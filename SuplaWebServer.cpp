@@ -1331,7 +1331,7 @@ String SuplaWebServer::supla_webpage_sensor(int save) {
   }
   page += F("</select></i>");
   page += F("<i><label>");
-  page += F("SCL</label><select name='");
+  page += F("ECHO</label><select name='");
   page += INPUT_ECHO_GPIO;
   page += F("'>");
   key = KEY_ECHO;
