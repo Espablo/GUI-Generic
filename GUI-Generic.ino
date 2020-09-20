@@ -114,6 +114,8 @@ void setup() {
   int sclPin = ConfigManager->get(KEY_SCL)->getValueInt();
   if(sdaPin != OFF_GPIO && sclPin != OFF_GPIO){
     Wire.begin(sdaPin, sclPin);
+    WebServer->setBusyGpio(sdaPin, true);
+    WebServer->setBusyGpio(sclPin, true);
 
     int bme280_adress = ConfigManager->get(KEY_BME280)->getValueInt();
     if(bme280_adress != 0){
@@ -123,7 +125,9 @@ void setup() {
   int trigPin = ConfigManager->get(KEY_TRIG)->getValueInt();
   int echoPin = ConfigManager->get(KEY_ECHO)->getValueInt();
   if(trigPin != OFF_GPIO && echoPin != OFF_GPIO){
-     new Supla::Sensor::HC_SR04(trigPin,echoPin);
+    WebServer->setBusyGpio(trigPin, true);
+    WebServer->setBusyGpio(echoPin, true);
+    new Supla::Sensor::HC_SR04(trigPin,echoPin);
   }
 
   Supla::GUI::begin();
