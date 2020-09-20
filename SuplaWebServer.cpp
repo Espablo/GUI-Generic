@@ -599,14 +599,38 @@ void SuplaWebServer::handleConfigSave() {
       return;
     }
   }
+  int exceptBusyGpio[32];
+  int exception = OFF_GPIO;
+  int nr, gpio;
+  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++){
+    key = KEY_BUTTON;
+    key += nr;
+    gpio = ConfigManager->get(key.c_str())->getValueInt();
+    exceptBusyGpio[nr] = gpio;
+  }
+  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
+    key = KEY_LIMIT_SWITCH;
+    key += nr;
+    gpio = ConfigManager->get(key.c_str())->getValueInt();
+    exceptBusyGpio[nr + ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()] = gpio;
+  }
+    
   key = KEY_CFG_BTN;
   input = INPUT_CFG_BTN_GPIO;
   set_input = httpServer.arg(input).toInt();
   get_input = ConfigManager->get(key.c_str())->getValueInt();
+
+  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() + ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
+    if(exceptBusyGpio[nr] == set_input){
+      exception = set_input;
+      break;
+    }    
+  }
+
   if(get_input != set_input){
-    if(getBusyGpio(set_input) == false){
+    if(getBusyGpio(set_input) == false || exception == set_input){
       ConfigManager->set(key.c_str(), httpServer.arg(input).c_str());
-      setBusyGpio(get_input, false);
+      if(exception != set_input) setBusyGpio(get_input, false);
       setBusyGpio(set_input, true);
     }
     else {
@@ -1420,8 +1444,35 @@ String SuplaWebServer::supla_webpage_config(int save) {
   page += INPUT_CFG_BTN_GPIO;
   page += F("'>");
   selected = ConfigManager->get(KEY_CFG_BTN)->getValueInt();
-  for (suported = 0; suported < sizeof(Supported_Gpio) / sizeof(char*); suported++) {
-    if(getBusyGpio(suported) == false || selected == suported){
+
+
+  int exceptBusyGpio[32];
+  int nr, gpio;
+  int exception = OFF_GPIO;
+  String key;
+
+  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++){
+    key = KEY_BUTTON;
+    key += nr;
+    gpio = ConfigManager->get(key.c_str())->getValueInt();
+    exceptBusyGpio[nr] = gpio;
+  }
+  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
+    key = KEY_LIMIT_SWITCH;
+    key += nr;
+    gpio = ConfigManager->get(key.c_str())->getValueInt();
+    exceptBusyGpio[nr + ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()] = gpio;
+  }
+  
+  for (suported = 0; suported < sizeof(Supported_Gpio) / sizeof(char*); suported++) {    
+  
+    for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() + ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
+      if(exceptBusyGpio[nr] == suported){
+        exception = suported;
+        break;
+      }    
+    }
+    if(getBusyGpio(suported) == false || selected == suported || exception == suported){
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
