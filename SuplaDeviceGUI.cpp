@@ -55,10 +55,10 @@ void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
 
   if (ConfigManager->get(KEY_TYPE_BUTTON)->getValueElement(size)) {
     //BISTABILNY
-    button[size]->willTrigger(*relay[size], Supla::ON_CHANGE, Supla::TOGGLE);
+    button[size]->addAction(Supla::TOGGLE, *relay[size], Supla::ON_CHANGE);
   } else {
     //MONOSTABILNY
-    button[size]->willTrigger(*relay[size], ConfigManager->get(KEY_MONOSTABLE_TRIGGER)->getValueInt(), Supla::TOGGLE);
+    button[size]->addAction(Supla::TOGGLE, *relay[size], ConfigManager->get(KEY_MONOSTABLE_TRIGGER)->getValueInt());
   }
 }
 

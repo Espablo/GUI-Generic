@@ -67,15 +67,15 @@ SuplaConfigESP::SuplaConfigESP() {
   Supla::Control::Button *buttonConfig = new Supla::Control::Button(pinNumberConfig, true, true);
 
   if (modeConfigButton == CONFIG_MODE_10_ON_PRESSES) {
-    buttonConfig->willTrigger(*ConfigESP, Supla::ON_PRESS, CONFIG_MODE_10_ON_PRESSES);
+    buttonConfig->addAction(CONFIG_MODE_10_ON_PRESSES, *ConfigESP, Supla::ON_PRESS);
   }
   if (modeConfigButton == CONFIG_MODE_5SEK_HOLD) {
-    buttonConfig->willTrigger(*ConfigESP, Supla::ON_PRESS, CONFIG_MODE_5SEK_HOLD);
-    buttonConfig->willTrigger(*ConfigESP, Supla::ON_RELEASE, CONFIG_MODE_5SEK_HOLD);
+    buttonConfig->addAction(CONFIG_MODE_5SEK_HOLD, *ConfigESP, Supla::ON_PRESS);
+    buttonConfig->addAction(CONFIG_MODE_5SEK_HOLD, *ConfigESP, Supla::ON_RELEASE);
   }
 }
 
-void SuplaConfigESP::trigger(int event, int action) {
+void SuplaConfigESP::runAction(int event, int action) {
   if (action == CONFIG_MODE_10_ON_PRESSES) {
     if (millis() - cnfigChangeTimeMs > 10000UL) {
       cnfigChangeTimeMs = millis();
