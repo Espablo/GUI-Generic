@@ -17,10 +17,11 @@
 #ifndef SuplaDeviceGUI_h
 #define SuplaDeviceGUI_h
 
-//#define DEBUG_MODE
+#define DEBUG_MODE
 
 #include <SuplaDevice.h>
 
+#include <supla/control/roller_shutter.h>
 #include <supla/control/relay.h>
 #include <supla/control/button.h>
 #include "SuplaSensorDS18B20.h"
@@ -44,10 +45,14 @@ void begin();
 void addRelayButton(int pinRelay, int pinButton, bool highIsOn = true);
 void addDS18B20MultiThermometer(int pinNumber);
 void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, bool highIsOn);
+void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn = true);
 
 extern std::vector <Supla::Control::Relay *> relay;
 extern std::vector <Supla::Control::Button *> button;
 extern std::vector <DS18B20 *> sensorDS;
+extern std::vector <Supla::Control::RollerShutter *> RollerShutterRelay;
+extern std::vector <Supla::Control::Button *> RollerShutterButtonOpen;
+extern std::vector <Supla::Control::Button *> RollerShutterButtonClose;
 };
 };
 

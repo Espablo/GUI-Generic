@@ -104,6 +104,7 @@ void SuplaWebServer::handleSave() {
   ConfigManager->set(KEY_LOGIN, httpServer.arg(INPUT_MODUL_LOGIN).c_str());
   ConfigManager->set(KEY_LOGIN_PASS, httpServer.arg(INPUT_MODUL_PASS).c_str());
   ConfigManager->set(KEY_MONOSTABLE_TRIGGER, httpServer.arg(INPUT_TRIGGER).c_str());
+  ConfigManager->set(KEY_MAX_ROLLERSHUTTER, httpServer.arg(INPUT_ROLLERSHUTTER).c_str());
   
   String button_value;
   for (int i = 0; i < Supla::GUI::button.size(); ++i) {
@@ -788,8 +789,21 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("'>LED, BUTTON CONFIG</a></button>");
   content += F("<label>Ustaw</label></i>");
   content += F("</div>");
+//ROLLERSHUTTER*******************************************************************
+  int maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
+  if(maxrollershutter >=2){
+    content += F("<div class='w'>");
+    content += F("<h3>Rolety</h3>");
+    content += F("<i><label>Ilość</label><input name='");
+    content += INPUT_ROLLERSHUTTER;
+    content += F("' type='number' placeholder='1' step='1' min='0' max='");
+    content += maxrollershutter/2;
+    content += F("' value='");
+    content += String(ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValue());
+    content += F("'></i>");
+    content += F("</div>");
+  }
   //DS****************************************************************************
-//  if (!Supla::GUI::sensorDS.empty() || ConfigManager->get(KEY_MULTI_DS)->getValueInt() < OFF_GPIO) {
   if (!Supla::GUI::sensorDS.empty()) {
     content += F("<div class='w'>");
     content += F("<h3>Temperatura</h3>");

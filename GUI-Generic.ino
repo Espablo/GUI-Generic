@@ -34,37 +34,66 @@ void setup() {
 
   Serial.begin(74880);
 
-  int busy_gpio_button[MAX_GPIO];
-  for(int i=0; i <= MAX_GPIO; i++){
-    busy_gpio_button[i] = OFF_GPIO;
-  }
   int nr, gpio;
   String key;
-  
+
   for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++){
     key = KEY_BUTTON;
     key += nr;
     gpio = ConfigManager->get(key.c_str())->getValueInt();
     if(gpio >= 0 && gpio < OFF_GPIO){
-      WebServer->setBusyGpio(gpio, true);
-      busy_gpio_button[nr] = gpio;       
+      WebServer->setBusyGpio(gpio, true); 
     }
   }
   
-  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++){
+  int relays = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
+  int buttons = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
+  int rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
+  int count_rollershutter, gpio_relay, gpio_button;
+  
+  if(rollershutters > 0) count_rollershutter = rollershutters * 2;
+  for(nr = 1; nr <= relays; nr++){
     key = KEY_RELAY;
     key += nr;
-    gpio = ConfigManager->get(key.c_str())->getValueInt();
-    if(gpio >= 0 && gpio < OFF_GPIO){
-      WebServer->setBusyGpio(gpio, true);
-      if (busy_gpio_button[nr] < OFF_GPIO){
-         Supla::GUI::addRelayButton(gpio, busy_gpio_button[nr], ConfigManager->get(KEY_RELAY_LEVEL)->getValueInt());
+    gpio_relay = ConfigManager->get(key.c_str())->getValueInt();
+    if (buttons > 0){
+      buttons--;
+      key = KEY_BUTTON;
+      key += nr;
+      gpio_button = ConfigManager->get(key.c_str())->getValueInt();
+      
+      if(count_rollershutter > 0) {
+        int gpio_relay_up, gpio_relay_down;
+        int gpio_button_up, gpio_button_down;
+        if(count_rollershutter%2 == 0){
+          gpio_button_up = gpio_button;
+          gpio_relay_up = gpio_relay;        
+        }
+        else {
+          gpio_button_down = gpio_button;
+          gpio_relay_down = gpio_relay;
+          Supla::GUI::addRolleShutter(gpio_relay_up, gpio_relay_down, gpio_button_up, gpio_button_down, ConfigManager->get(KEY_RELAY_LEVEL)->getValueInt());
+        }
+        count_rollershutter--;        
       }
-      else{
-        new Supla::Control::Relay(gpio, ConfigManager->get(KEY_RELAY_LEVEL)->getValueInt());
-      }      
+      else Supla::GUI::addRelayButton(gpio_relay, gpio_button, ConfigManager->get(KEY_RELAY_LEVEL)->getValueInt());      
+    }
+    else {
+      if(count_rollershutter > 0) {
+        int gpio_relay_up, gpio_relay_down;
+        if(count_rollershutter%2 == 0){
+          gpio_relay_up = gpio_relay;        
+        }
+        else {
+          gpio_relay_down = gpio_relay;
+          Supla::GUI::addRolleShutter(gpio_relay_up, gpio_relay_down, OFF_GPIO, OFF_GPIO, ConfigManager->get(KEY_RELAY_LEVEL)->getValueInt());
+        }
+      count_rollershutter--;        
+      }
+      else new Supla::Control::Relay(gpio_relay, ConfigManager->get(KEY_RELAY_LEVEL)->getValueInt());
     }
   }
+  
   for(nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
     key = KEY_LIMIT_SWITCH;
     key += nr;
@@ -74,7 +103,7 @@ void setup() {
       new Supla::Sensor::Binary(gpio, true);
     }
   }
-
+  
   for(nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++){
     key = KEY_DHT11;
     key += nr;

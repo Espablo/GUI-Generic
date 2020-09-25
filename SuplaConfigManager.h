@@ -61,7 +61,7 @@
 #define KEY_RELAY_LEVEL         "cfgrRelayLevel"
 #define KEY_TRIG                "trigGpio"
 #define KEY_ECHO                "echoGpio"
-
+#define KEY_MAX_ROLLERSHUTTER   "maxrollershutter"
 
 #define  MAX_GUID                 SUPLA_GUID_SIZE
 #define  MAX_AUTHKEY              SUPLA_GUID_SIZE

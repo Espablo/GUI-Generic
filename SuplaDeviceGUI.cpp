@@ -75,9 +75,24 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
   ConfigESP->addConfigESP(pinNumberConfig, pinLedConfig, modeConfigButton, highIsOn);
 }
 
+void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn) {
+  RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
+  if(pinButtonUp != OFF_GPIO) RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
+  if(pinButtonDown != OFF_GPIO) RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
+  int size = RollerShutterRelay.size() - 1;
+  if(pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO){
+      RollerShutterButtonOpen[size]->addAction(Supla::OPEN_OR_STOP, *RollerShutterRelay[size], Supla::ON_PRESS);
+      RollerShutterButtonClose[size]->addAction(Supla::CLOSE_OR_STOP, *RollerShutterRelay[size], Supla::ON_PRESS);
+  }
+  else RollerShutterButtonOpen[size]->addAction(Supla::STEP_BY_STEP, *RollerShutterRelay[size], Supla::ON_PRESS);
+}
+
 std::vector <Supla::Control::Relay *> relay;
 std::vector <Supla::Control::Button *> button;
 std::vector <DS18B20 *> sensorDS;
+std::vector <Supla::Control::RollerShutter *> RollerShutterRelay;
+std::vector <Supla::Control::Button *> RollerShutterButtonOpen;
+std::vector <Supla::Control::Button *> RollerShutterButtonClose;
 }
 }
 

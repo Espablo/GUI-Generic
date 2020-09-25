@@ -121,6 +121,7 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_RELAY_LEVEL,"1", 2);
   this->addKey(KEY_TRIG,"17", 2);
   this->addKey(KEY_ECHO,"17", 2);
+  this->addKey(KEY_MAX_ROLLERSHUTTER,"0", 2);
 
   this->addKey(KEY_MAX_RELAY,"0", 2);
   for(int relay_nr = 1; relay_nr <= 16; relay_nr++){

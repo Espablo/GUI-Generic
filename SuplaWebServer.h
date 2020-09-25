@@ -75,6 +75,7 @@
 #define  INPUT_SCL_GPIO            "sclg"
 #define  INPUT_CFG_LED_LEVEL       "icll"
 #define  INPUT_RELAY_LEVEL         "icrl"
+#define  INPUT_ROLLERSHUTTER       "irsr"
 
 #define  INPUT_BME280              "bme280"
 #define  INPUT_ALTITUDE_BME280      "abme280"
