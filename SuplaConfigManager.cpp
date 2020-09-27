@@ -137,7 +137,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(key.c_str(),"17", 2);
     key = KEY_RELAY_LEVEL;
     key += nr;
-    this->addKey(key.c_str(),"0", 1);
+    this->addKey(key.c_str(),"1", 1);
     key = KEY_RELAY_MEMORY;
     key += nr;
     this->addKey(key.c_str(),"0", 1);
