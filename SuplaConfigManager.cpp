@@ -125,19 +125,19 @@ SuplaConfigManager::SuplaConfigManager() {
 
   this->addKey(KEY_MAX_RELAY,"0", 2);
   for(int relay_nr = 1; relay_nr <= 16; relay_nr++){
-      String relay_key = KEY_RELAY;
+      String relay_key = KEY_RELAY_GPIO;
       relay_key += relay_nr;
       this->addKey(relay_key.c_str(),"17", 2);
   }
   this->addKey(KEY_MAX_BUTTON,"0", 2);
   for(int button_nr = 1; button_nr <= 16; button_nr++){
-      String button_key = KEY_BUTTON;
+      String button_key = KEY_BUTTON_GPIO;
       button_key += button_nr;
       this->addKey(button_key.c_str(),"17", 2);
   }
   this->addKey(KEY_MAX_LIMIT_SWITCH,"0", 2);
   for(int limit_switch_nr = 1; limit_switch_nr <= 16; limit_switch_nr++){
-      String limit_switch_key = KEY_LIMIT_SWITCH;
+      String limit_switch_key = KEY_LIMIT_SWITCH_GPIO;
       limit_switch_key += limit_switch_nr;
       this->addKey(limit_switch_key.c_str(),"17", 2);
   }

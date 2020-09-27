@@ -223,7 +223,7 @@ void SuplaWebServer::handleRelaySave() {
   current_value = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   if(current_value >= last_value){
     for(nr = 1; nr <= last_value; nr++){
-      key = KEY_RELAY;
+      key = KEY_RELAY_GPIO;
       input = INPUT_RELAY_GPIO;
       key += nr;
       input += nr;
@@ -245,7 +245,7 @@ void SuplaWebServer::handleRelaySave() {
   }
   else if(current_value < last_value){
     for(nr = current_value + 1; nr <= last_value; nr++){
-      key = KEY_RELAY;
+      key = KEY_RELAY_GPIO;
       key += nr;
       get_input = ConfigManager->get(key.c_str())->getValueInt();
       ConfigManager->set(key.c_str(), "17");
@@ -291,7 +291,7 @@ void SuplaWebServer::handleControlSave() {
   current_value = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   if(current_value >= last_value){
     for(nr = 1; nr <= last_value; nr++){
-      key = KEY_BUTTON;
+      key = KEY_BUTTON_GPIO;
       input = INPUT_BUTTON_GPIO;
       key += nr;
       input += nr;
@@ -313,7 +313,7 @@ void SuplaWebServer::handleControlSave() {
   }
   else if(current_value < last_value){
     for(nr = current_value + 1; nr <= last_value; nr++){
-      key = KEY_BUTTON;
+      key = KEY_BUTTON_GPIO;
       key += nr;
       get_input = ConfigManager->get(key.c_str())->getValueInt();
       ConfigManager->set(key.c_str(), "17");
@@ -328,7 +328,7 @@ void SuplaWebServer::handleControlSave() {
   current_value = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
   if(current_value >= last_value){
     for(nr = 1; nr <= last_value; nr++){
-      key = KEY_LIMIT_SWITCH;
+      key = KEY_LIMIT_SWITCH_GPIO;
       input = INPUT_LIMIT_SWITCH_GPIO;
       key += nr;
       input += nr;
@@ -350,7 +350,7 @@ void SuplaWebServer::handleControlSave() {
   }
   else if(current_value < last_value){
     for(nr = current_value + 1; nr <= last_value; nr++){
-      key = KEY_LIMIT_SWITCH;
+      key = KEY_LIMIT_SWITCH_GPIO;
       key += nr;
       get_input = ConfigManager->get(key.c_str())->getValueInt();
       ConfigManager->set(key.c_str(), "17");
@@ -604,13 +604,13 @@ void SuplaWebServer::handleConfigSave() {
   int exception = OFF_GPIO;
   int nr, gpio;
   for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++){
-    key = KEY_BUTTON;
+    key = KEY_BUTTON_GPIO;
     key += nr;
     gpio = ConfigManager->get(key.c_str())->getValueInt();
     exceptBusyGpio[nr] = gpio;
   }
   for(nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
-    key = KEY_LIMIT_SWITCH;
+    key = KEY_LIMIT_SWITCH_GPIO;
     key += nr;
     gpio = ConfigManager->get(key.c_str())->getValueInt();
     exceptBusyGpio[nr + ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()] = gpio;
@@ -1073,7 +1073,7 @@ String SuplaWebServer::supla_webpage_relay(int save) {
     pagerelay += INPUT_RELAY_GPIO;
     pagerelay += nr;
     pagerelay += F("'>");
-    key = KEY_RELAY;
+    key = KEY_RELAY_GPIO;
     key += nr;
     selected = ConfigManager->get(key.c_str())->getValueInt();
     for (suported = 0; suported < sizeof(Supported_Gpio) / sizeof(char*); suported++) {
@@ -1124,7 +1124,7 @@ String SuplaWebServer::supla_webpage_control(int save) {
     pagebutton += INPUT_BUTTON_GPIO;
     pagebutton += nr;
     pagebutton += F("'>");
-    key = KEY_BUTTON;
+    key = KEY_BUTTON_GPIO;
     key += nr;
     selected = ConfigManager->get(key.c_str())->getValueInt();
     for (suported = 0; suported < sizeof(Supported_Gpio) / sizeof(char*); suported++) {
@@ -1156,7 +1156,7 @@ String SuplaWebServer::supla_webpage_control(int save) {
     pagebutton += INPUT_LIMIT_SWITCH_GPIO;
     pagebutton += nr;
     pagebutton += F("'>");
-    key = KEY_LIMIT_SWITCH;
+    key = KEY_LIMIT_SWITCH_GPIO;
     key += nr;
     selected = ConfigManager->get(key.c_str())->getValueInt();
     for (suported = 0; suported < sizeof(Supported_Gpio) / sizeof(char*); suported++) {
@@ -1466,13 +1466,13 @@ String SuplaWebServer::supla_webpage_config(int save) {
   String key;
 
   for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++){
-    key = KEY_BUTTON;
+    key = KEY_BUTTON_GPIO;
     key += nr;
     gpio = ConfigManager->get(key.c_str())->getValueInt();
     exceptBusyGpio[nr] = gpio;
   }
   for(nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
-    key = KEY_LIMIT_SWITCH;
+    key = KEY_LIMIT_SWITCH_GPIO;
     key += nr;
     gpio = ConfigManager->get(key.c_str())->getValueInt();
     exceptBusyGpio[nr + ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()] = gpio;

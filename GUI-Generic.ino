@@ -38,7 +38,7 @@ void setup() {
   String key;
 
   for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++){
-    key = KEY_BUTTON;
+    key = KEY_BUTTON_GPIO;
     key += nr;
     gpio = ConfigManager->get(key.c_str())->getValueInt();
     if(gpio >= 0 && gpio < OFF_GPIO){
@@ -53,12 +53,16 @@ void setup() {
   
   if(rollershutters > 0) count_rollershutter = rollershutters * 2;
   for(nr = 1; nr <= relays; nr++){
-    key = KEY_RELAY;
+    key = KEY_RELAY_GPIO;
     key += nr;
     gpio_relay = ConfigManager->get(key.c_str())->getValueInt();
+    if(gpio >= 0 && gpio < OFF_GPIO){
+      WebServer->setBusyGpio(gpio_relay, true); 
+    }
+
     if (buttons > 0){
       buttons--;
-      key = KEY_BUTTON;
+      key = KEY_BUTTON_GPIO;
       key += nr;
       gpio_button = ConfigManager->get(key.c_str())->getValueInt();
       
@@ -95,7 +99,7 @@ void setup() {
   }
   
   for(nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
-    key = KEY_LIMIT_SWITCH;
+    key = KEY_LIMIT_SWITCH_GPIO;
     key += nr;
     gpio = ConfigManager->get(key.c_str())->getValueInt();
     if(gpio >= 0 && gpio < OFF_GPIO){
