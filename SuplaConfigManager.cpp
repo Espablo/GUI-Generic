@@ -118,53 +118,50 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_CFG_LED,"17", 2);
   this->addKey(KEY_CFG_BTN,"17", 2);
   this->addKey(KEY_CFG_LED_LEVEL,"1", 2);
-  this->addKey(KEY_RELAY_LEVEL,"1", 2);
   this->addKey(KEY_TRIG,"17", 2);
   this->addKey(KEY_ECHO,"17", 2);
   this->addKey(KEY_MAX_ROLLERSHUTTER,"0", 2);
-
   this->addKey(KEY_MAX_RELAY,"0", 2);
-  for(int relay_nr = 1; relay_nr <= 16; relay_nr++){
-      String relay_key = KEY_RELAY_GPIO;
-      relay_key += relay_nr;
-      this->addKey(relay_key.c_str(),"17", 2);
-  }
   this->addKey(KEY_MAX_BUTTON,"0", 2);
-  for(int button_nr = 1; button_nr <= 16; button_nr++){
-      String button_key = KEY_BUTTON_GPIO;
-      button_key += button_nr;
-      this->addKey(button_key.c_str(),"17", 2);
-  }
   this->addKey(KEY_MAX_LIMIT_SWITCH,"0", 2);
-  for(int limit_switch_nr = 1; limit_switch_nr <= 16; limit_switch_nr++){
-      String limit_switch_key = KEY_LIMIT_SWITCH_GPIO;
-      limit_switch_key += limit_switch_nr;
-      this->addKey(limit_switch_key.c_str(),"17", 2);
-  }
   this->addKey(KEY_MAX_DHT22,"0", 2);
-  for(int dht22_nr = 1; dht22_nr <= 16; dht22_nr++){
-      String dht22_key = KEY_DHT22;
-      dht22_key += dht22_nr;
-      this->addKey(dht22_key.c_str(),"17", 2);
-  }
   this->addKey(KEY_MAX_DHT11,"0", 2);
-  for(int dht11_nr = 1; dht11_nr <= 16; dht11_nr++){
-      String dht11_key = KEY_DHT11;
-      dht11_key += dht11_nr;
-      this->addKey(dht11_key.c_str(),"17", 2);
-  }
   this->addKey(KEY_MULTI_DS,"17", 2);
-
   this->addKeyAndRead(KEY_MULTI_MAX_DS18B20, "1", sizeof(int));
-  for (int i = 0; i <= 16; i++)
-  {
-    String ds_key = KEY_DS;
-    String ds_name_key = KEY_DS_NAME;
-    ds_key += i;
-    ds_name_key += i;
-
-    this->addKey(ds_key.c_str(), MAX_DS18B20_ADDRESS_HEX);
-    this->addKey(ds_name_key.c_str(), MAX_DS18B20_NAME);
+  
+  int nr;
+  String key;
+  for(int nr = 1; nr <= MAX_KEY; nr++){
+    key = KEY_RELAY_GPIO;
+    key += nr;
+    this->addKey(key.c_str(),"17", 2);
+    key = KEY_RELAY_LEVEL;
+    key += nr;
+    this->addKey(key.c_str(),"0", 1);
+    key = KEY_RELAY_MEMORY;
+    key += nr;
+    this->addKey(key.c_str(),"0", 1);
+    key = KEY_RELAY_DURATION;
+    key += nr;
+    this->addKey(key.c_str(),"0", 2);
+    key = KEY_BUTTON_GPIO;
+    key += nr;
+    this->addKey(key.c_str(),"17", 2);
+    key = KEY_LIMIT_SWITCH_GPIO;
+    key += nr;
+    this->addKey(key.c_str(),"17", 2);
+    key = KEY_DHT22;
+    key += nr;
+    this->addKey(key.c_str(),"17", 2);
+    key = KEY_DHT11;
+    key += nr;
+    this->addKey(key.c_str(),"17", 2);
+    key = KEY_DS;
+    key += nr;
+    this->addKey(key.c_str(), MAX_DS18B20_ADDRESS_HEX);     
+    key = KEY_DS_NAME;    
+    key += nr;   
+    this->addKey(key.c_str(), MAX_DS18B20_NAME);
   }
  
   switch (this->load()) {
@@ -318,7 +315,7 @@ uint8_t SuplaConfigManager::save() {
     if (configFile) {
       uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
       for (i = 0; i < _optionCount; i++) {
-//        Serial.println("save: " + String(_options[i]->getValue()));
+        Serial.println("save: " + String(_options[i]->getValue()));
         memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
         offset += _options[i]->getLength();
       }

@@ -62,6 +62,9 @@
 #define KEY_TRIG                "trigGpio"
 #define KEY_ECHO                "echoGpio"
 #define KEY_MAX_ROLLERSHUTTER   "maxrollershutter"
+#define KEY_RELAY_LEVEL         "relayLevel"        
+#define KEY_RELAY_MEMORY        "relaymemory"
+#define KEY_RELAY_DURATION      "relayDuration"
 
 #define  MAX_GUID                 SUPLA_GUID_SIZE
 #define  MAX_AUTHKEY              SUPLA_GUID_SIZE
@@ -76,9 +79,10 @@
 #define  MAX_DS18B20_ADDRESS_HEX  16
 #define  MAX_DS18B20_ADDRESS      8
 #define  MAX_DS18B20_NAME         8
-#define  MAX_TYPE_BUTTON          4
-#define  MAX_MONOSTABLE_TRIGGER   2
+#define  MAX_TYPE_BUTTON          1
+#define  MAX_MONOSTABLE_TRIGGER   1
 #define  MAX_FUNCTION             1
+#define  MAX_KEY                  13
 
 #define E_CONFIG_OK               0
 #define E_CONFIG_FS_ACCESS        1
