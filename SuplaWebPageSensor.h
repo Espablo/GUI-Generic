@@ -22,6 +22,7 @@
 #define  INPUT_ECHO_GPIO            "echo"
 #define  INPUT_MAX_DHT11            "mdht11"
 #define  INPUT_MAX_DHT22            "mdht22"
+#define  INPUT_MAX_DS18B20          "maxds"
 
 
 class SuplaWebPageSensor {

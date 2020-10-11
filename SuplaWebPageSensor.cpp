@@ -18,6 +18,7 @@ void SuplaWebPageSensor::createWebPageSensor() {
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleSensorSave, this));
 
 #ifdef SUPLA_DS18B20
+  path = PATH_START;
   path += PATH_SERCH;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleSearchDS, this));
   path = PATH_START;
@@ -259,22 +260,39 @@ void SuplaWebPageSensor::handleSensorSave() {
   ConfigESP->sort(FUNCTION_ECHO);
 #endif
 
+#ifdef SUPLA_DS18B20
+  input = INPUT_MULTI_DS_GPIO;
+  key = GPIO;
+  key += WebServer->httpServer.arg(input).toInt();
+  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+    key = GPIO;
+    key += WebServer->httpServer.arg(input).toInt();  
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+        (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DS18B20)) {
 
-//   ConfigManager->set(KEY_MULTI_DS, WebServer->httpServer.arg(INPUT_MULTI_DS_GPIO).c_str());
-  
-//   last_value = ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt();
-//   if (strcmp(WebServer->httpServer.arg("maxds").c_str(), "") != 0) {
-//     ConfigManager->set(KEY_MULTI_MAX_DS18B20, WebServer->httpServer.arg("maxds").c_str());    
-//   }
-//   if(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() >= last_value){
-//     uint8_t gpio = ConfigManager->get(KEY_MULTI_DS)->getValueInt();
-//     if(gpio >= 0 && gpio < OFF_GPIO){
-//       WebServer->setBusyGpio(gpio, true);
-//       Supla::GUI::addDS18B20MultiThermometer(gpio);  
-//     }
-//     else WebServer->setBusyGpio(gpio, false);
-//   }
-
+      ConfigManager->setElement(key.c_str(), NR, 1);
+      ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_DS18B20);
+    }
+    else {
+      WebServer->httpServer.send(200, "text/html", supla_webpage_sensor(6));
+      return;
+    }
+  }
+  if(ConfigESP->getGpio(1, FUNCTION_DS18B20) != WebServer->httpServer.arg(input).toInt() || 
+                      WebServer->httpServer.arg(input).toInt() == OFF_GPIO){
+    key = GPIO;
+    key += ConfigESP->getGpio(1, FUNCTION_DS18B20);
+    ConfigManager->setElement(key.c_str(), NR, 0);
+    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
+    ConfigManager->setElement(key.c_str(), LEVEL, 0 );
+    ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+  }
+  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str(), "") > 0) {
+    ConfigManager->set(KEY_MULTI_MAX_DS18B20, WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str());  
+  }
+  ConfigESP->sort(FUNCTION_DS18B20);
+#endif
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -376,8 +394,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("MULTI DS18B20</label><select name='");
   page += INPUT_MULTI_DS_GPIO;
   page += F("'>");
-  key = KEY_MULTI_DS;
-  selected = ConfigManager->get(key.c_str())->getValueInt();
+  selected =  ConfigESP->getGpio(1, FUNCTION_DS18B20);
   for (suported = 0; suported < 18; suported++) {
     if(ConfigESP->checkBusy(suported, FUNCTION_DS18B20) == false || selected == suported){
       page += F("<option value='");
@@ -390,8 +407,10 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
     }
   }
   page += F("</select></i>");
-  if (ConfigManager->get(KEY_MULTI_DS)->getValueInt() < OFF_GPIO) {
-    page += F("<i><label>ILOŚĆ</label><input name='maxds' type='number' placeholder='1' step='1' min='1' max='16' value='");
+  if (ConfigESP->getGpio(1, FUNCTION_DS18B20) < OFF_GPIO) {
+    page += F("<i><label>ILOŚĆ</label><input name='");
+    page += INPUT_MAX_DS18B20;
+    page += F("' type='number' placeholder='1' step='1' min='1' max='16' value='");
     page += String(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValue());
     page += F("'></i>");
   }
@@ -506,7 +525,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("<br><br>");
 
 #ifdef SUPLA_DS18B20
-  if (!Supla::GUI::sensorDS.empty() || ConfigManager->get(KEY_MULTI_DS)->getValueInt() < OFF_GPIO) {
+  if(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1){
     page += F("<a href='");
     page += PATH_START;
     page += PATH_SERCH;
@@ -560,7 +579,7 @@ void SuplaWebPageSensor::handleDSSave() {
 String SuplaWebPageSensor::supla_webpage_search(int save) {
   String content = "";
   uint8_t count = 0;
-  uint8_t pin = Supla::GUI::sensorDS[0]->getPin();
+  uint8_t pin = ConfigESP->getGpio(1, FUNCTION_DS18B20);
 
   OneWire ow(pin);
   DallasTemperature sensors;

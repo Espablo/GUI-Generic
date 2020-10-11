@@ -147,9 +147,7 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_MAX_LIMIT_SWITCH,"0", 2);
   this->addKey(KEY_MAX_DHT22,"0", 2);
   this->addKey(KEY_MAX_DHT11,"0", 2);
-  this->addKey(KEY_MULTI_DS,"17", 2);
-  this->addKey(KEY_MULTI_MAX_DS18B20,"0", 2);
-  // this->addKeyAndRead(KEY_MULTI_MAX_DS18B20, "0", sizeof(int));
+  this->addKey(KEY_MULTI_MAX_DS18B20,"1", 2);
   this->addKey(KEY_ADR_BME280,"0", 2);
   this->addKey(KEY_ALTITUDE_BME280,"0", 4);
   
@@ -171,7 +169,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(key.c_str(), func.c_str(), 14);
   }
 
-  for(nr = 1; nr <= MAX_KEY; nr++){
+  for(nr = 0; nr <= MAX_KEY; nr++){
     key = KEY_DS;
     key += nr;
     this->addKey(key.c_str(), MAX_DS18B20_ADDRESS_HEX);     

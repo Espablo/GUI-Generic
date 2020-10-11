@@ -43,7 +43,6 @@
 #define KEY_MAX_LIMIT_SWITCH    "maxLimitSwitch"
 #define KEY_MAX_DHT11           "maxDht11"
 #define KEY_MAX_DHT22           "maxDht22"
-#define KEY_MULTI_DS            "multiDsGpio"
 #define KEY_MAX_ROLLERSHUTTER   "maxRollerShutter"
 
 #define KEY_ADR_BME280          "adrBme280"

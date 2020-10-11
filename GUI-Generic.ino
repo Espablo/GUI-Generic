@@ -36,6 +36,7 @@
 void setup() {
 
   Serial.begin(74880);
+
   uint8_t nr, gpio;
   String key;
 
@@ -109,13 +110,12 @@ void setup() {
   if(ConfigESP->sort(FUNCTION_DS18B20)){
     if(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 0){ 
       if(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1){
-      Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(1, FUNCTION_DS18B20));      
+        Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(1, FUNCTION_DS18B20));      
+      }
+      else {
+        new Supla::Sensor::DS18B20(ConfigESP->getGpio(1, FUNCTION_DS18B20));
+      }    
     }
-    else {
-      new Supla::Sensor::DS18B20(ConfigESP->getGpio(1, FUNCTION_DS18B20));
-    }    
-  }
-
   }
 #endif
 
