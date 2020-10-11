@@ -37,34 +37,42 @@
 #define KEY_DS                  "ds"
 #define KEY_DS_NAME             "dsName"
 #define KEY_MULTI_MAX_DS18B20   "multiMaxDs"
-#define KEY_TYPE_BUTTON         "typeButton"
-#define KEY_MONOSTABLE_TRIGGER  "trigger"
 #define KEY_SUPLA_FUNCTION      "function"
-#define KEY_RELAY_GPIO          "relayGpio"
 #define KEY_MAX_RELAY           "maxRelay"
-#define KEY_BUTTON_GPIO         "buttonGpio"
 #define KEY_MAX_BUTTON          "maxButton"
-#define KEY_LIMIT_SWITCH_GPIO   "limitSwitchGpio"
 #define KEY_MAX_LIMIT_SWITCH    "maxLimitSwitch"
-#define KEY_DHT11               "dht11Gpio"
 #define KEY_MAX_DHT11           "maxDht11"
-#define KEY_DHT22               "dht22Gpio"
 #define KEY_MAX_DHT22           "maxDht22"
 #define KEY_MULTI_DS            "multiDsGpio"
-#define KEY_BME280              "bme280"
+#define KEY_MAX_ROLLERSHUTTER   "maxRollerShutter"
+
+#define KEY_ADR_BME280          "adrBme280"
 #define KEY_ALTITUDE_BME280     "altbme280"
-#define KEY_SDA                 "sdaGpio"
-#define KEY_SCL                 "sclGpio"
-#define KEY_CFG_LED             "cfgLedGpio"
-#define KEY_CFG_BTN             "cfgBtnGpio"
-#define KEY_CFG_LED_LEVEL       "cfgLedLevel"
-#define KEY_RELAY_LEVEL         "cfgrRelayLevel"
-#define KEY_TRIG                "trigGpio"
-#define KEY_ECHO                "echoGpio"
-#define KEY_MAX_ROLLERSHUTTER   "maxrollershutter"
-#define KEY_RELAY_LEVEL         "relayLevel"        
-#define KEY_RELAY_MEMORY        "relaymemory"
-#define KEY_RELAY_DURATION      "relayDuration"
+
+#define GPIO                      "GPIO"
+#define SEPARATOR                 ','
+
+#define PIN                       0
+#define NR                        1
+#define FUNCTION                  2
+#define LEVEL                     3
+#define MEMORY                    4
+
+#define FUNCTION_OFF              0
+#define FUNCTION_RELAY            1
+#define FUNCTION_BUTTON           2
+#define FUNCTION_LIMIT_SWITCH     3
+#define FUNCTION_CFG_LED          4
+#define FUNCTION_CFG_BUTTON       5
+#define FUNCTION_DS18B20          6
+#define FUNCTION_DHT11            7
+#define FUNCTION_DHT22            8
+#define FUNCTION_SDA              9
+#define FUNCTION_SCL              10
+#define FUNCTION_TRIG             11
+#define FUNCTION_ECHO             12
+
+
 
 #define  MAX_GUID                 SUPLA_GUID_SIZE
 #define  MAX_AUTHKEY              SUPLA_GUID_SIZE
@@ -79,10 +87,10 @@
 #define  MAX_DS18B20_ADDRESS_HEX  16
 #define  MAX_DS18B20_ADDRESS      8
 #define  MAX_DS18B20_NAME         8
-#define  MAX_TYPE_BUTTON          1
+#define  MAX_TYPE_BUTTON          4
 #define  MAX_MONOSTABLE_TRIGGER   1
 #define  MAX_FUNCTION             1
-#define  MAX_KEY                  13
+#define  MAX_KEY                  5
 
 #define E_CONFIG_OK               0
 #define E_CONFIG_FS_ACCESS        1
@@ -91,7 +99,7 @@
 #define E_CONFIG_PARSE_ERROR      4
 #define E_CONFIG_MAX              5
 
-#define CONFIG_MAX_OPTIONS        188
+#define CONFIG_MAX_OPTIONS        88
 
 class ConfigOption {
   public:
@@ -105,6 +113,8 @@ class ConfigOption {
 
     int getLength();
     void setValue(const char *value);
+    String getElement(int index);
+    String replaceElement(int index, int value);
 
   private:
     char *_key;
@@ -127,7 +137,7 @@ class SuplaConfigManager {
 
     ConfigOption *get(const char *key);
     bool set(const char *key, const char *value);
-    bool setElement(const char *key, const char value);
+    bool setElement(const char *key, int index, int newvalue);
 
     bool isDeviceConfigured();
     void setGUIDandAUTHKEY();

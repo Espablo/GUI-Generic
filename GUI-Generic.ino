@@ -16,8 +16,9 @@
 
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
-
+#include <EEPROM.h>
 #include <SPI.h>
+#include "FS.h"
 #include <SuplaDevice.h>
 
 #include <supla/control/relay.h>
@@ -29,139 +30,121 @@
 #include <Wire.h>
 #include <supla/sensor/HC_SR04.h>
 
+#include "GUI-Generic_Config.h"
+
 
 void setup() {
 
   Serial.begin(74880);
-
-  int nr, gpio;
+  uint8_t nr, gpio;
   String key;
 
-  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++){
-    key = KEY_BUTTON_GPIO;
-    key += nr;
-    gpio = ConfigManager->get(key.c_str())->getValueInt();
-    if(gpio >= 0 && gpio < OFF_GPIO){
-      WebServer->setBusyGpio(gpio, true); 
-    }
-  }
-  
-  int relays = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
-  int buttons = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
-  int rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
-  int count_rollershutter, gpio_relay, gpio_button;
-  
-  if(rollershutters > 0) count_rollershutter = rollershutters * 2;
-  for(nr = 1; nr <= relays; nr++){
-    key = KEY_RELAY_GPIO;
-    key += nr;
-    gpio_relay = ConfigManager->get(key.c_str())->getValueInt();
-    if(gpio >= 0 && gpio < OFF_GPIO){
-      WebServer->setBusyGpio(gpio_relay, true); 
-    }
+#ifdef SUPLA_BUTTON
+  ConfigESP->sort(FUNCTION_BUTTON);
+#endif
 
-    if (buttons > 0){
-      buttons--;
-      key = KEY_BUTTON_GPIO;
-      key += nr;
-      gpio_button = ConfigManager->get(key.c_str())->getValueInt();
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+  ConfigESP->sort(FUNCTION_RELAY);
+  uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
+
+  if(ConfigManager->get(KEY_MAX_RELAY)->getValueInt() > 0){
+    for(nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++){
       
-      if(count_rollershutter > 0) {
-        int gpio_relay_up, gpio_relay_down;
-        int gpio_button_up, gpio_button_down;
-        if(count_rollershutter%2 == 0){
-          gpio_button_up = gpio_button;
-          gpio_relay_up = gpio_relay;        
+#ifdef SUPLA_ROLLERSHUTTER
+      if(rollershutters > 0){
+#ifdef SUPLA_BUTTON
+        if(ConfigESP->getLevel(nr, FUNCTION_BUTTON) == Supla::ON_CHANGE && ConfigESP->getLevel(nr + 1, FUNCTION_BUTTON) == Supla::ON_CHANGE){
+          Supla::GUI::addRolleShutterMomentary(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr +1, FUNCTION_RELAY), 
+                                              ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getGpio(nr +1, FUNCTION_BUTTON), ConfigESP->getLevel(nr, FUNCTION_RELAY));
         }
-        else {
-          gpio_button_down = gpio_button;
-          gpio_relay_down = gpio_relay;
-          Supla::GUI::addRolleShutter(gpio_relay_up, gpio_relay_down, gpio_button_up, gpio_button_down, ConfigManager->get(KEY_RELAY_LEVEL)->getValueInt());
+        else{
+#endif
+          Supla::GUI::addRolleShutter(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr +1 , FUNCTION_RELAY), 
+                                      ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getGpio(nr +1 , FUNCTION_BUTTON), ConfigESP->getLevel(nr, FUNCTION_RELAY));
+#ifdef SUPLA_BUTTON
         }
-        count_rollershutter--;        
+#endif
+        rollershutters--;
+        nr++;
       }
-      else Supla::GUI::addRelayButton(gpio_relay, gpio_button, ConfigManager->get(KEY_RELAY_LEVEL)->getValueInt());      
-    }
-    else {
-      if(count_rollershutter > 0) {
-        int gpio_relay_up, gpio_relay_down;
-        if(count_rollershutter%2 == 0){
-          gpio_relay_up = gpio_relay;        
-        }
-        else {
-          gpio_relay_down = gpio_relay;
-          Supla::GUI::addRolleShutter(gpio_relay_up, gpio_relay_down, OFF_GPIO, OFF_GPIO, ConfigManager->get(KEY_RELAY_LEVEL)->getValueInt());
-        }
-      count_rollershutter--;        
-      }
-      else new Supla::Control::Relay(gpio_relay, ConfigManager->get(KEY_RELAY_LEVEL)->getValueInt());
+      else {
+#endif
+        Supla::GUI::addRelayButton(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getLevel(nr, FUNCTION_RELAY));
+#ifdef SUPLA_ROLLERSHUTTER
+      } 
+#endif
     }
   }
-  
-  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
-    key = KEY_LIMIT_SWITCH_GPIO;
-    key += nr;
-    gpio = ConfigManager->get(key.c_str())->getValueInt();
-    if(gpio >= 0 && gpio < OFF_GPIO){
-      WebServer->setBusyGpio(gpio, true);
-      new Supla::Sensor::Binary(gpio, true);
-    }
-  }
-  
-  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++){
-    key = KEY_DHT11;
-    key += nr;
-    gpio = ConfigManager->get(key.c_str())->getValueInt();
-    if(gpio >= 0 && gpio < OFF_GPIO){
-      WebServer->setBusyGpio(gpio, true);
-      new Supla::Sensor::DHT(gpio, DHT11);
-    }
-  }
-  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++){
-    key = KEY_DHT22;
-    key += nr;
-    gpio = ConfigManager->get(key.c_str())->getValueInt();
-    if(gpio >= 0 && gpio < OFF_GPIO){
-      WebServer->setBusyGpio(gpio, true);
-      new Supla::Sensor::DHT(gpio, DHT22);
-    }
-  }
+#endif
 
-  gpio = ConfigManager->get(KEY_MULTI_DS)->getValueInt();
-  if(gpio >= 0 && gpio < OFF_GPIO){
-    WebServer->setBusyGpio(gpio, true);
-    if(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt()== 1){
-      new Supla::Sensor::DS18B20(gpio);
+#ifdef SUPLA_LIMIT_SWITCH
+  ConfigESP->sort(FUNCTION_LIMIT_SWITCH);
+  if(ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt() > 0){ 
+    for(nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
+      new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), true);
+    }
+  }
+#endif
+
+#ifdef SUPLA_DHT11
+  ConfigESP->sort(FUNCTION_DHT11);
+  if(ConfigManager->get(KEY_MAX_DHT11)->getValueInt() > 0){ 
+    for(nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++){
+      new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT11), DHT11);
+    }
+  }
+  
+#endif
+
+#ifdef SUPLA_DHT22
+  ConfigESP->sort(FUNCTION_DHT22);
+  if(ConfigManager->get(KEY_MAX_DHT22)->getValueInt() > 0){ 
+    for(nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++){
+      new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22);
+    }
+  }
+#endif
+
+#ifdef SUPLA_DS18B20
+  if(ConfigESP->sort(FUNCTION_DS18B20)){
+    if(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 0){ 
+      if(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1){
+      Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(1, FUNCTION_DS18B20));      
     }
     else {
-      Supla::GUI::addDS18B20MultiThermometer(gpio);  
+      new Supla::Sensor::DS18B20(ConfigESP->getGpio(1, FUNCTION_DS18B20));
     }    
   }
-  gpio = ConfigManager->get(KEY_CFG_BTN)->getValueInt();
-  if(gpio >= 0 && gpio < OFF_GPIO) WebServer->setBusyGpio(gpio, true);  
-  gpio = ConfigManager->get(KEY_CFG_LED)->getValueInt();
-  if(gpio >= 0 && gpio < OFF_GPIO) WebServer->setBusyGpio(gpio, true);
-  Supla::GUI::addConfigESP(ConfigManager->get(KEY_CFG_BTN)->getValueInt(), ConfigManager->get(KEY_CFG_LED)->getValueInt(), CONFIG_MODE_10_ON_PRESSES, ConfigManager->get(KEY_CFG_LED_LEVEL)->getValueInt());
 
-  int sdaPin = ConfigManager->get(KEY_SDA)->getValueInt();
-  int sclPin = ConfigManager->get(KEY_SCL)->getValueInt();
-  if(sdaPin != OFF_GPIO && sclPin != OFF_GPIO){
-    Wire.begin(sdaPin, sclPin);
-    WebServer->setBusyGpio(sdaPin, true);
-    WebServer->setBusyGpio(sclPin, true);
+  }
+#endif
 
-    int bme280_adress = ConfigManager->get(KEY_BME280)->getValueInt();
-    if(bme280_adress != 0){
-      new Supla::Sensor::BME280(bme280_adress, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+#ifdef SUPLA_CONFIG 
+  if(ConfigESP->sort(FUNCTION_CFG_LED) || ConfigESP->sort(FUNCTION_CFG_BUTTON)){
+    ConfigESP->sort(FUNCTION_CFG_BUTTON);
+    Supla::GUI::addConfigESP(ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES, ConfigESP->getLevel(1, FUNCTION_CFG_LED));
+  } 
+#endif
+
+#ifdef SUPLA_BME280
+  ConfigESP->sort(FUNCTION_SDA);
+  ConfigESP->sort(FUNCTION_SCL);
+  if(ConfigESP->sort(FUNCTION_SDA) && ConfigESP->sort(FUNCTION_SCL)){
+    Wire.begin(ConfigESP->getGpio(1, FUNCTION_SDA), ConfigESP->getGpio(1, FUNCTION_SCL));
+
+    if(ConfigManager->get(KEY_ADR_BME280)->getValueInt()){
+      new Supla::Sensor::BME280(ConfigManager->get(KEY_ADR_BME280)->getValueInt(), ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
     }
   }
-  int trigPin = ConfigManager->get(KEY_TRIG)->getValueInt();
-  int echoPin = ConfigManager->get(KEY_ECHO)->getValueInt();
-  if(trigPin != OFF_GPIO && echoPin != OFF_GPIO){
-    WebServer->setBusyGpio(trigPin, true);
-    WebServer->setBusyGpio(echoPin, true);
-    new Supla::Sensor::HC_SR04(trigPin,echoPin);
+#endif
+
+#ifdef SUPLA_HC_SR04
+ConfigESP->sort(FUNCTION_TRIG);
+ConfigESP->sort(FUNCTION_ECHO);
+  if(ConfigESP->sort(FUNCTION_TRIG) && ConfigESP->sort(FUNCTION_ECHO)){
+    new Supla::Sensor::HC_SR04(ConfigESP->getGpio(1, FUNCTION_TRIG), ConfigESP->getGpio(1, FUNCTION_ECHO));
   }
+#endif
 
   Supla::GUI::begin();
 }

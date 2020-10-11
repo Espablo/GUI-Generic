@@ -79,6 +79,38 @@ int ConfigOption::getLength() {
   return _maxLength;
 }
 
+String ConfigOption::getElement(int index) {
+  String data = _value;
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length() - 1;
+  for(int i = 0; i <= maxIndex && found <= index; i++){
+    if(data.charAt(i) == SEPARATOR || i == maxIndex){
+      found++;
+      strIndex[0] = strIndex[1] + 1;
+      strIndex[1] = (i == maxIndex) ? i + 1 : i;
+    }
+  }
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
+String ConfigOption::replaceElement(int index, int newvalue){
+  String data = _value;
+  int lenght = 5;
+  String table;
+  for(int i = 0; i < lenght; i++){
+    if(i == index){
+      table += newvalue;
+    }
+    else {
+      table += this->getElement(i);
+    }
+    if(i < lenght - 1) table += SEPARATOR;
+  } 
+  return table; 
+}
+
+
 void ConfigOption::setValue(const char *value) {
   size_t size = _maxLength + 1;
   _value = (char *)malloc(sizeof(char) * (size));
@@ -94,9 +126,9 @@ void ConfigOption::setValue(const char *value) {
 //
 SuplaConfigManager::SuplaConfigManager() {
   if (SPIFFS.begin()) {
-    Serial.println(F("\nSPIFFS mounted"));
-  } else {
-    Serial.println(F("\nFailed to mount SPIFFS"));
+//    Serial.println(F("\nSPIFFS mounted"));
+//  } else {
+//    Serial.println(F("\nFailed to mount SPIFFS"));
   }
   _optionCount = 0;
 
@@ -109,17 +141,6 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_HOST_NAME, DEFAULT_HOSTNAME, MAX_HOSTNAME);
   this->addKey(KEY_SUPLA_SERVER, DEFAULT_SERVER, MAX_SUPLA_SERVER);
   this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL,MAX_EMAIL);
-  this->addKey(KEY_TYPE_BUTTON, "0", MAX_TYPE_BUTTON);
-  this->addKey(KEY_MONOSTABLE_TRIGGER, "1", MAX_MONOSTABLE_TRIGGER);
-  this->addKey(KEY_SDA,"17", 2);
-  this->addKey(KEY_SCL,"17", 2);
-  this->addKey(KEY_BME280,"0", 2);
-  this->addKey(KEY_ALTITUDE_BME280,"0", 4);
-  this->addKey(KEY_CFG_LED,"17", 2);
-  this->addKey(KEY_CFG_BTN,"17", 2);
-  this->addKey(KEY_CFG_LED_LEVEL,"1", 2);
-  this->addKey(KEY_TRIG,"17", 2);
-  this->addKey(KEY_ECHO,"17", 2);
   this->addKey(KEY_MAX_ROLLERSHUTTER,"0", 2);
   this->addKey(KEY_MAX_RELAY,"0", 2);
   this->addKey(KEY_MAX_BUTTON,"0", 2);
@@ -127,35 +148,30 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_MAX_DHT22,"0", 2);
   this->addKey(KEY_MAX_DHT11,"0", 2);
   this->addKey(KEY_MULTI_DS,"17", 2);
-  this->addKeyAndRead(KEY_MULTI_MAX_DS18B20, "1", sizeof(int));
+  this->addKey(KEY_MULTI_MAX_DS18B20,"0", 2);
+  // this->addKeyAndRead(KEY_MULTI_MAX_DS18B20, "0", sizeof(int));
+  this->addKey(KEY_ADR_BME280,"0", 2);
+  this->addKey(KEY_ALTITUDE_BME280,"0", 4);
   
   int nr;
   String key;
-  for(int nr = 1; nr <= MAX_KEY; nr++){
-    key = KEY_RELAY_GPIO;
+  for(nr = 0; nr <= 17; nr++){
+    key = GPIO;
     key += nr;
-    this->addKey(key.c_str(),"17", 2);
-    key = KEY_RELAY_LEVEL;
-    key += nr;
-    this->addKey(key.c_str(),"1", 1);
-    key = KEY_RELAY_MEMORY;
-    key += nr;
-    this->addKey(key.c_str(),"0", 1);
-    key = KEY_RELAY_DURATION;
-    key += nr;
-    this->addKey(key.c_str(),"0", 2);
-    key = KEY_BUTTON_GPIO;
-    key += nr;
-    this->addKey(key.c_str(),"17", 2);
-    key = KEY_LIMIT_SWITCH_GPIO;
-    key += nr;
-    this->addKey(key.c_str(),"17", 2);
-    key = KEY_DHT22;
-    key += nr;
-    this->addKey(key.c_str(),"17", 2);
-    key = KEY_DHT11;
-    key += nr;
-    this->addKey(key.c_str(),"17", 2);
+    String func;
+    func = String(nr);
+    func += SEPARATOR;
+    func += "0";
+    func += SEPARATOR;
+    func += "0";
+    func += SEPARATOR;
+    func += "0";
+    func += SEPARATOR;
+    func += "0";
+    this->addKey(key.c_str(), func.c_str(), 14);
+  }
+
+  for(nr = 1; nr <= MAX_KEY; nr++){
     key = KEY_DS;
     key += nr;
     this->addKey(key.c_str(), MAX_DS18B20_ADDRESS_HEX);     
@@ -163,24 +179,24 @@ SuplaConfigManager::SuplaConfigManager() {
     key += nr;   
     this->addKey(key.c_str(), MAX_DS18B20_NAME);
   }
- 
-  switch (this->load()) {
-    case E_CONFIG_OK:
-      Serial.println(F("Config read"));
-      return;
-    case E_CONFIG_FS_ACCESS:
-      Serial.println(F("E_CONFIG_FS_ACCESS: Couldn't access file system"));
-      return;
-    case E_CONFIG_FILE_NOT_FOUND:
-      Serial.println(F("E_CONFIG_FILE_NOT_FOUND: File not found"));
-      return;
-    case E_CONFIG_FILE_OPEN:
-      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      return;
-    case E_CONFIG_PARSE_ERROR:
-      Serial.println(F("E_CONFIG_PARSE_ERROR: File was not parsable"));
-      return;
-  }
+ this->load();
+//  switch (this->load()) {
+//    case E_CONFIG_OK:
+//      Serial.println(F("Config read"));
+//      return;
+//    case E_CONFIG_FS_ACCESS:
+//      Serial.println(F("E_CONFIG_FS_ACCESS: Couldn't access file system"));
+//      return;
+//    case E_CONFIG_FILE_NOT_FOUND:
+//      Serial.println(F("E_CONFIG_FILE_NOT_FOUND: File not found"));
+//      return;
+//    case E_CONFIG_FILE_OPEN:
+//      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
+//      return;
+//    case E_CONFIG_PARSE_ERROR:
+//      Serial.println(F("E_CONFIG_PARSE_ERROR: File was not parsable"));
+//      return;
+//  }
 }
 
 uint8_t SuplaConfigManager::addKey(const char *key, int maxLength) {
@@ -360,6 +376,17 @@ bool SuplaConfigManager::set(const char *key, const char *value) {
   for (int i = 0; i < _optionCount; i++) {
     if (strcmp(key, _options[i]->getKey()) == 0) {
       _options[i]->setValue(value);
+      return true;
+    }
+  }
+  return false;
+}
+
+bool SuplaConfigManager::setElement(const char *key, int index,  int newvalue) {
+  for (int i = 0; i < _optionCount; i++) {
+    if (strcmp(key, _options[i]->getKey()) == 0) {
+      String data = _options[i]->replaceElement(index, newvalue);
+      _options[i]->setValue(data.c_str());
       return true;
     }
   }

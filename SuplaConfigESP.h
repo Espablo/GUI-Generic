@@ -18,6 +18,7 @@
 #define SuplaConfigESP_h
 
 #include <supla/triggerable.h>
+#include "GUI-Generic_Config.h"
 
 enum _configModeESP { NORMAL_MODE, CONFIG_MODE };
 
@@ -48,11 +49,17 @@ class SuplaConfigESP : public Supla::Triggerable {
       return highIsOn ? LOW : HIGH;
     }
 
-    
     String getMacAddress(bool formating);
 
     _configModeESP configModeESP;
     _supla_status supla_status;
+
+    int sort(int function);
+    int getGpio(int nr, int function);
+    int getLevel(int nr, int function);
+    int checkBusy(int gpio, int function);
+
+    int getMemoryRelay(int nr);
 
   private:
     void configModeInit();
@@ -63,6 +70,49 @@ class SuplaConfigESP : public Supla::Triggerable {
     int countPresses = 0;
     unsigned long cnfigChangeTimeMs = 0;
     bool highIsOn;
+
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+    int _relayGpio[17];
+    int _relayLevel[17];
+    int _relayMemory[17];
+#endif
+
+#ifdef SUPLA_BUTTON
+    int _buttonGpio[17];
+    int _buttonLevel[17];
+#endif
+
+#ifdef SUPLA_LIMIT_SWITCH
+    int _limitSwiitchGpio[17];
+#endif
+
+#ifdef SUPLA_DHT11
+    int _dht11Gpio[17];
+#endif
+
+#ifdef SUPLA_DHT22
+    int _dht22Gpio[17];
+#endif
+
+#ifdef SUPLA_DS18B20
+    int _ds18b20Gpio[17];
+#endif
+
+#ifdef SUPLA_BME280
+    int _sdaGpio[17];
+    int _sclGpio[17];
+#endif
+
+#ifdef SUPLA_HC_SR04
+    int _trigGpio[17];
+    int _echoGpio[17];
+#endif
+
+#ifdef SUPLA_CONFIG
+    int _cfgLedGpio[17];
+    int _cfgLedLevel[17];
+    int _cfgButtonGpio[17];
+#endif
 
     ETSTimer led_timer;
 };

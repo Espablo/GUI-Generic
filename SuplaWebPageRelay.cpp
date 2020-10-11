@@ -2,6 +2,7 @@
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebPageRelay.h"
 
+ #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 SuplaWebPageRelay *WebPageRelay = new SuplaWebPageRelay();
 
 SuplaWebPageRelay::SuplaWebPageRelay() {
@@ -17,7 +18,7 @@ void SuplaWebPageRelay::createWebPageRelay() {
   path += PATH_SAVE_RELAY;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageRelay::handleRelaySave, this));
 
-  for(int i = 1; i <= MAX_GPIO; i++){
+  for(uint8_t i = 1; i <= MAX_GPIO; i++){
     path = PATH_START;
     path += PATH_RELAY_SET;
     path += i;
@@ -39,61 +40,65 @@ void SuplaWebPageRelay::handleRelay() {
 }
 
 void SuplaWebPageRelay::handleRelaySave() {
-  Serial.println(F("HTTP_POST - metoda handleRelaySave"));
+//  Serial.println(F("HTTP_POST - metoda handleRelaySave"));
 
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  String key, input, key_max, input_max;
-  int nr, set_input,get_input, current_value, last_value;
+  String key, input;
+  uint8_t nr, current_value, last_value, error;
   
   last_value = ConfigManager->get(KEY_MAX_RELAY )->getValueInt();
-  
-  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_RELAY).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_RELAY, WebServer->httpServer.arg(INPUT_MAX_RELAY).c_str());
-  }
-  current_value = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
- 
-  if(current_value >= last_value){
+  current_value = WebServer->httpServer.arg(INPUT_MAX_RELAY).toInt();
+
+  if(last_value > 0){
     for(nr = 1; nr <= last_value; nr++){
-      key = KEY_RELAY_GPIO;
-      key += nr;
       input = INPUT_RELAY_GPIO;
       input += nr;
-      set_input = WebServer->httpServer.arg(input).toInt();
-      get_input = ConfigManager->get(key.c_str())->getValueInt();
-      if(get_input != set_input){
-        if(WebServer->getBusyGpio(set_input) == false){
-          ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
-          WebServer->setBusyGpio(get_input, false);
-          WebServer->setBusyGpio(set_input, true);
+      key = GPIO;
+      key += WebServer->httpServer.arg(input).toInt();
+      if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+        key = GPIO;
+        key += WebServer->httpServer.arg(input).toInt();  
+        if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||            
+            (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+              ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_RELAY)) {
+
+          ConfigManager->setElement(key.c_str(), NR, nr);
+          ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_RELAY);
+          ConfigManager->setElement(key.c_str(), LEVEL, 1);
         }
         else {
-          Serial.println(F("ERROR!!!"));
           WebServer->httpServer.send(200, "text/html", supla_webpage_relay(6));
           return;
         }
-      } 
+      }
+      if(ConfigESP->getGpio(nr, FUNCTION_RELAY) != WebServer->httpServer.arg(input).toInt() || 
+                          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || 
+                          ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value){
+        key = GPIO;
+        key += ConfigESP->getGpio(nr, FUNCTION_RELAY);
+        ConfigManager->setElement(key.c_str(), NR, 0);
+        ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
+        ConfigManager->setElement(key.c_str(), LEVEL, 0 );
+        ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+      }
     }
-  }
-  else if(current_value < last_value){
-    for(nr = current_value + 1; nr <= last_value; nr++){
-      key = KEY_RELAY_GPIO;
-      key += nr;
-      get_input = ConfigManager->get(key.c_str())->getValueInt();
-      ConfigManager->set(key.c_str(), "17");
-      WebServer->setBusyGpio(get_input, false);
+  }  
+  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_RELAY).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_RELAY, WebServer->httpServer.arg(INPUT_MAX_RELAY).c_str());  
     }
-  }
+
+   ConfigESP->sort(FUNCTION_RELAY);
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      Serial.println(F("E_CONFIG_OK: Config save"));
+//      Serial.println(F("E_CONFIG_OK: Config save"));
       WebServer->sendContent(supla_webpage_relay(1));
       break;
     case E_CONFIG_FILE_OPEN:
-      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
+//      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
       WebServer->httpServer.send(200, "text/html", supla_webpage_relay(2));
       break;  
   }
@@ -101,7 +106,7 @@ void SuplaWebPageRelay::handleRelaySave() {
 
 String SuplaWebPageRelay::supla_webpage_relay(int save) {
   String key;
-  int selected, suported, nr;
+  uint8_t selected, suported, nr;
   
   String pagerelay = "";
   pagerelay += WebServer->SuplaMetas();
@@ -110,8 +115,8 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += F("</div>");
   pagerelay += WebServer->SuplaJavaScript(PATH_RELAY);
   pagerelay += F("<div class='s'>");
-  pagerelay += WebServer->SuplaLogo();
-  pagerelay += WebServer->SuplaSummary();
+//  pagerelay += WebServer->SuplaLogo();
+//  pagerelay += WebServer->SuplaSummary();
   pagerelay += F("<form method='post' action='");
   pagerelay += PATH_SAVE_RELAY;
   pagerelay += F("'><div class='w'><h3>Ustawienie GPIO dla przekaźników</h3>");
@@ -134,11 +139,9 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
     pagerelay += INPUT_RELAY_GPIO;
     pagerelay += nr;
     pagerelay += F("'>");
-    key = KEY_RELAY_GPIO;
-    key += nr;
-    selected = ConfigManager->get(key.c_str())->getValueInt();
-    for (suported = 0; suported < sizeof(WebServer->Supported_Gpio) / sizeof(char*); suported++) {
-      if(WebServer->getBusyGpio(suported) == false || selected == suported){
+    selected = ConfigESP->getGpio(nr, FUNCTION_RELAY);
+      for (suported = 0; suported < 18; suported++) {
+        if(ConfigESP->checkBusy(suported, FUNCTION_RELAY) == false || selected == suported){
           pagerelay += F("<option value='");
           pagerelay += suported;
           if (selected == suported) {
@@ -155,6 +158,7 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += F("<a href='/'><button>Powrót</button></a></div>");
   return pagerelay;
 }
+
 void SuplaWebPageRelay::handleRelaySet() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
@@ -164,14 +168,14 @@ void SuplaWebPageRelay::handleRelaySet() {
 }
 
 void SuplaWebPageRelay::handleRelaySaveSet() {
-  Serial.println(F("HTTP_POST - metoda handleRelaySaveSet"));
+//  Serial.println(F("HTTP_POST - metoda handleRelaySaveSet"));
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
 
   String readUrl, nr_relay, key, input;
-  int place, selected, suported, set_input;
+  uint8_t place;
   
   String path = PATH_START;
   path += PATH_SAVE_RELAY_SET;
@@ -179,31 +183,27 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
   
   place = readUrl.indexOf(path);
   nr_relay = readUrl.substring(place + path.length(), place + path.length()+3);
+  key = GPIO;
+  key += ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
 
-  key = KEY_RELAY_LEVEL;
-  key += nr_relay;
+  input = INPUT_RELAY_MEMORY;  
+  input += nr_relay;  
+  ConfigManager->setElement(key.c_str(), MEMORY, WebServer->httpServer.arg(input).toInt());
+  
   input = INPUT_RELAY_LEVEL;  
   input += nr_relay;
-  ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
-  key = KEY_RELAY_MEMORY;
-  key += nr_relay;
-  input = INPUT_RELAY_MEMORY;  
-  input += nr_relay;
-  ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
-  key = KEY_RELAY_DURATION;
-  key += nr_relay;
-  input = INPUT_RELAY_DURATION;  
-  input += nr_relay;
-  ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
+  ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
+
+  ConfigESP->sort(FUNCTION_RELAY);
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
+//      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
       WebServer->sendContent(supla_webpage_relay(1));
       break;
 
     case E_CONFIG_FILE_OPEN:
-      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
+//      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
       WebServer->httpServer.send(200, "text/html", supla_webpage_relay(2));
       break;
   }
@@ -212,7 +212,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
 
   String readUrl, nr_relay, key;
-  int place, selected, suported;
+  uint8_t place, selected, suported;
   
   String path = PATH_START;
   path += PATH_RELAY_SET;
@@ -228,10 +228,10 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
   page += F("</div>");
   page += WebServer->SuplaJavaScript(PATH_RELAY);
   page += F("<div class='s'>");
-  page += WebServer->SuplaLogo();
-  page += WebServer->SuplaSummary();
-  int relays = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
-  if(nr_relay.toInt() <= relays){
+//  page += WebServer->SuplaLogo();
+//  page += WebServer->SuplaSummary();
+  uint8_t relays = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
+  if(nr_relay.toInt() <= relays && ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY) != OFF_GPIO){
     page += F("<form method='post' action='");
     page += PATH_SAVE_RELAY_SET;
     page += nr_relay;
@@ -239,21 +239,19 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += nr_relay;
     page += F("</h3>");
     page += F("<i><label>");
-    page += F("Sterowanie stanem</label><select name='");
+    page += F("Sterowanie</label><select name='");
     page += INPUT_RELAY_LEVEL;
     page += nr_relay;
     page += F("'>");
-    key = KEY_RELAY_LEVEL;
-    key += nr_relay;
-    selected = ConfigManager->get(key.c_str())->getValueInt();
-    for (suported = 0; suported < sizeof(WebServer->Supported_Level) / sizeof(char*); suported++) {
-        page += F("<option value='");
-        page += suported;
-        if (selected == suported) {
-          page += F("' selected>");
-        }
-        else page += F("'>");
-        page += (WebServer->Supported_Level[suported]);
+    selected = ConfigESP->getLevel(nr_relay.toInt(), FUNCTION_RELAY); 
+    for (suported = 0; suported < sizeof(SupportedRelayLevel) / sizeof(char*); suported++) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else page += F("'>");
+      page += (SupportedRelayLevel[suported]);
     }
     page += F("</select></i>");
     page += F("<i><label>");
@@ -261,37 +259,17 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += INPUT_RELAY_MEMORY;
     page += nr_relay;
     page += F("'>");
-    key = KEY_RELAY_MEMORY;
-    key += nr_relay;
-    selected = ConfigManager->get(key.c_str())->getValueInt();
-    for (suported = 0; suported < sizeof(Supported_RelayMemory) / sizeof(char*); suported++) {
-        page += F("<option value='");
-        page += suported;
-        if (selected == suported) {
-          page += F("' selected>");
-        }
-        else page += F("'>");
-        page += (Supported_RelayMemory[suported]);
+    selected = ConfigESP->getMemoryRelay(nr_relay.toInt());
+    for (suported = 0; suported < sizeof(SupportedRelayMemory) / sizeof(char*); suported++) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else page += F("'>");
+      page += (SupportedRelayMemory[suported]);
     }
-    page += F("</select></i>");
-    page += F("<i><label>");
-    page += F("Czas ząłączenia</label><select name='");
-    page += INPUT_RELAY_DURATION;
-    page += nr_relay;
-    page += F("'>");
-    key = KEY_RELAY_DURATION;
-    key += nr_relay;
-    selected = ConfigManager->get(key.c_str())->getValueInt();
-    for (suported = 0; suported < sizeof(WebServer->Supported_Level) / sizeof(char*); suported++) {
-        page += F("<option value='");
-        page += suported;
-        if (selected == suported) {
-          page += F("' selected>");
-        }
-        else page += F("'>");
-        page += (WebServer->Supported_Level[suported]);
-    }
-    page += F("</select></i>");
+    page += F("</select></i>");   
     page += F("</div><button type='submit'>Zapisz</button></form>");
     page += F("<br><br>");
   }
@@ -304,3 +282,4 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
   
   return page;
 }
+#endif

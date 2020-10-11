@@ -19,6 +19,7 @@
 #include "SuplaWebPageRelay.h"
 #include "SuplaWebPageControl.h"
 #include "SuplaWebPageSensor.h"
+#include "SuplaWebPageConfig.h"
 
 SuplaWebServer::SuplaWebServer() {
 
@@ -39,38 +40,34 @@ void SuplaWebServer::iterateAlways() {
 }
 
 void SuplaWebServer::createWebServer() {
-    String path = PATH_START;
+  String path = PATH_START;
   httpServer.on(path, HTTP_GET, std::bind(&SuplaWebServer::handle, this));
   path = PATH_START;
   path += PATH_SET;
   httpServer.on(path, std::bind(&SuplaWebServer::handleSave, this));
-  path = PATH_START;
-  path += PATH_SERCH;
-  httpServer.on(path, std::bind(&SuplaWebServer::handleSearchDS, this));
-  path = PATH_START;
-  path += PATH_SAVE_DS;
-  httpServer.on(path, std::bind(&SuplaWebServer::handleDSSave, this));
   path = PATH_START;
   path += PATH_UPDATE;  
   httpServer.on(path, std::bind(&SuplaWebServer::handleFirmwareUp, this));
   path = PATH_START;
   path += PATH_REBOT;  
   httpServer.on(path, std::bind(&SuplaWebServer::supla_webpage_reboot, this));
-  path = PATH_START;
-  path += PATH_CONFIG;
-  httpServer.on(path, std::bind(&SuplaWebServer::handleConfig, this));
-  path = PATH_START;
-  path += PATH_SAVE_CONFIG;
-  httpServer.on(path, std::bind(&SuplaWebServer::handleConfigSave, this));
-  
+  #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   WebPageRelay->createWebPageRelay();
+  #endif
+  #if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH)
   WebPageControl->createWebPageControl();
+  #endif
+  #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_BME280) || defined(SUPLA_HC_SR04)
   WebPageSensor->createWebPageSensor();
+  #endif
+  #ifdef SUPLA_CONFIG
+  WebPageConfig->createWebPageConfig();
+  #endif
 }
 
 void SuplaWebServer::handle() {
 
-  Serial.println(F("HTTP_GET - metoda handle"));
+//  Serial.println(F("HTTP_GET - metoda handle"));
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!httpServer.authenticate(this->www_username, this->www_password))
       return httpServer.requestAuthentication();
@@ -80,7 +77,7 @@ void SuplaWebServer::handle() {
 
 
 void SuplaWebServer::handleSave() {
-  Serial.println(F("HTTP_POST - metoda handleSave"));
+//  Serial.println(F("HTTP_POST - metoda handleSave"));
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!httpServer.authenticate(this->www_username, this->www_password))
       return httpServer.requestAuthentication();
@@ -93,18 +90,24 @@ void SuplaWebServer::handleSave() {
   ConfigManager->set(KEY_HOST_NAME, httpServer.arg(INPUT_HOSTNAME).c_str());
   ConfigManager->set(KEY_LOGIN, httpServer.arg(INPUT_MODUL_LOGIN).c_str());
   ConfigManager->set(KEY_LOGIN_PASS, httpServer.arg(INPUT_MODUL_PASS).c_str());
-  ConfigManager->set(KEY_MONOSTABLE_TRIGGER, httpServer.arg(INPUT_TRIGGER).c_str());
+
+#ifdef SUPLA_ROLLERSHUTTER
   ConfigManager->set(KEY_MAX_ROLLERSHUTTER, httpServer.arg(INPUT_ROLLERSHUTTER).c_str());
-  
+#endif
+
   String button_value;
-  for (int i = 0; i < Supla::GUI::button.size(); ++i) {
+  uint8_t i;
+#ifdef SUPLA_BUTTON
+  for (i = 0; i < Supla::GUI::button.size(); ++i) {
     String button = INPUT_BUTTON_SET;
     button += i;
     button_value += httpServer.arg(button).c_str();
-    ConfigManager->set(KEY_TYPE_BUTTON, button_value.c_str());
+//    ConfigManager->set(KEY_TYPE_BUTTON, button_value.c_str());
   }
-
-   for (int i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
+#endif
+// ConfigManager->set(KEY_TYPE_BUTTON, button_value.c_str());
+#ifdef SUPLA_DS18B20
+   for (i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
     String ds_key = KEY_DS;
     String ds_name_key = KEY_DS_NAME;
     ds_key += i;
@@ -122,59 +125,22 @@ void SuplaWebServer::handleSave() {
   if (strcmp(httpServer.arg("maxds").c_str(), "") != 0) {
     ConfigManager->set(KEY_MULTI_MAX_DS18B20, httpServer.arg("maxds").c_str());
   }
-
+#endif
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
+//      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
       this->sendContent(supla_webpage_start(5));
       this->rebootESP();
       break;
 
     case E_CONFIG_FILE_OPEN:
-      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
+//      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
       httpServer.send(200, "text/html", supla_webpage_start(4));
       break;
   }
 }
 
-void SuplaWebServer::handleSearchDS() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer.authenticate(www_username, www_password))
-      return httpServer.requestAuthentication();
-  }
-  this->sendContent(supla_webpage_search(0));
-}
-
-void SuplaWebServer::handleDSSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer.authenticate(www_username, www_password))
-      return httpServer.requestAuthentication();
-  }
-  for (int i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-    String ds_key = KEY_DS;
-    ds_key += i;
-
-    String ds = F("dschlid");
-    ds += i;
-
-    String address = httpServer.arg(ds).c_str();
-    if (address != NULL) {
-      ConfigManager->set(ds_key.c_str(), address.c_str());
-    }
-  }
-
-  switch (ConfigManager->save()) {
-    case E_CONFIG_OK:
-      Serial.println(F("E_CONFIG_OK: Config save"));
-      this->sendContent(supla_webpage_search(1));
-      break;
-    case E_CONFIG_FILE_OPEN:
-      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      httpServer.send(200, "text/html", supla_webpage_search(2));
-      break;
-  }
-}
 
 void SuplaWebServer::handleFirmwareUp() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
@@ -184,93 +150,6 @@ void SuplaWebServer::handleFirmwareUp() {
   httpServer.send(200, "text/html", supla_webpage_upddate());
 }
 
-void SuplaWebServer::handleConfig() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer.authenticate(www_username, www_password))
-      return httpServer.requestAuthentication();
-  }
-  httpServer.send(200, "text/html", supla_webpage_config(0));
-}
-
-void SuplaWebServer::handleConfigSave() {
-  Serial.println(F("HTTP_POST - metoda handleConfigSave"));
-
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer.authenticate(www_username, www_password))
-      return httpServer.requestAuthentication();
-  }
-
-  ConfigManager->set(KEY_CFG_LED_LEVEL, httpServer.arg(INPUT_CFG_LED_LEVEL).c_str());
-  
-  String key = KEY_CFG_LED;
-  String input = INPUT_CFG_LED_GPIO;
-  int set_input = httpServer.arg(input).toInt();
-  int get_input = ConfigManager->get(key.c_str())->getValueInt();
-  if(get_input != set_input){
-    if(getBusyGpio(set_input) == false){
-      ConfigManager->set(key.c_str(), httpServer.arg(input).c_str());
-      setBusyGpio(get_input, false);
-      setBusyGpio(set_input, true);
-    }
-    else {
-      Serial.println(F("ERROR!!!"));
-      httpServer.send(200, "text/html", supla_webpage_config(6));
-      return;
-    }
-  }
-  int exceptBusyGpio[32];
-  int exception = OFF_GPIO;
-  int nr, gpio;
-  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++){
-    key = KEY_BUTTON_GPIO;
-    key += nr;
-    gpio = ConfigManager->get(key.c_str())->getValueInt();
-    exceptBusyGpio[nr] = gpio;
-  }
-  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
-    key = KEY_LIMIT_SWITCH_GPIO;
-    key += nr;
-    gpio = ConfigManager->get(key.c_str())->getValueInt();
-    exceptBusyGpio[nr + ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()] = gpio;
-  }
-    
-  key = KEY_CFG_BTN;
-  input = INPUT_CFG_BTN_GPIO;
-  set_input = httpServer.arg(input).toInt();
-  get_input = ConfigManager->get(key.c_str())->getValueInt();
-
-  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() + ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
-    if(exceptBusyGpio[nr] == set_input){
-      exception = set_input;
-      break;
-    }    
-  }
-
-  if(get_input != set_input){
-    if(getBusyGpio(set_input) == false || exception == set_input){
-      ConfigManager->set(key.c_str(), httpServer.arg(input).c_str());
-      if(exception != set_input) setBusyGpio(get_input, false);
-      setBusyGpio(set_input, true);
-    }
-    else {
-      Serial.println(F("ERROR!!!"));
-      httpServer.send(200, "text/html", supla_webpage_config(6));
-      return;
-    }
-  }
-  switch (ConfigManager->save()) {
-    case E_CONFIG_OK:
-      Serial.println(F("E_CONFIG_OK: Config save"));
-      this->sendContent(supla_webpage_config(1));
-//      this->rebootESP();
-      break;
-    case E_CONFIG_FILE_OPEN:
-      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      httpServer.send(200, "text/html", supla_webpage_config(2));
-      break;  
-  }
-}
- 
 String SuplaWebServer::supla_webpage_start(int save) {
   String content = F("");
 
@@ -379,7 +258,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F(">");
   content += F("<label>Hasło</label></i>");
   content += F("</div>");
-  //****************************************************************************
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   content += F("<div class='w'>");
   content += F("<h3>Ustawienia GPIO</a></h3>");
   content += F("<i>");
@@ -388,27 +267,37 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += PATH_RELAY;
   content += F("'>PRZEKAŹNIKI</a></button>");
   content += F("<label>Ustaw</label></i>");
+#endif
+
+#ifdef SUPLA_BUTTON
   content += F("<i>");
   content += F("<button><a href='");
   content += PATH_START;
   content += PATH_CONTROL;
   content += F("'>PRZYCISKI</a></button>");
   content += F("<label>Ustaw</label></i>");
+#endif
+
+#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_BME280) || defined(SUPLA_HC_SR04)
   content += F("<i>");
   content += F("<button><a href='");
   content += PATH_START;
   content += PATH_SENSOR;
   content += F("'>SENSORY</a></button>");
   content += F("<label>Ustaw</label></i>");
+#endif
+
+#ifdef SUPLA_CONFIG
   content += F("<i>");
   content += F("<button><a href='");
   content += PATH_START;
   content += PATH_CONFIG;
   content += F("'>LED, BUTTON CONFIG</a></button>");
   content += F("<label>Ustaw</label></i>");
+#endif
   content += F("</div>");
-//ROLLERSHUTTER*******************************************************************
-  int maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
+#ifdef SUPLA_ROLLERSHUTTER
+  uint8_t maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   if(maxrollershutter >=2){
     content += F("<div class='w'>");
     content += F("<h3>Rolety</h3>");
@@ -421,11 +310,13 @@ String SuplaWebServer::supla_webpage_start(int save) {
     content += F("'></i>");
     content += F("</div>");
   }
-  //DS****************************************************************************
+#endif
+
+#ifdef SUPLA_DS18B20
   if (!Supla::GUI::sensorDS.empty()) {
     content += F("<div class='w'>");
     content += F("<h3>Temperatura</h3>");
-    for (int i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
+    for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
       String ds_key = KEY_DS;
       String ds_name_key = KEY_DS_NAME;
       ds_key += i;
@@ -456,54 +347,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
     }
     content += F("</div>");
   }
-  //*****************************************************************************************
-//if (!Supla::GUI::button.empty()) {
-//    content += F("<div class='w'>");
-//    content += F("<h3>Ustawienia Przycisków</h3>");  
-//    //button***************************************************************************************
-    
-//      for (int i = 0; i < Supla::GUI::button.size(); i++) {
-//        int select_button = ConfigManager->get(KEY_TYPE_BUTTON)->getValueElement(i);
-//        content += F("<i><label>");
-//        content += i + 1;
-//        content += F(". Przycisk typ</label><select name='");
-//        content += INPUT_BUTTON_SET;
-//        content += i;
-//        content += F("'>");
-//  
-//        for (int suported_button = 0; suported_button < sizeof(Supported_Button) / sizeof(char*); suported_button++) {
-//          content += F("<option value='");
-//          content += suported_button;
-//          if (select_button == suported_button) {
-//            content += F("' selected>");
-//          }
-//          else content += F("'>");
-//          content += (Supported_Button[suported_button]);
-//        }
-//        content += F("</select></i>");
-//      }
-  
-      //monostable triger
-//      content += F("<i><label>");
-//      content += F("Reakcja na");
-//      content += F("</label><select name='");
-//      content += INPUT_TRIGGER;
-//      content += F("'>");
-//      int select_trigger = ConfigManager->get(KEY_MONOSTABLE_TRIGGER)->getValueInt();
-//      for (int suported_trigger = 0; suported_trigger < sizeof(Supported_MonostableTrigger) / sizeof(char*); suported_trigger++) {
-//        content += F("<option value='");
-//        content += suported_trigger;
-//        if (select_trigger == suported_trigger) {
-//          content += F("' selected>");
-//        }
-//        else content += F("'>");
-//        content += (Supported_MonostableTrigger[suported_trigger]);
-//      }
-//      content += F("</select></i>");
-//    content += F("</div>");
-//  }
-//  *****************************************************************************************
-
+#endif
   content += F("<button type='submit'>Zapisz</button></form>");
   content += F("<br>");
   content += F("<a href='");
@@ -516,107 +360,6 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("'>");
   content += F("<button type='submit'>Restart</button></form></div>");
   content += SuplaCopyrightBar();
-  return content;
-}
-
-String SuplaWebServer::supla_webpage_search(int save) {
-  String content = "";
-  uint8_t count = 0;
-  int pin = Supla::GUI::sensorDS[0]->getPin();
-
-  OneWire ow(pin);
-  DallasTemperature sensors;
-  DeviceAddress address;
-  char strAddr[64];
-
-  content += SuplaMetas();
-  content += SuplaStyle();
-  content += SuplaFavicon();
-  content += SuplaSaveResult(save);
-  content += SuplaJavaScript();
-  content += F("<div class='s'>");
-  content += SuplaLogo();
-  content += SuplaSummary();
-  content += F("<center>");
-  content += F("<div class='w'>");
-  content += F("<h3>Temperatura</h3>");
-//  for (int i = 0; i < Supla::GUI::sensorDS.size(); i++) {
-  for (int i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-    double temp = Supla::GUI::sensorDS[i]->getValue();
-    String ds_key = KEY_DS;
-    ds_key += i;
-
-    content += F("<i><input name='ds18b20_");
-    content += i;
-    content += F("' value='");
-    content += String(ConfigManager->get(ds_key.c_str())->getValue());
-    content += F("' maxlength=");
-    content += MAX_DS18B20_ADDRESS_HEX;
-    content += F(" readonly><label>");
-    if (temp != -275)content += temp;
-    else content += F("--.--");
-    content += F(" <b>&deg;C</b> ");
-    content += F("</label>");
-    content += F("<label style='left:80px'>GPIO: ");
-    content += pin;
-    content += F("</label></i>");
-  }
-  content += F("</div>");
-
-  content += F("<form method='post' action='");
-  content += PATH_SAVE_DS;
-  content += F("'>");
-  content += F("<div class='w'>");
-  content += F("<h3>Znalezione DS18b20</h3>");
-  sensors.setOneWire(&ow);
-  sensors.begin();
-  if (sensors.isParasitePowerMode()) {
-    supla_log(LOG_DEBUG, "OneWire(pin %d) Parasite power is ON", pin);
-  } else {
-    supla_log(LOG_DEBUG, "OneWire(pin %d) Parasite power is OFF", pin);
-  }
-  // report parasite power requirements
-  for (int i = 0; i < sensors.getDeviceCount(); i++) {
-    if (!sensors.getAddress(address, i)) {
-      supla_log(LOG_DEBUG, "Unable to find address for Device %d", i);
-    } else {
-      sprintf(
-        strAddr,
-        "%02X%02X%02X%02X%02X%02X%02X%02X",
-        address[0],
-        address[1],
-        address[2],
-        address[3],
-        address[4],
-        address[5],
-        address[6],
-        address[7]);
-      supla_log(LOG_DEBUG, "Index %d - address %s", i, strAddr);
-
-      content += F("<i><input name='dschlid");
-      content += count;
-
-      content += F("' value='");
-      content += String(strAddr);
-      content += F("' maxlength=");
-      content += MAX_DS18B20_ADDRESS_HEX;
-      content += F(" readonly><label></i>");
-
-      count++;
-    }
-    delay(0);
-  }
-
-  if (count == 0)
-    content += F("<i><label>brak podłączonych czujników</label></i>");
-
-  content += F("</div>");
-  content += F("</center>");
-  content += F("<button type='submit'>Zapisz znalezione DSy</button></form>");
-  content += F("<br><br>");
-  content += F("<a href='/'><button>Powrót</button></a></div>");
-  content += SuplaCopyrightBar();
-
   return content;
 }
 
@@ -641,106 +384,6 @@ String SuplaWebServer::supla_webpage_upddate() {
   content += SuplaCopyrightBar();
 
   return content;
-}
-
-String SuplaWebServer::supla_webpage_config(int save) {
-  
-  int selected, suported;
-  String page = "";
-  page += SuplaMetas();
-  page += SuplaStyle();
-  page += SuplaSaveResult(save);
-  page += F("</div>");
-  page += SuplaJavaScript(PATH_CONFIG);
-  page += F("<div class='s'>");
-  page += SuplaLogo();
-  page += SuplaSummary();
-  page += F("<form method='post' action='");
-  page += PATH_SAVE_CONFIG;
-  page += F("'><div class='w'><h3>Ustawienie GPIO dla CONFIG</h3>");
-  page += F("<i><label>");
-  page += F("LED</label><select name='");
-  page += INPUT_CFG_LED_GPIO;
-  page += F("'>");
-  selected = ConfigManager->get(KEY_CFG_LED)->getValueInt();
-  for (suported = 0; suported < sizeof(Supported_Gpio) / sizeof(char*); suported++) {
-    if(getBusyGpio(suported) == false || selected == suported){
-        page += F("<option value='");
-        page += suported;
-        if (selected == suported) {
-          page += F("' selected>");
-        }
-        else page += F("'>");
-        page += (Supported_Gpio[suported][0]);
-    }
-  }
-  page += F("</select></i>");
-
-  if(selected != 17){
-    page += F("<i><label>");
-    page += F("Sterowanie stanem</label><select name='");
-    page += INPUT_CFG_LED_LEVEL;
-    page += F("'>");
-    selected = ConfigManager->get(KEY_CFG_LED_LEVEL)->getValueInt();
-    for (suported = 0; suported < sizeof(Supported_Level) / sizeof(char*); suported++) {
-        page += F("<option value='");
-        page += suported;
-        if (selected == suported) {
-          page += F("' selected>");
-        }
-        else page += F("'>");
-        page += (Supported_Level[suported]);
-    }
-    page += F("</select></i>");
-  }  
-  page += F("<i><label>");
-  page += F("BUTTON</label><select name='");
-  page += INPUT_CFG_BTN_GPIO;
-  page += F("'>");
-  selected = ConfigManager->get(KEY_CFG_BTN)->getValueInt();
-
-
-  int exceptBusyGpio[32];
-  int nr, gpio;
-  int exception = OFF_GPIO;
-  String key;
-
-  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++){
-    key = KEY_BUTTON_GPIO;
-    key += nr;
-    gpio = ConfigManager->get(key.c_str())->getValueInt();
-    exceptBusyGpio[nr] = gpio;
-  }
-  for(nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
-    key = KEY_LIMIT_SWITCH_GPIO;
-    key += nr;
-    gpio = ConfigManager->get(key.c_str())->getValueInt();
-    exceptBusyGpio[nr + ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()] = gpio;
-  }
-  
-  for (suported = 0; suported < sizeof(Supported_Gpio) / sizeof(char*); suported++) {    
-  
-    for(nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() + ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++){
-      if(exceptBusyGpio[nr] == suported){
-        exception = suported;
-        break;
-      }    
-    }
-    if(getBusyGpio(suported) == false || selected == suported || exception == suported){
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else page += F("'>");
-      page += (Supported_Gpio[suported][0]);
-    }
-  }
-  page += F("</select></i>");
-  page += F("</div><button type='submit'>Zapisz</button></form>");
-  page += F("<br><br>");
-  page += F("<a href='/'><button>Powrót</button></a></div>");
-  return page;
 }
 
 void SuplaWebServer::supla_webpage_reboot() {
@@ -867,13 +510,3 @@ void SuplaWebServer::redirectToIndex() {
   httpServer.client().stop();
 }
 
-void SuplaWebServer::setBusyGpio(int gpio, int busy){
-  if (busy == true && gpio < 17) Supported_Gpio[gpio][1] = "1";
-  else Supported_Gpio[gpio][1] = "0";
-}
-
-int SuplaWebServer::getBusyGpio(int gpio){
-  if (Supported_Gpio[gpio][1] == "0") return false;
-  else return true;
-}
-  

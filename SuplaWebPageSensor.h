@@ -31,10 +31,17 @@ class SuplaWebPageSensor {
     void handleSensor();
     void handleSensorSave();
     
+#ifdef SUPLA_DS18B20
+    void handleSearchDS();
+    void handleDSSave();
+#endif
+    
   private:
     String supla_webpage_sensor(int save);
-    
-    const char* Supported_Bme280[3] = {
+#ifdef SUPLA_DS18B20
+    String supla_webpage_search(int save);
+#endif
+    const char* SupportedBme280[3] = {
       "OFF",
       "0x76",
       "0x77"

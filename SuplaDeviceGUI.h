@@ -33,6 +33,7 @@
 #include "SuplaConfigManager.h"
 #include "SuplaConfigESP.h"
 #include "SuplaWebServer.h"
+#include "GUI-Generic_Config.h"
 
 #include <vector>
 
@@ -42,17 +43,32 @@ namespace Supla {
 namespace GUI {
 
 void begin();
+
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void addRelayButton(int pinRelay, int pinButton, bool highIsOn = true);
-void addDS18B20MultiThermometer(int pinNumber);
-void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, bool highIsOn);
-void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn = true);
 
 extern std::vector <Supla::Control::Relay *> relay;
 extern std::vector <Supla::Control::Button *> button;
+#endif
+
+#ifdef SUPLA_DS18B20
+void addDS18B20MultiThermometer(int pinNumber);
+
 extern std::vector <DS18B20 *> sensorDS;
+#endif
+
+#ifdef SUPLA_CONFIG
+void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, bool highIsOn);
+#endif
+
+#ifdef SUPLA_ROLLERSHUTTER
+void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn = true);
+void addRolleShutterMomentary(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn = true);
+
 extern std::vector <Supla::Control::RollerShutter *> RollerShutterRelay;
 extern std::vector <Supla::Control::Button *> RollerShutterButtonOpen;
 extern std::vector <Supla::Control::Button *> RollerShutterButtonClose;
+#endif
 };
 };
 

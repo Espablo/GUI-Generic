@@ -38,16 +38,17 @@ SuplaConfigESP::SuplaConfigESP() {
     }    
     if(String(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue()) == 0){
       ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
-    }    
-
-//    char BUTTON[MAX_TYPE_BUTTON];
-//    memset(BUTTON, Supla::ON_PRESS + '0', MAX_TYPE_BUTTON);
-//    ConfigManager->set(KEY_TYPE_BUTTON, BUTTON);
-
+    }
     ConfigManager->save();
     configModeInit();
   }
-
+  // if(String(ConfigManager->get(KEY_WIFI_SSID)->getValue()) == 0 ||
+  //         String(ConfigManager->get(KEY_WIFI_PASS)->getValue()) == 0 ||
+  //         String(ConfigManager->get(KEY_SUPLA_SERVER)->getValue()) == DEFAULT_SERVER ||
+  //         String(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue()) == DEFAULT_EMAIL){
+  //   configModeInit();
+  //   return;
+  // }
   SuplaDevice.setStatusFuncImpl(&status_func);
 }
 
@@ -84,7 +85,7 @@ void SuplaConfigESP::runAction(int event, int action) {
     countPresses++;
 
     if (countPresses == 3) {
-      Serial.println(F("CONFIG_MODE_3_PRESSES"));
+//      Serial.println(F("CONFIG_MODE_3_PRESSES"));
       configModeInit();
       countPresses = 0;
       return;
@@ -98,7 +99,7 @@ void SuplaConfigESP::runAction(int event, int action) {
     if (event == Supla::ON_RELEASE) {
       if (millis() - cnfigChangeTimeMs > 5000UL) {
         if(!digitalRead(pinNumberConfig)){
-        Serial.println(F("CONFIG_MODE_5SEK_HOLD"));
+//        Serial.println(F("CONFIG_MODE_5SEK_HOLD"));
         configModeInit();
         }
       }
@@ -124,56 +125,56 @@ void SuplaConfigESP::rebootESP() {
 void WiFiEvent(WiFiEvent_t event) {
   switch (event) {
     case WIFI_EVENT_STAMODE_CONNECTED:
-      Serial.print(millis());
-      Serial.print(" => ");
-
-      Serial.println(F("WIFI_EVENT_STAMODE_CONNECTED"));
+//      Serial.print(millis());
+//      Serial.print(" => ");
+//
+//      Serial.println(F("WIFI_EVENT_STAMODE_CONNECTED"));
       break;
     case WIFI_EVENT_STAMODE_DISCONNECTED:
-      Serial.print(millis());
-      Serial.print(" => ");
-
-      Serial.println(F("WiFi lost connection"));
+//      Serial.print(millis());
+//      Serial.print(" => ");
+//
+//      Serial.println(F("WiFi lost connection"));
       break;
     case WIFI_EVENT_STAMODE_AUTHMODE_CHANGE:
-      Serial.print(millis());
-      Serial.print(" => ");
-
-      Serial.println(F("WIFI_EVENT_STAMODE_AUTHMODE_CHANGE"));
+//      Serial.print(millis());
+//      Serial.print(" => ");
+//
+//      Serial.println(F("WIFI_EVENT_STAMODE_AUTHMODE_CHANGE"));
       break;
     case WIFI_EVENT_STAMODE_GOT_IP:
-      Serial.print(millis());
-      Serial.print(" => ");
-      Serial.println(F("WIFI_EVENT_STAMODE_GOT_IP"));
-      Serial.println(WiFi.localIP());
+//      Serial.print(millis());
+//      Serial.print(" => ");
+//      Serial.println(F("WIFI_EVENT_STAMODE_GOT_IP"));
+//      Serial.println(WiFi.localIP());
       break;
     case WIFI_EVENT_STAMODE_DHCP_TIMEOUT:
-      Serial.print(millis());
-      Serial.print(" => ");
-
-      Serial.println(F("WIFI_EVENT_STAMODE_DHCP_TIMEOUT"));
+//      Serial.print(millis());
+//      Serial.print(" => ");
+//
+//      Serial.println(F("WIFI_EVENT_STAMODE_DHCP_TIMEOUT"));
       break;
     case WIFI_EVENT_SOFTAPMODE_STACONNECTED:
-      Serial.print(millis());
-      Serial.print(" => ");
-
-      Serial.println(F("WIFI_EVENT_SOFTAPMODE_STACONNECTED"));
+//      Serial.print(millis());
+//      Serial.print(" => ");
+//
+//      Serial.println(F("WIFI_EVENT_SOFTAPMODE_STACONNECTED"));
       break;
     case WIFI_EVENT_SOFTAPMODE_STADISCONNECTED:
-      Serial.print(millis());
-      Serial.print(" => ");
-
-      Serial.println(F("WIFI_EVENT_SOFTAPMODE_STADISCONNECTED"));
+//      Serial.print(millis());
+//      Serial.print(" => ");
+//
+//      Serial.println(F("WIFI_EVENT_SOFTAPMODE_STADISCONNECTED"));
       break;
     case WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED:
       // Serial.print(" => ");
       //Serial.println("WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED"));
       break;
     case WIFI_EVENT_MAX:
-      Serial.print(millis());
-      Serial.print(" => ");
-
-      Serial.println(F("WIFI_EVENT_MAX"));
+//      Serial.print(millis());
+//      Serial.print(" => ");
+//
+//      Serial.println(F("WIFI_EVENT_MAX"));
       break;
   }
 }
@@ -184,20 +185,20 @@ void SuplaConfigESP::configModeInit() {
   WiFi.softAPdisconnect(true);
 
   WiFi.onEvent(WiFiEvent);
-  Serial.print(F("Creating Access Point"));
-  Serial.print(F("Setting mode ... "));
-  Serial.println(WiFi.mode(WIFI_AP_STA) ? "Ready" : "Failed!");
+//  Serial.print(F("Creating Access Point"));
+//  Serial.print(F("Setting mode ... "));
+//  Serial.println(WiFi.mode(WIFI_AP_STA) ? "Ready" : "Failed!");
   WiFi.disconnect(true);
 
   String CONFIG_WIFI_NAME = "SUPLA-ESP8266-" + getMacAddress(false);
   while (!WiFi.softAP(CONFIG_WIFI_NAME, ""))
   {
-    Serial.println(F("."));
+//    Serial.println(F("."));
     delay(100);
   }
-  Serial.println(F("Network Created!"));
-  Serial.print(F("Soft-AP IP address = "));
-  Serial.println(WiFi.softAPIP());
+//  Serial.println(F("Network Created!"));
+//  Serial.print(F("Soft-AP IP address = "));
+//  Serial.println(WiFi.softAPIP());
 }
 
 const char *SuplaConfigESP::getLastStatusSupla() {
@@ -311,6 +312,185 @@ void status_func(int status, const char *msg) {
   if (ConfigESP->supla_status.old_msg != ConfigESP->supla_status.msg) {
     ConfigESP->supla_status.old_msg = ConfigESP->supla_status.msg;
     ConfigESP->supla_status.status = status;
-    Serial.println(ConfigESP->supla_status.msg);
+//    Serial.println(ConfigESP->supla_status.msg);
   }
+}
+ #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+int SuplaConfigESP::getMemoryRelay(int nr){
+  return _relayMemory[nr];
+}
+#endif
+
+int SuplaConfigESP::sort(int function){
+  int present = false;
+  int gpio[17];
+  int level[17];
+  int memory[17];
+  for(int nr = 0; nr <= OFF_GPIO; nr++){
+      gpio[nr] = OFF_GPIO;
+      level[nr] = 0;
+      memory[nr] = 0;
+  }
+
+  for(int nr = 0; nr <= OFF_GPIO; nr++){
+    String key = GPIO;
+    key += nr;    
+    if(ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function){
+      present = true;
+      gpio[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = nr;
+      level[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = ConfigManager->get(key.c_str())->getElement(LEVEL).toInt();
+      memory[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = ConfigManager->get(key.c_str())->getElement(MEMORY).toInt();
+    }
+  }
+
+  switch (function) {
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+    case FUNCTION_RELAY:
+      memcpy(_relayGpio, gpio, sizeof(_relayGpio));
+      memcpy(_relayLevel, level, sizeof(_relayLevel));
+      memcpy(_relayMemory, memory, sizeof(_relayMemory));
+      return present;
+#endif
+#ifdef SUPLA_BUTTON
+    case FUNCTION_BUTTON:
+      memcpy(_buttonGpio, gpio, sizeof(_buttonGpio));
+      memcpy(_buttonLevel, level, sizeof(_buttonLevel));
+      return present;
+#endif
+#ifdef SUPLA_LIMIT_SWITCH
+    case FUNCTION_LIMIT_SWITCH:
+      memcpy(_limitSwiitchGpio, gpio, sizeof(_limitSwiitchGpio));
+      return present;
+#endif
+#ifdef SUPLA_CONFIG
+    case FUNCTION_CFG_LED:     
+      memcpy(_cfgLedGpio, gpio, sizeof(_cfgLedGpio));
+      memcpy(_cfgLedLevel, level, sizeof(_cfgLedLevel));
+      return present;
+
+    case FUNCTION_CFG_BUTTON:
+      memcpy(_cfgButtonGpio, gpio, sizeof(_cfgButtonGpio));      
+      return present;
+#endif
+#ifdef SUPLA_DS18B20
+    case FUNCTION_DS18B20:
+      memcpy(_ds18b20Gpio, gpio, sizeof(_ds18b20Gpio));
+      return present;
+#endif
+#ifdef SUPLA_DHT11
+    case FUNCTION_DHT11:
+      memcpy(_dht11Gpio, gpio, sizeof(_dht11Gpio));
+      return present;
+#endif
+#ifdef SUPLA_DHT22
+    case FUNCTION_DHT22:
+      memcpy(_dht22Gpio, gpio, sizeof(_dht22Gpio));
+      return present;
+#endif
+#ifdef SUPLA_BME280
+    case FUNCTION_SDA:
+      memcpy(_sdaGpio, gpio, sizeof(_sdaGpio));
+      return present;
+
+    case FUNCTION_SCL:
+      memcpy(_sclGpio, gpio, sizeof(_sclGpio));
+      return present;
+#endif
+#ifdef SUPLA_HC_SR04
+    case FUNCTION_TRIG:
+      memcpy(_trigGpio, gpio, sizeof(_trigGpio));
+      return present;
+
+    case FUNCTION_ECHO:
+      memcpy(_echoGpio, gpio, sizeof(_echoGpio));
+      return present;
+#endif
+  }
+  return present;
+}
+
+// int SuplaConfigESP::getGpio(int nr, int function){
+//   ConfigESP->getGpio(1, function);
+// }
+
+int SuplaConfigESP::getGpio(int nr, int function){
+
+   switch (function) {
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+    case FUNCTION_RELAY:
+      return _relayGpio[nr];
+#endif
+#ifdef SUPLA_BUTTON
+    case FUNCTION_BUTTON:
+      return _buttonGpio[nr];
+#endif
+#ifdef SUPLA_LIMIT_SWITCH
+    case FUNCTION_LIMIT_SWITCH:
+      return _limitSwiitchGpio[nr];
+#endif
+#ifdef SUPLA_CONFIG
+    case FUNCTION_CFG_LED:
+      return _cfgLedGpio[nr];
+
+    case FUNCTION_CFG_BUTTON:
+      return _cfgButtonGpio[nr];
+#endif
+#ifdef SUPLA_DS18B20
+    case FUNCTION_DS18B20:
+      return _ds18b20Gpio[nr];
+#endif
+#ifdef SUPLA_DHT11
+    case FUNCTION_DHT11:
+      return _dht11Gpio[nr];
+#endif
+#ifdef SUPLA_DHT22
+    case FUNCTION_DHT22:
+      return _dht22Gpio[nr];
+#endif
+#ifdef SUPLA_BME280
+    case FUNCTION_SDA:
+      return _sdaGpio[nr];
+
+    case FUNCTION_SCL:
+      return _sclGpio[nr];
+#endif
+#ifdef SUPLA_HC_SR04
+    case FUNCTION_TRIG:
+      return _trigGpio[nr];
+
+    case FUNCTION_ECHO:
+      return _echoGpio[nr];
+#endif
+  }
+}
+
+int SuplaConfigESP::getLevel(int nr, int function){
+
+   switch (function) {
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+    case FUNCTION_RELAY:
+      return _relayLevel[nr];
+#endif
+#ifdef SUPLA_CONFIG
+    case FUNCTION_CFG_LED:
+      return _cfgLedLevel[nr];
+#endif
+  }
+}
+
+int SuplaConfigESP::checkBusy(int gpio, int function){
+  if(gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11){
+    return true;
+  }
+  else{
+    String key = GPIO;
+    key += gpio;
+    if( ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != FUNCTION_OFF){
+      if( ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != function){
+        return true;
+      }
+      return false;
+    }
+  }
+  return false;
 }

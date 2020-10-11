@@ -15,6 +15,7 @@
 #define  INPUT_RELAY_DURATION     "ird"
 #define  INPUT_ROLLERSHUTTER      "irsr"
 
+ #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 class SuplaWebPageRelay {
   public:
     SuplaWebPageRelay();
@@ -27,12 +28,18 @@ class SuplaWebPageRelay {
   private:    
     String supla_webpage_relay_set(int save);
     String supla_webpage_relay(int save);
+
+    const char* SupportedRelayLevel[2] = {
+      "ODWRÓCONE",
+      "NORMALNE"
+    };
     
-    const char* Supported_RelayMemory[2] = {
+    const char* SupportedRelayMemory[2] = {
       "WYŁĄCZONY",
       "PAMIĘTAJ STAN"
     };
 };
 
 extern SuplaWebPageRelay *WebPageRelay;
+#endif
 #endif // SuplaWebPageRelay_h

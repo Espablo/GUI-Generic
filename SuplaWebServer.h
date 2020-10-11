@@ -29,59 +29,30 @@
 #define  DEFAULT_LOGIN         "admin"
 #define  DEFAULT_PASSWORD      "password"
 
-#define MAX_GPIO               16
+#define MAX_GPIO               13
 #define OFF_GPIO               17
 
 #define MAX_THERMOMETER         5
 
-#define  UPDATE_PATH           "/firmware"
-#define  PATH_START           "/"
-#define  PATH_SET             "set"
-//#define  PATH_SERCH           "serch"
-//#define  PATH_SAVE_DS         "saveds"
-#define  PATH_UPDATE          "update"
-#define  PATH_REBOT           "rbt"
-//#define  PATH_SENSOR           "sensor"
-//#define  PATH_SAVE_SENSOR      "savesensor"
-//#define  PATH_MULTI_DS          "multids"
-//#define  PATH_SAVE_MULTI_DS     "savemultids"
-#define  PATH_CONFIG            "config"
-#define  PATH_SAVE_CONFIG       "saveconfig"
+#define  PATH_START               "/"
+#define  UPDATE_PATH              "/firmware"
+#define  PATH_SET                 "set"
+#define  PATH_UPDATE              "update"
+#define  PATH_REBOT               "rbt"
 
-#define  INPUT_WIFI_SSID           "sid"
-#define  INPUT_WIFI_PASS           "wpw"
-#define  INPUT_EMAIL               "eml"
-#define  INPUT_SERVER              "svr"
-#define  INPUT_FUNCTION            "stp"
-#define  INPUT_HOSTNAME            "shn"
-#define  INPUT_MODUL_LOGIN         "mlg"
-#define  INPUT_MODUL_PASS          "mps"
-//#define  INPUT_MULTI_DS_GPIO       "mdsg"
-//#define  INPUT_DHT11_GPIO          "dht11"
-//#define  INPUT_DHT22_GPIO          "dht22"
-#define  INPUT_CFG_LED_GPIO        "cfgl"
-#define  INPUT_CFG_BTN_GPIO        "cfgb"
-//#define  INPUT_SDA_GPIO            "sdag"
-//#define  INPUT_SCL_GPIO            "sclg"
-#define  INPUT_CFG_LED_LEVEL       "icll"
-#define  INPUT_ROLLERSHUTTER       "irsr"
-
-//#define  INPUT_BME280              "bme280"
-//#define  INPUT_ALTITUDE_BME280      "abme280"
-//
-//#define  INPUT_TRIG_GPIO            "trig"
-//#define  INPUT_ECHO_GPIO            "echo"
-//
-//#define  INPUT_MAX_DHT11            "mdht11"
-//#define  INPUT_MAX_DHT22            "mdht22"
-
+#define  INPUT_WIFI_SSID          "sid"
+#define  INPUT_WIFI_PASS          "wpw"
+#define  INPUT_EMAIL              "eml"
+#define  INPUT_SERVER             "svr"
+#define  INPUT_HOSTNAME           "shn"
+#define  INPUT_MODUL_LOGIN        "mlg"
+#define  INPUT_MODUL_PASS         "mps"
+#define  INPUT_ROLLERSHUTTER      "irsr"
 
 class SuplaWebServer : public Supla::Element {
   public:
     SuplaWebServer();
     void begin();
-    void setBusyGpio(int gpio, int busy);
-    int getBusyGpio(int gpio);
  
     char www_username[MAX_MLOGIN];
     char www_password[MAX_MPASSWORD];
@@ -92,7 +63,7 @@ class SuplaWebServer : public Supla::Element {
     const String SuplaFavicon();
     const String SuplaLogo();
     const String SuplaSummary();
-    const String SuplaJavaScript(String java_return = "/");
+    const String SuplaJavaScript(String java_return = PATH_START);
     const String SuplaCopyrightBar();
     const String SuplaSaveResult(int save);
 
@@ -101,7 +72,7 @@ class SuplaWebServer : public Supla::Element {
     ESP8266WebServer httpServer = {80};
     ESP8266HTTPUpdateServer httpUpdater;
 
-    char* Supported_Gpio[18][2] = {
+    const char* Supported_Gpio[18][2] = {
       {"GPIO0-D3", "0"},
       {"GPIO1-TX", "0"},
       {"GPIO2-D4", "0"},
@@ -121,7 +92,7 @@ class SuplaWebServer : public Supla::Element {
       {"GPIO16-D0", "0"},
       {"OFF", "0"}
     };
-    
+
     const char* Supported_Level[2] = {
       "ODWRÓCONE",
       "NORMALNE"
@@ -130,32 +101,16 @@ class SuplaWebServer : public Supla::Element {
 private:
     void iterateAlways();
     void handle();
-    void handleWizardSave();
     void handleSave();
-    void handleSearchDS();
-    void handleDSSave();
-    void handleFirmwareUp();
-    void handleSensor();
-    void handleSensorSave();
-    void handleConfig();
-    void handleConfigSave();
-    
+    void handleFirmwareUp();    
     void createWebServer();
 
     String supla_webpage_start(int save);
-    String supla_webpage_search(int save);
     String supla_webpage_upddate();
-    String supla_webpage_sensor(int save);
-    String supla_webpage_config(int save);
     void supla_webpage_reboot();
 
     void rebootESP();
     void redirectToIndex();
-    
-    const char* Supported_Type[2] = {
-      "ROLETA",
-      "ŚWIATŁA I INNE..."
-    }; 
 };
 
 #endif //SuplaWebServer_h
