@@ -148,7 +148,7 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
             pagerelay += F("' selected>");
           }
           else pagerelay += F("'>");
-          pagerelay += (WebServer->Supported_Gpio[suported][0]);
+          pagerelay += (WebServer->Supported_Gpio[suported]);
       }
     }
     pagerelay += F("</select></i>");    

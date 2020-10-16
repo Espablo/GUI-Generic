@@ -60,7 +60,7 @@ void SuplaWebPageSensor::handleSensorSave() {
         key = GPIO;
         key += WebServer->httpServer.arg(input).toInt();  
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-            (onfigESP->getGpio(nr, FUNCTION_DHT11) == WebServer->httpServer.arg(input).toInt() && 
+            (ConfigESP->getGpio(nr, FUNCTION_DHT11) == WebServer->httpServer.arg(input).toInt() && 
               ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DHT11)) {
 
           ConfigManager->setElement(key.c_str(), NR, nr);
@@ -347,7 +347,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
           page += F("' selected>");
         }
         else page += F("'>");
-        page += (WebServer->Supported_Gpio[suported][0]);
+        page += (WebServer->Supported_Gpio[suported]);
       }
     }
     page += F("</select></i>");    
@@ -380,7 +380,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
           page += F("' selected>");
         }
         else page += F("'>");
-        page += (WebServer->Supported_Gpio[suported][0]);
+        page += (WebServer->Supported_Gpio[suported]);
       }
     }
     page += F("</select></i>");    
@@ -403,7 +403,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
         page += F("' selected>");
       }
       else page += F("'>");
-      page += (WebServer->Supported_Gpio[suported][0]);
+      page += (WebServer->Supported_Gpio[suported]);
     }
   }
   page += F("</select></i>");
@@ -432,7 +432,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
         page += F("' selected>");
       }
       else page += F("'>");
-      page += (WebServer->Supported_Gpio[suported][0]);
+      page += (WebServer->Supported_Gpio[suported]);
     }
   }
   page += F("</select></i>");
@@ -449,7 +449,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
         page += F("' selected>");
       }
       else page += F("'>");
-      page += (WebServer->Supported_Gpio[suported][0]);
+      page += (WebServer->Supported_Gpio[suported]);
     }
   }
   page += F("</select></i>");
@@ -497,7 +497,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
         page += F("' selected>");
       }
       else page += F("'>");
-      page += (WebServer->Supported_Gpio[suported][0]);
+      page += (WebServer->Supported_Gpio[suported]);
     }
   }
   page += F("</select></i>");
@@ -514,7 +514,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
         page += F("' selected>");
       }
       else page += F("'>");
-      page += (WebServer->Supported_Gpio[suported][0]);
+      page += (WebServer->Supported_Gpio[suported]);
     }
   }
   page += F("</select></i>");

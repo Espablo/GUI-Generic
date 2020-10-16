@@ -191,7 +191,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
           pagebutton += F("' selected>");
         }
         else pagebutton += F("'>");
-        pagebutton += (WebServer->Supported_Gpio[suported][0]);
+        pagebutton += (WebServer->Supported_Gpio[suported]);
       }
     }
     pagebutton += F("</select></i>");    
@@ -224,7 +224,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
           pagebutton += F("' selected>");
         }
         else pagebutton += F("'>");
-        pagebutton += (WebServer->Supported_Gpio[suported][0]);
+        pagebutton += (WebServer->Supported_Gpio[suported]);
       }
     }
     pagebutton += F("</select></i>");    

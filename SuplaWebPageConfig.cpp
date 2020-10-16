@@ -157,7 +157,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
           page += F("' selected>");
         }
         else page += F("'>");
-        page += (WebServer->Supported_Gpio[suported][0]);
+        page += (WebServer->Supported_Gpio[suported]);
     }
   }
   page += F("</select></i>");
@@ -199,7 +199,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
         else page += F("'>");
       }
       else page += F("'>");
-      page += (WebServer->Supported_Gpio[suported][0]);
+      page += (WebServer->Supported_Gpio[suported]);
     }
   }
   page += F("</select></i>"); 

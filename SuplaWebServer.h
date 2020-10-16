@@ -72,25 +72,25 @@ class SuplaWebServer : public Supla::Element {
     ESP8266WebServer httpServer = {80};
     ESP8266HTTPUpdateServer httpUpdater;
 
-    const char* Supported_Gpio[18][2] = {
-      {"GPIO0-D3", "0"},
-      {"GPIO1-TX", "0"},
-      {"GPIO2-D4", "0"},
-      {"GPIO3-RX", "0"},
-      {"GPIO4-D2", "0"},
-      {"GPIO5-D1", "0"},
-      {"", "1"},
-      {"", "1"},
-      {"", "1"},
-      {"GPIO9-D11", "0"},
-      {"GPIO10-D12", "0"},
-      {"", "1"},
-      {"GPIO12-D6", "0"},
-      {"GPIO13-D7", "0"},
-      {"GPIO14-D5", "0"},
-      {"GPIO15-D8", "0"},
-      {"GPIO16-D0", "0"},
-      {"OFF", "0"}
+    const char* Supported_Gpio[18] = {
+      "GPIO0-D3",
+      "GPIO1-TX",
+      "GPIO2-D4",
+      "GPIO3-RX",
+      "GPIO4-D2",
+      "GPIO5-D1",
+      "",
+      "",
+      "",
+      "GPIO9-D11",
+      "GPIO10-D12",
+      "",
+      "GPIO12-D6",
+      "GPIO13-D7",
+      "GPIO14-D5",
+      "GPIO15-D8",
+      "GPIO16-D0",
+      "OFF",
     };
 
     const char* Supported_Level[2] = {
