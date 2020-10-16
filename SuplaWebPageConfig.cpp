@@ -66,13 +66,13 @@ void SuplaWebPageConfig::handleConfigSave() {
     ConfigManager->setElement(key.c_str(), LEVEL, 0 );
     ConfigManager->setElement(key.c_str(), MEMORY, 0 );
   }
-  ConfigESP->sort(FUNCTION_CFG_LED);
-  
-  input = INPUT_CFG_LED_LEVEL;
+
   key = GPIO;
-  key += WebServer->httpServer.arg(input).toInt();
+  key += ConfigESP->getGpio(1, FUNCTION_CFG_LED);
+  input = INPUT_CFG_LED_LEVEL;  
   ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
 
+  ConfigESP->sort(FUNCTION_CFG_LED);
 
   input = INPUT_CFG_BTN_GPIO;
   key = GPIO;
