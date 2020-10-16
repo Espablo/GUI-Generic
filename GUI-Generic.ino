@@ -122,6 +122,12 @@ void setup() {
 #ifdef SUPLA_CONFIG 
   if(ConfigESP->sort(FUNCTION_CFG_LED) || ConfigESP->sort(FUNCTION_CFG_BUTTON)){
     ConfigESP->sort(FUNCTION_CFG_BUTTON);
+#ifdef SUPLA_BUTTON
+  if(ConfigESP->getCfgFlag() != OFF_GPIO){
+    Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES, ConfigESP->getLevel(1, FUNCTION_CFG_LED));
+  }
+  else 
+#endif
     Supla::GUI::addConfigESP(ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES, ConfigESP->getLevel(1, FUNCTION_CFG_LED));
   } 
 #endif

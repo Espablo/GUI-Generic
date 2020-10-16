@@ -60,6 +60,7 @@ class SuplaConfigESP : public Supla::Triggerable {
     int checkBusy(int gpio, int function);
 
     int getMemoryRelay(int nr);
+    int getCfgFlag();
 
   private:
     void configModeInit();
@@ -112,6 +113,7 @@ class SuplaConfigESP : public Supla::Triggerable {
     int _cfgLedGpio[17];
     int _cfgLedLevel[17];
     int _cfgButtonGpio[17];
+    int _cfgButtonFlag[17];
 #endif
 
     ETSTimer led_timer;

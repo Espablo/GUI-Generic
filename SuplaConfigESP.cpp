@@ -369,7 +369,8 @@ int SuplaConfigESP::sort(int function){
       return present;
 
     case FUNCTION_CFG_BUTTON:
-      memcpy(_cfgButtonGpio, gpio, sizeof(_cfgButtonGpio));      
+      memcpy(_cfgButtonGpio, gpio, sizeof(_cfgButtonGpio));
+      memcpy(_cfgButtonFlag, memory, sizeof(_cfgButtonFlag));
       return present;
 #endif
 #ifdef SUPLA_DS18B20
@@ -497,4 +498,17 @@ int SuplaConfigESP::checkBusy(int gpio, int function){
     }
   }
   return false;
+}
+
+int SuplaConfigESP::getCfgFlag(){
+  for(int i = 0; i <= 17; i++){
+    String key = GPIO;
+    key += i;
+     if( ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_BUTTON){
+        if(ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1){
+          return i;
+        }
+     }
+  }
+  return 17;
 }

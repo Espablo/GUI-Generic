@@ -157,7 +157,7 @@ SuplaConfigManager::SuplaConfigManager() {
     key = GPIO;
     key += nr;
     String func;
-    func = String(nr);
+    func = "0";
     func += SEPARATOR;
     func += "0";
     func += SEPARATOR;

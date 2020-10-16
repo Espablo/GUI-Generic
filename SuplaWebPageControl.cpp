@@ -60,7 +60,7 @@ void SuplaWebPageControl::handleControlSave() {
         key = GPIO;
         key += WebServer->httpServer.arg(input).toInt();  
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-            (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+            (ConfigESP->getGpio(nr, FUNCTION_BUTTON) == WebServer->httpServer.arg(input).toInt() && 
               ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_BUTTON)) {
 
           ConfigManager->setElement(key.c_str(), NR, nr);
@@ -81,6 +81,7 @@ void SuplaWebPageControl::handleControlSave() {
         ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
         ConfigManager->setElement(key.c_str(), LEVEL, 0 );
         ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+        ConfigManager->setElement(key.c_str(), CFG, 0);
       }
     }
   }  
@@ -104,7 +105,7 @@ void SuplaWebPageControl::handleControlSave() {
         key = GPIO;
         key += WebServer->httpServer.arg(input).toInt();  
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-            (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+            (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) == WebServer->httpServer.arg(input).toInt() && 
               ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_LIMIT_SWITCH)) {
 
           ConfigManager->setElement(key.c_str(), NR, nr);

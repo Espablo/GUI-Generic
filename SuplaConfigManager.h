@@ -50,12 +50,12 @@
 
 #define GPIO                      "GPIO"
 #define SEPARATOR                 ','
-
-#define PIN                       0
-#define NR                        1
-#define FUNCTION                  2
-#define LEVEL                     3
-#define MEMORY                    4
+ 
+#define NR                        0
+#define FUNCTION                  1
+#define LEVEL                     2
+#define MEMORY                    3
+#define CFG                       3
 
 #define FUNCTION_OFF              0
 #define FUNCTION_RELAY            1

@@ -60,7 +60,7 @@ void SuplaWebPageSensor::handleSensorSave() {
         key = GPIO;
         key += WebServer->httpServer.arg(input).toInt();  
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-            (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+            (onfigESP->getGpio(nr, FUNCTION_DHT11) == WebServer->httpServer.arg(input).toInt() && 
               ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DHT11)) {
 
           ConfigManager->setElement(key.c_str(), NR, nr);
@@ -103,7 +103,7 @@ void SuplaWebPageSensor::handleSensorSave() {
         key = GPIO;
         key += WebServer->httpServer.arg(input).toInt();  
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-            (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+            (ConfigESP->getGpio(nr, FUNCTION_DHT22) == WebServer->httpServer.arg(input).toInt() && 
               ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DHT22)) {
 
           ConfigManager->setElement(key.c_str(), NR, nr);
@@ -148,7 +148,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     key = GPIO;
     key += WebServer->httpServer.arg(input).toInt();  
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+        (ConfigESP->getGpio(1, FUNCTION_SDA) == WebServer->httpServer.arg(input).toInt() && 
           ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_SDA)) {
 
       ConfigManager->setElement(key.c_str(), NR, 1);
@@ -177,7 +177,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     key = GPIO;
     key += WebServer->httpServer.arg(input).toInt();  
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+        (ConfigESP->getGpio(1, FUNCTION_SCL) == WebServer->httpServer.arg(input).toInt() && 
           ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_SCL)) {
 
       ConfigManager->setElement(key.c_str(), NR, 1);
@@ -208,7 +208,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     key = GPIO;
     key += WebServer->httpServer.arg(input).toInt();  
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+        (ConfigESP->getGpio(1, FUNCTION_TRIG) == WebServer->httpServer.arg(input).toInt() && 
           ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_TRIG)) {
 
       ConfigManager->setElement(key.c_str(), NR, 1);
@@ -237,7 +237,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     key = GPIO;
     key += WebServer->httpServer.arg(input).toInt();  
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+        (ConfigESP->getGpio(1, FUNCTION_ECHO) == WebServer->httpServer.arg(input).toInt() && 
           ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_ECHO)) {
 
       ConfigManager->setElement(key.c_str(), NR, 1);
@@ -268,7 +268,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     key = GPIO;
     key += WebServer->httpServer.arg(input).toInt();  
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigManager->get(key.c_str())->getElement(PIN).toInt() == WebServer->httpServer.arg(input).toInt() && 
+        (ConfigESP->getGpio(1, FUNCTION_DS18B20) == WebServer->httpServer.arg(input).toInt() && 
           ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DS18B20)) {
 
       ConfigManager->setElement(key.c_str(), NR, 1);
