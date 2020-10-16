@@ -178,7 +178,9 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
     pagebutton += nr;
     pagebutton += F("'>");
     pagebutton += nr;
-    pagebutton += F(". PRZYCISK</a></label><select name='");
+    pagebutton += F(". PRZYCISK ");
+    pagebutton += WebServer->SuplaIconEdit();
+    pagebutton += F("</a></label><select name='");
     pagebutton += INPUT_BUTTON_GPIO;
     pagebutton += nr;
     pagebutton += F("'>");
@@ -233,8 +235,11 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
 #endif
   
   pagebutton += F("<button type='submit'>Zapisz</button></form>");
-  pagebutton += F("<br><br>");
-  pagebutton += F("<a href='/'><button>Powrót</button></a></div>");
+  pagebutton += F("<br>");
+  pagebutton += F("<a href='");
+  pagebutton += PATH_START;
+  pagebutton += PATH_DEVICESETTINGS;
+  pagebutton += F ("'><button>Powrót</button></a></div>");
   return pagebutton;
 }
 
@@ -331,14 +336,17 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
     }
     page += F("</select></i>");
     page += F("</div><button type='submit'>Zapisz</button></form>");
-    page += F("<br><br>");
   }
   else {
     page += F("<div class='w'><h3>Brak przycisku nr. ");
     page += nr_button;
     page += F("</h3>");
   }
-  page += F("<a href='/'><button>Powrót</button></a></div>");
+  page += F("<br>");
+  page += F("<a href='");
+  page += PATH_START;
+  page += PATH_CONTROL;
+  page += F ("'><button>Powrót</button></a></div>");
   
   return page;
 }
