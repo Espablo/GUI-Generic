@@ -471,6 +471,10 @@ int SuplaConfigESP::getLevel(int nr, int function){
     case FUNCTION_RELAY:
       return _relayLevel[nr];
 #endif
+#ifdef SUPLA_BUTTON
+    case FUNCTION_BUTTON:
+      return _buttonLevel[nr];
+#endif
 #ifdef SUPLA_CONFIG
     case FUNCTION_CFG_LED:
       return _cfgLedLevel[nr];
