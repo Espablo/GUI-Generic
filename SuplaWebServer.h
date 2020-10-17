@@ -39,6 +39,7 @@
 #define  PATH_SET                 "set"
 #define  PATH_UPDATE              "update"
 #define  PATH_REBOT               "rbt"
+#define  PATH_DEVICESETTINGS	  "devicesettings"
 
 #define  INPUT_WIFI_SSID          "sid"
 #define  INPUT_WIFI_PASS          "wpw"
@@ -53,7 +54,7 @@ class SuplaWebServer : public Supla::Element {
   public:
     SuplaWebServer();
     void begin();
- 
+
     char www_username[MAX_MLOGIN];
     char www_password[MAX_MPASSWORD];
     char* update_path = (char*)UPDATE_PATH;
@@ -62,6 +63,7 @@ class SuplaWebServer : public Supla::Element {
     const String SuplaStyle();
     const String SuplaFavicon();
     const String SuplaLogo();
+    const String SuplaIconEdit();
     const String SuplaSummary();
     const String SuplaJavaScript(String java_return = PATH_START);
     const String SuplaCopyrightBar();
@@ -98,16 +100,18 @@ class SuplaWebServer : public Supla::Element {
       "NORMALNE"
     };
 
-private:
+  private:
     void iterateAlways();
     void handle();
     void handleSave();
-    void handleFirmwareUp();    
+    void handleFirmwareUp();
+    void handleDeviceSettings();
     void createWebServer();
 
     String supla_webpage_start(int save);
     String supla_webpage_upddate();
     void supla_webpage_reboot();
+    String deviceSettings();
 
     void rebootESP();
     void redirectToIndex();
