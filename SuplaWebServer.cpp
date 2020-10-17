@@ -163,18 +163,18 @@ void SuplaWebServer::handleDeviceSettings() {
 }
 
 void SuplaWebServer::handleWizardSave() {
-  Serial.println(F("HTTP_POST - metoda handleWizardSave"));
+  Serial.println(F("HTTP_POST - handleWizardSave"));
 
-  if (strcmp(httpServer.arg("rbt").c_str(), "1") == 0) {
+  if (strcmp(httpServer.arg(PATH_REBOT).c_str(), "1") == 0) {
     Serial.println(F("RESTART ESP"));
     this->rebootESP();
     return;
   }
 
-  ConfigManager->set(KEY_WIFI_SSID, httpServer.arg("sid").c_str());
-  ConfigManager->set(KEY_WIFI_PASS, httpServer.arg("wpw").c_str());
-  ConfigManager->set(KEY_SUPLA_SERVER, httpServer.arg("svr").c_str());
-  ConfigManager->set(KEY_SUPLA_EMAIL, httpServer.arg("eml").c_str());
+  ConfigManager->set(KEY_WIFI_SSID, httpServer.arg(INPUT_WIFI_SSID).c_str());
+  ConfigManager->set(KEY_WIFI_PASS, httpServer.arg(INPUT_WIFI_PASS).c_str());
+  ConfigManager->set(KEY_SUPLA_SERVER, httpServer.arg(INPUT_SERVER).c_str());
+  ConfigManager->set(KEY_SUPLA_EMAIL, httpServer.arg(INPUT_EMAIL).c_str());
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
