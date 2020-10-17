@@ -112,6 +112,7 @@ class SuplaWebServer : public Supla::Element {
     String supla_webpage_upddate();
     void supla_webpage_reboot();
     String deviceSettings();
+    void handleWizardSave();
 
     void rebootESP();
     void redirectToIndex();
