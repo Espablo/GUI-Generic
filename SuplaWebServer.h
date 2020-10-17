@@ -36,7 +36,6 @@
 
 #define  PATH_START               "/"
 #define  UPDATE_PATH              "/firmware"
-#define  PATH_SET                 "set"
 #define  PATH_UPDATE              "update"
 #define  PATH_REBOT               "rbt"
 #define  PATH_DEVICESETTINGS	  "devicesettings"
@@ -112,7 +111,6 @@ class SuplaWebServer : public Supla::Element {
     String supla_webpage_upddate();
     void supla_webpage_reboot();
     String deviceSettings();
-    void handleWizardSave();
 
     void rebootESP();
     void redirectToIndex();
