@@ -140,7 +140,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += WebServer->SuplaJavaScript(PATH_CONFIG);
   page += F("<div class='s'>");
   //  page += WebServer->SuplaLogo();
-  //  page += WebServer->SuplaSummary();
+  page += WebServer->SuplaSummary();
   page += F("<form method='post' action='");
   page += PATH_SAVE_CONFIG;
   page += F("'><div class='w'><h3>Ustawienie GPIO dla CONFIG</h3>");

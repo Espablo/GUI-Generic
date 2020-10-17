@@ -298,7 +298,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
       ds_name_key += i;
 
       double temp = Supla::GUI::sensorDS[i]->getValue();
-      content += F("<i><input name='dsnameid");
+      content += F("<i style='border-bottom:none !important;'><input name='dsnameid");
       content += i;
       content += F("' value='");
       content += String(ConfigManager->get(ds_name_key.c_str())->getValue());
@@ -441,13 +441,13 @@ const String SuplaWebServer::SuplaStyle() {
 
   String style = F("<style>a{text-decoration: none;}body{font-size:14px;font-family:'HelveticaNeue','Helvetica Neue','HelveticaNeueRoman','HelveticaNeue-Roman','Helvetica Neue Roman','TeXGyreHerosRegular','Helvetica','Tahoma','Geneva','Arial',sans-serif;font-weight:400;font-stretch:normal;background:");
   style += gui_color;
-  style += F(";color:#fff;line-height:20px;padding:0}.s{width:460px;margin:0 auto;margin-top:calc(50vh - 340px);border:solid 3px #fff;padding:0 10px 10px;border-radius:3px}#l{display:block;max-width:150px;height:155px;margin:-80px auto 20px;background:");
+  style += F(";color:#fff;line-height:20px;padding:0}a:visited{color:#005c96}.s{width:460px;margin:0 auto;margin-top:calc(50vh - 340px);border:solid 3px #fff;padding:0 10px 10px;border-radius:3px}#l{display:block;max-width:150px;height:155px;margin:-80px auto 20px;background:");
   style += gui_color;
   style += F(";padding-right:5px}#l path{fill:#000}.w{margin:3px 0 16px;padding:5px 0px;border-radius:3px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}h1,h3{margin:10px 8px;font-family:'HelveticaNeueLight','HelveticaNeue-Light','Helvetica Neue Light','HelveticaNeue','Helvetica Neue','TeXGyreHerosRegular','Helvetica','Tahoma','Geneva','Arial',sans-serif;font-weight:300;font-stretch:normal;color:#000;font-size:23px}h1{margin-bottom:14px;color:#fff}span{display:block;margin:10px 7px 14px}i{display:block;font-style:normal;position:relative;border-bottom:solid 1px ");
   style += gui_color;
   style += F(";height:42px}i:last-child{border:none}label{position:absolute;display:inline-block;top:0px;left:8px;color:");
   style += gui_color;
-  style += F(";line-height:41px}input,select{width:calc(100% - 145px);border:none;font-size:16px;line-height:40px;border-radius:0;letter-spacing:-.5px;background:#fff;color:#000;padding-left:144px;-webkit-appearance:none;-moz-appearance:none;appearance:none;outline:none!important;height:40px}select{padding:0px;float:right;margin:1px 3px 1px 2px}button{width:100%;border:0;background:#000;padding:5px 10px;font-size:16px;line-height:40px;color:white;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.3);cursor:pointer}.c{background:#FFE836;position:fixed;width:100%;line-height:80px;color:#000;top:0;left:0;box-shadow:0 1px 3px rgba(0,0,0,.3);text-align:center;font-size:26px;z-index:100}@media all and (max-height: 920px){.s{margin-top:80px}}@media all and (max-width: 900px){.s{width:calc(100% - 20px);margin-top:40px;border:none;padding:0 8px;border-radius:0px}#l{max-width:80px;height:auto;margin:10px auto 20px}h1,h3{font-size:19px}i{border:none;height:auto}label{display:block;margin:4px 0 12px;color:");
+  style += F(";line-height:41px}input,select{width:calc(100% - 146px);border:none;font-size:16px;line-height:40px;border-radius:0;letter-spacing:-.5px;background:#fff;color:#000;padding-left:144px;-webkit-appearance:none;-moz-appearance:none;appearance:none;outline:none!important;height:40px}select{padding:0px;float:right;margin:1px 3px 1px 2px}button{width:100%;border:0;background:#000;padding:5px 10px;font-size:16px;line-height:40px;color:white;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.3);cursor:pointer}.c{background:#FFE836;position:fixed;width:100%;line-height:80px;color:#000;top:0;left:0;box-shadow:0 1px 3px rgba(0,0,0,.3);text-align:center;font-size:26px;z-index:100}@media all and (max-height: 920px){.s{margin-top:80px}}@media all and (max-width: 900px){.s{width:calc(100% - 20px);margin-top:40px;border:none;padding:0 8px;border-radius:0px}#l{max-width:80px;height:auto;margin:10px auto 20px}h1,h3{font-size:19px}i{border:none;height:auto}label{display:block;margin:4px 0 12px;color:");
   style += gui_color;
   style += F(";font-size:13px;position:relative;line-height:18px}input,select{width:calc(100% - 10px);font-size:16px;line-height:28px;padding:0px 5px;border-bottom:solid 1px ");
   style += gui_color;
@@ -473,7 +473,7 @@ const String SuplaWebServer::SuplaSummary() {
   String content = "";
   content += F("<h1>");
   content += String(ConfigManager->get(KEY_HOST_NAME)->getValue());
-  content += F(" </h1>");
+  content += F("</h1>");
   content += F("<span>LAST STATE: ");
   content += String(ConfigESP->getLastStatusSupla());
   content += F("<br>");

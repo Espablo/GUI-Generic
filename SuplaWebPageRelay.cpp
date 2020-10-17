@@ -116,7 +116,7 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += WebServer->SuplaJavaScript(PATH_RELAY);
   pagerelay += F("<div class='s'>");
   //  pagerelay += WebServer->SuplaLogo();
-  //  pagerelay += WebServer->SuplaSummary();
+  pagerelay += WebServer->SuplaSummary();
   pagerelay += F("<form method='post' action='");
   pagerelay += PATH_SAVE_RELAY;
   pagerelay += F("'><div class='w'><h3>Ustawienie GPIO dla przekaźników</h3>");
@@ -234,7 +234,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
   page += WebServer->SuplaJavaScript(PATH_RELAY);
   page += F("<div class='s'>");
   //  page += WebServer->SuplaLogo();
-  //  page += WebServer->SuplaSummary();
+  page += WebServer->SuplaSummary();
   uint8_t relays = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   if (nr_relay.toInt() <= relays && ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY) != OFF_GPIO) {
     page += F("<form method='post' action='");

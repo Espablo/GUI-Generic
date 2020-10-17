@@ -157,7 +157,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += WebServer->SuplaJavaScript(PATH_CONTROL);
   pagebutton += F("<div class='s'>");
 //  pagebutton += WebServer->SuplaLogo();
-//  pagebutton += WebServer->SuplaSummary();
+  pagebutton += WebServer->SuplaSummary();
   pagebutton += F("<form method='post' action='");
   pagebutton += PATH_SAVE_CONTROL;
 
@@ -310,7 +310,7 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
   page += WebServer->SuplaJavaScript(PATH_CONTROL);
   page += F("<div class='s'>");
 //  page += WebServer->SuplaLogo();
-//  page += WebServer->SuplaSummary();
+  page += WebServer->SuplaSummary();
   uint8_t buttons = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   if(nr_button.toInt() <= buttons && ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON) != OFF_GPIO){
     page += F("<form method='post' action='");

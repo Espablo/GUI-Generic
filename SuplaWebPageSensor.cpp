@@ -317,7 +317,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += WebServer->SuplaJavaScript(PATH_SENSOR);
   page += F("<div class='s'>");
   //  page += WebServer->SuplaLogo();
-  //  page += WebServer->SuplaSummary();
+  page += WebServer->SuplaSummary();
   page += F("<form method='post' action='");
   page += PATH_SAVE_SENSOR;
   page += F("'>");
@@ -594,7 +594,7 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   content += WebServer->SuplaJavaScript();
   content += F("<div class='s'>");
   //  content += WebServer->SuplaLogo();
-  //  content += WebServer->SuplaSummary();
+  content += WebServer->SuplaSummary();
   content += F("<center>");
   content += F("<div class='w'>");
   content += F("<h3>Temperatura</h3>");
