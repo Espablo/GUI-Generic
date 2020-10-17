@@ -53,7 +53,7 @@ void SuplaWebPageConfig::handleConfigSave() {
 
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_CFG_LED);
-      ConfigManager->setElement(key.c_str(), LEVEL, 1);
+      //ConfigManager->setElement(key.c_str(), LEVEL, 1);
     }
     else {
       WebServer->httpServer.send(200, "text/html", supla_webpage_config(6));
