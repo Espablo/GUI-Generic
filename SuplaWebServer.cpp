@@ -181,7 +181,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("<div class='s'>");
   content += SuplaLogo();
   content += SuplaSummary();
-  content += F("<form method='post'");
+  content += F("<form method='post'>");
   content += F("<div class='w'>");
   content += F("<h3>Ustawienia WIFI</h3>");
   content += F("<i><input name='");
