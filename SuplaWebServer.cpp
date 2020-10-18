@@ -43,7 +43,6 @@ void SuplaWebServer::createWebServer() {
   String path = PATH_START;
   httpServer.on(path, HTTP_GET, std::bind(&SuplaWebServer::handle, this));
   path = PATH_START;
-  path += PATH_SET;
   httpServer.on(path, std::bind(&SuplaWebServer::handleSave, this));
   path = PATH_START;
   path += PATH_UPDATE;
@@ -85,6 +84,11 @@ void SuplaWebServer::handleSave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!httpServer.authenticate(this->www_username, this->www_password))
       return httpServer.requestAuthentication();
+  }
+
+  if (strcmp(httpServer.arg(PATH_REBOT).c_str(), "1") == 0) {
+    this->rebootESP();
+    return;
   }
 
   ConfigManager->set(KEY_WIFI_SSID, httpServer.arg(INPUT_WIFI_SSID).c_str());
@@ -134,8 +138,12 @@ void SuplaWebServer::handleSave() {
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
-      this->sendContent(supla_webpage_start(5));
-      this->rebootESP();
+      if (ConfigESP->configModeESP == NORMAL_MODE) {
+        this->sendContent(supla_webpage_start(5));
+        this->rebootESP();
+      } else {
+        this->sendContent(supla_webpage_start(7));
+      }
       break;
 
     case E_CONFIG_FILE_OPEN:
@@ -173,9 +181,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("<div class='s'>");
   content += SuplaLogo();
   content += SuplaSummary();
-  content += F("<form method='post' action='");
-  content += PATH_SET;
-  content += F("'>");
+  content += F("<form method='post'");
   content += F("<div class='w'>");
   content += F("<h3>Ustawienia WIFI</h3>");
   content += F("<i><input name='");
@@ -522,6 +528,8 @@ const String SuplaWebServer::SuplaSaveResult(int save) {
   }
   else if (save == 6) {
     saveresult += F("Błąd zapisu - złe dane.");
+  } else if (save == 7 ) {
+    saveresult += F("data saved");
   }
   saveresult += F("</div>");
   return saveresult;

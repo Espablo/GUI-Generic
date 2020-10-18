@@ -36,7 +36,6 @@
 
 #define  PATH_START               "/"
 #define  UPDATE_PATH              "/firmware"
-#define  PATH_SET                 "set"
 #define  PATH_UPDATE              "update"
 #define  PATH_REBOT               "rbt"
 #define  PATH_DEVICESETTINGS	  "devicesettings"
