@@ -98,17 +98,7 @@ void SuplaWebServer::handleSave() {
   ConfigManager->set(KEY_MAX_ROLLERSHUTTER, httpServer.arg(INPUT_ROLLERSHUTTER).c_str());
 #endif
 
-  String button_value;
   uint8_t i;
-#ifdef SUPLA_BUTTON
-  for (i = 0; i < Supla::GUI::button.size(); ++i) {
-    String button = INPUT_BUTTON_SET;
-    button += i;
-    button_value += httpServer.arg(button).c_str();
-    //    ConfigManager->set(KEY_TYPE_BUTTON, button_value.c_str());
-  }
-#endif
-// ConfigManager->set(KEY_TYPE_BUTTON, button_value.c_str());
 #ifdef SUPLA_DS18B20
   for (i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
     String ds_key = KEY_DS;
@@ -123,10 +113,6 @@ void SuplaWebServer::handleSave() {
 
     ConfigManager->set(ds_key.c_str(), httpServer.arg(ds).c_str());
     ConfigManager->set(ds_name_key.c_str(), httpServer.arg(ds_name).c_str());
-  }
-
-  if (strcmp(httpServer.arg("maxds").c_str(), "") != 0) {
-    ConfigManager->set(KEY_MULTI_MAX_DS18B20, httpServer.arg("maxds").c_str());
   }
 #endif
 

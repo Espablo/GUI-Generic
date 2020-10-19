@@ -17,7 +17,7 @@
 #ifndef SuplaDeviceGUI_h
 #define SuplaDeviceGUI_h
 
-#define DEBUG_MODE
+// #define DEBUG_MODE
 
 #include <SuplaDevice.h>
 
