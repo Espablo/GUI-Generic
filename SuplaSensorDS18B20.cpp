@@ -17,7 +17,7 @@
 #include "SuplaSensorDS18B20.h"
 
 OneWireBus::OneWireBus(uint8_t pinNumberConfig)
-  : oneWire(pinNumberConfig), pin(pinNumberConfig), nextBus(nullptr), lastReadTime(0) {
+    : oneWire(pinNumberConfig), pin(pinNumberConfig), nextBus(nullptr), lastReadTime(0) {
   supla_log(LOG_DEBUG, "Initializing OneWire bus at pin %d", pinNumberConfig);
   sensors.setOneWire(&oneWire);
   sensors.begin();
@@ -27,9 +27,7 @@ OneWireBus::OneWireBus(uint8_t pinNumberConfig)
     supla_log(LOG_DEBUG, "OneWire(pin %d) Parasite power is OFF", pinNumberConfig);
   }
 
-  supla_log(LOG_DEBUG,
-            "OneWire(pin %d) Found %d devices:",
-            pinNumberConfig,
+  supla_log(LOG_DEBUG, "OneWire(pin %d) Found %d devices:", pinNumberConfig,
             sensors.getDeviceCount());
 
   // report parasite power requirements
@@ -108,8 +106,7 @@ DS18B20::DS18B20(uint8_t pin, uint8_t *deviceAddress) {
     }
   }
   if (deviceAddress == nullptr) {
-    supla_log(LOG_DEBUG,
-              "Device address not provided. Using device from index 0");
+    supla_log(LOG_DEBUG, "Device address not provided. Using device from index 0");
   } else {
     memcpy(address, deviceAddress, 8);
   }
@@ -157,7 +154,7 @@ void DS18B20::onInit() {
   channel.setNewValue(getValue());
 }
 
-uint8_t  DS18B20::getPin() {
+uint8_t DS18B20::getPin() {
   return myBus->pin;
 }
 

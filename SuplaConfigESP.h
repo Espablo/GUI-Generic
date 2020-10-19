@@ -17,6 +17,7 @@
 #ifndef SuplaConfigESP_h
 #define SuplaConfigESP_h
 
+
 #include <supla/triggerable.h>
 #include "GUI-Generic_Config.h"
 
@@ -29,97 +30,94 @@ typedef struct {
 } _supla_status;
 
 class SuplaConfigESP : public Supla::Triggerable {
-  public:
-    SuplaConfigESP();
+public:
+  SuplaConfigESP();
 
-    void addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _highIsOn = true);
-    void runAction(int event, int action);
-    void rebootESP();
+  void addConfigESP(int _pinNumberConfig, int _pinLedConfig,
+                    int _modeConfigButton, bool _highIsOn = true);
+  void runAction(int event, int action);
+  void rebootESP();
 
-    const char *getLastStatusSupla();
+  const char *getLastStatusSupla();
 
-    void ledBlinking(int time);
-    void ledBlinkingStop(void);
-    int getPinLedConfig();
-    virtual uint8_t pinOnValue() {
-      return highIsOn ? HIGH : LOW;
-    }
-  
-    virtual uint8_t pinOffValue() {
-      return highIsOn ? LOW : HIGH;
-    }
+  void ledBlinking(int time);
+  void ledBlinkingStop(void);
+  int getPinLedConfig();
+  virtual uint8_t pinOnValue() { return highIsOn ? HIGH : LOW; }
 
-    String getMacAddress(bool formating);
+  virtual uint8_t pinOffValue() { return highIsOn ? LOW : HIGH; }
 
-    _configModeESP configModeESP;
-    _supla_status supla_status;
+  String getMacAddress(bool formating);
 
-    int sort(int function);
-    int getGpio(int nr, int function);
-    int getLevel(int nr, int function);
-    int checkBusy(int gpio, int function);
+  _configModeESP configModeESP;
+  _supla_status supla_status;
 
-    int getMemoryRelay(int nr);
-    int getCfgFlag();
+  int sort(int function);
+  int getGpio(int nr, int function);
+  int getLevel(int nr, int function);
+  int checkBusy(int gpio, int function);
 
-  private:
-    void configModeInit();
+  int getMemoryRelay(int nr);
+  int getCfgFlag();
 
-    int pinNumberConfig;
-    int pinLedConfig;
-    int modeConfigButton;
-    int countPresses = 0;
-    unsigned long cnfigChangeTimeMs = 0;
-    bool highIsOn;
+private:
+  void configModeInit();
+
+  int pinNumberConfig;
+  int pinLedConfig;
+  int modeConfigButton;
+  int countPresses = 0;
+  unsigned long cnfigChangeTimeMs = 0;
+  bool highIsOn;
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-    int _relayGpio[17];
-    int _relayLevel[17];
-    int _relayMemory[17];
+  int _relayGpio[17];
+  int _relayLevel[17];
+  int _relayMemory[17];
 #endif
 
 #ifdef SUPLA_BUTTON
-    int _buttonGpio[17];
-    int _buttonLevel[17];
+  int _buttonGpio[17];
+  int _buttonLevel[17];
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-    int _limitSwiitchGpio[17];
+  int _limitSwiitchGpio[17];
 #endif
 
 #ifdef SUPLA_DHT11
-    int _dht11Gpio[17];
+  int _dht11Gpio[17];
 #endif
 
 #ifdef SUPLA_DHT22
-    int _dht22Gpio[17];
+  int _dht22Gpio[17];
 #endif
 
 #ifdef SUPLA_DS18B20
-    int _ds18b20Gpio[17];
+  int _ds18b20Gpio[17];
 #endif
 
 #ifdef SUPLA_BME280
-    int _sdaGpio[17];
-    int _sclGpio[17];
+  int _sdaGpio[17];
+  int _sclGpio[17];
 #endif
 
 #ifdef SUPLA_HC_SR04
-    int _trigGpio[17];
-    int _echoGpio[17];
+  int _trigGpio[17];
+  int _echoGpio[17];
 #endif
 
 #ifdef SUPLA_CONFIG
-    int _cfgLedGpio[17];
-    int _cfgLedLevel[17];
-    int _cfgButtonGpio[17];
-    int _cfgButtonFlag[17];
+  int _cfgLedGpio[17];
+  int _cfgLedLevel[17];
+  int _cfgButtonGpio[17];
+  int _cfgButtonFlag[17];
 #endif
 
-    ETSTimer led_timer;
+  ETSTimer led_timer;
 };
 
 void ledBlinking_func(void *timer_arg);
 void status_func(int status, const char *msg);
 
-#endif //SuplaConfigESP_h
+#endif // SuplaConfigESP_h

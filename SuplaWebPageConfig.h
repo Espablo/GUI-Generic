@@ -11,15 +11,15 @@
 #define  INPUT_CFG_LED_LEVEL    "icll"
 
 class SuplaWebPageConfig {
-  public:
-    SuplaWebPageConfig();
-    void createWebPageConfig();
-    void handleConfig();
-    void handleConfigSave();
-    
-  private:
-    String supla_webpage_config(int save);
+ public:
+  SuplaWebPageConfig();
+  void createWebPageConfig();
+  void handleConfig();
+  void handleConfigSave();
+
+ private:
+  String supla_webpage_config(int save);
 };
 
 extern SuplaWebPageConfig *WebPageConfig;
-#endif // SuplaWebPageConfig_h
+#endif  // SuplaWebPageConfig_h

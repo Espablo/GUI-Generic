@@ -24,30 +24,28 @@
 #define  INPUT_MAX_DHT22            "mdht22"
 #define  INPUT_MAX_DS18B20          "maxds"
 
-
 class SuplaWebPageSensor {
-  public:
-    SuplaWebPageSensor();
-    void createWebPageSensor();
-    void handleSensor();
-    void handleSensorSave();
-    
+ public:
+  SuplaWebPageSensor();
+  void createWebPageSensor();
+  void handleSensor();
+  void handleSensorSave();
+
 #ifdef SUPLA_DS18B20
-    void handleSearchDS();
-    void handleDSSave();
+  void handleSearchDS();
+  void handleDSSave();
 #endif
-    
-  private:
-    String supla_webpage_sensor(int save);
+
+ private:
+  String supla_webpage_sensor(int save);
 #ifdef SUPLA_DS18B20
-    String supla_webpage_search(int save);
+  String supla_webpage_search(int save);
 #endif
-    const char* SupportedBme280[3] = {
-      "OFF",
-      "0x76",
-      "0x77"
-    };
+  const char* SupportedBme280[3] = {
+    "OFF", 
+    "0x76", 
+    "0x77"};
 };
 
-extern SuplaWebPageSensor *WebPageSensor;
-#endif // SuplaWebPageSensor_h
+extern SuplaWebPageSensor* WebPageSensor;
+#endif  // SuplaWebPageSensor_h

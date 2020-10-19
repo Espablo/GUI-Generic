@@ -101,48 +101,47 @@
 #define CONFIG_MAX_OPTIONS        88
 
 class ConfigOption {
-  public:
-    ConfigOption(const char *key, const char *value, int maxLength);
-    const char *getKey();
-    const char *getValue();
-    int getValueInt();
-    uint8_t *getValueBin(size_t size);
-    const char *getValueHex(size_t size);
-    int getValueElement(int element);
+ public:
+  ConfigOption(const char *key, const char *value, int maxLength);
+  const char *getKey();
+  const char *getValue();
+  int getValueInt();
+  uint8_t *getValueBin(size_t size);
+  const char *getValueHex(size_t size);
+  int getValueElement(int element);
 
-    int getLength();
-    void setValue(const char *value);
-    String getElement(int index);
-    String replaceElement(int index, int value);
+  int getLength();
+  void setValue(const char *value);
+  String getElement(int index);
+  String replaceElement(int index, int value);
 
-  private:
-    char *_key;
-    char *_value;
-    int _maxLength;
+ private:
+  char *_key;
+  char *_value;
+  int _maxLength;
 };
 
 class SuplaConfigManager {
+ public:
+  SuplaConfigManager();
+  uint8_t addKey(const char *key, int maxLength);
+  uint8_t addKey(const char *key, const char *value, int maxLength);
+  uint8_t addKeyAndRead(const char *key, const char *value, int maxLength);
+  uint8_t deleteKey(const char *key);
+  uint8_t load();
+  uint8_t loadItem(const char *key);
+  uint8_t save();
+  void showAllValue();
 
-  public:
-    SuplaConfigManager();
-    uint8_t addKey(const char *key, int maxLength);
-    uint8_t addKey(const char *key, const char *value, int maxLength);
-    uint8_t addKeyAndRead(const char *key, const char *value, int maxLength);
-    uint8_t deleteKey(const char *key);
-    uint8_t load();
-    uint8_t loadItem(const char *key);
-    uint8_t save();
-    void showAllValue();
+  ConfigOption *get(const char *key);
+  bool set(const char *key, const char *value);
+  bool setElement(const char *key, int index, int newvalue);
 
-    ConfigOption *get(const char *key);
-    bool set(const char *key, const char *value);
-    bool setElement(const char *key, int index, int newvalue);
+  bool isDeviceConfigured();
+  void setGUIDandAUTHKEY();
 
-    bool isDeviceConfigured();
-    void setGUIDandAUTHKEY();
-
-  private:
-    int _optionCount;
-    ConfigOption *_options[CONFIG_MAX_OPTIONS];
+ private:
+  int _optionCount;
+  ConfigOption *_options[CONFIG_MAX_OPTIONS];
 };
 #endif

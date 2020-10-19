@@ -15,31 +15,29 @@
 #define  INPUT_RELAY_DURATION     "ird"
 #define  INPUT_ROLLERSHUTTER      "irsr"
 
- #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 class SuplaWebPageRelay {
-  public:
-    SuplaWebPageRelay();
-    void createWebPageRelay();
-    void handleRelay();
-    void handleRelaySave();
-    void handleRelaySet();
-    void handleRelaySaveSet();
-    
-  private:    
-    String supla_webpage_relay_set(int save);
-    String supla_webpage_relay(int save);
+ public:
+  SuplaWebPageRelay();
+  void createWebPageRelay();
+  void handleRelay();
+  void handleRelaySave();
+  void handleRelaySet();
+  void handleRelaySaveSet();
 
-    const char* SupportedRelayLevel[2] = {
-      "ODWRÓCONE",
-      "NORMALNE"
-    };
-    
-    const char* SupportedRelayMemory[2] = {
-      "WYŁĄCZONY",
-      "PAMIĘTAJ STAN"
-    };
+ private:
+  String supla_webpage_relay_set(int save);
+  String supla_webpage_relay(int save);
+
+  const char* SupportedRelayLevel[2] = {
+    "ODWRÓCONE", 
+    "NORMALNE"};
+
+  const char* SupportedRelayMemory[2] = {
+    "WYŁĄCZONY", 
+    "PAMIĘTAJ STAN"};
 };
 
-extern SuplaWebPageRelay *WebPageRelay;
+extern SuplaWebPageRelay* WebPageRelay;
 #endif
-#endif // SuplaWebPageRelay_h
+#endif  // SuplaWebPageRelay_h

@@ -24,40 +24,44 @@ SuplaConfigESP::SuplaConfigESP() {
 
   if (ConfigManager->isDeviceConfigured()) {
     ConfigManager->setGUIDandAUTHKEY();
-    if(String(ConfigManager->get(KEY_LOGIN)->getValue()) == 0){
+    if (String(ConfigManager->get(KEY_LOGIN)->getValue()) == 0) {
       ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
-    }    
-    if(String(ConfigManager->get(KEY_LOGIN_PASS)->getValue()) == 0){
+    }
+    if (String(ConfigManager->get(KEY_LOGIN_PASS)->getValue()) == 0) {
       ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
     }
-    if(String(ConfigManager->get(KEY_HOST_NAME)->getValue()) == 0){
+    if (String(ConfigManager->get(KEY_HOST_NAME)->getValue()) == 0) {
       ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
-    }    
-    if(String(ConfigManager->get(KEY_SUPLA_SERVER)->getValue()) == 0){
+    }
+    if (String(ConfigManager->get(KEY_SUPLA_SERVER)->getValue()) == 0) {
       ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);
-    }    
-    if(String(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue()) == 0){
+    }
+    if (String(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue()) == 0) {
       ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
     }
+
     ConfigManager->save();
+
     configModeInit();
   }
   // if(String(ConfigManager->get(KEY_WIFI_SSID)->getValue()) == 0 ||
   //         String(ConfigManager->get(KEY_WIFI_PASS)->getValue()) == 0 ||
-  //         String(ConfigManager->get(KEY_SUPLA_SERVER)->getValue()) == DEFAULT_SERVER ||
-  //         String(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue()) == DEFAULT_EMAIL){
+  //         String(ConfigManager->get(KEY_SUPLA_SERVER)->getValue()) ==
+  //         DEFAULT_SERVER ||
+  //         String(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue()) ==
+  //         DEFAULT_EMAIL){
   //   configModeInit();
   //   return;
   // }
   SuplaDevice.setStatusFuncImpl(&status_func);
 }
 
- void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _highIsOn) {
+void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _highIsOn) {
   pinNumberConfig = _pinNumberConfig;
   pinLedConfig = _pinLedConfig;
   modeConfigButton = _modeConfigButton;
   highIsOn = _highIsOn;
-  
+
   if (pinLedConfig <= 0) {
     Serial.println(F("ESP  - status LED disabled"));
   } else {
@@ -85,7 +89,7 @@ void SuplaConfigESP::runAction(int event, int action) {
     countPresses++;
 
     if (countPresses == 3) {
-//      Serial.println(F("CONFIG_MODE_3_PRESSES"));
+      //      Serial.println(F("CONFIG_MODE_3_PRESSES"));
       configModeInit();
       countPresses = 0;
       return;
@@ -98,9 +102,9 @@ void SuplaConfigESP::runAction(int event, int action) {
     }
     if (event == Supla::ON_RELEASE) {
       if (millis() - cnfigChangeTimeMs > 5000UL) {
-        if(!digitalRead(pinNumberConfig)){
-//        Serial.println(F("CONFIG_MODE_5SEK_HOLD"));
-        configModeInit();
+        if (!digitalRead(pinNumberConfig)) {
+          //        Serial.println(F("CONFIG_MODE_5SEK_HOLD"));
+          configModeInit();
         }
       }
       cnfigChangeTimeMs = 0;
@@ -119,63 +123,63 @@ void SuplaConfigESP::rebootESP() {
   WiFi.forceSleepBegin();
   wdt_reset();
   ESP.restart();
-  while (1)wdt_reset();
+  while (1) wdt_reset();
 }
 
 void WiFiEvent(WiFiEvent_t event) {
   switch (event) {
-    case WIFI_EVENT_STAMODE_CONNECTED:
-//      Serial.print(millis());
-//      Serial.print(" => ");
-//
-//      Serial.println(F("WIFI_EVENT_STAMODE_CONNECTED"));
-      break;
-    case WIFI_EVENT_STAMODE_DISCONNECTED:
-//      Serial.print(millis());
-//      Serial.print(" => ");
-//
-//      Serial.println(F("WiFi lost connection"));
-      break;
-    case WIFI_EVENT_STAMODE_AUTHMODE_CHANGE:
-//      Serial.print(millis());
-//      Serial.print(" => ");
-//
-//      Serial.println(F("WIFI_EVENT_STAMODE_AUTHMODE_CHANGE"));
-      break;
-    case WIFI_EVENT_STAMODE_GOT_IP:
-//      Serial.print(millis());
-//      Serial.print(" => ");
-//      Serial.println(F("WIFI_EVENT_STAMODE_GOT_IP"));
-//      Serial.println(WiFi.localIP());
-      break;
-    case WIFI_EVENT_STAMODE_DHCP_TIMEOUT:
-//      Serial.print(millis());
-//      Serial.print(" => ");
-//
-//      Serial.println(F("WIFI_EVENT_STAMODE_DHCP_TIMEOUT"));
-      break;
-    case WIFI_EVENT_SOFTAPMODE_STACONNECTED:
-//      Serial.print(millis());
-//      Serial.print(" => ");
-//
-//      Serial.println(F("WIFI_EVENT_SOFTAPMODE_STACONNECTED"));
-      break;
-    case WIFI_EVENT_SOFTAPMODE_STADISCONNECTED:
-//      Serial.print(millis());
-//      Serial.print(" => ");
-//
-//      Serial.println(F("WIFI_EVENT_SOFTAPMODE_STADISCONNECTED"));
-      break;
-    case WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED:
-      // Serial.print(" => ");
-      //Serial.println("WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED"));
-      break;
-    case WIFI_EVENT_MAX:
-//      Serial.print(millis());
-//      Serial.print(" => ");
-//
-//      Serial.println(F("WIFI_EVENT_MAX"));
-      break;
+  case WIFI_EVENT_STAMODE_CONNECTED:
+    //      Serial.print(millis());
+    //      Serial.print(" => ");
+    //
+    //      Serial.println(F("WIFI_EVENT_STAMODE_CONNECTED"));
+    break;
+  case WIFI_EVENT_STAMODE_DISCONNECTED:
+    //      Serial.print(millis());
+    //      Serial.print(" => ");
+    //
+    //      Serial.println(F("WiFi lost connection"));
+    break;
+  case WIFI_EVENT_STAMODE_AUTHMODE_CHANGE:
+    //      Serial.print(millis());
+    //      Serial.print(" => ");
+    //
+    //      Serial.println(F("WIFI_EVENT_STAMODE_AUTHMODE_CHANGE"));
+    break;
+  case WIFI_EVENT_STAMODE_GOT_IP:
+    //      Serial.print(millis());
+    //      Serial.print(" => ");
+    //      Serial.println(F("WIFI_EVENT_STAMODE_GOT_IP"));
+    //      Serial.println(WiFi.localIP());
+    break;
+  case WIFI_EVENT_STAMODE_DHCP_TIMEOUT:
+    //      Serial.print(millis());
+    //      Serial.print(" => ");
+    //
+    //      Serial.println(F("WIFI_EVENT_STAMODE_DHCP_TIMEOUT"));
+    break;
+  case WIFI_EVENT_SOFTAPMODE_STACONNECTED:
+    //      Serial.print(millis());
+    //      Serial.print(" => ");
+    //
+    //      Serial.println(F("WIFI_EVENT_SOFTAPMODE_STACONNECTED"));
+    break;
+  case WIFI_EVENT_SOFTAPMODE_STADISCONNECTED:
+    //      Serial.print(millis());
+    //      Serial.print(" => ");
+    //
+    //      Serial.println(F("WIFI_EVENT_SOFTAPMODE_STADISCONNECTED"));
+    break;
+  case WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED:
+    // Serial.print(" => ");
+    // Serial.println("WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED"));
+    break;
+  case WIFI_EVENT_MAX:
+    //      Serial.print(millis());
+    //      Serial.print(" => ");
+    //
+    //      Serial.println(F("WIFI_EVENT_MAX"));
+    break;
   }
 }
 
@@ -185,20 +189,19 @@ void SuplaConfigESP::configModeInit() {
   WiFi.softAPdisconnect(true);
 
   WiFi.onEvent(WiFiEvent);
-//  Serial.print(F("Creating Access Point"));
-//  Serial.print(F("Setting mode ... "));
-//  Serial.println(WiFi.mode(WIFI_AP_STA) ? "Ready" : "Failed!");
+  //  Serial.print(F("Creating Access Point"));
+  //  Serial.print(F("Setting mode ... "));
+  //  Serial.println(WiFi.mode(WIFI_AP_STA) ? "Ready" : "Failed!");
   WiFi.disconnect(true);
 
   String CONFIG_WIFI_NAME = "SUPLA-ESP8266-" + getMacAddress(false);
-  while (!WiFi.softAP(CONFIG_WIFI_NAME, ""))
-  {
-//    Serial.println(F("."));
+  while (!WiFi.softAP(CONFIG_WIFI_NAME, "")) {
+    //    Serial.println(F("."));
     delay(100);
   }
-//  Serial.println(F("Network Created!"));
-//  Serial.print(F("Soft-AP IP address = "));
-//  Serial.println(WiFi.softAPIP());
+  //  Serial.println(F("Network Created!"));
+  //  Serial.print(F("Soft-AP IP address = "));
+  //  Serial.println(WiFi.softAPIP());
 }
 
 const char *SuplaConfigESP::getLastStatusSupla() {
@@ -208,7 +211,7 @@ const char *SuplaConfigESP::getLastStatusSupla() {
 void SuplaConfigESP::ledBlinking(int time) {
   os_timer_disarm(&led_timer);
   os_timer_setfn(&led_timer, ledBlinking_func, NULL);
-  os_timer_arm (&led_timer, time, true);
+  os_timer_arm(&led_timer, time, true);
 }
 
 void SuplaConfigESP::ledBlinkingStop(void) {
@@ -221,7 +224,6 @@ int SuplaConfigESP::getPinLedConfig() {
 }
 
 String SuplaConfigESP::getMacAddress(bool formating) {
-  uint8_t mac_addr[6];
   byte mac[6];
   WiFi.macAddress(mac);
   char baseMacChr[18] = {0};
@@ -241,70 +243,71 @@ void ledBlinking_func(void *timer_arg) {
 
 void status_func(int status, const char *msg) {
   switch (status) {
-    case 2:
-      ConfigESP->supla_status.msg = "Już zainicjalizowane";
-      break;
-    case 3:
-      ConfigESP->supla_status.msg = "Nie przypisane CB";
-      break;
-    case 4:
-      ConfigESP->supla_status.msg = "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń NIEAKTYWNA";
-      break;
-    case 5:
-      ConfigESP->supla_status.msg = "Nieznany adres serwera";
-      break;
-    case 6:
-      ConfigESP->supla_status.msg = "Nieznany identyfikator ID";
-      break;
-    case 7:
-      ConfigESP->supla_status.msg = "Zainicjowany";
-      break;
-    case 8:
-      ConfigESP->supla_status.msg = "Przekroczono limit kanału";
-      break;
-    case 9:
-      ConfigESP->supla_status.msg = "Rozłączony";
-      break;
-    case 10:
-      ConfigESP->supla_status.msg = "Rejestracja w toku";
-      break;
-    case 11:
-      ConfigESP->supla_status.msg = "Błąd zmiennej";
-      break;
-    case 12:
-      ConfigESP->supla_status.msg = "Błąd wersji protokołu";
-      break;
-    case 13:
-      ConfigESP->supla_status.msg = "Złe poświadczenia";
-      break;
-    case 14:
-      ConfigESP->supla_status.msg = "Tymczasowo niedostępne";
-      break;
-    case 15:
-      ConfigESP->supla_status.msg = "Konflikt lokalizacji";
-      break;
-    case 16:
-      ConfigESP->supla_status.msg = "Konflikt kanałów";
-      break;
-    case 17:
-      ConfigESP->supla_status.msg = "Zarejestrowany i gotowy";
-      break;
-    case 18:
-      ConfigESP->supla_status.msg = "Urządzenie jest rozłączone";
-      break;
-    case 19:
-      ConfigESP->supla_status.msg = "Lokalizacja jest wyłączona";
-      break;
-    case 20:
-      ConfigESP->supla_status.msg = "Przekroczono limit urządzeń";
+  case 2:
+    ConfigESP->supla_status.msg = "Już zainicjalizowane";
+    break;
+  case 3:
+    ConfigESP->supla_status.msg = "Nie przypisane CB";
+    break;
+  case 4:
+    ConfigESP->supla_status.msg =
+        "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
+        "NIEAKTYWNA";
+    break;
+  case 5:
+    ConfigESP->supla_status.msg = "Nieznany adres serwera";
+    break;
+  case 6:
+    ConfigESP->supla_status.msg = "Nieznany identyfikator ID";
+    break;
+  case 7:
+    ConfigESP->supla_status.msg = "Zainicjowany";
+    break;
+  case 8:
+    ConfigESP->supla_status.msg = "Przekroczono limit kanału";
+    break;
+  case 9:
+    ConfigESP->supla_status.msg = "Rozłączony";
+    break;
+  case 10:
+    ConfigESP->supla_status.msg = "Rejestracja w toku";
+    break;
+  case 11:
+    ConfigESP->supla_status.msg = "Błąd zmiennej";
+    break;
+  case 12:
+    ConfigESP->supla_status.msg = "Błąd wersji protokołu";
+    break;
+  case 13:
+    ConfigESP->supla_status.msg = "Złe poświadczenia";
+    break;
+  case 14:
+    ConfigESP->supla_status.msg = "Tymczasowo niedostępne";
+    break;
+  case 15:
+    ConfigESP->supla_status.msg = "Konflikt lokalizacji";
+    break;
+  case 16:
+    ConfigESP->supla_status.msg = "Konflikt kanałów";
+    break;
+  case 17:
+    ConfigESP->supla_status.msg = "Zarejestrowany i gotowy";
+    break;
+  case 18:
+    ConfigESP->supla_status.msg = "Urządzenie jest rozłączone";
+    break;
+  case 19:
+    ConfigESP->supla_status.msg = "Lokalizacja jest wyłączona";
+    break;
+  case 20:
+    ConfigESP->supla_status.msg = "Przekroczono limit urządzeń";
   }
 
   static int lock;
   if (status == 17 && ConfigESP->configModeESP == NORMAL_MODE) {
     ConfigESP->ledBlinkingStop();
     lock = 0;
-  }
-  else if (status != 17 && lock == 0 && ConfigESP->configModeESP == NORMAL_MODE) {
+  } else if (status != 17 && lock == 0 && ConfigESP->configModeESP == NORMAL_MODE) {
     ConfigESP->ledBlinking(500);
     lock = 1;
   }
@@ -312,30 +315,30 @@ void status_func(int status, const char *msg) {
   if (ConfigESP->supla_status.old_msg != ConfigESP->supla_status.msg) {
     ConfigESP->supla_status.old_msg = ConfigESP->supla_status.msg;
     ConfigESP->supla_status.status = status;
-//    Serial.println(ConfigESP->supla_status.msg);
+    //    Serial.println(ConfigESP->supla_status.msg);
   }
 }
- #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-int SuplaConfigESP::getMemoryRelay(int nr){
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+int SuplaConfigESP::getMemoryRelay(int nr) {
   return _relayMemory[nr];
 }
 #endif
 
-int SuplaConfigESP::sort(int function){
+int SuplaConfigESP::sort(int function) {
   int present = false;
   int gpio[17];
   int level[17];
   int memory[17];
-  for(int nr = 0; nr <= OFF_GPIO; nr++){
-      gpio[nr] = OFF_GPIO;
-      level[nr] = 0;
-      memory[nr] = 0;
+  for (int nr = 0; nr <= OFF_GPIO; nr++) {
+    gpio[nr] = OFF_GPIO;
+    level[nr] = 0;
+    memory[nr] = 0;
   }
 
-  for(int nr = 0; nr <= OFF_GPIO; nr++){
+  for (int nr = 0; nr <= OFF_GPIO; nr++) {
     String key = GPIO;
-    key += nr;    
-    if(ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function){
+    key += nr;
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
       present = true;
       gpio[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = nr;
       level[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = ConfigManager->get(key.c_str())->getElement(LEVEL).toInt();
@@ -345,66 +348,66 @@ int SuplaConfigESP::sort(int function){
 
   switch (function) {
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-    case FUNCTION_RELAY:
-      memcpy(_relayGpio, gpio, sizeof(_relayGpio));
-      memcpy(_relayLevel, level, sizeof(_relayLevel));
-      memcpy(_relayMemory, memory, sizeof(_relayMemory));
-      return present;
+  case FUNCTION_RELAY:
+    memcpy(_relayGpio, gpio, sizeof(_relayGpio));
+    memcpy(_relayLevel, level, sizeof(_relayLevel));
+    memcpy(_relayMemory, memory, sizeof(_relayMemory));
+    return present;
 #endif
 #ifdef SUPLA_BUTTON
-    case FUNCTION_BUTTON:
-      memcpy(_buttonGpio, gpio, sizeof(_buttonGpio));
-      memcpy(_buttonLevel, level, sizeof(_buttonLevel));
-      return present;
+  case FUNCTION_BUTTON:
+    memcpy(_buttonGpio, gpio, sizeof(_buttonGpio));
+    memcpy(_buttonLevel, level, sizeof(_buttonLevel));
+    return present;
 #endif
 #ifdef SUPLA_LIMIT_SWITCH
-    case FUNCTION_LIMIT_SWITCH:
-      memcpy(_limitSwiitchGpio, gpio, sizeof(_limitSwiitchGpio));
-      return present;
+  case FUNCTION_LIMIT_SWITCH:
+    memcpy(_limitSwiitchGpio, gpio, sizeof(_limitSwiitchGpio));
+    return present;
 #endif
 #ifdef SUPLA_CONFIG
-    case FUNCTION_CFG_LED:     
-      memcpy(_cfgLedGpio, gpio, sizeof(_cfgLedGpio));
-      memcpy(_cfgLedLevel, level, sizeof(_cfgLedLevel));
-      return present;
+  case FUNCTION_CFG_LED:
+    memcpy(_cfgLedGpio, gpio, sizeof(_cfgLedGpio));
+    memcpy(_cfgLedLevel, level, sizeof(_cfgLedLevel));
+    return present;
 
-    case FUNCTION_CFG_BUTTON:
-      memcpy(_cfgButtonGpio, gpio, sizeof(_cfgButtonGpio));
-      memcpy(_cfgButtonFlag, memory, sizeof(_cfgButtonFlag));
-      return present;
+  case FUNCTION_CFG_BUTTON:
+    memcpy(_cfgButtonGpio, gpio, sizeof(_cfgButtonGpio));
+    memcpy(_cfgButtonFlag, memory, sizeof(_cfgButtonFlag));
+    return present;
 #endif
 #ifdef SUPLA_DS18B20
-    case FUNCTION_DS18B20:
-      memcpy(_ds18b20Gpio, gpio, sizeof(_ds18b20Gpio));
-      return present;
+  case FUNCTION_DS18B20:
+    memcpy(_ds18b20Gpio, gpio, sizeof(_ds18b20Gpio));
+    return present;
 #endif
 #ifdef SUPLA_DHT11
-    case FUNCTION_DHT11:
-      memcpy(_dht11Gpio, gpio, sizeof(_dht11Gpio));
-      return present;
+  case FUNCTION_DHT11:
+    memcpy(_dht11Gpio, gpio, sizeof(_dht11Gpio));
+    return present;
 #endif
 #ifdef SUPLA_DHT22
-    case FUNCTION_DHT22:
-      memcpy(_dht22Gpio, gpio, sizeof(_dht22Gpio));
-      return present;
+  case FUNCTION_DHT22:
+    memcpy(_dht22Gpio, gpio, sizeof(_dht22Gpio));
+    return present;
 #endif
 #ifdef SUPLA_BME280
-    case FUNCTION_SDA:
-      memcpy(_sdaGpio, gpio, sizeof(_sdaGpio));
-      return present;
+  case FUNCTION_SDA:
+    memcpy(_sdaGpio, gpio, sizeof(_sdaGpio));
+    return present;
 
-    case FUNCTION_SCL:
-      memcpy(_sclGpio, gpio, sizeof(_sclGpio));
-      return present;
+  case FUNCTION_SCL:
+    memcpy(_sclGpio, gpio, sizeof(_sclGpio));
+    return present;
 #endif
 #ifdef SUPLA_HC_SR04
-    case FUNCTION_TRIG:
-      memcpy(_trigGpio, gpio, sizeof(_trigGpio));
-      return present;
+  case FUNCTION_TRIG:
+    memcpy(_trigGpio, gpio, sizeof(_trigGpio));
+    return present;
 
-    case FUNCTION_ECHO:
-      memcpy(_echoGpio, gpio, sizeof(_echoGpio));
-      return present;
+  case FUNCTION_ECHO:
+    memcpy(_echoGpio, gpio, sizeof(_echoGpio));
+    return present;
 #endif
   }
   return present;
@@ -414,84 +417,81 @@ int SuplaConfigESP::sort(int function){
 //   ConfigESP->getGpio(1, function);
 // }
 
-int SuplaConfigESP::getGpio(int nr, int function){
-
-   switch (function) {
+int SuplaConfigESP::getGpio(int nr, int function) {
+  switch (function) {
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-    case FUNCTION_RELAY:
-      return _relayGpio[nr];
+  case FUNCTION_RELAY:
+    return _relayGpio[nr];
 #endif
 #ifdef SUPLA_BUTTON
-    case FUNCTION_BUTTON:
-      return _buttonGpio[nr];
+  case FUNCTION_BUTTON:
+    return _buttonGpio[nr];
 #endif
 #ifdef SUPLA_LIMIT_SWITCH
-    case FUNCTION_LIMIT_SWITCH:
-      return _limitSwiitchGpio[nr];
+  case FUNCTION_LIMIT_SWITCH:
+    return _limitSwiitchGpio[nr];
 #endif
 #ifdef SUPLA_CONFIG
-    case FUNCTION_CFG_LED:
-      return _cfgLedGpio[nr];
+  case FUNCTION_CFG_LED:
+    return _cfgLedGpio[nr];
 
-    case FUNCTION_CFG_BUTTON:
-      return _cfgButtonGpio[nr];
+  case FUNCTION_CFG_BUTTON:
+    return _cfgButtonGpio[nr];
 #endif
 #ifdef SUPLA_DS18B20
-    case FUNCTION_DS18B20:
-      return _ds18b20Gpio[nr];
+  case FUNCTION_DS18B20:
+    return _ds18b20Gpio[nr];
 #endif
 #ifdef SUPLA_DHT11
-    case FUNCTION_DHT11:
-      return _dht11Gpio[nr];
+  case FUNCTION_DHT11:
+    return _dht11Gpio[nr];
 #endif
 #ifdef SUPLA_DHT22
-    case FUNCTION_DHT22:
-      return _dht22Gpio[nr];
+  case FUNCTION_DHT22:
+    return _dht22Gpio[nr];
 #endif
 #ifdef SUPLA_BME280
-    case FUNCTION_SDA:
-      return _sdaGpio[nr];
+  case FUNCTION_SDA:
+    return _sdaGpio[nr];
 
-    case FUNCTION_SCL:
-      return _sclGpio[nr];
+  case FUNCTION_SCL:
+    return _sclGpio[nr];
 #endif
 #ifdef SUPLA_HC_SR04
-    case FUNCTION_TRIG:
-      return _trigGpio[nr];
+  case FUNCTION_TRIG:
+    return _trigGpio[nr];
 
-    case FUNCTION_ECHO:
-      return _echoGpio[nr];
+  case FUNCTION_ECHO:
+    return _echoGpio[nr];
 #endif
   }
 }
 
-int SuplaConfigESP::getLevel(int nr, int function){
-
-   switch (function) {
+int SuplaConfigESP::getLevel(int nr, int function) {
+  switch (function) {
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-    case FUNCTION_RELAY:
-      return _relayLevel[nr];
+  case FUNCTION_RELAY:
+    return _relayLevel[nr];
 #endif
 #ifdef SUPLA_BUTTON
-    case FUNCTION_BUTTON:
-      return _buttonLevel[nr];
+  case FUNCTION_BUTTON:
+    return _buttonLevel[nr];
 #endif
 #ifdef SUPLA_CONFIG
-    case FUNCTION_CFG_LED:
-      return _cfgLedLevel[nr];
+  case FUNCTION_CFG_LED:
+    return _cfgLedLevel[nr];
 #endif
   }
 }
 
-int SuplaConfigESP::checkBusy(int gpio, int function){
-  if(gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11){
+int SuplaConfigESP::checkBusy(int gpio, int function) {
+  if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11) {
     return true;
-  }
-  else{
+  } else {
     String key = GPIO;
     key += gpio;
-    if( ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != FUNCTION_OFF){
-      if( ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != function){
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != FUNCTION_OFF) {
+      if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != function) {
         return true;
       }
       return false;
@@ -500,15 +500,15 @@ int SuplaConfigESP::checkBusy(int gpio, int function){
   return false;
 }
 
-int SuplaConfigESP::getCfgFlag(){
-  for(int i = 0; i <= 17; i++){
+int SuplaConfigESP::getCfgFlag() {
+  for (int i = 0; i <= 17; i++) {
     String key = GPIO;
     key += i;
-     if( ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_BUTTON){
-        if(ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1){
-          return i;
-        }
-     }
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_BUTTON) {
+      if (ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1) {
+        return i;
+      }
+    }
   }
   return 17;
 }

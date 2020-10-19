@@ -1,12 +1,12 @@
-#include "SuplaWebServer.h"
-#include "SuplaDeviceGUI.h"
 #include "SuplaWebPageRelay.h"
+#include "SuplaDeviceGUI.h"
+#include "SuplaWebServer.h"
+
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 SuplaWebPageRelay *WebPageRelay = new SuplaWebPageRelay();
 
 SuplaWebPageRelay::SuplaWebPageRelay() {
-
 }
 
 void SuplaWebPageRelay::createWebPageRelay() {
@@ -49,7 +49,7 @@ void SuplaWebPageRelay::handleRelaySave() {
   String key, input;
   uint8_t nr, current_value, last_value, error;
 
-  last_value = ConfigManager->get(KEY_MAX_RELAY )->getValueInt();
+  last_value = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   current_value = WebServer->httpServer.arg(INPUT_MAX_RELAY).toInt();
 
   if (last_value > 0) {
@@ -64,12 +64,10 @@ void SuplaWebPageRelay::handleRelaySave() {
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
             (ConfigESP->getGpio(nr, FUNCTION_RELAY) == WebServer->httpServer.arg(input).toInt() &&
              ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_RELAY)) {
-
           ConfigManager->setElement(key.c_str(), NR, nr);
           ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_RELAY);
           ConfigManager->setElement(key.c_str(), LEVEL, 1);
-        }
-        else {
+        } else {
           WebServer->httpServer.send(200, "text/html", supla_webpage_relay(6));
           return;
         }
@@ -80,9 +78,9 @@ void SuplaWebPageRelay::handleRelaySave() {
         key = GPIO;
         key += ConfigESP->getGpio(nr, FUNCTION_RELAY);
         ConfigManager->setElement(key.c_str(), NR, 0);
-        ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
-        ConfigManager->setElement(key.c_str(), LEVEL, 0 );
-        ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+        ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+        ConfigManager->setElement(key.c_str(), LEVEL, 0);
+        ConfigManager->setElement(key.c_str(), MEMORY, 0);
       }
     }
   }
@@ -123,7 +121,10 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += F("<i><label>ILOŚĆ</label><input name='");
   pagerelay += INPUT_MAX_RELAY;
   pagerelay += F("' type='number' placeholder='0' step='1' min='0' max='");
-  pagerelay += MAX_GPIO - ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() - ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt() - ConfigManager->get(KEY_MAX_DHT11)->getValueInt() - ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
+  pagerelay += MAX_GPIO - ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() -
+               ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt() -
+               ConfigManager->get(KEY_MAX_DHT11)->getValueInt() -
+               ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
   pagerelay += F("' value='");
   pagerelay += String(ConfigManager->get(KEY_MAX_RELAY)->getValue());
   pagerelay += F("'></i>");
@@ -148,8 +149,8 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
         pagerelay += suported;
         if (selected == suported) {
           pagerelay += F("' selected>");
-        }
-        else pagerelay += F("'>");
+        } else
+          pagerelay += F("'>");
         pagerelay += (WebServer->Supported_Gpio[suported]);
       }
     }
@@ -160,7 +161,7 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += F("<a href='");
   pagerelay += PATH_START;
   pagerelay += PATH_DEVICESETTINGS;
-  pagerelay += F ("'><button>Powrót</button></a></div>");
+  pagerelay += F("'><button>Powrót</button></a></div>");
   return pagerelay;
 }
 
@@ -215,7 +216,6 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 }
 
 String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
-
   String readUrl, nr_relay, key;
   uint8_t place, selected, suported;
 
@@ -236,7 +236,8 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
   //  page += WebServer->SuplaLogo();
   page += WebServer->SuplaSummary();
   uint8_t relays = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
-  if (nr_relay.toInt() <= relays && ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY) != OFF_GPIO) {
+  if (nr_relay.toInt() <= relays &&
+      ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY) != OFF_GPIO) {
     page += F("<form method='post' action='");
     page += PATH_SAVE_RELAY_SET;
     page += nr_relay;
@@ -249,13 +250,13 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += nr_relay;
     page += F("'>");
     selected = ConfigESP->getLevel(nr_relay.toInt(), FUNCTION_RELAY);
-    for (suported = 0; suported < sizeof(SupportedRelayLevel) / sizeof(char*); suported++) {
+    for (suported = 0; suported < sizeof(SupportedRelayLevel) / sizeof(char *); suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      }
-      else page += F("'>");
+      } else
+        page += F("'>");
       page += (SupportedRelayLevel[suported]);
     }
     page += F("</select></i>");
@@ -265,19 +266,18 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += nr_relay;
     page += F("'>");
     selected = ConfigESP->getMemoryRelay(nr_relay.toInt());
-    for (suported = 0; suported < sizeof(SupportedRelayMemory) / sizeof(char*); suported++) {
+    for (suported = 0; suported < sizeof(SupportedRelayMemory) / sizeof(char *); suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      }
-      else page += F("'>");
+      } else
+        page += F("'>");
       page += (SupportedRelayMemory[suported]);
     }
     page += F("</select></i>");
     page += F("</div><button type='submit'>Zapisz</button></form>");
-  }
-  else {
+  } else {
     page += F("<div class='w'><h3>Brak przekaźnika nr. ");
     page += nr_relay;
     page += F("</h3>");
@@ -286,7 +286,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
   page += F("<a href='");
   page += PATH_START;
   page += PATH_RELAY;
-  page += F ("'><button>Powrót</button></a></div>");
+  page += F("'><button>Powrót</button></a></div>");
 
   return page;
 }
