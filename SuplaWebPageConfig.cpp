@@ -36,38 +36,37 @@ void SuplaWebPageConfig::handleConfigSave() {
   }
 
   String key, input;
-  key = GPIO;
-  key += ConfigESP->getGpio(1, FUNCTION_CFG_LED);
-  input = INPUT_CFG_LED_LEVEL;
-  ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
-
   input = INPUT_CFG_LED_GPIO;
   key = GPIO;
   key += WebServer->httpServer.arg(input).toInt();
   if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
     key = GPIO;
     key += WebServer->httpServer.arg(input).toInt();
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigESP->getGpio(1, FUNCTION_CFG_LED) == WebServer->httpServer.arg(input).toInt() &&
-         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED)) {
-
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_CFG_LED);
       ConfigManager->setElement(key.c_str(), LEVEL, 1);
+    }
+    else if(ConfigESP->getGpio(1, FUNCTION_CFG_LED) == WebServer->httpServer.arg(input).toInt() &&
+         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED){
+      key = GPIO;
+      key += ConfigESP->getGpio(1, FUNCTION_CFG_LED);
+      input = INPUT_CFG_LED_LEVEL;
+      ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
     }
     else {
       WebServer->httpServer.send(200, "text/html", supla_webpage_config(6));
       return;
     }
   }
-  if (ConfigESP->getGpio(1, FUNCTION_CFG_LED) != WebServer->httpServer.arg(input).toInt() ||
+  else if (ConfigESP->getGpio(1, FUNCTION_CFG_LED) != WebServer->httpServer.arg(input).toInt() ||
       WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     key = GPIO;
     key += ConfigESP->getGpio(1, FUNCTION_CFG_LED);
     ConfigManager->setElement(key.c_str(), NR, 0);
     ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
     ConfigManager->setElement(key.c_str(), LEVEL, 0 );
-    ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+    ConfigManager->setElement(key.c_str(), CFG, 0 );
   }
 
   ConfigESP->sort(FUNCTION_CFG_LED);
