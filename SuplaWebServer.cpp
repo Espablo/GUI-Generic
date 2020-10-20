@@ -51,7 +51,7 @@ void SuplaWebServer::createWebServer() {
   path += PATH_REBOT;
   httpServer.on(path, std::bind(&SuplaWebServer::supla_webpage_reboot, this));
   path = PATH_START;
-  path += PATH_DEVICESETTINGS;
+  path += PATH_DEVICE_SETTINGS;
   httpServer.on(path, std::bind(&SuplaWebServer::handleDeviceSettings, this));
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
@@ -111,27 +111,6 @@ void SuplaWebServer::handleSave() {
     button += i;
     button_value += httpServer.arg(button).c_str();
     //    ConfigManager->set(KEY_TYPE_BUTTON, button_value.c_str());
-  }
-#endif
-  // ConfigManager->set(KEY_TYPE_BUTTON, button_value.c_str());
-#ifdef SUPLA_DS18B20
-  for (i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-    String ds_key = KEY_DS;
-    String ds_name_key = KEY_DS_NAME;
-    ds_key += i;
-    ds_name_key += i;
-
-    String ds = F("dschlid");
-    String ds_name = F("dsnameid");
-    ds += i;
-    ds_name += i;
-
-    ConfigManager->set(ds_key.c_str(), httpServer.arg(ds).c_str());
-    ConfigManager->set(ds_name_key.c_str(), httpServer.arg(ds_name).c_str());
-  }
-
-  if (strcmp(httpServer.arg("maxds").c_str(), "") != 0) {
-    ConfigManager->set(KEY_MULTI_MAX_DS18B20, httpServer.arg("maxds").c_str());
   }
 #endif
 
@@ -294,44 +273,12 @@ String SuplaWebServer::supla_webpage_start(int save) {
 #endif
 
 #ifdef SUPLA_DS18B20
-  if (!Supla::GUI::sensorDS.empty()) {
-    content += F("<div class='w'>");
-    content += F("<h3>Temperatura</h3>");
-    for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-      String ds_key = KEY_DS;
-      String ds_name_key = KEY_DS_NAME;
-      ds_key += i;
-      ds_name_key += i;
-
-      double temp = Supla::GUI::sensorDS[i]->getValue();
-      content += F("<i style='border-bottom:none !important;'><input name='dsnameid");
-      content += i;
-      content += F("' value='");
-      content += String(ConfigManager->get(ds_name_key.c_str())->getValue());
-      content += F("' maxlength=");
-      content += MAX_DS18B20_NAME;
-      content += F("><label>");
-      content += F("Nazwa ");
-      content += i + 1;
-      content += F("</label></i>");
-      content += F("<i><input name='dschlid");
-      content += i;
-      content += F("' value='");
-      content += String(ConfigManager->get(ds_key.c_str())->getValue());
-      content += F("' maxlength=");
-      content += MAX_DS18B20_ADDRESS_HEX;
-      content += F("><label>");
-      if (temp != -275)content += temp;
-      else content += F("--.--");
-      content += F(" <b>&deg;C</b> ");
-      content += F("</label></i>");
-    }
-    content += F("</div>");
-  }
+  WebPageSensor->showDS18B20(content, true);
 #endif
+
   content += F("<button type='submit'formaction='");
   content += PATH_START;
-  content += PATH_DEVICESETTINGS;
+  content += PATH_DEVICE_SETTINGS;
   content += F("'>Ustawienia urządzenia</button>");
   content += F("<br><br>");
   content += F("<button type='submit'>Zapisz</button></form>");

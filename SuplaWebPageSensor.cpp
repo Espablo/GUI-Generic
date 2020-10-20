@@ -1,5 +1,3 @@
-#include "SuplaWebServer.h"
-#include "SuplaDeviceGUI.h"
 #include "SuplaWebPageSensor.h"
 
 SuplaWebPageSensor *WebPageSensor = new SuplaWebPageSensor();
@@ -19,10 +17,10 @@ void SuplaWebPageSensor::createWebPageSensor() {
 
 #ifdef SUPLA_DS18B20
   path = PATH_START;
-  path += PATH_SERCH;
+  path += PATH_MULTI_DS;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleSearchDS, this));
   path = PATH_START;
-  path += PATH_SAVE_DS;
+  path += PATH_SAVE_MULTI_DS;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleDSSave, this));
 #endif
 }
@@ -296,8 +294,8 @@ void SuplaWebPageSensor::handleSensorSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      //      Serial.println(F("E_CONFIG_OK: Config save"));
-      WebServer->sendContent(supla_webpage_sensor(1));
+      WebServer->sendContent(supla_webpage_sensor(5));
+      WebServer->rebootESP();
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
@@ -390,8 +388,26 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
 
 #ifdef SUPLA_DS18B20
   page += F("<div class='w'><h3>Ustawienie GPIO dla Multi DS18B20</h3>");
-  page += F("<i><label>");
-  page += F("MULTI DS18B20</label><select name='");
+
+  //if (ConfigESP->getGpio(1, FUNCTION_DS18B20) < OFF_GPIO) {
+  page += F("<i><label>ILOŚĆ</label><input name='");
+  page += INPUT_MAX_DS18B20;
+  page += F("' type='number' placeholder='1' step='1' min='1' max='16' value='");
+  page += String(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValue());
+  page += F("'></i>");
+  //}
+
+  page += F("<i>");
+  if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
+    page += F("<label><a href='");
+    page += PATH_START;
+    page += PATH_MULTI_DS;
+    page += F("'>");
+    page += F("MULTI DS18B20 ");
+    page += WebServer->SuplaIconEdit();
+    page += F("</a></label>");
+  }
+  page += F("<select name='");
   page += INPUT_MULTI_DS_GPIO;
   page += F("'>");
   selected =  ConfigESP->getGpio(1, FUNCTION_DS18B20);
@@ -407,19 +423,15 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
     }
   }
   page += F("</select></i>");
-  if (ConfigESP->getGpio(1, FUNCTION_DS18B20) < OFF_GPIO) {
-    page += F("<i><label>ILOŚĆ</label><input name='");
-    page += INPUT_MAX_DS18B20;
-    page += F("' type='number' placeholder='1' step='1' min='1' max='16' value='");
-    page += String(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValue());
-    page += F("'></i>");
-  }
-  if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
-    page += F("<button type='submit'formaction='");
-    page += PATH_START;
-    page += PATH_SERCH;
-    page += F("'>Szukaj DS</button>");
-  }
+
+
+  /* if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
+     page += F("<button type='submit'formaction='");
+     page += PATH_START;
+     page += PATH_MULTI_DS;
+     page += F("'>Ustawienia DS18B20</button>");
+    }*/
+
   page += F("</div>");
 #endif
 
@@ -532,7 +544,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
 
   page += F("<a href='");
   page += PATH_START;
-  page += PATH_DEVICESETTINGS;
+  page += PATH_DEVICE_SETTINGS;
   page += F("'><button>Powrót</button></a></div>");
   return page;
 }
@@ -553,25 +565,28 @@ void SuplaWebPageSensor::handleDSSave() {
   }
   for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
     String ds_key = KEY_DS;
+    String ds_name_key = KEY_DS_NAME;
     ds_key += i;
+    ds_name_key += i;
 
     String ds = F("dschlid");
+    String ds_name = F("dsnameid");
     ds += i;
+    ds_name += i;
 
-    String address = WebServer->httpServer.arg(ds).c_str();
-    if (address != NULL) {
-      ConfigManager->set(ds_key.c_str(), address.c_str());
-    }
+    ConfigManager->set(ds_key.c_str(), WebServer->httpServer.arg(ds).c_str());
+    ConfigManager->set(ds_name_key.c_str(), WebServer->httpServer.arg(ds_name).c_str());
   }
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Config save"));
-      WebServer->sendContent(supla_webpage_search(1));
+      WebServer->sendContent(supla_webpage_search(5));
+      WebServer->rebootESP();
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->httpServer.send(200, "text/html", supla_webpage_search(2));
+      WebServer->sendContent(supla_webpage_search(2));
       break;
   }
 }
@@ -591,37 +606,19 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   content += WebServer->SuplaStyle();
   //  content += WebServer->SuplaFavicon();
   content += WebServer->SuplaSaveResult(save);
-  content += WebServer->SuplaJavaScript();
+  content += WebServer->SuplaJavaScript(PATH_MULTI_DS);
   content += F("<div class='s'>");
   //  content += WebServer->SuplaLogo();
   content += WebServer->SuplaSummary();
   content += F("<center>");
-  content += F("<div class='w'>");
-  content += F("<h3>Temperatura</h3>");
-  for (i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-    double temp = Supla::GUI::sensorDS[i]->getValue();
-    String ds_key = KEY_DS;
-    ds_key += i;
-
-    content += F("<i><input name='ds18b20_");
-    content += i;
-    content += F("' value='");
-    content += String(ConfigManager->get(ds_key.c_str())->getValue());
-    content += F("' maxlength=");
-    content += MAX_DS18B20_ADDRESS_HEX;
-    content += F(" readonly><label>");
-    if (temp != -275)content += temp;
-    else content += F("--.--");
-    content += F(" <b>&deg;C</b> ");
-    content += F("</label>");
-    content += F("<label style='left:80px'>GPIO: ");
-    content += pin;
-    content += F("</label></i>");
-  }
-  content += F("</div>");
-
   content += F("<form method='post' action='");
-  content += PATH_SAVE_DS;
+  content += PATH_SAVE_MULTI_DS;
+  content += F("'>");
+  this->showDS18B20(content);
+  content += F("<button type='submit'>Zapisz</button></form>");
+  content += F("<br>");
+  content += F("<form method='post' action='");
+  content += PATH_SAVE_MULTI_DS;
   content += F("'>");
   content += F("<div class='w'>");
   content += F("<h3>Znalezione DS18b20</h3>");
@@ -678,5 +675,49 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   //  content += WebServer->SuplaCopyrightBar();
 
   return content;
+}
+
+void SuplaWebPageSensor::showDS18B20(String &content, bool readonly ) {
+  if (!Supla::GUI::sensorDS.empty()) {
+    content += F("<div class='w'>");
+    content += F("<h3>Temperatura</h3>");
+    for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
+      String ds_key = KEY_DS;
+      String ds_name_key = KEY_DS_NAME;
+      ds_key += i;
+      ds_name_key += i;
+
+      double temp = Supla::GUI::sensorDS[i]->getValue();
+      content += F("<i style='border-bottom:none !important;'><input name='dsnameid");
+      content += i;
+      content += F("' value='");
+      content += String(ConfigManager->get(ds_name_key.c_str())->getValue());
+      content += F("' maxlength=");
+      content += MAX_DS18B20_NAME;
+      if (readonly) {
+        content += F(" readonly");
+      }
+      content += F("><label>");
+      content += F("Nazwa ");
+      content += i + 1;
+      content += F("</label></i>");
+      content += F("<i><input name='dschlid");
+      content += i;
+      content += F("' value='");
+      content += String(ConfigManager->get(ds_key.c_str())->getValue());
+      content += F("' maxlength=");
+      content += MAX_DS18B20_ADDRESS_HEX;
+      if (readonly) {
+        content += F(" readonly");
+      }
+      content += F("><label>");
+      if (temp != -275)content += temp;
+      else content += F("--.--");
+      content += F(" <b>&deg;C</b> ");
+      content += F("</label></i>");
+      delay(0);
+    }
+    content += F("</div>");
+  }
 }
 #endif

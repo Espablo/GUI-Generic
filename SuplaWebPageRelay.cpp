@@ -159,7 +159,7 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += F("<br>");
   pagerelay += F("<a href='");
   pagerelay += PATH_START;
-  pagerelay += PATH_DEVICESETTINGS;
+  pagerelay += PATH_DEVICE_SETTINGS;
   pagerelay += F ("'><button>Powrót</button></a></div>");
   return pagerelay;
 }

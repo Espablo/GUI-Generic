@@ -238,7 +238,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += F("<br>");
   pagebutton += F("<a href='");
   pagebutton += PATH_START;
-  pagebutton += PATH_DEVICESETTINGS;
+  pagebutton += PATH_DEVICE_SETTINGS;
   pagebutton += F ("'><button>Powrót</button></a></div>");
   return pagebutton;
 }

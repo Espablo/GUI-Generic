@@ -207,7 +207,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += F("<br>");
   page += F("<a href='");
   page += PATH_START;
-  page += PATH_DEVICESETTINGS;
+  page += PATH_DEVICE_SETTINGS;
   page += F("'><button>Powrót</button></a></div>");
   return page;
 }
