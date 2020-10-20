@@ -33,7 +33,7 @@ void SuplaWebPageControl::handleControl() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->httpServer.send(200, "text/html", supla_webpage_control(0));
+  WebServer->sendContent(supla_webpage_control(0));
 
 }
 
@@ -68,7 +68,7 @@ void SuplaWebPageControl::handleControlSave() {
           ConfigManager->setElement(key.c_str(), LEVEL, 2);
         }
         else {
-          WebServer->httpServer.send(200, "text/html", supla_webpage_control(6));
+          WebServer->sendContent(supla_webpage_control(6));
           return;
         }
       }
@@ -112,7 +112,7 @@ void SuplaWebPageControl::handleControlSave() {
           ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_LIMIT_SWITCH);
         }
         else {
-          WebServer->httpServer.send(200, "text/html", supla_webpage_control(6));
+          WebServer->sendContent(supla_webpage_control(6));
           return;
         }
       }
@@ -141,7 +141,7 @@ void SuplaWebPageControl::handleControlSave() {
       break;
     case E_CONFIG_FILE_OPEN:
 //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->httpServer.send(200, "text/html", supla_webpage_control(2));
+      WebServer->sendContent(supla_webpage_control(2));
       break;  
   }
 }
@@ -249,7 +249,7 @@ void SuplaWebPageControl::handleButtonSet() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->httpServer.send(200, "text/html", supla_webpage_button_set(0));
+  WebServer->sendContent(supla_webpage_button_set(0));
 }
 
 void SuplaWebPageControl::handleButtonSaveSet() {
@@ -285,7 +285,7 @@ void SuplaWebPageControl::handleButtonSaveSet() {
 
     case E_CONFIG_FILE_OPEN:
 //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->httpServer.send(200, "text/html", supla_webpage_control(2));
+      WebServer->sendContent(supla_webpage_control(2));
       break;
   }
 }

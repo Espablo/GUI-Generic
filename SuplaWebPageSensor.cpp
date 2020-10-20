@@ -30,7 +30,7 @@ void SuplaWebPageSensor::handleSensor() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->httpServer.send(200, "text/html", supla_webpage_sensor(0));
+  WebServer->sendContent(supla_webpage_sensor(0));
 }
 
 void SuplaWebPageSensor::handleSensorSave() {
@@ -65,7 +65,7 @@ void SuplaWebPageSensor::handleSensorSave() {
           ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_DHT11);
         }
         else {
-          WebServer->httpServer.send(200, "text/html", supla_webpage_sensor(6));
+          WebServer->sendContent(supla_webpage_sensor(6));
           return;
         }
       }
@@ -108,7 +108,7 @@ void SuplaWebPageSensor::handleSensorSave() {
           ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_DHT22);
         }
         else {
-          WebServer->httpServer.send(200, "text/html", supla_webpage_sensor(6));
+          WebServer->sendContent(supla_webpage_sensor(6));
           return;
         }
       }
@@ -153,7 +153,7 @@ void SuplaWebPageSensor::handleSensorSave() {
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_SDA);
     }
     else {
-      WebServer->httpServer.send(200, "text/html", supla_webpage_sensor(6));
+      WebServer->sendContent(supla_webpage_sensor(6));
       return;
     }
   }
@@ -182,7 +182,7 @@ void SuplaWebPageSensor::handleSensorSave() {
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_SCL);
     }
     else {
-      WebServer->httpServer.send(200, "text/html", supla_webpage_sensor(6));
+      WebServer->sendContent(supla_webpage_sensor(6));
       return;
     }
   }
@@ -213,7 +213,7 @@ void SuplaWebPageSensor::handleSensorSave() {
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_TRIG);
     }
     else {
-      WebServer->httpServer.send(200, "text/html", supla_webpage_sensor(6));
+      WebServer->sendContent(supla_webpage_sensor(6));
       return;
     }
   }
@@ -242,7 +242,7 @@ void SuplaWebPageSensor::handleSensorSave() {
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_ECHO);
     }
     else {
-      WebServer->httpServer.send(200, "text/html", supla_webpage_sensor(6));
+      WebServer->sendContent(supla_webpage_sensor(6));
       return;
     }
   }
@@ -273,7 +273,7 @@ void SuplaWebPageSensor::handleSensorSave() {
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_DS18B20);
     }
     else {
-      WebServer->httpServer.send(200, "text/html", supla_webpage_sensor(6));
+      WebServer->sendContent(supla_webpage_sensor(6));
       return;
     }
   }
@@ -299,7 +299,7 @@ void SuplaWebPageSensor::handleSensorSave() {
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->httpServer.send(200, "text/html", supla_webpage_sensor(2));
+      WebServer->sendContent(supla_webpage_sensor(2));
       break;
   }
 }
@@ -392,7 +392,9 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   //if (ConfigESP->getGpio(1, FUNCTION_DS18B20) < OFF_GPIO) {
   page += F("<i><label>ILOŚĆ</label><input name='");
   page += INPUT_MAX_DS18B20;
-  page += F("' type='number' placeholder='1' step='1' min='1' max='16' value='");
+  page += F("' type='number' placeholder='1' step='1' min='0' max='");
+  page += MAX_MAX_DS18B20;
+  page += F("' value='");
   page += String(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValue());
   page += F("'></i>");
   //}
@@ -678,7 +680,7 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
 }
 
 void SuplaWebPageSensor::showDS18B20(String &content, bool readonly ) {
-  if (!Supla::GUI::sensorDS.empty()) {
+  if (ConfigESP->getGpio(1, FUNCTION_DS18B20) < OFF_GPIO) {
     content += F("<div class='w'>");
     content += F("<h3>Temperatura</h3>");
     for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {

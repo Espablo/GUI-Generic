@@ -127,7 +127,7 @@ void SuplaWebServer::handleSave() {
 
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      httpServer.send(200, "text/html", supla_webpage_start(4));
+      this->sendContent(supla_webpage_start(4));
       break;
   }
 }
@@ -138,7 +138,7 @@ void SuplaWebServer::handleFirmwareUp() {
     if (!httpServer.authenticate(www_username, www_password))
       return httpServer.requestAuthentication();
   }
-  httpServer.send(200, "text/html", supla_webpage_upddate());
+  this->sendContent(supla_webpage_upddate());
 }
 
 void SuplaWebServer::handleDeviceSettings() {
@@ -146,7 +146,7 @@ void SuplaWebServer::handleDeviceSettings() {
     if (!httpServer.authenticate(www_username, www_password))
       return httpServer.requestAuthentication();
   }
-  httpServer.send(200, "text/html", deviceSettings());
+  this->sendContent(deviceSettings());
 }
 
 String SuplaWebServer::supla_webpage_start(int save) {
@@ -491,8 +491,8 @@ void SuplaWebServer::rebootESP() {
 }
 
 void SuplaWebServer::sendContent(const String content) {
-  httpServer.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  httpServer.send(200, "text/html", " ");
+  httpServer.setContentLength(content.length());
+  httpServer.send(200, "text/html", "");
   httpServer.sendContent(content);
 }
 

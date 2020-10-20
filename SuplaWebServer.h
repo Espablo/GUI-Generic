@@ -32,8 +32,6 @@
 #define MAX_GPIO               13
 #define OFF_GPIO               17
 
-#define MAX_THERMOMETER         5
-
 #define  PATH_START               "/"
 #define  PATH_SAVE_LOGIN          "savelogin"
 #define  UPDATE_PATH              "/firmware"

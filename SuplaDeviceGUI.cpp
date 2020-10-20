@@ -31,7 +31,7 @@ void begin() {
     ConfigManager->get(KEY_WIFI_PASS)->getValue());
 
   wifi->enableBuffer(true);
-  wifi->enableSSL(true);
+  wifi->enableSSL(false);
 
   String supla_hostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
   supla_hostname.replace(" ", "_");

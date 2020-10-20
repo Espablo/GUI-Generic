@@ -23,7 +23,7 @@ void SuplaWebPageConfig::handleConfig() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->httpServer.send(200, "text/html", supla_webpage_config(0));
+  WebServer->sendContent(supla_webpage_config(0));
 
 }
 
@@ -56,7 +56,7 @@ void SuplaWebPageConfig::handleConfigSave() {
       ConfigManager->setElement(key.c_str(), LEVEL, 1);
     }
     else {
-      WebServer->httpServer.send(200, "text/html", supla_webpage_config(6));
+      WebServer->sendContent(supla_webpage_config(6));
       return;
     }
   }
@@ -89,7 +89,7 @@ void SuplaWebPageConfig::handleConfigSave() {
       ConfigManager->setElement(key.c_str(), CFG, 1);
     }
     else {
-      WebServer->httpServer.send(200, "text/html", supla_webpage_config(6));
+      WebServer->sendContent(supla_webpage_config(6));
       return;
     }
   }
@@ -125,7 +125,7 @@ void SuplaWebPageConfig::handleConfigSave() {
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->httpServer.send(200, "text/html", supla_webpage_config(2));
+      WebServer->sendContent(supla_webpage_config(2));
       break;
   }
 }
