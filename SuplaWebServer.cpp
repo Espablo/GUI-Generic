@@ -102,16 +102,6 @@ void SuplaWebServer::handleSave() {
   ConfigManager->set(KEY_MAX_ROLLERSHUTTER, httpServer.arg(INPUT_ROLLERSHUTTER).c_str());
 #endif
 
-  uint8_t i;
-#ifdef SUPLA_BUTTON
-  for (i = 0; i < Supla::GUI::button.size(); ++i) {
-    String button = INPUT_BUTTON_SET;
-    button += i;
-    button_value += httpServer.arg(button).c_str();
-    //    ConfigManager->set(KEY_TYPE_BUTTON, button_value.c_str());
-  }
-#endif
-
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
