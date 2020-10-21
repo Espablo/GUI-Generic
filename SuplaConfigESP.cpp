@@ -19,7 +19,6 @@
 #include "SuplaConfigManager.h"
 #include "SuplaDeviceGUI.h"
 
-
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
 
@@ -40,7 +39,6 @@ SuplaConfigESP::SuplaConfigESP() {
     if (String(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue()) == 0) {
       ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
     }
-
     ConfigManager->save();
 
     configModeInit();
@@ -57,10 +55,7 @@ SuplaConfigESP::SuplaConfigESP() {
   SuplaDevice.setStatusFuncImpl(&status_func);
 }
 
-void SuplaConfigESP::addConfigESP(int _pinNumberConfig,
-                                  int _pinLedConfig,
-                                  int _modeConfigButton,
-                                  bool _highIsOn) {
+void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _highIsOn) {
   pinNumberConfig = _pinNumberConfig;
   pinLedConfig = _pinLedConfig;
   modeConfigButton = _modeConfigButton;
@@ -233,8 +228,7 @@ String SuplaConfigESP::getMacAddress(bool formating) {
   char baseMacChr[18] = {0};
 
   if (formating)
-    sprintf(baseMacChr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4],
-            mac[5]);
+    sprintf(baseMacChr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
   else
     sprintf(baseMacChr, "%02X%02X%02X%02X%02X%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
@@ -346,10 +340,8 @@ int SuplaConfigESP::sort(int function) {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
       present = true;
       gpio[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = nr;
-      level[ConfigManager->get(key.c_str())->getElement(NR).toInt()] =
-          ConfigManager->get(key.c_str())->getElement(LEVEL).toInt();
-      memory[ConfigManager->get(key.c_str())->getElement(NR).toInt()] =
-          ConfigManager->get(key.c_str())->getElement(MEMORY).toInt();
+      level[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = ConfigManager->get(key.c_str())->getElement(LEVEL).toInt();
+      memory[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = ConfigManager->get(key.c_str())->getElement(MEMORY).toInt();
     }
   }
 
@@ -514,4 +506,48 @@ int SuplaConfigESP::getCfgFlag() {
     }
   }
   return 17;
+}
+
+void SuplaConfigESP::factoryReset() {
+  ConfigManager->set(KEY_SUPLA_GUID, "");
+  ConfigManager->set(KEY_SUPLA_AUTHKEY, "");
+  ConfigManager->set(KEY_WIFI_SSID, "");
+  ConfigManager->set(KEY_WIFI_PASS, "");
+  ConfigManager->set(KEY_SUPLA_SERVER, "");
+  ConfigManager->set(KEY_SUPLA_EMAIL, "");
+  ConfigManager->set(KEY_HOST_NAME, "");
+  ConfigManager->set(KEY_LOGIN, "");
+  ConfigManager->set(KEY_LOGIN_PASS, "");
+  ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
+  ConfigManager->set(KEY_MAX_RELAY, "0");
+  ConfigManager->set(KEY_MAX_BUTTON, "0");
+  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
+  ConfigManager->set(KEY_MAX_DHT22, "0");
+  ConfigManager->set(KEY_MAX_DHT11, "0");
+  ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
+  ConfigManager->set(KEY_ADR_BME280, "0");
+  ConfigManager->set(KEY_ALTITUDE_BME280, "0");
+
+  int nr;
+  String key;
+  for (nr = 0; nr <= 17; nr++) {
+    key = GPIO;
+    key += nr;
+    ConfigManager->set(key.c_str(), "0,0,0,0,0");
+  }
+  for (nr = 0; nr <= MAX_KEY; nr++) {
+    key = KEY_DS;
+    key += nr;
+    ConfigManager->set(key.c_str(), "");
+    key = KEY_DS_NAME;
+    key += nr;
+    ConfigManager->set(key.c_str(), "");
+  }
+  ConfigManager->save();
+
+  delay(3000);
+  WiFi.forceSleepBegin();
+  wdt_reset();
+  ESP.restart();
+  while (1) wdt_reset();
 }

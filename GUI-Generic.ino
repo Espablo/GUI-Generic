@@ -26,14 +26,23 @@
 #include <supla/sensor/binary.h>
 #include <supla/sensor/bme280.h>
 
+#include <DoubleResetDetector.h>
 #include "FS.h"
 #include "GUI-Generic_Config.h"
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 
+#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
+#define DRD_ADDRESS 0   // RTC Memory Address for the DoubleResetDetector to use
+DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
+
 void setup() {
   Serial.begin(74880);
 
+  if (drd.detectDoubleReset()) {
+    Serial.println("FACTORY RESET!!!");
+    ConfigESP->factoryReset();
+  }
   uint8_t nr, gpio;
   String key;
 
@@ -50,18 +59,15 @@ void setup() {
 #ifdef SUPLA_ROLLERSHUTTER
       if (rollershutters > 0) {
 #ifdef SUPLA_BUTTON
-        if (ConfigESP->getLevel(nr, FUNCTION_BUTTON) == Supla::ON_CHANGE &&
-            ConfigESP->getLevel(nr + 1, FUNCTION_BUTTON) == Supla::ON_CHANGE) {
-          Supla::GUI::addRolleShutterMomentary(
-              ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr + 1, FUNCTION_RELAY),
-              ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON),
-              ConfigESP->getLevel(nr, FUNCTION_RELAY));
+        if (ConfigESP->getLevel(nr, FUNCTION_BUTTON) == Supla::ON_CHANGE && ConfigESP->getLevel(nr + 1, FUNCTION_BUTTON) == Supla::ON_CHANGE) {
+          Supla::GUI::addRolleShutterMomentary(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr + 1, FUNCTION_RELAY),
+                                               ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON),
+                                               ConfigESP->getLevel(nr, FUNCTION_RELAY));
         } else {
 #endif
-          Supla::GUI::addRolleShutter(
-              ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr + 1, FUNCTION_RELAY),
-              ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON),
-              ConfigESP->getLevel(nr, FUNCTION_RELAY));
+          Supla::GUI::addRolleShutter(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr + 1, FUNCTION_RELAY),
+                                      ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON),
+                                      ConfigESP->getLevel(nr, FUNCTION_RELAY));
 #ifdef SUPLA_BUTTON
         }
 #endif
@@ -69,8 +75,7 @@ void setup() {
         nr++;
       } else {
 #endif
-        Supla::GUI::addRelayButton(ConfigESP->getGpio(nr, FUNCTION_RELAY),
-                                   ConfigESP->getGpio(nr, FUNCTION_BUTTON),
+        Supla::GUI::addRelayButton(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr, FUNCTION_BUTTON),
                                    ConfigESP->getLevel(nr, FUNCTION_RELAY));
 #ifdef SUPLA_ROLLERSHUTTER
       }
@@ -124,12 +129,11 @@ void setup() {
     ConfigESP->sort(FUNCTION_CFG_BUTTON);
 #ifdef SUPLA_BUTTON
     if (ConfigESP->getCfgFlag() != OFF_GPIO) {
-      Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(1, FUNCTION_CFG_LED),
-                               CONFIG_MODE_10_ON_PRESSES, ConfigESP->getLevel(1, FUNCTION_CFG_LED));
+      Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
+                               ConfigESP->getLevel(1, FUNCTION_CFG_LED));
     } else
 #endif
-      Supla::GUI::addConfigESP(ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON),
-                               ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
+      Supla::GUI::addConfigESP(ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
                                ConfigESP->getLevel(1, FUNCTION_CFG_LED));
   }
 #endif
@@ -141,8 +145,7 @@ void setup() {
     Wire.begin(ConfigESP->getGpio(1, FUNCTION_SDA), ConfigESP->getGpio(1, FUNCTION_SCL));
 
     if (ConfigManager->get(KEY_ADR_BME280)->getValueInt()) {
-      new Supla::Sensor::BME280(ConfigManager->get(KEY_ADR_BME280)->getValueInt(),
-                                ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+      new Supla::Sensor::BME280(ConfigManager->get(KEY_ADR_BME280)->getValueInt(), ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
     }
   }
 #endif
@@ -151,8 +154,7 @@ void setup() {
   ConfigESP->sort(FUNCTION_TRIG);
   ConfigESP->sort(FUNCTION_ECHO);
   if (ConfigESP->sort(FUNCTION_TRIG) && ConfigESP->sort(FUNCTION_ECHO)) {
-    new Supla::Sensor::HC_SR04(ConfigESP->getGpio(1, FUNCTION_TRIG),
-                               ConfigESP->getGpio(1, FUNCTION_ECHO));
+    new Supla::Sensor::HC_SR04(ConfigESP->getGpio(1, FUNCTION_TRIG), ConfigESP->getGpio(1, FUNCTION_ECHO));
   }
 #endif
 
@@ -161,4 +163,5 @@ void setup() {
 
 void loop() {
   SuplaDevice.iterate();
+  drd.loop();
 }

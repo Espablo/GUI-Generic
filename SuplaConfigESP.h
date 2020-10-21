@@ -60,7 +60,9 @@ public:
   int getMemoryRelay(int nr);
   int getCfgFlag();
 
-private:
+  void factoryReset();
+
+ private:
   void configModeInit();
 
   int pinNumberConfig;
@@ -69,6 +71,7 @@ private:
   int countPresses = 0;
   unsigned long cnfigChangeTimeMs = 0;
   bool highIsOn;
+  // bool factoryReset = 0;
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   int _relayGpio[17];
