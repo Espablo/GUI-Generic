@@ -17,7 +17,7 @@
 #include "SuplaSensorDS18B20.h"
 
 OneWireBus::OneWireBus(uint8_t pinNumberConfig)
-    : oneWire(pinNumberConfig), pin(pinNumberConfig), nextBus(nullptr), lastReadTime(0) {
+  : oneWire(pinNumberConfig), pin(pinNumberConfig), nextBus(nullptr), lastReadTime(0) {
   supla_log(LOG_DEBUG, "Initializing OneWire bus at pin %d", pinNumberConfig);
   sensors.setOneWire(&oneWire);
   sensors.begin();
@@ -49,7 +49,7 @@ OneWireBus::OneWireBus(uint8_t pinNumberConfig)
         address[5],
         address[6],
         address[7]);
-      supla_log(LOG_DEBUG, "Index %d - address %s", i, strAddr);*/
+        supla_log(LOG_DEBUG, "Index %d - address %s", i, strAddr);*/
       sensors.setResolution(address, 12);
     }
     delay(0);
@@ -156,6 +156,14 @@ void DS18B20::onInit() {
 
 uint8_t DS18B20::getPin() {
   return myBus->pin;
+}
+
+void DS18B20::setDeviceAddress(uint8_t *deviceAddress) {
+  if (deviceAddress == nullptr) {
+    supla_log(LOG_DEBUG, "Device address not provided. Using device from index 0");
+  } else {
+    memcpy(address, deviceAddress, 8);
+  }
 }
 
 OneWireBus *DS18B20::oneWireBus = nullptr;

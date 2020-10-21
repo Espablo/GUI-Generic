@@ -570,13 +570,15 @@ void SuplaWebPageSensor::handleDSSave() {
 
     ConfigManager->set(ds_key.c_str(), WebServer->httpServer.arg(ds).c_str());
     ConfigManager->set(ds_name_key.c_str(), WebServer->httpServer.arg(ds_name).c_str());
+
+    Supla::GUI::sensorDS[i]->setDeviceAddress(ConfigManager->get(ds_key.c_str())->getValueBin(MAX_DS18B20_ADDRESS));
   }
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      //      Serial.println(F("E_CONFIG_OK: Config save"));
-      WebServer->sendContent(supla_webpage_search(5));
-      WebServer->rebootESP();
+      //Serial.println(F("E_CONFIG_OK: Config save"));
+      WebServer->sendContent(supla_webpage_search(1));
+      //WebServer->rebootESP();
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
@@ -605,12 +607,15 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   //  content += WebServer->SuplaLogo();
   content += WebServer->SuplaSummary();
   content += F("<center>");
-  content += F("<form method='post' action='");
-  content += PATH_SAVE_MULTI_DS;
-  content += F("'>");
-  this->showDS18B20(content);
-  content += F("<button type='submit'>Zapisz</button></form>");
-  content += F("<br>");
+  if (ConfigESP->getGpio(1, FUNCTION_DS18B20) < OFF_GPIO ||
+      !Supla::GUI::sensorDS.empty()) {
+    content += F("<form method='post' action='");
+    content += PATH_SAVE_MULTI_DS;
+    content += F("'>");
+    this->showDS18B20(content);
+    content += F("<button type='submit'>Zapisz</button></form>");
+    content += F("<br>");
+  }
   content += F("<form method='post' action='");
   content += PATH_SAVE_MULTI_DS;
   content += F("'>");
@@ -650,7 +655,7 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
 
   content += F("</div>");
   content += F("</center>");
-  content += F("<button type='submit'>Zapisz znalezione DSy</button></form>");
+  content += F("<button type='submit'>Zapisz znalezione DS18b20</button></form>");
   content += F("<br><br>");
   content += F("<a href='");
   content += PATH_START;
@@ -662,7 +667,8 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
 }
 
 void SuplaWebPageSensor::showDS18B20(String &content, bool readonly ) {
-  if (ConfigESP->getGpio(1, FUNCTION_DS18B20) < OFF_GPIO) {
+  if (ConfigESP->getGpio(1, FUNCTION_DS18B20) < OFF_GPIO ||
+      !Supla::GUI::sensorDS.empty()) {
     content += F("<div class='w'>");
     content += F("<h3>Temperatura</h3>");
     for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
