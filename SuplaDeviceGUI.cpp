@@ -13,22 +13,18 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#include "esp_wifi.h"
-
 #include "SuplaDeviceGUI.h"
 #include "SuplaConfigManager.h"
+#include "SuplaGuiWiFi.h"
 
 namespace Supla {
 namespace GUI {
 void begin() {
-
 #ifdef DEBUG_MODE
   new Supla::Sensor::EspFreeHeap();
 #endif
 
-  Supla::ESPWifi *wifi = new Supla::ESPWifi(
-    ConfigManager->get(KEY_WIFI_SSID)->getValue(),
-    ConfigManager->get(KEY_WIFI_PASS)->getValue());
+  Supla::GUIESPWifi *wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
 
   wifi->enableBuffer(true);
   wifi->enableSSL(false);
@@ -37,12 +33,12 @@ void begin() {
   supla_hostname.replace(" ", "_");
   wifi->setHostName(supla_hostname.c_str());
 
-  SuplaDevice.setName((char*)ConfigManager->get(KEY_HOST_NAME)->getValue());
+  SuplaDevice.setName((char *)ConfigManager->get(KEY_HOST_NAME)->getValue());
 
-  SuplaDevice.begin((char*)ConfigManager->get(KEY_SUPLA_GUID)->getValue(),      // Global Unique Identifier
-                    (char*)ConfigManager->get(KEY_SUPLA_SERVER)->getValue(),    // SUPLA server address
-                    (char*)ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),     // Email address used to login to Supla Cloud
-                    (char*)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
+  SuplaDevice.begin((char *)ConfigManager->get(KEY_SUPLA_GUID)->getValue(),      // Global Unique Identifier
+                    (char *)ConfigManager->get(KEY_SUPLA_SERVER)->getValue(),    // SUPLA server address
+                    (char *)ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),     // Email address used to login to Supla Cloud
+                    (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
   ConfigManager->showAllValue();
 
@@ -51,14 +47,14 @@ void begin() {
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
-  if(pinRelay != OFF_GPIO) relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
-  if(pinButton != OFF_GPIO) button.push_back(new Supla::Control::Button(pinButton, true));
+  if (pinRelay != OFF_GPIO) relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
+  if (pinButton != OFF_GPIO) button.push_back(new Supla::Control::Button(pinButton, true));
 
   int size = relay.size() - 1;
   relay[size]->keepTurnOnDuration();
   relay[size]->setDefaultStateRestore();
 
-  if(pinButton != OFF_GPIO) button[size]->addAction(Supla::TOGGLE, *relay[size],  ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
+  if (pinButton != OFF_GPIO) button[size]->addAction(Supla::TOGGLE, *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
 }
 #endif
 
@@ -82,27 +78,26 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 #ifdef SUPLA_ROLLERSHUTTER
 void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn) {
   RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
-  if(pinButtonUp != OFF_GPIO) RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
-  if(pinButtonDown != OFF_GPIO) RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
+  if (pinButtonUp != OFF_GPIO) RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
+  if (pinButtonDown != OFF_GPIO) RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
   int size = RollerShutterRelay.size() - 1;
-  if(pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO){
+  if (pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO) {
     RollerShutterButtonOpen[size]->addAction(Supla::OPEN_OR_STOP, *RollerShutterRelay[size], Supla::ON_PRESS);
     RollerShutterButtonClose[size]->addAction(Supla::CLOSE_OR_STOP, *RollerShutterRelay[size], Supla::ON_PRESS);
-  }
-  else if((pinButtonUp == OFF_GPIO && pinButtonDown != OFF_GPIO) || (pinButtonUp != OFF_GPIO && pinButtonDown == OFF_GPIO)){
+  } else if ((pinButtonUp == OFF_GPIO && pinButtonDown != OFF_GPIO) || (pinButtonUp != OFF_GPIO && pinButtonDown == OFF_GPIO)) {
     RollerShutterButtonOpen[size]->addAction(Supla::STEP_BY_STEP, *RollerShutterRelay[size], Supla::ON_PRESS);
   }
 }
 
 void addRolleShutterMomentary(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn) {
   RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
-  if(pinButtonUp != OFF_GPIO) RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
-  if(pinButtonDown != OFF_GPIO) RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
+  if (pinButtonUp != OFF_GPIO) RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
+  if (pinButtonDown != OFF_GPIO) RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
   int size = RollerShutterRelay.size() - 1;
-  if(pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO){
+  if (pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO) {
     RollerShutterButtonOpen[size]->addAction(Supla::OPEN, *RollerShutterRelay[size], Supla::ON_PRESS);
     RollerShutterButtonOpen[size]->addAction(Supla::STOP, *RollerShutterRelay[size], Supla::ON_RELEASE);
-    
+
     RollerShutterButtonClose[size]->addAction(Supla::CLOSE, *RollerShutterRelay[size], Supla::ON_PRESS);
     RollerShutterButtonClose[size]->addAction(Supla::STOP, *RollerShutterRelay[size], Supla::ON_RELEASE);
   }
@@ -110,18 +105,18 @@ void addRolleShutterMomentary(int pinRelayUp, int pinRelayDown, int pinButtonUp,
 #endif
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-std::vector <Supla::Control::Relay *> relay;
-std::vector <Supla::Control::Button *> button;
+std::vector<Supla::Control::Relay *> relay;
+std::vector<Supla::Control::Button *> button;
 #endif
 
 #ifdef SUPLA_DS18B20
-std::vector <DS18B20 *> sensorDS;
+std::vector<DS18B20 *> sensorDS;
 #endif
 
 #ifdef SUPLA_ROLLERSHUTTER
-std::vector <Supla::Control::RollerShutter *> RollerShutterRelay;
-std::vector <Supla::Control::Button *> RollerShutterButtonOpen;
-std::vector <Supla::Control::Button *> RollerShutterButtonClose;
+std::vector<Supla::Control::RollerShutter *> RollerShutterRelay;
+std::vector<Supla::Control::Button *> RollerShutterButtonOpen;
+std::vector<Supla::Control::Button *> RollerShutterButtonClose;
 #endif
 }
 }

@@ -1,11 +1,11 @@
-#include "SuplaWebServer.h"
-#include "SuplaDeviceGUI.h"
 #include "SuplaWebPageConfig.h"
+#include "SuplaDeviceGUI.h"
+#include "SuplaWebServer.h"
+
 
 SuplaWebPageConfig *WebPageConfig = new SuplaWebPageConfig();
 
 SuplaWebPageConfig::SuplaWebPageConfig() {
-
 }
 
 void SuplaWebPageConfig::createWebPageConfig() {
@@ -24,7 +24,6 @@ void SuplaWebPageConfig::handleConfig() {
       return WebServer->httpServer.requestAuthentication();
   }
   WebServer->sendContent(supla_webpage_config(0));
-
 }
 
 void SuplaWebPageConfig::handleConfigSave() {
@@ -36,38 +35,35 @@ void SuplaWebPageConfig::handleConfigSave() {
   }
 
   String key, input;
-  key = GPIO;
-  key += ConfigESP->getGpio(1, FUNCTION_CFG_LED);
-  input = INPUT_CFG_LED_LEVEL;
-  ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
-
   input = INPUT_CFG_LED_GPIO;
   key = GPIO;
   key += WebServer->httpServer.arg(input).toInt();
   if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
     key = GPIO;
     key += WebServer->httpServer.arg(input).toInt();
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigESP->getGpio(1, FUNCTION_CFG_LED) == WebServer->httpServer.arg(input).toInt() &&
-         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED)) {
-
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_CFG_LED);
       ConfigManager->setElement(key.c_str(), LEVEL, 1);
-    }
-    else {
+    } else if (ConfigESP->getGpio(1, FUNCTION_CFG_LED) ==
+                   WebServer->httpServer.arg(input).toInt() &&
+               ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED) {
+      key = GPIO;
+      key += ConfigESP->getGpio(1, FUNCTION_CFG_LED);
+      input = INPUT_CFG_LED_LEVEL;
+      ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
+    } else {
       WebServer->sendContent(supla_webpage_config(6));
       return;
     }
-  }
-  if (ConfigESP->getGpio(1, FUNCTION_CFG_LED) != WebServer->httpServer.arg(input).toInt() ||
-      WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+  } else if (ConfigESP->getGpio(1, FUNCTION_CFG_LED) != WebServer->httpServer.arg(input).toInt() ||
+             WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     key = GPIO;
     key += ConfigESP->getGpio(1, FUNCTION_CFG_LED);
     ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
-    ConfigManager->setElement(key.c_str(), LEVEL, 0 );
-    ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+    ConfigManager->setElement(key.c_str(), LEVEL, 0);
+    ConfigManager->setElement(key.c_str(), CFG, 0);
   }
 
   ConfigESP->sort(FUNCTION_CFG_LED);
@@ -81,11 +77,10 @@ void SuplaWebPageConfig::handleConfigSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CFG_BUTTON)) {
-
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_CFG_BUTTON);
-    }
-    else if (ConfigESP->checkBusy(WebServer->httpServer.arg(input).toInt(), FUNCTION_BUTTON) == false) {
+    } else if (ConfigESP->checkBusy(WebServer->httpServer.arg(input).toInt(), FUNCTION_BUTTON) ==
+               false) {
       ConfigManager->setElement(key.c_str(), CFG, 1);
     }
     else {
@@ -98,8 +93,8 @@ void SuplaWebPageConfig::handleConfigSave() {
     key = GPIO;
     key += ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON);
     ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
-    ConfigManager->setElement(key.c_str(), LEVEL, 0 );
+    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+    ConfigManager->setElement(key.c_str(), LEVEL, 0);
     ConfigManager->setElement(key.c_str(), CFG, 0);
   }
 
@@ -155,8 +150,8 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      }
-      else page += F("'>");
+      } else
+        page += F("'>");
       page += (WebServer->Supported_Gpio[suported]);
     }
   }
@@ -168,13 +163,13 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
     page += INPUT_CFG_LED_LEVEL;
     page += F("'>");
     selected = ConfigESP->getLevel(1, FUNCTION_CFG_LED);
-    for (suported = 0; suported < sizeof(WebServer->Supported_Level) / sizeof(char*); suported++) {
+    for (suported = 0; suported < sizeof(WebServer->Supported_Level) / sizeof(char *); suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      }
-      else page += F("'>");
+      } else
+        page += F("'>");
       page += (WebServer->Supported_Level[suported]);
     }
     page += F("</select></i>");
@@ -186,7 +181,8 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   selected = ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON);
   int cfg = 0;
   for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusy(suported, FUNCTION_CFG_BUTTON) == false || ConfigESP->checkBusy(suported, FUNCTION_BUTTON) == false || selected == suported) {
+    if (ConfigESP->checkBusy(suported, FUNCTION_CFG_BUTTON) == false ||
+        ConfigESP->checkBusy(suported, FUNCTION_BUTTON) == false || selected == suported) {
       String key = GPIO;
       key += suported;
       page += F("<option value='");
@@ -195,10 +191,10 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
         if (cfg != 1) {
           page += F("' selected>");
           cfg = 1;
-        }
-        else page += F("'>");
-      }
-      else page += F("'>");
+        } else
+          page += F("'>");
+      } else
+        page += F("'>");
       page += (WebServer->Supported_Gpio[suported]);
     }
   }

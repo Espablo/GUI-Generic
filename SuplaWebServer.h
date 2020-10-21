@@ -17,20 +17,21 @@
 #ifndef SuplaWebServer_h
 #define SuplaWebServer_h
 
-#include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
+#include <ESP8266WebServer.h>
+
 
 #include <supla/element.h>
 #include "SuplaConfigManager.h"
 
-#define  GUI_BLUE               "#005c96"
-#define  GUI_GREEN              "#00D151"
+#define GUI_BLUE "#005c96"
+#define GUI_GREEN "#00D151"
 
-#define  DEFAULT_LOGIN         "admin"
-#define  DEFAULT_PASSWORD      "password"
+#define DEFAULT_LOGIN "admin"
+#define DEFAULT_PASSWORD "password"
 
-#define MAX_GPIO               13
-#define OFF_GPIO               17
+#define MAX_GPIO 13
+#define OFF_GPIO 17
 
 #define  PATH_START               "/"
 #define  PATH_SAVE_LOGIN          "savelogin"
@@ -41,14 +42,14 @@
 #define	 PATH_DEFAULT_SETTINGS	  "defaultsettings"
 #define	 PATH_LOGIN_SETTINGS	  "loginsettings"
 
-#define  INPUT_WIFI_SSID          "sid"
-#define  INPUT_WIFI_PASS          "wpw"
-#define  INPUT_EMAIL              "eml"
-#define  INPUT_SERVER             "svr"
-#define  INPUT_HOSTNAME           "shn"
-#define  INPUT_MODUL_LOGIN        "mlg"
-#define  INPUT_MODUL_PASS         "mps"
-#define  INPUT_ROLLERSHUTTER      "irsr"
+#define INPUT_WIFI_SSID "sid"
+#define INPUT_WIFI_PASS "wpw"
+#define INPUT_EMAIL "eml"
+#define INPUT_SERVER "svr"
+#define INPUT_HOSTNAME "shn"
+#define INPUT_MODUL_LOGIN "mlg"
+#define INPUT_MODUL_PASS "mps"
+#define INPUT_ROLLERSHUTTER "irsr"
 
 class SuplaWebServer : public Supla::Element {
   public:
@@ -82,17 +83,17 @@ class SuplaWebServer : public Supla::Element {
       "GPIO3-RX",
       "GPIO4-D2",
       "GPIO5-D1",
+      "",          
+      "",          
+      "",          
+      "GPIO9-D11", 
+      "GPIO10-D12", 
       "",
-      "",
-      "",
-      "GPIO9-D11",
-      "GPIO10-D12",
-      "",
-      "GPIO12-D6",
-      "GPIO13-D7",
-      "GPIO14-D5",
-      "GPIO15-D8",
-      "GPIO16-D0",
+      "GPIO12-D6", 
+      "GPIO13-D7", 
+      "GPIO14-D5", 
+      "GPIO15-D8", 
+      "GPIO16-D0",  
       "OFF",
     };
 
@@ -119,7 +120,6 @@ class SuplaWebServer : public Supla::Element {
     String loginSettings();
 
     void redirectToIndex();
-
 };
 
-#endif //SuplaWebServer_h
+#endif  // SuplaWebServer_h

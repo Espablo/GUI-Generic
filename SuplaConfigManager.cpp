@@ -14,15 +14,15 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-#include <supla-common/proto.h>
 #include <IPAddress.h>
+#include <supla-common/proto.h>
 
-#include "SuplaConfigManager.h"
 #include "FS.h"
+#include "SuplaConfigManager.h"
 
 #define CONFIG_FILE_PATH "/dat"
 
@@ -101,15 +101,13 @@ String ConfigOption::replaceElement(int index, int newvalue) {
   for (int i = 0; i < lenght; i++) {
     if (i == index) {
       table += newvalue;
-    }
-    else {
+    } else {
       table += this->getElement(i);
     }
     if (i < lenght - 1) table += SEPARATOR;
   }
   return table;
 }
-
 
 void ConfigOption::setValue(const char *value) {
   size_t size = _maxLength + 1;
@@ -122,13 +120,13 @@ void ConfigOption::setValue(const char *value) {
 }
 
 //
-//class SuplaConfigManager
+// class SuplaConfigManager
 //
 SuplaConfigManager::SuplaConfigManager() {
   if (SPIFFS.begin()) {
-//    Serial.println(F("\nSPIFFS mounted"));
-//  } else {
-//    Serial.println(F("\nFailed to mount SPIFFS"));
+    //    Serial.println(F("\nSPIFFS mounted"));
+    //  } else {
+    //    Serial.println(F("\nFailed to mount SPIFFS"));
   }
   _optionCount = 0;
 
@@ -140,20 +138,20 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_LOGIN_PASS, MAX_MPASSWORD);
   this->addKey(KEY_HOST_NAME, DEFAULT_HOSTNAME, MAX_HOSTNAME);
   this->addKey(KEY_SUPLA_SERVER, DEFAULT_SERVER, MAX_SUPLA_SERVER);
-  this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL,MAX_EMAIL);
-  this->addKey(KEY_MAX_ROLLERSHUTTER,"0", 2);
-  this->addKey(KEY_MAX_RELAY,"0", 2);
-  this->addKey(KEY_MAX_BUTTON,"0", 2);
-  this->addKey(KEY_MAX_LIMIT_SWITCH,"0", 2);
-  this->addKey(KEY_MAX_DHT22,"0", 2);
-  this->addKey(KEY_MAX_DHT11,"0", 2);
-  this->addKey(KEY_MULTI_MAX_DS18B20,"1", 2);
-  this->addKey(KEY_ADR_BME280,"0", 2);
-  this->addKey(KEY_ALTITUDE_BME280,"0", 4);
-  
+  this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL, MAX_EMAIL);
+  this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
+  this->addKey(KEY_MAX_RELAY, "0", 2);
+  this->addKey(KEY_MAX_BUTTON, "0", 2);
+  this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
+  this->addKey(KEY_MAX_DHT22, "0", 2);
+  this->addKey(KEY_MAX_DHT11, "0", 2);
+  this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
+  this->addKey(KEY_ADR_BME280, "0", 2);
+  this->addKey(KEY_ALTITUDE_BME280, "0", 4);
+
   int nr;
   String key;
-  for(nr = 0; nr <= 17; nr++){
+  for (nr = 0; nr <= 17; nr++) {
     key = GPIO;
     key += nr;
     String func;
@@ -177,24 +175,24 @@ SuplaConfigManager::SuplaConfigManager() {
     key += nr;
     this->addKey(key.c_str(), MAX_DS18B20_NAME);
   }
- this->load();
-//  switch (this->load()) {
-//    case E_CONFIG_OK:
-//      Serial.println(F("Config read"));
-//      return;
-//    case E_CONFIG_FS_ACCESS:
-//      Serial.println(F("E_CONFIG_FS_ACCESS: Couldn't access file system"));
-//      return;
-//    case E_CONFIG_FILE_NOT_FOUND:
-//      Serial.println(F("E_CONFIG_FILE_NOT_FOUND: File not found"));
-//      return;
-//    case E_CONFIG_FILE_OPEN:
-//      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-//      return;
-//    case E_CONFIG_PARSE_ERROR:
-//      Serial.println(F("E_CONFIG_PARSE_ERROR: File was not parsable"));
-//      return;
-//  }
+  this->load();
+  //  switch (this->load()) {
+  //    case E_CONFIG_OK:
+  //      Serial.println(F("Config read"));
+  //      return;
+  //    case E_CONFIG_FS_ACCESS:
+  //      Serial.println(F("E_CONFIG_FS_ACCESS: Couldn't access file system"));
+  //      return;
+  //    case E_CONFIG_FILE_NOT_FOUND:
+  //      Serial.println(F("E_CONFIG_FILE_NOT_FOUND: File not found"));
+  //      return;
+  //    case E_CONFIG_FILE_OPEN:
+  //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
+  //      return;
+  //    case E_CONFIG_PARSE_ERROR:
+  //      Serial.println(F("E_CONFIG_PARSE_ERROR: File was not parsable"));
+  //      return;
+  //  }
 }
 
 uint8_t SuplaConfigManager::addKey(const char *key, int maxLength) {
@@ -229,7 +227,6 @@ uint8_t SuplaConfigManager::deleteKey(const char *key) {
 
   return E_CONFIG_OK;
 }
-
 
 uint8_t SuplaConfigManager::load() {
 
@@ -380,7 +377,7 @@ bool SuplaConfigManager::set(const char *key, const char *value) {
   return false;
 }
 
-bool SuplaConfigManager::setElement(const char *key, int index,  int newvalue) {
+bool SuplaConfigManager::setElement(const char *key, int index, int newvalue) {
   for (int i = 0; i < _optionCount; i++) {
     if (strcmp(key, _options[i]->getKey()) == 0) {
       String data = _options[i]->replaceElement(index, newvalue);
@@ -406,21 +403,20 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
   memset(GUID, 0, SUPLA_GUID_SIZE);
   memset(AUTHKEY, 0, SUPLA_AUTHKEY_SIZE);
 
-  os_get_random((unsigned char*)GUID, SUPLA_GUID_SIZE);
-  os_get_random((unsigned char*)AUTHKEY, SUPLA_AUTHKEY_SIZE);
+  os_get_random((unsigned char *)GUID, SUPLA_GUID_SIZE);
+  os_get_random((unsigned char *)AUTHKEY, SUPLA_AUTHKEY_SIZE);
 
-  if ( SUPLA_GUID_SIZE >= 6 ) {
-    wifi_get_macaddr(STATION_IF, (unsigned char*)mac);
+  if (SUPLA_GUID_SIZE >= 6) {
+    wifi_get_macaddr(STATION_IF, (unsigned char *)mac);
 
     for (a = 0; a < 6; a++)
       GUID[a] = (GUID[a] * mac[a]) % 255;
   }
 
-  if ( SUPLA_GUID_SIZE >= 12 ) {
-    wifi_get_macaddr(SOFTAP_IF, (unsigned char*)mac);
+  if (SUPLA_GUID_SIZE >= 12) {
+    wifi_get_macaddr(SOFTAP_IF, (unsigned char *)mac);
 
-    for (a = 0; a < 6; a++)
-      GUID[a + 6] = ( GUID[a + 6] * mac[a] ) % 255;
+    for (a = 0; a < 6; a++) GUID[a + 6] = (GUID[a + 6] * mac[a]) % 255;
   }
 
   for (a = 0; a < SUPLA_GUID_SIZE; a++) {
@@ -435,5 +431,4 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
 
   this->set(KEY_SUPLA_GUID, GUID);
   this->set(KEY_SUPLA_AUTHKEY, AUTHKEY);
-
 }

@@ -1,9 +1,10 @@
 #include "SuplaWebPageSensor.h"
+#include "SuplaDeviceGUI.h"
+#include "SuplaWebServer.h"
 
 SuplaWebPageSensor *WebPageSensor = new SuplaWebPageSensor();
 
 SuplaWebPageSensor::SuplaWebPageSensor() {
-
 }
 
 void SuplaWebPageSensor::createWebPageSensor() {
@@ -45,7 +46,7 @@ void SuplaWebPageSensor::handleSensorSave() {
   uint8_t nr, current_value, last_value;
 
 #ifdef SUPLA_DHT11
-  last_value = ConfigManager->get(KEY_MAX_DHT11 )->getValueInt();
+  last_value = ConfigManager->get(KEY_MAX_DHT11)->getValueInt();
   current_value = WebServer->httpServer.arg(INPUT_MAX_DHT11).toInt();
 
   if (last_value > 0) {
@@ -60,11 +61,9 @@ void SuplaWebPageSensor::handleSensorSave() {
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
             (ConfigESP->getGpio(nr, FUNCTION_DHT11) == WebServer->httpServer.arg(input).toInt() &&
              ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DHT11)) {
-
           ConfigManager->setElement(key.c_str(), NR, nr);
           ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_DHT11);
-        }
-        else {
+        } else {
           WebServer->sendContent(supla_webpage_sensor(6));
           return;
         }
@@ -75,9 +74,9 @@ void SuplaWebPageSensor::handleSensorSave() {
         key = GPIO;
         key += ConfigESP->getGpio(nr, FUNCTION_DHT11);
         ConfigManager->setElement(key.c_str(), NR, 0);
-        ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
-        ConfigManager->setElement(key.c_str(), LEVEL, 0 );
-        ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+        ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+        ConfigManager->setElement(key.c_str(), LEVEL, 0);
+        ConfigManager->setElement(key.c_str(), MEMORY, 0);
       }
     }
   }
@@ -88,7 +87,7 @@ void SuplaWebPageSensor::handleSensorSave() {
 #endif
 
 #ifdef SUPLA_DHT22
-  last_value = ConfigManager->get(KEY_MAX_DHT22 )->getValueInt();
+  last_value = ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
   current_value = WebServer->httpServer.arg(INPUT_MAX_DHT22).toInt();
 
   if (last_value > 0) {
@@ -103,11 +102,9 @@ void SuplaWebPageSensor::handleSensorSave() {
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
             (ConfigESP->getGpio(nr, FUNCTION_DHT22) == WebServer->httpServer.arg(input).toInt() &&
              ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DHT22)) {
-
           ConfigManager->setElement(key.c_str(), NR, nr);
           ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_DHT22);
-        }
-        else {
+        } else {
           WebServer->sendContent(supla_webpage_sensor(6));
           return;
         }
@@ -118,9 +115,9 @@ void SuplaWebPageSensor::handleSensorSave() {
         key = GPIO;
         key += ConfigESP->getGpio(nr, FUNCTION_DHT22);
         ConfigManager->setElement(key.c_str(), NR, 0);
-        ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
-        ConfigManager->setElement(key.c_str(), LEVEL, 0 );
-        ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+        ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+        ConfigManager->setElement(key.c_str(), LEVEL, 0);
+        ConfigManager->setElement(key.c_str(), MEMORY, 0);
       }
     }
   }
@@ -148,11 +145,9 @@ void SuplaWebPageSensor::handleSensorSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(1, FUNCTION_SDA) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_SDA)) {
-
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_SDA);
-    }
-    else {
+    } else {
       WebServer->sendContent(supla_webpage_sensor(6));
       return;
     }
@@ -162,9 +157,9 @@ void SuplaWebPageSensor::handleSensorSave() {
     key = GPIO;
     key += ConfigESP->getGpio(1, FUNCTION_SDA);
     ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
-    ConfigManager->setElement(key.c_str(), LEVEL, 0 );
-    ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+    ConfigManager->setElement(key.c_str(), LEVEL, 0);
+    ConfigManager->setElement(key.c_str(), MEMORY, 0);
   }
   ConfigESP->sort(FUNCTION_SDA);
 
@@ -177,11 +172,9 @@ void SuplaWebPageSensor::handleSensorSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(1, FUNCTION_SCL) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_SCL)) {
-
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_SCL);
-    }
-    else {
+    } else {
       WebServer->sendContent(supla_webpage_sensor(6));
       return;
     }
@@ -191,9 +184,9 @@ void SuplaWebPageSensor::handleSensorSave() {
     key = GPIO;
     key += ConfigESP->getGpio(1, FUNCTION_SCL);
     ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
-    ConfigManager->setElement(key.c_str(), LEVEL, 0 );
-    ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+    ConfigManager->setElement(key.c_str(), LEVEL, 0);
+    ConfigManager->setElement(key.c_str(), MEMORY, 0);
   }
   ConfigESP->sort(FUNCTION_SCL);
 #endif
@@ -208,11 +201,9 @@ void SuplaWebPageSensor::handleSensorSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(1, FUNCTION_TRIG) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_TRIG)) {
-
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_TRIG);
-    }
-    else {
+    } else {
       WebServer->sendContent(supla_webpage_sensor(6));
       return;
     }
@@ -222,9 +213,9 @@ void SuplaWebPageSensor::handleSensorSave() {
     key = GPIO;
     key += ConfigESP->getGpio(1, FUNCTION_TRIG);
     ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
-    ConfigManager->setElement(key.c_str(), LEVEL, 0 );
-    ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+    ConfigManager->setElement(key.c_str(), LEVEL, 0);
+    ConfigManager->setElement(key.c_str(), MEMORY, 0);
   }
   ConfigESP->sort(FUNCTION_TRIG);
 
@@ -237,11 +228,9 @@ void SuplaWebPageSensor::handleSensorSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(1, FUNCTION_ECHO) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_ECHO)) {
-
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_ECHO);
-    }
-    else {
+    } else {
       WebServer->sendContent(supla_webpage_sensor(6));
       return;
     }
@@ -251,9 +240,9 @@ void SuplaWebPageSensor::handleSensorSave() {
     key = GPIO;
     key += ConfigESP->getGpio(1, FUNCTION_ECHO);
     ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
-    ConfigManager->setElement(key.c_str(), LEVEL, 0 );
-    ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+    ConfigManager->setElement(key.c_str(), LEVEL, 0);
+    ConfigManager->setElement(key.c_str(), MEMORY, 0);
   }
   ConfigESP->sort(FUNCTION_ECHO);
 #endif
@@ -268,11 +257,9 @@ void SuplaWebPageSensor::handleSensorSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(1, FUNCTION_DS18B20) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DS18B20)) {
-
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_DS18B20);
-    }
-    else {
+    } else {
       WebServer->sendContent(supla_webpage_sensor(6));
       return;
     }
@@ -282,9 +269,9 @@ void SuplaWebPageSensor::handleSensorSave() {
     key = GPIO;
     key += ConfigESP->getGpio(1, FUNCTION_DS18B20);
     ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF );
-    ConfigManager->setElement(key.c_str(), LEVEL, 0 );
-    ConfigManager->setElement(key.c_str(), MEMORY, 0 );
+    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+    ConfigManager->setElement(key.c_str(), LEVEL, 0);
+    ConfigManager->setElement(key.c_str(), MEMORY, 0);
   }
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str(), "") > 0) {
     ConfigManager->set(KEY_MULTI_MAX_DS18B20, WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str());
@@ -325,7 +312,9 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("<i><label>ILOŚĆ</label><input name='");
   page += INPUT_MAX_DHT11;
   page += F("' type='number' placeholder='0' step='1' min='0' max='");
-  page += MAX_GPIO - ConfigManager->get(KEY_MAX_RELAY)->getValueInt() - ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() - ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
+  page += MAX_GPIO - ConfigManager->get(KEY_MAX_RELAY)->getValueInt() -
+          ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() -
+          ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
   page += F("' value='");
   page += String(ConfigManager->get(KEY_MAX_DHT11)->getValue());
   page += F("'></i>");
@@ -343,8 +332,8 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
         page += suported;
         if (selected == suported) {
           page += F("' selected>");
-        }
-        else page += F("'>");
+        } else
+          page += F("'>");
         page += (WebServer->Supported_Gpio[suported]);
       }
     }
@@ -358,7 +347,9 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("<i><label>ILOŚĆ</label><input name='");
   page += INPUT_MAX_DHT22;
   page += F("' type='number' placeholder='0' step='1' min='0' max='");
-  page += MAX_GPIO - ConfigManager->get(KEY_MAX_RELAY)->getValueInt() - ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() - ConfigManager->get(KEY_MAX_DHT11)->getValueInt();
+  page += MAX_GPIO - ConfigManager->get(KEY_MAX_RELAY)->getValueInt() -
+          ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() -
+          ConfigManager->get(KEY_MAX_DHT11)->getValueInt();
   page += F("' value='");
   page += String(ConfigManager->get(KEY_MAX_DHT22)->getValue());
   page += F("'></i>");
@@ -376,8 +367,8 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
         page += suported;
         if (selected == suported) {
           page += F("' selected>");
-        }
-        else page += F("'>");
+        } else
+          page += F("'>");
         page += (WebServer->Supported_Gpio[suported]);
       }
     }
@@ -412,15 +403,15 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("<select name='");
   page += INPUT_MULTI_DS_GPIO;
   page += F("'>");
-  selected =  ConfigESP->getGpio(1, FUNCTION_DS18B20);
+  selected = ConfigESP->getGpio(1, FUNCTION_DS18B20);
   for (suported = 0; suported < 18; suported++) {
     if (ConfigESP->checkBusy(suported, FUNCTION_DS18B20) == false || selected == suported) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      }
-      else page += F("'>");
+      } else
+        page += F("'>");
       page += (WebServer->Supported_Gpio[suported]);
     }
   }
@@ -450,8 +441,8 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      }
-      else page += F("'>");
+      } else
+        page += F("'>");
       page += (WebServer->Supported_Gpio[suported]);
     }
   }
@@ -467,26 +458,27 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      }
-      else page += F("'>");
+      } else
+        page += F("'>");
       page += (WebServer->Supported_Gpio[suported]);
     }
   }
   page += F("</select></i>");
-  if (ConfigESP->getGpio(1, FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(1, FUNCTION_SCL) != OFF_GPIO) {
+  if (ConfigESP->getGpio(1, FUNCTION_SDA) != OFF_GPIO &&
+      ConfigESP->getGpio(1, FUNCTION_SCL) != OFF_GPIO) {
     page += F("<i><label>");
     page += F("BME280 adres</label><select name='");
     page += INPUT_BME280;
     page += F("'>");
     key = KEY_ADR_BME280;
     selected = ConfigManager->get(key.c_str())->getValueInt();
-    for (suported = 0; suported < sizeof(SupportedBme280) / sizeof(char*); suported++) {
+    for (suported = 0; suported < sizeof(SupportedBme280) / sizeof(char *); suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      }
-      else page += F("'>");
+      } else
+        page += F("'>");
       page += (SupportedBme280[suported]);
     }
     page += F("</select></i>");
@@ -515,8 +507,8 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      }
-      else page += F("'>");
+      } else
+        page += F("'>");
       page += (WebServer->Supported_Gpio[suported]);
     }
   }
@@ -532,8 +524,8 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      }
-      else page += F("'>");
+      } else
+        page += F("'>");
       page += (WebServer->Supported_Gpio[suported]);
     }
   }
@@ -636,17 +628,8 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
     if (!sensors.getAddress(address, i)) {
       supla_log(LOG_DEBUG, "Unable to find address for Device %d", i);
     } else {
-      sprintf(
-        strAddr,
-        "%02X%02X%02X%02X%02X%02X%02X%02X",
-        address[0],
-        address[1],
-        address[2],
-        address[3],
-        address[4],
-        address[5],
-        address[6],
-        address[7]);
+      sprintf(strAddr, "%02X%02X%02X%02X%02X%02X%02X%02X", address[0], address[1], address[2],
+              address[3], address[4], address[5], address[6], address[7]);
       supla_log(LOG_DEBUG, "Index %d - address %s", i, strAddr);
 
       content += F("<i><input name='dschlid");
@@ -663,8 +646,7 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
     delay(0);
   }
 
-  if (count == 0)
-    content += F("<i><label>brak podłączonych czujników</label></i>");
+  if (count == 0) content += F("<i><label>brak podłączonych czujników</label></i>");
 
   content += F("</div>");
   content += F("</center>");
@@ -673,7 +655,7 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   content += F("<a href='");
   content += PATH_START;
   content += PATH_SENSOR;
-  content += F ("'><button>Powrót</button></a></div>");
+  content += F("'><button>Powrót</button></a></div>");
   //  content += WebServer->SuplaCopyrightBar();
 
   return content;

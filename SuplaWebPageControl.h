@@ -16,31 +16,30 @@
 #define  INPUT_MAX_BUTTON           "mbt"
 #define  INPUT_MAX_LIMIT_SWITCH     "mls"
 
-
 class SuplaWebPageControl {
-  public:
-    void createWebPageControl();
-    void handleControl();
-    void handleControlSave();
-    
-#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
-    void handleButtonSet();
-    void handleButtonSaveSet();
+ public:
+  void createWebPageControl();
+  void handleControl();
+  void handleControlSave();
+
+#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || \
+    (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
+  void handleButtonSet();
+  void handleButtonSaveSet();
 #endif
-    
-  private:
-    String supla_webpage_control(int save);
+
+ private:
+  String supla_webpage_control(int save);
 
 #ifdef SUPLA_BUTTON
-    String supla_webpage_button_set(int save);
+  String supla_webpage_button_set(int save);
 
-    const char* SupportedTrigger[3] = {
-      "ZWOLNIENIE",         
-      "WCIŚNIĘCIE",
-      "ZMIANA STANU"
-    };
+  const char* SupportedTrigger[3] = {
+    "ZWOLNIENIE", 
+    "WCIŚNIĘCIE", 
+    "ZMIANA STANU"};
 #endif
 };
 
-extern SuplaWebPageControl *WebPageControl;
-#endif // SuplaWebPageControl_h
+extern SuplaWebPageControl* WebPageControl;
+#endif  // SuplaWebPageControl_h
