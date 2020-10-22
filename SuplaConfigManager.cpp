@@ -167,7 +167,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(key.c_str(), func.c_str(), 14);
   }
 
-  for (nr = 0; nr <= MAX_MAX_DS18B20; nr++) {
+  for (nr = 0; nr <= MAX_DS18B20; nr++) {
     key = KEY_DS;
     key += nr;
     this->addKey(key.c_str(), MAX_DS18B20_ADDRESS_HEX);

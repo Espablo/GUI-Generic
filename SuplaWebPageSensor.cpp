@@ -384,7 +384,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("<i><label>ILOŚĆ</label><input name='");
   page += INPUT_MAX_DS18B20;
   page += F("' type='number' placeholder='1' step='1' min='0' max='");
-  page += MAX_MAX_DS18B20;
+  page += MAX_DS18B20;
   page += F("' value='");
   page += String(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValue());
   page += F("'></i>");

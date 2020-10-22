@@ -535,7 +535,7 @@ void SuplaConfigESP::factoryReset() {
     key += nr;
     ConfigManager->set(key.c_str(), "0,0,0,0,0");
   }
-  for (nr = 0; nr <= MAX_KEY; nr++) {
+  for (nr = 0; nr <= MAX_DS18B20; nr++) {
     key = KEY_DS;
     key += nr;
     ConfigManager->set(key.c_str(), "");
