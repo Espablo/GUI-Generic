@@ -46,6 +46,7 @@ class DS18B20 : public Supla::Sensor::Thermometer {
   double getValue();
   void onInit();
   uint8_t getPin();
+  void setDeviceAddress(uint8_t *deviceAddress = nullptr);
 
  protected:
   static OneWireBus *oneWireBus;

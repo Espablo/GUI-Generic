@@ -23,7 +23,7 @@ void SuplaWebPageConfig::handleConfig() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->httpServer.send(200, "text/html", supla_webpage_config(0));
+  WebServer->sendContent(supla_webpage_config(0));
 }
 
 void SuplaWebPageConfig::handleConfigSave() {
@@ -53,7 +53,7 @@ void SuplaWebPageConfig::handleConfigSave() {
       input = INPUT_CFG_LED_LEVEL;
       ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
     } else {
-      WebServer->httpServer.send(200, "text/html", supla_webpage_config(6));
+      WebServer->sendContent(supla_webpage_config(6));
       return;
     }
   } else if (ConfigESP->getGpio(1, FUNCTION_CFG_LED) != WebServer->httpServer.arg(input).toInt() ||
@@ -82,8 +82,9 @@ void SuplaWebPageConfig::handleConfigSave() {
     } else if (ConfigESP->checkBusy(WebServer->httpServer.arg(input).toInt(), FUNCTION_BUTTON) ==
                false) {
       ConfigManager->setElement(key.c_str(), CFG, 1);
-    } else {
-      WebServer->httpServer.send(200, "text/html", supla_webpage_config(6));
+    }
+    else {
+      WebServer->sendContent(supla_webpage_config(6));
       return;
     }
   }
@@ -119,7 +120,7 @@ void SuplaWebPageConfig::handleConfigSave() {
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->httpServer.send(200, "text/html", supla_webpage_config(2));
+      WebServer->sendContent(supla_webpage_config(2));
       break;
   }
 }
@@ -202,7 +203,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += F("<br>");
   page += F("<a href='");
   page += PATH_START;
-  page += PATH_DEVICESETTINGS;
+  page += PATH_DEVICE_SETTINGS;
   page += F("'><button>Powrót</button></a></div>");
   return page;
 }

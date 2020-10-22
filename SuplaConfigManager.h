@@ -89,7 +89,7 @@
 #define  MAX_TYPE_BUTTON          4
 #define  MAX_MONOSTABLE_TRIGGER   1
 #define  MAX_FUNCTION             1
-#define  MAX_KEY                  5
+#define  MAX_DS18B20          10
 
 #define E_CONFIG_OK               0
 #define E_CONFIG_FS_ACCESS        1

@@ -167,7 +167,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(key.c_str(), func.c_str(), 14);
   }
 
-  for (nr = 0; nr <= MAX_KEY; nr++) {
+  for (nr = 0; nr <= MAX_DS18B20; nr++) {
     key = KEY_DS;
     key += nr;
     this->addKey(key.c_str(), MAX_DS18B20_ADDRESS_HEX);
@@ -326,7 +326,7 @@ uint8_t SuplaConfigManager::save() {
     if (configFile) {
       uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
       for (i = 0; i < _optionCount; i++) {
-        Serial.println("save: " + String(_options[i]->getValue()));
+        Serial.println("Save key " + String(_options[i]->getKey()) + ": " + String(_options[i]->getValue()));
         memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
         offset += _options[i]->getLength();
       }
@@ -346,7 +346,7 @@ uint8_t SuplaConfigManager::save() {
 
 void SuplaConfigManager::showAllValue() {
   for (int i = 0; i < _optionCount; i++) {
-    Serial.println("Key:  " + String(_options[i]->getKey()) + " Value:  " + String(_options[i]->getValue()));
+    Serial.println("Key: " + String(_options[i]->getKey()) + " Value: " + String(_options[i]->getValue()));
   }
 }
 

@@ -36,7 +36,7 @@ void SuplaWebPageRelay::handleRelay() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->httpServer.send(200, "text/html", supla_webpage_relay(0));
+  WebServer->sendContent(supla_webpage_relay(0));
 }
 
 void SuplaWebPageRelay::handleRelaySave() {
@@ -68,7 +68,7 @@ void SuplaWebPageRelay::handleRelaySave() {
           ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_RELAY);
           ConfigManager->setElement(key.c_str(), LEVEL, 1);
         } else {
-          WebServer->httpServer.send(200, "text/html", supla_webpage_relay(6));
+          WebServer->sendContent(supla_webpage_relay(6));
           return;
         }
       }
@@ -97,7 +97,7 @@ void SuplaWebPageRelay::handleRelaySave() {
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->httpServer.send(200, "text/html", supla_webpage_relay(2));
+      WebServer->sendContent(supla_webpage_relay(2));
       break;
   }
 }
@@ -160,8 +160,8 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += F("<br>");
   pagerelay += F("<a href='");
   pagerelay += PATH_START;
-  pagerelay += PATH_DEVICESETTINGS;
-  pagerelay += F("'><button>Powrót</button></a></div>");
+  pagerelay += PATH_DEVICE_SETTINGS;
+  pagerelay += F ("'><button>Powrót</button></a></div>");
   return pagerelay;
 }
 
@@ -170,7 +170,7 @@ void SuplaWebPageRelay::handleRelaySet() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->httpServer.send(200, "text/html", supla_webpage_relay_set(0));
+  WebServer->sendContent(supla_webpage_relay_set(0));
 }
 
 void SuplaWebPageRelay::handleRelaySaveSet() {
@@ -210,7 +210,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->httpServer.send(200, "text/html", supla_webpage_relay(2));
+      WebServer->sendContent(supla_webpage_relay(2));
       break;
   }
 }

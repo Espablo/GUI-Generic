@@ -43,7 +43,6 @@ void SuplaWebServer::createWebServer() {
   String path = PATH_START;
   httpServer.on(path, HTTP_GET, std::bind(&SuplaWebServer::handle, this));
   path = PATH_START;
-  path += PATH_SET;
   httpServer.on(path, std::bind(&SuplaWebServer::handleSave, this));
   path = PATH_START;
   path += PATH_UPDATE;
@@ -52,7 +51,7 @@ void SuplaWebServer::createWebServer() {
   path += PATH_REBOT;
   httpServer.on(path, std::bind(&SuplaWebServer::supla_webpage_reboot, this));
   path = PATH_START;
-  path += PATH_DEVICESETTINGS;
+  path += PATH_DEVICE_SETTINGS;
   httpServer.on(path, std::bind(&SuplaWebServer::handleDeviceSettings, this));
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
@@ -86,6 +85,11 @@ void SuplaWebServer::handleSave() {
       return httpServer.requestAuthentication();
   }
 
+  if (strcmp(httpServer.arg(PATH_REBOT).c_str(), "1") == 0) {
+    this->rebootESP();
+    return;
+  }
+
   ConfigManager->set(KEY_WIFI_SSID, httpServer.arg(INPUT_WIFI_SSID).c_str());
   ConfigManager->set(KEY_WIFI_PASS, httpServer.arg(INPUT_WIFI_PASS).c_str());
   ConfigManager->set(KEY_SUPLA_SERVER, httpServer.arg(INPUT_SERVER).c_str());
@@ -98,34 +102,20 @@ void SuplaWebServer::handleSave() {
   ConfigManager->set(KEY_MAX_ROLLERSHUTTER, httpServer.arg(INPUT_ROLLERSHUTTER).c_str());
 #endif
 
-  uint8_t i;
-#ifdef SUPLA_DS18B20
-  for (i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-    String ds_key = KEY_DS;
-    String ds_name_key = KEY_DS_NAME;
-    ds_key += i;
-    ds_name_key += i;
-
-    String ds = F("dschlid");
-    String ds_name = F("dsnameid");
-    ds += i;
-    ds_name += i;
-
-    ConfigManager->set(ds_key.c_str(), httpServer.arg(ds).c_str());
-    ConfigManager->set(ds_name_key.c_str(), httpServer.arg(ds_name).c_str());
-  }
-#endif
-
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
-      this->sendContent(supla_webpage_start(5));
-      this->rebootESP();
+      if (ConfigESP->configModeESP == NORMAL_MODE) {
+        this->sendContent(supla_webpage_start(5));
+        this->rebootESP();
+      } else {
+        this->sendContent(supla_webpage_start(7));
+      }
       break;
 
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      httpServer.send(200, "text/html", supla_webpage_start(4));
+      this->sendContent(supla_webpage_start(4));
       break;
   }
 }
@@ -135,7 +125,7 @@ void SuplaWebServer::handleFirmwareUp() {
     if (!httpServer.authenticate(www_username, www_password))
       return httpServer.requestAuthentication();
   }
-  httpServer.send(200, "text/html", supla_webpage_upddate());
+  this->sendContent(supla_webpage_upddate());
 }
 
 void SuplaWebServer::handleDeviceSettings() {
@@ -143,7 +133,7 @@ void SuplaWebServer::handleDeviceSettings() {
     if (!httpServer.authenticate(www_username, www_password))
       return httpServer.requestAuthentication();
   }
-  httpServer.send(200, "text/html", deviceSettings());
+  this->sendContent(deviceSettings());
 }
 
 String SuplaWebServer::supla_webpage_start(int save) {
@@ -157,9 +147,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("<div class='s'>");
   content += SuplaLogo();
   content += SuplaSummary();
-  content += F("<form method='post' action='");
-  content += PATH_SET;
-  content += F("'>");
+  content += F("<form method='post'>");
   content += F("<div class='w'>");
   content += F("<h3>Ustawienia WIFI</h3>");
   content += F("<i><input name='");
@@ -269,50 +257,16 @@ String SuplaWebServer::supla_webpage_start(int save) {
 #endif
 
 #ifdef SUPLA_DS18B20
-  if (!Supla::GUI::sensorDS.empty()) {
-    content += F("<div class='w'>");
-    content += F("<h3>Temperatura</h3>");
-    for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-      String ds_key = KEY_DS;
-      String ds_name_key = KEY_DS_NAME;
-      ds_key += i;
-      ds_name_key += i;
-
-      double temp = Supla::GUI::sensorDS[i]->getValue();
-      content += F("<i style='border-bottom:none !important;'><input name='dsnameid");
-      content += i;
-      content += F("' value='");
-      content += String(ConfigManager->get(ds_name_key.c_str())->getValue());
-      content += F("' maxlength=");
-      content += MAX_DS18B20_NAME;
-      content += F("><label>");
-      content += F("Nazwa ");
-      content += i + 1;
-      content += F("</label></i>");
-      content += F("<i><input name='dschlid");
-      content += i;
-      content += F("' value='");
-      content += String(ConfigManager->get(ds_key.c_str())->getValue());
-      content += F("' maxlength=");
-      content += MAX_DS18B20_ADDRESS_HEX;
-      content += F("><label>");
-      if (temp != -275)
-        content += temp;
-      else
-        content += F("--.--");
-      content += F(" <b>&deg;C</b> ");
-      content += F("</label></i>");
-    }
-    content += F("</div>");
-  }
+  WebPageSensor->showDS18B20(content, true);
 #endif
-  content += F("<button type='submit'formaction='");
-  content += PATH_START;
-  content += PATH_DEVICESETTINGS;
-  content += F("'>Ustawienia urządzenia</button>");
-  content += F("<br><br>");
+
   content += F("<button type='submit'>Zapisz</button></form>");
   content += F("<br>");
+  content += F("<a href='");
+  content += PATH_START;
+  content += PATH_DEVICE_SETTINGS;
+  content += F("'><button>Ustawienia urządzenia</button></a>");  
+  content += F("<br><br>");  
   content += F("<a href='");
   content += PATH_START;
   content += PATH_UPDATE;
@@ -560,6 +514,8 @@ const String SuplaWebServer::SuplaSaveResult(int save) {
     saveresult += F("Dane zapisane - restart modułu.");
   } else if (save == 6) {
     saveresult += F("Błąd zapisu - złe dane.");
+  } else if (save == 7 ) {
+    saveresult += F("data saved");
   }
   saveresult += F("</div>");
   return saveresult;
@@ -574,8 +530,8 @@ void SuplaWebServer::rebootESP() {
 }
 
 void SuplaWebServer::sendContent(const String content) {
-  httpServer.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  httpServer.send(200, "text/html", " ");
+  httpServer.setContentLength(content.length());
+  httpServer.send(200, "text/html", "");
   httpServer.sendContent(content);
 }
 
