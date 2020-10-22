@@ -260,13 +260,13 @@ String SuplaWebServer::supla_webpage_start(int save) {
   WebPageSensor->showDS18B20(content, true);
 #endif
 
-  content += F("<button type='submit'formaction='");
-  content += PATH_START;
-  content += PATH_DEVICE_SETTINGS;
-  content += F("'>Ustawienia urządzenia</button>");
-  content += F("<br><br>");
   content += F("<button type='submit'>Zapisz</button></form>");
   content += F("<br>");
+  content += F("<a href='");
+  content += PATH_START;
+  content += PATH_DEVICE_SETTINGS;
+  content += F("'><button>Ustawienia urządzenia</button></a>");  
+  content += F("<br><br>");  
   content += F("<a href='");
   content += PATH_START;
   content += PATH_UPDATE;
