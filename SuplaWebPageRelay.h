@@ -1,19 +1,19 @@
 #ifndef SuplaWebPageRelay_h
 #define SuplaWebPageRelay_h
 
-#include "SuplaWebServer.h"
 #include "SuplaDeviceGUI.h"
+#include "SuplaWebServer.h"
 
-#define  PATH_RELAY               "relay"
-#define  PATH_SAVE_RELAY          "saverelay"
-#define  PATH_RELAY_SET           "setrelay"
-#define  PATH_SAVE_RELAY_SET      "savesetrelay"
-#define  INPUT_MAX_RELAY          "mrl"
-#define  INPUT_RELAY_GPIO         "rlg"
-#define  INPUT_RELAY_LEVEL        "irl"
-#define  INPUT_RELAY_MEMORY       "irm"
-#define  INPUT_RELAY_DURATION     "ird"
-#define  INPUT_ROLLERSHUTTER      "irsr"
+#define PATH_RELAY           "relay"
+#define PATH_SAVE_RELAY      "saverelay"
+#define PATH_RELAY_SET       "setrelay"
+#define PATH_SAVE_RELAY_SET  "savesetrelay"
+#define INPUT_MAX_RELAY      "mrl"
+#define INPUT_RELAY_GPIO     "rlg"
+#define INPUT_RELAY_LEVEL    "irl"
+#define INPUT_RELAY_MEMORY   "irm"
+#define INPUT_RELAY_DURATION "ird"
+#define INPUT_ROLLERSHUTTER  "irsr"
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 class SuplaWebPageRelay {

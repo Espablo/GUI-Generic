@@ -17,9 +17,10 @@
 #ifndef SuplaConfigESP_h
 #define SuplaConfigESP_h
 
-
 #include <supla/triggerable.h>
+
 #include "GUI-Generic_Config.h"
+
 
 enum _configModeESP { NORMAL_MODE, CONFIG_MODE };
 
@@ -30,11 +31,10 @@ typedef struct {
 } _supla_status;
 
 class SuplaConfigESP : public Supla::Triggerable {
-public:
+ public:
   SuplaConfigESP();
 
-  void addConfigESP(int _pinNumberConfig, int _pinLedConfig,
-                    int _modeConfigButton, bool _highIsOn = true);
+  void addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _highIsOn = true);
   void runAction(int event, int action);
   void rebootESP();
 
@@ -43,9 +43,13 @@ public:
   void ledBlinking(int time);
   void ledBlinkingStop(void);
   int getPinLedConfig();
-  virtual uint8_t pinOnValue() { return highIsOn ? HIGH : LOW; }
+  virtual uint8_t pinOnValue() {
+    return highIsOn ? HIGH : LOW;
+  }
 
-  virtual uint8_t pinOffValue() { return highIsOn ? LOW : HIGH; }
+  virtual uint8_t pinOffValue() {
+    return highIsOn ? LOW : HIGH;
+  }
 
   String getMacAddress(bool formating);
 
@@ -71,7 +75,6 @@ public:
   int countPresses = 0;
   unsigned long cnfigChangeTimeMs = 0;
   bool highIsOn;
-  // bool factoryReset = 0;
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   int _relayGpio[17];
@@ -123,4 +126,4 @@ public:
 void ledBlinking_func(void *timer_arg);
 void status_func(int status, const char *msg);
 
-#endif // SuplaConfigESP_h
+#endif  // SuplaConfigESP_h
