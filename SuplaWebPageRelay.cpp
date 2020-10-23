@@ -136,8 +136,8 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
     }
     pagerelay += nr;
     pagerelay += F(". PRZEKAŹNIK ");
-    pagerelay += WebServer->SuplaIconEdit();
     if (selected != OFF_GPIO) {
+      pagerelay += WebServer->SuplaIconEdit();    
       pagerelay += F("</a>");
     }
     pagerelay += F("</label><select name='");

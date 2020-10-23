@@ -398,9 +398,9 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
       page += PATH_MULTI_DS;
       page += F("'>");
     }
-    page += F("MULTI DS18B20 ");
-    page += WebServer->SuplaIconEdit();
+    page += F("MULTI DS18B20 ");    
     if (ConfigESP->getGpio(1, FUNCTION_DS18B20) != OFF_GPIO) {
+      page += WebServer->SuplaIconEdit();
       page += F("</a>");
     }
     page += F("</label>");

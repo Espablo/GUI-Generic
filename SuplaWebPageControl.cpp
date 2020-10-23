@@ -179,8 +179,8 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
     }
     pagebutton += nr;
     pagebutton += F(". PRZYCISK ");
-    pagebutton += WebServer->SuplaIconEdit();
     if (selected != OFF_GPIO) {
+      pagebutton += WebServer->SuplaIconEdit();
       pagebutton += F("</a>");
     }
     pagebutton += F("</label><select name='");
