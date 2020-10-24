@@ -50,7 +50,7 @@ class SuplaWebPageSensor {
   const char* SupportedBme280[4] = {
     "OFF", 
     "0x76", 
-    "0x77 - domyślny",
+    "0x77",
     "0x76 & 0x77"};
 };
 #endif
