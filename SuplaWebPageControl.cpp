@@ -188,7 +188,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
     pagebutton += nr;
     pagebutton += F("'>");
     for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusy(suported, FUNCTION_BUTTON) == false || selected == suported) {
+      if (ConfigESP->checkBusyGpio(suported, FUNCTION_BUTTON) == false || selected == suported) {
         pagebutton += F("<option value='");
         pagebutton += suported;
         if (selected == suported) {
@@ -223,7 +223,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
     pagebutton += F("'>");
     selected = ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH);
     for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusy(suported, FUNCTION_LIMIT_SWITCH) == false || selected == suported) {
+      if (ConfigESP->checkBusyGpio(suported, FUNCTION_LIMIT_SWITCH) == false || selected == suported) {
         pagebutton += F("<option value='");
         pagebutton += suported;
         if (selected == suported) {

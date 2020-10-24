@@ -327,7 +327,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
     page += F("'>");
     selected = ConfigESP->getGpio(nr, FUNCTION_DHT11);
     for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusy(suported, FUNCTION_DHT11) == false || selected == suported) {
+      if (ConfigESP->checkBusyGpio(suported, FUNCTION_DHT11) == false || selected == suported) {
         page += F("<option value='");
         page += suported;
         if (selected == suported) {
@@ -363,7 +363,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
     page += F("'>");
     selected = ConfigESP->getGpio(nr, FUNCTION_DHT22);
     for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusy(suported, FUNCTION_DHT22) == false || selected == suported) {
+      if (ConfigESP->checkBusyGpio(suported, FUNCTION_DHT22) == false || selected == suported) {
         page += F("<option value='");
         page += suported;
         if (selected == suported) {
@@ -398,7 +398,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
       page += PATH_MULTI_DS;
       page += F("'>");
     }
-    page += F("MULTI DS18B20 ");    
+    page += F("MULTI DS18B20 ");
     if (ConfigESP->getGpio(1, FUNCTION_DS18B20) != OFF_GPIO) {
       page += WebServer->SuplaIconEdit();
       page += F("</a>");
@@ -410,7 +410,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("'>");
   selected = ConfigESP->getGpio(1, FUNCTION_DS18B20);
   for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusy(suported, FUNCTION_DS18B20) == false || selected == suported) {
+    if (ConfigESP->checkBusyGpio(suported, FUNCTION_DS18B20) == false || selected == suported) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -442,7 +442,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("'>");
   selected = ConfigESP->getGpio(1, FUNCTION_SDA);
   for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusy(suported, FUNCTION_SDA) == false || selected == suported) {
+    if (ConfigESP->checkBusyGpio(suported, FUNCTION_SDA) == false || selected == suported) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -461,7 +461,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("'>");
   selected = ConfigESP->getGpio(1, FUNCTION_SCL);
   for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusy(suported, FUNCTION_SCL) == false || selected == suported) {
+    if (ConfigESP->checkBusyGpio(suported, FUNCTION_SCL) == false || selected == suported) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -513,7 +513,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("'>");
   selected = ConfigESP->getGpio(1, FUNCTION_TRIG);
   for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusy(suported, FUNCTION_TRIG) == false || selected == suported) {
+    if (ConfigESP->checkBusyGpio(suported, FUNCTION_TRIG) == false || selected == suported) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -532,7 +532,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("'>");
   selected = ConfigESP->getGpio(1, FUNCTION_ECHO);
   for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusy(suported, FUNCTION_ECHO) == false || selected == suported) {
+    if (ConfigESP->checkBusyGpio(suported, FUNCTION_ECHO) == false || selected == suported) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {

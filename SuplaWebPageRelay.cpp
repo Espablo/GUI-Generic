@@ -146,7 +146,7 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
     pagerelay += F("'>");
 
     for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusy(suported, FUNCTION_RELAY) == false || selected == suported) {
+      if (ConfigESP->checkBusyGpio(suported, FUNCTION_RELAY) == false || selected == suported) {
         pagerelay += F("<option value='");
         pagerelay += suported;
         if (selected == suported) {

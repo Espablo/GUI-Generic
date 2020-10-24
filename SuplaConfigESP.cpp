@@ -20,7 +20,6 @@
 #include "SuplaConfigManager.h"
 #include "SuplaDeviceGUI.h"
 
-
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
 
@@ -483,7 +482,7 @@ int SuplaConfigESP::getLevel(int nr, int function) {
   }
 }
 
-int SuplaConfigESP::checkBusy(int gpio, int function) {
+int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11) {
     return true;
   }

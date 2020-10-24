@@ -21,7 +21,6 @@
 
 #include "GUI-Generic_Config.h"
 
-
 enum _configModeESP { NORMAL_MODE, CONFIG_MODE };
 
 typedef struct {
@@ -59,7 +58,7 @@ class SuplaConfigESP : public Supla::Triggerable {
   int sort(int function);
   int getGpio(int nr, int function);
   int getLevel(int nr, int function);
-  int checkBusy(int gpio, int function);
+  int checkBusyGpio(int gpio, int function);
 
   int getMemoryRelay(int nr);
   int getCfgFlag();
