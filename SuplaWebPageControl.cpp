@@ -162,8 +162,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += F("<i><label>ILOŚĆ</label><input name='");
   pagebutton += INPUT_MAX_BUTTON;
   pagebutton += F("' type='number' placeholder='0' step='1' min='0' max='");
-  pagebutton += MAX_GPIO - ConfigManager->get(KEY_MAX_RELAY)->getValueInt() - ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt() -
-                ConfigManager->get(KEY_MAX_DHT11)->getValueInt() - ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
+  pagebutton += ConfigESP->countFreeGpio(FUNCTION_BUTTON);
   pagebutton += F("' value='");
   pagebutton += String(ConfigManager->get(KEY_MAX_BUTTON)->getValue());
   pagebutton += F("'></i>");
@@ -209,8 +208,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += F("<i><label>ILOŚĆ</label><input name='");
   pagebutton += INPUT_MAX_LIMIT_SWITCH;
   pagebutton += F("' type='number' placeholder='0' step='1' min='0' max='");
-  pagebutton += MAX_GPIO - ConfigManager->get(KEY_MAX_RELAY)->getValueInt() - ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() -
-                ConfigManager->get(KEY_MAX_DHT11)->getValueInt() - ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
+  pagebutton += ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH);
   pagebutton += F("' value='");
   pagebutton += String(ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValue());
   pagebutton += F("'></i>");

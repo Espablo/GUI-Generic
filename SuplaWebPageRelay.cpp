@@ -33,7 +33,8 @@ void SuplaWebPageRelay::createWebPageRelay() {
 
 void SuplaWebPageRelay::handleRelay() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password)) return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
   }
   WebServer->sendContent(supla_webpage_relay(0));
 }
@@ -42,7 +43,8 @@ void SuplaWebPageRelay::handleRelaySave() {
   //  Serial.println(F("HTTP_POST - metoda handleRelaySave"));
 
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password)) return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
   }
   String key, input;
   uint8_t nr, current_value, last_value, error;
@@ -119,8 +121,7 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += F("<i><label>ILOŚĆ</label><input name='");
   pagerelay += INPUT_MAX_RELAY;
   pagerelay += F("' type='number' placeholder='0' step='1' min='0' max='");
-  pagerelay += MAX_GPIO - ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() - ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt() -
-               ConfigManager->get(KEY_MAX_DHT11)->getValueInt() - ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
+  pagerelay += ConfigESP->countFreeGpio(FUNCTION_RELAY);
   pagerelay += F("' value='");
   pagerelay += String(ConfigManager->get(KEY_MAX_RELAY)->getValue());
   pagerelay += F("'></i>");
@@ -137,7 +138,7 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
     pagerelay += nr;
     pagerelay += F(". PRZEKAŹNIK ");
     if (selected != OFF_GPIO) {
-      pagerelay += WebServer->SuplaIconEdit();    
+      pagerelay += WebServer->SuplaIconEdit();
       pagerelay += F("</a>");
     }
     pagerelay += F("</label><select name='");
@@ -170,7 +171,8 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
 
 void SuplaWebPageRelay::handleRelaySet() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password)) return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
   }
   WebServer->sendContent(supla_webpage_relay_set(0));
 }
@@ -178,7 +180,8 @@ void SuplaWebPageRelay::handleRelaySet() {
 void SuplaWebPageRelay::handleRelaySaveSet() {
   //  Serial.println(F("HTTP_POST - metoda handleRelaySaveSet"));
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password)) return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
   }
 
   String readUrl, nr_relay, key, input;

@@ -313,8 +313,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("<i><label>ILOŚĆ</label><input name='");
   page += INPUT_MAX_DHT11;
   page += F("' type='number' placeholder='0' step='1' min='0' max='");
-  page += MAX_GPIO - ConfigManager->get(KEY_MAX_RELAY)->getValueInt() - ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() -
-          ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
+  page += ConfigESP->countFreeGpio(FUNCTION_DHT11);
   page += F("' value='");
   page += String(ConfigManager->get(KEY_MAX_DHT11)->getValue());
   page += F("'></i>");
@@ -349,8 +348,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("<i><label>ILOŚĆ</label><input name='");
   page += INPUT_MAX_DHT22;
   page += F("' type='number' placeholder='0' step='1' min='0' max='");
-  page += MAX_GPIO - ConfigManager->get(KEY_MAX_RELAY)->getValueInt() - ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() -
-          ConfigManager->get(KEY_MAX_DHT11)->getValueInt();
+  page += ConfigESP->countFreeGpio(FUNCTION_DHT22);
   page += F("' value='");
   page += String(ConfigManager->get(KEY_MAX_DHT22)->getValue());
   page += F("'></i>");
