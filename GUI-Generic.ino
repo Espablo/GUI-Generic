@@ -13,27 +13,29 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+#include "GUI-Generic_Config.h"
 
 #include <EEPROM.h>
 #include <SPI.h>
 #include <SuplaDevice.h>
-#include <Wire.h>
 #include <supla/control/button.h>
 #include <supla/control/relay.h>
 #include <supla/sensor/DHT.h>
 #include <supla/sensor/DS18B20.h>
 #include <supla/sensor/HC_SR04.h>
 #include <supla/sensor/binary.h>
+#ifdef SUPLA_BME280
 #include <supla/sensor/bme280.h>
+#include "SuplaWebPageSensor.h"
+#endif
 
 #include <DoubleResetDetector.h>
 #include "FS.h"
-#include "GUI-Generic_Config.h"
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 
 #define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
-#define DRD_ADDRESS 0   // RTC Memory Address for the DoubleResetDetector to use
+#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
 DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 void setup() {
@@ -63,7 +65,8 @@ void setup() {
           Supla::GUI::addRolleShutterMomentary(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr + 1, FUNCTION_RELAY),
                                                ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON),
                                                ConfigESP->getLevel(nr, FUNCTION_RELAY));
-        } else {
+        }
+        else {
 #endif
           Supla::GUI::addRolleShutter(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr + 1, FUNCTION_RELAY),
                                       ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON),
@@ -73,7 +76,8 @@ void setup() {
 #endif
         rollershutters--;
         nr++;
-      } else {
+      }
+      else {
 #endif
         Supla::GUI::addRelayButton(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr, FUNCTION_BUTTON),
                                    ConfigESP->getLevel(nr, FUNCTION_RELAY));
@@ -117,7 +121,8 @@ void setup() {
     if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 0) {
       if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
         Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(1, FUNCTION_DS18B20));
-      } else {
+      }
+      else {
         new Supla::Sensor::DS18B20(ConfigESP->getGpio(1, FUNCTION_DS18B20));
       }
     }
@@ -131,7 +136,8 @@ void setup() {
     if (ConfigESP->getCfgFlag() != OFF_GPIO) {
       Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
                                ConfigESP->getLevel(1, FUNCTION_CFG_LED));
-    } else
+    }
+    else
 #endif
       Supla::GUI::addConfigESP(ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
                                ConfigESP->getLevel(1, FUNCTION_CFG_LED));
@@ -142,10 +148,15 @@ void setup() {
   ConfigESP->sort(FUNCTION_SDA);
   ConfigESP->sort(FUNCTION_SCL);
   if (ConfigESP->sort(FUNCTION_SDA) && ConfigESP->sort(FUNCTION_SCL)) {
-    Wire.begin(ConfigESP->getGpio(1, FUNCTION_SDA), ConfigESP->getGpio(1, FUNCTION_SCL));
-
-    if (ConfigManager->get(KEY_ADR_BME280)->getValueInt()) {
-      new Supla::Sensor::BME280(ConfigManager->get(KEY_ADR_BME280)->getValueInt(), ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+    if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76) {
+      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+    }
+    else if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X77) {
+      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+    }
+    else if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76_AND_0X77) {
+      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
     }
   }
 #endif

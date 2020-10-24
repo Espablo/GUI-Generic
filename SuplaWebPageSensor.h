@@ -41,11 +41,19 @@ class SuplaWebPageSensor {
 #ifdef SUPLA_DS18B20
   String supla_webpage_search(int save);
 #endif
-  const char* SupportedBme280[3] = {
+
+#ifdef SUPLA_BME280
+#define BME280_ADDRESS_0X76				1			
+#define BME280_ADDRESS_0X77				2
+#define BME280_ADDRESS_0X76_AND_0X77	3
+
+  const char* SupportedBme280[4] = {
     "OFF", 
     "0x76", 
-    "0x77"};
+    "0x77 - domyślny",
+    "0x76 & 0x77"};
 };
+#endif
 
 extern SuplaWebPageSensor* WebPageSensor;
 #endif  // SuplaWebPageSensor_h
