@@ -13,6 +13,7 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
 #include <ESP8266WiFi.h>
 
 #include "SuplaConfigESP.h"
@@ -63,7 +64,8 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _
 
   if (pinLedConfig <= 0) {
     Serial.println(F("ESP  - status LED disabled"));
-  } else {
+  }
+  else {
     pinMode(pinLedConfig, OUTPUT);
     digitalWrite(pinLedConfig, pinOffValue());
   }
@@ -306,7 +308,8 @@ void status_func(int status, const char *msg) {
   if (status == 17 && ConfigESP->configModeESP == NORMAL_MODE) {
     ConfigESP->ledBlinkingStop();
     lock = 0;
-  } else if (status != 17 && lock == 0 && ConfigESP->configModeESP == NORMAL_MODE) {
+  }
+  else if (status != 17 && lock == 0 && ConfigESP->configModeESP == NORMAL_MODE) {
     ConfigESP->ledBlinking(500);
     lock = 1;
   }
@@ -479,10 +482,11 @@ int SuplaConfigESP::getLevel(int nr, int function) {
   }
 }
 
-int SuplaConfigESP::checkBusy(int gpio, int function) {
+int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11) {
     return true;
-  } else {
+  }
+  else {
     String key = GPIO;
     key += gpio;
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != FUNCTION_OFF) {
@@ -493,6 +497,21 @@ int SuplaConfigESP::checkBusy(int gpio, int function) {
     }
   }
   return false;
+}
+
+uint8_t SuplaConfigESP::countFreeGpio(uint8_t function) {
+  uint8_t count = 0;
+  for (uint8_t gpio = 0; gpio < OFF_GPIO; gpio++) {
+    if (gpio != 6 && gpio != 7 && gpio != 8 && gpio != 11) {
+      String key = GPIO;
+      key += gpio;
+      if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
+        count++;
+      }
+    }
+  }
+  return count;
 }
 
 int SuplaConfigESP::getCfgFlag() {

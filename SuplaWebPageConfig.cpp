@@ -2,7 +2,6 @@
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 
-
 SuplaWebPageConfig *WebPageConfig = new SuplaWebPageConfig();
 
 SuplaWebPageConfig::SuplaWebPageConfig() {
@@ -45,19 +44,21 @@ void SuplaWebPageConfig::handleConfigSave() {
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_CFG_LED);
       ConfigManager->setElement(key.c_str(), LEVEL, 1);
-    } else if (ConfigESP->getGpio(1, FUNCTION_CFG_LED) ==
-                   WebServer->httpServer.arg(input).toInt() &&
-               ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED) {
+    }
+    else if (ConfigESP->getGpio(1, FUNCTION_CFG_LED) == WebServer->httpServer.arg(input).toInt() &&
+             ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED) {
       key = GPIO;
       key += ConfigESP->getGpio(1, FUNCTION_CFG_LED);
       input = INPUT_CFG_LED_LEVEL;
       ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
-    } else {
+    }
+    else {
       WebServer->sendContent(supla_webpage_config(6));
       return;
     }
-  } else if (ConfigESP->getGpio(1, FUNCTION_CFG_LED) != WebServer->httpServer.arg(input).toInt() ||
-             WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+  }
+  else if (ConfigESP->getGpio(1, FUNCTION_CFG_LED) != WebServer->httpServer.arg(input).toInt() ||
+           WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     key = GPIO;
     key += ConfigESP->getGpio(1, FUNCTION_CFG_LED);
     ConfigManager->setElement(key.c_str(), NR, 0);
@@ -79,8 +80,8 @@ void SuplaWebPageConfig::handleConfigSave() {
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CFG_BUTTON)) {
       ConfigManager->setElement(key.c_str(), NR, 1);
       ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_CFG_BUTTON);
-    } else if (ConfigESP->checkBusy(WebServer->httpServer.arg(input).toInt(), FUNCTION_BUTTON) ==
-               false) {
+    }
+    else if (ConfigESP->checkBusyGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_BUTTON) == false) {
       ConfigManager->setElement(key.c_str(), CFG, 1);
     }
     else {
@@ -102,8 +103,7 @@ void SuplaWebPageConfig::handleConfigSave() {
   for (int i = 1; i <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); i++) {
     key = GPIO;
     key += ConfigESP->getGpio(i, FUNCTION_BUTTON);
-    if (ConfigESP->getGpio(i, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() ||
-        WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    if (ConfigESP->getGpio(i, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
       if (ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1) {
         ConfigManager->setElement(key.c_str(), CFG, 0);
       }
@@ -145,12 +145,13 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += F("'>");
   selected = ConfigESP->getGpio(1, FUNCTION_CFG_LED);
   for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusy(suported, FUNCTION_CFG_LED) == false || selected == suported) {
+    if (ConfigESP->checkBusyGpio(suported, FUNCTION_CFG_LED) == false || selected == suported) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      } else
+      }
+      else
         page += F("'>");
       page += (WebServer->Supported_Gpio[suported]);
     }
@@ -168,7 +169,8 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      } else
+      }
+      else
         page += F("'>");
       page += (WebServer->Supported_Level[suported]);
     }
@@ -181,8 +183,8 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   selected = ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON);
   int cfg = 0;
   for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusy(suported, FUNCTION_CFG_BUTTON) == false ||
-        ConfigESP->checkBusy(suported, FUNCTION_BUTTON) == false || selected == suported) {
+    if (ConfigESP->checkBusyGpio(suported, FUNCTION_CFG_BUTTON) == false || ConfigESP->checkBusyGpio(suported, FUNCTION_BUTTON) == false ||
+        selected == suported) {
       String key = GPIO;
       key += suported;
       page += F("<option value='");
@@ -191,9 +193,11 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
         if (cfg != 1) {
           page += F("' selected>");
           cfg = 1;
-        } else
+        }
+        else
           page += F("'>");
-      } else
+      }
+      else
         page += F("'>");
       page += (WebServer->Supported_Gpio[suported]);
     }

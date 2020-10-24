@@ -15,6 +15,7 @@
 */
 #include "GUI-Generic_Config.h"
 
+#include <DoubleResetDetector.h>
 #include <EEPROM.h>
 #include <SPI.h>
 #include <SuplaDevice.h>
@@ -28,8 +29,8 @@
 #include <supla/sensor/bme280.h>
 #include "SuplaWebPageSensor.h"
 #endif
+#include <supla/storage/eeprom.h>
 
-#include <DoubleResetDetector.h>
 #include "FS.h"
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
@@ -45,6 +46,7 @@ void setup() {
     Serial.println("FACTORY RESET!!!");
     ConfigESP->factoryReset();
   }
+
   uint8_t nr, gpio;
   String key;
 

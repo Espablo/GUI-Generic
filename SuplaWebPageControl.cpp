@@ -1,7 +1,7 @@
 #include "SuplaWebPageControl.h"
+
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
-
 
 SuplaWebPageControl *WebPageControl = new SuplaWebPageControl();
 
@@ -65,14 +65,14 @@ void SuplaWebPageControl::handleControlSave() {
           ConfigManager->setElement(key.c_str(), NR, nr);
           ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_BUTTON);
           ConfigManager->setElement(key.c_str(), LEVEL, 2);
-        } else {
+        }
+        else {
           WebServer->sendContent(supla_webpage_control(6));
           return;
         }
       }
       if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() ||
-          WebServer->httpServer.arg(input).toInt() == OFF_GPIO ||
-          ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
+          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
         key = GPIO;
         key += ConfigESP->getGpio(nr, FUNCTION_BUTTON);
         ConfigManager->setElement(key.c_str(), NR, 0);
@@ -103,21 +103,18 @@ void SuplaWebPageControl::handleControlSave() {
         key = GPIO;
         key += WebServer->httpServer.arg(input).toInt();
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-            (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) ==
-                 WebServer->httpServer.arg(input).toInt() &&
-             ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() ==
-                 FUNCTION_LIMIT_SWITCH)) {
+            (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) == WebServer->httpServer.arg(input).toInt() &&
+             ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_LIMIT_SWITCH)) {
           ConfigManager->setElement(key.c_str(), NR, nr);
           ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_LIMIT_SWITCH);
-        } else {
+        }
+        else {
           WebServer->sendContent(supla_webpage_control(6));
           return;
         }
       }
-      if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) !=
-              WebServer->httpServer.arg(input).toInt() ||
-          WebServer->httpServer.arg(input).toInt() == OFF_GPIO ||
-          ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
+      if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != WebServer->httpServer.arg(input).toInt() ||
+          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
         key = GPIO;
         key += ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH);
         ConfigManager->setElement(key.c_str(), NR, 0);
@@ -128,8 +125,7 @@ void SuplaWebPageControl::handleControlSave() {
     }
   }
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_LIMIT_SWITCH,
-                       WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str());
+    ConfigManager->set(KEY_MAX_LIMIT_SWITCH, WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str());
   }
   ConfigESP->sort(FUNCTION_LIMIT_SWITCH);
 #endif
@@ -140,9 +136,9 @@ void SuplaWebPageControl::handleControlSave() {
       WebServer->sendContent(supla_webpage_control(1));
       break;
     case E_CONFIG_FILE_OPEN:
-//      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
+      //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
       WebServer->sendContent(supla_webpage_control(2));
-      break;  
+      break;
   }
 }
 
@@ -161,41 +157,43 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += F("<form method='post' action='");
   pagebutton += PATH_SAVE_CONTROL;
 
-#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || \
-    (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
+#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
   pagebutton += F("'><div class='w'><h3>Ustawienie GPIO dla przycisków</h3>");
   pagebutton += F("<i><label>ILOŚĆ</label><input name='");
   pagebutton += INPUT_MAX_BUTTON;
   pagebutton += F("' type='number' placeholder='0' step='1' min='0' max='");
-  pagebutton += MAX_GPIO - ConfigManager->get(KEY_MAX_RELAY)->getValueInt() -
-                ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt() -
-                ConfigManager->get(KEY_MAX_DHT11)->getValueInt() -
-                ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
+  pagebutton += ConfigESP->countFreeGpio(FUNCTION_BUTTON);
   pagebutton += F("' value='");
   pagebutton += String(ConfigManager->get(KEY_MAX_BUTTON)->getValue());
   pagebutton += F("'></i>");
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
     pagebutton += F("<i><label>");
-    pagebutton += F("<a href='");
-    pagebutton += PATH_START;
-    pagebutton += PATH_BUTTON_SET;
-    pagebutton += nr;
-    pagebutton += F("'>");
+    selected = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+    if (selected != OFF_GPIO) {
+      pagebutton += F("<a href='");
+      pagebutton += PATH_START;
+      pagebutton += PATH_BUTTON_SET;
+      pagebutton += nr;
+      pagebutton += F("'>");
+    }
     pagebutton += nr;
     pagebutton += F(". PRZYCISK ");
-    pagebutton += WebServer->SuplaIconEdit();
-    pagebutton += F("</a></label><select name='");
+    if (selected != OFF_GPIO) {
+      pagebutton += WebServer->SuplaIconEdit();
+      pagebutton += F("</a>");
+    }
+    pagebutton += F("</label><select name='");
     pagebutton += INPUT_BUTTON_GPIO;
     pagebutton += nr;
     pagebutton += F("'>");
-    selected = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
     for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusy(suported, FUNCTION_BUTTON) == false || selected == suported) {
+      if (ConfigESP->checkBusyGpio(suported, FUNCTION_BUTTON) == false || selected == suported) {
         pagebutton += F("<option value='");
         pagebutton += suported;
         if (selected == suported) {
           pagebutton += F("' selected>");
-        } else
+        }
+        else
           pagebutton += F("'>");
         pagebutton += (WebServer->Supported_Gpio[suported]);
       }
@@ -210,10 +208,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += F("<i><label>ILOŚĆ</label><input name='");
   pagebutton += INPUT_MAX_LIMIT_SWITCH;
   pagebutton += F("' type='number' placeholder='0' step='1' min='0' max='");
-  pagebutton += MAX_GPIO - ConfigManager->get(KEY_MAX_RELAY)->getValueInt() -
-                ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() -
-                ConfigManager->get(KEY_MAX_DHT11)->getValueInt() -
-                ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
+  pagebutton += ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH);
   pagebutton += F("' value='");
   pagebutton += String(ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValue());
   pagebutton += F("'></i>");
@@ -226,12 +221,13 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
     pagebutton += F("'>");
     selected = ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH);
     for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusy(suported, FUNCTION_LIMIT_SWITCH) == false || selected == suported) {
+      if (ConfigESP->checkBusyGpio(suported, FUNCTION_LIMIT_SWITCH) == false || selected == suported) {
         pagebutton += F("<option value='");
         pagebutton += suported;
         if (selected == suported) {
           pagebutton += F("' selected>");
-        } else
+        }
+        else
           pagebutton += F("'>");
         pagebutton += (WebServer->Supported_Gpio[suported]);
       }
@@ -246,12 +242,11 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += F("<a href='");
   pagebutton += PATH_START;
   pagebutton += PATH_DEVICE_SETTINGS;
-  pagebutton += F ("'><button>Powrót</button></a></div>");
+  pagebutton += F("'><button>Powrót</button></a></div>");
   return pagebutton;
 }
 
-#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || \
-    (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
+#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
 void SuplaWebPageControl::handleButtonSet() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
@@ -292,7 +287,7 @@ void SuplaWebPageControl::handleButtonSaveSet() {
       break;
 
     case E_CONFIG_FILE_OPEN:
-//      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
+      //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
       WebServer->sendContent(supla_webpage_control(2));
       break;
   }
@@ -319,8 +314,7 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
   //  page += WebServer->SuplaLogo();
   page += WebServer->SuplaSummary();
   uint8_t buttons = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
-  if (nr_button.toInt() <= buttons &&
-      ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON) != OFF_GPIO) {
+  if (nr_button.toInt() <= buttons && ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON) != OFF_GPIO) {
     page += F("<form method='post' action='");
     page += PATH_SAVE_BUTTON_SET;
     page += nr_button;
@@ -338,13 +332,15 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
       page += suported;
       if (selected == suported) {
         page += F("' selected>");
-      } else
+      }
+      else
         page += F("'>");
       page += (SupportedTrigger[suported]);
     }
     page += F("</select></i>");
     page += F("</div><button type='submit'>Zapisz</button></form>");
-  } else {
+  }
+  else {
     page += F("<div class='w'><h3>Brak przycisku nr. ");
     page += nr_button;
     page += F("</h3>");
