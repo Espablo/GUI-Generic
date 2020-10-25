@@ -13,23 +13,25 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+#include "GUI-Generic_Config.h"
 
 #include <DoubleResetDetector.h>
 #include <EEPROM.h>
 #include <SPI.h>
 #include <SuplaDevice.h>
-#include <Wire.h>
 #include <supla/control/button.h>
 #include <supla/control/relay.h>
 #include <supla/sensor/DHT.h>
 #include <supla/sensor/DS18B20.h>
 #include <supla/sensor/HC_SR04.h>
 #include <supla/sensor/binary.h>
+#ifdef SUPLA_BME280
 #include <supla/sensor/bme280.h>
+#include "SuplaWebPageSensor.h"
+#endif
 #include <supla/storage/eeprom.h>
 
 #include "FS.h"
-#include "GUI-Generic_Config.h"
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 
@@ -148,10 +150,15 @@ void setup() {
   ConfigESP->sort(FUNCTION_SDA);
   ConfigESP->sort(FUNCTION_SCL);
   if (ConfigESP->sort(FUNCTION_SDA) && ConfigESP->sort(FUNCTION_SCL)) {
-    Wire.begin(ConfigESP->getGpio(1, FUNCTION_SDA), ConfigESP->getGpio(1, FUNCTION_SCL));
-
-    if (ConfigManager->get(KEY_ADR_BME280)->getValueInt()) {
-      new Supla::Sensor::BME280(ConfigManager->get(KEY_ADR_BME280)->getValueInt(), ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+    if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76) {
+      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+    }
+    else if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X77) {
+      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+    }
+    else if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76_AND_0X77) {
+      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
     }
   }
 #endif

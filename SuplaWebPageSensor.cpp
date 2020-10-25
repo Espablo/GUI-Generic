@@ -131,11 +131,15 @@ void SuplaWebPageSensor::handleSensorSave() {
 #ifdef SUPLA_BME280
   key = KEY_ADR_BME280;
   input = INPUT_BME280;
-  ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
+  if (strcmp(WebServer->httpServer.arg(INPUT_BME280).c_str(), "") != 0) {
+  	ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
+  }
 
   key = KEY_ALTITUDE_BME280;
   input = INPUT_ALTITUDE_BME280;
-  ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
+  if (strcmp(WebServer->httpServer.arg(INPUT_ALTITUDE_BME280).c_str(), "") != 0) {  
+  	ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
+  }
 
   input = INPUT_SDA_GPIO;
   key = GPIO;
