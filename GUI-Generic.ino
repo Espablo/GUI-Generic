@@ -107,7 +107,6 @@ void setup() {
       new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT11), DHT11);
     }
   }
-
 #endif
 
 #ifdef SUPLA_DHT22
@@ -123,10 +122,10 @@ void setup() {
   if (ConfigESP->sort(FUNCTION_DS18B20)) {
     if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 0) {
       if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
-        Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(1, FUNCTION_DS18B20));
+        Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(FUNCTION_DS18B20));
       }
       else {
-        new Supla::Sensor::DS18B20(ConfigESP->getGpio(1, FUNCTION_DS18B20));
+        new Supla::Sensor::DS18B20(ConfigESP->getGpio(FUNCTION_DS18B20));
       }
     }
   }
@@ -137,13 +136,13 @@ void setup() {
     ConfigESP->sort(FUNCTION_CFG_BUTTON);
 #ifdef SUPLA_BUTTON
     if (ConfigESP->getCfgFlag() != OFF_GPIO) {
-      Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
-                               ConfigESP->getLevel(1, FUNCTION_CFG_LED));
+      Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
+                               ConfigESP->getLevel(FUNCTION_CFG_LED));
     }
     else
 #endif
-      Supla::GUI::addConfigESP(ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
-                               ConfigESP->getLevel(1, FUNCTION_CFG_LED));
+      Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
+                               ConfigESP->getLevel(FUNCTION_CFG_LED));
   }
 #endif
 
@@ -152,8 +151,8 @@ void setup() {
   ConfigESP->sort(FUNCTION_SCL);
 
   if (ConfigESP->sort(FUNCTION_SDA) && ConfigESP->sort(FUNCTION_SCL)) {
-    Wire.begin(ConfigESP->getGpio(1, FUNCTION_SDA), ConfigESP->getGpio(1, FUNCTION_SCL));
-    
+    Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
+
     if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76) {
       new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
     }
@@ -171,7 +170,7 @@ void setup() {
   ConfigESP->sort(FUNCTION_TRIG);
   ConfigESP->sort(FUNCTION_ECHO);
   if (ConfigESP->sort(FUNCTION_TRIG) && ConfigESP->sort(FUNCTION_ECHO)) {
-    new Supla::Sensor::HC_SR04(ConfigESP->getGpio(1, FUNCTION_TRIG), ConfigESP->getGpio(1, FUNCTION_ECHO));
+    new Supla::Sensor::HC_SR04(ConfigESP->getGpio(FUNCTION_TRIG), ConfigESP->getGpio(FUNCTION_ECHO));
   }
 #endif
 

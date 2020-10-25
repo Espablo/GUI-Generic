@@ -499,14 +499,14 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   return false;
 }
 
-uint8_t SuplaConfigESP::countFreeGpio(uint8_t function) {
+uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   uint8_t count = 0;
   for (uint8_t gpio = 0; gpio < OFF_GPIO; gpio++) {
     if (gpio != 6 && gpio != 7 && gpio != 8 && gpio != 11) {
       String key = GPIO;
       key += gpio;
       if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
+          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == exception) {
         count++;
       }
     }
