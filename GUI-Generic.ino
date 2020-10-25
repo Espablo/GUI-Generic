@@ -19,6 +19,7 @@
 #include <EEPROM.h>
 #include <SPI.h>
 #include <SuplaDevice.h>
+#include <Wire.h>
 #include <supla/control/button.h>
 #include <supla/control/relay.h>
 #include <supla/sensor/DHT.h>
@@ -149,7 +150,10 @@ void setup() {
 #ifdef SUPLA_BME280
   ConfigESP->sort(FUNCTION_SDA);
   ConfigESP->sort(FUNCTION_SCL);
+
   if (ConfigESP->sort(FUNCTION_SDA) && ConfigESP->sort(FUNCTION_SCL)) {
+    Wire.begin(ConfigESP->getGpio(1, FUNCTION_SDA), ConfigESP->getGpio(1, FUNCTION_SCL));
+    
     if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76) {
       new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
     }
