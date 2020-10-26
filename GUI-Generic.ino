@@ -146,24 +146,27 @@ void setup() {
   }
 #endif
 
-#ifdef SUPLA_BME280
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || defined(SUPLA_BH1750) || \
+    defined(SUPLA_MAX44009)
   ConfigESP->sort(FUNCTION_SDA);
   ConfigESP->sort(FUNCTION_SCL);
-
   if (ConfigESP->sort(FUNCTION_SDA) && ConfigESP->sort(FUNCTION_SCL)) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
-
-    if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76) {
-      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-    }
-    else if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X77) {
-      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-    }
-    else if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76_AND_0X77) {
-      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-    }
   }
+#endif
+
+#ifdef SUPLA_BME280
+  if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76) {
+    new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+  }
+  else if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X77) {
+    new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+  }
+  else if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76_AND_0X77) {
+    new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+    new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+  }
+
 #endif
 
 #ifdef SUPLA_HC_SR04
