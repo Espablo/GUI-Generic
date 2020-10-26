@@ -499,6 +499,14 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   return false;
 }
 
+void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level) {
+  String key = GPIO;
+  key += gpio;
+  ConfigManager->setElement(key.c_str(), NR, nr);
+  ConfigManager->setElement(key.c_str(), FUNCTION, function);
+  ConfigManager->setElement(key.c_str(), LEVEL, level);
+}
+
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   uint8_t count = 0;
   for (uint8_t gpio = 0; gpio < OFF_GPIO; gpio++) {

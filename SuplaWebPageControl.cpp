@@ -62,9 +62,7 @@ void SuplaWebPageControl::handleControlSave() {
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
             (ConfigESP->getGpio(nr, FUNCTION_BUTTON) == WebServer->httpServer.arg(input).toInt() &&
              ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_BUTTON)) {
-          ConfigManager->setElement(key.c_str(), NR, nr);
-          ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_BUTTON);
-          ConfigManager->setElement(key.c_str(), LEVEL, 2);
+          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_BUTTON, 2);
         }
         else {
           WebServer->sendContent(supla_webpage_control(6));
@@ -105,8 +103,7 @@ void SuplaWebPageControl::handleControlSave() {
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
             (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) == WebServer->httpServer.arg(input).toInt() &&
              ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_LIMIT_SWITCH)) {
-          ConfigManager->setElement(key.c_str(), NR, nr);
-          ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_LIMIT_SWITCH);
+          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_LIMIT_SWITCH, 0);
         }
         else {
           WebServer->sendContent(supla_webpage_control(6));

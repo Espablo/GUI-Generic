@@ -47,7 +47,7 @@ void SuplaWebPageRelay::handleRelaySave() {
       return WebServer->httpServer.requestAuthentication();
   }
   String key, input;
-  uint8_t nr, current_value, last_value, error;
+  uint8_t nr, current_value, last_value;
 
   last_value = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   current_value = WebServer->httpServer.arg(INPUT_MAX_RELAY).toInt();
@@ -64,9 +64,7 @@ void SuplaWebPageRelay::handleRelaySave() {
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
             (ConfigESP->getGpio(nr, FUNCTION_RELAY) == WebServer->httpServer.arg(input).toInt() &&
              ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_RELAY)) {
-          ConfigManager->setElement(key.c_str(), NR, nr);
-          ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_RELAY);
-          ConfigManager->setElement(key.c_str(), LEVEL, 1);
+          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_RELAY, 1);
         }
         else {
           WebServer->sendContent(supla_webpage_relay(6));

@@ -41,9 +41,7 @@ void SuplaWebPageConfig::handleConfigSave() {
     key = GPIO;
     key += WebServer->httpServer.arg(input).toInt();
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
-      ConfigManager->setElement(key.c_str(), NR, 1);
-      ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_CFG_LED);
-      ConfigManager->setElement(key.c_str(), LEVEL, 1);
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), 1, FUNCTION_CFG_LED, 1);
     }
     else if (ConfigESP->getGpio(FUNCTION_CFG_LED) == WebServer->httpServer.arg(input).toInt() &&
              ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED) {
@@ -77,8 +75,7 @@ void SuplaWebPageConfig::handleConfigSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CFG_BUTTON)) {
-      ConfigManager->setElement(key.c_str(), NR, 1);
-      ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_CFG_BUTTON);
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_CFG_BUTTON);
     }
     else if (ConfigESP->checkBusyGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_BUTTON) == false) {
       ConfigManager->setElement(key.c_str(), CFG, 1);

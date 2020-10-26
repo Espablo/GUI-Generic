@@ -62,8 +62,7 @@ void SuplaWebPageSensor::handleSensorSave() {
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
             (ConfigESP->getGpio(nr, FUNCTION_DHT11) == WebServer->httpServer.arg(input).toInt() &&
              ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DHT11)) {
-          ConfigManager->setElement(key.c_str(), NR, nr);
-          ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_DHT11);
+          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_DHT11, 0);
         }
         else {
           WebServer->sendContent(supla_webpage_sensor(6));
@@ -103,8 +102,7 @@ void SuplaWebPageSensor::handleSensorSave() {
         if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
             (ConfigESP->getGpio(nr, FUNCTION_DHT22) == WebServer->httpServer.arg(input).toInt() &&
              ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DHT22)) {
-          ConfigManager->setElement(key.c_str(), NR, nr);
-          ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_DHT22);
+          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_DHT22, 0);
         }
         else {
           WebServer->sendContent(supla_webpage_sensor(6));
@@ -150,8 +148,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(FUNCTION_SDA) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_SDA)) {
-      ConfigManager->setElement(key.c_str(), NR, 1);
-      ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_SDA);
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_SDA);
     }
     else {
       WebServer->sendContent(supla_webpage_sensor(6));
@@ -177,8 +174,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(FUNCTION_SCL) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_SCL)) {
-      ConfigManager->setElement(key.c_str(), NR, 1);
-      ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_SCL);
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_SCL);
     }
     else {
       WebServer->sendContent(supla_webpage_sensor(6));
@@ -206,8 +202,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(FUNCTION_TRIG) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_TRIG)) {
-      ConfigManager->setElement(key.c_str(), NR, 1);
-      ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_TRIG);
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_TRIG);
     }
     else {
       WebServer->sendContent(supla_webpage_sensor(6));
@@ -233,8 +228,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(FUNCTION_ECHO) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_ECHO)) {
-      ConfigManager->setElement(key.c_str(), NR, 1);
-      ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_ECHO);
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_ECHO);
     }
     else {
       WebServer->sendContent(supla_webpage_sensor(6));
@@ -262,8 +256,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
         (ConfigESP->getGpio(FUNCTION_DS18B20) == WebServer->httpServer.arg(input).toInt() &&
          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_DS18B20)) {
-      ConfigManager->setElement(key.c_str(), NR, 1);
-      ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_DS18B20);
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_DS18B20);
     }
     else {
       WebServer->sendContent(supla_webpage_sensor(6));
