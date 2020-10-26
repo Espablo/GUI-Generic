@@ -7,11 +7,22 @@
 #define SUPLA_ROLLERSHUTTER
 #define SUPLA_CONFIG
 
-#define SUPLA_DS18B20
-// #define SUPLA_DHT11
-// #define SUPLA_DHT22
-// #define SUPLA_BME280
+#define SUPLA_HC_SR04
 
-// #define SUPLA_HC_SR04
+// 1Wire
+#define SUPLA_DS18B20
+#define SUPLA_DHT11
+#define SUPLA_DHT22
+
+// i2c
+#define SUPLA_BME280
+// #define SUPLA_SI7021    // 0x40 NOT SUPPORTED
+// #define SUPLA_HTU21D    // 0x40 NOT SUPPORTED
+// #define SUPLA_SHT71     // 0x44 AND 0x45 NOT SUPPORTED
+// #define SUPLA_BH1750    // 0x23 AND 0x5C NOT SUPPORTED
+// #define SUPLA_MAX44009  // A0 NOT SUPPORTED
+
+// SPI
+// #define SUPLA_MAX6675  // NOT SUPPORTED
 
 #endif  // GUI-Generic_Config_h
