@@ -146,7 +146,6 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_MAX_DHT22, "0", 2);
   this->addKey(KEY_MAX_DHT11, "0", 2);
   this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
-  this->addKey(KEY_ADR_BME280, "0", 2);
   this->addKey(KEY_ALTITUDE_BME280, "0", 4);
 
   int nr;
@@ -166,6 +165,8 @@ SuplaConfigManager::SuplaConfigManager() {
     func += "0";
     this->addKey(key.c_str(), func.c_str(), 14);
   }
+
+  this->addKey(KEY_ACTIVE_SENSOR, 14);
 
   for (nr = 0; nr <= MAX_DS18B20; nr++) {
     key = KEY_DS;

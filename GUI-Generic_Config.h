@@ -10,7 +10,8 @@
 #define SUPLA_DS18B20
 // #define SUPLA_DHT11
 // #define SUPLA_DHT22
-// #define SUPLA_BME280
+#define SUPLA_BME280
+//#define SUPLA_SHT30
 
 // #define SUPLA_HC_SR04
 

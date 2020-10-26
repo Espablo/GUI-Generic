@@ -544,7 +544,6 @@ void SuplaConfigESP::factoryReset() {
   ConfigManager->set(KEY_MAX_DHT22, "0");
   ConfigManager->set(KEY_MAX_DHT11, "0");
   ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
-  ConfigManager->set(KEY_ADR_BME280, "0");
   ConfigManager->set(KEY_ALTITUDE_BME280, "0");
 
   int nr;

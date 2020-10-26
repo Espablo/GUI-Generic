@@ -15,12 +15,16 @@
 #define INPUT_SDA_GPIO        "sdag"
 #define INPUT_SCL_GPIO        "sclg"
 #define INPUT_BME280          "bme280"
+#define INPUT_SHT30           "sht30"
 #define INPUT_ALTITUDE_BME280 "abme280"
 #define INPUT_TRIG_GPIO       "trig"
 #define INPUT_ECHO_GPIO       "echo"
 #define INPUT_MAX_DHT11       "mdht11"
 #define INPUT_MAX_DHT22       "mdht22"
 #define INPUT_MAX_DS18B20     "maxds"
+
+#define SENSOR_BME280          0
+#define SENSOR_SHT30           1
 
 class SuplaWebPageSensor {
  public:
@@ -43,8 +47,8 @@ class SuplaWebPageSensor {
 #endif
 
 #ifdef SUPLA_BME280
-#define BME280_ADDRESS_0X76				1			
-#define BME280_ADDRESS_0X77				2
+#define BME280_ADDRESS_0X76				    1			
+#define BME280_ADDRESS_0X77			    	2
 #define BME280_ADDRESS_0X76_AND_0X77	3
 
   const char* SupportedBme280[4] = {
@@ -52,8 +56,14 @@ class SuplaWebPageSensor {
     "0x76", 
     "0x77",
     "0x76 & 0x77"};
-};
 #endif
+
+#ifdef SUPLA_SHT30
+  const char* SupportedSensorActivity[2] = {
+    "OFF", 
+    "ON"};
+#endif       
+};
 
 extern SuplaWebPageSensor* WebPageSensor;
 #endif  // SuplaWebPageSensor_h

@@ -30,6 +30,9 @@
 #include <supla/sensor/bme280.h>
 #include "SuplaWebPageSensor.h"
 #endif
+#ifdef SUPLA_SHT30
+#include <supla/sensor/SHT3x.h>
+#endif
 #include <supla/storage/eeprom.h>
 
 #include "FS.h"
@@ -147,24 +150,32 @@ void setup() {
   }
 #endif
 
-#ifdef SUPLA_BME280
+#ifdef SUPLA_BME280 || SUPLA_SHT30
   ConfigESP->sort(FUNCTION_SDA);
   ConfigESP->sort(FUNCTION_SCL);
 
   if (ConfigESP->sort(FUNCTION_SDA) && ConfigESP->sort(FUNCTION_SCL)) {
     Wire.begin(ConfigESP->getGpio(1, FUNCTION_SDA), ConfigESP->getGpio(1, FUNCTION_SCL));
-    
-    if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76) {
-      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-    }
-    else if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X77) {
-      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-    }
-    else if (ConfigManager->get(KEY_ADR_BME280)->getValueInt() == BME280_ADDRESS_0X76_AND_0X77) {
-      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-    }
   }
+#endif
+
+#ifdef SUPLA_BME280
+  switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt()) {
+    case BME280_ADDRESS_0X76:
+      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+      break;
+    case BME280_ADDRESS_0X77:
+      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+      break;
+    case BME280_ADDRESS_0X76_AND_0X77:
+      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+      break;
+  }
+#endif
+
+#ifdef SUPLA_SHT30
+  new Supla::Sensor::SHT3x();
 #endif
 
 #ifdef SUPLA_HC_SR04
