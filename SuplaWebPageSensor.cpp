@@ -71,12 +71,7 @@ void SuplaWebPageSensor::handleSensorSave() {
       }
       if (ConfigESP->getGpio(nr, FUNCTION_DHT11) != WebServer->httpServer.arg(input).toInt() ||
           WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
-        key = GPIO;
-        key += ConfigESP->getGpio(nr, FUNCTION_DHT11);
-        ConfigManager->setElement(key.c_str(), NR, 0);
-        ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
-        ConfigManager->setElement(key.c_str(), LEVEL, 0);
-        ConfigManager->setElement(key.c_str(), MEMORY, 0);
+        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_DHT11));
       }
     }
   }
@@ -111,12 +106,7 @@ void SuplaWebPageSensor::handleSensorSave() {
       }
       if (ConfigESP->getGpio(nr, FUNCTION_DHT22) != WebServer->httpServer.arg(input).toInt() ||
           WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
-        key = GPIO;
-        key += ConfigESP->getGpio(nr, FUNCTION_DHT22);
-        ConfigManager->setElement(key.c_str(), NR, 0);
-        ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
-        ConfigManager->setElement(key.c_str(), LEVEL, 0);
-        ConfigManager->setElement(key.c_str(), MEMORY, 0);
+        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_DHT22));
       }
     }
   }
@@ -156,12 +146,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     }
   }
   if (ConfigESP->getGpio(FUNCTION_SDA) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    key = GPIO;
-    key += ConfigESP->getGpio(FUNCTION_SDA);
-    ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
-    ConfigManager->setElement(key.c_str(), LEVEL, 0);
-    ConfigManager->setElement(key.c_str(), MEMORY, 0);
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_SDA));
   }
   ConfigESP->sort(FUNCTION_SDA);
 
@@ -182,12 +167,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     }
   }
   if (ConfigESP->getGpio(FUNCTION_SCL) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    key = GPIO;
-    key += ConfigESP->getGpio(FUNCTION_SCL);
-    ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
-    ConfigManager->setElement(key.c_str(), LEVEL, 0);
-    ConfigManager->setElement(key.c_str(), MEMORY, 0);
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_SCL));
   }
   ConfigESP->sort(FUNCTION_SCL);
 #endif
@@ -210,12 +190,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     }
   }
   if (ConfigESP->getGpio(FUNCTION_TRIG) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    key = GPIO;
-    key += ConfigESP->getGpio(FUNCTION_TRIG);
-    ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
-    ConfigManager->setElement(key.c_str(), LEVEL, 0);
-    ConfigManager->setElement(key.c_str(), MEMORY, 0);
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_TRIG));
   }
   ConfigESP->sort(FUNCTION_TRIG);
 
@@ -236,12 +211,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     }
   }
   if (ConfigESP->getGpio(FUNCTION_ECHO) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    key = GPIO;
-    key += ConfigESP->getGpio(FUNCTION_ECHO);
-    ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
-    ConfigManager->setElement(key.c_str(), LEVEL, 0);
-    ConfigManager->setElement(key.c_str(), MEMORY, 0);
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_ECHO));
   }
   ConfigESP->sort(FUNCTION_ECHO);
 #endif
@@ -264,12 +234,7 @@ void SuplaWebPageSensor::handleSensorSave() {
     }
   }
   if (ConfigESP->getGpio(FUNCTION_DS18B20) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    key = GPIO;
-    key += ConfigESP->getGpio(FUNCTION_DS18B20);
-    ConfigManager->setElement(key.c_str(), NR, 0);
-    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
-    ConfigManager->setElement(key.c_str(), LEVEL, 0);
-    ConfigManager->setElement(key.c_str(), MEMORY, 0);
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_DS18B20));
   }
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str(), "") > 0) {
     ConfigManager->set(KEY_MULTI_MAX_DS18B20, WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str());

@@ -507,6 +507,15 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t
   ConfigManager->setElement(key.c_str(), LEVEL, level);
 }
 
+void SuplaConfigESP::clearGpio(uint8_t gpio) {
+  String key = GPIO;
+  key += gpio;
+  ConfigManager->setElement(key.c_str(), NR, 0);
+  ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+  ConfigManager->setElement(key.c_str(), LEVEL, 0);
+  ConfigManager->setElement(key.c_str(), MEMORY, 0);
+}
+
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   uint8_t count = 0;
   for (uint8_t gpio = 0; gpio < OFF_GPIO; gpio++) {

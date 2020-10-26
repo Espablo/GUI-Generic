@@ -73,12 +73,7 @@ void SuplaWebPageRelay::handleRelaySave() {
       }
       if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != WebServer->httpServer.arg(input).toInt() ||
           WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
-        key = GPIO;
-        key += ConfigESP->getGpio(nr, FUNCTION_RELAY);
-        ConfigManager->setElement(key.c_str(), NR, 0);
-        ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
-        ConfigManager->setElement(key.c_str(), LEVEL, 0);
-        ConfigManager->setElement(key.c_str(), MEMORY, 0);
+        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_RELAY));
       }
     }
   }
