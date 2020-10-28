@@ -528,15 +528,13 @@ int SuplaConfigESP::getCfgFlag() {
 }
 
 void SuplaConfigESP::factoryReset() {
-  ConfigManager->set(KEY_SUPLA_GUID, "");
-  ConfigManager->set(KEY_SUPLA_AUTHKEY, "");
   ConfigManager->set(KEY_WIFI_SSID, "");
   ConfigManager->set(KEY_WIFI_PASS, "");
-  ConfigManager->set(KEY_SUPLA_SERVER, "");
-  ConfigManager->set(KEY_SUPLA_EMAIL, "");
-  ConfigManager->set(KEY_HOST_NAME, "");
-  ConfigManager->set(KEY_LOGIN, "");
-  ConfigManager->set(KEY_LOGIN_PASS, "");
+  ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);
+  ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
+  ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
+  ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
+  ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
   ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
   ConfigManager->set(KEY_MAX_RELAY, "0");
   ConfigManager->set(KEY_MAX_BUTTON, "0");
@@ -548,11 +546,25 @@ void SuplaConfigESP::factoryReset() {
 
   int nr;
   String key;
+  String func;
+  func = "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+
   for (nr = 0; nr <= 17; nr++) {
     key = GPIO;
     key += nr;
-    ConfigManager->set(key.c_str(), "0,0,0,0,0");
+    ConfigManager->set(key.c_str(), func.c_str());
   }
+
+  ConfigManager->set(KEY_ACTIVE_SENSOR, func.c_str());
+
   for (nr = 0; nr <= MAX_DS18B20; nr++) {
     key = KEY_DS;
     key += nr;
@@ -561,6 +573,7 @@ void SuplaConfigESP::factoryReset() {
     key += nr;
     ConfigManager->set(key.c_str(), "");
   }
+
   ConfigManager->save();
 
   delay(3000);

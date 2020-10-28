@@ -51,7 +51,8 @@ void setup() {
 
   if (drd.detectDoubleReset()) {
     Serial.println("FACTORY RESET!!!");
-   // ConfigESP->factoryReset();
+    drd.stop();
+    ConfigESP->factoryReset();
   }
 
   uint8_t nr, gpio;
