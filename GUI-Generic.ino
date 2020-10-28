@@ -33,6 +33,9 @@
 #ifdef SUPLA_SHT30
 #include <supla/sensor/SHT3x.h>
 #endif
+#ifdef SUPLA_SI7021
+#include <supla/sensor/Si7021.h>
+#endif
 #include <supla/storage/eeprom.h>
 
 #include "FS.h"
@@ -48,7 +51,7 @@ void setup() {
 
   if (drd.detectDoubleReset()) {
     Serial.println("FACTORY RESET!!!");
-    ConfigESP->factoryReset();
+   // ConfigESP->factoryReset();
   }
 
   uint8_t nr, gpio;
@@ -150,7 +153,7 @@ void setup() {
   }
 #endif
 
-#ifdef SUPLA_BME280 || SUPLA_SHT30
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   ConfigESP->sort(FUNCTION_SDA);
   ConfigESP->sort(FUNCTION_SCL);
 
@@ -175,7 +178,22 @@ void setup() {
 #endif
 
 #ifdef SUPLA_SHT30
-  new Supla::Sensor::SHT3x();
+  switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT30).toInt()) {
+    case SHT30_ADDRESS_0X44:
+      new Supla::Sensor::SHT3x(0x44);
+      break;
+    case SHT30_ADDRESS_0X45:
+      new Supla::Sensor::SHT3x(0x45);
+      break;
+    case SHT30_ADDRESS_0X44_AND_0X45:
+      new Supla::Sensor::SHT3x(0x44);
+      new Supla::Sensor::SHT3x(0x45);
+      break;      
+  }
+#endif
+
+#ifdef SUPLA_SI7021
+  new Supla::Sensor::Si7021();
 #endif
 
 #ifdef SUPLA_HC_SR04

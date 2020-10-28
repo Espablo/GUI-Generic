@@ -206,6 +206,14 @@ void SuplaWebPageSensor::handleSensorSave() {
   }
 #endif
 
+#ifdef SUPLA_SI7021
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_SI7021;
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_SI7021, WebServer->httpServer.arg(input).toInt());
+  }
+#endif
+
 #ifdef SUPLA_HC_SR04
   input = INPUT_TRIG_GPIO;
   key = GPIO;
@@ -446,7 +454,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("</div>");
 #endif
 
-#ifdef SUPLA_BME280 || SUPLA_SHT30
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   page += F("<div class='w'><h3>Ustawienie GPIO dla i2c</h3>");
   page += F("<i><label>");
   page += F("SDA</label><select name='");
@@ -486,9 +494,9 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
     }
   }
   page += F("</select></i>");
-
-#ifdef SUPLA_BME280
+  
   if (ConfigESP->getGpio(1, FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(1, FUNCTION_SCL) != OFF_GPIO) {
+#ifdef SUPLA_BME280
     page += F("<i style='border-bottom:none !important;'><label>");
     page += F("BME280 adres</label><select name='");
     page += INPUT_BME280;
@@ -522,6 +530,27 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
     page += F("'>");
 
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT30).toInt();
+    for (suported = 0; suported < sizeof(SupportedSHT30) / sizeof(char *); suported++) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else {
+        page += F("'>");
+      }
+      page += (SupportedSHT30[suported]);
+    }
+    page += F("</select></i>");
+#endif
+
+#ifdef SUPLA_SI7021
+    page += F("<i><label>");
+    page += F("Si7021</label><select name='");
+    page += INPUT_SI7021;
+    page += F("'>");
+
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt();
     for (suported = 0; suported < sizeof(SupportedSensorActivity) / sizeof(char *); suported++) {
       page += F("<option value='");
       page += suported;

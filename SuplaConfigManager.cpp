@@ -150,23 +150,24 @@ SuplaConfigManager::SuplaConfigManager() {
 
   int nr;
   String key;
+  String func;
+  func = "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+
   for (nr = 0; nr <= 17; nr++) {
     key = GPIO;
     key += nr;
-    String func;
-    func = "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
     this->addKey(key.c_str(), func.c_str(), 14);
   }
 
-  this->addKey(KEY_ACTIVE_SENSOR, 14);
+  this->addKey(KEY_ACTIVE_SENSOR, func.c_str(), 14);
 
   for (nr = 0; nr <= MAX_DS18B20; nr++) {
     key = KEY_DS;
