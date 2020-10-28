@@ -304,7 +304,7 @@ void SuplaWebPageSensor::handleSensorSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      WebServer->sendContent(supla_webpage_sensor(5));
+      WebServer->sendContent(supla_webpage_sensor(1));
       // WebServer->rebootESP();
       break;
     case E_CONFIG_FILE_OPEN:

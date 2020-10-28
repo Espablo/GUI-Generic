@@ -194,7 +194,9 @@ void setup() {
 #endif
 
 #ifdef SUPLA_SI7021
-  new Supla::Sensor::Si7021();
+  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt()) {
+    new Supla::Sensor::Si7021();
+  }
 #endif
 
 #ifdef SUPLA_HC_SR04
