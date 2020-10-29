@@ -44,7 +44,7 @@ void setup() {
   Serial.begin(74880);
 
   if (drd.detectDoubleReset()) {
-    Serial.println("FACTORY RESET!!!");
+    drd.stop();
     ConfigESP->factoryReset();
   }
 

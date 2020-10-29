@@ -44,6 +44,7 @@ SuplaConfigESP::SuplaConfigESP() {
 
     configModeInit();
   }
+
   // if(String(ConfigManager->get(KEY_WIFI_SSID)->getValue()) == 0 ||
   //         String(ConfigManager->get(KEY_WIFI_PASS)->getValue()) == 0 ||
   //         String(ConfigManager->get(KEY_SUPLA_SERVER)->getValue()) ==
@@ -545,45 +546,51 @@ int SuplaConfigESP::getCfgFlag() {
 }
 
 void SuplaConfigESP::factoryReset() {
-  ConfigManager->set(KEY_SUPLA_GUID, "");
-  ConfigManager->set(KEY_SUPLA_AUTHKEY, "");
-  ConfigManager->set(KEY_WIFI_SSID, "");
-  ConfigManager->set(KEY_WIFI_PASS, "");
-  ConfigManager->set(KEY_SUPLA_SERVER, "");
-  ConfigManager->set(KEY_SUPLA_EMAIL, "");
-  ConfigManager->set(KEY_HOST_NAME, "");
-  ConfigManager->set(KEY_LOGIN, "");
-  ConfigManager->set(KEY_LOGIN_PASS, "");
-  ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
-  ConfigManager->set(KEY_MAX_RELAY, "0");
-  ConfigManager->set(KEY_MAX_BUTTON, "0");
-  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
-  ConfigManager->set(KEY_MAX_DHT22, "0");
-  ConfigManager->set(KEY_MAX_DHT11, "0");
-  ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
-  ConfigManager->set(KEY_ADR_BME280, "0");
-  ConfigManager->set(KEY_ALTITUDE_BME280, "0");
+  delay(1000);
+  pinMode(0, INPUT);
+  if (!digitalRead(0)) {
+    Serial.println("FACTORY RESET!!!");
 
-  int nr;
-  String key;
-  for (nr = 0; nr <= 17; nr++) {
-    key = GPIO;
-    key += nr;
-    ConfigManager->set(key.c_str(), "0,0,0,0,0");
-  }
-  for (nr = 0; nr <= MAX_DS18B20; nr++) {
-    key = KEY_DS;
-    key += nr;
-    ConfigManager->set(key.c_str(), "");
-    key = KEY_DS_NAME;
-    key += nr;
-    ConfigManager->set(key.c_str(), "");
-  }
-  ConfigManager->save();
+    ConfigManager->set(KEY_SUPLA_GUID, "");
+    ConfigManager->set(KEY_SUPLA_AUTHKEY, "");
+    ConfigManager->set(KEY_WIFI_SSID, "");
+    ConfigManager->set(KEY_WIFI_PASS, "");
+    ConfigManager->set(KEY_SUPLA_SERVER, "");
+    ConfigManager->set(KEY_SUPLA_EMAIL, "");
+    ConfigManager->set(KEY_HOST_NAME, "");
+    ConfigManager->set(KEY_LOGIN, "");
+    ConfigManager->set(KEY_LOGIN_PASS, "");
+    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
+    ConfigManager->set(KEY_MAX_RELAY, "0");
+    ConfigManager->set(KEY_MAX_BUTTON, "0");
+    ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
+    ConfigManager->set(KEY_MAX_DHT22, "0");
+    ConfigManager->set(KEY_MAX_DHT11, "0");
+    ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
+    ConfigManager->set(KEY_ADR_BME280, "0");
+    ConfigManager->set(KEY_ALTITUDE_BME280, "0");
 
-  delay(3000);
-  WiFi.forceSleepBegin();
-  wdt_reset();
-  ESP.restart();
-  while (1) wdt_reset();
+    int nr;
+    String key;
+    for (nr = 0; nr <= 17; nr++) {
+      key = GPIO;
+      key += nr;
+      ConfigManager->set(key.c_str(), "0,0,0,0,0");
+    }
+    for (nr = 0; nr <= MAX_DS18B20; nr++) {
+      key = KEY_DS;
+      key += nr;
+      ConfigManager->set(key.c_str(), "");
+      key = KEY_DS_NAME;
+      key += nr;
+      ConfigManager->set(key.c_str(), "");
+    }
+    ConfigManager->save();
+
+    delay(3000);
+    WiFi.forceSleepBegin();
+    wdt_reset();
+    ESP.restart();
+    while (1) wdt_reset();
+  }
 }
