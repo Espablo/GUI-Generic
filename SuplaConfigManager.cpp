@@ -143,8 +143,8 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_MAX_RELAY, "0", 2);
   this->addKey(KEY_MAX_BUTTON, "0", 2);
   this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
-  this->addKey(KEY_MAX_DHT22, "0", 2);
-  this->addKey(KEY_MAX_DHT11, "0", 2);
+  this->addKey(KEY_MAX_DHT22, "1", 2);
+  this->addKey(KEY_MAX_DHT11, "1", 2);
   this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
   this->addKey(KEY_ALTITUDE_BME280, "0", 4);
 

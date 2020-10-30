@@ -69,6 +69,7 @@
 #define FUNCTION_SCL              10
 #define FUNCTION_TRIG             11
 #define FUNCTION_ECHO             12
+#define FUNCTION_SI7021_SONOFF    13
 
 
 #define  MAX_GUID                 SUPLA_GUID_SIZE

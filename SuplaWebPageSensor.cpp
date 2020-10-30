@@ -302,6 +302,35 @@ void SuplaWebPageSensor::handleSensorSave() {
   ConfigESP->sort(FUNCTION_DS18B20);
 #endif
 
+#ifdef SUPLA_SI7021_SONOFF
+  input = INPUT_SI7021_SONOFF;
+  key = GPIO;
+  key += WebServer->httpServer.arg(input).toInt();
+  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+    key = GPIO;
+    key += WebServer->httpServer.arg(input).toInt();
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+        (ConfigESP->getGpio(1, FUNCTION_SI7021_SONOFF) == WebServer->httpServer.arg(input).toInt() &&
+         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_SI7021_SONOFF)) {
+      ConfigManager->setElement(key.c_str(), NR, 1);
+      ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_SI7021_SONOFF);
+    }
+    else {
+      WebServer->sendContent(supla_webpage_sensor(6));
+      return;
+    }
+  }
+  if (ConfigESP->getGpio(1, FUNCTION_SI7021_SONOFF) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    key = GPIO;
+    key += ConfigESP->getGpio(1, FUNCTION_SI7021_SONOFF);
+    ConfigManager->setElement(key.c_str(), NR, 0);
+    ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+    ConfigManager->setElement(key.c_str(), LEVEL, 0);
+    ConfigManager->setElement(key.c_str(), MEMORY, 0);
+  }
+  ConfigESP->sort(FUNCTION_SI7021_SONOFF);
+#endif
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       WebServer->sendContent(supla_webpage_sensor(1));
@@ -377,7 +406,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
     page += F("<i><label>");
     page += nr;
-    page += F(". DHT22</label><select name='");
+    page += F(". DHT22 Sonoff</label><select name='");
     page += INPUT_DHT22_GPIO;
     page += nr;
     page += F("'>");
@@ -397,6 +426,29 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
     }
     page += F("</select></i>");
   }
+  page += F("</div>");
+#endif
+
+#ifdef SUPLA_SI7021_SONOFF
+  page += F("<div class='w'><h3>Ustawienie GPIO dla Si7021 Sonoff</h3>");
+  page += F("<i><label>Si7021 Sonoff</label><select name='");
+  page += INPUT_SI7021_SONOFF;
+  page += F("'>");
+  selected = ConfigESP->getGpio(1, FUNCTION_SI7021_SONOFF);
+  for (suported = 0; suported < 18; suported++) {
+    if (ConfigESP->checkBusyGpio(suported, FUNCTION_SI7021_SONOFF) == false || selected == suported) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else {
+        page += F("'>");
+      }
+      page += (WebServer->Supported_Gpio[suported]);
+    }
+  }
+  page += F("</select></i>");
   page += F("</div>");
 #endif
 
@@ -494,7 +546,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
     }
   }
   page += F("</select></i>");
-  
+
   if (ConfigESP->getGpio(1, FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(1, FUNCTION_SCL) != OFF_GPIO) {
 #ifdef SUPLA_BME280
     page += F("<i style='border-bottom:none !important;'><label>");
@@ -610,10 +662,13 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("</select></i>");
   page += F("</div>");
 #endif
-
   page += F("<button type='submit'>Zapisz</button></form>");
+  page += F("<br><br>");
+  page += F("<form method='post' action='");
+  page += PATH_REBOT;
+  page += F("'>");
+  page += F("<button type='submit'>Restart</button></form>");
   page += F("<br>");
-
   page += F("<a href='");
   page += PATH_START;
   page += PATH_DEVICE_SETTINGS;

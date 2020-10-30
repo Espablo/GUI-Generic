@@ -18,6 +18,7 @@
 #define INPUT_ALTITUDE_BME280 "abme280"
 #define INPUT_SHT30           "sht30"
 #define INPUT_SI7021		  "si7021"
+#define INPUT_SI7021_SONOFF   "si7021sonoff"
 #define INPUT_TRIG_GPIO       "trig"
 #define INPUT_ECHO_GPIO       "echo"
 #define INPUT_MAX_DHT11       "mdht11"

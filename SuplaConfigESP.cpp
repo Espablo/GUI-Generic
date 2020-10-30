@@ -252,8 +252,8 @@ void status_func(int status, const char *msg) {
       break;
     case 4:
       ConfigESP->supla_status.msg =
-          "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
-          "NIEAKTYWNA";
+        "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
+        "NIEAKTYWNA";
       break;
     case 5:
       ConfigESP->supla_status.msg = "Nieznany adres serwera";
@@ -411,6 +411,11 @@ int SuplaConfigESP::sort(int function) {
       memcpy(_echoGpio, gpio, sizeof(_echoGpio));
       return present;
 #endif
+#ifdef SUPLA_SI7021_SONOFF
+    case FUNCTION_SI7021_SONOFF:
+      memcpy(_si7021Gpio, gpio, sizeof(_si7021Gpio));
+      return present;
+#endif
   }
   return present;
 }
@@ -461,6 +466,10 @@ int SuplaConfigESP::getGpio(int nr, int function) {
 
     case FUNCTION_ECHO:
       return _echoGpio[nr];
+#endif
+#ifdef SUPLA_SI7021_SONOFF
+    case FUNCTION_SI7021_SONOFF:
+      return _si7021Gpio[nr];
 #endif
   }
 }
@@ -539,8 +548,8 @@ void SuplaConfigESP::factoryReset() {
   ConfigManager->set(KEY_MAX_RELAY, "0");
   ConfigManager->set(KEY_MAX_BUTTON, "0");
   ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
-  ConfigManager->set(KEY_MAX_DHT22, "0");
-  ConfigManager->set(KEY_MAX_DHT11, "0");
+  ConfigManager->set(KEY_MAX_DHT22, "1");
+  ConfigManager->set(KEY_MAX_DHT11, "1");
   ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
   ConfigManager->set(KEY_ALTITUDE_BME280, "0");
 

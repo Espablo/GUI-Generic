@@ -37,6 +37,7 @@
 #include <supla/sensor/Si7021.h>
 #endif
 #include <supla/storage/eeprom.h>
+#include "Si7021Sonoff.h"
 
 #include "FS.h"
 #include "SuplaDeviceGUI.h"
@@ -109,7 +110,7 @@ void setup() {
 
 #ifdef SUPLA_DHT11
   ConfigESP->sort(FUNCTION_DHT11);
-  if (ConfigManager->get(KEY_MAX_DHT11)->getValueInt() > 0) {
+  if (ConfigESP->getGpio(1, FUNCTION_DHT11) != OFF_GPIO) {
     for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
       new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT11), DHT11);
     }
@@ -119,7 +120,7 @@ void setup() {
 
 #ifdef SUPLA_DHT22
   ConfigESP->sort(FUNCTION_DHT22);
-  if (ConfigManager->get(KEY_MAX_DHT22)->getValueInt() > 0) {
+  if (ConfigESP->getGpio(1, FUNCTION_DHT22) != OFF_GPIO) {
     for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
       new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22);
     }
@@ -128,7 +129,7 @@ void setup() {
 
 #ifdef SUPLA_DS18B20
   if (ConfigESP->sort(FUNCTION_DS18B20)) {
-    if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 0) {
+    if (ConfigESP->getGpio(1, FUNCTION_DS18B20) != OFF_GPIO) {
       if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
         Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(1, FUNCTION_DS18B20));
       }
@@ -189,13 +190,22 @@ void setup() {
     case SHT30_ADDRESS_0X44_AND_0X45:
       new Supla::Sensor::SHT3x(0x44);
       new Supla::Sensor::SHT3x(0x45);
-      break;      
+      break;
   }
 #endif
 
 #ifdef SUPLA_SI7021
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt()) {
     new Supla::Sensor::Si7021();
+  }
+#endif
+
+#ifdef SUPLA_SI7021_SONOFF
+  ConfigESP->sort(FUNCTION_SI7021_SONOFF);
+  if (ConfigESP->sort(FUNCTION_SI7021_SONOFF)) {
+  	if (ConfigESP->getGpio(1, FUNCTION_SI7021_SONOFF) != OFF_GPIO) {
+    new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(1, FUNCTION_SI7021_SONOFF));
+  	}
   }
 #endif
 
