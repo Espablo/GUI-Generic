@@ -663,7 +663,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("</div>");
 #endif
   page += F("<button type='submit'>Zapisz</button></form>");
-  page += F("<br><br>");
+  page += F("<br>");
   page += F("<form method='post' action='");
   page += PATH_REBOT;
   page += F("'>");

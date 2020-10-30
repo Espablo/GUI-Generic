@@ -54,7 +54,10 @@ void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
   relay[size]->keepTurnOnDuration();
   relay[size]->setDefaultStateRestore();
 
-  if (pinButton != OFF_GPIO) button[size]->addAction(Supla::TOGGLE, *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
+  if (pinButton != OFF_GPIO) {
+  	button[size]->addAction(Supla::TOGGLE, *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
+  	button[size]->setSwNoiseFilterDelay(50);
+  }
 }
 #endif
 
