@@ -143,29 +143,31 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_MAX_RELAY, "0", 2);
   this->addKey(KEY_MAX_BUTTON, "0", 2);
   this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
-  this->addKey(KEY_MAX_DHT22, "0", 2);
-  this->addKey(KEY_MAX_DHT11, "0", 2);
+  this->addKey(KEY_MAX_DHT22, "1", 2);
+  this->addKey(KEY_MAX_DHT11, "1", 2);
   this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
-  this->addKey(KEY_ADR_BME280, "0", 2);
   this->addKey(KEY_ALTITUDE_BME280, "0", 4);
 
   int nr;
   String key;
+  String func;
+  func = "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+
   for (nr = 0; nr <= 17; nr++) {
     key = GPIO;
     key += nr;
-    String func;
-    func = "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
     this->addKey(key.c_str(), func.c_str(), 14);
   }
+
+  this->addKey(KEY_ACTIVE_SENSOR, func.c_str(), 14);
 
   for (nr = 0; nr <= MAX_DS18B20; nr++) {
     key = KEY_DS;

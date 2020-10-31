@@ -116,19 +116,7 @@ void SuplaWebPageSensor::handleSensorSave() {
   ConfigESP->sort(FUNCTION_DHT22);
 #endif
 
-#ifdef SUPLA_BME280
-  key = KEY_ADR_BME280;
-  input = INPUT_BME280;
-  if (strcmp(WebServer->httpServer.arg(INPUT_BME280).c_str(), "") != 0) {
-    ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
-  }
-
-  key = KEY_ALTITUDE_BME280;
-  input = INPUT_ALTITUDE_BME280;
-  if (strcmp(WebServer->httpServer.arg(INPUT_ALTITUDE_BME280).c_str(), "") != 0) {
-    ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
-  }
-
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30)
   input = INPUT_SDA_GPIO;
   key = GPIO;
   key += WebServer->httpServer.arg(input).toInt();
@@ -170,6 +158,36 @@ void SuplaWebPageSensor::handleSensorSave() {
     ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_SCL));
   }
   ConfigESP->sort(FUNCTION_SCL);
+#endif
+
+#ifdef SUPLA_BME280
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_BME280;
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_BME280, WebServer->httpServer.arg(input).toInt());
+  }
+
+  key = KEY_ALTITUDE_BME280;
+  input = INPUT_ALTITUDE_BME280;
+  if (strcmp(WebServer->httpServer.arg(INPUT_ALTITUDE_BME280).c_str(), "") != 0) {
+    ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
+  }
+#endif
+
+#ifdef SUPLA_SHT30
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_SHT30;
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_SHT30, WebServer->httpServer.arg(input).toInt());
+  }
+#endif
+
+#ifdef SUPLA_SI7021
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_SI7021;
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_SI7021, WebServer->httpServer.arg(input).toInt());
+  }
 #endif
 
 #ifdef SUPLA_HC_SR04
@@ -242,10 +260,33 @@ void SuplaWebPageSensor::handleSensorSave() {
   ConfigESP->sort(FUNCTION_DS18B20);
 #endif
 
+#ifdef SUPLA_SI7021_SONOFF
+  input = INPUT_SI7021_SONOFF;
+  key = GPIO;
+  key += WebServer->httpServer.arg(input).toInt();
+  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+    key = GPIO;
+    key += WebServer->httpServer.arg(input).toInt();
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+        (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) == WebServer->httpServer.arg(input).toInt() &&
+         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_SI7021_SONOFF)) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_SI7021_SONOFF);
+    }
+    else {
+      WebServer->sendContent(supla_webpage_sensor(6));
+      return;
+    }
+  }
+  if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+  	ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
+  }
+  ConfigESP->sort(FUNCTION_SI7021_SONOFF);
+#endif
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      WebServer->sendContent(supla_webpage_sensor(5));
-      WebServer->rebootESP();
+      WebServer->sendContent(supla_webpage_sensor(1));
+      // WebServer->rebootESP();
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
@@ -340,6 +381,29 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("</div>");
 #endif
 
+#ifdef SUPLA_SI7021_SONOFF
+  page += F("<div class='w'><h3>Ustawienie GPIO dla Si7021 Sonoff</h3>");
+  page += F("<i><label>Si7021 Sonoff</label><select name='");
+  page += INPUT_SI7021_SONOFF;
+  page += F("'>");
+  selected = ConfigESP->getGpio(FUNCTION_SI7021_SONOFF);
+  for (suported = 0; suported < 18; suported++) {
+    if (ConfigESP->checkBusyGpio(suported, FUNCTION_SI7021_SONOFF) == false || selected == suported) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else {
+        page += F("'>");
+      }
+      page += (WebServer->Supported_Gpio[suported]);
+    }
+  }
+  page += F("</select></i>");
+  page += F("</div>");
+#endif
+
 #ifdef SUPLA_DS18B20
   page += F("<div class='w'><h3>Ustawienie GPIO dla Multi DS18B20</h3>");
   page += F("<i><label>ILOŚĆ</label><input name='");
@@ -394,7 +458,7 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("</div>");
 #endif
 
-#ifdef SUPLA_BME280
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30)
   page += F("<div class='w'><h3>Ustawienie GPIO dla i2c</h3>");
   page += F("<i><label>");
   page += F("SDA</label><select name='");
@@ -434,13 +498,15 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
     }
   }
   page += F("</select></i>");
+
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
-    page += F("<i><label>");
+#ifdef SUPLA_BME280  	
+    page += F("<i style='border-bottom:none !important;'><label>");
     page += F("BME280 adres</label><select name='");
     page += INPUT_BME280;
     page += F("'>");
-    key = KEY_ADR_BME280;
-    selected = ConfigManager->get(key.c_str())->getValueInt();
+
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt();
     for (suported = 0; suported < sizeof(SupportedBme280) / sizeof(char *); suported++) {
       page += F("<option value='");
       page += suported;
@@ -453,14 +519,55 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
       page += (SupportedBme280[suported]);
     }
     page += F("</select></i>");
-    if (selected) {
-      page += F("<i><input name='");
-      page += INPUT_ALTITUDE_BME280;
-      page += F("' value='");
-      page += ConfigManager->get(KEY_ALTITUDE_BME280)->getValue();
-      page += F("' ");
-      page += F("><label>Wysokość m n.p.m.</label></i>");
+    page += F("<i><input name='");
+    page += INPUT_ALTITUDE_BME280;
+    page += F("' value='");
+    page += ConfigManager->get(KEY_ALTITUDE_BME280)->getValue();
+    page += F("' ");
+    page += F("><label>Wysokość m n.p.m.</label></i>");
+#endif
+
+#ifdef SUPLA_SHT30
+    page += F("<i><label>");
+    page += F("SHT30</label><select name='");
+    page += INPUT_SHT30;
+    page += F("'>");
+
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT30).toInt();
+    for (suported = 0; suported < sizeof(SupportedSHT30) / sizeof(char *); suported++) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else {
+        page += F("'>");
+      }
+      page += (SupportedSHT30[suported]);
     }
+    page += F("</select></i>");
+#endif
+
+#ifdef SUPLA_SI7021
+    page += F("<i><label>");
+    page += F("Si7021</label><select name='");
+    page += INPUT_SI7021;
+    page += F("'>");
+
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt();
+    for (suported = 0; suported < sizeof(SupportedSensorActivity) / sizeof(char *); suported++) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else {
+        page += F("'>");
+      }
+      page += (SupportedSensorActivity[suported]);
+    }
+    page += F("</select></i>");
+#endif
   }
   page += F("</div>");
 #endif
@@ -507,10 +614,13 @@ String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   page += F("</select></i>");
   page += F("</div>");
 #endif
-
   page += F("<button type='submit'>Zapisz</button></form>");
   page += F("<br>");
-
+  page += F("<form method='post' action='");
+  page += PATH_REBOT;
+  page += F("'>");
+  page += F("<button type='submit'>Restart</button></form>");
+  page += F("<br>");
   page += F("<a href='");
   page += PATH_START;
   page += PATH_DEVICE_SETTINGS;

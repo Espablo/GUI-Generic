@@ -124,6 +124,10 @@ class SuplaConfigESP : public Supla::Triggerable {
   int _echoGpio[17];
 #endif
 
+#ifdef SUPLA_SI7021_SONOFF
+  int _si7021Gpio[17];
+#endif
+
 #ifdef SUPLA_CONFIG
   int _cfgLedGpio[17];
   int _cfgLedLevel[17];
