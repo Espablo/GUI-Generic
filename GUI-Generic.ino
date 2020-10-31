@@ -110,6 +110,21 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_CONFIG
+  if (ConfigESP->sort(FUNCTION_CFG_LED) || ConfigESP->sort(FUNCTION_CFG_BUTTON)) {
+    ConfigESP->sort(FUNCTION_CFG_BUTTON);
+#ifdef SUPLA_BUTTON
+    if (ConfigESP->getCfgFlag() != OFF_GPIO) {
+      Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
+                               ConfigESP->getLevel(FUNCTION_CFG_LED));
+    }
+    else
+#endif
+      Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
+                               ConfigESP->getLevel(FUNCTION_CFG_LED));
+  }
+#endif
+
 #ifdef SUPLA_DHT11
   if (ConfigESP->sort(FUNCTION_DHT11)) {
     if (ConfigESP->getGpio(FUNCTION_DHT11) != OFF_GPIO && ConfigManager->get(KEY_MAX_DHT11)->getValueInt() > 0) {
@@ -140,21 +155,6 @@ void setup() {
         new Supla::Sensor::DS18B20(ConfigESP->getGpio(FUNCTION_DS18B20));
       }
     }
-  }
-#endif
-
-#ifdef SUPLA_CONFIG
-  if (ConfigESP->sort(FUNCTION_CFG_LED) || ConfigESP->sort(FUNCTION_CFG_BUTTON)) {
-    ConfigESP->sort(FUNCTION_CFG_BUTTON);
-#ifdef SUPLA_BUTTON
-    if (ConfigESP->getCfgFlag() != OFF_GPIO) {
-      Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
-                               ConfigESP->getLevel(FUNCTION_CFG_LED));
-    }
-    else
-#endif
-      Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
-                               ConfigESP->getLevel(FUNCTION_CFG_LED));
   }
 #endif
 
