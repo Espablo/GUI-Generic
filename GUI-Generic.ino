@@ -36,8 +36,10 @@
 #ifdef SUPLA_SI7021
 #include <supla/sensor/Si7021.h>
 #endif
+#ifdef SUPLA_SI7021_SONOFF
+#include <supla/sensor/Si7021_sonoff.h>
+#endif
 #include <supla/storage/eeprom.h>
-#include "Si7021Sonoff.h"
 
 #include "FS.h"
 #include "SuplaDeviceGUI.h"
@@ -51,7 +53,6 @@ void setup() {
   Serial.begin(74880);
 
   if (drd.detectDoubleReset()) {
-    Serial.println("FACTORY RESET!!!");
     drd.stop();
     ConfigESP->factoryReset();
   }
@@ -100,41 +101,43 @@ void setup() {
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-  ConfigESP->sort(FUNCTION_LIMIT_SWITCH);
-  if (ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt() > 0) {
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
-      new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), true);
+  if (ConfigESP->sort(FUNCTION_LIMIT_SWITCH)) {
+    if (ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt() > 0) {
+      for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
+        new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), true);
+      }
     }
   }
 #endif
 
 #ifdef SUPLA_DHT11
-  ConfigESP->sort(FUNCTION_DHT11);
-  if (ConfigESP->getGpio(1, FUNCTION_DHT11) != OFF_GPIO) {
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
-      new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT11), DHT11);
+  if (ConfigESP->sort(FUNCTION_DHT11)) {
+    if (ConfigESP->getGpio(FUNCTION_DHT11) != OFF_GPIO && ConfigManager->get(KEY_MAX_DHT11)->getValueInt() > 0) {
+      for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
+        new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT11), DHT11);
+      }
     }
   }
-
 #endif
 
 #ifdef SUPLA_DHT22
-  ConfigESP->sort(FUNCTION_DHT22);
-  if (ConfigESP->getGpio(1, FUNCTION_DHT22) != OFF_GPIO) {
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
-      new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22);
+  if (ConfigESP->sort(FUNCTION_DHT22)) {
+    if (ConfigESP->getGpio(FUNCTION_DHT22) != OFF_GPIO && ConfigManager->get(KEY_MAX_DHT22)->getValueInt() > 0) {
+      for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
+        new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22);
+      }
     }
   }
 #endif
 
 #ifdef SUPLA_DS18B20
   if (ConfigESP->sort(FUNCTION_DS18B20)) {
-    if (ConfigESP->getGpio(1, FUNCTION_DS18B20) != OFF_GPIO) {
+    if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
       if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
-        Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(1, FUNCTION_DS18B20));
+        Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(FUNCTION_DS18B20));
       }
       else {
-        new Supla::Sensor::DS18B20(ConfigESP->getGpio(1, FUNCTION_DS18B20));
+        new Supla::Sensor::DS18B20(ConfigESP->getGpio(FUNCTION_DS18B20));
       }
     }
   }
@@ -145,22 +148,19 @@ void setup() {
     ConfigESP->sort(FUNCTION_CFG_BUTTON);
 #ifdef SUPLA_BUTTON
     if (ConfigESP->getCfgFlag() != OFF_GPIO) {
-      Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
-                               ConfigESP->getLevel(1, FUNCTION_CFG_LED));
+      Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
+                               ConfigESP->getLevel(FUNCTION_CFG_LED));
     }
     else
 #endif
-      Supla::GUI::addConfigESP(ConfigESP->getGpio(1, FUNCTION_CFG_BUTTON), ConfigESP->getGpio(1, FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
-                               ConfigESP->getLevel(1, FUNCTION_CFG_LED));
+      Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
+                               ConfigESP->getLevel(FUNCTION_CFG_LED));
   }
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
-  ConfigESP->sort(FUNCTION_SDA);
-  ConfigESP->sort(FUNCTION_SCL);
-
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || defined(SUPLA_BH1750) || defined(SUPLA_MAX44009)
   if (ConfigESP->sort(FUNCTION_SDA) && ConfigESP->sort(FUNCTION_SCL)) {
-    Wire.begin(ConfigESP->getGpio(1, FUNCTION_SDA), ConfigESP->getGpio(1, FUNCTION_SCL));
+    Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
   }
 #endif
 
@@ -201,11 +201,10 @@ void setup() {
 #endif
 
 #ifdef SUPLA_SI7021_SONOFF
-  ConfigESP->sort(FUNCTION_SI7021_SONOFF);
   if (ConfigESP->sort(FUNCTION_SI7021_SONOFF)) {
-  	if (ConfigESP->getGpio(1, FUNCTION_SI7021_SONOFF) != OFF_GPIO) {
-    new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(1, FUNCTION_SI7021_SONOFF));
-  	}
+    if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != OFF_GPIO) {
+      new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
+    }
   }
 #endif
 
@@ -213,7 +212,7 @@ void setup() {
   ConfigESP->sort(FUNCTION_TRIG);
   ConfigESP->sort(FUNCTION_ECHO);
   if (ConfigESP->sort(FUNCTION_TRIG) && ConfigESP->sort(FUNCTION_ECHO)) {
-    new Supla::Sensor::HC_SR04(ConfigESP->getGpio(1, FUNCTION_TRIG), ConfigESP->getGpio(1, FUNCTION_ECHO));
+    new Supla::Sensor::HC_SR04(ConfigESP->getGpio(FUNCTION_TRIG), ConfigESP->getGpio(FUNCTION_ECHO));
   }
 #endif
 

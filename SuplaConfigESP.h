@@ -57,9 +57,20 @@ class SuplaConfigESP : public Supla::Triggerable {
 
   int sort(int function);
   int getGpio(int nr, int function);
+  int getGpio(int function) {
+    return getGpio(1, function);
+  }
   int getLevel(int nr, int function);
+  int getLevel(int function) {
+    return getLevel(1, function);
+  }
   int checkBusyGpio(int gpio, int function);
-  uint8_t countFreeGpio(uint8_t function = 0);
+  uint8_t countFreeGpio(uint8_t exception = 0);
+  void setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level);
+  void setGpio(uint8_t gpio, uint8_t function, uint8_t level = 0) {
+    setGpio(gpio, 1, function, level);
+  }
+  void clearGpio(uint8_t gpio);
 
   int getMemoryRelay(int nr);
   int getCfgFlag();

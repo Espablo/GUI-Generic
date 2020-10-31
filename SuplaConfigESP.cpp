@@ -44,6 +44,7 @@ SuplaConfigESP::SuplaConfigESP() {
 
     configModeInit();
   }
+
   // if(String(ConfigManager->get(KEY_WIFI_SSID)->getValue()) == 0 ||
   //         String(ConfigManager->get(KEY_WIFI_PASS)->getValue()) == 0 ||
   //         String(ConfigManager->get(KEY_SUPLA_SERVER)->getValue()) ==
@@ -508,14 +509,31 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   return false;
 }
 
-uint8_t SuplaConfigESP::countFreeGpio(uint8_t function) {
+void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level) {
+  String key = GPIO;
+  key += gpio;
+  ConfigManager->setElement(key.c_str(), NR, nr);
+  ConfigManager->setElement(key.c_str(), FUNCTION, function);
+  ConfigManager->setElement(key.c_str(), LEVEL, level);
+}
+
+void SuplaConfigESP::clearGpio(uint8_t gpio) {
+  String key = GPIO;
+  key += gpio;
+  ConfigManager->setElement(key.c_str(), NR, 0);
+  ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
+  ConfigManager->setElement(key.c_str(), LEVEL, 0);
+  ConfigManager->setElement(key.c_str(), MEMORY, 0);
+}
+
+uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   uint8_t count = 0;
   for (uint8_t gpio = 0; gpio < OFF_GPIO; gpio++) {
     if (gpio != 6 && gpio != 7 && gpio != 8 && gpio != 11) {
       String key = GPIO;
       key += gpio;
       if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
+          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == exception) {
         count++;
       }
     }
@@ -537,6 +555,11 @@ int SuplaConfigESP::getCfgFlag() {
 }
 
 void SuplaConfigESP::factoryReset() {
+  delay(1000);
+  pinMode(0, INPUT);
+  if (!digitalRead(0)) {
+  Serial.println("FACTORY RESET!!!");
+
   ConfigManager->set(KEY_WIFI_SSID, "");
   ConfigManager->set(KEY_WIFI_PASS, "");
   ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);
@@ -585,9 +608,10 @@ void SuplaConfigESP::factoryReset() {
 
   ConfigManager->save();
 
-  delay(3000);
-  WiFi.forceSleepBegin();
-  wdt_reset();
-  ESP.restart();
-  while (1) wdt_reset();
+    delay(3000);
+    WiFi.forceSleepBegin();
+    wdt_reset();
+    ESP.restart();
+    while (1) wdt_reset();
+  }
 }
