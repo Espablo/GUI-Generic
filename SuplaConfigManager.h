@@ -44,12 +44,11 @@
 #define KEY_MAX_DHT11           "maxDht11"
 #define KEY_MAX_DHT22           "maxDht22"
 #define KEY_MAX_ROLLERSHUTTER   "maxRollerShutter"
-
-#define KEY_ADR_BME280          "adrBme280"
 #define KEY_ALTITUDE_BME280     "altbme280"
 
 #define GPIO                      "GPIO"
 #define SEPARATOR                 ','
+#define KEY_ACTIVE_SENSOR         "SENSOR"
  
 #define NR                        0
 #define FUNCTION                  1
@@ -70,7 +69,7 @@
 #define FUNCTION_SCL              10
 #define FUNCTION_TRIG             11
 #define FUNCTION_ECHO             12
-
+#define FUNCTION_SI7021_SONOFF    13
 
 
 #define  MAX_GUID                 SUPLA_GUID_SIZE
@@ -89,7 +88,7 @@
 #define  MAX_TYPE_BUTTON          4
 #define  MAX_MONOSTABLE_TRIGGER   1
 #define  MAX_FUNCTION             1
-#define  MAX_DS18B20          10
+#define  MAX_DS18B20          	  10
 
 #define E_CONFIG_OK               0
 #define E_CONFIG_FS_ACCESS        1

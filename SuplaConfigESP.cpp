@@ -253,8 +253,8 @@ void status_func(int status, const char *msg) {
       break;
     case 4:
       ConfigESP->supla_status.msg =
-          "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
-          "NIEAKTYWNA";
+        "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
+        "NIEAKTYWNA";
       break;
     case 5:
       ConfigESP->supla_status.msg = "Nieznany adres serwera";
@@ -412,6 +412,11 @@ int SuplaConfigESP::sort(int function) {
       memcpy(_echoGpio, gpio, sizeof(_echoGpio));
       return present;
 #endif
+#ifdef SUPLA_SI7021_SONOFF
+    case FUNCTION_SI7021_SONOFF:
+      memcpy(_si7021Gpio, gpio, sizeof(_si7021Gpio));
+      return present;
+#endif
   }
   return present;
 }
@@ -462,6 +467,10 @@ int SuplaConfigESP::getGpio(int nr, int function) {
 
     case FUNCTION_ECHO:
       return _echoGpio[nr];
+#endif
+#ifdef SUPLA_SI7021_SONOFF
+    case FUNCTION_SI7021_SONOFF:
+      return _si7021Gpio[nr];
 #endif
   }
 }
@@ -549,43 +558,55 @@ void SuplaConfigESP::factoryReset() {
   delay(1000);
   pinMode(0, INPUT);
   if (!digitalRead(0)) {
-    Serial.println("FACTORY RESET!!!");
+  Serial.println("FACTORY RESET!!!");
 
-    ConfigManager->set(KEY_SUPLA_GUID, "");
-    ConfigManager->set(KEY_SUPLA_AUTHKEY, "");
-    ConfigManager->set(KEY_WIFI_SSID, "");
-    ConfigManager->set(KEY_WIFI_PASS, "");
-    ConfigManager->set(KEY_SUPLA_SERVER, "");
-    ConfigManager->set(KEY_SUPLA_EMAIL, "");
-    ConfigManager->set(KEY_HOST_NAME, "");
-    ConfigManager->set(KEY_LOGIN, "");
-    ConfigManager->set(KEY_LOGIN_PASS, "");
-    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
-    ConfigManager->set(KEY_MAX_RELAY, "0");
-    ConfigManager->set(KEY_MAX_BUTTON, "0");
-    ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
-    ConfigManager->set(KEY_MAX_DHT22, "0");
-    ConfigManager->set(KEY_MAX_DHT11, "0");
-    ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
-    ConfigManager->set(KEY_ADR_BME280, "0");
-    ConfigManager->set(KEY_ALTITUDE_BME280, "0");
+  ConfigManager->set(KEY_WIFI_SSID, "");
+  ConfigManager->set(KEY_WIFI_PASS, "");
+  ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);
+  ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
+  ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
+  ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
+  ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
+  ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
+  ConfigManager->set(KEY_MAX_RELAY, "0");
+  ConfigManager->set(KEY_MAX_BUTTON, "0");
+  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
+  ConfigManager->set(KEY_MAX_DHT22, "1");
+  ConfigManager->set(KEY_MAX_DHT11, "1");
+  ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
+  ConfigManager->set(KEY_ALTITUDE_BME280, "0");
 
-    int nr;
-    String key;
-    for (nr = 0; nr <= 17; nr++) {
-      key = GPIO;
-      key += nr;
-      ConfigManager->set(key.c_str(), "0,0,0,0,0");
-    }
-    for (nr = 0; nr <= MAX_DS18B20; nr++) {
-      key = KEY_DS;
-      key += nr;
-      ConfigManager->set(key.c_str(), "");
-      key = KEY_DS_NAME;
-      key += nr;
-      ConfigManager->set(key.c_str(), "");
-    }
-    ConfigManager->save();
+  int nr;
+  String key;
+  String func;
+  func = "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+  func += SEPARATOR;
+  func += "0";
+
+  for (nr = 0; nr <= 17; nr++) {
+    key = GPIO;
+    key += nr;
+    ConfigManager->set(key.c_str(), func.c_str());
+  }
+
+  ConfigManager->set(KEY_ACTIVE_SENSOR, func.c_str());
+
+  for (nr = 0; nr <= MAX_DS18B20; nr++) {
+    key = KEY_DS;
+    key += nr;
+    ConfigManager->set(key.c_str(), "");
+    key = KEY_DS_NAME;
+    key += nr;
+    ConfigManager->set(key.c_str(), "");
+  }
+
+  ConfigManager->save();
 
     delay(3000);
     WiFi.forceSleepBegin();
