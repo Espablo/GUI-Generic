@@ -159,6 +159,8 @@ void setup() {
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || defined(SUPLA_BH1750) || defined(SUPLA_MAX44009)
+  ConfigESP->sort(FUNCTION_SDA);
+  ConfigESP->sort(FUNCTION_SCL);
   if (ConfigESP->sort(FUNCTION_SDA) && ConfigESP->sort(FUNCTION_SCL)) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
   }
