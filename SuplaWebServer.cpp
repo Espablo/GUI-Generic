@@ -21,7 +21,6 @@
 #include "SuplaWebPageRelay.h"
 #include "SuplaWebPageSensor.h"
 
-
 SuplaWebServer::SuplaWebServer() {
 }
 
@@ -60,8 +59,7 @@ void SuplaWebServer::createWebServer() {
 #if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH)
   WebPageControl->createWebPageControl();
 #endif
-#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || \
-    defined(SUPLA_BME280) || defined(SUPLA_HC_SR04)
+#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_BME280) || defined(SUPLA_HC_SR04)
   WebPageSensor->createWebPageSensor();
 #endif
 #ifdef SUPLA_CONFIG
@@ -108,7 +106,8 @@ void SuplaWebServer::handleSave() {
       if (ConfigESP->configModeESP == NORMAL_MODE) {
         this->sendContent(supla_webpage_start(5));
         this->rebootESP();
-      } else {
+      }
+      else {
         this->sendContent(supla_webpage_start(7));
       }
       break;
@@ -156,7 +155,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += String(ConfigManager->get(KEY_WIFI_SSID)->getValue());
   content += F("' length=");
   content += MAX_SSID;
-  content += F("><label>Nazwa sieci</label></i>");
+  content += F(" required><label>Nazwa sieci</label></i>");
   content += F("<i><input name='");
   content += INPUT_WIFI_PASS;
   if (ConfigESP->configModeESP != NORMAL_MODE) {
@@ -167,13 +166,14 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("'");
 
   if (ConfigManager->get(KEY_WIFI_PASS)->getValue() != 0) {
-    content += F(">");
-  } else {
+    content += F("required>");
+  }
+  else {
     content += F("'minlength='");
     content += MIN_PASSWORD;
-    content += F("' required length=");
+    content += F("' length=");
     content += MAX_PASSWORD;
-    content += F(">");
+    content += F(" required>");
   }
   content += F("<label>Hasło</label></i>");
   content += F("<i><input name='");
@@ -182,7 +182,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += ConfigManager->get(KEY_HOST_NAME)->getValue();
   content += F("' length=");
   content += MAX_HOSTNAME;
-  content += F("><label>Nazwa modułu</label></i>");
+  content += F(" required><label>Nazwa modułu</label></i>");
   content += F("</div>");
 
   content += F("<div class='w'>");
@@ -195,11 +195,12 @@ String SuplaWebServer::supla_webpage_start(int save) {
   String def_2 = String(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
   if (def == def_2) {
     content += F(" placeholder='");
-  } else {
+  }
+  else {
     content += F(" value='");
   }
   content += def_2;
-  content += F("'><label>Adres serwera</label></i>");
+  content += F("' required><label>Adres serwera</label></i>");
   content += F("<i><input name='");
   content += INPUT_EMAIL;
   content += F("' length=");
@@ -208,11 +209,12 @@ String SuplaWebServer::supla_webpage_start(int save) {
   def_2 = String(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue());
   if (def == def_2) {
     content += F(" placeholder='");
-  } else {
+  }
+  else {
     content += F(" value='");
   }
   content += def_2;
-  content += F("'><label>Email</label></i>");
+  content += F("' required><label>Email</label></i>");
   content += F("</div>");
 
   content += F("<div class='w'>");
@@ -234,9 +236,9 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("'");
   content += F("'minlength='");
   content += MIN_PASSWORD;
-  content += F("' required length=");
+  content += F("' length=");
   content += MAX_MPASSWORD;
-  content += F(">");
+  content += F(" required>");
   content += F("<label>Hasło</label></i>");
   content += F("</div>");
 
@@ -265,8 +267,8 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("<a href='");
   content += PATH_START;
   content += PATH_DEVICE_SETTINGS;
-  content += F("'><button>Ustawienia urządzenia</button></a>");  
-  content += F("<br><br>");  
+  content += F("'><button>Ustawienia urządzenia</button></a>");
+  content += F("<br><br>");
   content += F("<a href='");
   content += PATH_START;
   content += PATH_UPDATE;
@@ -344,8 +346,7 @@ String SuplaWebServer::deviceSettings() {
   content += F("<br><br>");
 #endif
 
-#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || \
-    defined(SUPLA_BME280) || defined(SUPLA_HC_SR04)
+#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_BME280) || defined(SUPLA_HC_SR04)
   content += F("<a href='");
   content += PATH_START;
   content += PATH_SENSOR;
@@ -379,14 +380,15 @@ const String SuplaWebServer::SuplaStyle() {
   String gui_color = "";
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     gui_color = "#005c96";
-  } else
+  }
+  else
     gui_color = "#00D151";
 
-  String style = F(
-      "<style>a{text-decoration: none;}body{font-size:14px;font-family:'HelveticaNeue','Helvetica "
-      "Neue','HelveticaNeueRoman','HelveticaNeue-Roman','Helvetica Neue "
-      "Roman','TeXGyreHerosRegular','Helvetica','Tahoma','Geneva','Arial',sans-serif;font-weight:"
-      "400;font-stretch:normal;background:");
+  String style =
+      F("<style>a{text-decoration: none;}body{font-size:14px;font-family:'HelveticaNeue','Helvetica "
+        "Neue','HelveticaNeueRoman','HelveticaNeue-Roman','Helvetica Neue "
+        "Roman','TeXGyreHerosRegular','Helvetica','Tahoma','Geneva','Arial',sans-serif;font-weight:"
+        "400;font-stretch:normal;background:");
   style += gui_color;
   style +=
       F(";color:#fff;line-height:20px;padding:0}a:visited{color:#005c96}.s{width:460px;margin:0 "
@@ -394,15 +396,15 @@ const String SuplaWebServer::SuplaStyle() {
         "10px;border-radius:3px}#l{display:block;max-width:150px;height:155px;margin:-80px auto "
         "20px;background:");
   style += gui_color;
-  style += F(
-      ";padding-right:5px}#l path{fill:#000}.w{margin:3px 0 16px;padding:5px "
-      "0px;border-radius:3px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}h1,h3{margin:10px "
-      "8px;font-family:'HelveticaNeueLight','HelveticaNeue-Light','Helvetica Neue "
-      "Light','HelveticaNeue','Helvetica "
-      "Neue','TeXGyreHerosRegular','Helvetica','Tahoma','Geneva','Arial',sans-serif;font-weight:"
-      "300;font-stretch:normal;color:#000;font-size:23px}h1{margin-bottom:14px;color:#fff}span{"
-      "display:block;margin:10px 7px "
-      "14px}i{display:block;font-style:normal;position:relative;border-bottom:solid 1px ");
+  style +=
+      F(";padding-right:5px}#l path{fill:#000}.w{margin:3px 0 16px;padding:5px "
+        "0px;border-radius:3px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}h1,h3{margin:10px "
+        "8px;font-family:'HelveticaNeueLight','HelveticaNeue-Light','Helvetica Neue "
+        "Light','HelveticaNeue','Helvetica "
+        "Neue','TeXGyreHerosRegular','Helvetica','Tahoma','Geneva','Arial',sans-serif;font-weight:"
+        "300;font-stretch:normal;color:#000;font-size:23px}h1{margin-bottom:14px;color:#fff}span{"
+        "display:block;margin:10px 7px "
+        "14px}i{display:block;font-style:normal;position:relative;border-bottom:solid 1px ");
   style += gui_color;
   style +=
       F(";height:42px}i:last-child{border:none}label{position:absolute;display:inline-block;top:"
@@ -499,22 +501,29 @@ const String SuplaWebServer::SuplaCopyrightBar() {
 }
 
 const String SuplaWebServer::SuplaSaveResult(int save) {
-  if (save == 0) return F("");
+  if (save == 0)
+    return F("");
   String saveresult = "";
   saveresult += F("<div id=\"msg\" class=\"c\">");
   if (save == 1) {
     saveresult += F("Dane zapisane");
-  } else if (save == 2) {
+  }
+  else if (save == 2) {
     saveresult += F("Restart modułu");
-  } else if (save == 3) {
+  }
+  else if (save == 3) {
     saveresult += F("Dane wymazane - należy zrobić restart urządzenia");
-  } else if (save == 4) {
+  }
+  else if (save == 4) {
     saveresult += F("Błąd zapisu - nie można odczytać pliku - brak partycji FS.");
-  } else if (save == 5) {
+  }
+  else if (save == 5) {
     saveresult += F("Dane zapisane - restart modułu.");
-  } else if (save == 6) {
+  }
+  else if (save == 6) {
     saveresult += F("Błąd zapisu - złe dane.");
-  } else if (save == 7 ) {
+  }
+  else if (save == 7) {
     saveresult += F("data saved");
   }
   saveresult += F("</div>");
