@@ -133,12 +133,7 @@ void setup() {
 
 #ifdef SUPLA_DS18B20
   if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
-    if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
       Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(FUNCTION_DS18B20));
-    }
-    else {
-      new Supla::Sensor::DS18B20(ConfigESP->getGpio(FUNCTION_DS18B20));
-    }
   }
 #endif
 

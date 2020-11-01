@@ -746,7 +746,7 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
 }
 
 void SuplaWebPageSensor::showDS18B20(String &content, bool readonly) {
-  if (ConfigESP->getGpio(FUNCTION_DS18B20) < OFF_GPIO || !Supla::GUI::sensorDS.empty()) {
+  if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
     content += F("<div class='w'>");
     content += F("<h3>Temperatura</h3>");
     for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
