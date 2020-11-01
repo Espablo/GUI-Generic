@@ -49,28 +49,31 @@
 #define GPIO                      "GPIO"
 #define SEPARATOR                 ','
 #define KEY_ACTIVE_SENSOR         "SENSOR"
- 
-#define NR                        0
-#define FUNCTION                  1
-#define LEVEL                     2
-#define MEMORY                    3
-#define CFG                       3
 
-#define FUNCTION_OFF              0
-#define FUNCTION_RELAY            1
-#define FUNCTION_BUTTON           2
-#define FUNCTION_LIMIT_SWITCH     3
-#define FUNCTION_CFG_LED          4
-#define FUNCTION_CFG_BUTTON       5
-#define FUNCTION_DS18B20          6
-#define FUNCTION_DHT11            7
-#define FUNCTION_DHT22            8
-#define FUNCTION_SDA              9
-#define FUNCTION_SCL              10
-#define FUNCTION_TRIG             11
-#define FUNCTION_ECHO             12
-#define FUNCTION_SI7021_SONOFF    13
+enum _settings {
+	NR,
+	FUNCTION,
+	LEVEL,
+	MEMORY,
+	CFG
+};
 
+enum _function {
+	FUNCTION_OFF,
+	FUNCTION_RELAY,
+	FUNCTION_BUTTON,
+	FUNCTION_LIMIT_SWITCH,
+	FUNCTION_CFG_LED,
+	FUNCTION_CFG_BUTTON,
+	FUNCTION_DS18B20,
+	FUNCTION_DHT11,
+	FUNCTION_DHT22,
+	FUNCTION_SDA,
+	FUNCTION_SCL,
+	FUNCTION_TRIG,
+	FUNCTION_ECHO,
+	FUNCTION_SI7021_SONOFF
+};
 
 #define  MAX_GUID                 SUPLA_GUID_SIZE
 #define  MAX_AUTHKEY              SUPLA_GUID_SIZE
@@ -90,12 +93,14 @@
 #define  MAX_FUNCTION             1
 #define  MAX_DS18B20          	  10
 
-#define E_CONFIG_OK               0
-#define E_CONFIG_FS_ACCESS        1
-#define E_CONFIG_FILE_NOT_FOUND   2
-#define E_CONFIG_FILE_OPEN        3
-#define E_CONFIG_PARSE_ERROR      4
-#define E_CONFIG_MAX              5
+enum _e_onfig {
+	E_CONFIG_OK,
+	E_CONFIG_FS_ACCESS,
+	E_CONFIG_FILE_NOT_FOUND,
+	E_CONFIG_FILE_OPEN,
+	E_CONFIG_PARSE_ERROR,
+	E_CONFIG_MAX
+};
 
 #define CONFIG_MAX_OPTIONS        88
 
