@@ -78,7 +78,6 @@ void SuplaWebPageSensor::handleSensorSave() {
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_DHT11).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_DHT11, WebServer->httpServer.arg(INPUT_MAX_DHT11).c_str());
   }
-  ConfigESP->sort(FUNCTION_DHT11);
 #endif
 
 #ifdef SUPLA_DHT22
@@ -113,7 +112,6 @@ void SuplaWebPageSensor::handleSensorSave() {
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_DHT22).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_DHT22, WebServer->httpServer.arg(INPUT_MAX_DHT22).c_str());
   }
-  ConfigESP->sort(FUNCTION_DHT22);
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30)
@@ -136,7 +134,6 @@ void SuplaWebPageSensor::handleSensorSave() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_SDA));
   }
-  ConfigESP->sort(FUNCTION_SDA);
 
   input = INPUT_SCL_GPIO;
   key = GPIO;
@@ -157,7 +154,6 @@ void SuplaWebPageSensor::handleSensorSave() {
   if (ConfigESP->getGpio(FUNCTION_SCL) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_SCL));
   }
-  ConfigESP->sort(FUNCTION_SCL);
 #endif
 
 #ifdef SUPLA_BME280
@@ -210,7 +206,6 @@ void SuplaWebPageSensor::handleSensorSave() {
   if (ConfigESP->getGpio(FUNCTION_TRIG) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_TRIG));
   }
-  ConfigESP->sort(FUNCTION_TRIG);
 
   input = INPUT_ECHO_GPIO;
   key = GPIO;
@@ -231,7 +226,6 @@ void SuplaWebPageSensor::handleSensorSave() {
   if (ConfigESP->getGpio(FUNCTION_ECHO) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_ECHO));
   }
-  ConfigESP->sort(FUNCTION_ECHO);
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -257,7 +251,6 @@ void SuplaWebPageSensor::handleSensorSave() {
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str(), "") > 0) {
     ConfigManager->set(KEY_MULTI_MAX_DS18B20, WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str());
   }
-  ConfigESP->sort(FUNCTION_DS18B20);
 #endif
 
 #ifdef SUPLA_SI7021_SONOFF
@@ -280,7 +273,6 @@ void SuplaWebPageSensor::handleSensorSave() {
   if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
   	ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
   }
-  ConfigESP->sort(FUNCTION_SI7021_SONOFF);
 #endif
 
   switch (ConfigManager->save()) {

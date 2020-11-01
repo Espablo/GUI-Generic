@@ -81,8 +81,6 @@ void SuplaWebPageRelay::handleRelaySave() {
     ConfigManager->set(KEY_MAX_RELAY, WebServer->httpServer.arg(INPUT_MAX_RELAY).c_str());
   }
 
-  ConfigESP->sort(FUNCTION_RELAY);
-
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Config save"));
@@ -196,8 +194,6 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
   input = INPUT_RELAY_LEVEL;
   input += nr_relay;
   ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
-
-  ConfigESP->sort(FUNCTION_RELAY);
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:

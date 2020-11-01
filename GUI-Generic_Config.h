@@ -1,6 +1,8 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
+// #define DEBUG_MODE
+
 #define SUPLA_RELAY
 #define SUPLA_BUTTON
 #define SUPLA_LIMIT_SWITCH

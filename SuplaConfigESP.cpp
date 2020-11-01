@@ -323,173 +323,48 @@ void status_func(int status, const char *msg) {
 }
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 int SuplaConfigESP::getMemoryRelay(int nr) {
-  return _relayMemory[nr];
-}
-#endif
-
-int SuplaConfigESP::sort(int function) {
-  int present = false;
-  int gpio[17];
-  int level[17];
-  int memory[17];
-  for (int nr = 0; nr <= OFF_GPIO; nr++) {
-    gpio[nr] = OFF_GPIO;
-    level[nr] = 0;
-    memory[nr] = 0;
-  }
-
-  for (int nr = 0; nr <= OFF_GPIO; nr++) {
+  uint8_t gpio;
+  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
     String key = GPIO;
-    key += nr;
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
-      present = true;
-      gpio[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = nr;
-      level[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = ConfigManager->get(key.c_str())->getElement(LEVEL).toInt();
-      memory[ConfigManager->get(key.c_str())->getElement(NR).toInt()] = ConfigManager->get(key.c_str())->getElement(MEMORY).toInt();
+    key += gpio;
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_RELAY) {
+      if (ConfigManager->get(key.c_str())->getElement(NR).toInt() == nr) {
+        uint8_t memory = ConfigManager->get(key.c_str())->getElement(MEMORY).toInt();
+        return memory;
+      }
     }
   }
-
-  switch (function) {
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-    case FUNCTION_RELAY:
-      memcpy(_relayGpio, gpio, sizeof(_relayGpio));
-      memcpy(_relayLevel, level, sizeof(_relayLevel));
-      memcpy(_relayMemory, memory, sizeof(_relayMemory));
-      return present;
-#endif
-#ifdef SUPLA_BUTTON
-    case FUNCTION_BUTTON:
-      memcpy(_buttonGpio, gpio, sizeof(_buttonGpio));
-      memcpy(_buttonLevel, level, sizeof(_buttonLevel));
-      return present;
-#endif
-#ifdef SUPLA_LIMIT_SWITCH
-    case FUNCTION_LIMIT_SWITCH:
-      memcpy(_limitSwiitchGpio, gpio, sizeof(_limitSwiitchGpio));
-      return present;
-#endif
-#ifdef SUPLA_CONFIG
-    case FUNCTION_CFG_LED:
-      memcpy(_cfgLedGpio, gpio, sizeof(_cfgLedGpio));
-      memcpy(_cfgLedLevel, level, sizeof(_cfgLedLevel));
-      return present;
-
-    case FUNCTION_CFG_BUTTON:
-      memcpy(_cfgButtonGpio, gpio, sizeof(_cfgButtonGpio));
-      memcpy(_cfgButtonFlag, memory, sizeof(_cfgButtonFlag));
-      return present;
-#endif
-#ifdef SUPLA_DS18B20
-    case FUNCTION_DS18B20:
-      memcpy(_ds18b20Gpio, gpio, sizeof(_ds18b20Gpio));
-      return present;
-#endif
-#ifdef SUPLA_DHT11
-    case FUNCTION_DHT11:
-      memcpy(_dht11Gpio, gpio, sizeof(_dht11Gpio));
-      return present;
-#endif
-#ifdef SUPLA_DHT22
-    case FUNCTION_DHT22:
-      memcpy(_dht22Gpio, gpio, sizeof(_dht22Gpio));
-      return present;
-#endif
-#ifdef SUPLA_BME280
-    case FUNCTION_SDA:
-      memcpy(_sdaGpio, gpio, sizeof(_sdaGpio));
-      return present;
-
-    case FUNCTION_SCL:
-      memcpy(_sclGpio, gpio, sizeof(_sclGpio));
-      return present;
-#endif
-#ifdef SUPLA_HC_SR04
-    case FUNCTION_TRIG:
-      memcpy(_trigGpio, gpio, sizeof(_trigGpio));
-      return present;
-
-    case FUNCTION_ECHO:
-      memcpy(_echoGpio, gpio, sizeof(_echoGpio));
-      return present;
-#endif
-#ifdef SUPLA_SI7021_SONOFF
-    case FUNCTION_SI7021_SONOFF:
-      memcpy(_si7021Gpio, gpio, sizeof(_si7021Gpio));
-      return present;
-#endif
-  }
-  return present;
+  return OFF_GPIO;
 }
+#endif
 
 int SuplaConfigESP::getGpio(int nr, int function) {
-  switch (function) {
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-    case FUNCTION_RELAY:
-      return _relayGpio[nr];
-#endif
-#ifdef SUPLA_BUTTON
-    case FUNCTION_BUTTON:
-      return _buttonGpio[nr];
-#endif
-#ifdef SUPLA_LIMIT_SWITCH
-    case FUNCTION_LIMIT_SWITCH:
-      return _limitSwiitchGpio[nr];
-#endif
-#ifdef SUPLA_CONFIG
-    case FUNCTION_CFG_LED:
-      return _cfgLedGpio[nr];
-
-    case FUNCTION_CFG_BUTTON:
-      return _cfgButtonGpio[nr];
-#endif
-#ifdef SUPLA_DS18B20
-    case FUNCTION_DS18B20:
-      return _ds18b20Gpio[nr];
-#endif
-#ifdef SUPLA_DHT11
-    case FUNCTION_DHT11:
-      return _dht11Gpio[nr];
-#endif
-#ifdef SUPLA_DHT22
-    case FUNCTION_DHT22:
-      return _dht22Gpio[nr];
-#endif
-#ifdef SUPLA_BME280
-    case FUNCTION_SDA:
-      return _sdaGpio[nr];
-
-    case FUNCTION_SCL:
-      return _sclGpio[nr];
-#endif
-#ifdef SUPLA_HC_SR04
-    case FUNCTION_TRIG:
-      return _trigGpio[nr];
-
-    case FUNCTION_ECHO:
-      return _echoGpio[nr];
-#endif
-#ifdef SUPLA_SI7021_SONOFF
-    case FUNCTION_SI7021_SONOFF:
-      return _si7021Gpio[nr];
-#endif
+  uint8_t gpio;
+  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    String key = GPIO;
+    key += gpio;
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
+      if (ConfigManager->get(key.c_str())->getElement(NR).toInt() == nr) {
+        return gpio;
+      }
+    }
   }
+  return OFF_GPIO;
 }
 
 int SuplaConfigESP::getLevel(int nr, int function) {
-  switch (function) {
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-    case FUNCTION_RELAY:
-      return _relayLevel[nr];
-#endif
-#ifdef SUPLA_BUTTON
-    case FUNCTION_BUTTON:
-      return _buttonLevel[nr];
-#endif
-#ifdef SUPLA_CONFIG
-    case FUNCTION_CFG_LED:
-      return _cfgLedLevel[nr];
-#endif
+  uint8_t gpio;
+  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    String key = GPIO;
+    key += gpio;
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
+      if (ConfigManager->get(key.c_str())->getElement(NR).toInt() == nr) {
+        uint8_t level = ConfigManager->get(key.c_str())->getElement(LEVEL).toInt();
+        return level;
+      }
+    }
   }
+  return OFF_GPIO;
 }
 
 int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
@@ -558,55 +433,55 @@ void SuplaConfigESP::factoryReset() {
   delay(1000);
   pinMode(0, INPUT);
   if (!digitalRead(0)) {
-  Serial.println("FACTORY RESET!!!");
+    Serial.println("FACTORY RESET!!!");
 
-  ConfigManager->set(KEY_WIFI_SSID, "");
-  ConfigManager->set(KEY_WIFI_PASS, "");
-  ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);
-  ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
-  ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
-  ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
-  ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
-  ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
-  ConfigManager->set(KEY_MAX_RELAY, "0");
-  ConfigManager->set(KEY_MAX_BUTTON, "0");
-  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
-  ConfigManager->set(KEY_MAX_DHT22, "1");
-  ConfigManager->set(KEY_MAX_DHT11, "1");
-  ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
-  ConfigManager->set(KEY_ALTITUDE_BME280, "0");
+    ConfigManager->set(KEY_WIFI_SSID, "");
+    ConfigManager->set(KEY_WIFI_PASS, "");
+    ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);
+    ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
+    ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
+    ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
+    ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
+    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
+    ConfigManager->set(KEY_MAX_RELAY, "0");
+    ConfigManager->set(KEY_MAX_BUTTON, "0");
+    ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
+    ConfigManager->set(KEY_MAX_DHT22, "1");
+    ConfigManager->set(KEY_MAX_DHT11, "1");
+    ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
+    ConfigManager->set(KEY_ALTITUDE_BME280, "0");
 
-  int nr;
-  String key;
-  String func;
-  func = "0";
-  func += SEPARATOR;
-  func += "0";
-  func += SEPARATOR;
-  func += "0";
-  func += SEPARATOR;
-  func += "0";
-  func += SEPARATOR;
-  func += "0";
+    int nr;
+    String key;
+    String func;
+    func = "0";
+    func += SEPARATOR;
+    func += "0";
+    func += SEPARATOR;
+    func += "0";
+    func += SEPARATOR;
+    func += "0";
+    func += SEPARATOR;
+    func += "0";
 
-  for (nr = 0; nr <= 17; nr++) {
-    key = GPIO;
-    key += nr;
-    ConfigManager->set(key.c_str(), func.c_str());
-  }
+    for (nr = 0; nr <= 17; nr++) {
+      key = GPIO;
+      key += nr;
+      ConfigManager->set(key.c_str(), func.c_str());
+    }
 
-  ConfigManager->set(KEY_ACTIVE_SENSOR, func.c_str());
+    ConfigManager->set(KEY_ACTIVE_SENSOR, func.c_str());
 
-  for (nr = 0; nr <= MAX_DS18B20; nr++) {
-    key = KEY_DS;
-    key += nr;
-    ConfigManager->set(key.c_str(), "");
-    key = KEY_DS_NAME;
-    key += nr;
-    ConfigManager->set(key.c_str(), "");
-  }
+    for (nr = 0; nr <= MAX_DS18B20; nr++) {
+      key = KEY_DS;
+      key += nr;
+      ConfigManager->set(key.c_str(), "");
+      key = KEY_DS_NAME;
+      key += nr;
+      ConfigManager->set(key.c_str(), "");
+    }
 
-  ConfigManager->save();
+    ConfigManager->save();
 
     delay(3000);
     WiFi.forceSleepBegin();

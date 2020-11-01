@@ -59,8 +59,6 @@ void SuplaWebPageConfig::handleConfigSave() {
     ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_LED));
   }
 
-  ConfigESP->sort(FUNCTION_CFG_LED);
-
   input = INPUT_CFG_BTN_GPIO;
   key = GPIO;
   key += WebServer->httpServer.arg(input).toInt();
@@ -95,8 +93,6 @@ void SuplaWebPageConfig::handleConfigSave() {
     }
   }
 #endif
-
-  ConfigESP->sort(FUNCTION_CFG_BUTTON);
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:

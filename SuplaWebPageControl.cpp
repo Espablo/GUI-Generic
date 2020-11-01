@@ -78,7 +78,6 @@ void SuplaWebPageControl::handleControlSave() {
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_BUTTON).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_BUTTON, WebServer->httpServer.arg(INPUT_MAX_BUTTON).c_str());
   }
-  ConfigESP->sort(FUNCTION_BUTTON);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
@@ -113,7 +112,6 @@ void SuplaWebPageControl::handleControlSave() {
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_LIMIT_SWITCH, WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str());
   }
-  ConfigESP->sort(FUNCTION_LIMIT_SWITCH);
 #endif
 
   switch (ConfigManager->save()) {
@@ -263,8 +261,6 @@ void SuplaWebPageControl::handleButtonSaveSet() {
   input = INPUT_BUTTON_LEVEL;
   input += nr_button;
   ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
-
-  ConfigESP->sort(FUNCTION_BUTTON);
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
