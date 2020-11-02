@@ -188,22 +188,24 @@ void WiFiEvent(WiFiEvent_t event) {
 void SuplaConfigESP::configModeInit() {
   configModeESP = CONFIG_MODE;
   ledBlinking(100);
-  WiFi.softAPdisconnect(true);
-
+  
   WiFi.onEvent(WiFiEvent);
-  //  Serial.print(F("Creating Access Point"));
-  //  Serial.print(F("Setting mode ... "));
-  //  Serial.println(WiFi.mode(WIFI_AP_STA) ? "Ready" : "Failed!");
+  // Serial.print(F("Creating Access Point"));
+  // Serial.print(F("Setting mode ... "));
+  // Serial.println(WiFi.mode(WIFI_AP_STA) ? "Ready" : "Failed!");
+  WiFi.softAPdisconnect(true);
   WiFi.disconnect(true);
+  WiFi.mode(WIFI_AP_STA);
 
   String CONFIG_WIFI_NAME = "SUPLA-ESP8266-" + getMacAddress(false);
   while (!WiFi.softAP(CONFIG_WIFI_NAME, "")) {
-    //    Serial.println(F("."));
+    //Serial.println(F("."));
     delay(100);
   }
-  //  Serial.println(F("Network Created!"));
-  //  Serial.print(F("Soft-AP IP address = "));
-  //  Serial.println(WiFi.softAPIP());
+  
+ // Serial.println(F("Network Created!"));
+ // Serial.print(F("Soft-AP IP address = "));
+ // Serial.println(WiFi.softAPIP());
 }
 
 const char *SuplaConfigESP::getLastStatusSupla() {

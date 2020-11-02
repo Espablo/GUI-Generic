@@ -58,6 +58,42 @@ class GUIESPWifi : public Supla::ESPWifi {
 
     return result;
   }
+
+	void setup() {
+	  gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP & event) {
+	    Serial.print(F("local IP: "));
+	    Serial.println(WiFi.localIP());
+	    Serial.print(F("subnetMask: "));
+	    Serial.println(WiFi.subnetMask());
+	    Serial.print(F("gatewayIP: "));
+	    Serial.println(WiFi.gatewayIP());
+	    long rssi = WiFi.RSSI();
+	    Serial.print(F("Signal strength (RSSI): "));
+	    Serial.print(rssi);
+	    Serial.println(F(" dBm"));
+	  });
+	  disconnectedEventHandler =
+	  WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected & event) {
+	    Serial.println(F("WiFi station disconnected"));
+	  });
+	
+	  Serial.print(F("WiFi: establishing connection with SSID: \""));
+	  Serial.print(ssid);
+	  Serial.println(F("\""));
+	
+	  if (ConfigESP->configModeESP == NORMAL_MODE) {
+	    WiFi.softAPdisconnect(true);
+	    WiFi.setAutoConnect(false);
+	    WiFi.mode(WIFI_STA);
+	  }
+	
+	  if (!isReady()) {
+	    WiFi.begin(ssid, password);
+	  }
+	
+	  yield();
+	}
+
   void enableBuffer(bool value) {
     isBuffer = value;
   }
