@@ -109,14 +109,8 @@ void SuplaWebPageConfig::handleConfigSave() {
 String SuplaWebPageConfig::supla_webpage_config(int save) {
   uint8_t selected, suported;
   String page = "";
-  page += WebServer->SuplaMetas();
-  page += WebServer->SuplaStyle();
   page += WebServer->SuplaSaveResult(save);
-  page += F("</div>");
   page += WebServer->SuplaJavaScript(PATH_CONFIG);
-  page += F("<div class='s'>");
-  //  page += WebServer->SuplaLogo();
-  page += WebServer->SuplaSummary();
   page += F("<form method='post' action='");
   page += PATH_SAVE_CONFIG;
   page += F("'><div class='w'><h3>Ustawienie GPIO dla CONFIG</h3>");

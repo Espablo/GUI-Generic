@@ -290,19 +290,11 @@ void SuplaWebPageSensor::handleSensorSave() {
 String SuplaWebPageSensor::supla_webpage_sensor(int save) {
   uint8_t nr, suported, selected;
   String page, key;
-
-  page += WebServer->SuplaMetas();
-  page += WebServer->SuplaStyle();
   page += WebServer->SuplaSaveResult(save);
-  page += F("</div>");
   page += WebServer->SuplaJavaScript(PATH_SENSOR);
-  page += F("<div class='s'>");
-  //  page += WebServer->SuplaLogo();
-  page += WebServer->SuplaSummary();
   page += F("<form method='post' action='");
   page += PATH_SAVE_SENSOR;
   page += F("'>");
-
 #ifdef SUPLA_DHT11
   page += F("<div class='w'><h3>Ustawienie GPIO dla DHT11</h3>");
   page += F("<i><label>ILOŚĆ</label><input name='");
@@ -675,14 +667,8 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   char strAddr[64];
   uint8_t i;
 
-  content += WebServer->SuplaMetas();
-  content += WebServer->SuplaStyle();
-  //  content += WebServer->SuplaFavicon();
   content += WebServer->SuplaSaveResult(save);
   content += WebServer->SuplaJavaScript(PATH_MULTI_DS);
-  content += F("<div class='s'>");
-  //  content += WebServer->SuplaLogo();
-  content += WebServer->SuplaSummary();
   content += F("<center>");
   if (ConfigESP->getGpio(FUNCTION_DS18B20) < OFF_GPIO || !Supla::GUI::sensorDS.empty()) {
     content += F("<form method='post' action='");
