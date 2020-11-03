@@ -63,11 +63,16 @@ void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
 
 #ifdef SUPLA_DS18B20
 void addDS18B20MultiThermometer(int pinNumber) {
-  for (int i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); ++i) {
-    String ds_key = KEY_DS;
-    ds_key += i;
-    sensorDS.push_back(new DS18B20(pinNumber, ConfigManager->get(ds_key.c_str())->getValueBin(MAX_DS18B20_ADDRESS)));
-    supla_log(LOG_DEBUG, "Index %d - address %s", i, ConfigManager->get(ds_key.c_str())->getValue());
+  if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
+    for (int i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); ++i) {
+      String ds_key = KEY_DS;
+      ds_key += i;
+      sensorDS.push_back(new DS18B20(pinNumber, ConfigManager->get(ds_key.c_str())->getValueBin(MAX_DS18B20_ADDRESS)));
+      supla_log(LOG_DEBUG, "Index %d - address %s", i, ConfigManager->get(ds_key.c_str())->getValue());
+    }
+  }
+  else {
+    sensorDS.push_back(new DS18B20(ConfigESP->getGpio(FUNCTION_DS18B20)));
   }
 }
 #endif

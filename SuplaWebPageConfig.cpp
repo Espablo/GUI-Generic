@@ -59,8 +59,6 @@ void SuplaWebPageConfig::handleConfigSave() {
     ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_LED));
   }
 
-  ConfigESP->sort(FUNCTION_CFG_LED);
-
   input = INPUT_CFG_BTN_GPIO;
   key = GPIO;
   key += WebServer->httpServer.arg(input).toInt();
@@ -96,8 +94,6 @@ void SuplaWebPageConfig::handleConfigSave() {
   }
 #endif
 
-  ConfigESP->sort(FUNCTION_CFG_BUTTON);
-
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Config save"));
@@ -113,14 +109,8 @@ void SuplaWebPageConfig::handleConfigSave() {
 String SuplaWebPageConfig::supla_webpage_config(int save) {
   uint8_t selected, suported;
   String page = "";
-  page += WebServer->SuplaMetas();
-  page += WebServer->SuplaStyle();
   page += WebServer->SuplaSaveResult(save);
-  page += F("</div>");
   page += WebServer->SuplaJavaScript(PATH_CONFIG);
-  page += F("<div class='s'>");
-  //  page += WebServer->SuplaLogo();
-  page += WebServer->SuplaSummary();
   page += F("<form method='post' action='");
   page += PATH_SAVE_CONFIG;
   page += F("'><div class='w'><h3>Ustawienie GPIO dla CONFIG</h3>");
