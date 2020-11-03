@@ -283,8 +283,8 @@ String SuplaWebServer::supla_webpage_upddate() {
   content += F("<iframe src=");
   content += UPDATE_PATH;
   content +=
-    F(">Twoja przeglądarka nie akceptuje ramek! width='200' height='100' "
-      "frameborder='100'></iframe>");
+      F(">Twoja przeglądarka nie akceptuje ramek! width='200' height='100' "
+        "frameborder='100'></iframe>");
   content += F("</center>");
   content += F("</div>");
   content += F("<a href='/'><button>Powrót</button></a></div>");
@@ -324,11 +324,27 @@ String SuplaWebServer::deviceSettings() {
   content += F("<br><br>");
 #endif
 
-#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_BME280) || defined(SUPLA_HC_SR04)
+#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
   content += F("<a href='");
   content += PATH_START;
-  content += PATH_SENSOR;
-  content += F("'><button>SENSORY</button></a>");
+  content += PATH_1WIRE;
+  content += F("'><button>SENSORY 1Wire</button></a>");
+  content += F("<br><br>");
+#endif
+
+#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+  content += F("<a href='");
+  content += PATH_START;
+  content += PATH_I2C;
+  content += F("'><button>SENSORY i2c</button></a>");
+  content += F("<br><br>");
+#endif
+
+#if defined(SUPLA_MAX6675)
+  content += F("<a href='");
+  content += PATH_START;
+  content += PATH_SPI;
+  content += F("'><button>SENSORY SPI</button></a>");
   content += F("<br><br>");
 #endif
 
@@ -355,20 +371,20 @@ const String SuplaWebServer::SuplaFavicon() {
 
 const String SuplaWebServer::SuplaIconEdit() {
   return F(
-           "<img "
-           "src='data:image/"
-           "png;base64,"
-           "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
-           "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
-           "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
-           "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
+      "<img "
+      "src='data:image/"
+      "png;base64,"
+      "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
+      "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
+      "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
+      "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
 }
 
 const String SuplaWebServer::SuplaJavaScript(String java_return) {
   String java_script =
-    F("<script type='text/javascript'>setTimeout(function(){var "
-      "element=document.getElementById('msg');if( element != "
-      "null){element.style.visibility='hidden';location.href='");
+      F("<script type='text/javascript'>setTimeout(function(){var "
+        "element=document.getElementById('msg');if( element != "
+        "null){element.style.visibility='hidden';location.href='");
   java_script += java_return;
   java_script += F("';}},3200);</script>\n");
   return java_script;
@@ -413,14 +429,15 @@ void SuplaWebServer::rebootESP() {
 }
 
 void SuplaWebServer::sendContent(const String content) {
-  //httpServer.send(200, "text/html", "");
+  // httpServer.send(200, "text/html", "");
   const int bufferSize = 1000;
   String _buffer;
   int bufferCounter = 0;
   int fileSize = content.length();
 
 #ifdef DEBUG_MODE
-  Serial.print("Content size: "); Serial.println(fileSize);
+  Serial.print("Content size: ");
+  Serial.println(fileSize);
 #endif
 
   httpServer.setContentLength(fileSize);
@@ -438,7 +455,7 @@ void SuplaWebServer::sendContent(const String content) {
   summary.replace("{m}", ConfigESP->getMacAddress(true));
   httpServer.sendContent(summary);
 
-  //httpServer.send(200, "text/html", "");
+  // httpServer.send(200, "text/html", "");
   for (int i = 0; i < fileSize; i++) {
     _buffer += content[i];
     bufferCounter++;
