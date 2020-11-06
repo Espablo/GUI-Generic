@@ -418,7 +418,7 @@ const String SuplaWebServer::SuplaJavaScript(String java_return) {
         "element=document.getElementById('msg');if( element != "
         "null){element.style.visibility='hidden';location.href='");
   java_script += java_return;
-  java_script += F("';}},3200);</script>\n");
+  java_script += F("';}},1600);</script>\n");
   return java_script;
 }
 
