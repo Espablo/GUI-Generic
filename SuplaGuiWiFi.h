@@ -71,13 +71,15 @@ class GUIESPWifi : public Supla::ESPWifi {
         Serial.print(rssi);
         Serial.println(F(" dBm"));
       });
-      disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
-        Serial.println(F("WiFi station disconnected"));
-      });
+      disconnectedEventHandler =
+          WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) { Serial.println(F("WiFi station disconnected")); });
 
       Serial.print(F("WiFi: establishing connection with SSID: \""));
       Serial.print(ssid);
       Serial.println(F("\""));
+      WiFi.hostname(hostname);
+      Serial.print(F("Host name: "));
+      Serial.println(WiFi.hostname());
 
       WiFi.softAPdisconnect(true);
       WiFi.setAutoConnect(false);
