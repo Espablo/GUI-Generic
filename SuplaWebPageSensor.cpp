@@ -37,6 +37,15 @@ void SuplaWebPageSensor::createWebPageSensor() {
   path += PATH_SAVE_I2C;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handlei2cSave, this));
 #endif
+
+#if defined(SUPLA_MAX6675)
+  path = PATH_START;
+  path += PATH_SPI;
+  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleSpi, this));
+  path = PATH_START;
+  path += PATH_SAVE_SPI;
+  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleSpiSave, this));
+#endif
 }
 
 #ifdef SUPLA_DS18B20
@@ -695,6 +704,164 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   page += F("<i><label>ECHO</label>");
   page += WebServer->selectGPIO(INPUT_ECHO_GPIO, FUNCTION_ECHO);
   page += F("</i>");
+  page += F("</div>");
+#endif
+  page += F("<button type='submit'>Zapisz</button></form>");
+  page += F("<br>");
+  page += F("<form method='post' action='");
+  page += PATH_REBOT;
+  page += F("'>");
+  page += F("<button type='submit'>Restart</button></form>");
+  page += F("<br>");
+  page += F("<a href='");
+  page += PATH_START;
+  page += PATH_DEVICE_SETTINGS;
+  page += F("'><button>Powrót</button></a></div>");
+  return page;
+}
+#endif
+
+#if defined(SUPLA_MAX6675)
+void SuplaWebPageSensor::handleSpi() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+  WebServer->sendContent(supla_webpage_spi(0));
+}
+
+void SuplaWebPageSensor::handleSpiSave() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+
+  String key, input;
+  uint8_t nr, current_value, last_value;
+
+#if defined(SUPLA_MAX6675)
+  input = INPUT_CLK_GPIO;
+  key = GPIO;
+  key += WebServer->httpServer.arg(input).toInt();
+  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+    key = GPIO;
+    key += WebServer->httpServer.arg(input).toInt();
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+        (ConfigESP->getGpio(FUNCTION_CLK) == WebServer->httpServer.arg(input).toInt() &&
+         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CLK)) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_CLK);
+    }
+    else {
+      WebServer->sendContent(supla_webpage_spi(6));
+      return;
+    }
+  }
+  if (ConfigESP->getGpio(FUNCTION_CLK) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CLK));
+  }
+
+  input = INPUT_CS_GPIO;
+  key = GPIO;
+  key += WebServer->httpServer.arg(input).toInt();
+  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+    key = GPIO;
+    key += WebServer->httpServer.arg(input).toInt();
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+        (ConfigESP->getGpio(FUNCTION_CS) == WebServer->httpServer.arg(input).toInt() &&
+         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_CS)) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_CS);
+    }
+    else {
+      WebServer->sendContent(supla_webpage_spi(6));
+      return;
+    }
+  }
+  if (ConfigESP->getGpio(FUNCTION_CS) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CS));
+  }
+  input = INPUT_D0_GPIO;
+  key = GPIO;
+  key += WebServer->httpServer.arg(input).toInt();
+  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+    key = GPIO;
+    key += WebServer->httpServer.arg(input).toInt();
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+        (ConfigESP->getGpio(FUNCTION_D0) == WebServer->httpServer.arg(input).toInt() &&
+         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_D0)) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_D0);
+    }
+    else {
+      WebServer->sendContent(supla_webpage_spi(6));
+      return;
+    }
+  }
+  if (ConfigESP->getGpio(FUNCTION_D0) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_D0));
+  }
+#endif
+
+#ifdef SUPLA_MAX6675
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_MAX6675;
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_MAX6675, WebServer->httpServer.arg(input).toInt());
+  }
+#endif
+
+  switch (ConfigManager->save()) {
+    case E_CONFIG_OK:
+      WebServer->sendContent(supla_webpage_spi(1));
+      break;
+    case E_CONFIG_FILE_OPEN:
+      //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
+      WebServer->sendContent(supla_webpage_spi(2));
+      break;
+  }
+}
+
+String SuplaWebPageSensor::supla_webpage_spi(int save) {
+  uint8_t nr, suported, selected;
+  String page, key;
+  page += WebServer->SuplaSaveResult(save);
+  page += WebServer->SuplaJavaScript(PATH_SPI);
+  page += F("<form method='post' action='");
+  page += PATH_SAVE_SPI;
+  page += F("'>");
+
+#if defined(SUPLA_MAX6675)
+  page += F("<div class='w'><h3>Ustawienie GPIO dla SPI</h3>");
+  page += F("<i><label>CLK</label>");
+  page += WebServer->selectGPIO(INPUT_CLK_GPIO, FUNCTION_CLK);
+  page += F("</i>");
+  page += F("<i><label>CS</label>");
+  page += WebServer->selectGPIO(INPUT_CS_GPIO, FUNCTION_CS);
+  page += F("</i>");
+  page += F("<i><label>D0</label>");
+  page += WebServer->selectGPIO(INPUT_D0_GPIO, FUNCTION_D0);
+  page += F("</i>");
+
+  if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
+#ifdef SUPLA_MAX6675
+    page += F("<i><label>");
+    page += F("MAX6675</label><select name='");
+    page += INPUT_MAX6675;
+    page += F("'>");
+
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MAX6675).toInt();
+    for (suported = 0; suported < 2; suported++) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else {
+        page += F("'>");
+      }
+      page += StateString(suported);
+    }
+    page += F("</select></i>");
+#endif
+  }
   page += F("</div>");
 #endif
   page += F("<button type='submit'>Zapisz</button></form>");

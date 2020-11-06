@@ -27,6 +27,6 @@
 // #define SUPLA_MAX44009  // A0 NOT SUPPORTED
 
 // SPI
-// #define SUPLA_MAX6675  // NOT SUPPORTED
+#define SUPLA_MAX6675
 
 #endif  // GUI-Generic_Config_h

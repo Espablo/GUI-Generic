@@ -39,6 +39,9 @@
 #ifdef SUPLA_SI7021_SONOFF
 #include <supla/sensor/Si7021_sonoff.h>
 #endif
+#ifdef SUPLA_MAX6675
+#include <supla/sensor/MAX6675_K.h>
+#endif
 #include <supla/storage/eeprom.h>
 
 #include "FS.h"
@@ -63,7 +66,7 @@ void setup() {
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
-  if (ConfigESP->getGpio(FUNCTION_RELAY) != OFF_GPIO &&ConfigManager->get(KEY_MAX_RELAY)->getValueInt() > 0) {
+  if (ConfigESP->getGpio(FUNCTION_RELAY) != OFF_GPIO && ConfigManager->get(KEY_MAX_RELAY)->getValueInt() > 0) {
     for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
 #ifdef SUPLA_ROLLERSHUTTER
       if (rollershutters > 0) {
@@ -133,14 +136,14 @@ void setup() {
 
 #ifdef SUPLA_DS18B20
   if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
-      Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(FUNCTION_DS18B20));
+    Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(FUNCTION_DS18B20));
   }
 #endif
 
 #ifdef SUPLA_SI7021_SONOFF
-    if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != OFF_GPIO) {
-      new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
-    }
+  if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != OFF_GPIO) {
+    new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
+  }
 #endif
 
 #ifdef SUPLA_HC_SR04
@@ -149,46 +152,55 @@ void setup() {
   }
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || defined(SUPLA_BH1750) || defined(SUPLA_MAX44009)
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || \
+    defined(SUPLA_BH1750) || defined(SUPLA_MAX44009)
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
 
 #ifdef SUPLA_BME280
-  switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt()) {
-    case BME280_ADDRESS_0X76:
-      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-      break;
-    case BME280_ADDRESS_0X77:
-      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-      break;
-    case BME280_ADDRESS_0X76_AND_0X77:
-      new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-      new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-      break;
-  }
+    switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt()) {
+      case BME280_ADDRESS_0X76:
+        new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        break;
+      case BME280_ADDRESS_0X77:
+        new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        break;
+      case BME280_ADDRESS_0X76_AND_0X77:
+        new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        break;
+    }
 #endif
 
 #ifdef SUPLA_SHT30
-  switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT30).toInt()) {
-    case SHT30_ADDRESS_0X44:
-      new Supla::Sensor::SHT3x(0x44);
-      break;
-    case SHT30_ADDRESS_0X45:
-      new Supla::Sensor::SHT3x(0x45);
-      break;
-    case SHT30_ADDRESS_0X44_AND_0X45:
-      new Supla::Sensor::SHT3x(0x44);
-      new Supla::Sensor::SHT3x(0x45);
-      break;
-  }
+    switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT30).toInt()) {
+      case SHT30_ADDRESS_0X44:
+        new Supla::Sensor::SHT3x(0x44);
+        break;
+      case SHT30_ADDRESS_0X45:
+        new Supla::Sensor::SHT3x(0x45);
+        break;
+      case SHT30_ADDRESS_0X44_AND_0X45:
+        new Supla::Sensor::SHT3x(0x44);
+        new Supla::Sensor::SHT3x(0x45);
+        break;
+    }
 #endif
 
 #ifdef SUPLA_SI7021
-  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt()) {
-    new Supla::Sensor::Si7021();
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt()) {
+      new Supla::Sensor::Si7021();
+    }
+#endif
   }
 #endif
-}
+
+#ifdef SUPLA_MAX6675
+  if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
+    new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS),
+                                 ConfigESP->getGpio(FUNCTION_D0));
+  }
+
 #endif
 
   Supla::GUI::begin();

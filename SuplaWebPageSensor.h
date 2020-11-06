@@ -28,12 +28,21 @@
 #define INPUT_MAX_DHT11       "mdht11"
 #define INPUT_MAX_DHT22       "mdht22"
 #define INPUT_MAX_DS18B20     "maxds"
+#define INPUT_CLK_GPIO        "clk"
+#define INPUT_CS_GPIO         "cs"
+#define INPUT_D0_GPIO         "d0"
+#define INPUT_MAX6675         "max6675"
 
 enum _sensorI2C
 {
   SENSOR_BME280,
   SENSOR_SHT30,
   SENSOR_SI7021
+};
+
+enum _sensorSPI
+{
+  SENSOR_MAX6675
 };
 
 #ifdef SUPLA_BME280
@@ -63,7 +72,7 @@ class SuplaWebPageSensor {
   void handle1Wire();
   void handle1WireSave();
 #endif
-  
+
 #ifdef SUPLA_DS18B20
   void handleSearchDS();
   void handleDSSave();
@@ -73,6 +82,11 @@ class SuplaWebPageSensor {
 #if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   void handlei2c();
   void handlei2cSave();
+#endif
+
+#if defined(SUPLA_MAX6675)
+  void handleSpi();
+  void handleSpiSave();
 #endif
 
  private:
@@ -85,6 +99,9 @@ class SuplaWebPageSensor {
 
 #if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   String supla_webpage_i2c(int save);
+#endif
+#if defined(SUPLA_MAX6675)
+  String supla_webpage_spi(int save);
 #endif
 };
 
