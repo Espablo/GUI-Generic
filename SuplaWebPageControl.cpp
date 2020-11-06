@@ -1,7 +1,7 @@
 #include "SuplaWebPageControl.h"
-
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
+#include "SuplaCommonPROGMEM.h"
 
 SuplaWebPageControl *WebPageControl = new SuplaWebPageControl();
 
@@ -160,23 +160,9 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
       pagebutton += WebServer->SuplaIconEdit();
       pagebutton += F("</a>");
     }
-    pagebutton += F("</label><select name='");
-    pagebutton += INPUT_BUTTON_GPIO;
-    pagebutton += nr;
-    pagebutton += F("'>");
-    for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusyGpio(suported, FUNCTION_BUTTON) == false || selected == suported) {
-        pagebutton += F("<option value='");
-        pagebutton += suported;
-        if (selected == suported) {
-          pagebutton += F("' selected>");
-        }
-        else
-          pagebutton += F("'>");
-        pagebutton += (WebServer->Supported_Gpio[suported]);
-      }
-    }
-    pagebutton += F("</select></i>");
+    pagebutton += F("</label>");
+    pagebutton += WebServer->selectGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr);
+    pagebutton += F("</i>");
   }
   pagebutton += F("</div>");
 #endif
@@ -193,24 +179,9 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
     pagebutton += F("<i><label>");
     pagebutton += nr;
-    pagebutton += F(". KRAŃCÓWKA</label><select name='");
-    pagebutton += INPUT_LIMIT_SWITCH_GPIO;
-    pagebutton += nr;
-    pagebutton += F("'>");
-    selected = ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH);
-    for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusyGpio(suported, FUNCTION_LIMIT_SWITCH) == false || selected == suported) {
-        pagebutton += F("<option value='");
-        pagebutton += suported;
-        if (selected == suported) {
-          pagebutton += F("' selected>");
-        }
-        else
-          pagebutton += F("'>");
-        pagebutton += (WebServer->Supported_Gpio[suported]);
-      }
-    }
-    pagebutton += F("</select></i>");
+    pagebutton += F(". KRAŃCÓWKA</label>");
+    pagebutton += WebServer->selectGPIO(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr);
+    pagebutton += F("</i>");
   }
   pagebutton += F("</div>");
 #endif
@@ -297,7 +268,7 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
     page += nr_button;
     page += F("'>");
     selected = ConfigESP->getLevel(nr_button.toInt(), FUNCTION_BUTTON);
-    for (suported = 0; suported < sizeof(SupportedTrigger) / sizeof(char *); suported++) {
+    for (suported = 0; suported < 3; suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -305,7 +276,7 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
       }
       else
         page += F("'>");
-      page += (SupportedTrigger[suported]);
+      page += TriggerString(suported);
     }
     page += F("</select></i>");
     page += F("</div><button type='submit'>Zapisz</button></form>");

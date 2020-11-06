@@ -20,6 +20,7 @@
 #include "SuplaWebPageControl.h"
 #include "SuplaWebPageRelay.h"
 #include "SuplaWebPageSensor.h"
+#include "SuplaCommonPROGMEM.h"
 
 SuplaWebServer::SuplaWebServer() {
 }
@@ -297,7 +298,7 @@ void SuplaWebServer::supla_webpage_reboot() {
     if (!httpServer.authenticate(www_username, www_password))
       return httpServer.requestAuthentication();
   }
-  httpServer.send(200, "text/html", supla_webpage_start(2));
+  this->sendContent(supla_webpage_start(2));
   this->rebootESP();
 }
 
@@ -360,6 +361,37 @@ String SuplaWebServer::deviceSettings() {
   content += F("<a href='/'><button>Powrót</button></a></div>");
 
   return content;
+}
+
+String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr) {
+  String page = "";
+  page += F("<select name='");
+  page += input;
+  if (nr != 0) {
+    page += nr;
+  }
+  else {
+    nr = 1;
+  }
+  page += F("'>");
+
+  uint8_t selected = ConfigESP->getGpio(nr, function);
+
+  for (uint8_t suported = 0; suported < 18; suported++) {
+    if (ConfigESP->checkBusyGpio(suported, function) == false || selected == suported) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else {
+        page += F("'>");
+      }
+      page += GIPOString(suported);
+    }
+  }
+  page += F("</select>");
+  return page;
 }
 
 const String SuplaWebServer::SuplaFavicon() {

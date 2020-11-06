@@ -152,7 +152,6 @@ void setup() {
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || defined(SUPLA_BH1750) || defined(SUPLA_MAX44009)
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
-#endif
 
 #ifdef SUPLA_BME280
   switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt()) {
@@ -190,6 +189,8 @@ void setup() {
   }
 #endif
 }
+#endif
+
   Supla::GUI::begin();
 }
 

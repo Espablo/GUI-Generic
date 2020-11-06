@@ -2,6 +2,7 @@
 
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
+#include "SuplaCommonPROGMEM.h"
 
 SuplaWebPageSensor *WebPageSensor = new SuplaWebPageSensor();
 
@@ -334,6 +335,7 @@ void SuplaWebPageSensor::handle1WireSave() {
       return;
     }
   }
+
   if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != WebServer->httpServer.arg(input).toInt() ||
       WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
@@ -371,25 +373,9 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
     page += F("<i><label>");
     page += nr;
-    page += F(". DHT11</label><select name='");
-    page += INPUT_DHT11_GPIO;
-    page += nr;
-    page += F("'>");
-    selected = ConfigESP->getGpio(nr, FUNCTION_DHT11);
-    for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusyGpio(suported, FUNCTION_DHT11) == false || selected == suported) {
-        page += F("<option value='");
-        page += suported;
-        if (selected == suported) {
-          page += F("' selected>");
-        }
-        else {
-          page += F("'>");
-        }
-        page += (WebServer->Supported_Gpio[suported]);
-      }
-    }
-    page += F("</select></i>");
+    page += F(". DHT11</label>");
+    page += WebServer->selectGPIO(INPUT_DHT11_GPIO, FUNCTION_DHT11, nr);
+    page += F("</i>");
   }
   page += F("</div>");
 #endif
@@ -406,49 +392,18 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
     page += F("<i><label>");
     page += nr;
-    page += F(". DHT22</label><select name='");
-    page += INPUT_DHT22_GPIO;
-    page += nr;
-    page += F("'>");
-    selected = ConfigESP->getGpio(nr, FUNCTION_DHT22);
-    for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusyGpio(suported, FUNCTION_DHT22) == false || selected == suported) {
-        page += F("<option value='");
-        page += suported;
-        if (selected == suported) {
-          page += F("' selected>");
-        }
-        else {
-          page += F("'>");
-        }
-        page += (WebServer->Supported_Gpio[suported]);
-      }
-    }
-    page += F("</select></i>");
+    page += F(". DHT22</label>");
+    page += WebServer->selectGPIO(INPUT_DHT22_GPIO, FUNCTION_DHT22, nr);
+    page += F("</i>");
   }
   page += F("</div>");
 #endif
 
 #ifdef SUPLA_SI7021_SONOFF
   page += F("<div class='w'><h3>Ustawienie GPIO dla Si7021 Sonoff</h3>");
-  page += F("<i><label>Si7021 Sonoff</label><select name='");
-  page += INPUT_SI7021_SONOFF;
-  page += F("'>");
-  selected = ConfigESP->getGpio(FUNCTION_SI7021_SONOFF);
-  for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, FUNCTION_SI7021_SONOFF) == false || selected == suported) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += (WebServer->Supported_Gpio[suported]);
-    }
-  }
-  page += F("</select></i>");
+  page += F("<i><label>Si7021 Sonoff</label>");
+  page += WebServer->selectGPIO(INPUT_SI7021_SONOFF, FUNCTION_SI7021_SONOFF);
+  page += F("</i>");
   page += F("</div>");
 #endif
 
@@ -477,24 +432,8 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
     }
     page += F("</label>");
   }
-  page += F("<select name='");
-  page += INPUT_MULTI_DS_GPIO;
-  page += F("'>");
-  selected = ConfigESP->getGpio(FUNCTION_DS18B20);
-  for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, FUNCTION_DS18B20) == false || selected == suported) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += (WebServer->Supported_Gpio[suported]);
-    }
-  }
-  page += F("</select></i>");
+  page += WebServer->selectGPIO(INPUT_MULTI_DS_GPIO, FUNCTION_DS18B20);
+  page += F("</i>");
   page += F("</div>");
 #endif
 
@@ -620,6 +559,7 @@ void SuplaWebPageSensor::handlei2cSave() {
       return;
     }
   }
+
   if (ConfigESP->getGpio(FUNCTION_TRIG) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_TRIG));
   }
@@ -667,44 +607,12 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30)
   page += F("<div class='w'><h3>Ustawienie GPIO dla i2c</h3>");
-  page += F("<i><label>");
-  page += F("SDA</label><select name='");
-  page += INPUT_SDA_GPIO;
-  page += F("'>");
-  selected = ConfigESP->getGpio(FUNCTION_SDA);
-  for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, FUNCTION_SDA) == false || selected == suported) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += (WebServer->Supported_Gpio[suported]);
-    }
-  }
-  page += F("</select></i>");
-  page += F("<i><label>");
-  page += F("SCL</label><select name='");
-  page += INPUT_SCL_GPIO;
-  page += F("'>");
-  selected = ConfigESP->getGpio(FUNCTION_SCL);
-  for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, FUNCTION_SCL) == false || selected == suported) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += (WebServer->Supported_Gpio[suported]);
-    }
-  }
-  page += F("</select></i>");
+  page += F("<i><label>SDA</label>");
+  page += WebServer->selectGPIO(INPUT_SDA_GPIO, FUNCTION_SDA);
+  page += F("</i>");
+  page += F("<i><label>SCL</label>");
+  page += WebServer->selectGPIO(INPUT_SCL_GPIO, FUNCTION_SCL);
+  page += F("</i>");
 
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
 #ifdef SUPLA_BME280
@@ -714,7 +622,7 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
     page += F("'>");
 
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt();
-    for (suported = 0; suported < sizeof(SupportedBme280) / sizeof(char *); suported++) {
+    for (suported = 0; suported < 4; suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -723,7 +631,7 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
       else {
         page += F("'>");
       }
-      page += (SupportedBme280[suported]);
+      page += BME280String(suported);
     }
     page += F("</select></i>");
     page += F("<i><input name='");
@@ -741,7 +649,7 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
     page += F("'>");
 
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT30).toInt();
-    for (suported = 0; suported < sizeof(SupportedSHT30) / sizeof(char *); suported++) {
+    for (suported = 0; suported < 4; suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -750,7 +658,7 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
       else {
         page += F("'>");
       }
-      page += (SupportedSHT30[suported]);
+      page += SHT30String(suported);
     }
     page += F("</select></i>");
 #endif
@@ -762,7 +670,7 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
     page += F("'>");
 
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt();
-    for (suported = 0; suported < sizeof(SupportedSensorActivity) / sizeof(char *); suported++) {
+    for (suported = 0; suported < 2; suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -771,7 +679,7 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
       else {
         page += F("'>");
       }
-      page += (SupportedSensorActivity[suported]);
+      page += StateString(suported);
     }
     page += F("</select></i>");
 #endif
@@ -781,44 +689,12 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
 
 #ifdef SUPLA_HC_SR04
   page += F("<div class='w'><h3>Ustawienie GPIO dla HC-SR04</h3>");
-  page += F("<i><label>");
-  page += F("TRIG</label><select name='");
-  page += INPUT_TRIG_GPIO;
-  page += F("'>");
-  selected = ConfigESP->getGpio(FUNCTION_TRIG);
-  for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, FUNCTION_TRIG) == false || selected == suported) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += (WebServer->Supported_Gpio[suported]);
-    }
-  }
-  page += F("</select></i>");
-  page += F("<i><label>");
-  page += F("ECHO</label><select name='");
-  page += INPUT_ECHO_GPIO;
-  page += F("'>");
-  selected = ConfigESP->getGpio(FUNCTION_ECHO);
-  for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, FUNCTION_ECHO) == false || selected == suported) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += (WebServer->Supported_Gpio[suported]);
-    }
-  }
-  page += F("</select></i>");
+  page += F("<i><label>TRIG</label>");
+  page += WebServer->selectGPIO(INPUT_TRIG_GPIO, FUNCTION_TRIG);
+  page += F("</i>");
+  page += F("<i><label>ECHO</label>");
+  page += WebServer->selectGPIO(INPUT_ECHO_GPIO, FUNCTION_ECHO);
+  page += F("</i>");
   page += F("</div>");
 #endif
   page += F("<button type='submit'>Zapisz</button></form>");

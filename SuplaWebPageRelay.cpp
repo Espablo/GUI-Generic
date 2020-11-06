@@ -1,7 +1,7 @@
 #include "SuplaWebPageRelay.h"
-
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
+#include "SuplaCommonPROGMEM.h"
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 SuplaWebPageRelay *WebPageRelay = new SuplaWebPageRelay();
@@ -126,24 +126,9 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
       pagerelay += WebServer->SuplaIconEdit();
       pagerelay += F("</a>");
     }
-    pagerelay += F("</label><select name='");
-    pagerelay += INPUT_RELAY_GPIO;
-    pagerelay += nr;
-    pagerelay += F("'>");
-
-    for (suported = 0; suported < 18; suported++) {
-      if (ConfigESP->checkBusyGpio(suported, FUNCTION_RELAY) == false || selected == suported) {
-        pagerelay += F("<option value='");
-        pagerelay += suported;
-        if (selected == suported) {
-          pagerelay += F("' selected>");
-        }
-        else
-          pagerelay += F("'>");
-        pagerelay += (WebServer->Supported_Gpio[suported]);
-      }
-    }
-    pagerelay += F("</select></i>");
+    pagerelay += F("</label>");
+    pagerelay += WebServer->selectGPIO(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr);
+    pagerelay += F("</i>");
   }
   pagerelay += F("</div><button type='submit'>Zapisz</button></form>");
   pagerelay += F("<br>");
@@ -230,7 +215,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += nr_relay;
     page += F("'>");
     selected = ConfigESP->getLevel(nr_relay.toInt(), FUNCTION_RELAY);
-    for (suported = 0; suported < sizeof(SupportedRelayLevel) / sizeof(char *); suported++) {
+    for (suported = 0; suported < 2; suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -238,7 +223,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
       }
       else
         page += F("'>");
-      page += (SupportedRelayLevel[suported]);
+      page += LevelString(suported);
     }
     page += F("</select></i>");
     page += F("<i><label>");
@@ -247,7 +232,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += nr_relay;
     page += F("'>");
     selected = ConfigESP->getMemoryRelay(nr_relay.toInt());
-    for (suported = 0; suported < sizeof(SupportedRelayMemory) / sizeof(char *); suported++) {
+    for (suported = 0; suported < 2; suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -255,7 +240,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
       }
       else
         page += F("'>");
-      page += (SupportedRelayMemory[suported]);
+      page += MemoryString(suported);
     }
     page += F("</select></i>");
     page += F("</div><button type='submit'>Zapisz</button></form>");

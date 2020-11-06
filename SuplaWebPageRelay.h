@@ -28,14 +28,6 @@ class SuplaWebPageRelay {
  private:
   String supla_webpage_relay_set(int save);
   String supla_webpage_relay(int save);
-
-  const char* SupportedRelayLevel[2] = {
-    "ODWRÓCONE", 
-    "NORMALNE"};
-
-  const char* SupportedRelayMemory[2] = {
-    "WYŁĄCZONY", 
-    "PAMIĘTAJ STAN"};
 };
 
 extern SuplaWebPageRelay* WebPageRelay;

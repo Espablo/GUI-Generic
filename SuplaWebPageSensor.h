@@ -62,12 +62,12 @@ class SuplaWebPageSensor {
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
   void handle1Wire();
   void handle1WireSave();
+#endif
   
 #ifdef SUPLA_DS18B20
   void handleSearchDS();
   void handleDSSave();
   void showDS18B20(String& content, bool readonly = false);
-#endif
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
@@ -85,18 +85,6 @@ class SuplaWebPageSensor {
 
 #if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   String supla_webpage_i2c(int save);
-
-#ifdef SUPLA_BME280
-  const char* SupportedBme280[4] = {"OFF", "0x76", "0x77", "0x76 & 0x77"};
-#endif
-
-#if defined(SUPLA_SHT30)
-  const char* SupportedSHT30[4] = {"OFF", "0x44", "0x45", "0x44 & 0x45"};
-#endif
-
-#if defined(SUPLA_SI7021)
-  const char* SupportedSensorActivity[2] = {"OFF", "ON"};
-#endif
 #endif
 };
 
