@@ -1,6 +1,7 @@
 #include "SuplaWebPageConfig.h"
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
+#include "SuplaCommonPROGMEM.h"
 
 SuplaWebPageConfig *WebPageConfig = new SuplaWebPageConfig();
 
@@ -115,23 +116,9 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += PATH_SAVE_CONFIG;
   page += F("'><div class='w'><h3>Ustawienie GPIO dla CONFIG</h3>");
   page += F("<i><label>");
-  page += F("LED</label><select name='");
-  page += INPUT_CFG_LED_GPIO;
-  page += F("'>");
-  selected = ConfigESP->getGpio(FUNCTION_CFG_LED);
-  for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, FUNCTION_CFG_LED) == false || selected == suported) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else
-        page += F("'>");
-      page += (WebServer->Supported_Gpio[suported]);
-    }
-  }
-  page += F("</select></i>");
+  page += F("LED</label>");
+  page += WebServer->selectGPIO(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED);
+  page += F("</i>");
 
   if (selected != 17) {
     page += F("<i><label>");
@@ -139,7 +126,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
     page += INPUT_CFG_LED_LEVEL;
     page += F("'>");
     selected = ConfigESP->getLevel(FUNCTION_CFG_LED);
-    for (suported = 0; suported < sizeof(WebServer->Supported_Level) / sizeof(char *); suported++) {
+    for (suported = 0; suported < 2; suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
@@ -147,37 +134,14 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
       }
       else
         page += F("'>");
-      page += (WebServer->Supported_Level[suported]);
+      page += LevelString(suported);
     }
     page += F("</select></i>");
   }
   page += F("<i><label>");
-  page += F("BUTTON</label><select name='");
-  page += INPUT_CFG_BTN_GPIO;
-  page += F("'>");
-  selected = ConfigESP->getGpio(FUNCTION_CFG_BUTTON);
-  int cfg = 0;
-  for (suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, FUNCTION_CFG_BUTTON) == false || ConfigESP->checkBusyGpio(suported, FUNCTION_BUTTON) == false ||
-        selected == suported) {
-      String key = GPIO;
-      key += suported;
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported || ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1) {
-        if (cfg != 1) {
-          page += F("' selected>");
-          cfg = 1;
-        }
-        else
-          page += F("'>");
-      }
-      else
-        page += F("'>");
-      page += (WebServer->Supported_Gpio[suported]);
-    }
-  }
-  page += F("</select></i>");
+  page += F("BUTTON</label>");
+  page += WebServer->selectGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON);
+  page += F("</i>");
   page += F("</div><button type='submit'>Zapisz</button></form>");
   page += F("<br>");
   page += F("<a href='");

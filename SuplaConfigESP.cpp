@@ -445,8 +445,8 @@ void SuplaConfigESP::factoryReset() {
     ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
     ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
     ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
-    ConfigManager->set(KEY_MAX_RELAY, "0");
-    ConfigManager->set(KEY_MAX_BUTTON, "0");
+    ConfigManager->set(KEY_MAX_RELAY, "1");
+    ConfigManager->set(KEY_MAX_BUTTON, "1");
     ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
     ConfigManager->set(KEY_MAX_DHT22, "1");
     ConfigManager->set(KEY_MAX_DHT11, "1");

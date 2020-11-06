@@ -22,8 +22,7 @@ class SuplaWebPageControl {
   void handleControl();
   void handleControlSave();
 
-#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || \
-    (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
+#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
   void handleButtonSet();
   void handleButtonSaveSet();
 #endif
@@ -33,12 +32,8 @@ class SuplaWebPageControl {
 
 #ifdef SUPLA_BUTTON
   String supla_webpage_button_set(int save);
-
-  const char* SupportedTrigger[3] = {
-    "ZWOLNIENIE", 
-    "WCIŚNIĘCIE", 
-    "ZMIANA STANU"};
 #endif
+
 };
 
 extern SuplaWebPageControl* WebPageControl;

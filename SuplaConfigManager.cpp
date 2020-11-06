@@ -27,12 +27,16 @@
 #define CONFIG_FILE_PATH "/dat"
 
 ConfigOption::ConfigOption(const char *key, const char *value, int maxLength) {
+  // size_t size = strlen(key) + 1;
+  // _key = (char *)malloc(sizeof(char) * size);
+  // memcpy(_key, key, size - 1);
+  // _key[size - 1] = 0;
   size_t size = strlen(key) + 1;
-  _key = (char *)malloc(sizeof(char) * size);
-  memcpy(_key, key, size - 1);
-  _key[size - 1] = 0;
+  _key = new char[size];
+  strncpy(_key, key, size);
+  _key[size - 1] = '\0';
 
-  _maxLength = maxLength;
+  _maxLength = maxLength + 1;
   setValue(value);
 }
 
@@ -110,12 +114,18 @@ String ConfigOption::replaceElement(int index, int newvalue) {
 }
 
 void ConfigOption::setValue(const char *value) {
-  size_t size = _maxLength + 1;
-  _value = (char *)malloc(sizeof(char) * (size));
+  //size_t size = _maxLength + 1;
+  //_value = (char *)malloc(sizeof(char) * (size));
 
+  //if (value != NULL) {
+  //  memcpy(_value, value, size - 1);
+  // _value[size - 1] = 0;
+  //}
   if (value != NULL) {
-    memcpy(_value, value, size - 1);
-    _value[size - 1] = 0;
+    size_t size = getLength();
+    _value = new char[size];
+    strncpy(_value, value, size);
+    _value[size - 1] = '\0';
   }
 }
 
@@ -140,8 +150,8 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_SUPLA_SERVER, DEFAULT_SERVER, MAX_SUPLA_SERVER);
   this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL, MAX_EMAIL);
   this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
-  this->addKey(KEY_MAX_RELAY, "0", 2);
-  this->addKey(KEY_MAX_BUTTON, "0", 2);
+  this->addKey(KEY_MAX_RELAY, "1", 2);
+  this->addKey(KEY_MAX_BUTTON, "1", 2);
   this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
   this->addKey(KEY_MAX_DHT22, "1", 2);
   this->addKey(KEY_MAX_DHT11, "1", 2);
