@@ -44,7 +44,6 @@
 #endif
 #include <supla/storage/eeprom.h>
 
-#include "FS.h"
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 
