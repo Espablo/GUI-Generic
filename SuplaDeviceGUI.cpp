@@ -17,6 +17,12 @@
 #include "SuplaConfigManager.h"
 #include "SuplaGuiWiFi.h"
 
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+#define STORAGE_OFFSET 100
+#include <supla/storage/eeprom.h>
+Supla::Eeprom eeprom(STORAGE_OFFSET);
+#endif
+
 namespace Supla {
 namespace GUI {
 void begin() {
@@ -51,8 +57,20 @@ void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
   if (pinButton != OFF_GPIO) button.push_back(new Supla::Control::Button(pinButton, true));
 
   int size = relay.size() - 1;
+
+  switch (ConfigESP->getMemoryRelay(size + 1)) {
+    case STATE_RELAY_OFF:
+      relay[size]->setDefaultStateOff();
+      break;
+    case STATE_RELAY_ON:
+      relay[size]->setDefaultStateOn();
+      break;
+    case STATE_RELAY_RESTORE:
+      relay[size]->setDefaultStateRestore();
+      break;
+  }
+
   relay[size]->keepTurnOnDuration();
-  relay[size]->setDefaultStateRestore();
 
   if (pinButton != OFF_GPIO) {
   	button[size]->addAction(Supla::TOGGLE, *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));

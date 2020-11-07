@@ -61,10 +61,12 @@ void SuplaWebPageRelay::handleRelaySave() {
       if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
         key = GPIO;
         key += WebServer->httpServer.arg(input).toInt();
-        if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-            (ConfigESP->getGpio(nr, FUNCTION_RELAY) == WebServer->httpServer.arg(input).toInt() &&
-             ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_RELAY)) {
+        if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
           ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_RELAY, 1);
+        }
+        else if (ConfigESP->getGpio(nr, FUNCTION_RELAY) == WebServer->httpServer.arg(input).toInt() &&
+                 ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_RELAY) {
+          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_RELAY, ConfigESP->getLevel(nr, FUNCTION_RELAY));
         }
         else {
           WebServer->sendContent(supla_webpage_relay(6));
@@ -232,7 +234,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += nr_relay;
     page += F("'>");
     selected = ConfigESP->getMemoryRelay(nr_relay.toInt());
-    for (suported = 0; suported < 2; suported++) {
+    for (suported = 0; suported < 3; suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {
