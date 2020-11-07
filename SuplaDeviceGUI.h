@@ -17,23 +17,23 @@
 #ifndef SuplaDeviceGUI_h
 #define SuplaDeviceGUI_h
 
+#include "GUI-Generic_Config.h"
+
 #include <SuplaDevice.h>
 
 #include <supla/control/button.h>
 #include <supla/control/relay.h>
 #include <supla/control/roller_shutter.h>
 #include "SuplaSensorDS18B20.h"
-#include "GUI-Generic_Config.h"
 
 #ifdef DEBUG_MODE
 #include <supla/sensor/esp_free_heap.h>
 #endif
 
-#include "GUI-Generic_Config.h"
 #include "SuplaConfigESP.h"
 #include "SuplaConfigManager.h"
 #include "SuplaWebServer.h"
-
+#include "SuplaWebPageRelay.h"
 
 #include <vector>
 

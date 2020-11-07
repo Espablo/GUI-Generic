@@ -232,7 +232,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += nr_relay;
     page += F("'>");
     selected = ConfigESP->getMemoryRelay(nr_relay.toInt());
-    for (suported = 0; suported < 2; suported++) {
+    for (suported = 0; suported < 3; suported++) {
       page += F("<option value='");
       page += suported;
       if (selected == suported) {

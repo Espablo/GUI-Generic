@@ -16,6 +16,13 @@
 #define INPUT_ROLLERSHUTTER  "irsr"
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+
+enum _state_relay {
+  STATE_RELAY_OFF,
+  STATE_RELAY_ON,
+  STATE_RELAY_RESTORE
+};
+  
 class SuplaWebPageRelay {
  public:
   SuplaWebPageRelay();

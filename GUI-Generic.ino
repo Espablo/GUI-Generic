@@ -42,7 +42,6 @@
 #ifdef SUPLA_MAX6675
 #include <supla/sensor/MAX6675_K.h>
 #endif
-#include <supla/storage/eeprom.h>
 
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"

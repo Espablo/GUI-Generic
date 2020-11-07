@@ -44,9 +44,9 @@ const char ODWROCONE[] PROGMEM = "ODWRÓCONE";
 const char NORMALNE[] PROGMEM = "NORMALNE";
 const char* const LEVEL_P[] PROGMEM = {ODWROCONE, NORMALNE};
 
-const char WYLACZONY[] PROGMEM = "WYŁĄCZONY";
+//const char WYLACZONY[] PROGMEM = "WYŁĄCZONY";
 const char PAMIETAJSTAN[] PROGMEM = "PAMIĘTAJ STAN";
-const char* const MEMORY_P[] PROGMEM = {WYLACZONY, PAMIETAJSTAN};
+const char* const MEMORY_P[] PROGMEM = {OFF, ON, PAMIETAJSTAN};
 
 const char ZWOLNIENIE[] PROGMEM = "ZWOLNIENIE";
 const char WCISNIECIE[] PROGMEM = "WCIŚNIĘCIE";
