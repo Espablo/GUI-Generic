@@ -1,15 +1,13 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
-#define DEBUG_MODE
+// #define DEBUG_MODE
 
 #define SUPLA_RELAY
 #define SUPLA_BUTTON
 #define SUPLA_LIMIT_SWITCH
 #define SUPLA_ROLLERSHUTTER
 #define SUPLA_CONFIG
-
-#define SUPLA_HC_SR04
 
 // 1Wire
 #define SUPLA_DS18B20
@@ -28,5 +26,9 @@
 
 // SPI
 #define SUPLA_MAX6675
+
+// Other
+#define SUPLA_HC_SR04
+#define SUPLA_IMPULSE_COUNTER  // NOT SUPPORTED
 
 #endif  // GUI-Generic_Config_h
