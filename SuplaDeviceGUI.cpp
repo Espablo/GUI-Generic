@@ -18,7 +18,7 @@
 #include "SuplaGuiWiFi.h"
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-#define STORAGE_OFFSET 100
+#define STORAGE_OFFSET 0
 #include <supla/storage/eeprom.h>
 Supla::Eeprom eeprom(STORAGE_OFFSET);
 #endif
