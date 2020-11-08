@@ -453,8 +453,6 @@ const String SuplaWebServer::SuplaSaveResult(int save) {
 }
 
 void SuplaWebServer::rebootESP() {
-  delay(3000);
-  WiFi.forceSleepBegin();
   wdt_reset();
   ESP.restart();
   while (1) wdt_reset();
