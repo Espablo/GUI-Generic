@@ -229,7 +229,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     }
     page += F("</select></i>");
     page += F("<i><label>");
-    page += F("Pamięć po resecie</label><select name='");
+    page += F("Reakcja po resecie</label><select name='");
     page += INPUT_RELAY_MEMORY;
     page += nr_relay;
     page += F("'>");
