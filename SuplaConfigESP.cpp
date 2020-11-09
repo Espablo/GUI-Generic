@@ -188,7 +188,7 @@ void WiFiEvent(WiFiEvent_t event) {
 void SuplaConfigESP::configModeInit() {
   configModeESP = CONFIG_MODE;
   ledBlinking(100);
-  
+
   WiFi.onEvent(WiFiEvent);
   // Serial.print(F("Creating Access Point"));
   // Serial.print(F("Setting mode ... "));
@@ -199,13 +199,13 @@ void SuplaConfigESP::configModeInit() {
 
   String CONFIG_WIFI_NAME = "SUPLA-ESP8266-" + getMacAddress(false);
   while (!WiFi.softAP(CONFIG_WIFI_NAME, "")) {
-    //Serial.println(F("."));
+    // Serial.println(F("."));
     delay(100);
   }
-  
- // Serial.println(F("Network Created!"));
- // Serial.print(F("Soft-AP IP address = "));
- // Serial.println(WiFi.softAPIP());
+
+  // Serial.println(F("Network Created!"));
+  // Serial.print(F("Soft-AP IP address = "));
+  // Serial.println(WiFi.softAPIP());
 }
 
 const char *SuplaConfigESP::getLastStatusSupla() {
@@ -255,8 +255,8 @@ void status_func(int status, const char *msg) {
       break;
     case 4:
       ConfigESP->supla_status.msg =
-        "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
-        "NIEAKTYWNA";
+          "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
+          "NIEAKTYWNA";
       break;
     case 5:
       ConfigESP->supla_status.msg = "Nieznany adres serwera";
@@ -392,6 +392,8 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t
   ConfigManager->setElement(key.c_str(), NR, nr);
   ConfigManager->setElement(key.c_str(), FUNCTION, function);
   ConfigManager->setElement(key.c_str(), LEVEL, level);
+  // ConfigManager->setElement(key.c_str(), MEMORY, memory);
+  // ConfigManager->setElement(key.c_str(), CFG, cfg);
 }
 
 void SuplaConfigESP::clearGpio(uint8_t gpio) {
@@ -401,6 +403,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio) {
   ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
   ConfigManager->setElement(key.c_str(), LEVEL, 0);
   ConfigManager->setElement(key.c_str(), MEMORY, 0);
+  ConfigManager->setElement(key.c_str(), CFG, 0);
 }
 
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
@@ -492,3 +495,4 @@ void SuplaConfigESP::factoryReset() {
     while (1) wdt_reset();
   }
 }
+

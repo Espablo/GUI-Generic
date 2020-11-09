@@ -363,7 +363,7 @@ String SuplaWebServer::deviceSettings() {
   return content;
 }
 
-String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr) {
+String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr, uint8_t exeptionCfg) {
   String page = "";
   page += F("<select name='");
   page += input;
@@ -376,13 +376,20 @@ String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t n
   page += F("'>");
 
   uint8_t selected = ConfigESP->getGpio(nr, function);
-
-  for (uint8_t suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, function) == false || selected == suported) {
+  uint8_t cfg = 0;
+  for (uint8_t suported = 0; suported <= OFF_GPIO; suported++) {
+    if (ConfigESP->checkBusyGpio(suported, function) == false || ConfigESP->checkBusyGpio(suported, exeptionCfg) == false || selected == suported) {
+      String key = GPIO;
+      key += suported;
       page += F("<option value='");
       page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
+      if (selected == suported || ConfigESP->getCfgFlag() == suported) {
+        if (cfg != 1) {
+          page += F("' selected>");
+          cfg = 1;
+        }
+        else
+          page += F("'>");
       }
       else {
         page += F("'>");

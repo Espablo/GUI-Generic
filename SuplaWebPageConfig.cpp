@@ -140,7 +140,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   }
   page += F("<i><label>");
   page += F("BUTTON</label>");
-  page += WebServer->selectGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON);
+  page += WebServer->selectGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON, 0, FUNCTION_BUTTON);
   page += F("</i>");
   page += F("</div><button type='submit'>Zapisz</button></form>");
   page += F("<br>");
