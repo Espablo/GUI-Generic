@@ -379,17 +379,16 @@ String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t n
   uint8_t cfg = 0;
   for (uint8_t suported = 0; suported <= OFF_GPIO; suported++) {
     if (ConfigESP->checkBusyGpio(suported, function) == false || ConfigESP->checkBusyGpio(suported, exeptionCfg) == false || selected == suported) {
-      String key = GPIO;
-      key += suported;
       page += F("<option value='");
       page += suported;
-      if (selected == suported || ConfigESP->getCfgFlag() == suported) {
-        if (cfg != 1) {
+      if (selected == suported || (ConfigESP->getCfgFlag() == suported && selected == OFF_GPIO)) {
+        if (cfg == 0) {
           page += F("' selected>");
           cfg = 1;
         }
-        else
+        else {
           page += F("'>");
+        }
       }
       else {
         page += F("'>");
