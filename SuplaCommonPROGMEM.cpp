@@ -36,3 +36,8 @@ String TriggerString(uint8_t nr) {
   strcpy_P(buffer, (char*)pgm_read_ptr(&(TRIGGER_P[nr])));
   return buffer;
 }
+
+String BoardString(uint8_t nr) {
+  strcpy_P(buffer, (char*)pgm_read_ptr(&(BOARD_P[nr])));
+  return buffer;	
+}

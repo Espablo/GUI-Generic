@@ -212,7 +212,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += nr_relay;
     page += F("</h3>");
     page += F("<i><label>");
-    page += F("Sterowanie</label><select name='");
+    page += F("Sterowanie stanem</label><select name='");
     page += INPUT_RELAY_LEVEL;
     page += nr_relay;
     page += F("'>");

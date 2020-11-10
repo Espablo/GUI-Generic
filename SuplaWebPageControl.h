@@ -16,6 +16,12 @@
 #define  INPUT_MAX_BUTTON           "mbt"
 #define  INPUT_MAX_LIMIT_SWITCH     "mls"
 
+/*enum _trigger_button {
+  TRIGGER_PRESS,
+  TRIGGER_RELEASE,
+  TRIGGER_CHANGE
+};*/
+
 class SuplaWebPageControl {
  public:
   void createWebPageControl();

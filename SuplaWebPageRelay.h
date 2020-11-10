@@ -17,10 +17,10 @@
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 
-enum _state_relay {
-  STATE_RELAY_OFF,
-  STATE_RELAY_ON,
-  STATE_RELAY_RESTORE
+enum _memory_relay {
+  MEMORY_RELAY_OFF,
+  MEMORY_RELAY_ON,
+  MEMORY_RELAY_RESTORE
 };
   
 class SuplaWebPageRelay {

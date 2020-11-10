@@ -40,6 +40,7 @@
 #define PATH_DEVICE_SETTINGS  "devicesettings"
 #define PATH_DEFAULT_SETTINGS "defaultsettings"
 #define PATH_LOGIN_SETTINGS   "loginsettings"
+#define PATH_SAVE_BOARD		  "saveboard"
 
 #define INPUT_WIFI_SSID     "sid"
 #define INPUT_WIFI_PASS     "wpw"
@@ -49,7 +50,18 @@
 #define INPUT_MODUL_LOGIN   "mlg"
 #define INPUT_MODUL_PASS    "mps"
 #define INPUT_ROLLERSHUTTER "irsr"
-   
+#define INPUT_BOARD			"board"
+
+enum _board {
+  BOARD_SONOFF_BASIC = 1,
+  BOARD_SONOFF_TH,
+  BOARD_SONOFF_TOUCH,
+  BOARD_SONOFF_TOUCH_2CH,
+  BOARD_SONOFF_TOUCH_3CH,
+  BOARD_SONOFF_4CH,
+  BOARD_YUNSHA
+};
+
 class SuplaWebServer : public Supla::Element {
   public:
    String selectGPIO(const char* input, uint8_t function, uint8_t nr, uint8_t exeptionCfg);
@@ -81,6 +93,7 @@ class SuplaWebServer : public Supla::Element {
     void handleWizardSave();
     void handleFirmwareUp();
     void handleDeviceSettings();
+    void handleBoardSave();
     void handleDefaultSettings();
     void handleLoginSettings();
     void createWebServer();
@@ -88,7 +101,7 @@ class SuplaWebServer : public Supla::Element {
     String supla_webpage_start(int save);
     String supla_webpage_upddate();
     void supla_webpage_reboot();
-    String deviceSettings();
+	String deviceSettings(int save);
     String loginSettings();
 
     void redirectToIndex();

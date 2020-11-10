@@ -53,6 +53,9 @@ void SuplaWebServer::createWebServer() {
   path = PATH_START;
   path += PATH_DEVICE_SETTINGS;
   httpServer.on(path, std::bind(&SuplaWebServer::handleDeviceSettings, this));
+  path = PATH_START;
+  path += PATH_SAVE_BOARD;
+  httpServer.on(path, std::bind(&SuplaWebServer::handleBoardSave, this));
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   WebPageRelay->createWebPageRelay();
@@ -133,7 +136,7 @@ void SuplaWebServer::handleDeviceSettings() {
     if (!httpServer.authenticate(www_username, www_password))
       return httpServer.requestAuthentication();
   }
-  this->sendContent(deviceSettings());
+  this->sendContent(deviceSettings(0));
 }
 
 String SuplaWebServer::supla_webpage_start(int save) {
@@ -284,8 +287,8 @@ String SuplaWebServer::supla_webpage_upddate() {
   content += F("<iframe src=");
   content += UPDATE_PATH;
   content +=
-      F(">Twoja przeglądarka nie akceptuje ramek! width='200' height='100' "
-        "frameborder='100'></iframe>");
+    F(">Twoja przeglądarka nie akceptuje ramek! width='200' height='100' "
+      "frameborder='100'></iframe>");
   content += F("</center>");
   content += F("</div>");
   content += F("<a href='/'><button>Powrót</button></a></div>");
@@ -302,8 +305,32 @@ void SuplaWebServer::supla_webpage_reboot() {
   this->rebootESP();
 }
 
-String SuplaWebServer::deviceSettings() {
+String SuplaWebServer::deviceSettings(int save) {
   String content = "";
+
+  content += WebServer->SuplaSaveResult(save);
+  content += WebServer->SuplaJavaScript(PATH_DEVICE_SETTINGS);
+  content += F("<form method='post' action='");
+  content += PATH_SAVE_BOARD;
+  content += F("'>");
+  content += F("<div class='w'><h3>Ustawienia płytki</h3>");
+  content += F("<i><label>Rodzaj</label><select name='");
+  content += INPUT_BOARD;
+  content += F("'>");
+  uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
+  for (uint8_t suported = 0; suported < 8; suported++) {
+    content += F("<option value='");
+    content += suported;
+    if (selected == suported) {
+      content += F("' selected>");
+    }
+    else
+      content += F("'>");
+    content += BoardString(suported);
+  }
+  content += F("</select></i>");
+  content += F("</div><button type='submit'>Zapisz</button></form><br><br>");
+
   content += F("<div class='w'>");
   content += F("<h3>Ustawienia urządzenia</h3>");
   content += F("<br>");
@@ -363,6 +390,76 @@ String SuplaWebServer::deviceSettings() {
   return content;
 }
 
+void SuplaWebServer::handleBoardSave() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!httpServer.authenticate(this->www_username, this->www_password))
+      return httpServer.requestAuthentication();
+  }
+  String input = INPUT_BOARD;
+
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    ConfigManager->set(KEY_BOARD, httpServer.arg(input).c_str());
+
+    int nr;
+    String key;
+    for (nr = 0; nr <= 17; nr++) {
+      key = GPIO;
+      key += nr;
+      ConfigManager->set(key.c_str(), "0,0,0,0,0");
+    }
+
+    switch (WebServer->httpServer.arg(input).toInt()) {
+      case BOARD_SONOFF_BASIC:
+        ConfigManager->set(KEY_MAX_BUTTON, "1");
+        ConfigESP->setGpio(14, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
+
+        ConfigManager->set(KEY_MAX_RELAY, "1");
+        ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
+
+        ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+        ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
+        break;
+      case BOARD_SONOFF_TH:
+        break;
+      case BOARD_SONOFF_TOUCH:
+        break;
+      case BOARD_SONOFF_TOUCH_2CH:
+        break;
+      case BOARD_SONOFF_TOUCH_3CH:
+        break;
+      case BOARD_SONOFF_4CH:
+        ConfigManager->set(KEY_MAX_BUTTON, "4");
+        ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
+        ConfigESP->setGpio(9, 2, FUNCTION_BUTTON, Supla::ON_CHANGE);
+        ConfigESP->setGpio(10, 3, FUNCTION_BUTTON, Supla::ON_CHANGE);
+        ConfigESP->setGpio(14, 4, FUNCTION_BUTTON, Supla::ON_CHANGE);
+
+        ConfigManager->set(KEY_MAX_RELAY, "4");
+        ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
+        ConfigESP->setGpio(5, 2, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
+        ConfigESP->setGpio(4, 3, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
+        ConfigESP->setGpio(15, 4, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
+
+        ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+        //ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
+        break;
+      case BOARD_YUNSHA:
+        break;
+      default:
+        break;
+    }
+  }
+
+  switch (ConfigManager->save()) {
+    case E_CONFIG_OK:
+      WebServer->sendContent(deviceSettings(1));
+      break;
+    case E_CONFIG_FILE_OPEN:
+      WebServer->sendContent(deviceSettings(2));
+      break;
+  }
+}
+
 String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr, uint8_t exeptionCfg) {
   String page = "";
   page += F("<select name='");
@@ -410,20 +507,20 @@ const String SuplaWebServer::SuplaFavicon() {
 
 const String SuplaWebServer::SuplaIconEdit() {
   return F(
-      "<img "
-      "src='data:image/"
-      "png;base64,"
-      "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
-      "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
-      "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
-      "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
+           "<img "
+           "src='data:image/"
+           "png;base64,"
+           "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
+           "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
+           "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
+           "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
 }
 
 const String SuplaWebServer::SuplaJavaScript(String java_return) {
   String java_script =
-      F("<script type='text/javascript'>setTimeout(function(){var "
-        "element=document.getElementById('msg');if( element != "
-        "null){element.style.visibility='hidden';location.href='");
+    F("<script type='text/javascript'>setTimeout(function(){var "
+      "element=document.getElementById('msg');if( element != "
+      "null){element.style.visibility='hidden';location.href='");
   java_script += java_return;
   java_script += F("';}},1600);</script>\n");
   return java_script;

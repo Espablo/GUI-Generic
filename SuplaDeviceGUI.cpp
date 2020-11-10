@@ -59,13 +59,13 @@ void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
   int size = relay.size() - 1;
 
   switch (ConfigESP->getMemoryRelay(size + 1)) {
-    case STATE_RELAY_OFF:
+    case MEMORY_RELAY_OFF:
       relay[size]->setDefaultStateOff();
       break;
-    case STATE_RELAY_ON:
+    case MEMORY_RELAY_ON:
       relay[size]->setDefaultStateOn();
       break;
-    case STATE_RELAY_RESTORE:
+    case MEMORY_RELAY_RESTORE:
       relay[size]->setDefaultStateRestore();
       break;
   }

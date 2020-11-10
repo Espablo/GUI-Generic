@@ -255,8 +255,8 @@ void status_func(int status, const char *msg) {
       break;
     case 4:
       ConfigESP->supla_status.msg =
-          "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
-          "NIEAKTYWNA";
+        "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
+        "NIEAKTYWNA";
       break;
     case 5:
       ConfigESP->supla_status.msg = "Nieznany adres serwera";
@@ -386,12 +386,19 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   return false;
 }
 
-void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level) {
+void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory) {
   String key = GPIO;
   key += gpio;
+  if (function == FUNCTION_CFG_BUTTON) {
+    ConfigManager->setElement(key.c_str(), CFG, FUNCTION_ON);
+    return;
+  }
+
   ConfigManager->setElement(key.c_str(), NR, nr);
   ConfigManager->setElement(key.c_str(), FUNCTION, function);
   ConfigManager->setElement(key.c_str(), LEVEL, level);
+  ConfigManager->setElement(key.c_str(), MEMORY, memory);
+
   // ConfigManager->setElement(key.c_str(), MEMORY, memory);
   // ConfigManager->setElement(key.c_str(), CFG, cfg);
 }
@@ -458,24 +465,14 @@ void SuplaConfigESP::factoryReset() {
 
     int nr;
     String key;
-    String func;
-    func = "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
 
     for (nr = 0; nr <= 17; nr++) {
       key = GPIO;
       key += nr;
-      ConfigManager->set(key.c_str(), func.c_str());
+      ConfigManager->set(key.c_str(), "0,0,0,0,0");
     }
 
-    ConfigManager->set(KEY_ACTIVE_SENSOR, func.c_str());
+    ConfigManager->set(KEY_ACTIVE_SENSOR, "0,0,0,0,0");
 
     for (nr = 0; nr <= MAX_DS18B20; nr++) {
       key = KEY_DS;
@@ -495,4 +492,3 @@ void SuplaConfigESP::factoryReset() {
     while (1) wdt_reset();
   }
 }
-
