@@ -346,6 +346,9 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     String key = GPIO;
     key += gpio;
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
+      if (function == FUNCTION_CFG_BUTTON) {
+        return gpio;
+      }
       if (ConfigManager->get(key.c_str())->getElement(NR).toInt() == nr) {
         return gpio;
       }
@@ -390,8 +393,7 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t
   String key = GPIO;
   key += gpio;
   if (function == FUNCTION_CFG_BUTTON) {
-    ConfigManager->setElement(key.c_str(), CFG, FUNCTION_ON);
-    return;
+    ConfigManager->setElement(key.c_str(), CFG, 1);
   }
 
   ConfigManager->setElement(key.c_str(), NR, nr);

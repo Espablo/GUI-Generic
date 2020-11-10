@@ -410,14 +410,14 @@ void SuplaWebServer::handleBoardSave() {
 
     switch (WebServer->httpServer.arg(input).toInt()) {
       case BOARD_SONOFF_BASIC:
+        ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+        ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
+
         ConfigManager->set(KEY_MAX_BUTTON, "1");
         ConfigESP->setGpio(14, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
 
         ConfigManager->set(KEY_MAX_RELAY, "1");
         ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
-
-        ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
-        ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
         break;
       case BOARD_SONOFF_TH:
         break;
@@ -428,6 +428,9 @@ void SuplaWebServer::handleBoardSave() {
       case BOARD_SONOFF_TOUCH_3CH:
         break;
       case BOARD_SONOFF_4CH:
+        ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+        ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
+
         ConfigManager->set(KEY_MAX_BUTTON, "4");
         ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
         ConfigESP->setGpio(9, 2, FUNCTION_BUTTON, Supla::ON_CHANGE);
@@ -440,8 +443,6 @@ void SuplaWebServer::handleBoardSave() {
         ConfigESP->setGpio(4, 3, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
         ConfigESP->setGpio(15, 4, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
 
-        ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
-        //ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
         break;
       case BOARD_YUNSHA:
         break;
