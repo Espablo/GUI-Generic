@@ -53,28 +53,30 @@ void begin() {
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
-  if (pinRelay != OFF_GPIO) relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
-  if (pinButton != OFF_GPIO) button.push_back(new Supla::Control::Button(pinButton, true));
+  if (pinRelay != OFF_GPIO)  {
+    relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
 
-  int size = relay.size() - 1;
+    int size = relay.size() - 1;
 
-  switch (ConfigESP->getMemoryRelay(size + 1)) {
-    case MEMORY_RELAY_OFF:
-      relay[size]->setDefaultStateOff();
-      break;
-    case MEMORY_RELAY_ON:
-      relay[size]->setDefaultStateOn();
-      break;
-    case MEMORY_RELAY_RESTORE:
-      relay[size]->setDefaultStateRestore();
-      break;
-  }
+    switch (ConfigESP->getMemoryRelay(size + 1)) {
+      case MEMORY_RELAY_OFF:
+        relay[size]->setDefaultStateOff();
+        break;
+      case MEMORY_RELAY_ON:
+        relay[size]->setDefaultStateOn();
+        break;
+      case MEMORY_RELAY_RESTORE:
+        relay[size]->setDefaultStateRestore();
+        break;
+    }
 
-  relay[size]->keepTurnOnDuration();
+    relay[size]->keepTurnOnDuration();
 
-  if (pinButton != OFF_GPIO) {
-  	button[size]->addAction(Supla::TOGGLE, *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
-  	button[size]->setSwNoiseFilterDelay(50);
+    button.push_back(new Supla::Control::Button(pinButton, true));
+    if (pinButton != OFF_GPIO) {
+      button[size]->addAction(Supla::TOGGLE, *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
+      button[size]->setSwNoiseFilterDelay(50);
+    }
   }
 }
 #endif
