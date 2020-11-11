@@ -38,6 +38,9 @@ void SuplaWebPageConfig::handleConfigSave() {
   input = INPUT_CFG_LED_GPIO;
   key = GPIO;
   key += WebServer->httpServer.arg(input).toInt();
+  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_LED));
+  }
   if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
     key = GPIO;
     key += WebServer->httpServer.arg(input).toInt();
@@ -56,13 +59,13 @@ void SuplaWebPageConfig::handleConfigSave() {
       return;
     }
   }
-  else if (ConfigESP->getGpio(FUNCTION_CFG_LED) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_LED));
-  }
 
   input = INPUT_CFG_BTN_GPIO;
   key = GPIO;
   key += WebServer->httpServer.arg(input).toInt();
+  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
+  }
   if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
     key = GPIO;
     key += WebServer->httpServer.arg(input).toInt();
@@ -78,9 +81,6 @@ void SuplaWebPageConfig::handleConfigSave() {
       WebServer->sendContent(supla_webpage_config(6));
       return;
     }
-  }
-  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
   }
 
 #ifdef SUPLA_BUTTON
