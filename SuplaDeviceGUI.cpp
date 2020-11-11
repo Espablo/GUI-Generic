@@ -18,7 +18,8 @@
 #include "SuplaGuiWiFi.h"
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-#define STORAGE_OFFSET 0
+#define TIME_SAVE_PERIOD_SEK 30  // the time is given in seconds
+#define STORAGE_OFFSET       0
 #include <supla/storage/eeprom.h>
 Supla::Eeprom eeprom(STORAGE_OFFSET);
 #endif
@@ -53,8 +54,10 @@ void begin() {
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
-  if (pinRelay != OFF_GPIO) relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
-  if (pinButton != OFF_GPIO) button.push_back(new Supla::Control::Button(pinButton, true));
+  if (pinRelay != OFF_GPIO)
+    relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
+  if (pinButton != OFF_GPIO)
+    button.push_back(new Supla::Control::Button(pinButton, true));
 
   int size = relay.size() - 1;
 
@@ -71,10 +74,11 @@ void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
   }
 
   relay[size]->keepTurnOnDuration();
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
   if (pinButton != OFF_GPIO) {
-  	button[size]->addAction(Supla::TOGGLE, *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
-  	button[size]->setSwNoiseFilterDelay(50);
+    button[size]->addAction(Supla::TOGGLE, *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
+    button[size]->setSwNoiseFilterDelay(50);
   }
 }
 #endif
@@ -104,21 +108,27 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 #ifdef SUPLA_ROLLERSHUTTER
 void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn) {
   RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
-  if (pinButtonUp != OFF_GPIO) RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
-  if (pinButtonDown != OFF_GPIO) RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
+  if (pinButtonUp != OFF_GPIO)
+    RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
+  if (pinButtonDown != OFF_GPIO)
+    RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
   int size = RollerShutterRelay.size() - 1;
   if (pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO) {
     RollerShutterButtonOpen[size]->addAction(Supla::OPEN_OR_STOP, *RollerShutterRelay[size], Supla::ON_PRESS);
     RollerShutterButtonClose[size]->addAction(Supla::CLOSE_OR_STOP, *RollerShutterRelay[size], Supla::ON_PRESS);
-  } else if ((pinButtonUp == OFF_GPIO && pinButtonDown != OFF_GPIO) || (pinButtonUp != OFF_GPIO && pinButtonDown == OFF_GPIO)) {
+  }
+  else if ((pinButtonUp == OFF_GPIO && pinButtonDown != OFF_GPIO) || (pinButtonUp != OFF_GPIO && pinButtonDown == OFF_GPIO)) {
     RollerShutterButtonOpen[size]->addAction(Supla::STEP_BY_STEP, *RollerShutterRelay[size], Supla::ON_PRESS);
   }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 }
 
 void addRolleShutterMomentary(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn) {
   RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
-  if (pinButtonUp != OFF_GPIO) RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
-  if (pinButtonDown != OFF_GPIO) RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
+  if (pinButtonUp != OFF_GPIO)
+    RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
+  if (pinButtonDown != OFF_GPIO)
+    RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
   int size = RollerShutterRelay.size() - 1;
   if (pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO) {
     RollerShutterButtonOpen[size]->addAction(Supla::OPEN, *RollerShutterRelay[size], Supla::ON_PRESS);
@@ -127,6 +137,7 @@ void addRolleShutterMomentary(int pinRelayUp, int pinRelayDown, int pinButtonUp,
     RollerShutterButtonClose[size]->addAction(Supla::CLOSE, *RollerShutterRelay[size], Supla::ON_PRESS);
     RollerShutterButtonClose[size]->addAction(Supla::STOP, *RollerShutterRelay[size], Supla::ON_RELEASE);
   }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 }
 #endif
 
@@ -144,8 +155,8 @@ std::vector<Supla::Control::RollerShutter *> RollerShutterRelay;
 std::vector<Supla::Control::Button *> RollerShutterButtonOpen;
 std::vector<Supla::Control::Button *> RollerShutterButtonClose;
 #endif
-}
-}
+}  // namespace GUI
+}  // namespace Supla
 
 SuplaConfigManager *ConfigManager = new SuplaConfigManager();
 SuplaConfigESP *ConfigESP = new SuplaConfigESP();
