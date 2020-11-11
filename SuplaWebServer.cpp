@@ -21,6 +21,7 @@
 #include "SuplaWebPageRelay.h"
 #include "SuplaWebPageSensor.h"
 #include "SuplaCommonPROGMEM.h"
+#include "SuplaTemplateBoard.h"
 
 SuplaWebServer::SuplaWebServer() {
 }
@@ -53,6 +54,9 @@ void SuplaWebServer::createWebServer() {
   path = PATH_START;
   path += PATH_DEVICE_SETTINGS;
   httpServer.on(path, std::bind(&SuplaWebServer::handleDeviceSettings, this));
+  path = PATH_START;
+  path += PATH_SAVE_BOARD;
+  httpServer.on(path, std::bind(&SuplaWebServer::handleBoardSave, this));
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   WebPageRelay->createWebPageRelay();
@@ -98,7 +102,9 @@ void SuplaWebServer::handleSave() {
   ConfigManager->set(KEY_LOGIN_PASS, httpServer.arg(INPUT_MODUL_PASS).c_str());
 
 #ifdef SUPLA_ROLLERSHUTTER
-  ConfigManager->set(KEY_MAX_ROLLERSHUTTER, httpServer.arg(INPUT_ROLLERSHUTTER).c_str());
+  if (strcmp(WebServer->httpServer.arg(INPUT_ROLLERSHUTTER).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, httpServer.arg(INPUT_ROLLERSHUTTER).c_str());
+  }
 #endif
 
   switch (ConfigManager->save()) {
@@ -133,7 +139,7 @@ void SuplaWebServer::handleDeviceSettings() {
     if (!httpServer.authenticate(www_username, www_password))
       return httpServer.requestAuthentication();
   }
-  this->sendContent(deviceSettings());
+  this->sendContent(deviceSettings(0));
 }
 
 String SuplaWebServer::supla_webpage_start(int save) {
@@ -284,8 +290,8 @@ String SuplaWebServer::supla_webpage_upddate() {
   content += F("<iframe src=");
   content += UPDATE_PATH;
   content +=
-      F(">Twoja przeglądarka nie akceptuje ramek! width='200' height='100' "
-        "frameborder='100'></iframe>");
+    F(">Twoja przeglądarka nie akceptuje ramek! width='200' height='100' "
+      "frameborder='100'></iframe>");
   content += F("</center>");
   content += F("</div>");
   content += F("<a href='/'><button>Powrót</button></a></div>");
@@ -302,8 +308,32 @@ void SuplaWebServer::supla_webpage_reboot() {
   this->rebootESP();
 }
 
-String SuplaWebServer::deviceSettings() {
+String SuplaWebServer::deviceSettings(int save) {
   String content = "";
+
+  content += WebServer->SuplaSaveResult(save);
+  content += WebServer->SuplaJavaScript(PATH_DEVICE_SETTINGS);
+  content += F("<form method='post' action='");
+  content += PATH_SAVE_BOARD;
+  content += F("'>");
+  content += F("<div class='w'><h3>Szablony płytek</h3>");
+  content += F("<i><label>Rodzaj</label><select name='");
+  content += INPUT_BOARD;
+  content += F("'>");
+  uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
+  for (uint8_t suported = 0; suported < 8; suported++) {
+    content += F("<option value='");
+    content += suported;
+    if (selected == suported) {
+      content += F("' selected>");
+    }
+    else
+      content += F("'>");
+    content += BoardString(suported);
+  }
+  content += F("</select></i>");
+  content += F("</div><button type='submit'>Zapisz</button></form><br><br>");
+
   content += F("<div class='w'>");
   content += F("<h3>Ustawienia urządzenia</h3>");
   content += F("<br>");
@@ -363,32 +393,56 @@ String SuplaWebServer::deviceSettings() {
   return content;
 }
 
-String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr, uint8_t exeptionCfg) {
-  String page = "";
+void SuplaWebServer::handleBoardSave() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!httpServer.authenticate(this->www_username, this->www_password))
+      return httpServer.requestAuthentication();
+  }
+  String input = INPUT_BOARD;
+
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    ConfigManager->set(KEY_BOARD, httpServer.arg(input).c_str());
+
+    int nr;
+    String key;
+    for (nr = 0; nr <= 17; nr++) {
+      key = GPIO;
+      key += nr;
+      ConfigManager->set(key.c_str(), "0,0,0,0,0");
+    }
+
+    chooseTemplateBoard(WebServer->httpServer.arg(input).toInt());
+  }
+
+  switch (ConfigManager->save()) {
+    case E_CONFIG_OK:
+      WebServer->sendContent(deviceSettings(1));
+      break;
+    case E_CONFIG_FILE_OPEN:
+      WebServer->sendContent(deviceSettings(2));
+      break;
+  }
+}
+
+String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr) {
+  String page  = "";
   page += F("<select name='");
   page += input;
-  if (nr != 0) {
+  if (nr != 0 ) {
     page += nr;
-  }
-  else {
+  } else {
     nr = 1;
   }
   page += F("'>");
 
   uint8_t selected = ConfigESP->getGpio(nr, function);
-  uint8_t cfg = 0;
-  for (uint8_t suported = 0; suported <= OFF_GPIO; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, function) == false || ConfigESP->checkBusyGpio(suported, exeptionCfg) == false || selected == suported) {
+
+  for (uint8_t suported = 0; suported < 18; suported++) {
+    if (ConfigESP->checkBusyGpio(suported, function) == false || selected == suported) {
       page += F("<option value='");
       page += suported;
-      if (selected == suported || (ConfigESP->getCfgFlag() == suported && selected == OFF_GPIO)) {
-        if (cfg == 0) {
-          page += F("' selected>");
-          cfg = 1;
-        }
-        else {
-          page += F("'>");
-        }
+      if (selected == suported) {
+        page += F("' selected>");
       }
       else {
         page += F("'>");
@@ -409,20 +463,20 @@ const String SuplaWebServer::SuplaFavicon() {
 
 const String SuplaWebServer::SuplaIconEdit() {
   return F(
-      "<img "
-      "src='data:image/"
-      "png;base64,"
-      "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
-      "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
-      "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
-      "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
+           "<img "
+           "src='data:image/"
+           "png;base64,"
+           "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
+           "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
+           "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
+           "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
 }
 
 const String SuplaWebServer::SuplaJavaScript(String java_return) {
   String java_script =
-      F("<script type='text/javascript'>setTimeout(function(){var "
-        "element=document.getElementById('msg');if( element != "
-        "null){element.style.visibility='hidden';location.href='");
+    F("<script type='text/javascript'>setTimeout(function(){var "
+      "element=document.getElementById('msg');if( element != "
+      "null){element.style.visibility='hidden';location.href='");
   java_script += java_return;
   java_script += F("';}},1600);</script>\n");
   return java_script;

@@ -75,7 +75,8 @@ void SuplaWebPageConfig::handleConfigSave() {
       ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_CFG_BUTTON);
     }
     else if (ConfigESP->checkBusyGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_BUTTON) == false) {
-      ConfigManager->setElement(key.c_str(), CFG, 1);
+      //ConfigManager->setElement(key.c_str(), CFG, 1);
+      ConfigESP->setGpio(key.toInt(), FUNCTION_CFG_BUTTON);
     }
     else {
       WebServer->sendContent(supla_webpage_config(6));
@@ -83,17 +84,21 @@ void SuplaWebPageConfig::handleConfigSave() {
     }
   }
 
-#ifdef SUPLA_BUTTON
-  for (int i = 1; i <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); i++) {
-    key = GPIO;
-    key += ConfigESP->getGpio(i, FUNCTION_BUTTON);
-    if (ConfigESP->getGpio(i, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-      if (ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1) {
-        ConfigManager->setElement(key.c_str(), CFG, 0);
+  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), FUNCTION_CFG_BUTTON);
+  }
+
+  /*#ifdef SUPLA_BUTTON
+    for (int i = 1; i <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); i++) {
+      key = GPIO;
+      key += ConfigESP->getGpio(i, FUNCTION_BUTTON);
+      if (ConfigESP->getGpio(i, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+        if (ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1) {
+          ConfigManager->setElement(key.c_str(), CFG, 0);
+        }
       }
     }
-  }
-#endif
+    #endif*/
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -140,7 +145,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   }
   page += F("<i><label>");
   page += F("BUTTON</label>");
-  page += WebServer->selectGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON, 0, FUNCTION_BUTTON);
+  page += WebServer->selectGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON);
   page += F("</i>");
   page += F("</div><button type='submit'>Zapisz</button></form>");
   page += F("<br>");

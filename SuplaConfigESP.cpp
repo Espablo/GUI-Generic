@@ -255,8 +255,8 @@ void status_func(int status, const char *msg) {
       break;
     case 4:
       ConfigESP->supla_status.msg =
-          "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
-          "NIEAKTYWNA";
+        "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
+        "NIEAKTYWNA";
       break;
     case 5:
       ConfigESP->supla_status.msg = "Nieznany adres serwera";
@@ -345,6 +345,11 @@ int SuplaConfigESP::getGpio(int nr, int function) {
   for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
     String key = GPIO;
     key += gpio;
+    if (function == FUNCTION_CFG_BUTTON) {
+      if (checkBusyCfg(gpio)) {
+        return gpio;
+      }
+    }
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
       if (ConfigManager->get(key.c_str())->getElement(NR).toInt() == nr) {
         return gpio;
@@ -369,6 +374,15 @@ int SuplaConfigESP::getLevel(int nr, int function) {
   return OFF_GPIO;
 }
 
+bool SuplaConfigESP::checkBusyCfg(int gpio) {
+  String key = GPIO;
+  key += gpio;
+  if (ConfigManager->get(key.c_str())->getElement(FUNCTION_CFG_LED).toInt() == 1) {
+    return true;
+  }
+  return false;
+}
+
 int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11) {
     return true;
@@ -376,34 +390,53 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   else {
     String key = GPIO;
     key += gpio;
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_BUTTON) {
+      if (function == FUNCTION_CFG_BUTTON) {
+        return false;
+      }
+    }
+    if (checkBusyCfg(gpio)) {
+      if (function != FUNCTION_BUTTON) {
+        return true;
+      }
+    }
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != FUNCTION_OFF) {
       if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != function) {
         return true;
       }
-      return false;
     }
+    return false;
   }
-  return false;
 }
 
-void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level) {
+void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory) {
   String key = GPIO;
   key += gpio;
+  if (function == FUNCTION_CFG_BUTTON) {
+    ConfigManager->setElement(key.c_str(), CFG, 1);
+    return;
+  }
+
   ConfigManager->setElement(key.c_str(), NR, nr);
   ConfigManager->setElement(key.c_str(), FUNCTION, function);
   ConfigManager->setElement(key.c_str(), LEVEL, level);
+  ConfigManager->setElement(key.c_str(), MEMORY, memory);
+
   // ConfigManager->setElement(key.c_str(), MEMORY, memory);
   // ConfigManager->setElement(key.c_str(), CFG, cfg);
 }
 
-void SuplaConfigESP::clearGpio(uint8_t gpio) {
+void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   String key = GPIO;
   key += gpio;
+  if (function == FUNCTION_CFG_BUTTON) {
+    ConfigManager->setElement(key.c_str(), CFG, 0);
+    return;
+  }
   ConfigManager->setElement(key.c_str(), NR, 0);
   ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
   ConfigManager->setElement(key.c_str(), LEVEL, 0);
   ConfigManager->setElement(key.c_str(), MEMORY, 0);
-  ConfigManager->setElement(key.c_str(), CFG, 0);
 }
 
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
@@ -419,19 +452,6 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
     }
   }
   return count;
-}
-
-int SuplaConfigESP::getCfgFlag() {
-  for (int i = 0; i <= 17; i++) {
-    String key = GPIO;
-    key += i;
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_BUTTON) {
-      if (ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1) {
-        return i;
-      }
-    }
-  }
-  return 17;
 }
 
 void SuplaConfigESP::factoryReset() {
@@ -458,24 +478,14 @@ void SuplaConfigESP::factoryReset() {
 
     int nr;
     String key;
-    String func;
-    func = "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
-    func += SEPARATOR;
-    func += "0";
 
     for (nr = 0; nr <= 17; nr++) {
       key = GPIO;
       key += nr;
-      ConfigManager->set(key.c_str(), func.c_str());
+      ConfigManager->set(key.c_str(), "0,0,0,0,0");
     }
 
-    ConfigManager->set(KEY_ACTIVE_SENSOR, func.c_str());
+    ConfigManager->set(KEY_ACTIVE_SENSOR, "0,0,0,0,0");
 
     for (nr = 0; nr <= MAX_DS18B20; nr++) {
       key = KEY_DS;
@@ -495,4 +505,3 @@ void SuplaConfigESP::factoryReset() {
     while (1) wdt_reset();
   }
 }
-

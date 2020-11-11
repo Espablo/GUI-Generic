@@ -40,18 +40,18 @@ const char* const SHT30_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
 
 const char* const STATE_P[] PROGMEM = {OFF, ON};
 
-const char ODWROCONE[] PROGMEM = "ODWRÓCONE";
-const char NORMALNE[] PROGMEM = "NORMALNE";
+const char ODWROCONE[] PROGMEM = "LOW";
+const char NORMALNE[] PROGMEM = "HIGH";
 const char* const LEVEL_P[] PROGMEM = {ODWROCONE, NORMALNE};
 
 //const char WYLACZONY[] PROGMEM = "WYŁĄCZONY";
 const char PAMIETAJSTAN[] PROGMEM = "PAMIĘTAJ STAN";
 const char* const MEMORY_P[] PROGMEM = {OFF, ON, PAMIETAJSTAN};
 
-const char ZWOLNIENIE[] PROGMEM = "ZWOLNIENIE";
 const char WCISNIECIE[] PROGMEM = "WCIŚNIĘCIE";
+const char ZWOLNIENIE[] PROGMEM = "ZWOLNIENIE";
 const char ZMIANASTANU[] PROGMEM = "ZMIANA STANU";
-const char* const TRIGGER_P[] PROGMEM = {ZWOLNIENIE, WCISNIECIE, ZMIANASTANU};
+const char* const TRIGGER_P[] PROGMEM = {WCISNIECIE, ZWOLNIENIE, ZMIANASTANU};
 
 String GIPOString(uint8_t gpio);
 String BME280String(uint8_t adr);
@@ -60,5 +60,6 @@ String StateString(uint8_t adr);
 String LevelString(uint8_t nr);
 String MemoryString(uint8_t nr);
 String TriggerString(uint8_t nr);
+String BoardString(uint8_t board);
 
 #endif  // SuplaCommonPROGMEM_h

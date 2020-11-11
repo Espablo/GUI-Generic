@@ -45,10 +45,11 @@
 #define KEY_MAX_DHT22           "maxDht22"
 #define KEY_MAX_ROLLERSHUTTER   "maxRollerShutter"
 #define KEY_ALTITUDE_BME280     "altbme280"
+#define KEY_ACTIVE_SENSOR       "senor"
+#define KEY_BOARD			    "board"
 
 #define GPIO                      "GPIO"
 #define SEPARATOR                 ','
-#define KEY_ACTIVE_SENSOR         "SENSOR"
 
 enum _settings {
 	NR,
