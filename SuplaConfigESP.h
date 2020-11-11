@@ -73,8 +73,6 @@ class SuplaConfigESP : public Supla::Triggerable {
   void clearGpio(uint8_t gpio, uint8_t function = 0);
 
   int getMemoryRelay(int nr);
-  int getCfgFlag();
-
   void factoryReset();
 
  private:

@@ -105,15 +105,8 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONFIG
-#ifdef SUPLA_BUTTON
-  if (ConfigESP->getCfgFlag() != OFF_GPIO) {
-    Supla::GUI::addConfigESP(ConfigESP->getCfgFlag(), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
-                             ConfigESP->getLevel(FUNCTION_CFG_LED));
-  }
-  else
-#endif
-    Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
-                             ConfigESP->getLevel(FUNCTION_CFG_LED));
+  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
+                           ConfigESP->getLevel(FUNCTION_CFG_LED));
 #endif
 
 #ifdef SUPLA_DHT11

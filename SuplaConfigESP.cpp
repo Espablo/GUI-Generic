@@ -454,19 +454,6 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   return count;
 }
 
-int SuplaConfigESP::getCfgFlag() {
-  for (int i = 0; i <= 17; i++) {
-    String key = GPIO;
-    key += i;
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_BUTTON) {
-      if (ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1) {
-        return i;
-      }
-    }
-  }
-  return 17;
-}
-
 void SuplaConfigESP::factoryReset() {
   delay(1000);
   pinMode(0, INPUT);
