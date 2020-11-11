@@ -24,6 +24,8 @@ void chooseTemplateBoard(uint8_t board) {
 
       ConfigManager->set(KEY_MAX_RELAY, "1");
       ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
+
+      ConfigESP->setGpio(14, FUNCTION_SI7021_SONOFF);
       break;
     case BOARD_SONOFF_TOUCH:
       ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
