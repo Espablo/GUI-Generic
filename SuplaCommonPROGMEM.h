@@ -53,16 +53,6 @@ const char ZWOLNIENIE[] PROGMEM = "ZWOLNIENIE";
 const char ZMIANASTANU[] PROGMEM = "ZMIANA STANU";
 const char* const TRIGGER_P[] PROGMEM = {WCISNIECIE, ZWOLNIENIE, ZMIANASTANU};
 
-const char BOARD_NULL[] PROGMEM = "BRAK";
-const char SONOFF_BASIC[] PROGMEM = "SONOFF BASIC";
-const char SONOFF_TH[] PROGMEM = "SONOFF TH";
-const char SONOFF_TOUCH[] PROGMEM = "SONOFF TOUCH";
-const char SONOFF_TOUCH_2CH[] PROGMEM = "SONOFF TOUCH DUAL";
-const char SONOFF_TOUCH_3CH[] PROGMEM = "SONOFF TOUCH TRIPLE";
-const char SONOFF_4CH[] PROGMEM = "SONOFF 4CH";
-const char YUNSHA[] PROGMEM = "Yunshan";
-const char* const BOARD_P[] PROGMEM = {BOARD_NULL, SONOFF_BASIC, SONOFF_TH, SONOFF_TOUCH, SONOFF_TOUCH_2CH, SONOFF_TOUCH_3CH, SONOFF_4CH, YUNSHA};
-
 String GIPOString(uint8_t gpio);
 String BME280String(uint8_t adr);
 String SHT30String(uint8_t adr);
@@ -70,6 +60,6 @@ String StateString(uint8_t adr);
 String LevelString(uint8_t nr);
 String MemoryString(uint8_t nr);
 String TriggerString(uint8_t nr);
-String BoardString(uint8_t nr);
+String BoardString(uint8_t board);
 
 #endif  // SuplaCommonPROGMEM_h

@@ -52,16 +52,6 @@
 #define INPUT_ROLLERSHUTTER "irsr"
 #define INPUT_BOARD			"board"
 
-enum _board {
-  BOARD_SONOFF_BASIC = 1,
-  BOARD_SONOFF_TH,
-  BOARD_SONOFF_TOUCH,
-  BOARD_SONOFF_TOUCH_2CH,
-  BOARD_SONOFF_TOUCH_3CH,
-  BOARD_SONOFF_4CH,
-  BOARD_YUNSHA
-};
-
 class SuplaWebServer : public Supla::Element {
   public:
    String selectGPIO(const char* input, uint8_t function, uint8_t nr = 0);

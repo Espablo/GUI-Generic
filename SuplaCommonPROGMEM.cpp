@@ -1,4 +1,5 @@
 #include "SuplaCommonPROGMEM.h"
+#include "SuplaTemplateBoard.h"
 
 static char buffer[15];
 
@@ -37,7 +38,7 @@ String TriggerString(uint8_t nr) {
   return buffer;
 }
 
-String BoardString(uint8_t nr) {
-  strcpy_P(buffer, (char*)pgm_read_ptr(&(BOARD_P[nr])));
+String BoardString(uint8_t board) {
+  strcpy_P(buffer, (char*)pgm_read_ptr(&(BOARD_P[board])));
   return buffer;	
 }

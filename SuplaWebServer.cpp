@@ -21,6 +21,7 @@
 #include "SuplaWebPageRelay.h"
 #include "SuplaWebPageSensor.h"
 #include "SuplaCommonPROGMEM.h"
+#include "SuplaTemplateBoard.h"
 
 SuplaWebServer::SuplaWebServer() {
 }
@@ -313,7 +314,7 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<form method='post' action='");
   content += PATH_SAVE_BOARD;
   content += F("'>");
-  content += F("<div class='w'><h3>Ustawienia płytki</h3>");
+  content += F("<div class='w'><h3>Szablony płytek</h3>");
   content += F("<i><label>Rodzaj</label><select name='");
   content += INPUT_BOARD;
   content += F("'>");
@@ -407,50 +408,8 @@ void SuplaWebServer::handleBoardSave() {
       key += nr;
       ConfigManager->set(key.c_str(), "0,0,0,0,0");
     }
-    ConfigManager->set(KEY_MAX_BUTTON, "1");
-    ConfigManager->set(KEY_MAX_RELAY, "1");
 
-    switch (WebServer->httpServer.arg(input).toInt()) {
-      case BOARD_SONOFF_BASIC:
-        ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
-        ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
-
-        ConfigManager->set(KEY_MAX_BUTTON, "1");
-        ConfigESP->setGpio(14, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
-
-        ConfigManager->set(KEY_MAX_RELAY, "1");
-        ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
-        break;
-      case BOARD_SONOFF_TH:
-        break;
-      case BOARD_SONOFF_TOUCH:
-        break;
-      case BOARD_SONOFF_TOUCH_2CH:
-        break;
-      case BOARD_SONOFF_TOUCH_3CH:
-        break;
-      case BOARD_SONOFF_4CH:
-        ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
-        ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
-
-        ConfigManager->set(KEY_MAX_BUTTON, "4");
-        ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
-        ConfigESP->setGpio(9, 2, FUNCTION_BUTTON, Supla::ON_CHANGE);
-        ConfigESP->setGpio(10, 3, FUNCTION_BUTTON, Supla::ON_CHANGE);
-        ConfigESP->setGpio(14, 4, FUNCTION_BUTTON, Supla::ON_CHANGE);
-
-        ConfigManager->set(KEY_MAX_RELAY, "4");
-        ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
-        ConfigESP->setGpio(5, 2, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
-        ConfigESP->setGpio(4, 3, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
-        ConfigESP->setGpio(15, 4, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
-
-        break;
-      case BOARD_YUNSHA:
-        break;
-      default:
-        break;
-    }
+    chooseTemplateBoard(WebServer->httpServer.arg(input).toInt());
   }
 
   switch (ConfigManager->save()) {
