@@ -407,6 +407,8 @@ void SuplaWebServer::handleBoardSave() {
       key += nr;
       ConfigManager->set(key.c_str(), "0,0,0,0,0");
     }
+    ConfigManager->set(KEY_MAX_BUTTON, "1");
+    ConfigManager->set(KEY_MAX_RELAY, "1");
 
     switch (WebServer->httpServer.arg(input).toInt()) {
       case BOARD_SONOFF_BASIC:
@@ -461,32 +463,25 @@ void SuplaWebServer::handleBoardSave() {
   }
 }
 
-String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr, uint8_t exeptionCfg) {
-  String page = "";
+String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr) {
+  String page  = "";
   page += F("<select name='");
   page += input;
-  if (nr != 0) {
+  if (nr != 0 ) {
     page += nr;
-  }
-  else {
+  } else {
     nr = 1;
   }
   page += F("'>");
 
   uint8_t selected = ConfigESP->getGpio(nr, function);
-  uint8_t cfg = 0;
-  for (uint8_t suported = 0; suported <= OFF_GPIO; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, function) == false || ConfigESP->checkBusyGpio(suported, exeptionCfg) == false || selected == suported) {
+
+  for (uint8_t suported = 0; suported < 18; suported++) {
+    if (ConfigESP->checkBusyGpio(suported, function) == false || selected == suported) {
       page += F("<option value='");
       page += suported;
-      if (selected == suported || (ConfigESP->getCfgFlag() == suported && selected == OFF_GPIO)) {
-        if (cfg == 0) {
-          page += F("' selected>");
-          cfg = 1;
-        }
-        else {
-          page += F("'>");
-        }
+      if (selected == suported) {
+        page += F("' selected>");
       }
       else {
         page += F("'>");
