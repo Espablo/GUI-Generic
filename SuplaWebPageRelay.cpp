@@ -58,6 +58,10 @@ void SuplaWebPageRelay::handleRelaySave() {
       input += nr;
       key = GPIO;
       key += WebServer->httpServer.arg(input).toInt();
+      if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != WebServer->httpServer.arg(input).toInt() ||
+          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
+        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_RELAY));
+      }
       if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
         key = GPIO;
         key += WebServer->httpServer.arg(input).toInt();
@@ -72,10 +76,6 @@ void SuplaWebPageRelay::handleRelaySave() {
           WebServer->sendContent(supla_webpage_relay(6));
           return;
         }
-      }
-      if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != WebServer->httpServer.arg(input).toInt() ||
-          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
-        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_RELAY));
       }
     }
   }

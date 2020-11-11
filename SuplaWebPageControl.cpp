@@ -56,6 +56,10 @@ void SuplaWebPageControl::handleControlSave() {
       input += nr;
       key = GPIO;
       key += WebServer->httpServer.arg(input).toInt();
+      if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() ||
+          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
+        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_BUTTON));
+      }
       if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
         key = GPIO;
         key += WebServer->httpServer.arg(input).toInt();
@@ -70,10 +74,6 @@ void SuplaWebPageControl::handleControlSave() {
           WebServer->sendContent(supla_webpage_control(6));
           return;
         }
-      }
-      if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() ||
-          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
-        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_BUTTON));
       }
     }
   }
@@ -92,6 +92,10 @@ void SuplaWebPageControl::handleControlSave() {
       input += nr;
       key = GPIO;
       key += WebServer->httpServer.arg(input).toInt();
+      if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != WebServer->httpServer.arg(input).toInt() ||
+          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
+        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH));
+      }
       if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
         key = GPIO;
         key += WebServer->httpServer.arg(input).toInt();
@@ -106,10 +110,6 @@ void SuplaWebPageControl::handleControlSave() {
           WebServer->sendContent(supla_webpage_control(6));
           return;
         }
-      }
-      if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != WebServer->httpServer.arg(input).toInt() ||
-          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
-        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH));
       }
     }
   }
