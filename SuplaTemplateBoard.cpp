@@ -2,7 +2,6 @@
 #include "SuplaWebPageRelay.h"
 #include <supla/events.h>
 
-
 void chooseTemplateBoard(uint8_t board) {
   switch (board) {
     case BOARD_SONOFF_BASIC:
@@ -90,9 +89,26 @@ void chooseTemplateBoard(uint8_t board) {
       ConfigManager->set(KEY_MAX_RELAY, "1");
       ConfigESP->setGpio(4, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
       break;
+    case BOARD_INCAN3:
+      ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+      ConfigESP->setGpio(2, FUNCTION_CFG_LED, HIGH);
+
+      ConfigManager->set(KEY_MAX_BUTTON, "2");
+      ConfigESP->setGpio(14, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
+      ConfigESP->setGpio(12, 2, FUNCTION_BUTTON, Supla::ON_CHANGE);
+
+      ConfigManager->set(KEY_MAX_RELAY, "2");
+      ConfigESP->setGpio(5, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
+      ConfigESP->setGpio(13, 2, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
+
+      ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "2");
+      ConfigESP->setGpio(4, 1, FUNCTION_LIMIT_SWITCH, 0);
+      ConfigESP->setGpio(16, 2, FUNCTION_LIMIT_SWITCH, 0);
+      break;
     default:
       ConfigManager->set(KEY_MAX_BUTTON, "1");
       ConfigManager->set(KEY_MAX_RELAY, "1");
+      ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
       break;
   }
 }
