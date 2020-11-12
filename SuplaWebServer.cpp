@@ -321,7 +321,7 @@ String SuplaWebServer::deviceSettings(int save) {
   content += INPUT_BOARD;
   content += F("'>");
   uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
-  for (uint8_t suported = 0; suported < 9; suported++) {
+  for (uint8_t suported = 0; suported < MAX_MODULE; suported++) {
     content += F("<option value='");
     content += suported;
     if (selected == suported) {
