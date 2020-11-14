@@ -44,14 +44,13 @@ const char ODWROCONE[] PROGMEM = "LOW";
 const char NORMALNE[] PROGMEM = "HIGH";
 const char* const LEVEL_P[] PROGMEM = {ODWROCONE, NORMALNE};
 
-//const char WYLACZONY[] PROGMEM = "WYŁĄCZONY";
 const char PAMIETAJSTAN[] PROGMEM = "PAMIĘTAJ STAN";
 const char* const MEMORY_P[] PROGMEM = {OFF, ON, PAMIETAJSTAN};
 
-const char WCISNIECIE[] PROGMEM = "WCIŚNIĘCIE";
-const char ZWOLNIENIE[] PROGMEM = "ZWOLNIENIE";
-const char ZMIANASTANU[] PROGMEM = "ZMIANA STANU";
-const char* const TRIGGER_P[] PROGMEM = {WCISNIECIE, ZWOLNIENIE, ZMIANASTANU};
+const char ON_PRESS[] PROGMEM = "MONOSTABILNY";
+const char ON_RELEASE[] PROGMEM = "ZWOLNIENIE";
+const char ON_CHANGE[] PROGMEM = "BISTABILNY";
+const char* const TRIGGER_P[] PROGMEM = {ON_PRESS, ON_RELEASE, ON_CHANGE};
 
 String GIPOString(uint8_t gpio);
 String BME280String(uint8_t adr);
