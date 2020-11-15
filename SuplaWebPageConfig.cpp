@@ -2,6 +2,7 @@
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 #include "SuplaCommonPROGMEM.h"
+#include "GUIGenericCommon.h"
 
 SuplaWebPageConfig *WebPageConfig = new SuplaWebPageConfig();
 
@@ -75,7 +76,7 @@ void SuplaWebPageConfig::handleConfigSave() {
       ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_CFG_BUTTON);
     }
     else if (ConfigESP->checkBusyGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_BUTTON) == false) {
-      //ConfigManager->setElement(key.c_str(), CFG, 1);
+      // ConfigManager->setElement(key.c_str(), CFG, 1);
       ConfigESP->setGpio(key.toInt(), FUNCTION_CFG_BUTTON);
     }
     else {
@@ -92,9 +93,8 @@ void SuplaWebPageConfig::handleConfigSave() {
     for (int i = 1; i <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); i++) {
       key = GPIO;
       key += ConfigESP->getGpio(i, FUNCTION_BUTTON);
-      if (ConfigESP->getGpio(i, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-        if (ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1) {
-          ConfigManager->setElement(key.c_str(), CFG, 0);
+      if (ConfigESP->getGpio(i, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO)
+    { if (ConfigManager->get(key.c_str())->getElement(CFG).toInt() == 1) { ConfigManager->setElement(key.c_str(), CFG, 0);
         }
       }
     }
@@ -119,7 +119,9 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += WebServer->SuplaJavaScript(PATH_CONFIG);
   page += F("<form method='post' action='");
   page += PATH_SAVE_CONFIG;
-  page += F("'><div class='w'><h3>Ustawienie GPIO dla CONFIG</h3>");
+  page += F("'><div class='w'><h3>");
+  page += S_GPIO_SETTINGS_FOR_CONFIG;
+  page += F("</h3>");
   page += F("<i><label>");
   page += F("LED</label>");
   page += WebServer->selectGPIO(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED);
@@ -127,7 +129,8 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
 
   if (selected != 17) {
     page += F("<i><label>");
-    page += F("Sterowanie stanem</label><select name='");
+    page += S_STATE_CONTROL;
+    page += F("</label><select name='");
     page += INPUT_CFG_LED_LEVEL;
     page += F("'>");
     selected = ConfigESP->getLevel(FUNCTION_CFG_LED);
@@ -144,14 +147,19 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
     page += F("</select></i>");
   }
   page += F("<i><label>");
-  page += F("BUTTON</label>");
+  page += S_BUTTON;
+  page += F("</label>");
   page += WebServer->selectGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON);
   page += F("</i>");
-  page += F("</div><button type='submit'>Zapisz</button></form>");
+  page += F("</div><button type='submit'>");
+  page += S_SAVE;
+  page += F("</button></form>");
   page += F("<br>");
   page += F("<a href='");
   page += PATH_START;
   page += PATH_DEVICE_SETTINGS;
-  page += F("'><button>Powrót</button></a></div>");
+  page += F("'><button>");
+  page += S_RETURN;
+  page += F("</button></a></div>");
   return page;
 }

@@ -2,6 +2,7 @@
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 #include "SuplaCommonPROGMEM.h"
+#include "GUIGenericCommon.h"
 
 SuplaWebPageControl *WebPageControl = new SuplaWebPageControl();
 
@@ -140,8 +141,12 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += PATH_SAVE_CONTROL;
 
 #if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
-  pagebutton += F("'><div class='w'><h3>Ustawienie GPIO dla przycisków</h3>");
-  pagebutton += F("<i><label>ILOŚĆ</label><input name='");
+  pagebutton += F("'><div class='w'><h3>");
+  pagebutton += S_GPIO_SETTINGS_FOR_BUTTONS;
+  pagebutton += F("</h3>");
+  pagebutton += F("<i><label>");
+  pagebutton += S_QUANTITY;
+  pagebutton += F("</label><input name='");
   pagebutton += INPUT_MAX_BUTTON;
   pagebutton += F("' type='number' placeholder='0' step='1' min='0' max='");
   pagebutton += ConfigESP->countFreeGpio(FUNCTION_BUTTON);
@@ -159,7 +164,8 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
       pagebutton += F("'>");
     }
     pagebutton += nr;
-    pagebutton += F(". PRZYCISK ");
+    pagebutton += F(". ");
+    pagebutton += S_BUTTON;
     if (selected != OFF_GPIO) {
       pagebutton += WebServer->SuplaIconEdit();
       pagebutton += F("</a>");
@@ -172,8 +178,12 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-  pagebutton += F("<div class='w'><h3>Ustawienie GPIO dla cz. otwarcia</h3>");
-  pagebutton += F("<i><label>ILOŚĆ</label><input name='");
+  pagebutton += F("<div class='w'><h3>");
+  pagebutton += S_GPIO_SETTINGS_FOR_LIMIT_SWITCH;
+  pagebutton += F("</h3>");
+  pagebutton += F("<i><label>");
+  pagebutton += S_QUANTITY;
+  pagebutton += F("</label><input name='");
   pagebutton += INPUT_MAX_LIMIT_SWITCH;
   pagebutton += F("' type='number' placeholder='0' step='1' min='0' max='");
   pagebutton += ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH);
@@ -183,19 +193,25 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
     pagebutton += F("<i><label>");
     pagebutton += nr;
-    pagebutton += F(". KRAŃCÓWKA</label>");
+    pagebutton += F(". ");
+    pagebutton += S_LIMIT_SWITCH;
+    pagebutton += F("</label>");
     pagebutton += WebServer->selectGPIO(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr);
     pagebutton += F("</i>");
   }
   pagebutton += F("</div>");
 #endif
 
-  pagebutton += F("<button type='submit'>Zapisz</button></form>");
+  pagebutton += F("<button type='submit'>");
+  pagebutton += S_SAVE;
+  pagebutton += F("</button></form>");
   pagebutton += F("<br>");
   pagebutton += F("<a href='");
   pagebutton += PATH_START;
   pagebutton += PATH_DEVICE_SETTINGS;
-  pagebutton += F("'><button>Powrót</button></a></div>");
+  pagebutton += F("'><button>");
+  pagebutton += S_RETURN;
+  pagebutton += F("</button></a></div>");
   return pagebutton;
 }
 
@@ -263,11 +279,14 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
     page += F("<form method='post' action='");
     page += PATH_SAVE_BUTTON_SET;
     page += nr_button;
-    page += F("'><div class='w'><h3>Ustawienia przycisku nr. ");
+    page += F("'><div class='w'><h3>");
+    page += S_BUTTON_NR_SETTINGS;
+    page += F(" ");
     page += nr_button;
     page += F("</h3>");
     page += F("<i><label>");
-    page += F("Reakcja na</label><select name='");
+    page += S_REACTION_TO;
+    page += F("</label><select name='");
     page += INPUT_BUTTON_LEVEL;
     page += nr_button;
     page += F("'>");
@@ -283,10 +302,14 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
       page += TriggerString(suported);
     }
     page += F("</select></i>");
-    page += F("</div><button type='submit'>Zapisz</button></form>");
+    page += F("</div><button type='submit'>");
+    page += S_SAVE;
+    page += F("</button></form>");
   }
   else {
-    page += F("<div class='w'><h3>Brak przycisku nr. ");
+    page += F("<div class='w'><h3>");
+    page += S_NO_BUTTON_NR;
+    page += F(" </h3>");
     page += nr_button;
     page += F("</h3>");
   }
@@ -294,7 +317,9 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
   page += F("<a href='");
   page += PATH_START;
   page += PATH_CONTROL;
-  page += F("'><button>Powrót</button></a></div>");
+  page += F("'><button>");
+  page += S_RETURN;
+  page += F("</button></a></div>");
 
   return page;
 }
