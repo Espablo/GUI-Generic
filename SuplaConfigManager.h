@@ -17,46 +17,47 @@
 #ifndef SuplaConfigManager_h
 #define SuplaConfigManager_h
 
-#define  DEFAULT_HOSTNAME      "GUI Generic"  
-  
-#define  DEFAULT_LOGIN         "admin"
-#define  DEFAULT_LOGIN_PASS    "pass"
+#define DEFAULT_HOSTNAME "GUI Generic"
 
-#define  DEFAULT_SERVER         "svrX.supla.org"
-#define  DEFAULT_EMAIL          "email@address.com"
+#define DEFAULT_LOGIN      "admin"
+#define DEFAULT_LOGIN_PASS "pass"
 
-#define KEY_SUPLA_GUID          "GUID"
-#define KEY_SUPLA_AUTHKEY       "AUTHKEY"
-#define KEY_WIFI_SSID           "wifiSSID"
-#define KEY_WIFI_PASS           "wifiPass"
-#define KEY_LOGIN               "login"
-#define KEY_LOGIN_PASS          "loginPass"
-#define KEY_HOST_NAME           "hostName"
-#define KEY_SUPLA_SERVER        "suplaServer"
-#define KEY_SUPLA_EMAIL         "suplaEmail"
-#define KEY_DS                  "ds"
-#define KEY_DS_NAME             "dsName"
-#define KEY_MULTI_MAX_DS18B20   "multiMaxDs"
-#define KEY_SUPLA_FUNCTION      "function"
-#define KEY_MAX_RELAY           "maxRelay"
-#define KEY_MAX_BUTTON          "maxButton"
-#define KEY_MAX_LIMIT_SWITCH    "maxLimitSwitch"
-#define KEY_MAX_DHT11           "maxDht11"
-#define KEY_MAX_DHT22           "maxDht22"
-#define KEY_MAX_ROLLERSHUTTER   "maxRollerShutter"
-#define KEY_ALTITUDE_BME280     "altbme280"
-#define KEY_ACTIVE_SENSOR       "senor"
-#define KEY_BOARD			    "board"
+#define DEFAULT_SERVER "svrX.supla.org"
+#define DEFAULT_EMAIL  "email@address.com"
 
-#define GPIO                      "GPIO"
-#define SEPARATOR                 ','
+#define KEY_SUPLA_GUID        "GUID"
+#define KEY_SUPLA_AUTHKEY     "AUTHKEY"
+#define KEY_WIFI_SSID         "wifiSSID"
+#define KEY_WIFI_PASS         "wifiPass"
+#define KEY_LOGIN             "login"
+#define KEY_LOGIN_PASS        "loginPass"
+#define KEY_HOST_NAME         "hostName"
+#define KEY_SUPLA_SERVER      "suplaServer"
+#define KEY_SUPLA_EMAIL       "suplaEmail"
+#define KEY_DS                "ds"
+#define KEY_DS_NAME           "dsName"
+#define KEY_MULTI_MAX_DS18B20 "multiMaxDs"
+#define KEY_SUPLA_FUNCTION    "function"
+#define KEY_MAX_RELAY         "maxRelay"
+#define KEY_MAX_BUTTON        "maxButton"
+#define KEY_MAX_LIMIT_SWITCH  "maxLimitSwitch"
+#define KEY_MAX_DHT11         "maxDht11"
+#define KEY_MAX_DHT22         "maxDht22"
+#define KEY_MAX_ROLLERSHUTTER "maxRollerShutter"
+#define KEY_ALTITUDE_BME280   "altbme280"
+#define KEY_ACTIVE_SENSOR     "sensor"
+#define KEY_BOARD             "board"
 
-enum _settings {
-	NR,
-	FUNCTION,
-	LEVEL,
-	MEMORY,
-	CFG
+#define GPIO      "GPIO"
+#define SEPARATOR ','
+
+enum _settings
+{
+  NR,
+  FUNCTION,
+  LEVEL,
+  MEMORY,
+  CFG
 };
 
 enum _function
@@ -80,34 +81,35 @@ enum _function
   FUNCTION_D0
 };
 
-#define  MAX_GUID                 SUPLA_GUID_SIZE
-#define  MAX_AUTHKEY              SUPLA_GUID_SIZE
-#define  MAX_SSID                 32
-#define  MAX_PASSWORD             64
-#define  MIN_PASSWORD             8
-#define  MAX_MLOGIN               32
-#define  MAX_MPASSWORD            64
-#define  MAX_HOSTNAME             32
-#define  MAX_SUPLA_SERVER         SUPLA_SERVER_NAME_MAXSIZE
-#define  MAX_EMAIL                SUPLA_EMAIL_MAXSIZE
-#define  MAX_DS18B20_ADDRESS_HEX  16
-#define  MAX_DS18B20_ADDRESS      8
-#define  MAX_DS18B20_NAME         8
-#define  MAX_TYPE_BUTTON          4
-#define  MAX_MONOSTABLE_TRIGGER   1
-#define  MAX_FUNCTION             1
-#define  MAX_DS18B20          	  10
+#define MAX_GUID                SUPLA_GUID_SIZE
+#define MAX_AUTHKEY             SUPLA_GUID_SIZE
+#define MAX_SSID                32
+#define MAX_PASSWORD            64
+#define MIN_PASSWORD            8
+#define MAX_MLOGIN              32
+#define MAX_MPASSWORD           64
+#define MAX_HOSTNAME            32
+#define MAX_SUPLA_SERVER        SUPLA_SERVER_NAME_MAXSIZE
+#define MAX_EMAIL               SUPLA_EMAIL_MAXSIZE
+#define MAX_DS18B20_ADDRESS_HEX 16
+#define MAX_DS18B20_ADDRESS     8
+#define MAX_DS18B20_NAME        8
+#define MAX_TYPE_BUTTON         4
+#define MAX_MONOSTABLE_TRIGGER  1
+#define MAX_FUNCTION            1
+#define MAX_DS18B20             10
 
-enum _e_onfig {
-	E_CONFIG_OK,
-	E_CONFIG_FS_ACCESS,
-	E_CONFIG_FILE_NOT_FOUND,
-	E_CONFIG_FILE_OPEN,
-	E_CONFIG_PARSE_ERROR,
-	E_CONFIG_MAX
+enum _e_onfig
+{
+  E_CONFIG_OK,
+  E_CONFIG_FS_ACCESS,
+  E_CONFIG_FILE_NOT_FOUND,
+  E_CONFIG_FILE_OPEN,
+  E_CONFIG_PARSE_ERROR,
+  E_CONFIG_MAX
 };
 
-#define CONFIG_MAX_OPTIONS        88
+#define CONFIG_MAX_OPTIONS 88
 
 class ConfigOption {
  public:
