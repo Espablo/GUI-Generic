@@ -9,7 +9,7 @@ void chooseTemplateBoard(uint8_t board) {
       ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
 
       ConfigManager->set(KEY_MAX_BUTTON, "1");
-      ConfigESP->setGpio(14, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
+      ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_PRESS);
 
       ConfigManager->set(KEY_MAX_RELAY, "1");
       ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
@@ -19,7 +19,7 @@ void chooseTemplateBoard(uint8_t board) {
       ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
 
       ConfigManager->set(KEY_MAX_BUTTON, "1");
-      ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
+      ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_PRESS);
 
       ConfigManager->set(KEY_MAX_RELAY, "1");
       ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
@@ -31,7 +31,7 @@ void chooseTemplateBoard(uint8_t board) {
       ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
 
       ConfigManager->set(KEY_MAX_BUTTON, "1");
-      ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
+      ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_PRESS);
 
       ConfigManager->set(KEY_MAX_RELAY, "1");
       ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
@@ -41,8 +41,8 @@ void chooseTemplateBoard(uint8_t board) {
       ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
 
       ConfigManager->set(KEY_MAX_BUTTON, "2");
-      ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
-      ConfigESP->setGpio(9, 2, FUNCTION_BUTTON, Supla::ON_CHANGE);
+      ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_PRESS);
+      ConfigESP->setGpio(9, 2, FUNCTION_BUTTON, Supla::ON_PRESS);
 
       ConfigManager->set(KEY_MAX_RELAY, "2");
       ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);
@@ -53,9 +53,9 @@ void chooseTemplateBoard(uint8_t board) {
       ConfigESP->setGpio(13, FUNCTION_CFG_LED, HIGH);
 
       ConfigManager->set(KEY_MAX_BUTTON, "3");
-      ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_CHANGE);
-      ConfigESP->setGpio(9, 2, FUNCTION_BUTTON, Supla::ON_CHANGE);
-      ConfigESP->setGpio(10, 3, FUNCTION_BUTTON, Supla::ON_CHANGE);
+      ConfigESP->setGpio(0, 1, FUNCTION_BUTTON, Supla::ON_PRESS);
+      ConfigESP->setGpio(9, 2, FUNCTION_BUTTON, Supla::ON_PRESS);
+      ConfigESP->setGpio(10, 3, FUNCTION_BUTTON, Supla::ON_PRESS);
 
       ConfigManager->set(KEY_MAX_RELAY, "3");
       ConfigESP->setGpio(12, 1, FUNCTION_RELAY, HIGH, MEMORY_RELAY_RESTORE);

@@ -90,7 +90,7 @@ void SuplaConfigESP::runAction(int event, int action) {
     }
     countPresses++;
 
-    if (countPresses == 3) {
+    if (countPresses == 10) {
       //      Serial.println(F("CONFIG_MODE_3_PRESSES"));
       configModeInit();
       countPresses = 0;

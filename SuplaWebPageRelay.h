@@ -15,14 +15,14 @@
 #define INPUT_RELAY_DURATION "ird"
 #define INPUT_ROLLERSHUTTER  "irsr"
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-
 enum _memory_relay {
   MEMORY_RELAY_OFF,
   MEMORY_RELAY_ON,
   MEMORY_RELAY_RESTORE
 };
   
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+
 class SuplaWebPageRelay {
  public:
   SuplaWebPageRelay();
