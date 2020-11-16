@@ -3,6 +3,9 @@
 
 // #define DEBUG_MODE
 
+// Language en - english, pl - polish (default if not defined UI_LANGUAGE)
+// #define UI_LANGUAGE en
+
 #define SUPLA_RELAY
 #define SUPLA_BUTTON
 #define SUPLA_LIMIT_SWITCH

@@ -59,36 +59,46 @@ class GUIESPWifi : public Supla::ESPWifi {
 
   void setup() {
     if (ConfigESP->configModeESP == NORMAL_MODE) {
-      gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
-        Serial.print(F("local IP: "));
-        Serial.println(WiFi.localIP());
-        Serial.print(F("subnetMask: "));
-        Serial.println(WiFi.subnetMask());
-        Serial.print(F("gatewayIP: "));
-        Serial.println(WiFi.gatewayIP());
-        long rssi = WiFi.RSSI();
-        Serial.print(F("Signal strength (RSSI): "));
-        Serial.print(rssi);
-        Serial.println(F(" dBm"));
-      });
-      disconnectedEventHandler =
-          WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) { Serial.println(F("WiFi station disconnected")); });
+      if (!wifiConfigured) {
+        wifiConfigured = true;
+        gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
+          Serial.print(F("local IP: "));
+          Serial.println(WiFi.localIP());
+          Serial.print(F("subnetMask: "));
+          Serial.println(WiFi.subnetMask());
+          Serial.print(F("gatewayIP: "));
+          Serial.println(WiFi.gatewayIP());
+          long rssi = WiFi.RSSI();
+          Serial.print(F("Signal strength (RSSI): "));
+          Serial.print(rssi);
+          Serial.println(F(" dBm"));
+        });
+        disconnectedEventHandler =
+            WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) { Serial.println(F("WiFi station disconnected")); });
 
-      Serial.print(F("WiFi: establishing connection with SSID: \""));
-      Serial.print(ssid);
-      Serial.println(F("\""));
-      WiFi.hostname(hostname);
-      Serial.print(F("Host name: "));
-      Serial.println(WiFi.hostname());
+        Serial.print(F("WiFi: establishing connection with SSID: \""));
+        Serial.print(ssid);
+        Serial.println(F("\""));
+        WiFi.hostname(hostname);
+        Serial.print(F("Host name: "));
+        Serial.println(WiFi.hostname());
 
-      WiFi.softAPdisconnect(true);
-      WiFi.setAutoConnect(false);
-      WiFi.mode(WIFI_STA);
+        WiFi.softAPdisconnect(true);
+        WiFi.setAutoConnect(false);
+        WiFi.mode(WIFI_STA);
 
-      if (!isReady()) {
-        WiFi.begin(ssid, password);
+        if (!isReady()) {
+          WiFi.begin(ssid, password);
+        }
       }
-
+      else {
+        Serial.println(F("WiFi: resetting WiFi connection"));
+        if (client) {
+          delete client;
+          client = nullptr;
+        }
+        WiFi.reconnect();
+      }
       yield();
     }
   }

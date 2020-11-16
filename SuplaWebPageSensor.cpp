@@ -3,6 +3,7 @@
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 #include "SuplaCommonPROGMEM.h"
+#include "GUIGenericCommon.h"
 
 SuplaWebPageSensor *WebPageSensor = new SuplaWebPageSensor();
 
@@ -111,14 +112,18 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
     content += PATH_SAVE_MULTI_DS;
     content += F("'>");
     this->showDS18B20(content);
-    content += F("<button type='submit'>Zapisz</button></form>");
+    content += F("<button type='submit'>");
+    content += S_SAVE;
+    content += F("</button></form>");
     content += F("<br>");
   }
   content += F("<form method='post' action='");
   content += PATH_SAVE_MULTI_DS;
   content += F("'>");
   content += F("<div class='w'>");
-  content += F("<h3>Znalezione DS18b20</h3>");
+  content += F("<h3>");
+  content += S_FOUND;
+  content += F(" DS18b20</h3>");
   sensors.setOneWire(&ow);
   sensors.begin();
   if (sensors.isParasitePowerMode()) {
@@ -152,17 +157,22 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   }
 
   if (count == 0) {
-    content += F("<i><label>brak podłączonych czujników</label></i>");
+    content += F("<i><label>");
+    content += S_NO_SENSORS_CONNECTED;
+    content += F("</label></i>");
   }
   content += F("</div>");
   content += F("</center>");
-  content += F("<button type='submit'>Zapisz znalezione DS18b20</button></form>");
+  content += F("<button type='submit'>");
+  content += S_SAVE_FOUND;
+  content += F("DS18b20</button></form>");
   content += F("<br><br>");
   content += F("<a href='");
   content += PATH_START;
   content += PATH_1WIRE;
-  content += F("'><button>Powrót</button></a></div>");
-  //  content += WebServer->SuplaCopyrightBar();
+  content += F("'><button>");
+  content += S_RETURN;
+  content += F("</button></a></div>");
 
   return content;
 }
@@ -170,7 +180,9 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
 void SuplaWebPageSensor::showDS18B20(String &content, bool readonly) {
   if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
     content += F("<div class='w'>");
-    content += F("<h3>Temperatura</h3>");
+    content += F("<h3>");
+    content += S_TEMPERATURE;
+    content += F("</h3>");
     for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
       String ds_key = KEY_DS;
       String ds_name_key = KEY_DS_NAME;
@@ -188,7 +200,7 @@ void SuplaWebPageSensor::showDS18B20(String &content, bool readonly) {
         content += F(" readonly");
       }
       content += F("><label>");
-      content += F("Nazwa ");
+      content += S_NAME;
       content += i + 1;
       content += F("</label></i>");
       content += F("<i><input name='dschlid");
@@ -371,8 +383,12 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   page += PATH_SAVE_1WIRE;
   page += F("'>");
 #ifdef SUPLA_DHT11
-  page += F("<div class='w'><h3>Ustawienie GPIO dla DHT11</h3>");
-  page += F("<i><label>ILOŚĆ</label><input name='");
+  page += F("<div class='w'><h3>");
+  page += S_GPIO_SETTINGS_FOR;
+  page += F(" DHT11</h3>");
+  page += F("<i><label>");
+  page += S_QUANTITY;
+  page += F("</label><input name='");
   page += INPUT_MAX_DHT11;
   page += F("' type='number' placeholder='0' step='1' min='0' max='");
   page += ConfigESP->countFreeGpio(FUNCTION_DHT11);
@@ -390,8 +406,12 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
 #endif
 
 #ifdef SUPLA_DHT22
-  page += F("<div class='w'><h3>Ustawienie GPIO dla DHT22</h3>");
-  page += F("<i><label>ILOŚĆ</label><input name='");
+  page += F("<div class='w'><h3>");
+  page += S_GPIO_SETTINGS_FOR;
+  page += F(" DHT22</h3>");
+  page += F("<i><label>");
+  page += S_QUANTITY;
+  page += F("</label><input name='");
   page += INPUT_MAX_DHT22;
   page += F("' type='number' placeholder='0' step='1' min='0' max='");
   page += ConfigESP->countFreeGpio(FUNCTION_DHT22);
@@ -409,7 +429,9 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
 #endif
 
 #ifdef SUPLA_SI7021_SONOFF
-  page += F("<div class='w'><h3>Ustawienie GPIO dla Si7021 Sonoff</h3>");
+  page += F("<div class='w'><h3>");
+  page += S_GPIO_SETTINGS_FOR;
+  page += F(" Si7021 Sonoff</h3>");
   page += F("<i><label>Si7021 Sonoff</label>");
   page += WebServer->selectGPIO(INPUT_SI7021_SONOFF, FUNCTION_SI7021_SONOFF);
   page += F("</i>");
@@ -417,8 +439,12 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
 #endif
 
 #ifdef SUPLA_DS18B20
-  page += F("<div class='w'><h3>Ustawienie GPIO dla Multi DS18B20</h3>");
-  page += F("<i><label>ILOŚĆ</label><input name='");
+  page += F("<div class='w'><h3>");
+  page += S_GPIO_SETTINGS_FOR;
+  page += F(" Multi DS18B20</h3>");
+  page += F("<i><label>");
+  page += S_QUANTITY;
+  page += F("</label><input name='");
   page += INPUT_MAX_DS18B20;
   page += F("' type='number' placeholder='1' step='1' min='0' max='");
   page += MAX_DS18B20;
@@ -446,17 +472,23 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   page += F("</div>");
 #endif
 
-  page += F("<button type='submit'>Zapisz</button></form>");
+  page += F("<button type='submit'>");
+  page += S_SAVE;
+  page += F("</button></form>");
   page += F("<br>");
   page += F("<form method='post' action='");
   page += PATH_REBOT;
   page += F("'>");
-  page += F("<button type='submit'>Restart</button></form>");
+  page += F("<button type='submit'>");
+  page += S_RESTART;
+  page += F("</button></form>");
   page += F("<br>");
   page += F("<a href='");
   page += PATH_START;
   page += PATH_DEVICE_SETTINGS;
-  page += F("'><button>Powrót</button></a></div>");
+  page += F("'><button>");
+  page += S_RETURN;
+  page += F("</button></a></div>");
   return page;
 }
 #endif
@@ -615,7 +647,9 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   page += F("'>");
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30)
-  page += F("<div class='w'><h3>Ustawienie GPIO dla i2c</h3>");
+  page += F("<div class='w'><h3>");
+  page += S_GPIO_SETTINGS_FOR;
+  page += F(" i2c</h3>");
   page += F("<i><label>SDA</label>");
   page += WebServer->selectGPIO(INPUT_SDA_GPIO, FUNCTION_SDA);
   page += F("</i>");
@@ -648,7 +682,9 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
     page += F("' value='");
     page += ConfigManager->get(KEY_ALTITUDE_BME280)->getValue();
     page += F("' ");
-    page += F("><label>Wysokość m n.p.m.</label></i>");
+    page += F("><label>");
+    page += S_ALTITUDE_ABOVE_SEA_LEVEL;
+    page += F("</label></i>");
 #endif
 
 #ifdef SUPLA_SHT30
@@ -697,7 +733,9 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
 #endif
 
 #ifdef SUPLA_HC_SR04
-  page += F("<div class='w'><h3>Ustawienie GPIO dla HC-SR04</h3>");
+  page += F("<div class='w'><h3>");
+  page += S_GPIO_SETTINGS_FOR;
+  page += F(" HC-SR04</h3>");
   page += F("<i><label>TRIG</label>");
   page += WebServer->selectGPIO(INPUT_TRIG_GPIO, FUNCTION_TRIG);
   page += F("</i>");
@@ -706,17 +744,23 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   page += F("</i>");
   page += F("</div>");
 #endif
-  page += F("<button type='submit'>Zapisz</button></form>");
+  page += F("<button type='submit'>");
+  page += S_SAVE;
+  page += F("</button></form>");
   page += F("<br>");
   page += F("<form method='post' action='");
   page += PATH_REBOT;
   page += F("'>");
-  page += F("<button type='submit'>Restart</button></form>");
+  page += F("<button type='submit'>");
+  page += S_RESTART;
+  page += F("</button></form>");
   page += F("<br>");
   page += F("<a href='");
   page += PATH_START;
   page += PATH_DEVICE_SETTINGS;
-  page += F("'><button>Powrót</button></a></div>");
+  page += F("'><button>");
+  page += S_RETURN;
+  page += F("</button></a></div>");
   return page;
 }
 #endif
@@ -830,7 +874,9 @@ String SuplaWebPageSensor::supla_webpage_spi(int save) {
   page += F("'>");
 
 #if defined(SUPLA_MAX6675)
-  page += F("<div class='w'><h3>Ustawienie GPIO dla SPI</h3>");
+  page += F("<div class='w'><h3>");
+  page += S_GPIO_SETTINGS_FOR;
+  page += F(" SPI</h3>");
   page += F("<i><label>CLK</label>");
   page += WebServer->selectGPIO(INPUT_CLK_GPIO, FUNCTION_CLK);
   page += F("</i>");
@@ -865,17 +911,23 @@ String SuplaWebPageSensor::supla_webpage_spi(int save) {
   }
   page += F("</div>");
 #endif
-  page += F("<button type='submit'>Zapisz</button></form>");
+  page += F("<button type='submit'>");
+  page += S_SAVE;
+  page += F("</button></form>");
   page += F("<br>");
   page += F("<form method='post' action='");
   page += PATH_REBOT;
   page += F("'>");
-  page += F("<button type='submit'>Restart</button></form>");
+  page += F("<button type='submit'>");
+  page += S_RESTART;
+  page += F("</button></form>");
   page += F("<br>");
   page += F("<a href='");
   page += PATH_START;
   page += PATH_DEVICE_SETTINGS;
-  page += F("'><button>Powrót</button></a></div>");
+  page += F("'><button>");
+  page += S_RETURN;
+  page += F("</button></a></div>");
   return page;
 }
 #endif

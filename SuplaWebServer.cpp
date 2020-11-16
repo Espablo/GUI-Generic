@@ -22,6 +22,7 @@
 #include "SuplaWebPageSensor.h"
 #include "SuplaCommonPROGMEM.h"
 #include "SuplaTemplateBoard.h"
+#include "GUIGenericCommon.h"
 
 SuplaWebServer::SuplaWebServer() {
 }
@@ -148,14 +149,18 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += SuplaJavaScript();
   content += F("<form method='post'>");
   content += F("<div class='w'>");
-  content += F("<h3>Ustawienia WIFI</h3>");
+  content += F("<h3>");
+  content += S_SETTING_WIFI_SSID;
+  content += F("</h3>");
   content += F("<i><input name='");
   content += INPUT_WIFI_SSID;
   content += F("' value='");
   content += String(ConfigManager->get(KEY_WIFI_SSID)->getValue());
   content += F("' length=");
   content += MAX_SSID;
-  content += F(" required><label>Nazwa sieci</label></i>");
+  content += F(" required><label>");
+  content += S_WIFI_SSID;
+  content += F("</label></i> ");
   content += F("<i><input name='");
   content += INPUT_WIFI_PASS;
   if (ConfigESP->configModeESP != NORMAL_MODE) {
@@ -175,18 +180,23 @@ String SuplaWebServer::supla_webpage_start(int save) {
     content += MAX_PASSWORD;
     content += F(" required>");
   }
-  content += F("<label>Hasło</label></i>");
+  content += F("<label>");
+  content += S_WIFI_PASS;
+  content += F("</label></i> ");
   content += F("<i><input name='");
   content += INPUT_HOSTNAME;
   content += F("' value='");
   content += ConfigManager->get(KEY_HOST_NAME)->getValue();
   content += F("' length=");
   content += MAX_HOSTNAME;
-  content += F(" required><label>Nazwa modułu</label></i>");
+  content += F(" required><label>");
+  content += S_HOST_NAME;
+  content += F("</label></i> ");
   content += F("</div>");
-
   content += F("<div class='w'>");
-  content += F("<h3>Ustawienia SUPLA</h3>");
+  content += F("<h3>");
+  content += S_SETTING_SUPLA;
+  content += F("</h3> ");
   content += F("<i><input name='");
   content += INPUT_SERVER;
   content += F("' length=");
@@ -200,7 +210,9 @@ String SuplaWebServer::supla_webpage_start(int save) {
     content += F(" value='");
   }
   content += def_2;
-  content += F("' required><label>Adres serwera</label></i>");
+  content += F("' required><label>");
+  content += S_SUPLA_SERVER;
+  content += F("</bel></i> ");
   content += F("<i><input name='");
   content += INPUT_EMAIL;
   content += F("' length=");
@@ -214,18 +226,24 @@ String SuplaWebServer::supla_webpage_start(int save) {
     content += F(" value='");
   }
   content += def_2;
-  content += F("' required><label>Email</label></i>");
+  content += F("' required><label>");
+  content += S_SUPLA_EMAIL;
+  content += F("</label></i>");
   content += F("</div>");
 
   content += F("<div class='w'>");
-  content += F("<h3>Ustawienia administratora</h3>");
+  content += F("<h3>");
+  content += S_SETTING_ADMIN;
+  content += F("</h3>");
   content += F("<i><input name='");
   content += INPUT_MODUL_LOGIN;
   content += F("' value='");
   content += String(ConfigManager->get(KEY_LOGIN)->getValue());
   content += F("' length=");
   content += MAX_MLOGIN;
-  content += F("><label>Login</label></i>");
+  content += F("><label>");
+  content += S_LOGIN;
+  content += F("</label></i>");
   content += F("<i><input name='");
   content += INPUT_MODUL_PASS;
   if (ConfigESP->configModeESP != NORMAL_MODE) {
@@ -239,15 +257,21 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("' length=");
   content += MAX_MPASSWORD;
   content += F(" required>");
-  content += F("<label>Hasło</label></i>");
+  content += F("<label>");
+  content += S_LOGIN_PASS;
+  content += F("</label></i>");
   content += F("</div>");
 
 #ifdef SUPLA_ROLLERSHUTTER
   uint8_t maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   if (maxrollershutter >= 2) {
     content += F("<div class='w'>");
-    content += F("<h3>Rolety</h3>");
-    content += F("<i><label>Ilość</label><input name='");
+    content += F("<h3>");
+    content += S_ROLLERSHUTTERS;
+    content += F("</h3>");
+    content += F("<i><label>");
+    content += S_QUANTITY;
+    content += F("</label><input name='");
     content += INPUT_ROLLERSHUTTER;
     content += F("' type='number' placeholder='1' step='1' min='0' max='");
     content += maxrollershutter / 2;
@@ -262,39 +286,51 @@ String SuplaWebServer::supla_webpage_start(int save) {
   WebPageSensor->showDS18B20(content, true);
 #endif
 
-  content += F("<button type='submit'>Zapisz</button></form>");
+  content += F("<button type='submit'>");
+  content += S_SAVE;
+  content += F("</button></form> ");
   content += F("<br>");
   content += F("<a href='");
   content += PATH_START;
   content += PATH_DEVICE_SETTINGS;
-  content += F("'><button>Ustawienia urządzenia</button></a>");
+  content += F("'><button>");
+  content += S_DEVICE_SETTINGS;
+  content += F("</button></a>");
   content += F("<br><br>");
   content += F("<a href='");
   content += PATH_START;
   content += PATH_UPDATE;
-  content += F("'><button>Aktualizacja</button></a>");
+  content += F("'><button>");
+  content += S_UPDATE;
+  content += F("</button></a>");
   content += F("<br><br>");
   content += F("<form method='post' action='");
   content += PATH_REBOT;
   content += F("'>");
-  content += F("<button type='submit'>Restart</button></form></div>");
+  content += F("<button type='submit'>");
+  content += S_RESTART;
+  content += F("</button></form></div>");
   return content;
 }
 
 String SuplaWebServer::supla_webpage_upddate() {
   String content = "";
   content += F("<div class='w'>");
-  content += F("<h3>Aktualizacja oprogramowania</h3>");
+  content += F("<h3>");
+  content += S_SOFTWARE_UPDATE;
+  content += F("</h3>");
   content += F("<br>");
   content += F("<center>");
   content += F("<iframe src=");
   content += UPDATE_PATH;
   content +=
-    F(">Twoja przeglądarka nie akceptuje ramek! width='200' height='100' "
-      "frameborder='100'></iframe>");
+      F(">Twoja przeglądarka nie akceptuje ramek! width='200' height='100' "
+        "frameborder='100'></iframe>");
   content += F("</center>");
   content += F("</div>");
-  content += F("<a href='/'><button>Powrót</button></a></div>");
+  content += F("<a href='/'><button>");
+  content += S_RETURN;
+  content += F("</button></a></div>");
 
   return content;
 }
@@ -316,12 +352,16 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<form method='post' action='");
   content += PATH_SAVE_BOARD;
   content += F("'>");
-  content += F("<div class='w'><h3>Szablony płytek</h3>");
-  content += F("<i><label>Rodzaj</label><select name='");
+  content += F("<div class='w'><h3>");
+  content += S_TEMPLATE_BOARD;
+  content += F("</h3>");
+  content += F("<i><label>");
+  content += S_TYPE;
+  content += F("</label><select name='");
   content += INPUT_BOARD;
   content += F("'>");
   uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
-  for (uint8_t suported = 0; suported < 9; suported++) {
+  for (uint8_t suported = 0; suported < MAX_MODULE; suported++) {
     content += F("<option value='");
     content += suported;
     if (selected == suported) {
@@ -332,10 +372,13 @@ String SuplaWebServer::deviceSettings(int save) {
     content += BoardString(suported);
   }
   content += F("</select></i>");
-  content += F("</div><button type='submit'>Zapisz</button></form><br><br>");
-
+  content += F("</div><button type='submit'>");
+  content += S_SAVE;
+  content += F("</button></form><br><br>");
   content += F("<div class='w'>");
-  content += F("<h3>Ustawienia urządzenia</h3>");
+  content += F("<h3>");
+  content += S_DEVICE_SETTINGS;
+  content += F("</h3>");
   content += F("<br>");
   content += F("<center>");
 
@@ -343,7 +386,9 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<a href='");
   content += PATH_START;
   content += PATH_RELAY;
-  content += F("'><button>PRZEKAŹNIKI</button></a>");
+  content += F("'><button>");
+  content += S_RELAYS;
+  content += F("</button></a>");
   content += F("<br><br>");
 #endif
 
@@ -351,7 +396,9 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<a href='");
   content += PATH_START;
   content += PATH_CONTROL;
-  content += F("'><button>PRZYCISKI</button></a>");
+  content += F("'><button>");
+  content += S_BUTTONS;
+  content += F("</button></a>");
   content += F("<br><br>");
 #endif
 
@@ -359,7 +406,9 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<a href='");
   content += PATH_START;
   content += PATH_1WIRE;
-  content += F("'><button>SENSORY 1Wire</button></a>");
+  content += F("'><button>");
+  content += S_SENSORS_1WIRE;
+  content += F("</button></a>");
   content += F("<br><br>");
 #endif
 
@@ -367,7 +416,9 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<a href='");
   content += PATH_START;
   content += PATH_I2C;
-  content += F("'><button>SENSORY i2c</button></a>");
+  content += F("'><button>");
+  content += S_SENSORS_I2C;
+  content += F("</button></a>");
   content += F("<br><br>");
 #endif
 
@@ -375,7 +426,9 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<a href='");
   content += PATH_START;
   content += PATH_SPI;
-  content += F("'><button>SENSORY SPI</button></a>");
+  content += F("'><button>");
+  content += S_SENSORS_SPI;
+  content += F("</button></a>");
   content += F("<br><br>");
 #endif
 
@@ -383,12 +436,16 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<a href='");
   content += PATH_START;
   content += PATH_CONFIG;
-  content += F("'><button>LED, BUTTON CONFIG</button></a>");
+  content += F("'><button>");
+  content += S_LED_BUTTON_CFG;
+  content += F("</button></a>");
   content += F("<br><br>");
 #endif
   content += F("</div>");
   content += F("</center>");
-  content += F("<a href='/'><button>Powrót</button></a></div>");
+  content += F("<a href='/'><button>");
+  content += S_RETURN;
+  content += F("</button></a></div>");
 
   return content;
 }
@@ -425,12 +482,13 @@ void SuplaWebServer::handleBoardSave() {
 }
 
 String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr) {
-  String page  = "";
+  String page = "";
   page += F("<select name='");
   page += input;
-  if (nr != 0 ) {
+  if (nr != 0) {
     page += nr;
-  } else {
+  }
+  else {
     nr = 1;
   }
   page += F("'>");
@@ -463,20 +521,20 @@ const String SuplaWebServer::SuplaFavicon() {
 
 const String SuplaWebServer::SuplaIconEdit() {
   return F(
-           "<img "
-           "src='data:image/"
-           "png;base64,"
-           "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
-           "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
-           "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
-           "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
+      "<img "
+      "src='data:image/"
+      "png;base64,"
+      "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
+      "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
+      "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
+      "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
 }
 
 const String SuplaWebServer::SuplaJavaScript(String java_return) {
   String java_script =
-    F("<script type='text/javascript'>setTimeout(function(){var "
-      "element=document.getElementById('msg');if( element != "
-      "null){element.style.visibility='hidden';location.href='");
+      F("<script type='text/javascript'>setTimeout(function(){var "
+        "element=document.getElementById('msg');if( element != "
+        "null){element.style.visibility='hidden';location.href='");
   java_script += java_return;
   java_script += F("';}},1600);</script>\n");
   return java_script;
@@ -488,22 +546,22 @@ const String SuplaWebServer::SuplaSaveResult(int save) {
   String saveresult = "";
   saveresult += F("<div id=\"msg\" class=\"c\">");
   if (save == 1) {
-    saveresult += F("Dane zapisane");
+    saveresult += S_DATA_SAVED;
   }
   else if (save == 2) {
-    saveresult += F("Restart modułu");
+    saveresult += S_RESTART_MODULE;
   }
   else if (save == 3) {
-    saveresult += F("Dane wymazane - należy zrobić restart urządzenia");
+    saveresult += S_DATA_ERASED_RESTART_DEVICE;
   }
   else if (save == 4) {
-    saveresult += F("Błąd zapisu - nie można odczytać pliku - brak partycji FS.");
+    saveresult += S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING;
   }
   else if (save == 5) {
-    saveresult += F("Dane zapisane - restart modułu.");
+    saveresult += S_DATA_SAVED_RESTART_MODULE;
   }
   else if (save == 6) {
-    saveresult += F("Błąd zapisu - złe dane.");
+    saveresult += S_WRITE_ERROR_BAD_DATA;
   }
   else if (save == 7) {
     saveresult += F("data saved");

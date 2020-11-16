@@ -199,5 +199,6 @@ void setup() {
 
 void loop() {
   SuplaDevice.iterate();
+  delay(25);
   drd.loop();
 }

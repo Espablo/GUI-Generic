@@ -2,6 +2,7 @@
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 #include "SuplaCommonPROGMEM.h"
+#include "GUIGenericCommon.h"
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 SuplaWebPageRelay *WebPageRelay = new SuplaWebPageRelay();
@@ -104,8 +105,12 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += WebServer->SuplaJavaScript(PATH_RELAY);
   pagerelay += F("<form method='post' action='");
   pagerelay += PATH_SAVE_RELAY;
-  pagerelay += F("'><div class='w'><h3>Ustawienie GPIO dla przekaźników</h3>");
-  pagerelay += F("<i><label>ILOŚĆ</label><input name='");
+  pagerelay += F("'><div class='w'><h3>");
+  pagerelay += S_GPIO_SETTINGS_FOR_RELAYS;
+  pagerelay += F("</h3>");
+  pagerelay += F("<i><label>");
+  pagerelay += S_QUANTITY;
+  pagerelay += F("</label><input name='");
   pagerelay += INPUT_MAX_RELAY;
   pagerelay += F("' type='number' placeholder='0' step='1' min='0' max='");
   pagerelay += ConfigESP->countFreeGpio(FUNCTION_RELAY);
@@ -123,7 +128,8 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
       pagerelay += F("'>");
     }
     pagerelay += nr;
-    pagerelay += F(". PRZEKAŹNIK ");
+    pagerelay += F(". ");
+    pagerelay += S_RELAY;
     if (selected != OFF_GPIO) {
       pagerelay += WebServer->SuplaIconEdit();
       pagerelay += F("</a>");
@@ -132,12 +138,16 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
     pagerelay += WebServer->selectGPIO(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr);
     pagerelay += F("</i>");
   }
-  pagerelay += F("</div><button type='submit'>Zapisz</button></form>");
+  pagerelay += F("</div><button type='submit'>");
+  pagerelay += S_SAVE;
+  pagerelay += F("</button></form>");
   pagerelay += F("<br>");
   pagerelay += F("<a href='");
   pagerelay += PATH_START;
   pagerelay += PATH_DEVICE_SETTINGS;
-  pagerelay += F("'><button>Powrót</button></a></div>");
+  pagerelay += F("'><button>");
+  pagerelay += S_RETURN;
+  pagerelay += F("</button></a></div>");
   return pagerelay;
 }
 
@@ -208,11 +218,14 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += F("<form method='post' action='");
     page += PATH_SAVE_RELAY_SET;
     page += nr_relay;
-    page += F("'><div class='w'><h3>Ustawienia przekaźnika nr. ");
+    page += F("'><div class='w'><h3>");
+    page += S_RELAY_NR_SETTINGS;
+    page += F(" ");
     page += nr_relay;
     page += F("</h3>");
     page += F("<i><label>");
-    page += F("Sterowanie stanem</label><select name='");
+    page += S_STATE_CONTROL;
+    page += F("</label><select name='");
     page += INPUT_RELAY_LEVEL;
     page += nr_relay;
     page += F("'>");
@@ -229,7 +242,8 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     }
     page += F("</select></i>");
     page += F("<i><label>");
-    page += F("Reakcja po resecie</label><select name='");
+    page += S_REACTION_AFTER_RESET;
+    page += F("</label><select name='");
     page += INPUT_RELAY_MEMORY;
     page += nr_relay;
     page += F("'>");
@@ -245,10 +259,14 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
       page += MemoryString(suported);
     }
     page += F("</select></i>");
-    page += F("</div><button type='submit'>Zapisz</button></form>");
+    page += F("</div><button type='submit'>");
+    page += S_SAVE;
+    page += F("</button></form>");
   }
   else {
-    page += F("<div class='w'><h3>Brak przekaźnika nr. ");
+    page += F("<div class='w'><h3>");
+    page += S_NO_RELAY_NR;
+    page += F(" ");
     page += nr_relay;
     page += F("</h3>");
   }
@@ -256,7 +274,9 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
   page += F("<a href='");
   page += PATH_START;
   page += PATH_RELAY;
-  page += F("'><button>Powrót</button></a></div>");
+  page += F("'><button>");
+  page += S_RETURN;
+  page += F("</button></a></div>");
 
   return page;
 }
