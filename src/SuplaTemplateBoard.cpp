@@ -58,6 +58,16 @@ void chooseTemplateBoard(uint8_t board) {
       setLimitSwitch(4);
       setLimitSwitch(16);
       break;
+    case BOARD_INCAN4:
+      setLedCFG(12);
+      setButtonCFG(0);
+      setButton(2, Supla::ON_CHANGE);
+      setButton(10, Supla::ON_CHANGE);
+      setRelay(4);
+      setRelay(14);
+      setLimitSwitch(4);
+      setLimitSwitch(16);
+      break;
     case BOARD_MELINK:
       setLedCFG(12);
       setButtonCFG(5);
@@ -103,6 +113,12 @@ void chooseTemplateBoard(uint8_t board) {
       setButton(0);
       setRelay(12);
       ConfigESP->setGpio(14, FUNCTION_SI7021_SONOFF);
+      break;
+    case BOARD_SONOFF_SV:
+      setLedCFG(13);
+      setButtonCFG(0);
+      setButton(0);
+      setRelay(12);
       break;
     case BOARD_SONOFF_TH:
       setLedCFG(13);
