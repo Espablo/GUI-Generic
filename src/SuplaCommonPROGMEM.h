@@ -4,6 +4,8 @@
 #include "SuplaDeviceGUI.h"
 #include "GUIGenericCommon.h"
 
+#define PGMT( pgm_ptr ) ( reinterpret_cast< const __FlashStringHelper * >( pgm_ptr ) )
+
 const char HTTP_META[] PROGMEM =
     "<!DOCTYPE HTML><meta http-equiv='content-type' content='text/html; charset=UTF-8'><meta name='viewport' "
     "content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no'>\n";
