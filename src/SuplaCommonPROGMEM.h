@@ -2,6 +2,7 @@
 #define SuplaCommonPROGMEM_h
 #include <pgmspace.h>
 #include "SuplaDeviceGUI.h"
+#include "GUIGenericCommon.h"
 
 const char HTTP_META[] PROGMEM =
     "<!DOCTYPE HTML><meta http-equiv='content-type' content='text/html; charset=UTF-8'><meta name='viewport' "
@@ -62,8 +63,8 @@ const char GPIO13[] PROGMEM = "GPIO13-D7";
 const char GPIO14[] PROGMEM = "GPIO14-D5";
 const char GPIO15[] PROGMEM = "GPIO15-D8";
 const char GPIO16[] PROGMEM = "GPIO16-D0";
-const char OFF[] PROGMEM = "OFF";
-const char ON[] PROGMEM = "ON";
+const char OFF[] PROGMEM = S_OFF;
+const char ON[] PROGMEM = S_ON;
 const char GPIONULL[] PROGMEM = "";
 
 const char* const GPIO_P[] PROGMEM = {GPIO0, GPIO1,  GPIO2,    GPIO3,  GPIO4,  GPIO5,  GPIONULL, GPIONULL, GPIONULL,
@@ -81,17 +82,17 @@ const char* const SHT30_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
 
 const char* const STATE_P[] PROGMEM = {OFF, ON};
 
-const char ODWROCONE[] PROGMEM = "LOW";
-const char NORMALNE[] PROGMEM = "HIGH";
-const char* const LEVEL_P[] PROGMEM = {ODWROCONE, NORMALNE};
+const char LOW_STATE_CONTROL[] PROGMEM = S_LOW;
+const char HIGH_STATE_CONTROL[] PROGMEM = S_HIGH;
+const char* const LEVEL_P[] PROGMEM = {LOW_STATE_CONTROL, HIGH_STATE_CONTROL};
 
-const char PAMIETAJSTAN[] PROGMEM = "PAMIĘTAJ STAN";
-const char* const MEMORY_P[] PROGMEM = {OFF, ON, PAMIETAJSTAN};
+const char POSITION_MEMORY[] PROGMEM = S_POSITION_MEMORY;
+const char* const MEMORY_P[] PROGMEM = {OFF, ON, POSITION_MEMORY};
 
-const char WCISNIECIE[] PROGMEM = "WCIŚNIĘCIE";
-const char ZWOLNIENIE[] PROGMEM = "ZWOLNIENIE";
-const char ZMIANASTANU[] PROGMEM = "ZMIANA STANU";
-const char* const TRIGGER_P[] PROGMEM = {WCISNIECIE, ZWOLNIENIE, ZMIANASTANU};
+const char REACTION_ON_PRESS[] PROGMEM = S_REACTION_ON_PRESS;
+const char REACTION_ON_RELEASE[] PROGMEM = S_REACTION_ON_RELEASE;
+const char REACTION_ON_CHANGE[] PROGMEM = S_REACTION_ON_CHANGE;
+const char* const TRIGGER_P[] PROGMEM = {REACTION_ON_PRESS, REACTION_ON_RELEASE, REACTION_ON_CHANGE};
 
 String GIPOString(uint8_t gpio);
 String BME280String(uint8_t adr);
