@@ -2,7 +2,13 @@
 #define SuplaTemplateBoard_h
 
 #include <pgmspace.h>
+#include "SuplaWebPageRelay.h"
 
+void setButton(uint8_t gpio, uint8_t event = 0);
+void setRelay(uint8_t gpio, uint8_t level = HIGH);
+void setLimitSwitch(uint8_t gpio);
+void setLedCFG(uint8_t gpio, uint8_t level = HIGH);
+void setButtonCFG(uint8_t gpio);
 
 enum _board
 {

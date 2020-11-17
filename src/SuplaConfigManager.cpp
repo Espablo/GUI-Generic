@@ -150,8 +150,8 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_SUPLA_SERVER, DEFAULT_SERVER, MAX_SUPLA_SERVER);
   this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL, MAX_EMAIL);
   this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
-  this->addKey(KEY_MAX_RELAY, "1", 2);
-  this->addKey(KEY_MAX_BUTTON, "1", 2);
+  this->addKey(KEY_MAX_RELAY, "0", 2);
+  this->addKey(KEY_MAX_BUTTON, "0", 2);
   this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
   this->addKey(KEY_MAX_DHT22, "1", 2);
   this->addKey(KEY_MAX_DHT11, "1", 2);
