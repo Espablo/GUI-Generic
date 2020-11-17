@@ -24,6 +24,8 @@
 #include "SuplaTemplateBoard.h"
 #include "GUIGenericCommon.h"
 
+#include "Markup.h"
+
 SuplaWebServer::SuplaWebServer() {
 }
 
@@ -153,119 +155,22 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += SuplaSaveResult(save);
   content += SuplaJavaScript();
   content += F("<form method='post'>");
-  content += F("<div class='w'>");
-  content += F("<h3>");
-  content += S_SETTING_WIFI_SSID;
-  content += F("</h3>");
-  content += F("<i><input name='");
-  content += INPUT_WIFI_SSID;
-  content += F("' value='");
-  content += String(ConfigManager->get(KEY_WIFI_SSID)->getValue());
-  content += F("' length=");
-  content += MAX_SSID;
-  content += F(" required><label>");
-  content += S_WIFI_SSID;
-  content += F("</label></i> ");
-  content += F("<i><input name='");
-  content += INPUT_WIFI_PASS;
-  if (ConfigESP->configModeESP != NORMAL_MODE) {
-    content += F("' type='password' ");
-  }
-  content += F("' value='");
-  content += String(ConfigManager->get(KEY_WIFI_PASS)->getValue());
-  content += F("'");
 
-  if (ConfigManager->get(KEY_WIFI_PASS)->getValue() != 0) {
-    content += F("required>");
-  }
-  else {
-    content += F("'minlength='");
-    content += MIN_PASSWORD;
-    content += F("' length=");
-    content += MAX_PASSWORD;
-    content += F(" required>");
-  }
-  content += F("<label>");
-  content += S_WIFI_PASS;
-  content += F("</label></i> ");
-  content += F("<i><input name='");
-  content += INPUT_HOSTNAME;
-  content += F("' value='");
-  content += ConfigManager->get(KEY_HOST_NAME)->getValue();
-  content += F("' length=");
-  content += MAX_HOSTNAME;
-  content += F(" required><label>");
-  content += S_HOST_NAME;
-  content += F("</label></i> ");
-  content += F("</div>");
-  content += F("<div class='w'>");
-  content += F("<h3>");
-  content += S_SETTING_SUPLA;
-  content += F("</h3> ");
-  content += F("<i><input name='");
-  content += INPUT_SERVER;
-  content += F("' length=");
-  content += MAX_SUPLA_SERVER;
-  String def = DEFAULT_SERVER;
-  String def_2 = String(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-  if (def == def_2) {
-    content += F(" placeholder='");
-  }
-  else {
-    content += F(" value='");
-  }
-  content += def_2;
-  content += F("' required><label>");
-  content += S_SUPLA_SERVER;
-  content += F("</bel></i> ");
-  content += F("<i><input name='");
-  content += INPUT_EMAIL;
-  content += F("' length=");
-  content += MAX_EMAIL;
-  def = DEFAULT_EMAIL;
-  def_2 = String(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue());
-  if (def == def_2) {
-    content += F(" placeholder='");
-  }
-  else {
-    content += F(" value='");
-  }
-  content += def_2;
-  content += F("' required><label>");
-  content += S_SUPLA_EMAIL;
-  content += F("</label></i>");
-  content += F("</div>");
+  addFormHeader(content, S_SETTING_WIFI_SSID);
+  addTextBox(content, INPUT_WIFI_SSID, KEY_WIFI_SSID, S_WIFI_SSID, 0, MAX_SSID, true);
+  addTextBoxPassword(content, INPUT_WIFI_PASS, KEY_WIFI_PASS, S_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
+  addTextBox(content, INPUT_HOSTNAME, KEY_HOST_NAME, S_HOST_NAME, 0, MAX_HOSTNAME, true);
+  addFormHeaderEnd(content);
 
-  content += F("<div class='w'>");
-  content += F("<h3>");
-  content += S_SETTING_ADMIN;
-  content += F("</h3>");
-  content += F("<i><input name='");
-  content += INPUT_MODUL_LOGIN;
-  content += F("' value='");
-  content += String(ConfigManager->get(KEY_LOGIN)->getValue());
-  content += F("' length=");
-  content += MAX_MLOGIN;
-  content += F("><label>");
-  content += S_LOGIN;
-  content += F("</label></i>");
-  content += F("<i><input name='");
-  content += INPUT_MODUL_PASS;
-  if (ConfigESP->configModeESP != NORMAL_MODE) {
-    content += F("' type='password' ");
-  }
-  content += F("' value='");
-  content += String(ConfigManager->get(KEY_LOGIN_PASS)->getValue());
-  content += F("'");
-  content += F("'minlength='");
-  content += MIN_PASSWORD;
-  content += F("' length=");
-  content += MAX_MPASSWORD;
-  content += F(" required>");
-  content += F("<label>");
-  content += S_LOGIN_PASS;
-  content += F("</label></i>");
-  content += F("</div>");
+  addFormHeader(content, S_SETTING_SUPLA);
+  addTextBox(content, INPUT_SERVER, KEY_SUPLA_SERVER, S_SUPLA_SERVER, 0, MAX_SUPLA_SERVER, true);
+  addTextBox(content, INPUT_EMAIL, KEY_SUPLA_EMAIL, S_SUPLA_EMAIL, 0, MAX_EMAIL, true);
+  addFormHeaderEnd(content);
+
+  addFormHeader(content, S_SETTING_ADMIN);
+  addTextBox(content, INPUT_MODUL_LOGIN, KEY_LOGIN, S_LOGIN, 0, MAX_MLOGIN, true);
+  addTextBoxPassword(content, INPUT_MODUL_PASS, KEY_LOGIN_PASS, S_LOGIN_PASS, MIN_PASSWORD, MAX_MPASSWORD, true);
+  addFormHeaderEnd(content);
 
 #ifdef SUPLA_ROLLERSHUTTER
   uint8_t maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
