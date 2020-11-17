@@ -39,6 +39,10 @@ void setButtonCFG(uint8_t gpio) {
 }
 
 void chooseTemplateBoard(uint8_t board) {
+  ConfigManager->set(KEY_MAX_BUTTON, "0");
+  ConfigManager->set(KEY_MAX_RELAY, "0");
+  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
+  
   switch (board) {
     case BOARD_ELECTRODRAGON:
       setLedCFG(16);
@@ -175,12 +179,6 @@ void chooseTemplateBoard(uint8_t board) {
       setButtonCFG(12);
       setButton(12, Supla::ON_CHANGE);
       setRelay(4);
-      break;
-
-    default:
-      ConfigManager->set(KEY_MAX_BUTTON, "0");
-      ConfigManager->set(KEY_MAX_RELAY, "0");
-      ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
       break;
   }
 }
