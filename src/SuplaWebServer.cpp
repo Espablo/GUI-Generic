@@ -33,7 +33,9 @@ void SuplaWebServer::begin() {
   strcpy(this->www_username, ConfigManager->get(KEY_LOGIN)->getValue());
   strcpy(this->www_password, ConfigManager->get(KEY_LOGIN_PASS)->getValue());
 
+#ifdef SUPLA_OTA
   httpUpdater.setup(&httpServer, UPDATE_PATH, www_username, www_password);
+#endif
   httpServer.begin();
 }
 
@@ -46,9 +48,11 @@ void SuplaWebServer::createWebServer() {
   httpServer.on(path, HTTP_GET, std::bind(&SuplaWebServer::handle, this));
   path = PATH_START;
   httpServer.on(path, std::bind(&SuplaWebServer::handleSave, this));
+#ifdef SUPLA_OTA
   path = PATH_START;
   path += PATH_UPDATE;
   httpServer.on(path, std::bind(&SuplaWebServer::handleFirmwareUp, this));
+#endif
   path = PATH_START;
   path += PATH_REBOT;
   httpServer.on(path, std::bind(&SuplaWebServer::supla_webpage_reboot, this));
@@ -126,7 +130,7 @@ void SuplaWebServer::handleSave() {
       break;
   }
 }
-
+#ifdef SUPLA_OTA
 void SuplaWebServer::handleFirmwareUp() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!httpServer.authenticate(www_username, www_password))
@@ -134,6 +138,7 @@ void SuplaWebServer::handleFirmwareUp() {
   }
   this->sendContent(supla_webpage_upddate());
 }
+#endif
 
 void SuplaWebServer::handleDeviceSettings() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
@@ -297,6 +302,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += S_DEVICE_SETTINGS;
   content += F("</button></a>");
   content += F("<br><br>");
+#ifdef SUPLA_OTA
   content += F("<a href='");
   content += PATH_START;
   content += PATH_UPDATE;
@@ -304,6 +310,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += S_UPDATE;
   content += F("</button></a>");
   content += F("<br><br>");
+#endif
   content += F("<form method='post' action='");
   content += PATH_REBOT;
   content += F("'>");
@@ -313,6 +320,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
   return content;
 }
 
+#ifdef SUPLA_OTA
 String SuplaWebServer::supla_webpage_upddate() {
   String content = "";
   content += F("<div class='w'>");
@@ -334,6 +342,7 @@ String SuplaWebServer::supla_webpage_upddate() {
 
   return content;
 }
+#endif
 
 void SuplaWebServer::supla_webpage_reboot() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {

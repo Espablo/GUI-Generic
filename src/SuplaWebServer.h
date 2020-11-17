@@ -17,7 +17,9 @@
 #ifndef SuplaWebServer_h
 #define SuplaWebServer_h
 
-#include <ESP8266HTTPUpdateServer.h>
+#ifdef SUPLA_OTA
+  #include <ESP8266HTTPUpdateServer.h>
+#endif
 #include <ESP8266WebServer.h>
 #include <supla/element.h>
 
@@ -40,7 +42,7 @@
 #define PATH_DEVICE_SETTINGS  "devicesettings"
 #define PATH_DEFAULT_SETTINGS "defaultsettings"
 #define PATH_LOGIN_SETTINGS   "loginsettings"
-#define PATH_SAVE_BOARD		  "saveboard"
+#define PATH_SAVE_BOARD       "saveboard"
 
 #define INPUT_WIFI_SSID     "sid"
 #define INPUT_WIFI_PASS     "wpw"
@@ -50,48 +52,50 @@
 #define INPUT_MODUL_LOGIN   "mlg"
 #define INPUT_MODUL_PASS    "mps"
 #define INPUT_ROLLERSHUTTER "irsr"
-#define INPUT_BOARD			"board"
+#define INPUT_BOARD         "board"
 
 class SuplaWebServer : public Supla::Element {
-  public:
-   String selectGPIO(const char* input, uint8_t function, uint8_t nr = 0);
-    SuplaWebServer();
-    void begin();
+ public:
+  String selectGPIO(const char* input, uint8_t function, uint8_t nr = 0);
+  SuplaWebServer();
+  void begin();
 
-    char www_username[MAX_MLOGIN];
-    char www_password[MAX_MPASSWORD];
-    char* update_path = (char*)UPDATE_PATH;
+  char www_username[MAX_MLOGIN];
+  char www_password[MAX_MPASSWORD];
+  char* update_path = (char*)UPDATE_PATH;
 
-    const String SuplaFavicon();
-    const String SuplaIconEdit();
-    const String SuplaJavaScript(String java_return = PATH_START);
-    const String SuplaSaveResult(int save);
+  const String SuplaFavicon();
+  const String SuplaIconEdit();
+  const String SuplaJavaScript(String java_return = PATH_START);
+  const String SuplaSaveResult(int save);
 
-    void sendContent(const String content);
-    void rebootESP();
+  void sendContent(const String content);
+  void rebootESP();
 
-    ESP8266WebServer httpServer = {80};
-    ESP8266HTTPUpdateServer httpUpdater;
+  ESP8266WebServer httpServer = {80};
+#ifdef SUPLA_OTA
+  ESP8266HTTPUpdateServer httpUpdater;
+  void handleFirmwareUp();
+  String supla_webpage_upddate();
+#endif
 
-  private:
-    void iterateAlways();
-    void handle();
-    void handleSave();
-    void handleWizardSave();
-    void handleFirmwareUp();
-    void handleDeviceSettings();
-    void handleBoardSave();
-    void handleDefaultSettings();
-    void handleLoginSettings();
-    void createWebServer();
+ private:
+  void iterateAlways();
+  void handle();
+  void handleSave();
+  void handleWizardSave();
+  void handleDeviceSettings();
+  void handleBoardSave();
+  void handleDefaultSettings();
+  void handleLoginSettings();
+  void createWebServer();
 
-    String supla_webpage_start(int save);
-    String supla_webpage_upddate();
-    void supla_webpage_reboot();
-	String deviceSettings(int save);
-    String loginSettings();
+  String supla_webpage_start(int save);
+  void supla_webpage_reboot();
+  String deviceSettings(int save);
+  String loginSettings();
 
-    void redirectToIndex();
+  void redirectToIndex();
 };
 
 #endif  // SuplaWebServer_h
