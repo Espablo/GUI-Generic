@@ -82,7 +82,7 @@
 #define S_ON                  "ON"
 #define S_LOW                 "LOW"
 #define S_HIGH                "HIGH"
-#define S_POSITION_MEMORY     "POSITION EMORY"
+#define S_POSITION_MEMORY     "POSITION MEMORY"
 #define S_REACTION_ON_PRESS   "ON PRESS"
 #define S_REACTION_ON_RELEASE "ON RELEASE"
 #define S_REACTION_ON_CHANGE  "ON CHANGE"
