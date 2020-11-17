@@ -19,6 +19,7 @@
 #include "SuplaConfigESP.h"
 #include "SuplaConfigManager.h"
 #include "SuplaDeviceGUI.h"
+#include "GUIGenericCommon.h"
 
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
@@ -45,15 +46,6 @@ SuplaConfigESP::SuplaConfigESP() {
     configModeInit();
   }
 
-  // if(String(ConfigManager->get(KEY_WIFI_SSID)->getValue()) == 0 ||
-  //         String(ConfigManager->get(KEY_WIFI_PASS)->getValue()) == 0 ||
-  //         String(ConfigManager->get(KEY_SUPLA_SERVER)->getValue()) ==
-  //         DEFAULT_SERVER ||
-  //         String(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue()) ==
-  //         DEFAULT_EMAIL){
-  //   configModeInit();
-  //   return;
-  // }
   SuplaDevice.setStatusFuncImpl(&status_func);
 }
 
@@ -248,63 +240,61 @@ void ledBlinking_func(void *timer_arg) {
 void status_func(int status, const char *msg) {
   switch (status) {
     case 2:
-      ConfigESP->supla_status.msg = "Już zainicjalizowane";
+      ConfigESP->supla_status.msg = S_ALEREADY_INITIATED;
       break;
     case 3:
-      ConfigESP->supla_status.msg = "Nie przypisane CB";
+      ConfigESP->supla_status.msg = S_NOT_ASSIGNED_CB;
       break;
     case 4:
-      ConfigESP->supla_status.msg =
-        "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń "
-        "NIEAKTYWNA";
+      ConfigESP->supla_status.msg = S_INVALID_GUID_OR_DEVICE_REGISTRATION_INACTIVE;
       break;
     case 5:
-      ConfigESP->supla_status.msg = "Nieznany adres serwera";
+      ConfigESP->supla_status.msg = S_UNKNOWN_SEVER_ADDRESS;
       break;
     case 6:
-      ConfigESP->supla_status.msg = "Nieznany identyfikator ID";
+      ConfigESP->supla_status.msg = S_UNKNOWN_ID;
       break;
     case 7:
-      ConfigESP->supla_status.msg = "Zainicjowany";
+      ConfigESP->supla_status.msg = S_INITIATED;
       break;
     case 8:
-      ConfigESP->supla_status.msg = "Przekroczono limit kanału";
+      ConfigESP->supla_status.msg = S_CHANNEL_LIMIT_EXCEEDED;
       break;
     case 9:
-      ConfigESP->supla_status.msg = "Rozłączony";
+      ConfigESP->supla_status.msg = S_DISCONNECTED;
       break;
     case 10:
-      ConfigESP->supla_status.msg = "Rejestracja w toku";
+      ConfigESP->supla_status.msg = S_REGISRATION_IS_PENDING;
       break;
     case 11:
-      ConfigESP->supla_status.msg = "Błąd zmiennej";
+      ConfigESP->supla_status.msg = S_VARIABLE_ERROR;
       break;
     case 12:
-      ConfigESP->supla_status.msg = "Błąd wersji protokołu";
+      ConfigESP->supla_status.msg = S_PROTOCOL_VERSION_ERROR;
       break;
     case 13:
-      ConfigESP->supla_status.msg = "Złe poświadczenia";
+      ConfigESP->supla_status.msg = S_BAD_CREDENTIALS;
       break;
     case 14:
-      ConfigESP->supla_status.msg = "Tymczasowo niedostępne";
+      ConfigESP->supla_status.msg = S_TEMPORARILY_UNAVAILABLE;
       break;
     case 15:
-      ConfigESP->supla_status.msg = "Konflikt lokalizacji";
+      ConfigESP->supla_status.msg = S_LOCATION_CONFLICT;
       break;
     case 16:
-      ConfigESP->supla_status.msg = "Konflikt kanałów";
+      ConfigESP->supla_status.msg = S_CHANNEL_CONFLICT;
       break;
     case 17:
-      ConfigESP->supla_status.msg = "Zarejestrowany i gotowy";
+      ConfigESP->supla_status.msg = S_REGISTERED_AND_READY;
       break;
     case 18:
-      ConfigESP->supla_status.msg = "Urządzenie jest rozłączone";
+      ConfigESP->supla_status.msg = S_DEVICE_IS_DISCONNECTED;
       break;
     case 19:
-      ConfigESP->supla_status.msg = "Lokalizacja jest wyłączona";
+      ConfigESP->supla_status.msg = S_LOCATION_IS_DISABLED;
       break;
     case 20:
-      ConfigESP->supla_status.msg = "Przekroczono limit urządzeń";
+      ConfigESP->supla_status.msg = S_DEVICE_LIMIT_EXCEEDED;
   }
 
   static int lock;
