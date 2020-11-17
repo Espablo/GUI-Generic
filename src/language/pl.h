@@ -56,4 +56,35 @@
 #define S_DATA_SAVED_RESTART_MODULE                            "Dane zapisane - restart modułu."
 #define S_WRITE_ERROR_BAD_DATA                                 "Błąd zapisu - złe dane."
 
+//#### SuplaConfigESP.cpp ####
+#define S_ALEREADY_INITIATED                           "Już zainicjalizowane"
+#define S_NOT_ASSIGNED_CB                              "Nie przypisane CB"
+#define S_INVALID_GUID_OR_DEVICE_REGISTRATION_INACTIVE "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń NIEAKTYWNA"
+#define S_UNKNOWN_SEVER_ADDRESS                        "Nieznany adres serwera"
+#define S_UNKNOWN_ID                                   "Nieznany identyfikator ID"
+#define S_INITIATED                                    "Zainicjowany"
+#define S_CHANNEL_LIMIT_EXCEEDED                       "Przekroczono limit kanału"
+#define S_DISCONNECTED                                 "Rozłączony"
+#define S_REGISRATION_IS_PENDING                       "Rejestracja w toku"
+#define S_VARIABLE_ERROR                               "Błąd zmiennej"
+#define S_PROTOCOL_VERSION_ERROR                       "Błąd wersji protokołu"
+#define S_BAD_CREDENTIALS                              "Złe poświadczenia"
+#define S_TEMPORARILY_UNAVAILABLE                      "Tymczasowo niedostępne"
+#define S_LOCATION_CONFLICT                            "Konflikt lokalizacji"
+#define S_CHANNEL_CONFLICT                             "Konflikt kanałów"
+#define S_REGISTERED_AND_READY                         "Zarejestrowany i gotowy"
+#define S_DEVICE_IS_DISCONNECTED                       "Urządzenie jest rozłączone"
+#define S_LOCATION_IS_DISABLED                         "Lokalizacja jest wyłączona"
+#define S_DEVICE_LIMIT_EXCEEDED                        "Przekroczono limit urządzeń"
+
+//#### SuplaCommonPROGMEM.h ####
+#define S_OFF                 "WYŁĄCZONY"
+#define S_ON                  "ZAŁĄCZONY"
+#define S_LOW                 "ODWRÓCONE"
+#define S_HIGH                "NORMALNE"
+#define S_POSITION_MEMORY     "PAMIĘTAJ STAN"
+#define S_REACTION_ON_PRESS   "WCIŚNIĘCIE"
+#define S_REACTION_ON_RELEASE "ZWOLNIENIE"
+#define S_REACTION_ON_CHANGE  "ZMIANA STANU"
+
 #endif  // _LANGUAGE_PL_S_H_

@@ -605,12 +605,14 @@ void SuplaWebServer::sendContent(const String content) {
   httpServer.sendContent_P(HTTP_LOGO);
 
   String summary = FPSTR(HTTP_SUMMARY);
+
   summary.replace("{h}", ConfigManager->get(KEY_HOST_NAME)->getValue());
   summary.replace("{s}", ConfigESP->getLastStatusSupla());
   summary.replace("{v}", Supla::Channel::reg_dev.SoftVer);
   summary.replace("{g}", ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
   summary.replace("{m}", ConfigESP->getMacAddress(true));
   httpServer.sendContent(summary);
+  httpServer.sendContent_P(HTTP_COPYRIGHT);
 
   // httpServer.send(200, "text/html", "");
   for (int i = 0; i < fileSize; i++) {
@@ -630,7 +632,6 @@ void SuplaWebServer::sendContent(const String content) {
     bufferCounter = 0;
     _buffer = "";
   }
-  httpServer.sendContent_P(HTTP_COPYRIGHT);
 
   httpServer.chunkedResponseFinalize();
 }
