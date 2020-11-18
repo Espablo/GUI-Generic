@@ -1,44 +1,34 @@
 #include "SuplaCommonPROGMEM.h"
 #include "SuplaTemplateBoard.h"
 
-static char buffer[15];
-
 String GIPOString(uint8_t gpio) {
-  strcpy_P(buffer, (char*)pgm_read_ptr(&(GPIO_P[gpio])));
-  return buffer;
+  return PGMT(GPIO_P[gpio]);
 }
 
 String BME280String(uint8_t adr) {
-  strcpy_P(buffer, (char*)pgm_read_ptr(&(BME280_P[adr])));
-  return buffer;
+  return PGMT(BME280_P[adr]);
 }
 
 String SHT30String(uint8_t adr) {
-  strcpy_P(buffer, (char*)pgm_read_ptr(&(SHT30_P[adr])));
-  return buffer;
+  return PGMT(SHT30_P[adr]);
 }
 
 String StateString(uint8_t adr) {
-  strcpy_P(buffer, (char*)pgm_read_ptr(&(STATE_P[adr])));
-  return buffer;
+  return PGMT(STATE_P[adr]);
 }
 
 String LevelString(uint8_t nr) {
-  strcpy_P(buffer, (char*)pgm_read_ptr(&(LEVEL_P[nr])));
-  return buffer;
+  return PGMT(LEVEL_P[nr]);
 }
 
 String MemoryString(uint8_t nr) {
-  strcpy_P(buffer, (char*)pgm_read_ptr(&(MEMORY_P[nr])));
-  return buffer;
+  return PGMT(MEMORY_P[nr]);
 }
 
 String TriggerString(uint8_t nr) {
-  strcpy_P(buffer, (char*)pgm_read_ptr(&(TRIGGER_P[nr])));
-  return buffer;
+  return PGMT(TRIGGER_P[nr]);
 }
 
 String BoardString(uint8_t board) {
-  strcpy_P(buffer, (char*)pgm_read_ptr(&(BOARD_P[board])));
-  return buffer;	
+  return PGMT(BOARD_P[board]);	
 }

@@ -238,6 +238,7 @@ void ledBlinking_func(void *timer_arg) {
 }
 
 void status_func(int status, const char *msg) {
+#ifndef UI_LANGUAGE
   switch (status) {
     case 2:
       ConfigESP->supla_status.msg = S_ALEREADY_INITIATED;
@@ -296,6 +297,9 @@ void status_func(int status, const char *msg) {
     case 20:
       ConfigESP->supla_status.msg = S_DEVICE_LIMIT_EXCEEDED;
   }
+#else
+ConfigESP->supla_status.msg = msg;
+#endif
 
   static int lock;
   if (status == 17 && ConfigESP->configModeESP == NORMAL_MODE) {
