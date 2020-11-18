@@ -47,6 +47,7 @@
 #define KEY_ALTITUDE_BME280   "altbme280"
 #define KEY_ACTIVE_SENSOR     "sensor"
 #define KEY_BOARD             "board"
+#define KEY_CFG_MODE          "cfgmode"
 
 #define GPIO      "GPIO"
 #define SEPARATOR ','

@@ -169,6 +169,7 @@ SuplaConfigManager::SuplaConfigManager() {
 
   this->addKey(KEY_ACTIVE_SENSOR, "0,0,0,0,0", 14);
   this->addKey(KEY_BOARD, "0", 2);
+  this->addKey(KEY_CFG_MODE, "0", 2);
 
   for (nr = 0; nr <= MAX_DS18B20; nr++) {
     key = KEY_DS;

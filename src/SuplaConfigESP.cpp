@@ -66,42 +66,25 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _
   Supla::Control::Button *buttonConfig = new Supla::Control::Button(pinNumberConfig, true, true);
 
   if (modeConfigButton == CONFIG_MODE_10_ON_PRESSES) {
-    buttonConfig->addAction(CONFIG_MODE_10_ON_PRESSES, *ConfigESP, Supla::ON_PRESS);
+    buttonConfig->setMulticlickTime(400);
+    buttonConfig->addAction(CONFIG_MODE_10_ON_PRESSES, *ConfigESP, Supla::ON_CLICK_10);
   }
   if (modeConfigButton == CONFIG_MODE_5SEK_HOLD) {
-    buttonConfig->addAction(CONFIG_MODE_5SEK_HOLD, *ConfigESP, Supla::ON_PRESS);
-    buttonConfig->addAction(CONFIG_MODE_5SEK_HOLD, *ConfigESP, Supla::ON_RELEASE);
+    buttonConfig->setHoldTime(5000);
+    buttonConfig->addAction(CONFIG_MODE_5SEK_HOLD, *ConfigESP, Supla::ON_HOLD);
   }
 }
 
 void SuplaConfigESP::runAction(int event, int action) {
   if (action == CONFIG_MODE_10_ON_PRESSES) {
-    if (millis() - cnfigChangeTimeMs > 10000UL) {
-      cnfigChangeTimeMs = millis();
-      countPresses = 0;
-    }
-    countPresses++;
-
-    if (countPresses == 10) {
-      //      Serial.println(F("CONFIG_MODE_3_PRESSES"));
+    if (event == Supla::ON_CLICK_10) {
       configModeInit();
-      countPresses = 0;
-      return;
     }
   }
-
   if (action == CONFIG_MODE_5SEK_HOLD) {
-    if (event == Supla::ON_PRESS) {
-      cnfigChangeTimeMs = millis();
-    }
-    if (event == Supla::ON_RELEASE) {
-      if (millis() - cnfigChangeTimeMs > 5000UL) {
-        if (!digitalRead(pinNumberConfig)) {
-          //        Serial.println(F("CONFIG_MODE_5SEK_HOLD"));
-          configModeInit();
-        }
-      }
-      cnfigChangeTimeMs = 0;
+    if (event == Supla::ON_HOLD) {
+      // Serial.println(F("CONFIG_MODE_5SEK_HOLD"));
+      configModeInit();
     }
   }
 
@@ -181,7 +164,7 @@ void SuplaConfigESP::configModeInit() {
   configModeESP = CONFIG_MODE;
   ledBlinking(100);
 
-  WiFi.onEvent(WiFiEvent);
+  // WiFi.onEvent(WiFiEvent);
   // Serial.print(F("Creating Access Point"));
   // Serial.print(F("Setting mode ... "));
   // Serial.println(WiFi.mode(WIFI_AP_STA) ? "Ready" : "Failed!");
@@ -189,15 +172,21 @@ void SuplaConfigESP::configModeInit() {
   WiFi.disconnect(true);
   WiFi.mode(WIFI_AP_STA);
 
-  String CONFIG_WIFI_NAME = "SUPLA-ESP8266-" + getMacAddress(false);
-  while (!WiFi.softAP(CONFIG_WIFI_NAME, "")) {
-    // Serial.println(F("."));
-    delay(100);
-  }
-
+  //  String CONFIG_WIFI_NAME = "SUPLA-ESP8266-" + getMacAddress(false);
+  //  while (!WiFi.softAP(CONFIG_WIFI_NAME, "")) {
+  // Serial.println(F("."));
+  // delay(100);
+  // }
   // Serial.println(F("Network Created!"));
   // Serial.print(F("Soft-AP IP address = "));
   // Serial.println(WiFi.softAPIP());
+}
+
+void SuplaConfigESP::iterateAlways() {
+  if (configModeESP == CONFIG_MODE) {
+    String CONFIG_WIFI_NAME = "SUPLA-ESP8266-" + getMacAddress(false);
+    WiFi.softAP(CONFIG_WIFI_NAME, "");
+  }
 }
 
 const char *SuplaConfigESP::getLastStatusSupla() {
@@ -298,7 +287,7 @@ void status_func(int status, const char *msg) {
       ConfigESP->supla_status.msg = S_DEVICE_LIMIT_EXCEEDED;
   }
 #else
-ConfigESP->supla_status.msg = msg;
+  ConfigESP->supla_status.msg = msg;
 #endif
 
   static int lock;
@@ -480,6 +469,8 @@ void SuplaConfigESP::factoryReset() {
     }
 
     ConfigManager->set(KEY_ACTIVE_SENSOR, "0,0,0,0,0");
+    ConfigManager->set(KEY_BOARD, "0");
+    ConfigManager->set(KEY_CFG_MODE, "0");
 
     for (nr = 0; nr <= MAX_DS18B20; nr++) {
       key = KEY_DS;

@@ -99,8 +99,8 @@ class GUIESPWifi : public Supla::ESPWifi {
         }
         WiFi.reconnect();
       }
-      yield();
     }
+    yield();
   }
 
   void enableBuffer(bool value) {

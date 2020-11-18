@@ -18,10 +18,12 @@
 #define SuplaConfigESP_h
 
 #include <supla/triggerable.h>
-
+#include <supla/element.h>
 #include "GUI-Generic_Config.h"
 
 enum _configModeESP { NORMAL_MODE, CONFIG_MODE };
+enum _ConfigMode { CONFIG_MODE_10_ON_PRESSES, CONFIG_MODE_5SEK_HOLD };
+
 
 typedef struct {
   int status;
@@ -29,7 +31,7 @@ typedef struct {
   const char *old_msg;
 } _supla_status;
 
-class SuplaConfigESP : public Supla::Triggerable {
+class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
  public:
   SuplaConfigESP();
 
@@ -77,7 +79,7 @@ class SuplaConfigESP : public Supla::Triggerable {
 
  private:
   void configModeInit();
-
+  void iterateAlways();
   int pinNumberConfig;
   int pinLedConfig;
   int modeConfigButton;
