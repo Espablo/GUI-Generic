@@ -631,7 +631,7 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
 
 #ifdef SUPLA_SI7021
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt();
-     size = sizeof(STATE_P) / sizeof(STATE_P[0]);
+    size = sizeof(STATE_P) / sizeof(STATE_P[0]);
     addListBox(page, INPUT_SI7021, "Si7021", STATE_P, size, selected);
 #endif
   }
