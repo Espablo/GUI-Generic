@@ -2,7 +2,7 @@
 
 void addFormHeader(String& html, const String& name) {
   html += F("<div class='w'>");
-  html += F("<h3>");
+  html += F("<h3> ");
   html += name;
   html += F("</h3>");
 }
@@ -13,15 +13,15 @@ void addFormHeaderEnd(String& html) {
 
 void addTextBox(String& html,
                 const String& input_id,
-                const String& value_key,
                 const String& name,
+                const String& value_key,
                 const String& placeholder,
                 int minlength,
                 int maxlength,
                 bool required,
                 bool readonly,
                 bool password) {
-  html += F("<i><input name=");
+  html += F("<i><input name='");
   html += input_id;
   if (password) {
     if (ConfigESP->configModeESP != NORMAL_MODE) {
@@ -30,29 +30,31 @@ void addTextBox(String& html,
   }
 
   if (placeholder != "") {
-    html += F("' placeholder=");
+    html += F("' placeholder='");
     html += placeholder;
   }
 
-  html += F(" value=");
+  html += F("' value='");
   html += String(ConfigManager->get(value_key.c_str())->getValue());
   if (minlength > 0) {
-    html += F(" minlength=");
+    html += F("' minlength='");
     html += minlength;
+    html += F("'");
   }
   if (maxlength > 0) {
-    html += F(" length=");
+    html += F("' length='");
     html += maxlength;
+    html += F("'");
   }
   if (readonly) {
-    html += F(" readonly ");
+    html += F(" readonly");
   }
 
   if (required) {
-    html += F(" required ");
+    html += F(" required");
   }
 
-  html += F("><label>");
+  html += F(" ><label>");
   html += name;
   html += F("</label></i> ");
 }
