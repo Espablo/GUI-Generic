@@ -42,8 +42,9 @@
 
 // Other
 #define SUPLA_HC_SR04
-#define SUPLA_IMPULSE_COUNTER  // NOT SUPPORTED
-#endif                         // GUI_Generic
+#define SUPLA_IMPULSE_COUNTER
+
+#endif  // GUI_Generic
 
 /*********************************************************************************************\
  * GUI_Generic_minimal
@@ -90,6 +91,13 @@
 
 // SPI
 #define SUPLA_MAX6675
+
+// Other
+#define SUPLA_HC_SR04
+#define SUPLA_PZEMv2           // NOT SUPPORTED
+#define SUPLA_PZEMv3           // NOT SUPPORTED
+#define SUPLA_IMPULSE_COUNTER  // NOT SUPPORTED
+
 #endif  // GUI_Generic_sensors
 
 #endif  // GUI-Generic_Config_h

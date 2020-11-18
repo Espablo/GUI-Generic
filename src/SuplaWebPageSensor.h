@@ -12,26 +12,30 @@
 #define PATH_SAVE_I2C      "savei2c"
 #define PATH_SPI           "spi"
 #define PATH_SAVE_SPI      "savespi"
+#define PATH_OTHER         "other"
+#define PATH_SAVE_OTHER    "saveother"
 
-#define INPUT_MULTI_DS_GPIO   "mdsg"
-#define INPUT_DHT11_GPIO      "dht11"
-#define INPUT_DHT22_GPIO      "dht22"
-#define INPUT_SDA_GPIO        "sdag"
-#define INPUT_SCL_GPIO        "sclg"
-#define INPUT_BME280          "bme280"
-#define INPUT_ALTITUDE_BME280 "abme280"
-#define INPUT_SHT3x           "SHT3x"
-#define INPUT_SI7021          "si7021"
-#define INPUT_SI7021_SONOFF   "si7021sonoff"
-#define INPUT_TRIG_GPIO       "trig"
-#define INPUT_ECHO_GPIO       "echo"
-#define INPUT_MAX_DHT11       "mdht11"
-#define INPUT_MAX_DHT22       "mdht22"
-#define INPUT_MAX_DS18B20     "maxds"
-#define INPUT_CLK_GPIO        "clk"
-#define INPUT_CS_GPIO         "cs"
-#define INPUT_D0_GPIO         "d0"
-#define INPUT_MAX6675         "max6675"
+#define INPUT_MULTI_DS_GPIO                    "mdsg"
+#define INPUT_DHT11_GPIO                       "dht11"
+#define INPUT_DHT22_GPIO                       "dht22"
+#define INPUT_SDA_GPIO                         "sdag"
+#define INPUT_SCL_GPIO                         "sclg"
+#define INPUT_BME280                           "bme280"
+#define INPUT_ALTITUDE_BME280                  "abme280"
+#define INPUT_SHT3x                            "sht30"
+#define INPUT_SI7021                           "si7021"
+#define INPUT_SI7021_SONOFF                    "si7021sonoff"
+#define INPUT_TRIG_GPIO                        "trig"
+#define INPUT_ECHO_GPIO                        "echo"
+#define INPUT_MAX_DHT11                        "mdht11"
+#define INPUT_MAX_DHT22                        "mdht22"
+#define INPUT_MAX_DS18B20                      "maxds"
+#define INPUT_CLK_GPIO                         "clk"
+#define INPUT_CS_GPIO                          "cs"
+#define INPUT_D0_GPIO                          "d0"
+#define INPUT_MAX6675                          "max6675"
+#define INPUT_IMPULSE_COUNTER_GPIO             "ic"
+#define INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "icdt"
 
 enum _sensorI2C
 {
@@ -79,7 +83,7 @@ class SuplaWebPageSensor {
   void showDS18B20(String& content, bool readonly = false);
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   void handlei2c();
   void handlei2cSave();
 #endif
@@ -87,6 +91,11 @@ class SuplaWebPageSensor {
 #if defined(SUPLA_MAX6675)
   void handleSpi();
   void handleSpiSave();
+#endif
+
+#if defined(SUPLA_HC_SR04)
+  void handleOther();
+  void handleOtherSave();
 #endif
 
  private:
@@ -97,11 +106,16 @@ class SuplaWebPageSensor {
 #endif
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   String supla_webpage_i2c(int save);
 #endif
+
 #if defined(SUPLA_MAX6675)
   String supla_webpage_spi(int save);
+#endif
+
+#if defined(SUPLA_HC_SR04)
+  String supla_webpage_other(int save);
 #endif
 };
 

@@ -42,7 +42,9 @@
 #ifdef SUPLA_MAX6675
 #include <supla/sensor/MAX6675_K.h>
 #endif
-
+#ifdef SUPLA_IMPULSE_COUNTER
+#include <supla/sensor/impulse_counter.h>
+#endif
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 
@@ -189,6 +191,13 @@ void setup() {
 #ifdef SUPLA_MAX6675
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
     new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
+  }
+#endif
+
+#ifdef SUPLA_IMPULSE_COUNTER
+  if (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
+    new Supla::Sensor::ImpulseCounter(ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER), true, true,
+                                      ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt());
   }
 
 #endif

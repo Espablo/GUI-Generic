@@ -25,6 +25,7 @@
 #define S_SENSORS_1WIRE                                        "SENSORY 1Wire"
 #define S_SENSORS_I2C                                          "SENSORY i2c"
 #define S_SENSORS_SPI                                          "SENSORY SPI"
+#define S_SENSORS_OTHER                                        "SENSORY INNE"
 #define S_LED_BUTTON_CFG                                       "LED, BUTTON CONFIG"
 #define S_CFG_MODE                                             "Tryb"
 #define S_QUANTITY                                             "ILOŚĆ"
@@ -89,5 +90,12 @@
 #define S_REACTION_ON_CHANGE  "ZMIANA STANU"
 #define S_CFG_10_PRESSES      "10 WCIŚNIĘĆ"
 #define S_5SEK_HOLD           "5 SEK"  
+
+//#### SuplaTemplateBoard.h ####
+#define S_ABSENT "BRAK"
+
+//#### SuplaWebPageSensor.cpp ####
+#define S_IMPULSE_COUNTER  "Licznik impulsów"
+#define S_DEBOUNCE_TIMEOUT "Limit czasu"
 
 #endif  // _LANGUAGE_PL_S_H_

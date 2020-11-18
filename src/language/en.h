@@ -25,6 +25,7 @@
 #define S_SENSORS_1WIRE                                        "SENSORS 1Wire"
 #define S_SENSORS_I2C                                          "SENSORS i2c"
 #define S_SENSORS_SPI                                          "SENSORS SPI"
+#define S_SENSORS_OTHER                                        "SENSORY OTHER"
 #define S_LED_BUTTON_CFG                                       "LED, BUTTON CONFIG"
 #define S_CFG_MODE                                             "CFG mode"
 #define S_QUANTITY                                             "QUANTITY"
@@ -83,11 +84,18 @@
 #define S_ON                  "ON"
 #define S_LOW                 "LOW"
 #define S_HIGH                "HIGH"
-#define S_POSITION_MEMORY     "POSITION EMORY"
+#define S_POSITION_MEMORY     "POSITION MEMORY"
 #define S_REACTION_ON_PRESS   "ON PRESS"
 #define S_REACTION_ON_RELEASE "ON RELEASE"
 #define S_REACTION_ON_CHANGE  "ON CHANGE"
 #define S_CFG_10_PRESSES      "10 ON PRESSES"
 #define S_5SEK_HOLD           "5 SEK HOLD"  
+
+//#### SuplaTemplateBoard.h ####
+#define S_ABSENT "ABSENT"
+
+//#### SuplaWebPageSensor.cpp ####
+#define S_IMPULSE_COUNTER  "Impulse counter"
+#define S_DEBOUNCE_TIMEOUT "Debounce timeout"
 
 #endif  // _LANGUAGE_EN_S_H_
