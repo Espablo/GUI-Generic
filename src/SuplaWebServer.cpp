@@ -163,14 +163,15 @@ String SuplaWebServer::supla_webpage_start(int save) {
   addFormHeaderEnd(content);
 
   addFormHeader(content, S_SETTING_SUPLA);
-  addTextBox(content, INPUT_SERVER, KEY_SUPLA_SERVER, S_SUPLA_SERVER, 0, MAX_SUPLA_SERVER, true);
-  addTextBox(content, INPUT_EMAIL, KEY_SUPLA_EMAIL, S_SUPLA_EMAIL, 0, MAX_EMAIL, true);
+  addTextBox(content, INPUT_SERVER, KEY_SUPLA_SERVER, S_SUPLA_SERVER, DEFAULT_SERVER, 0, MAX_SUPLA_SERVER, true);
+  addTextBox(content, INPUT_EMAIL, KEY_SUPLA_EMAIL, S_SUPLA_EMAIL, DEFAULT_EMAIL, 0, MAX_EMAIL, true);
   addFormHeaderEnd(content);
 
   addFormHeader(content, S_SETTING_ADMIN);
   addTextBox(content, INPUT_MODUL_LOGIN, KEY_LOGIN, S_LOGIN, 0, MAX_MLOGIN, true);
   addTextBoxPassword(content, INPUT_MODUL_PASS, KEY_LOGIN_PASS, S_LOGIN_PASS, MIN_PASSWORD, MAX_MPASSWORD, true);
   addFormHeaderEnd(content);
+
 
 #ifdef SUPLA_ROLLERSHUTTER
   uint8_t maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();

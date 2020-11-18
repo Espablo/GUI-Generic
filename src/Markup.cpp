@@ -15,26 +15,33 @@ void addTextBox(String& html,
                 const String& input_id,
                 const String& value_key,
                 const String& name,
+                const String& placeholder,
                 int minlength,
                 int maxlength,
                 bool required,
                 bool readonly,
                 bool password) {
-  html += F("<i><input name='");
+  html += F("<i><input name=");
   html += input_id;
   if (password) {
     if (ConfigESP->configModeESP != NORMAL_MODE) {
       html += F("' type='password' ");
     }
   }
-  html += F("' value='");
+
+  if (placeholder != "") {
+    html += F("' placeholder=");
+    html += placeholder;
+  }
+
+  html += F(" value=");
   html += String(ConfigManager->get(value_key.c_str())->getValue());
   if (minlength > 0) {
-    html += F("'minlength='");
+    html += F(" minlength=");
     html += minlength;
   }
   if (maxlength > 0) {
-    html += F("' length=");
+    html += F(" length=");
     html += maxlength;
   }
   if (readonly) {
@@ -50,7 +57,18 @@ void addTextBox(String& html,
   html += F("</label></i> ");
 }
 
+void addTextBox(String& html,
+                const String& input_id,
+                const String& value_key,
+                const String& name,
+                int minlength,
+                int maxlength,
+                bool required,
+                bool readonly) {
+  return addTextBox(html, input_id, value_key, name, "", minlength, maxlength, required, readonly, false);
+}
+
 void addTextBoxPassword(
     String& html, const String& input_id, const String& value_key, const String& name, int minlength, int maxlength, bool required) {
-  return addTextBox(html, input_id, value_key, name, minlength, maxlength, required, false, true);
+  return addTextBox(html, input_id, value_key, name, "", minlength, maxlength, required, false, true);
 }

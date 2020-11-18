@@ -5,7 +5,8 @@
 
 void addFormHeader(String& html, const String& name);
 void addFormHeaderEnd(String& html);
-void addTextBox(String& html, const String& input_id, const String& value_key, const String& name, int minlength, int maxlength, bool required, bool readonly = false, bool password = false);
+void addTextBox(String& html, const String& input_id, const String& value_key, const String& name, const String& placeholder, int minlength, int maxlength, bool required, bool readonly = false, bool password = false);
+void addTextBox(String& html, const String& input_id, const String& value_key, const String& name, int minlength, int maxlength, bool required, bool readonly = false);
 void addTextBoxPassword(String& html, const String& input_id, const String& value_key, const String& name, int minlength, int maxlength, bool required);
 
 #endif  // Markup_h
