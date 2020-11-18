@@ -30,7 +30,7 @@ void SuplaWebPageSensor::createWebPageSensor() {
 #endif
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021)
   path = PATH_START;
   path += PATH_I2C;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handlei2c, this));
@@ -493,7 +493,7 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
 }
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021)
 void SuplaWebPageSensor::handlei2c() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
@@ -511,7 +511,7 @@ void SuplaWebPageSensor::handlei2cSave() {
   String key, input;
   uint8_t nr, current_value, last_value;
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30)
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x)
   input = INPUT_SDA_GPIO;
   key = GPIO;
   key += WebServer->httpServer.arg(input).toInt();
@@ -567,11 +567,11 @@ void SuplaWebPageSensor::handlei2cSave() {
   }
 #endif
 
-#ifdef SUPLA_SHT30
+#ifdef SUPLA_SHT3x
   key = KEY_ACTIVE_SENSOR;
-  input = INPUT_SHT30;
+  input = INPUT_SHT3x;
   if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_SHT30, WebServer->httpServer.arg(input).toInt());
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_SHT3x, WebServer->httpServer.arg(input).toInt());
   }
 #endif
 
@@ -646,7 +646,7 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   page += PATH_SAVE_I2C;
   page += F("'>");
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30)
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x)
   page += F("<div class='w'><h3>");
   page += S_GPIO_SETTINGS_FOR;
   page += F(" i2c</h3>");
@@ -687,13 +687,13 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
     page += F("</label></i>");
 #endif
 
-#ifdef SUPLA_SHT30
+#ifdef SUPLA_SHT3x
     page += F("<i><label>");
-    page += F("SHT30</label><select name='");
-    page += INPUT_SHT30;
+    page += F("SHT3x</label><select name='");
+    page += INPUT_SHT3x;
     page += F("'>");
 
-    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT30).toInt();
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT3x).toInt();
     for (suported = 0; suported < 4; suported++) {
       page += F("<option value='");
       page += suported;
@@ -703,7 +703,7 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
       else {
         page += F("'>");
       }
-      page += SHT30String(suported);
+      page += SHT3xString(suported);
     }
     page += F("</select></i>");
 #endif

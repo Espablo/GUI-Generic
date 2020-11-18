@@ -327,7 +327,7 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<br><br>");
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021)
   content += F("<a href='");
   content += PATH_START;
   content += PATH_I2C;

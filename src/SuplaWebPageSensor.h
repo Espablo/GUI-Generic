@@ -20,7 +20,7 @@
 #define INPUT_SCL_GPIO        "sclg"
 #define INPUT_BME280          "bme280"
 #define INPUT_ALTITUDE_BME280 "abme280"
-#define INPUT_SHT30           "sht30"
+#define INPUT_SHT3x           "SHT3x"
 #define INPUT_SI7021          "si7021"
 #define INPUT_SI7021_SONOFF   "si7021sonoff"
 #define INPUT_TRIG_GPIO       "trig"
@@ -36,7 +36,7 @@
 enum _sensorI2C
 {
   SENSOR_BME280,
-  SENSOR_SHT30,
+  SENSOR_SHT3x,
   SENSOR_SI7021
 };
 
@@ -54,12 +54,12 @@ enum _bmeAdress
 };
 #endif
 
-#ifdef SUPLA_SHT30
+#ifdef SUPLA_SHT3x
 enum _shtAdress
 {
-  SHT30_ADDRESS_0X44 = 1,
-  SHT30_ADDRESS_0X45,
-  SHT30_ADDRESS_0X44_AND_0X45
+  SHT3x_ADDRESS_0X44 = 1,
+  SHT3x_ADDRESS_0X45,
+  SHT3x_ADDRESS_0X44_AND_0X45
 };
 #endif
 
@@ -79,7 +79,7 @@ class SuplaWebPageSensor {
   void showDS18B20(String& content, bool readonly = false);
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021)
   void handlei2c();
   void handlei2cSave();
 #endif
@@ -97,7 +97,7 @@ class SuplaWebPageSensor {
 #endif
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021)
   String supla_webpage_i2c(int save);
 #endif
 #if defined(SUPLA_MAX6675)

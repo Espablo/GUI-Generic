@@ -80,7 +80,7 @@ const char ADR77[] PROGMEM = "0x77";
 const char ADR76_ADR77[] PROGMEM = "0x76 & 0x77";
 
 const char* const BME280_P[] PROGMEM = {OFF, ADR76, ADR77, ADR76_ADR77};
-const char* const SHT30_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
+const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
 
 const char* const STATE_P[] PROGMEM = {OFF, ON};
 
@@ -102,7 +102,7 @@ const char* const CFG_MODE_P[] PROGMEM = {CFG_10_PRESSES, CFG_5SEK_HOLD};
 
 String GIPOString(uint8_t gpio);
 String BME280String(uint8_t adr);
-String SHT30String(uint8_t adr);
+String SHT3xString(uint8_t adr);
 String StateString(uint8_t adr);
 String LevelString(uint8_t nr);
 String MemoryString(uint8_t nr);

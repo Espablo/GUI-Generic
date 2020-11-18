@@ -9,8 +9,8 @@ String BME280String(uint8_t adr) {
   return PGMT(BME280_P[adr]);
 }
 
-String SHT30String(uint8_t adr) {
-  return PGMT(SHT30_P[adr]);
+String SHT3xString(uint8_t adr) {
+  return PGMT(SHT3x_P[adr]);
 }
 
 String StateString(uint8_t adr) {
@@ -30,5 +30,5 @@ String TriggerString(uint8_t nr) {
 }
 
 String BoardString(uint8_t board) {
-  return PGMT(BOARD_P[board]);	
+  return PGMT(BOARD_P[board]);
 }
