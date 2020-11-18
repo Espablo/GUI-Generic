@@ -105,19 +105,21 @@ String ConfigOption::replaceElement(int index, int newvalue) {
   for (int i = 0; i < lenght; i++) {
     if (i == index) {
       table += newvalue;
-    } else {
+    }
+    else {
       table += this->getElement(i);
     }
-    if (i < lenght - 1) table += SEPARATOR;
+    if (i < lenght - 1)
+      table += SEPARATOR;
   }
   return table;
 }
 
 void ConfigOption::setValue(const char *value) {
-  //size_t size = _maxLength + 1;
+  // size_t size = _maxLength + 1;
   //_value = (char *)malloc(sizeof(char) * (size));
 
-  //if (value != NULL) {
+  // if (value != NULL) {
   //  memcpy(_value, value, size - 1);
   // _value[size - 1] = 0;
   //}
@@ -157,7 +159,8 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_MAX_DHT11, "1", 2);
   this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
   this->addKey(KEY_ALTITUDE_BME280, "0", 4);
-  
+  this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "0", 4);
+
   int nr;
   String key;
 
@@ -232,7 +235,6 @@ uint8_t SuplaConfigManager::deleteKey(const char *key) {
 }
 
 uint8_t SuplaConfigManager::load() {
-
   if (SPIFFS.begin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
@@ -262,20 +264,22 @@ uint8_t SuplaConfigManager::load() {
         free(content);
 
         return E_CONFIG_OK;
-      } else {
+      }
+      else {
         configFile.close();
         return E_CONFIG_FILE_OPEN;
       }
-    } else {
+    }
+    else {
       return E_CONFIG_FILE_NOT_FOUND;
     }
-  } else {
+  }
+  else {
     return E_CONFIG_FS_ACCESS;
   }
 }
 
 uint8_t SuplaConfigManager::loadItem(const char *key) {
-
   if (SPIFFS.begin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
@@ -303,14 +307,17 @@ uint8_t SuplaConfigManager::loadItem(const char *key) {
         free(content);
 
         return E_CONFIG_OK;
-      } else {
+      }
+      else {
         configFile.close();
         return E_CONFIG_FILE_OPEN;
       }
-    } else {
+    }
+    else {
       return E_CONFIG_FILE_NOT_FOUND;
     }
-  } else {
+  }
+  else {
     return E_CONFIG_FS_ACCESS;
   }
 }
@@ -339,7 +346,8 @@ uint8_t SuplaConfigManager::save() {
 
       free(content);
       return E_CONFIG_OK;
-    } else {
+    }
+    else {
       return E_CONFIG_FILE_OPEN;
     }
   }
@@ -354,10 +362,8 @@ void SuplaConfigManager::showAllValue() {
 }
 
 bool SuplaConfigManager::isDeviceConfigured() {
-  return strcmp(this->get(KEY_SUPLA_GUID)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_WIFI_SSID)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_WIFI_PASS)->getValue(), "") == 0 ||
+  return strcmp(this->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(this->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0 ||
+         strcmp(this->get(KEY_WIFI_SSID)->getValue(), "") == 0 || strcmp(this->get(KEY_WIFI_PASS)->getValue(), "") == 0 ||
          strcmp(this->get(KEY_LOGIN)->getValue(), "") == 0;
 }
 
@@ -392,8 +398,7 @@ bool SuplaConfigManager::setElement(const char *key, int index, int newvalue) {
 }
 
 void SuplaConfigManager::setGUIDandAUTHKEY() {
-  if (strcmp(this->get(KEY_SUPLA_GUID)->getValue(), "") != 0 ||
-      strcmp(this->get(KEY_SUPLA_AUTHKEY)->getValue(), "") != 0) {
+  if (strcmp(this->get(KEY_SUPLA_GUID)->getValue(), "") != 0 || strcmp(this->get(KEY_SUPLA_AUTHKEY)->getValue(), "") != 0) {
     return;
   }
 
@@ -412,8 +417,7 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
   if (SUPLA_GUID_SIZE >= 6) {
     wifi_get_macaddr(STATION_IF, (unsigned char *)mac);
 
-    for (a = 0; a < 6; a++)
-      GUID[a] = (GUID[a] * mac[a]) % 255;
+    for (a = 0; a < 6; a++) GUID[a] = (GUID[a] * mac[a]) % 255;
   }
 
   if (SUPLA_GUID_SIZE >= 12) {

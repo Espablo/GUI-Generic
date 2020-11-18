@@ -91,4 +91,8 @@
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "ABSENT"
 
+//#### SuplaWebPageSensor.cpp ####
+#define S_IMPULSE_COUNTER  "Impulse counter"
+#define S_DEBOUNCE_TIMEOUT "Debounce timeout"
+
 #endif  // _LANGUAGE_EN_S_H_

@@ -91,4 +91,8 @@
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"
 
+//#### SuplaWebPageSensor.cpp ####
+#define S_IMPULSE_COUNTER  "Licznik impulsów"
+#define S_DEBOUNCE_TIMEOUT "Limit czasu"
+
 #endif  // _LANGUAGE_PL_S_H_

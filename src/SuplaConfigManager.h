@@ -25,28 +25,29 @@
 #define DEFAULT_SERVER "svrX.supla.org"
 #define DEFAULT_EMAIL  "email@address.com"
 
-#define KEY_SUPLA_GUID        "GUID"
-#define KEY_SUPLA_AUTHKEY     "AUTHKEY"
-#define KEY_WIFI_SSID         "wifiSSID"
-#define KEY_WIFI_PASS         "wifiPass"
-#define KEY_LOGIN             "login"
-#define KEY_LOGIN_PASS        "loginPass"
-#define KEY_HOST_NAME         "hostName"
-#define KEY_SUPLA_SERVER      "suplaServer"
-#define KEY_SUPLA_EMAIL       "suplaEmail"
-#define KEY_DS                "ds"
-#define KEY_DS_NAME           "dsName"
-#define KEY_MULTI_MAX_DS18B20 "multiMaxDs"
-#define KEY_SUPLA_FUNCTION    "function"
-#define KEY_MAX_RELAY         "maxRelay"
-#define KEY_MAX_BUTTON        "maxButton"
-#define KEY_MAX_LIMIT_SWITCH  "maxLimitSwitch"
-#define KEY_MAX_DHT11         "maxDht11"
-#define KEY_MAX_DHT22         "maxDht22"
-#define KEY_MAX_ROLLERSHUTTER "maxRollerShutter"
-#define KEY_ALTITUDE_BME280   "altbme280"
-#define KEY_ACTIVE_SENSOR     "sensor"
-#define KEY_BOARD             "board"
+#define KEY_SUPLA_GUID                       "GUID"
+#define KEY_SUPLA_AUTHKEY                    "AUTHKEY"
+#define KEY_WIFI_SSID                        "wifiSSID"
+#define KEY_WIFI_PASS                        "wifiPass"
+#define KEY_LOGIN                            "login"
+#define KEY_LOGIN_PASS                       "loginPass"
+#define KEY_HOST_NAME                        "hostName"
+#define KEY_SUPLA_SERVER                     "suplaServer"
+#define KEY_SUPLA_EMAIL                      "suplaEmail"
+#define KEY_DS                               "ds"
+#define KEY_DS_NAME                          "dsName"
+#define KEY_MULTI_MAX_DS18B20                "multiMaxDs"
+#define KEY_SUPLA_FUNCTION                   "function"
+#define KEY_MAX_RELAY                        "maxRelay"
+#define KEY_MAX_BUTTON                       "maxButton"
+#define KEY_MAX_LIMIT_SWITCH                 "maxLimitSwitch"
+#define KEY_MAX_DHT11                        "maxDht11"
+#define KEY_MAX_DHT22                        "maxDht22"
+#define KEY_MAX_ROLLERSHUTTER                "maxRollerShutter"
+#define KEY_ALTITUDE_BME280                  "altbme280"
+#define KEY_ACTIVE_SENSOR                    "sensor"
+#define KEY_BOARD                            "board"
+#define KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "icDebounceTimeout"
 
 #define GPIO      "GPIO"
 #define SEPARATOR ','
@@ -78,7 +79,8 @@ enum _function
   FUNCTION_SI7021_SONOFF,
   FUNCTION_CLK,
   FUNCTION_CS,
-  FUNCTION_D0
+  FUNCTION_D0,
+  FUNCTION_IMPULSE_COUNTER
 };
 
 #define MAX_GUID                SUPLA_GUID_SIZE

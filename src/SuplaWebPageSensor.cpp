@@ -946,6 +946,32 @@ void SuplaWebPageSensor::handleOtherSave() {
   }
 #endif
 
+#ifdef SUPLA_IMPULSE_COUNTER
+  input = INPUT_IMPULSE_COUNTER_GPIO;
+  key = GPIO;
+  key += WebServer->httpServer.arg(input).toInt();
+  if (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) != WebServer->httpServer.arg(input).toInt() ||
+      WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER));
+  }
+  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+    key = GPIO;
+    key += WebServer->httpServer.arg(input).toInt();
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+        (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) == WebServer->httpServer.arg(input).toInt() &&
+         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_IMPULSE_COUNTER)) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_IMPULSE_COUNTER);
+    }
+    else {
+      WebServer->sendContent(supla_webpage_other(6));
+      return;
+    }
+  }
+  if (strcmp(WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str(), "") != 0) {
+    ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
+  }
+#endif
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       WebServer->sendContent(supla_webpage_other(1));
@@ -976,6 +1002,27 @@ String SuplaWebPageSensor::supla_webpage_other(int save) {
   page += F("<i><label>ECHO</label>");
   page += WebServer->selectGPIO(INPUT_ECHO_GPIO, FUNCTION_ECHO);
   page += F("</i>");
+  page += F("</div>");
+#endif
+
+#ifdef SUPLA_IMPULSE_COUNTER
+  page += F("<div class='w'><h3>");
+  page += S_GPIO_SETTINGS_FOR;
+  page += F(" ");
+  page += S_IMPULSE_COUNTER;
+  page += F("</h3>");
+  page += F("<i><label>IC GPIO</label>");
+  page += WebServer->selectGPIO(INPUT_IMPULSE_COUNTER_GPIO, FUNCTION_IMPULSE_COUNTER);
+  page += F("</i>");
+  page += F("<i><label>");
+  page += S_DEBOUNCE_TIMEOUT;
+  page += F("</label><input name='");
+  page += INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT;
+  page += F("' type='number' placeholder='0' step='1' min='0' max='");
+  page += 100;
+  page += F("' value='");
+  page += String(ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValue());
+  page += F("'></i>");
   page += F("</div>");
 #endif
   page += F("<button type='submit'>");
