@@ -1,18 +1,6 @@
 #include "SuplaCommonPROGMEM.h"
 #include "SuplaTemplateBoard.h"
 
-String GIPOString(uint8_t gpio) {
-  return PGMT(GPIO_P[gpio]);
-}
-
-String BME280String(uint8_t adr) {
-  return PGMT(BME280_P[adr]);
-}
-
-String SHT3xString(uint8_t adr) {
-  return PGMT(SHT3x_P[adr]);
-}
-
 String StateString(uint8_t adr) {
   return PGMT(STATE_P[adr]);
 }

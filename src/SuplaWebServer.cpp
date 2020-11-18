@@ -157,21 +157,20 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("<form method='post'>");
 
   addFormHeader(content, S_SETTING_WIFI_SSID);
-  addTextBox(content, INPUT_WIFI_SSID, KEY_WIFI_SSID, S_WIFI_SSID, 0, MAX_SSID, true);
-  addTextBoxPassword(content, INPUT_WIFI_PASS, KEY_WIFI_PASS, S_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
-  addTextBox(content, INPUT_HOSTNAME, KEY_HOST_NAME, S_HOST_NAME, 0, MAX_HOSTNAME, true);
+  addTextBox(content, INPUT_WIFI_SSID, S_WIFI_SSID, KEY_WIFI_SSID, 0, MAX_SSID, true);
+  addTextBoxPassword(content, INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
+  addTextBox(content, INPUT_HOSTNAME, S_HOST_NAME, KEY_HOST_NAME, 0, MAX_HOSTNAME, true);
   addFormHeaderEnd(content);
 
   addFormHeader(content, S_SETTING_SUPLA);
-  addTextBox(content, INPUT_SERVER, KEY_SUPLA_SERVER, S_SUPLA_SERVER, DEFAULT_SERVER, 0, MAX_SUPLA_SERVER, true);
-  addTextBox(content, INPUT_EMAIL, KEY_SUPLA_EMAIL, S_SUPLA_EMAIL, DEFAULT_EMAIL, 0, MAX_EMAIL, true);
+  addTextBox(content, INPUT_SERVER, S_SUPLA_SERVER, KEY_SUPLA_SERVER, DEFAULT_SERVER, 0, MAX_SUPLA_SERVER, true);
+  addTextBox(content, INPUT_EMAIL, S_SUPLA_EMAIL, KEY_SUPLA_EMAIL, DEFAULT_EMAIL, 0, MAX_EMAIL, true);
   addFormHeaderEnd(content);
 
   addFormHeader(content, S_SETTING_ADMIN);
-  addTextBox(content, INPUT_MODUL_LOGIN, KEY_LOGIN, S_LOGIN, 0, MAX_MLOGIN, true);
-  addTextBoxPassword(content, INPUT_MODUL_PASS, KEY_LOGIN_PASS, S_LOGIN_PASS, MIN_PASSWORD, MAX_MPASSWORD, true);
+  addTextBox(content, INPUT_MODUL_LOGIN, S_LOGIN, KEY_LOGIN, 0, MAX_MLOGIN, true);
+  addTextBoxPassword(content, INPUT_MODUL_PASS, S_LOGIN_PASS, KEY_LOGIN_PASS, MIN_PASSWORD, MAX_MPASSWORD, true);
   addFormHeaderEnd(content);
-
 
 #ifdef SUPLA_ROLLERSHUTTER
   uint8_t maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
@@ -394,37 +393,6 @@ void SuplaWebServer::handleBoardSave() {
       WebServer->sendContent(deviceSettings(2));
       break;
   }
-}
-
-String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr) {
-  String page = "";
-  page += F("<select name='");
-  page += input;
-  if (nr != 0) {
-    page += nr;
-  }
-  else {
-    nr = 1;
-  }
-  page += F("'>");
-
-  uint8_t selected = ConfigESP->getGpio(nr, function);
-
-  for (uint8_t suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, function) == false || selected == suported) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += GIPOString(suported);
-    }
-  }
-  page += F("</select>");
-  return page;
 }
 
 const String SuplaWebServer::SuplaFavicon() {

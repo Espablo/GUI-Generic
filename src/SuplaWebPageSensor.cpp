@@ -4,6 +4,7 @@
 #include "SuplaWebServer.h"
 #include "SuplaCommonPROGMEM.h"
 #include "GUIGenericCommon.h"
+#include "Markup.h"
 
 SuplaWebPageSensor *WebPageSensor = new SuplaWebPageSensor();
 
@@ -376,6 +377,7 @@ void SuplaWebPageSensor::handle1WireSave() {
 
 String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   uint8_t nr, suported, selected;
+  uint16_t max;
   String page, key;
   page += WebServer->SuplaSaveResult(save);
   page += WebServer->SuplaJavaScript(PATH_1WIRE);
@@ -383,74 +385,35 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   page += PATH_SAVE_1WIRE;
   page += F("'>");
 #ifdef SUPLA_DHT11
-  page += F("<div class='w'><h3>");
-  page += S_GPIO_SETTINGS_FOR;
-  page += F(" DHT11</h3>");
-  page += F("<i><label>");
-  page += S_QUANTITY;
-  page += F("</label><input name='");
-  page += INPUT_MAX_DHT11;
-  page += F("' type='number' placeholder='0' step='1' min='0' max='");
-  page += ConfigESP->countFreeGpio(FUNCTION_DHT11);
-  page += F("' value='");
-  page += String(ConfigManager->get(KEY_MAX_DHT11)->getValue());
-  page += F("'></i>");
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " DHT11");
+  max = ConfigESP->countFreeGpio(FUNCTION_DHT11);
+  addNumberBox(page, INPUT_MAX_DHT11, S_QUANTITY, KEY_MAX_DHT11, max);
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
-    page += F("<i><label>");
-    page += nr;
-    page += F(". DHT11</label>");
-    page += WebServer->selectGPIO(INPUT_DHT11_GPIO, FUNCTION_DHT11, nr);
-    page += F("</i>");
+    addListGPIOBox(page, INPUT_DHT11_GPIO, "DHT11", FUNCTION_DHT11, nr);
   }
-  page += F("</div>");
+  addFormHeaderEnd(page);
 #endif
 
 #ifdef SUPLA_DHT22
-  page += F("<div class='w'><h3>");
-  page += S_GPIO_SETTINGS_FOR;
-  page += F(" DHT22</h3>");
-  page += F("<i><label>");
-  page += S_QUANTITY;
-  page += F("</label><input name='");
-  page += INPUT_MAX_DHT22;
-  page += F("' type='number' placeholder='0' step='1' min='0' max='");
-  page += ConfigESP->countFreeGpio(FUNCTION_DHT22);
-  page += F("' value='");
-  page += String(ConfigManager->get(KEY_MAX_DHT22)->getValue());
-  page += F("'></i>");
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " DHT22");
+  max = ConfigESP->countFreeGpio(FUNCTION_DHT22);
+  addNumberBox(page, INPUT_MAX_DHT22, S_QUANTITY, KEY_MAX_DHT22, FUNCTION_DHT22);
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
-    page += F("<i><label>");
-    page += nr;
-    page += F(". DHT22</label>");
-    page += WebServer->selectGPIO(INPUT_DHT22_GPIO, FUNCTION_DHT22, nr);
-    page += F("</i>");
+    addListGPIOBox(page, INPUT_DHT22_GPIO, "DHT22", FUNCTION_DHT22, nr);
   }
-  page += F("</div>");
+  addFormHeaderEnd(page);
 #endif
 
 #ifdef SUPLA_SI7021_SONOFF
-  page += F("<div class='w'><h3>");
-  page += S_GPIO_SETTINGS_FOR;
-  page += F(" Si7021 Sonoff</h3>");
-  page += F("<i><label>Si7021 Sonoff</label>");
-  page += WebServer->selectGPIO(INPUT_SI7021_SONOFF, FUNCTION_SI7021_SONOFF);
-  page += F("</i>");
-  page += F("</div>");
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " Si7021 Sonoff");
+  addListGPIOBox(page, INPUT_SI7021_SONOFF, "Si7021 Sonoff", FUNCTION_SI7021_SONOFF);
+  addFormHeaderEnd(page);
 #endif
 
 #ifdef SUPLA_DS18B20
-  page += F("<div class='w'><h3>");
-  page += S_GPIO_SETTINGS_FOR;
-  page += F(" Multi DS18B20</h3>");
-  page += F("<i><label>");
-  page += S_QUANTITY;
-  page += F("</label><input name='");
-  page += INPUT_MAX_DS18B20;
-  page += F("' type='number' placeholder='1' step='1' min='0' max='");
-  page += MAX_DS18B20;
-  page += F("' value='");
-  page += String(ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValue());
-  page += F("'></i>");
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " Multi DS18B20");
+  max = ConfigESP->countFreeGpio(FUNCTION_DS18B20);
+  addNumberBox(page, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, max);
   page += F("<i>");
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
     page += F("<label>");
@@ -467,9 +430,10 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
     }
     page += F("</label>");
   }
-  page += WebServer->selectGPIO(INPUT_MULTI_DS_GPIO, FUNCTION_DS18B20);
+  page += addListGPIOSelect(INPUT_MULTI_DS_GPIO, FUNCTION_DS18B20);
   page += F("</i>");
-  page += F("</div>");
+
+  addFormHeaderEnd(page);
 #endif
 
   page += F("<button type='submit'>");
@@ -638,7 +602,7 @@ void SuplaWebPageSensor::handlei2cSave() {
 }
 
 String SuplaWebPageSensor::supla_webpage_i2c(int save) {
-  uint8_t nr, suported, selected;
+  uint8_t nr, suported, selected, size;
   String page, key;
   page += WebServer->SuplaSaveResult(save);
   page += WebServer->SuplaJavaScript(PATH_I2C);
@@ -647,102 +611,38 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   page += F("'>");
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x)
-  page += F("<div class='w'><h3>");
-  page += S_GPIO_SETTINGS_FOR;
-  page += F(" i2c</h3>");
-  page += F("<i><label>SDA</label>");
-  page += WebServer->selectGPIO(INPUT_SDA_GPIO, FUNCTION_SDA);
-  page += F("</i>");
-  page += F("<i><label>SCL</label>");
-  page += WebServer->selectGPIO(INPUT_SCL_GPIO, FUNCTION_SCL);
-  page += F("</i>");
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " i2c");
+  addListGPIOBox(page, INPUT_SDA_GPIO, "SDA", FUNCTION_SDA);
+  addListGPIOBox(page, INPUT_SCL_GPIO, "SCL", FUNCTION_SCL);
 
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
 #ifdef SUPLA_BME280
-    page += F("<i style='border-bottom:none !important;'><label>");
-    page += F("BME280 adres</label><select name='");
-    page += INPUT_BME280;
-    page += F("'>");
-
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt();
-    for (suported = 0; suported < 4; suported++) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += BME280String(suported);
-    }
-    page += F("</select></i>");
-    page += F("<i><input name='");
-    page += INPUT_ALTITUDE_BME280;
-    page += F("' value='");
-    page += ConfigManager->get(KEY_ALTITUDE_BME280)->getValue();
-    page += F("' ");
-    page += F("><label>");
-    page += S_ALTITUDE_ABOVE_SEA_LEVEL;
-    page += F("</label></i>");
+    size = sizeof(BME280_P) / sizeof(BME280_P[0]);
+    addListBox(page, INPUT_BME280, "BME280 adres", BME280_P, size, selected);
+    addNumberBox(page, INPUT_ALTITUDE_BME280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BME280, 1500);
 #endif
 
 #ifdef SUPLA_SHT3x
-    page += F("<i><label>");
-    page += F("SHT3x</label><select name='");
-    page += INPUT_SHT3x;
-    page += F("'>");
-
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT3x).toInt();
-    for (suported = 0; suported < 4; suported++) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += SHT3xString(suported);
-    }
-    page += F("</select></i>");
+    size = sizeof(SHT3x_P) / sizeof(SHT3x_P[0]);
+    addListBox(page, INPUT_SHT3x, "SHT3x", SHT3x_P, size, selected);
 #endif
 
 #ifdef SUPLA_SI7021
-    page += F("<i><label>");
-    page += F("Si7021</label><select name='");
-    page += INPUT_SI7021;
-    page += F("'>");
-
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt();
-    for (suported = 0; suported < 2; suported++) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += StateString(suported);
-    }
-    page += F("</select></i>");
+     size = sizeof(STATE_P) / sizeof(STATE_P[0]);
+    addListBox(page, INPUT_SI7021, "Si7021", STATE_P, size, selected);
 #endif
   }
-  page += F("</div>");
+  addFormHeaderEnd(page);
 #endif
 
 #ifdef SUPLA_HC_SR04
-  page += F("<div class='w'><h3>");
-  page += S_GPIO_SETTINGS_FOR;
-  page += F(" HC-SR04</h3>");
-  page += F("<i><label>TRIG</label>");
-  page += WebServer->selectGPIO(INPUT_TRIG_GPIO, FUNCTION_TRIG);
-  page += F("</i>");
-  page += F("<i><label>ECHO</label>");
-  page += WebServer->selectGPIO(INPUT_ECHO_GPIO, FUNCTION_ECHO);
-  page += F("</i>");
-  page += F("</div>");
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " HC-SR04");
+  addListGPIOBox(page, INPUT_TRIG_GPIO, "TRIG", FUNCTION_TRIG);
+  addListGPIOBox(page, INPUT_ECHO_GPIO, "ECHO", FUNCTION_ECHO);
+  addFormHeaderEnd(page);
 #endif
   page += F("<button type='submit'>");
   page += S_SAVE;
@@ -878,13 +778,13 @@ String SuplaWebPageSensor::supla_webpage_spi(int save) {
   page += S_GPIO_SETTINGS_FOR;
   page += F(" SPI</h3>");
   page += F("<i><label>CLK</label>");
-  page += WebServer->selectGPIO(INPUT_CLK_GPIO, FUNCTION_CLK);
+  page += addListGPIOSelect(INPUT_CLK_GPIO, FUNCTION_CLK);
   page += F("</i>");
   page += F("<i><label>CS</label>");
-  page += WebServer->selectGPIO(INPUT_CS_GPIO, FUNCTION_CS);
+  page += addListGPIOSelect(INPUT_CS_GPIO, FUNCTION_CS);
   page += F("</i>");
   page += F("<i><label>D0</label>");
-  page += WebServer->selectGPIO(INPUT_D0_GPIO, FUNCTION_D0);
+  page += addListGPIOSelect(INPUT_D0_GPIO, FUNCTION_D0);
   page += F("</i>");
 
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {

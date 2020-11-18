@@ -3,6 +3,7 @@
 #include "SuplaWebServer.h"
 #include "SuplaCommonPROGMEM.h"
 #include "GUIGenericCommon.h"
+#include "Markup.h"
 
 SuplaWebPageControl *WebPageControl = new SuplaWebPageControl();
 
@@ -171,7 +172,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
       pagebutton += F("</a>");
     }
     pagebutton += F("</label>");
-    pagebutton += WebServer->selectGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr);
+    pagebutton += addListGPIOSelect(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr);
     pagebutton += F("</i>");
   }
   pagebutton += F("</div>");
@@ -196,7 +197,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
     pagebutton += F(". ");
     pagebutton += S_LIMIT_SWITCH;
     pagebutton += F("</label>");
-    pagebutton += WebServer->selectGPIO(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr);
+    pagebutton += addListGPIOSelect(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr);
     pagebutton += F("</i>");
   }
   pagebutton += F("</div>");

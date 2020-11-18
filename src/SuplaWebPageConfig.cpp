@@ -3,6 +3,7 @@
 #include "SuplaWebServer.h"
 #include "SuplaCommonPROGMEM.h"
 #include "GUIGenericCommon.h"
+#include "Markup.h"
 
 SuplaWebPageConfig *WebPageConfig = new SuplaWebPageConfig();
 
@@ -128,7 +129,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += F("</h3>");
   page += F("<i><label>");
   page += F("LED</label>");
-  page += WebServer->selectGPIO(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED);
+  page += addListGPIOSelect(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED);
   page += F("</i>");
 
   if (selected != 17) {
@@ -153,7 +154,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += F("<i><label>");
   page += S_BUTTON;
   page += F("</label>");
-  page += WebServer->selectGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON);
+  page += addListGPIOSelect(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON);
   page += F("</i>");
 
   page += F("<i><label>");

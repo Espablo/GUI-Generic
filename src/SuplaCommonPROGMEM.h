@@ -4,7 +4,7 @@
 #include "SuplaDeviceGUI.h"
 #include "GUIGenericCommon.h"
 
-#define PGMT( pgm_ptr ) ( reinterpret_cast< const __FlashStringHelper * >( pgm_ptr ) )
+#define PGMT(pgm_ptr) (reinterpret_cast<const __FlashStringHelper*>(pgm_ptr))
 
 const char HTTP_META[] PROGMEM =
     "<!DOCTYPE HTML><meta http-equiv='content-type' content='text/html; charset=UTF-8'><meta name='viewport' "
@@ -100,9 +100,6 @@ const char CFG_10_PRESSES[] PROGMEM = S_CFG_10_PRESSES;
 const char CFG_5SEK_HOLD[] PROGMEM = S_5SEK_HOLD;
 const char* const CFG_MODE_P[] PROGMEM = {CFG_10_PRESSES, CFG_5SEK_HOLD};
 
-String GIPOString(uint8_t gpio);
-String BME280String(uint8_t adr);
-String SHT3xString(uint8_t adr);
 String StateString(uint8_t adr);
 String LevelString(uint8_t nr);
 String MemoryString(uint8_t nr);

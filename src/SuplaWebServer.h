@@ -56,7 +56,6 @@
 
 class SuplaWebServer : public Supla::Element {
  public:
-  String selectGPIO(const char* input, uint8_t function, uint8_t nr = 0);
   SuplaWebServer();
   void begin();
 
