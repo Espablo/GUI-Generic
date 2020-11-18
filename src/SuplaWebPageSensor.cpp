@@ -30,7 +30,7 @@ void SuplaWebPageSensor::createWebPageSensor() {
 #endif
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   path = PATH_START;
   path += PATH_I2C;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handlei2c, this));
@@ -46,6 +46,15 @@ void SuplaWebPageSensor::createWebPageSensor() {
   path = PATH_START;
   path += PATH_SAVE_SPI;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleSpiSave, this));
+#endif
+
+#if defined(SUPLA_HC_SR04)
+  path = PATH_START;
+  path += PATH_OTHER;
+  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleOther, this));
+  path = PATH_START;
+  path += PATH_SAVE_OTHER;
+  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleOtherSave, this));
 #endif
 }
 
@@ -493,7 +502,7 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
 }
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
 void SuplaWebPageSensor::handlei2c() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
@@ -581,49 +590,6 @@ void SuplaWebPageSensor::handlei2cSave() {
   if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_SI7021, WebServer->httpServer.arg(input).toInt());
   }
-#endif
-
-#ifdef SUPLA_HC_SR04
-  input = INPUT_TRIG_GPIO;
-  key = GPIO;
-  key += WebServer->httpServer.arg(input).toInt();
-  if (ConfigESP->getGpio(FUNCTION_TRIG) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_TRIG));
-  }
-  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-    key = GPIO;
-    key += WebServer->httpServer.arg(input).toInt();
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigESP->getGpio(FUNCTION_TRIG) == WebServer->httpServer.arg(input).toInt() &&
-         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_TRIG)) {
-      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_TRIG);
-    }
-    else {
-      WebServer->sendContent(supla_webpage_i2c(6));
-      return;
-    }
-  }
-
-  input = INPUT_ECHO_GPIO;
-  key = GPIO;
-  key += WebServer->httpServer.arg(input).toInt();
-  if (ConfigESP->getGpio(FUNCTION_ECHO) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_ECHO));
-  }
-  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-    key = GPIO;
-    key += WebServer->httpServer.arg(input).toInt();
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigESP->getGpio(FUNCTION_ECHO) == WebServer->httpServer.arg(input).toInt() &&
-         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_ECHO)) {
-      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_ECHO);
-    }
-    else {
-      WebServer->sendContent(supla_webpage_i2c(6));
-      return;
-    }
-  }
-
 #endif
 
   switch (ConfigManager->save()) {
@@ -732,18 +698,6 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   page += F("</div>");
 #endif
 
-#ifdef SUPLA_HC_SR04
-  page += F("<div class='w'><h3>");
-  page += S_GPIO_SETTINGS_FOR;
-  page += F(" HC-SR04</h3>");
-  page += F("<i><label>TRIG</label>");
-  page += WebServer->selectGPIO(INPUT_TRIG_GPIO, FUNCTION_TRIG);
-  page += F("</i>");
-  page += F("<i><label>ECHO</label>");
-  page += WebServer->selectGPIO(INPUT_ECHO_GPIO, FUNCTION_ECHO);
-  page += F("</i>");
-  page += F("</div>");
-#endif
   page += F("<button type='submit'>");
   page += S_SAVE;
   page += F("</button></form>");
@@ -909,6 +863,119 @@ String SuplaWebPageSensor::supla_webpage_spi(int save) {
     page += F("</select></i>");
 #endif
   }
+  page += F("</div>");
+#endif
+  page += F("<button type='submit'>");
+  page += S_SAVE;
+  page += F("</button></form>");
+  page += F("<br>");
+  page += F("<form method='post' action='");
+  page += PATH_REBOT;
+  page += F("'>");
+  page += F("<button type='submit'>");
+  page += S_RESTART;
+  page += F("</button></form>");
+  page += F("<br>");
+  page += F("<a href='");
+  page += PATH_START;
+  page += PATH_DEVICE_SETTINGS;
+  page += F("'><button>");
+  page += S_RETURN;
+  page += F("</button></a></div>");
+  return page;
+}
+#endif
+
+#if defined(SUPLA_HC_SR04)
+void SuplaWebPageSensor::handleOther() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+  WebServer->sendContent(supla_webpage_other(0));
+}
+
+void SuplaWebPageSensor::handleOtherSave() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+
+  String key, input;
+  uint8_t nr, current_value, last_value;
+
+#ifdef SUPLA_HC_SR04
+  input = INPUT_TRIG_GPIO;
+  key = GPIO;
+  key += WebServer->httpServer.arg(input).toInt();
+  if (ConfigESP->getGpio(FUNCTION_TRIG) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_TRIG));
+  }
+  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+    key = GPIO;
+    key += WebServer->httpServer.arg(input).toInt();
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+        (ConfigESP->getGpio(FUNCTION_TRIG) == WebServer->httpServer.arg(input).toInt() &&
+         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_TRIG)) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_TRIG);
+    }
+    else {
+      WebServer->sendContent(supla_webpage_other(6));
+      return;
+    }
+  }
+
+  input = INPUT_ECHO_GPIO;
+  key = GPIO;
+  key += WebServer->httpServer.arg(input).toInt();
+  if (ConfigESP->getGpio(FUNCTION_ECHO) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_ECHO));
+  }
+  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+    key = GPIO;
+    key += WebServer->httpServer.arg(input).toInt();
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+        (ConfigESP->getGpio(FUNCTION_ECHO) == WebServer->httpServer.arg(input).toInt() &&
+         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_ECHO)) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_ECHO);
+    }
+    else {
+      WebServer->sendContent(supla_webpage_other(6));
+      return;
+    }
+  }
+#endif
+
+  switch (ConfigManager->save()) {
+    case E_CONFIG_OK:
+      WebServer->sendContent(supla_webpage_other(1));
+      break;
+    case E_CONFIG_FILE_OPEN:
+      //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
+      WebServer->sendContent(supla_webpage_other(2));
+      break;
+  }
+}
+
+String SuplaWebPageSensor::supla_webpage_other(int save) {
+  uint8_t nr, suported, selected;
+  String page, key;
+  page += WebServer->SuplaSaveResult(save);
+  page += WebServer->SuplaJavaScript(PATH_OTHER);
+  page += F("<form method='post' action='");
+  page += PATH_SAVE_OTHER;
+  page += F("'>");
+
+#ifdef SUPLA_HC_SR04
+  page += F("<div class='w'><h3>");
+  page += S_GPIO_SETTINGS_FOR;
+  page += F(" HC-SR04</h3>");
+  page += F("<i><label>TRIG</label>");
+  page += WebServer->selectGPIO(INPUT_TRIG_GPIO, FUNCTION_TRIG);
+  page += F("</i>");
+  page += F("<i><label>ECHO</label>");
+  page += WebServer->selectGPIO(INPUT_ECHO_GPIO, FUNCTION_ECHO);
+  page += F("</i>");
   page += F("</div>");
 #endif
   page += F("<button type='submit'>");

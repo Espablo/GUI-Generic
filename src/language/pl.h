@@ -25,6 +25,7 @@
 #define S_SENSORS_1WIRE                                        "SENSORY 1Wire"
 #define S_SENSORS_I2C                                          "SENSORY i2c"
 #define S_SENSORS_SPI                                          "SENSORY SPI"
+#define S_SENSORS_OTHER                                        "SENSORY INNE"
 #define S_LED_BUTTON_CFG                                       "LED, BUTTON CONFIG"
 #define S_QUANTITY                                             "ILOŚĆ"
 #define S_GPIO_SETTINGS_FOR_RELAYS                             "Ustawienie GPIO dla przekaźników"

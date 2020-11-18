@@ -326,7 +326,7 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<br><br>");
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   content += F("<a href='");
   content += PATH_START;
   content += PATH_I2C;
@@ -342,6 +342,16 @@ String SuplaWebServer::deviceSettings(int save) {
   content += PATH_SPI;
   content += F("'><button>");
   content += S_SENSORS_SPI;
+  content += F("</button></a>");
+  content += F("<br><br>");
+#endif
+
+#if defined(SUPLA_HC_SR04)
+  content += F("<a href='");
+  content += PATH_START;
+  content += PATH_OTHER;
+  content += F("'><button>");
+  content += S_SENSORS_OTHER;
   content += F("</button></a>");
   content += F("<br><br>");
 #endif

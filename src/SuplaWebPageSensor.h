@@ -12,6 +12,8 @@
 #define PATH_SAVE_I2C      "savei2c"
 #define PATH_SPI           "spi"
 #define PATH_SAVE_SPI      "savespi"
+#define PATH_OTHER         "other"
+#define PATH_SAVE_OTHER    "saveother"
 
 #define INPUT_MULTI_DS_GPIO   "mdsg"
 #define INPUT_DHT11_GPIO      "dht11"
@@ -79,7 +81,7 @@ class SuplaWebPageSensor {
   void showDS18B20(String& content, bool readonly = false);
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   void handlei2c();
   void handlei2cSave();
 #endif
@@ -87,6 +89,11 @@ class SuplaWebPageSensor {
 #if defined(SUPLA_MAX6675)
   void handleSpi();
   void handleSpiSave();
+#endif
+
+#if defined(SUPLA_HC_SR04)
+  void handleOther();
+  void handleOtherSave();
 #endif
 
  private:
@@ -97,11 +104,16 @@ class SuplaWebPageSensor {
 #endif
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_HC_SR04) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
   String supla_webpage_i2c(int save);
 #endif
+
 #if defined(SUPLA_MAX6675)
   String supla_webpage_spi(int save);
+#endif
+
+#if defined(SUPLA_HC_SR04)
+  String supla_webpage_other(int save);
 #endif
 };
 
