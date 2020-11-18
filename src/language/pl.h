@@ -87,4 +87,7 @@
 #define S_REACTION_ON_RELEASE "ZWOLNIENIE"
 #define S_REACTION_ON_CHANGE  "ZMIANA STANU"
 
+//#### SuplaTemplateBoard.h ####
+#define S_ABSENT "BRAK"
+
 #endif  // _LANGUAGE_PL_S_H_

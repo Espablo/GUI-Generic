@@ -3,6 +3,7 @@
 
 #include <pgmspace.h>
 #include "SuplaWebPageRelay.h"
+#include "GUIGenericCommon.h"
 
 void addButton(uint8_t gpio, uint8_t event = 0);
 void addRelay(uint8_t gpio, uint8_t level = HIGH);
@@ -33,7 +34,7 @@ enum _board
   MAX_MODULE
 };
 
-const char BOARD_NULL[] PROGMEM = "BRAK";
+const char BOARD_NULL[] PROGMEM = S_ABSENT;
 const char ELECTRODRAGON[] PROGMEM = "ElectroDragon";
 const char INCAN3[] PROGMEM = "inCan3";
 const char INCAN4[] PROGMEM = "inCan4";

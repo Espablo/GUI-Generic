@@ -87,4 +87,7 @@
 #define S_REACTION_ON_RELEASE "ON RELEASE"
 #define S_REACTION_ON_CHANGE  "ON CHANGE"
 
+//#### SuplaTemplateBoard.h ####
+#define S_ABSENT "ABSENT"
+
 #endif  // _LANGUAGE_EN_S_H_
