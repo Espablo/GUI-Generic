@@ -83,8 +83,6 @@ class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
   int pinNumberConfig;
   int pinLedConfig;
   int modeConfigButton;
-  int countPresses = 0;
-  unsigned long cnfigChangeTimeMs = 0;
   bool highIsOn;
 
   ETSTimer led_timer;

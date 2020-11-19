@@ -96,7 +96,7 @@ void SuplaWebServer::handleSave() {
   }
 
   if (strcmp(httpServer.arg(PATH_REBOT).c_str(), "1") == 0) {
-    this->rebootESP();
+    ConfigESP->rebootESP();
     return;
   }
 
@@ -118,8 +118,8 @@ void SuplaWebServer::handleSave() {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
       if (ConfigESP->configModeESP == NORMAL_MODE) {
-        this->sendContent(supla_webpage_start(5));
-        this->rebootESP();
+        this->sendContent(supla_webpage_start(1));
+        ConfigESP->rebootESP();
       }
       else {
         this->sendContent(supla_webpage_start(7));
@@ -255,7 +255,7 @@ void SuplaWebServer::supla_webpage_reboot() {
       return httpServer.requestAuthentication();
   }
   this->sendContent(supla_webpage_start(2));
-  this->rebootESP();
+  ConfigESP->rebootESP();
 }
 
 String SuplaWebServer::deviceSettings(int save) {
@@ -461,12 +461,6 @@ const String SuplaWebServer::SuplaSaveResult(int save) {
   }
   saveresult += F("</div>");
   return saveresult;
-}
-
-void SuplaWebServer::rebootESP() {
-  wdt_reset();
-  ESP.restart();
-  while (1) wdt_reset();
 }
 
 void SuplaWebServer::sendContent(const String content) {

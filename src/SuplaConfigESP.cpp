@@ -83,7 +83,6 @@ void SuplaConfigESP::runAction(int event, int action) {
   }
   if (action == CONFIG_MODE_5SEK_HOLD) {
     if (event == Supla::ON_HOLD) {
-      // Serial.println(F("CONFIG_MODE_5SEK_HOLD"));
       configModeInit();
     }
   }
@@ -103,83 +102,13 @@ void SuplaConfigESP::rebootESP() {
   while (1) wdt_reset();
 }
 
-void WiFiEvent(WiFiEvent_t event) {
-  switch (event) {
-    case WIFI_EVENT_STAMODE_CONNECTED:
-      //      Serial.print(millis());
-      //      Serial.print(" => ");
-      //
-      //      Serial.println(F("WIFI_EVENT_STAMODE_CONNECTED"));
-      break;
-    case WIFI_EVENT_STAMODE_DISCONNECTED:
-      //      Serial.print(millis());
-      //      Serial.print(" => ");
-      //
-      //      Serial.println(F("WiFi lost connection"));
-      break;
-    case WIFI_EVENT_STAMODE_AUTHMODE_CHANGE:
-      //      Serial.print(millis());
-      //      Serial.print(" => ");
-      //
-      //      Serial.println(F("WIFI_EVENT_STAMODE_AUTHMODE_CHANGE"));
-      break;
-    case WIFI_EVENT_STAMODE_GOT_IP:
-      //      Serial.print(millis());
-      //      Serial.print(" => ");
-      //      Serial.println(F("WIFI_EVENT_STAMODE_GOT_IP"));
-      //      Serial.println(WiFi.localIP());
-      break;
-    case WIFI_EVENT_STAMODE_DHCP_TIMEOUT:
-      //      Serial.print(millis());
-      //      Serial.print(" => ");
-      //
-      //      Serial.println(F("WIFI_EVENT_STAMODE_DHCP_TIMEOUT"));
-      break;
-    case WIFI_EVENT_SOFTAPMODE_STACONNECTED:
-      //      Serial.print(millis());
-      //      Serial.print(" => ");
-      //
-      //      Serial.println(F("WIFI_EVENT_SOFTAPMODE_STACONNECTED"));
-      break;
-    case WIFI_EVENT_SOFTAPMODE_STADISCONNECTED:
-      //      Serial.print(millis());
-      //      Serial.print(" => ");
-      //
-      //      Serial.println(F("WIFI_EVENT_SOFTAPMODE_STADISCONNECTED"));
-      break;
-    case WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED:
-      // Serial.print(" => ");
-      // Serial.println("WIFI_EVENT_SOFTAPMODE_PROBEREQRECVED"));
-      break;
-    case WIFI_EVENT_MAX:
-      //      Serial.print(millis());
-      //      Serial.print(" => ");
-      //
-      //      Serial.println(F("WIFI_EVENT_MAX"));
-      break;
-  }
-}
-
 void SuplaConfigESP::configModeInit() {
   configModeESP = CONFIG_MODE;
   ledBlinking(100);
 
-  // WiFi.onEvent(WiFiEvent);
-  // Serial.print(F("Creating Access Point"));
-  // Serial.print(F("Setting mode ... "));
-  // Serial.println(WiFi.mode(WIFI_AP_STA) ? "Ready" : "Failed!");
   WiFi.softAPdisconnect(true);
   WiFi.disconnect(true);
   WiFi.mode(WIFI_AP_STA);
-
-  //  String CONFIG_WIFI_NAME = "SUPLA-ESP8266-" + getMacAddress(false);
-  //  while (!WiFi.softAP(CONFIG_WIFI_NAME, "")) {
-  // Serial.println(F("."));
-  // delay(100);
-  // }
-  // Serial.println(F("Network Created!"));
-  // Serial.print(F("Soft-AP IP address = "));
-  // Serial.println(WiFi.softAPIP());
 }
 
 void SuplaConfigESP::iterateAlways() {
@@ -441,7 +370,7 @@ void SuplaConfigESP::factoryReset() {
   delay(1000);
   pinMode(0, INPUT);
   if (!digitalRead(0)) {
-    Serial.println("FACTORY RESET!!!");
+    Serial.println(F("FACTORY RESET!!!"));
 
     ConfigManager->set(KEY_WIFI_SSID, "");
     ConfigManager->set(KEY_WIFI_PASS, "");
@@ -483,10 +412,6 @@ void SuplaConfigESP::factoryReset() {
 
     ConfigManager->save();
 
-    delay(3000);
-    WiFi.forceSleepBegin();
-    wdt_reset();
-    ESP.restart();
-    while (1) wdt_reset();
+    rebootESP();
   }
 }

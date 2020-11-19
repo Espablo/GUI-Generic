@@ -37,17 +37,21 @@
 #define INPUT_IMPULSE_COUNTER_GPIO             "ic"
 #define INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "icdt"
 
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
 enum _sensorI2C
 {
   SENSOR_BME280,
   SENSOR_SHT3x,
   SENSOR_SI7021
 };
+#endif
 
+#if defined(SUPLA_MAX6675)
 enum _sensorSPI
 {
   SENSOR_MAX6675
 };
+#endif
 
 #ifdef SUPLA_BME280
 enum _bmeAdress
