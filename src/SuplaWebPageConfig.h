@@ -9,6 +9,7 @@
 #define  INPUT_CFG_LED_GPIO     "cfgl"
 #define  INPUT_CFG_BTN_GPIO     "cfgb"
 #define  INPUT_CFG_LED_LEVEL    "icll"
+#define  INPUT_CFG_MODE         "cfgm"
 
 class SuplaWebPageConfig {
  public:

@@ -22,7 +22,7 @@
 #define INPUT_SCL_GPIO                         "sclg"
 #define INPUT_BME280                           "bme280"
 #define INPUT_ALTITUDE_BME280                  "abme280"
-#define INPUT_SHT30                            "sht30"
+#define INPUT_SHT3x                            "sht30"
 #define INPUT_SI7021                           "si7021"
 #define INPUT_SI7021_SONOFF                    "si7021sonoff"
 #define INPUT_TRIG_GPIO                        "trig"
@@ -37,17 +37,21 @@
 #define INPUT_IMPULSE_COUNTER_GPIO             "ic"
 #define INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "icdt"
 
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
 enum _sensorI2C
 {
   SENSOR_BME280,
-  SENSOR_SHT30,
+  SENSOR_SHT3x,
   SENSOR_SI7021
 };
+#endif
 
+#if defined(SUPLA_MAX6675)
 enum _sensorSPI
 {
   SENSOR_MAX6675
 };
+#endif
 
 #ifdef SUPLA_BME280
 enum _bmeAdress
@@ -58,12 +62,12 @@ enum _bmeAdress
 };
 #endif
 
-#ifdef SUPLA_SHT30
+#ifdef SUPLA_SHT3x
 enum _shtAdress
 {
-  SHT30_ADDRESS_0X44 = 1,
-  SHT30_ADDRESS_0X45,
-  SHT30_ADDRESS_0X44_AND_0X45
+  SHT3x_ADDRESS_0X44 = 1,
+  SHT3x_ADDRESS_0X45,
+  SHT3x_ADDRESS_0X44_AND_0X45
 };
 #endif
 

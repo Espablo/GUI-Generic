@@ -3,6 +3,7 @@
 #include "SuplaWebServer.h"
 #include "SuplaCommonPROGMEM.h"
 #include "GUIGenericCommon.h"
+#include "Markup.h"
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 SuplaWebPageRelay *WebPageRelay = new SuplaWebPageRelay();
@@ -135,7 +136,7 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
       pagerelay += F("</a>");
     }
     pagerelay += F("</label>");
-    pagerelay += WebServer->selectGPIO(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr);
+    pagerelay += addListGPIOSelect(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr);
     pagerelay += F("</i>");
   }
   pagerelay += F("</div><button type='submit'>");

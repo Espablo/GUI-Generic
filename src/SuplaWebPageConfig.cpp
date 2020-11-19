@@ -3,6 +3,7 @@
 #include "SuplaWebServer.h"
 #include "SuplaCommonPROGMEM.h"
 #include "GUIGenericCommon.h"
+#include "Markup.h"
 
 SuplaWebPageConfig *WebPageConfig = new SuplaWebPageConfig();
 
@@ -100,6 +101,10 @@ void SuplaWebPageConfig::handleConfigSave() {
     }
     #endif*/
 
+  if (strcmp(WebServer->httpServer.arg(INPUT_CFG_MODE).c_str(), "") != 0) {
+    ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer.arg(INPUT_CFG_MODE).c_str());
+  }
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Config save"));
@@ -124,7 +129,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += F("</h3>");
   page += F("<i><label>");
   page += F("LED</label>");
-  page += WebServer->selectGPIO(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED);
+  page += addListGPIOSelect(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED);
   page += F("</i>");
 
   if (selected != 17) {
@@ -149,8 +154,27 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += F("<i><label>");
   page += S_BUTTON;
   page += F("</label>");
-  page += WebServer->selectGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON);
+  page += addListGPIOSelect(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON);
   page += F("</i>");
+
+  page += F("<i><label>");
+  page += S_CFG_MODE;
+  page += F("</label><select name='");
+  page += INPUT_CFG_MODE;
+  page += F("'>");
+  selected = ConfigManager->get(KEY_CFG_MODE)->getValueInt();
+  for (suported = 0; suported < 2; suported++) {
+    page += F("<option value='");
+    page += suported;
+    if (selected == suported) {
+      page += F("' selected>");
+    }
+    else
+      page += F("'>");
+    page += PGMT(CFG_MODE_P[suported]);
+  }
+  page += F("</select></i>");
+
   page += F("</div><button type='submit'>");
   page += S_SAVE;
   page += F("</button></form>");

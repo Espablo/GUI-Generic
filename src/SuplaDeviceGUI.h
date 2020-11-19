@@ -37,7 +37,6 @@
 
 #include <vector>
 
-enum ConfigMode { CONFIG_MODE_10_ON_PRESSES, CONFIG_MODE_5SEK_HOLD };
 
 namespace Supla {
 namespace GUI {

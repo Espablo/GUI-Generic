@@ -30,7 +30,7 @@
 #include <supla/sensor/bme280.h>
 #include "SuplaWebPageSensor.h"
 #endif
-#ifdef SUPLA_SHT30
+#ifdef SUPLA_SHT3x
 #include <supla/sensor/SHT3x.h>
 #endif
 #ifdef SUPLA_SI7021
@@ -107,8 +107,8 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONFIG
-  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED), CONFIG_MODE_10_ON_PRESSES,
-                           ConfigESP->getLevel(FUNCTION_CFG_LED));
+  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED),
+                           ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(FUNCTION_CFG_LED));
 #endif
 
 #ifdef SUPLA_DHT11
@@ -145,7 +145,7 @@ void setup() {
   }
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT30) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || \
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || \
     defined(SUPLA_BH1750) || defined(SUPLA_MAX44009)
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
@@ -165,15 +165,15 @@ void setup() {
     }
 #endif
 
-#ifdef SUPLA_SHT30
-    switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT30).toInt()) {
-      case SHT30_ADDRESS_0X44:
+#ifdef SUPLA_SHT3x
+    switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT3x).toInt()) {
+      case SHT3x_ADDRESS_0X44:
         new Supla::Sensor::SHT3x(0x44);
         break;
-      case SHT30_ADDRESS_0X45:
+      case SHT3x_ADDRESS_0X45:
         new Supla::Sensor::SHT3x(0x45);
         break;
-      case SHT30_ADDRESS_0X44_AND_0X45:
+      case SHT3x_ADDRESS_0X44_AND_0X45:
         new Supla::Sensor::SHT3x(0x44);
         new Supla::Sensor::SHT3x(0x45);
         break;
@@ -192,7 +192,6 @@ void setup() {
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
     new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
   }
-
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER

@@ -27,6 +27,7 @@
 #define S_SENSORS_SPI                                          "SENSORY SPI"
 #define S_SENSORS_OTHER                                        "SENSORY INNE"
 #define S_LED_BUTTON_CFG                                       "LED, BUTTON CONFIG"
+#define S_CFG_MODE                                             "Tryb"
 #define S_QUANTITY                                             "ILOŚĆ"
 #define S_GPIO_SETTINGS_FOR_RELAYS                             "Ustawienie GPIO dla przekaźników"
 #define S_RELAY                                                "PRZEKAŹNIK"
@@ -87,6 +88,8 @@
 #define S_REACTION_ON_PRESS   "WCIŚNIĘCIE"
 #define S_REACTION_ON_RELEASE "ZWOLNIENIE"
 #define S_REACTION_ON_CHANGE  "ZMIANA STANU"
+#define S_CFG_10_PRESSES      "10 WCIŚNIĘĆ"
+#define S_5SEK_HOLD           "5 SEK"  
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"

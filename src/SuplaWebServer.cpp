@@ -96,7 +96,7 @@ void SuplaWebServer::handleSave() {
   }
 
   if (strcmp(httpServer.arg(PATH_REBOT).c_str(), "1") == 0) {
-    this->rebootESP();
+    ConfigESP->rebootESP();
     return;
   }
 
@@ -118,8 +118,8 @@ void SuplaWebServer::handleSave() {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
       if (ConfigESP->configModeESP == NORMAL_MODE) {
-        this->sendContent(supla_webpage_start(5));
-        this->rebootESP();
+        this->sendContent(supla_webpage_start(1));
+        ConfigESP->rebootESP();
       }
       else {
         this->sendContent(supla_webpage_start(7));
@@ -157,19 +157,19 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("<form method='post'>");
 
   addFormHeader(content, S_SETTING_WIFI_SSID);
-  addTextBox(content, INPUT_WIFI_SSID, KEY_WIFI_SSID, S_WIFI_SSID, 0, MAX_SSID, true);
-  addTextBoxPassword(content, INPUT_WIFI_PASS, KEY_WIFI_PASS, S_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
-  addTextBox(content, INPUT_HOSTNAME, KEY_HOST_NAME, S_HOST_NAME, 0, MAX_HOSTNAME, true);
+  addTextBox(content, INPUT_WIFI_SSID, S_WIFI_SSID, KEY_WIFI_SSID, 0, MAX_SSID, true);
+  addTextBoxPassword(content, INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
+  addTextBox(content, INPUT_HOSTNAME, S_HOST_NAME, KEY_HOST_NAME, 0, MAX_HOSTNAME, true);
   addFormHeaderEnd(content);
 
   addFormHeader(content, S_SETTING_SUPLA);
-  addTextBox(content, INPUT_SERVER, KEY_SUPLA_SERVER, S_SUPLA_SERVER, 0, MAX_SUPLA_SERVER, true);
-  addTextBox(content, INPUT_EMAIL, KEY_SUPLA_EMAIL, S_SUPLA_EMAIL, 0, MAX_EMAIL, true);
+  addTextBox(content, INPUT_SERVER, S_SUPLA_SERVER, KEY_SUPLA_SERVER, DEFAULT_SERVER, 0, MAX_SUPLA_SERVER, true);
+  addTextBox(content, INPUT_EMAIL, S_SUPLA_EMAIL, KEY_SUPLA_EMAIL, DEFAULT_EMAIL, 0, MAX_EMAIL, true);
   addFormHeaderEnd(content);
 
   addFormHeader(content, S_SETTING_ADMIN);
-  addTextBox(content, INPUT_MODUL_LOGIN, KEY_LOGIN, S_LOGIN, 0, MAX_MLOGIN, true);
-  addTextBoxPassword(content, INPUT_MODUL_PASS, KEY_LOGIN_PASS, S_LOGIN_PASS, MIN_PASSWORD, MAX_MPASSWORD, true);
+  addTextBox(content, INPUT_MODUL_LOGIN, S_LOGIN, KEY_LOGIN, 0, MAX_MLOGIN, true);
+  addTextBoxPassword(content, INPUT_MODUL_PASS, S_LOGIN_PASS, KEY_LOGIN_PASS, MIN_PASSWORD, MAX_MPASSWORD, true);
   addFormHeaderEnd(content);
 
 #ifdef SUPLA_ROLLERSHUTTER
@@ -255,7 +255,7 @@ void SuplaWebServer::supla_webpage_reboot() {
       return httpServer.requestAuthentication();
   }
   this->sendContent(supla_webpage_start(2));
-  this->rebootESP();
+  ConfigESP->rebootESP();
 }
 
 String SuplaWebServer::deviceSettings(int save) {
@@ -405,37 +405,6 @@ void SuplaWebServer::handleBoardSave() {
   }
 }
 
-String SuplaWebServer::selectGPIO(const char* input, uint8_t function, uint8_t nr) {
-  String page = "";
-  page += F("<select name='");
-  page += input;
-  if (nr != 0) {
-    page += nr;
-  }
-  else {
-    nr = 1;
-  }
-  page += F("'>");
-
-  uint8_t selected = ConfigESP->getGpio(nr, function);
-
-  for (uint8_t suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, function) == false || selected == suported) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += GIPOString(suported);
-    }
-  }
-  page += F("</select>");
-  return page;
-}
-
 const String SuplaWebServer::SuplaFavicon() {
   //  return F("<link rel='icon'
   //  href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAB3RJTUUH5AUUCCQbIwTFfgAAAAlwSFlzAAALEgAACxIB0t1+/AAAAARnQU1BAACxjwv8YQUAAAAwUExURf7nNZuNIOvWMci2KWRbFJGEHnRpFy8rCdrGLSAdBgwLAod6G7inJkI8DVJLEKeYIg6cTsoAAAGUSURBVHjaY2CAAFUGNLCF4QAyl4mhmP8BB4LPcWtdAe+BEBiX9QD77Kzl24GKHCAC/OVZH5hkVyUCFQlCRJhnKjAwLVlVb8lQDOY/ZFrG8FDVQbVqbU8BWODc3BX8dbMMGJhfrUyAaOla+/dAP8jyncsbgJTKgVP/b+pOAUudegAkGMsrGZhE1EFyDGwLwNaucmZyl1TgKTdg4JvAwMBzn3txeKWrMwP7wQcMWiAtf2c9YDjUfYBJapsDw66bm4AiUesOnJty0/O9iwLDPI5EhhCD6/q3Chk4dgCleJYpAEOmfCkDB+sbsK1886YBRfgWMTBwbi896wR04YZuAyAH6OmzDCbr3RgYsj6A1HEBPXCfgWHONgaG6eUBII0LFTiA7jn+iIF/MbMTyEu3lphtAJtpvl4BTLPNWgVSySA+y28aWIDdyGtVBgNH5psshVawwHGGO+arLr7MYFoJjZr/zBPYj85a1sC4ulwAIsIdcJzh2qt1WReYBWBR48gxgd1ziQIi6hTYEsxR45pZwRU9+oWgNAB1F3c/H6bYqgAAAABJRU5ErkJggg=='
@@ -492,12 +461,6 @@ const String SuplaWebServer::SuplaSaveResult(int save) {
   }
   saveresult += F("</div>");
   return saveresult;
-}
-
-void SuplaWebServer::rebootESP() {
-  wdt_reset();
-  ESP.restart();
-  while (1) wdt_reset();
 }
 
 void SuplaWebServer::sendContent(const String content) {

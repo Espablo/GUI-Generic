@@ -4,7 +4,7 @@
 #include "SuplaDeviceGUI.h"
 #include "GUIGenericCommon.h"
 
-#define PGMT( pgm_ptr ) ( reinterpret_cast< const __FlashStringHelper * >( pgm_ptr ) )
+#define PGMT(pgm_ptr) (reinterpret_cast<const __FlashStringHelper*>(pgm_ptr))
 
 const char HTTP_META[] PROGMEM =
     "<!DOCTYPE HTML><meta http-equiv='content-type' content='text/html; charset=UTF-8'><meta name='viewport' "
@@ -80,7 +80,7 @@ const char ADR77[] PROGMEM = "0x77";
 const char ADR76_ADR77[] PROGMEM = "0x76 & 0x77";
 
 const char* const BME280_P[] PROGMEM = {OFF, ADR76, ADR77, ADR76_ADR77};
-const char* const SHT30_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
+const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
 
 const char* const STATE_P[] PROGMEM = {OFF, ON};
 
@@ -96,9 +96,10 @@ const char REACTION_ON_RELEASE[] PROGMEM = S_REACTION_ON_RELEASE;
 const char REACTION_ON_CHANGE[] PROGMEM = S_REACTION_ON_CHANGE;
 const char* const TRIGGER_P[] PROGMEM = {REACTION_ON_PRESS, REACTION_ON_RELEASE, REACTION_ON_CHANGE};
 
-String GIPOString(uint8_t gpio);
-String BME280String(uint8_t adr);
-String SHT30String(uint8_t adr);
+const char CFG_10_PRESSES[] PROGMEM = S_CFG_10_PRESSES;
+const char CFG_5SEK_HOLD[] PROGMEM = S_5SEK_HOLD;
+const char* const CFG_MODE_P[] PROGMEM = {CFG_10_PRESSES, CFG_5SEK_HOLD};
+
 String StateString(uint8_t adr);
 String LevelString(uint8_t nr);
 String MemoryString(uint8_t nr);
