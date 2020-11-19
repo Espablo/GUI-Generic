@@ -425,8 +425,9 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   addNumberBox(page, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, max);
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
     addListGPIOLinkBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20, "MULTI DS18B20", PATH_MULTI_DS);
-  } else {
-     addListGPIOBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20);
+  }
+  else {
+    addListGPIOBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20);
   }
   addFormHeaderEnd(page);
 #endif
@@ -756,7 +757,7 @@ String SuplaWebPageSensor::supla_webpage_spi(int save) {
 }
 #endif
 
-#if defined(SUPLA_HC_SR04)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
 void SuplaWebPageSensor::handleOther() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
