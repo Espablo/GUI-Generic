@@ -97,7 +97,7 @@ class SuplaWebPageSensor {
   void handleSpiSave();
 #endif
 
-#if defined(SUPLA_HC_SR04)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
   void handleOther();
   void handleOtherSave();
 #endif
@@ -118,7 +118,7 @@ class SuplaWebPageSensor {
   String supla_webpage_spi(int save);
 #endif
 
-#if defined(SUPLA_HC_SR04)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
   String supla_webpage_other(int save);
 #endif
 };
