@@ -347,7 +347,7 @@ String SuplaWebServer::deviceSettings(int save) {
   content += F("<br><br>");
 #endif
 
-#if defined(SUPLA_HC_SR04)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
   content += F("<a href='");
   content += PATH_START;
   content += PATH_OTHER;
