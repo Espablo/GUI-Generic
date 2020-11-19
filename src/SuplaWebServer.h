@@ -69,7 +69,6 @@ class SuplaWebServer : public Supla::Element {
   const String SuplaSaveResult(int save);
 
   void sendContent(const String content);
-  void rebootESP();
 
   ESP8266WebServer httpServer = {80};
 #ifdef SUPLA_OTA

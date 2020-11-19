@@ -95,15 +95,35 @@ void addListGPIOBox(String& html, const String& input_id, const String& name, ui
   html += F("</i>");
 }
 
-void addListBox(String& html, const String& input_id, const String& name, const char* const* array_P, uint8_t size, uint8_t selected) {
-    html += F("<i><label>");
-    html += name;
-    html += "</label><select name='";
-    html += input_id;
+void addListGPIOLinkBox(
+    String& html, const String& input_id, const String& name, uint8_t function, const String& name_url, const String& url, uint8_t nr) {
+  html += F("<i>");
+  html += F("<label>");
+  if (ConfigESP->getGpio(function) != OFF_GPIO) {
+    html += F("<a href='");
+    html += PATH_START;
+    html += url;
     html += F("'>");
+  }
+  html += name_url;
+  if (ConfigESP->getGpio(function) != OFF_GPIO) {
+    html += WebServer->SuplaIconEdit();
+    html += F("</a>");
+  }
+  html += F("</label>");
+  html += addListGPIOSelect(input_id.c_str(), function, nr);
+  html += F("</i>");
+}
 
-     Serial.println(name);
-    Serial.println( sizeof(array_P));
+void addListBox(String& html, const String& input_id, const String& name, const char* const* array_P, uint8_t size, uint8_t selected) {
+  html += F("<i><label>");
+  html += name;
+  html += "</label><select name='";
+  html += input_id;
+  html += F("'>");
+
+  Serial.println(name);
+  Serial.println(sizeof(array_P));
   for (uint8_t suported = 0; suported < size; suported++) {
     html += F("<option value='");
     html += suported;
@@ -118,33 +138,33 @@ void addListBox(String& html, const String& input_id, const String& name, const 
   html += F("</select></i>");
 }
 
-  String addListGPIOSelect(const char* input, uint8_t function, uint8_t nr) {
-    String page = "";
-    page += F("<select name='");
-    page += input;
-    if (nr != 0) {
-      page += nr;
-    }
-    else {
-      nr = 1;
-    }
-    page += F("'>");
-
-    uint8_t selected = ConfigESP->getGpio(nr, function);
-
-    for (uint8_t suported = 0; suported < sizeof(GPIO_P) / sizeof(GPIO_P[0]); suported++) {
-      if (ConfigESP->checkBusyGpio(suported, function) == false || selected == suported) {
-        page += F("<option value='");
-        page += suported;
-        if (selected == suported) {
-          page += F("' selected>");
-        }
-        else {
-          page += F("'>");
-        }
-        page += PGMT(GPIO_P[suported]);
-      }
-    }
-    page += F("</select>");
-    return page;
+String addListGPIOSelect(const char* input, uint8_t function, uint8_t nr) {
+  String page = "";
+  page += F("<select name='");
+  page += input;
+  if (nr != 0) {
+    page += nr;
   }
+  else {
+    nr = 1;
+  }
+  page += F("'>");
+
+  uint8_t selected = ConfigESP->getGpio(nr, function);
+
+  for (uint8_t suported = 0; suported < sizeof(GPIO_P) / sizeof(GPIO_P[0]); suported++) {
+    if (ConfigESP->checkBusyGpio(suported, function) == false || selected == suported) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else {
+        page += F("'>");
+      }
+      page += PGMT(GPIO_P[suported]);
+    }
+  }
+  page += F("</select>");
+  return page;
+}

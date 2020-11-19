@@ -423,25 +423,11 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " Multi DS18B20");
   max = ConfigESP->countFreeGpio(FUNCTION_DS18B20);
   addNumberBox(page, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, max);
-  page += F("<i>");
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
-    page += F("<label>");
-    if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
-      page += F("<a href='");
-      page += PATH_START;
-      page += PATH_MULTI_DS;
-      page += F("'>");
-    }
-    page += F("MULTI DS18B20 ");
-    if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
-      page += WebServer->SuplaIconEdit();
-      page += F("</a>");
-    }
-    page += F("</label>");
+    addListGPIOLinkBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20, "MULTI DS18B20", PATH_MULTI_DS);
+  } else {
+     addListGPIOBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20);
   }
-  page += addListGPIOSelect(INPUT_MULTI_DS_GPIO, FUNCTION_DS18B20);
-  page += F("</i>");
-
   addFormHeaderEnd(page);
 #endif
 
@@ -584,21 +570,18 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
 #ifdef SUPLA_BME280
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt();
-    size = sizeof(BME280_P) / sizeof(BME280_P[0]);
-    addListBox(page, INPUT_BME280, "BME280 adres", BME280_P, size, selected);
+    addListBox(page, INPUT_BME280, "BME280 adres", BME280_P, 4, selected);
     addNumberBox(page, INPUT_ALTITUDE_BME280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BME280, 1500);
 #endif
 
 #ifdef SUPLA_SHT3x
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT3x).toInt();
-    size = sizeof(SHT3x_P) / sizeof(SHT3x_P[0]);
-    addListBox(page, INPUT_SHT3x, "SHT3x", SHT3x_P, size, selected);
+    addListBox(page, INPUT_SHT3x, "SHT3x", SHT3x_P, 4, selected);
 #endif
 
 #ifdef SUPLA_SI7021
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt();
-    size = sizeof(STATE_P) / sizeof(STATE_P[0]);
-    addListBox(page, INPUT_SI7021, "Si7021", STATE_P, size, selected);
+    addListBox(page, INPUT_SI7021, "Si7021", STATE_P, 2, selected);
 #endif
   }
   addFormHeaderEnd(page);
@@ -741,42 +724,16 @@ String SuplaWebPageSensor::supla_webpage_spi(int save) {
   page += F("'>");
 
 #if defined(SUPLA_MAX6675)
-  page += F("<div class='w'><h3>");
-  page += S_GPIO_SETTINGS_FOR;
-  page += F(" SPI</h3>");
-  page += F("<i><label>CLK</label>");
-  page += addListGPIOSelect(INPUT_CLK_GPIO, FUNCTION_CLK);
-  page += F("</i>");
-  page += F("<i><label>CS</label>");
-  page += addListGPIOSelect(INPUT_CS_GPIO, FUNCTION_CS);
-  page += F("</i>");
-  page += F("<i><label>D0</label>");
-  page += addListGPIOSelect(INPUT_D0_GPIO, FUNCTION_D0);
-  page += F("</i>");
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " SPI");
+  addListGPIOBox(page, INPUT_CLK_GPIO, "CLK", FUNCTION_CLK);
+  addListGPIOBox(page, INPUT_CS_GPIO, "CS", FUNCTION_CS);
+  addListGPIOBox(page, INPUT_D0_GPIO, "D0", FUNCTION_D0);
 
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
-#ifdef SUPLA_MAX6675
-    page += F("<i><label>");
-    page += F("MAX6675</label><select name='");
-    page += INPUT_MAX6675;
-    page += F("'>");
-
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MAX6675).toInt();
-    for (suported = 0; suported < 2; suported++) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else {
-        page += F("'>");
-      }
-      page += StateString(suported);
-    }
-    page += F("</select></i>");
-#endif
+    addListBox(page, INPUT_MAX6675, "MAX6675", STATE_P, 2, selected);
   }
-  page += F("</div>");
+  addFormHeaderEnd(page);
 #endif
   page += F("<button type='submit'>");
   page += S_SAVE;
