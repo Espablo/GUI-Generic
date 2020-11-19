@@ -141,7 +141,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += F("<form method='post' action='");
   pagebutton += PATH_SAVE_CONTROL;
 
-#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
+#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
   pagebutton += F("'><div class='w'><h3>");
   pagebutton += S_GPIO_SETTINGS_FOR_BUTTONS;
   pagebutton += F("</h3>");
@@ -216,7 +216,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   return pagebutton;
 }
 
-#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
+#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
 void SuplaWebPageControl::handleButtonSet() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))

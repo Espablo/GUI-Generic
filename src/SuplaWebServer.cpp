@@ -71,7 +71,8 @@ void SuplaWebServer::createWebServer() {
 #if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH)
   WebPageControl->createWebPageControl();
 #endif
-#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_BME280) || defined(SUPLA_HC_SR04)
+#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF) || defined(SUPLA_BME280) || \
+    defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_MAX6675) || defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
   WebPageSensor->createWebPageSensor();
 #endif
 #ifdef SUPLA_CONFIG
