@@ -49,7 +49,7 @@ void SuplaWebPageSensor::createWebPageSensor() {
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleSpiSave, this));
 #endif
 
-#if defined(SUPLA_HC_SR04)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
   path = PATH_START;
   path += PATH_OTHER;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleOther, this));
