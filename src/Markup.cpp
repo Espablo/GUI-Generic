@@ -36,7 +36,10 @@ void addTextBox(String& html,
   }
 
   html += F("' value='");
-  html += String(ConfigManager->get(value_key.c_str())->getValue());
+  String value = String(ConfigManager->get(value_key.c_str())->getValue());
+  if (value != placeholder) {
+    html += value;
+  }
   if (minlength > 0) {
     html += F("' minlength='");
     html += minlength;
