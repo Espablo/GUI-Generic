@@ -196,8 +196,9 @@ void setup() {
 
 #ifdef SUPLA_IMPULSE_COUNTER
   if (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
-    new Supla::Sensor::ImpulseCounter(ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER), true, true,
-                                      ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt());
+    new Supla::Sensor::ImpulseCounter(
+        ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER), ConfigManager->get(KEY_IMPULSE_COUNTER_RAISING_EDGE)->getValueInt(),
+        ConfigManager->get(KEY_IMPULSE_COUNTER_PULL_UP)->getValueInt(), ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt());
   }
 
 #endif
