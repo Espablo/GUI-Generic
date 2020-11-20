@@ -38,6 +38,7 @@
 #define INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "icdt"
 #define INPUT_IMPULSE_COUNTER_PULL_UP          "icpu"
 #define INPUT_IMPULSE_COUNTER_RAISING_EDGE     "icre"
+#define INPUT_IMPULSE_COUNTER_CHANGE_VALUE     "iccv"
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
 enum _sensorI2C

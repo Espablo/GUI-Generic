@@ -51,7 +51,6 @@
 #define KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "icDebounceTimeout"
 #define KEY_IMPULSE_COUNTER_PULL_UP          "icPullUp"
 #define KEY_IMPULSE_COUNTER_RAISING_EDGE     "icRaisingEdge"
-#define KEY_IMPULSE_COUNTER_RAISING_EDGE     "icRaisingEdge"
 
 #define GPIO      "GPIO"
 #define SEPARATOR ','

@@ -818,6 +818,22 @@ void SuplaWebPageSensor::handleOtherSave() {
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
+  if (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
+    if (strcmp(WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str(), "") != 0) {
+      ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
+    }
+
+    if (strcmp(WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_RAISING_EDGE).c_str(), "") != 0) {
+      ConfigManager->set(KEY_IMPULSE_COUNTER_RAISING_EDGE, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_RAISING_EDGE).c_str());
+    }
+
+    if (strcmp(WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_PULL_UP).c_str(), "") != 0) {
+      ConfigManager->set(KEY_IMPULSE_COUNTER_PULL_UP, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_PULL_UP).c_str());
+    }
+
+    Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
+  }
+
   input = INPUT_IMPULSE_COUNTER_GPIO;
   key = GPIO;
   key += WebServer->httpServer.arg(input).toInt();
@@ -838,19 +854,6 @@ void SuplaWebPageSensor::handleOtherSave() {
       return;
     }
   }
-
-  if (strcmp(WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str(), "") != 0) {
-    ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
-  }
-
-  if (strcmp(WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_RAISING_EDGE).c_str(), "") != 0) {
-    ConfigManager->set(KEY_IMPULSE_COUNTER_RAISING_EDGE, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_RAISING_EDGE).c_str());
-  }
-
-  if (strcmp(WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_PULL_UP).c_str(), "") != 0) {
-    ConfigManager->set(KEY_IMPULSE_COUNTER_PULL_UP, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_PULL_UP).c_str());
-  }
-
 #endif
 
   switch (ConfigManager->save()) {
@@ -909,6 +912,16 @@ String SuplaWebPageSensor::supla_webpage_other(int save) {
     addListBox(page, INPUT_IMPULSE_COUNTER_RAISING_EDGE, S_RAISING_EDGE, STATE_P, 2, selected);
     selected = ConfigManager->get(KEY_IMPULSE_COUNTER_RAISING_EDGE)->getValueInt();
     addListBox(page, INPUT_IMPULSE_COUNTER_PULL_UP, S_PULL_UP, STATE_P, 2, selected);
+    page += F("<i><label>");
+    page += S_CHANGE_VALUE;
+    page += F("</label><input name='");
+    page += INPUT_IMPULSE_COUNTER_CHANGE_VALUE;
+    page += F("' type='number' placeholder='0' step='1' min='0' max='");
+    page += 100;
+    page += F("' value='");
+    uint32_t count = Supla::GUI::impulseCounter[0]->getCounter();
+    page += count;
+    page += F("'></i>");
   }
   page += F("</div>");
 #endif

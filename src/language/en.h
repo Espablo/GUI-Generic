@@ -99,5 +99,6 @@
 #define S_DEBOUNCE_TIMEOUT "Debounce timeout"
 #define S_RAISING_EDGE     "Raising edge"
 #define S_PULL_UP          "Pull up"
+#define S_CHANGE_VALUE     "Change value"
 
 #endif  // _LANGUAGE_EN_S_H_
