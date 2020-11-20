@@ -157,25 +157,23 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   page += addListGPIOSelect(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON);
   page += F("</i>");
 
-  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) != OFF_GPIO) {
-    page += F("<i><label>");
-    page += S_CFG_MODE;
-    page += F("</label><select name='");
-    page += INPUT_CFG_MODE;
-    page += F("'>");
-    selected = ConfigManager->get(KEY_CFG_MODE)->getValueInt();
-    for (suported = 0; suported < 2; suported++) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else
-        page += F("'>");
-      page += PGMT(CFG_MODE_P[suported]);
+  page += F("<i><label>");
+  page += S_CFG_MODE;
+  page += F("</label><select name='");
+  page += INPUT_CFG_MODE;
+  page += F("'>");
+  selected = ConfigManager->get(KEY_CFG_MODE)->getValueInt();
+  for (suported = 0; suported < 2; suported++) {
+    page += F("<option value='");
+    page += suported;
+    if (selected == suported) {
+      page += F("' selected>");
     }
-    page += F("</select></i>");
+    else
+      page += F("'>");
+    page += PGMT(CFG_MODE_P[suported]);
   }
+  page += F("</select></i>");
 
   page += F("</div><button type='submit'>");
   page += S_SAVE;

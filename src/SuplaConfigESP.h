@@ -45,11 +45,11 @@ class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
   void ledBlinkingStop(void);
   int getPinLedConfig();
   virtual uint8_t pinOnValue() {
-    return highIsOn ? HIGH : LOW;
+    return ledHighIsOn ? HIGH : LOW;
   }
 
   virtual uint8_t pinOffValue() {
-    return highIsOn ? LOW : HIGH;
+    return ledHighIsOn ? LOW : HIGH;
   }
 
   String getMacAddress(bool formating);
@@ -83,7 +83,7 @@ class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
   int pinNumberConfig;
   int pinLedConfig;
   int modeConfigButton;
-  bool highIsOn;
+  bool ledHighIsOn;
 
   ETSTimer led_timer;
 };
