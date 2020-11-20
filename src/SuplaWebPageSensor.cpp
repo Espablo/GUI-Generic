@@ -887,7 +887,7 @@ String SuplaWebPageSensor::supla_webpage_other(int save) {
   page += F("</i>");
   page += F("<i><label>");
   page += S_DEBOUNCE_TIMEOUT;
-  page += F("</label><input name='");
+  page += F(" [ms]</label><input name='");
   page += INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT;
   page += F("' type='number' placeholder='0' step='1' min='0' max='");
   page += 100;
