@@ -588,13 +588,6 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   addFormHeaderEnd(page);
 #endif
 
-#ifdef SUPLA_HC_SR04
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " HC-SR04");
-  addListGPIOBox(page, INPUT_TRIG_GPIO, "TRIG", FUNCTION_TRIG);
-  addListGPIOBox(page, INPUT_ECHO_GPIO, "ECHO", FUNCTION_ECHO);
-  addFormHeaderEnd(page);
-#endif
-
   page += F("<button type='submit'>");
   page += S_SAVE;
   page += F("</button></form>");
@@ -877,37 +870,17 @@ String SuplaWebPageSensor::supla_webpage_other(int save) {
   page += F("'>");
 
 #ifdef SUPLA_HC_SR04
-  page += F("<div class='w'><h3>");
-  page += S_GPIO_SETTINGS_FOR;
-  page += F(" HC-SR04</h3>");
-  page += F("<i><label>TRIG</label>");
-  page += addListGPIOSelect(INPUT_TRIG_GPIO, FUNCTION_TRIG);
-  page += F("</i>");
-  page += F("<i><label>ECHO</label>");
-  page += addListGPIOSelect(INPUT_ECHO_GPIO, FUNCTION_ECHO);
-  page += F("</i>");
-  page += F("</div>");
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " HC-SR04");
+  addListGPIOBox(page, INPUT_TRIG_GPIO, "TRIG", FUNCTION_TRIG);
+  addListGPIOBox(page, INPUT_ECHO_GPIO, "ECHO", FUNCTION_ECHO);
+  addFormHeaderEnd(page);
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-  page += F("<div class='w'><h3>");
-  page += S_GPIO_SETTINGS_FOR;
-  page += F(" ");
-  page += S_IMPULSE_COUNTER;
-  page += F("</h3>");
-  page += F("<i><label>IC GPIO</label>");
-  page += addListGPIOSelect(INPUT_IMPULSE_COUNTER_GPIO, FUNCTION_IMPULSE_COUNTER);
-  page += F("</i>");
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " " + S_IMPULSE_COUNTER);
+  addListGPIOBox(page, INPUT_IMPULSE_COUNTER_GPIO, "IC GPIO", FUNCTION_IMPULSE_COUNTER);
   if (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
-    page += F("<i><label>");
-    page += S_DEBOUNCE_TIMEOUT;
-    page += F(" [ms]</label><input name='");
-    page += INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT;
-    page += F("' type='number' placeholder='0' step='1' min='0' max='");
-    page += 100;
-    page += F("' value='");
-    page += String(ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValue());
-    page += F("'></i>");
+    addNumberBox(page, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, 99999999);
     selected = ConfigManager->get(KEY_IMPULSE_COUNTER_RAISING_EDGE)->getValueInt();
     addListBox(page, INPUT_IMPULSE_COUNTER_RAISING_EDGE, S_RAISING_EDGE, STATE_P, 2, selected);
     selected = ConfigManager->get(KEY_IMPULSE_COUNTER_RAISING_EDGE)->getValueInt();
@@ -923,7 +896,7 @@ String SuplaWebPageSensor::supla_webpage_other(int save) {
     page += count;
     page += F("'></i>");
   }
-  page += F("</div>");
+  addFormHeaderEnd(page);
 #endif
   page += F("<button type='submit'>");
   page += S_SAVE;
