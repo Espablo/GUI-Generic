@@ -89,7 +89,7 @@
 #define S_REACTION_ON_RELEASE "ON RELEASE"
 #define S_REACTION_ON_CHANGE  "ON CHANGE"
 #define S_CFG_10_PRESSES      "10 ON PRESSES"
-#define S_5SEK_HOLD           "5 SEK HOLD"  
+#define S_5SEK_HOLD           "5 SEK HOLD"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "ABSENT"
@@ -97,5 +97,8 @@
 //#### SuplaWebPageSensor.cpp ####
 #define S_IMPULSE_COUNTER  "Impulse counter"
 #define S_DEBOUNCE_TIMEOUT "Debounce timeout"
+#define S_RAISING_EDGE     "Raising edge"
+#define S_PULL_UP          "Pull up"
+#define S_CHANGE_VALUE     "Change value"
 
 #endif  // _LANGUAGE_EN_S_H_

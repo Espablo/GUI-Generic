@@ -89,7 +89,7 @@
 #define S_REACTION_ON_RELEASE "ZWOLNIENIE"
 #define S_REACTION_ON_CHANGE  "ZMIANA STANU"
 #define S_CFG_10_PRESSES      "10 WCIŚNIĘĆ"
-#define S_5SEK_HOLD           "5 SEK"  
+#define S_5SEK_HOLD           "5 SEK"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"
@@ -97,5 +97,8 @@
 //#### SuplaWebPageSensor.cpp ####
 #define S_IMPULSE_COUNTER  "Licznik impulsów"
 #define S_DEBOUNCE_TIMEOUT "Limit czasu"
+#define S_RAISING_EDGE     "Zbocze rosnące"
+#define S_PULL_UP          "Podciąganie do VCC"
+#define S_CHANGE_VALUE     "Zmień wartość"
 
 #endif  // _LANGUAGE_PL_S_H_

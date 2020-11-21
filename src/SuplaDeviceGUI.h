@@ -25,6 +25,7 @@
 #include <supla/control/relay.h>
 #include <supla/control/roller_shutter.h>
 #include "SuplaSensorDS18B20.h"
+#include <supla/sensor/impulse_counter.h>
 
 #ifdef DEBUG_MODE
 #include <supla/sensor/esp_free_heap.h>
@@ -36,7 +37,6 @@
 #include "SuplaWebPageRelay.h"
 
 #include <vector>
-
 
 namespace Supla {
 namespace GUI {
@@ -61,17 +61,21 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 #endif
 
 #ifdef SUPLA_ROLLERSHUTTER
-void addRolleShutter(
-    int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn = true);
-void addRolleShutterMomentary(
-    int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn = true);
+void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn = true);
+void addRolleShutterMomentary(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn = true);
 
 extern std::vector<Supla::Control::RollerShutter *> RollerShutterRelay;
 extern std::vector<Supla::Control::Button *> RollerShutterButtonOpen;
 extern std::vector<Supla::Control::Button *> RollerShutterButtonClose;
 #endif
-};
-};
+
+#ifdef SUPLA_IMPULSE_COUNTER
+extern std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
+void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay);
+
+#endif
+};  // namespace GUI
+};  // namespace Supla
 
 extern SuplaConfigManager *ConfigManager;
 extern SuplaConfigESP *ConfigESP;

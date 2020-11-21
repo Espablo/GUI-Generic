@@ -159,7 +159,9 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_MAX_DHT11, "1", 2);
   this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
   this->addKey(KEY_ALTITUDE_BME280, "0", 4);
-  this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "0", 4);
+  this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
+  this->addKey(KEY_IMPULSE_COUNTER_PULL_UP, "0", 2);
+  this->addKey(KEY_IMPULSE_COUNTER_RAISING_EDGE, "0", 2);
 
   int nr;
   String key;

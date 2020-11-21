@@ -17,7 +17,7 @@
 #include "SuplaConfigManager.h"
 #include "SuplaGuiWiFi.h"
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_IMPULSE_COUNTER)
 #define TIME_SAVE_PERIOD_SEK 30  // the time is given in seconds
 #define STORAGE_OFFSET       0
 #include <supla/storage/eeprom.h>
@@ -54,7 +54,7 @@ void begin() {
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
-  if (pinRelay != OFF_GPIO)  {
+  if (pinRelay != OFF_GPIO) {
     relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
 
     int size = relay.size() - 1;
@@ -106,6 +106,10 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 #endif
 
 #ifdef SUPLA_ROLLERSHUTTER
+std::vector<Supla::Control::RollerShutter *> RollerShutterRelay;
+std::vector<Supla::Control::Button *> RollerShutterButtonOpen;
+std::vector<Supla::Control::Button *> RollerShutterButtonClose;
+
 void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn) {
   RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
   if (pinButtonUp != OFF_GPIO)
@@ -141,6 +145,14 @@ void addRolleShutterMomentary(int pinRelayUp, int pinRelayDown, int pinButtonUp,
 }
 #endif
 
+#ifdef SUPLA_IMPULSE_COUNTER
+std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
+
+void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay) {
+  impulseCounter.push_back(new Supla::Sensor::ImpulseCounter(pin, lowToHigh, inputPullup, debounceDelay));
+}
+#endif
+
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 std::vector<Supla::Control::Relay *> relay;
 std::vector<Supla::Control::Button *> button;
@@ -150,11 +162,7 @@ std::vector<Supla::Control::Button *> button;
 std::vector<DS18B20 *> sensorDS;
 #endif
 
-#ifdef SUPLA_ROLLERSHUTTER
-std::vector<Supla::Control::RollerShutter *> RollerShutterRelay;
-std::vector<Supla::Control::Button *> RollerShutterButtonOpen;
-std::vector<Supla::Control::Button *> RollerShutterButtonClose;
-#endif
+
 }  // namespace GUI
 }  // namespace Supla
 
