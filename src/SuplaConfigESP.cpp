@@ -49,29 +49,29 @@ SuplaConfigESP::SuplaConfigESP() {
   SuplaDevice.setStatusFuncImpl(&status_func);
 }
 
-void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _highIsOn) {
+void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _ledHighIsOn) {
   pinNumberConfig = _pinNumberConfig;
   pinLedConfig = _pinLedConfig;
   modeConfigButton = _modeConfigButton;
-  highIsOn = _highIsOn;
+  ledHighIsOn = _ledHighIsOn;
 
-  if (pinLedConfig <= 0) {
-    Serial.println(F("ESP  - status LED disabled"));
-  }
-  else {
+  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO) {
     pinMode(pinLedConfig, OUTPUT);
     digitalWrite(pinLedConfig, pinOffValue());
   }
 
-  Supla::Control::Button *buttonConfig = new Supla::Control::Button(pinNumberConfig, true, true);
+  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) != OFF_GPIO) {
+    Supla::Control::Button *buttonConfig = new Supla::Control::Button(pinNumberConfig, true, true);
+    buttonConfig->setMulticlickTime(1000);
+    buttonConfig->addAction(Supla::TURN_ON, *ConfigESP, Supla::ON_CLICK_1);
 
-  if (modeConfigButton == CONFIG_MODE_10_ON_PRESSES) {
-    buttonConfig->setMulticlickTime(400);
-    buttonConfig->addAction(CONFIG_MODE_10_ON_PRESSES, *ConfigESP, Supla::ON_CLICK_10);
-  }
-  if (modeConfigButton == CONFIG_MODE_5SEK_HOLD) {
-    buttonConfig->setHoldTime(5000);
-    buttonConfig->addAction(CONFIG_MODE_5SEK_HOLD, *ConfigESP, Supla::ON_HOLD);
+    if (modeConfigButton == CONFIG_MODE_10_ON_PRESSES) {
+      buttonConfig->addAction(CONFIG_MODE_10_ON_PRESSES, *ConfigESP, Supla::ON_CLICK_10);
+    }
+    if (modeConfigButton == CONFIG_MODE_5SEK_HOLD) {
+      buttonConfig->setHoldTime(5000);
+      buttonConfig->addAction(CONFIG_MODE_5SEK_HOLD, *ConfigESP, Supla::ON_HOLD);
+    }
   }
 }
 
@@ -88,7 +88,7 @@ void SuplaConfigESP::runAction(int event, int action) {
   }
 
   if (configModeESP == CONFIG_MODE) {
-    if (event == Supla::ON_PRESS) {
+    if (event ==  Supla::ON_CLICK_1) {
       rebootESP();
     }
   }
