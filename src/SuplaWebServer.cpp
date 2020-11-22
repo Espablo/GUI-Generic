@@ -431,6 +431,11 @@ const String SuplaWebServer::SuplaJavaScript(String java_return) {
         "null){element.style.visibility='hidden';location.href='");
   java_script += java_return;
   java_script += F("';}},1600);</script>\n");
+#ifdef SUPLA_OTA
+  java_script +=
+      F("<script type='text/javascript'>if(window.top.location != window.location){"
+        "window.top.location.href = window.location.href;}</script>\n");
+#endif
   return java_script;
 }
 
