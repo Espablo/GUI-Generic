@@ -525,3 +525,43 @@ void SuplaWebServer::redirectToIndex() {
   httpServer.send(302, "text/plain", "");
   httpServer.client().stop();
 }
+
+bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
+  uint8_t current_value;
+  String key, input;
+  input = _input;
+  if (nr != 0) {
+    input += nr;
+  }
+  else {
+    nr = 1;
+  }
+
+  key = GPIO;
+  key += WebServer->httpServer.arg(input).toInt();
+
+  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, function, 1);
+    }
+    else if (ConfigESP->getGpio(nr, function) == WebServer->httpServer.arg(input).toInt() &&
+             ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, function, ConfigESP->getLevel(nr, function));
+    }
+    else {
+      return false;
+    }
+  }
+
+  if (ConfigESP->getGpio(nr, function) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
+  }
+
+  if (input_max != "\n") {
+    current_value = WebServer->httpServer.arg(input_max).toInt();
+    if (ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
+      ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
+    }
+  }
+  return true;
+}

@@ -19,7 +19,7 @@
 #include "GUI-Generic_Config.h"
 
 #ifdef SUPLA_OTA
-  #include <ESP8266HTTPUpdateServer.h>
+#include <ESP8266HTTPUpdateServer.h>
 #endif
 #include <ESP8266WebServer.h>
 #include <supla/element.h>
@@ -77,6 +77,8 @@ class SuplaWebServer : public Supla::Element {
   void handleFirmwareUp();
   String supla_webpage_upddate();
 #endif
+
+  bool saveGPIO(const String& input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
 
  private:
   void iterateAlways();
