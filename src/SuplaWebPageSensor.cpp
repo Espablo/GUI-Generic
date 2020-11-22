@@ -883,7 +883,7 @@ String SuplaWebPageSensor::supla_webpage_other(int save) {
     addNumberBox(page, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, 99999999);
     selected = ConfigManager->get(KEY_IMPULSE_COUNTER_RAISING_EDGE)->getValueInt();
     addListBox(page, INPUT_IMPULSE_COUNTER_RAISING_EDGE, S_RAISING_EDGE, STATE_P, 2, selected);
-    selected = ConfigManager->get(KEY_IMPULSE_COUNTER_RAISING_EDGE)->getValueInt();
+    selected = ConfigManager->get(KEY_IMPULSE_COUNTER_PULL_UP)->getValueInt();
     addListBox(page, INPUT_IMPULSE_COUNTER_PULL_UP, S_PULL_UP, STATE_P, 2, selected);
     page += F("<i><label>");
     page += S_CHANGE_VALUE;
