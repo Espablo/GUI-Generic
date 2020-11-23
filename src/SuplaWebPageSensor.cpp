@@ -351,26 +351,10 @@ void SuplaWebPageSensor::handle1WireSave() {
 #endif
 
 #ifdef SUPLA_SI7021_SONOFF
-  input = INPUT_SI7021_SONOFF;
-  key = GPIO;
-  key += WebServer->httpServer.arg(input).toInt();
-  if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != WebServer->httpServer.arg(input).toInt() ||
-      WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
-  }
-  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-    key = GPIO;
-    key += WebServer->httpServer.arg(input).toInt();
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) == WebServer->httpServer.arg(input).toInt() &&
-         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_SI7021_SONOFF)) {
-      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_SI7021_SONOFF);
-    }
-    else {
+  if (!WebServer->saveGPIO(INPUT_SI7021_SONOFF, FUNCTION_SI7021_SONOFF)) {
       WebServer->sendContent(supla_webpage_1wire(6));
       return;
     }
-  }
 #endif
 
   switch (ConfigManager->save()) {
