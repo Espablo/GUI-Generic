@@ -84,40 +84,14 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += WebServer->SuplaJavaScript(PATH_RELAY);
   pagerelay += F("<form method='post' action='");
   pagerelay += PATH_SAVE_RELAY;
-  pagerelay += F("'><div class='w'><h3>");
-  pagerelay += S_GPIO_SETTINGS_FOR_RELAYS;
-  pagerelay += F("</h3>");
-  pagerelay += F("<i><label>");
-  pagerelay += S_QUANTITY;
-  pagerelay += F("</label><input name='");
-  pagerelay += INPUT_MAX_RELAY;
-  pagerelay += F("' type='number' placeholder='0' step='1' min='0' max='");
-  pagerelay += ConfigESP->countFreeGpio(FUNCTION_RELAY);
-  pagerelay += F("' value='");
-  pagerelay += String(ConfigManager->get(KEY_MAX_RELAY)->getValue());
-  pagerelay += F("'></i>");
+  pagerelay += F("'>");
+  addFormHeader(pagerelay, String(S_GPIO_SETTINGS_FOR_RELAYS));
+  addNumberBox(pagerelay, INPUT_MAX_RELAY, S_QUANTITY, KEY_MAX_RELAY, ConfigESP->countFreeGpio(FUNCTION_RELAY));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-    pagerelay += F("<i><label>");
-    selected = ConfigESP->getGpio(nr, FUNCTION_RELAY);
-    if (selected != OFF_GPIO) {
-      pagerelay += F("<a href='");
-      pagerelay += PATH_START;
-      pagerelay += PATH_RELAY_SET;
-      pagerelay += nr;
-      pagerelay += F("'>");
-    }
-    pagerelay += nr;
-    pagerelay += F(". ");
-    pagerelay += S_RELAY;
-    if (selected != OFF_GPIO) {
-      pagerelay += WebServer->SuplaIconEdit();
-      pagerelay += F("</a>");
-    }
-    pagerelay += F("</label>");
-    pagerelay += addListGPIOSelect(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr);
-    pagerelay += F("</i>");
+    addListGPIOLinkBox(pagerelay, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, PATH_RELAY_SET, nr);
   }
-  pagerelay += F("</div><button type='submit'>");
+  addFormHeaderEnd(pagerelay);
+  pagerelay += F("<button type='submit'>");
   pagerelay += S_SAVE;
   pagerelay += F("</button></form>");
   pagerelay += F("<br>");
