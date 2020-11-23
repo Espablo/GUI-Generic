@@ -352,9 +352,9 @@ void SuplaWebPageSensor::handle1WireSave() {
 
 #ifdef SUPLA_SI7021_SONOFF
   if (!WebServer->saveGPIO(INPUT_SI7021_SONOFF, FUNCTION_SI7021_SONOFF)) {
-      WebServer->sendContent(supla_webpage_1wire(6));
-      return;
-    }
+    WebServer->sendContent(supla_webpage_1wire(6));
+    return;
+  }
 #endif
 
   switch (ConfigManager->save()) {
@@ -390,7 +390,7 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
 #ifdef SUPLA_DHT22
   addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " DHT22");
   max = ConfigESP->countFreeGpio(FUNCTION_DHT22);
-  addNumberBox(page, INPUT_MAX_DHT22, S_QUANTITY, KEY_MAX_DHT22, FUNCTION_DHT22);
+  addNumberBox(page, INPUT_MAX_DHT22, S_QUANTITY, KEY_MAX_DHT22, max);
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
     addListGPIOBox(page, INPUT_DHT22_GPIO, "DHT22", FUNCTION_DHT22, nr);
   }
@@ -408,7 +408,7 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   max = ConfigESP->countFreeGpio(FUNCTION_DS18B20);
   addNumberBox(page, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, max);
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
-    addListGPIOLinkBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20, "MULTI DS18B20", PATH_MULTI_DS);
+    addListGPIOLinkBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20, PATH_MULTI_DS);
   }
   else {
     addListGPIOBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20);
@@ -795,41 +795,18 @@ void SuplaWebPageSensor::handleOtherSave() {
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-  if (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
-    if (strcmp(WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str(), "") != 0) {
-      ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
-    }
+  // Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
 
-    if (strcmp(WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_RAISING_EDGE).c_str(), "") != 0) {
-      ConfigManager->set(KEY_IMPULSE_COUNTER_RAISING_EDGE, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_RAISING_EDGE).c_str());
-    }
-
-    if (strcmp(WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_PULL_UP).c_str(), "") != 0) {
-      ConfigManager->set(KEY_IMPULSE_COUNTER_PULL_UP, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_PULL_UP).c_str());
-    }
-
-    Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
-  }
-
-  input = INPUT_IMPULSE_COUNTER_GPIO;
-  key = GPIO;
-  key += WebServer->httpServer.arg(input).toInt();
-  if (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) != WebServer->httpServer.arg(input).toInt() ||
-      WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER));
-  }
-  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-    key = GPIO;
-    key += WebServer->httpServer.arg(input).toInt();
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) == WebServer->httpServer.arg(input).toInt() &&
-         ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_IMPULSE_COUNTER)) {
-      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_IMPULSE_COUNTER);
-    }
-    else {
+  last_value = ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt();
+  for (nr = 1; nr <= last_value; nr++) {
+    if (!WebServer->saveGPIO(INPUT_IMPULSE_COUNTER_GPIO, FUNCTION_IMPULSE_COUNTER, nr, INPUT_MAX_IMPULSE_COUNTER)) {
       WebServer->sendContent(supla_webpage_other(6));
       return;
     }
+  }
+
+  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_IMPULSE_COUNTER).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_IMPULSE_COUNTER, WebServer->httpServer.arg(INPUT_MAX_IMPULSE_COUNTER).c_str());
   }
 #endif
 
@@ -862,23 +839,9 @@ String SuplaWebPageSensor::supla_webpage_other(int save) {
 
 #ifdef SUPLA_IMPULSE_COUNTER
   addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " " + S_IMPULSE_COUNTER);
-  addListGPIOBox(page, INPUT_IMPULSE_COUNTER_GPIO, "IC GPIO", FUNCTION_IMPULSE_COUNTER);
-  if (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
-    addNumberBox(page, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, 99999999);
-    selected = ConfigManager->get(KEY_IMPULSE_COUNTER_RAISING_EDGE)->getValueInt();
-    addListBox(page, INPUT_IMPULSE_COUNTER_RAISING_EDGE, S_RAISING_EDGE, STATE_P, 2, selected);
-    selected = ConfigManager->get(KEY_IMPULSE_COUNTER_PULL_UP)->getValueInt();
-    addListBox(page, INPUT_IMPULSE_COUNTER_PULL_UP, S_PULL_UP, STATE_P, 2, selected);
-    page += F("<i><label>");
-    page += S_CHANGE_VALUE;
-    page += F("</label><input name='");
-    page += INPUT_IMPULSE_COUNTER_CHANGE_VALUE;
-    page += F("' type='number' placeholder='0' step='1' min='0' max='");
-    page += 100;
-    page += F("' value='");
-    uint32_t count = Supla::GUI::impulseCounter[0]->getCounter();
-    page += count;
-    page += F("'></i>");
+  addNumberBox(page, INPUT_MAX_IMPULSE_COUNTER, S_QUANTITY, KEY_MAX_IMPULSE_COUNTER, ConfigESP->countFreeGpio(FUNCTION_IMPULSE_COUNTER));
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
+    addListGPIOLinkBox(page, INPUT_IMPULSE_COUNTER_GPIO, "IC GPIO", FUNCTION_IMPULSE_COUNTER, PATH_IMPULSE_COUNTER_SET, nr);
   }
   addFormHeaderEnd(page);
 #endif

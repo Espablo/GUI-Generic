@@ -49,8 +49,7 @@
 #define KEY_BOARD                            "board"
 #define KEY_CFG_MODE                         "cfgmode"
 #define KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "icDebounceTimeout"
-#define KEY_IMPULSE_COUNTER_PULL_UP          "icPullUp"
-#define KEY_IMPULSE_COUNTER_RAISING_EDGE     "icRaisingEdge"
+#define KEY_MAX_IMPULSE_COUNTER              "maxicRaisingEdge"
 
 #define GPIO      "GPIO"
 #define SEPARATOR ','
