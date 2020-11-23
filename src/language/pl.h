@@ -95,10 +95,12 @@
 #define S_ABSENT "BRAK"
 
 //#### SuplaWebPageSensor.cpp ####
-#define S_IMPULSE_COUNTER  "Licznik impulsów"
-#define S_DEBOUNCE_TIMEOUT "Limit czasu"
-#define S_RAISING_EDGE     "Zbocze rosnące"
-#define S_PULL_UP          "Podciąganie do VCC"
-#define S_CHANGE_VALUE     "Zmień wartość"
+#define S_IMPULSE_COUNTER                  "Licznik impulsów"
+#define S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "Limit czasu"
+#define S_IMPULSE_COUNTER_RAISING_EDGE     "Zbocze rosnące"
+#define S_IMPULSE_COUNTER_PULL_UP          "Podciąganie do VCC"
+#define S_IMPULSE_COUNTER_CHANGE_VALUE     "Zmień wartość"
+#define S_IMPULSE_COUNTER_SETTINGS_NR      "Ustawienia IC nr."
+#define S_NO_IMPULSE_COUNTER_NR            "Brak IC nr."
 
 #endif  // _LANGUAGE_PL_S_H_

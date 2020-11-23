@@ -4,17 +4,18 @@
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 
-#define PATH_MULTI_DS            "multids"
-#define PATH_SAVE_MULTI_DS       "savemultids"
-#define PATH_1WIRE               "1wire"
-#define PATH_SAVE_1WIRE          "save1wire"
-#define PATH_I2C                 "i2c"
-#define PATH_SAVE_I2C            "savei2c"
-#define PATH_SPI                 "spi"
-#define PATH_SAVE_SPI            "savespi"
-#define PATH_OTHER               "other"
-#define PATH_SAVE_OTHER          "saveother"
-#define PATH_IMPULSE_COUNTER_SET "setimpulsecounter"
+#define PATH_MULTI_DS                 "multids"
+#define PATH_SAVE_MULTI_DS            "savemultids"
+#define PATH_1WIRE                    "1wire"
+#define PATH_SAVE_1WIRE               "save1wire"
+#define PATH_I2C                      "i2c"
+#define PATH_SAVE_I2C                 "savei2c"
+#define PATH_SPI                      "spi"
+#define PATH_SAVE_SPI                 "savespi"
+#define PATH_OTHER                    "other"
+#define PATH_SAVE_OTHER               "saveother"
+#define PATH_IMPULSE_COUNTER_SET      "setimpulsecounter"
+#define PATH_SAVE_IMPULSE_COUNTER_SET "savesetimpulsecounter"
 
 #define INPUT_MULTI_DS_GPIO                    "mdsg"
 #define INPUT_DHT11_GPIO                       "dht11"
@@ -105,6 +106,10 @@ class SuplaWebPageSensor {
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
   void handleOther();
   void handleOtherSave();
+
+  void handleImpulseCounterSet();
+  void handleImpulseCounterSaveSet();
+  String supla_impulse_counter_set(int save);
 #endif
 
  private:

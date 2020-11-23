@@ -56,9 +56,23 @@ void SuplaWebPageSensor::createWebPageSensor() {
   path = PATH_START;
   path += PATH_SAVE_OTHER;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleOtherSave, this));
+
+#if defined(SUPLA_IMPULSE_COUNTER)
+  for (uint8_t i = 1; i <= MAX_GPIO; i++) {
+    path = PATH_START;
+    path += PATH_IMPULSE_COUNTER_SET;
+    path += i;
+    WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleImpulseCounterSet, this));
+
+    path = PATH_START;
+    path += PATH_SAVE_IMPULSE_COUNTER_SET;
+    path += i;
+    WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleImpulseCounterSaveSet, this));
+  }
+#endif
+
 #endif
 }
-
 #ifdef SUPLA_DS18B20
 void SuplaWebPageSensor::handleSearchDS() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
@@ -694,6 +708,152 @@ String SuplaWebPageSensor::supla_webpage_other(int save) {
   page += F("'><button>");
   page += S_RETURN;
   page += F("</button></a></div>");
+  return page;
+}
+#endif
+
+#ifdef SUPLA_IMPULSE_COUNTER
+void SuplaWebPageSensor::handleImpulseCounterSet() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+  WebServer->sendContent(supla_impulse_counter_set(0));
+}
+
+void SuplaWebPageSensor::handleImpulseCounterSaveSet() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+
+  String readUrl, nr, key, input;
+  uint8_t place;
+
+  String path = PATH_START;
+  path += PATH_SAVE_IMPULSE_COUNTER_SET;
+  readUrl = WebServer->httpServer.uri();
+
+  place = readUrl.indexOf(path);
+  nr = readUrl.substring(place + path.length(), place + path.length() + 3);
+  key = GPIO;
+  key += ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
+
+  input = INPUT_IMPULSE_COUNTER_PULL_UP;
+  input += nr;
+  ConfigManager->setElement(key.c_str(), MEMORY, WebServer->httpServer.arg(input).toInt());
+
+  input = INPUT_IMPULSE_COUNTER_RAISING_EDGE;
+  input += nr;
+  ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
+
+  ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
+  Supla::GUI::impulseCounter[nr.toInt() - 1]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
+
+  switch (ConfigManager->save()) {
+    case E_CONFIG_OK:
+      //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
+      WebServer->sendContent(supla_webpage_other(1));
+      break;
+
+    case E_CONFIG_FILE_OPEN:
+      //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
+      WebServer->sendContent(supla_webpage_other(2));
+      break;
+  }
+}
+
+String SuplaWebPageSensor::supla_impulse_counter_set(int save) {
+  String readUrl, nr, key;
+  uint8_t place, selected, suported;
+
+  String path = PATH_START;
+  path += PATH_IMPULSE_COUNTER_SET;
+  readUrl = WebServer->httpServer.uri();
+
+  place = readUrl.indexOf(path);
+  nr = readUrl.substring(place + path.length(), place + path.length() + 3);
+
+  String page = "";
+  page += WebServer->SuplaSaveResult(save);
+  page += WebServer->SuplaJavaScript(PATH_OTHER);
+  uint8_t relays = ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt();
+  if (nr.toInt() <= relays && ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
+    page += F("<form method='post' action='");
+    page += PATH_SAVE_IMPULSE_COUNTER_SET;
+    page += nr;
+    page += F("'><div class='w'><h3>");
+    page += S_IMPULSE_COUNTER_SETTINGS_NR;
+    page += F(" ");
+    page += nr;
+    page += F("</h3>");
+    page += F("<i><label>");
+    page += S_IMPULSE_COUNTER_PULL_UP;
+    page += F("</label><select name='");
+    page += INPUT_IMPULSE_COUNTER_PULL_UP;
+    page += nr;
+    page += F("'>");
+    selected = ConfigESP->getMemory(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
+    for (suported = 0; suported < 2; suported++) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else
+        page += F("'>");
+      page += StateString(suported);
+    }
+    page += F("</select></i>");
+    page += F("<i><label>");
+    page += S_IMPULSE_COUNTER_RAISING_EDGE;
+    page += F("</label><select name='");
+    page += INPUT_IMPULSE_COUNTER_RAISING_EDGE;
+    page += nr;
+    page += F("'>");
+    selected = ConfigESP->getLevel(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
+    for (suported = 0; suported < 2; suported++) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else
+        page += F("'>");
+      page += StateString(suported);
+    }
+    page += F("</select></i>");
+    addNumberBox(page, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, 99999999);
+    page += F("<i><label>");
+    page += S_IMPULSE_COUNTER_CHANGE_VALUE;
+    page += F("</label><input name='");
+    page += INPUT_IMPULSE_COUNTER_CHANGE_VALUE;
+    page += F("' type='number' placeholder='0' step='1' min='0' max='");
+    page += 100;
+    page += F("' value='");
+    uint32_t count = Supla::GUI::impulseCounter[nr.toInt() - 1]->getCounter();
+    page += count;
+    page += F("'></i>");
+
+    page += F("</div><button type='submit'>");
+    page += S_SAVE;
+    page += F("</button></form>");
+  }
+  else {
+    page += F("<div class='w'><h3>");
+    page += S_NO_IMPULSE_COUNTER_NR;
+    page += F(" ");
+    page += nr;
+    page += F("</h3>");
+  }
+  page += F("<br>");
+  page += F("<a href='");
+  page += PATH_START;
+  page += PATH_OTHER;
+  page += F("'><button>");
+  page += S_RETURN;
+  page += F("</button></a></div>");
+
   return page;
 }
 #endif

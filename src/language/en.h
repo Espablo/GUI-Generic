@@ -95,10 +95,12 @@
 #define S_ABSENT "ABSENT"
 
 //#### SuplaWebPageSensor.cpp ####
-#define S_IMPULSE_COUNTER  "Impulse counter"
-#define S_DEBOUNCE_TIMEOUT "Debounce timeout"
-#define S_RAISING_EDGE     "Raising edge"
-#define S_PULL_UP          "Pull up"
-#define S_CHANGE_VALUE     "Change value"
+#define S_IMPULSE_COUNTER                  "Impulse counter"
+#define S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "Debounce timeout"
+#define S_IMPULSE_COUNTER_RAISING_EDGE     "Raising edge"
+#define S_IMPULSE_COUNTER_PULL_UP          "Pull up"
+#define S_IMPULSE_COUNTER_CHANGE_VALUE     "Change value"
+#define S_IMPULSE_COUNTER_SETTINGS_NR      "Settings IC nr."
+#define S_NO_IMPULSE_COUNTER_NR            "No IC nr."
 
 #endif  // _LANGUAGE_EN_S_H_
