@@ -235,22 +235,6 @@ void status_func(int status, const char *msg) {
     //    Serial.println(ConfigESP->supla_status.msg);
   }
 }
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-int SuplaConfigESP::getMemoryRelay(int nr) {
-  uint8_t gpio;
-  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
-    String key = GPIO;
-    key += gpio;
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_RELAY) {
-      if (ConfigManager->get(key.c_str())->getElement(NR).toInt() == nr) {
-        uint8_t memory = ConfigManager->get(key.c_str())->getElement(MEMORY).toInt();
-        return memory;
-      }
-    }
-  }
-  return OFF_GPIO;
-}
-#endif
 
 int SuplaConfigESP::getGpio(int nr, int function) {
   uint8_t gpio;
@@ -286,6 +270,20 @@ int SuplaConfigESP::getLevel(int nr, int function) {
   return OFF_GPIO;
 }
 
+int SuplaConfigESP::getMemory(int nr, int function) {
+  uint8_t gpio;
+  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    String key = GPIO;
+    key += gpio;
+    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
+      if (ConfigManager->get(key.c_str())->getElement(NR).toInt() == nr) {
+        uint8_t level = ConfigManager->get(key.c_str())->getElement(MEMORY).toInt();
+        return level;
+      }
+    }
+  }
+  return OFF_GPIO;
+}
 bool SuplaConfigESP::checkBusyCfg(int gpio) {
   String key = GPIO;
   key += gpio;
