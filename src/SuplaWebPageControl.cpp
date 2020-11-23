@@ -50,35 +50,13 @@ void SuplaWebPageControl::handleControlSave() {
   uint8_t nr, current_value, last_value;
 #ifdef SUPLA_BUTTON
   last_value = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
-  current_value = WebServer->httpServer.arg(INPUT_MAX_BUTTON).toInt();
-
-  if (last_value > 0) {
-    for (nr = 1; nr <= last_value; nr++) {
-      input = INPUT_BUTTON_GPIO;
-      input += nr;
-      key = GPIO;
-      key += WebServer->httpServer.arg(input).toInt();
-      if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() ||
-          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
-        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_BUTTON));
-      }
-      if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-        key = GPIO;
-        key += WebServer->httpServer.arg(input).toInt();
-        if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
-          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_BUTTON, 2);
-        }
-        else if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) == WebServer->httpServer.arg(input).toInt() &&
-                 ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_BUTTON) {
-          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_BUTTON, ConfigESP->getLevel(nr, FUNCTION_BUTTON));
-        }
-        else {
-          WebServer->sendContent(supla_webpage_control(6));
-          return;
-        }
-      }
+  for (nr = 1; nr <= last_value; nr++) {
+    if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
+      WebServer->sendContent(supla_webpage_control(6));
+      return;
     }
   }
+
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_BUTTON).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_BUTTON, WebServer->httpServer.arg(INPUT_MAX_BUTTON).c_str());
   }
@@ -86,35 +64,13 @@ void SuplaWebPageControl::handleControlSave() {
 
 #ifdef SUPLA_LIMIT_SWITCH
   last_value = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
-  current_value = WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).toInt();
-
-  if (last_value > 0) {
-    for (nr = 1; nr <= last_value; nr++) {
-      input = INPUT_LIMIT_SWITCH_GPIO;
-      input += nr;
-      key = GPIO;
-      key += WebServer->httpServer.arg(input).toInt();
-      if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != WebServer->httpServer.arg(input).toInt() ||
-          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
-        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH));
-      }
-      if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-        key = GPIO;
-        key += WebServer->httpServer.arg(input).toInt();
-        if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
-          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_LIMIT_SWITCH, 0);
-        }
-        else if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) == WebServer->httpServer.arg(input).toInt() &&
-                 ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_LIMIT_SWITCH) {
-          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_LIMIT_SWITCH, ConfigESP->getLevel(nr, FUNCTION_LIMIT_SWITCH));
-        }
-        else {
-          WebServer->sendContent(supla_webpage_control(6));
-          return;
-        }
-      }
+  for (nr = 1; nr <= last_value; nr++) {
+    if (!WebServer->saveGPIO(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr, INPUT_MAX_LIMIT_SWITCH)) {
+      WebServer->sendContent(supla_webpage_control(6));
+      return;
     }
   }
+
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_LIMIT_SWITCH, WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str());
   }
@@ -140,67 +96,24 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += WebServer->SuplaJavaScript(PATH_CONTROL);
   pagebutton += F("<form method='post' action='");
   pagebutton += PATH_SAVE_CONTROL;
+  pagebutton += F("'>");
 
 #if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
-  pagebutton += F("'><div class='w'><h3>");
-  pagebutton += S_GPIO_SETTINGS_FOR_BUTTONS;
-  pagebutton += F("</h3>");
-  pagebutton += F("<i><label>");
-  pagebutton += S_QUANTITY;
-  pagebutton += F("</label><input name='");
-  pagebutton += INPUT_MAX_BUTTON;
-  pagebutton += F("' type='number' placeholder='0' step='1' min='0' max='");
-  pagebutton += ConfigESP->countFreeGpio(FUNCTION_BUTTON);
-  pagebutton += F("' value='");
-  pagebutton += String(ConfigManager->get(KEY_MAX_BUTTON)->getValue());
-  pagebutton += F("'></i>");
+  addFormHeader(pagebutton, String(S_GPIO_SETTINGS_FOR_BUTTONS));
+  addNumberBox(pagebutton, INPUT_MAX_BUTTON, S_QUANTITY, KEY_MAX_BUTTON, ConfigESP->countFreeGpio(FUNCTION_BUTTON));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-    pagebutton += F("<i><label>");
-    selected = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-    if (selected != OFF_GPIO) {
-      pagebutton += F("<a href='");
-      pagebutton += PATH_START;
-      pagebutton += PATH_BUTTON_SET;
-      pagebutton += nr;
-      pagebutton += F("'>");
-    }
-    pagebutton += nr;
-    pagebutton += F(". ");
-    pagebutton += S_BUTTON;
-    if (selected != OFF_GPIO) {
-      pagebutton += WebServer->SuplaIconEdit();
-      pagebutton += F("</a>");
-    }
-    pagebutton += F("</label>");
-    pagebutton += addListGPIOSelect(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr);
-    pagebutton += F("</i>");
+    addListGPIOLinkBox(pagebutton, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, PATH_BUTTON_SET, nr);
   }
-  pagebutton += F("</div>");
+  addFormHeaderEnd(pagebutton);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-  pagebutton += F("<div class='w'><h3>");
-  pagebutton += S_GPIO_SETTINGS_FOR_LIMIT_SWITCH;
-  pagebutton += F("</h3>");
-  pagebutton += F("<i><label>");
-  pagebutton += S_QUANTITY;
-  pagebutton += F("</label><input name='");
-  pagebutton += INPUT_MAX_LIMIT_SWITCH;
-  pagebutton += F("' type='number' placeholder='0' step='1' min='0' max='");
-  pagebutton += ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH);
-  pagebutton += F("' value='");
-  pagebutton += String(ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValue());
-  pagebutton += F("'></i>");
+  addFormHeader(pagebutton, String(S_GPIO_SETTINGS_FOR_LIMIT_SWITCH));
+  addNumberBox(pagebutton, INPUT_MAX_LIMIT_SWITCH, S_QUANTITY, KEY_MAX_LIMIT_SWITCH, ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
-    pagebutton += F("<i><label>");
-    pagebutton += nr;
-    pagebutton += F(". ");
-    pagebutton += S_LIMIT_SWITCH;
-    pagebutton += F("</label>");
-    pagebutton += addListGPIOSelect(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr);
-    pagebutton += F("</i>");
+    addListGPIOBox(pagebutton, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
   }
-  pagebutton += F("</div>");
+  addFormHeaderEnd(pagebutton);
 #endif
 
   pagebutton += F("<button type='submit'>");
