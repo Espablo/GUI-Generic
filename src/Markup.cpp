@@ -98,18 +98,31 @@ void addListGPIOBox(String& html, const String& input_id, const String& name, ui
   html += F("</i>");
 }
 
-void addListGPIOLinkBox(
-    String& html, const String& input_id, const String& name, uint8_t function, const String& name_url, const String& url, uint8_t nr) {
+void addListGPIOLinkBox(String& html, const String& input_id, const String& name, uint8_t function, const String& url, uint8_t nr) {
+  uint8_t _nr;
+  if (nr == 0) {
+    _nr = 1;
+  }
+  else {
+    _nr = nr;
+  }
   html += F("<i>");
   html += F("<label>");
-  if (ConfigESP->getGpio(function) != OFF_GPIO) {
+  if (ConfigESP->getGpio(_nr, function) != OFF_GPIO) {
     html += F("<a href='");
     html += PATH_START;
     html += url;
+    if (nr > 0) {
+      html += nr;
+    }
     html += F("'>");
   }
-  html += name_url;
-  if (ConfigESP->getGpio(function) != OFF_GPIO) {
+  if (nr > 0) {
+    html += nr;
+    html += F(". ");
+  }
+  html += name;
+  if (ConfigESP->getGpio(_nr, function) != OFF_GPIO) {
     html += WebServer->SuplaIconEdit();
     html += F("</a>");
   }
