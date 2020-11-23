@@ -540,6 +540,10 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   key = GPIO;
   key += WebServer->httpServer.arg(input).toInt();
 
+  if (ConfigESP->getGpio(nr, function) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
+    ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
+  }
+
   if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
     if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
       ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, function, 1);
@@ -551,10 +555,6 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     else {
       return false;
     }
-  }
-
-  if (ConfigESP->getGpio(nr, function) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
   }
 
   if (input_max != "\n") {
