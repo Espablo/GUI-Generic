@@ -42,6 +42,8 @@ void begin() {
 
   SuplaDevice.setName((char *)ConfigManager->get(KEY_HOST_NAME)->getValue());
 
+  SuplaDevice.setSwVersion(BUILD_VERSION);
+
   SuplaDevice.begin((char *)ConfigManager->get(KEY_SUPLA_GUID)->getValue(),      // Global Unique Identifier
                     (char *)ConfigManager->get(KEY_SUPLA_SERVER)->getValue(),    // SUPLA server address
                     (char *)ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),     // Email address used to login to Supla Cloud

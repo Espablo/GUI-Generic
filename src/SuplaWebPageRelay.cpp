@@ -48,39 +48,17 @@ void SuplaWebPageRelay::handleRelaySave() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  String key, input;
-  uint8_t nr, current_value, last_value;
+
+  uint8_t nr, last_value;
 
   last_value = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
-  current_value = WebServer->httpServer.arg(INPUT_MAX_RELAY).toInt();
-
-  if (last_value > 0) {
-    for (nr = 1; nr <= last_value; nr++) {
-      input = INPUT_RELAY_GPIO;
-      input += nr;
-      key = GPIO;
-      key += WebServer->httpServer.arg(input).toInt();
-      if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != WebServer->httpServer.arg(input).toInt() ||
-          WebServer->httpServer.arg(input).toInt() == OFF_GPIO || ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
-        ConfigESP->clearGpio(ConfigESP->getGpio(nr, FUNCTION_RELAY));
-      }
-      if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-        key = GPIO;
-        key += WebServer->httpServer.arg(input).toInt();
-        if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
-          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_RELAY, 1);
-        }
-        else if (ConfigESP->getGpio(nr, FUNCTION_RELAY) == WebServer->httpServer.arg(input).toInt() &&
-                 ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_RELAY) {
-          ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, FUNCTION_RELAY, ConfigESP->getLevel(nr, FUNCTION_RELAY));
-        }
-        else {
-          WebServer->sendContent(supla_webpage_relay(6));
-          return;
-        }
-      }
+  for (nr = 1; nr <= last_value; nr++) {
+    if (!WebServer->saveGPIO(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr, INPUT_MAX_RELAY)) {
+      WebServer->sendContent(supla_webpage_relay(6));
+      return;
     }
   }
+
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_RELAY).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_RELAY, WebServer->httpServer.arg(INPUT_MAX_RELAY).c_str());
   }
