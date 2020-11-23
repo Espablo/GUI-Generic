@@ -200,7 +200,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
     page += INPUT_RELAY_MEMORY;
     page += nr_relay;
     page += F("'>");
-    selected = ConfigESP->getMemoryRelay(nr_relay.toInt());
+    selected = ConfigESP->getMemory(nr_relay.toInt(), FUNCTION_RELAY);
     for (suported = 0; suported < 3; suported++) {
       page += F("<option value='");
       page += suported;
