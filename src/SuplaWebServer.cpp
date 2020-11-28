@@ -36,8 +36,6 @@ void SuplaWebServer::begin() {
   strcpy(this->www_password, ConfigManager->get(KEY_LOGIN_PASS)->getValue());
 
 #ifdef SUPLA_OTA
-  httpUpdater.setup(&httpServer, UPDATE_PATH, www_username, www_password);
-#endif
   httpServer.begin();
 }
 
@@ -50,11 +48,6 @@ void SuplaWebServer::createWebServer() {
   httpServer.on(path, HTTP_GET, std::bind(&SuplaWebServer::handle, this));
   path = PATH_START;
   httpServer.on(path, std::bind(&SuplaWebServer::handleSave, this));
-#ifdef SUPLA_OTA
-  path = PATH_START;
-  path += PATH_UPDATE;
-  httpServer.on(path, std::bind(&SuplaWebServer::handleFirmwareUp, this));
-#endif
   path = PATH_START;
   path += PATH_REBOT;
   httpServer.on(path, std::bind(&SuplaWebServer::supla_webpage_reboot, this));
@@ -77,6 +70,9 @@ void SuplaWebServer::createWebServer() {
 #endif
 #ifdef SUPLA_CONFIG
   WebPageConfig->createWebPageConfig();
+#endif
+#ifdef SUPLA_OTA
+  httpUpdater.setup(&httpServer, this->www_username, this->www_password);
 #endif
 }
 
@@ -133,15 +129,6 @@ void SuplaWebServer::handleSave() {
       break;
   }
 }
-#ifdef SUPLA_OTA
-void SuplaWebServer::handleFirmwareUp() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer.authenticate(www_username, www_password))
-      return httpServer.requestAuthentication();
-  }
-  this->sendContent(supla_webpage_upddate());
-}
-#endif
 
 void SuplaWebServer::handleDeviceSettings() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
@@ -210,8 +197,7 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("<br><br>");
 #ifdef SUPLA_OTA
   content += F("<a href='");
-  content += PATH_START;
-  content += PATH_UPDATE;
+  content += PATH_UPDATE_HENDLE;
   content += F("'><button>");
   content += S_UPDATE;
   content += F("</button></a>");
@@ -225,30 +211,6 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += F("</button></form></div>");
   return content;
 }
-
-#ifdef SUPLA_OTA
-String SuplaWebServer::supla_webpage_upddate() {
-  String content = "";
-  content += F("<div class='w'>");
-  content += F("<h3>");
-  content += S_SOFTWARE_UPDATE;
-  content += F("</h3>");
-  content += F("<br>");
-  content += F("<center>");
-  content += F("<iframe src=");
-  content += UPDATE_PATH;
-  content +=
-      F(">Twoja przeglądarka nie akceptuje ramek! width='200' height='100' "
-        "frameborder='100'></iframe>");
-  content += F("</center>");
-  content += F("</div>");
-  content += F("<a href='/'><button>");
-  content += S_RETURN;
-  content += F("</button></a></div>");
-
-  return content;
-}
-#endif
 
 void SuplaWebServer::supla_webpage_reboot() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
@@ -520,10 +482,9 @@ void SuplaWebServer::sendContent(const String content) {
   httpServer.chunkedResponseFinalize();
 }
 
-void SuplaWebServer::redirectToIndex() {
+void SuplaWebServer::handleNotFound() {
   httpServer.sendHeader("Location", "/", true);
-  httpServer.send(302, "text/plain", "");
-  httpServer.client().stop();
+  httpServer.send(302, "text/plane", "");
 }
 
 bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
