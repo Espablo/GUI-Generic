@@ -43,18 +43,12 @@
 #define INPUT_IMPULSE_COUNTER_CHANGE_VALUE     "iccv"
 #define INPUT_MAX_IMPULSE_COUNTER              "imic"
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
-enum _sensorI2C
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021) || defined(SUPLA_MAX6675)
+enum _sensor
 {
   SENSOR_BME280,
   SENSOR_SHT3x,
-  SENSOR_SI7021
-};
-#endif
-
-#if defined(SUPLA_MAX6675)
-enum _sensorSPI
-{
+  SENSOR_SI7021,
   SENSOR_MAX6675
 };
 #endif
