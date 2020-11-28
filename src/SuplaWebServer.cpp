@@ -35,7 +35,7 @@ void SuplaWebServer::begin() {
   strcpy(this->www_username, ConfigManager->get(KEY_LOGIN)->getValue());
   strcpy(this->www_password, ConfigManager->get(KEY_LOGIN_PASS)->getValue());
 
-#ifdef SUPLA_OTA
+  httpServer.onNotFound(std::bind(&SuplaWebServer::handleNotFound, this));
   httpServer.begin();
 }
 

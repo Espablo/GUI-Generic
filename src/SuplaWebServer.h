@@ -92,7 +92,7 @@ class SuplaWebServer : public Supla::Element {
   String deviceSettings(int save);
   String loginSettings();
 
-  void redirectToIndex();
+  void handleNotFound();
 };
 
 #endif  // SuplaWebServer_h
