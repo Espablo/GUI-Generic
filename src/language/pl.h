@@ -67,7 +67,7 @@
 #define S_INITIATED                                    "Zainicjowany"
 #define S_CHANNEL_LIMIT_EXCEEDED                       "Przekroczono limit kanału"
 #define S_DISCONNECTED                                 "Rozłączony"
-#define S_REGIStRATION_IS_PENDING                      "Rejestracja w toku"
+#define S_REGISTRATION_IS_PENDING                      "Rejestracja w toku"
 #define S_VARIABLE_ERROR                               "Błąd zmiennej"
 #define S_PROTOCOL_VERSION_ERROR                       "Błąd wersji protokołu"
 #define S_BAD_CREDENTIALS                              "Złe poświadczenia"

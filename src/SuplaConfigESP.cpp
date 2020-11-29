@@ -159,7 +159,7 @@ void status_func(int status, const char *msg) {
 #ifndef UI_LANGUAGE
   switch (status) {
     case 2:
-      ConfigESP->supla_status.msg = S_ALEREADY_INITIATED;
+      ConfigESP->supla_status.msg = S_ALREADY_INITIATED;
       break;
     case 3:
       ConfigESP->supla_status.msg = S_NOT_ASSIGNED_CB;
@@ -183,7 +183,7 @@ void status_func(int status, const char *msg) {
       ConfigESP->supla_status.msg = S_DISCONNECTED;
       break;
     case 10:
-      ConfigESP->supla_status.msg = S_REGISRATION_IS_PENDING;
+      ConfigESP->supla_status.msg = S_REGISTRATION_IS_PENDING;
       break;
     case 11:
       ConfigESP->supla_status.msg = S_VARIABLE_ERROR;

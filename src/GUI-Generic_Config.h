@@ -1,7 +1,7 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
-//#define USE_CUSTOM
+// #define USE_CUSTOM
 
 // User configuration
 #ifdef USE_CUSTOM
@@ -9,12 +9,12 @@
 #undef BUILD_VERSION
 #endif  // ifdef BUILD_VERSION
 
-#define BUILD_VERSION "User GUI 1.0.0"
+#define BUILD_VERSION "User GUI 1.0.1"
 
 //#define DEBUG_MODE
 #define SUPLA_OTA
 
-// Language en - english, pl - polish (default if not defined UI_LANGUAGE)
+// Language en - english, pl - polish (default if not defined UI_LANGUAGE), es- spanish, fr - french
 // #define UI_LANGUAGE en
 
 #define SUPLA_RELAY
