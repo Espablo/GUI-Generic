@@ -1,9 +1,8 @@
-
 #ifndef _LANGUAGE_ES_S_H_
 #define _LANGUAGE_ES_S_H_
 
-//Translated by EñE Partycja Gajek-Nowrot
-//Checked by elmaya
+// Translated by EñE Partycja Gajek-Nowrot
+// Checked by elmaya
 
 #define S_SETTING_WIFI_SSID                                    "Configuración de WIFI"
 #define S_WIFI_SSID                                            "Nombre WIFI"

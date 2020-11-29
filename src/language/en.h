@@ -1,4 +1,3 @@
-
 #ifndef _LANGUAGE_EN_S_H_
 #define _LANGUAGE_EN_S_H_
 
@@ -59,7 +58,7 @@
 #define S_WRITE_ERROR_BAD_DATA                                 "Write error - bad data"
 
 //#### SuplaConfigESP.cpp ####
-#define S_ALREADY_INITIATED                           "Already initiated"
+#define S_ALREADY_INITIATED                            "Already initiated"
 #define S_NOT_ASSIGNED_CB                              "Not assigned CB"
 #define S_INVALID_GUID_OR_DEVICE_REGISTRATION_INACTIVE "Invalid GUID or device registration INACTIVE"
 #define S_UNKNOWN_SEVER_ADDRESS                        "Unknown server address"
@@ -67,7 +66,7 @@
 #define S_INITIATED                                    "Initiated"
 #define S_CHANNEL_LIMIT_EXCEEDED                       "Channel limit exceeded"
 #define S_DISCONNECTED                                 "Disconnected"
-#define S_REGISTRATION_IS_PENDING                       "Registration is pending"
+#define S_REGISTRATION_IS_PENDING                      "Registration is pending"
 #define S_VARIABLE_ERROR                               "Variable error"
 #define S_PROTOCOL_VERSION_ERROR                       "Protocol version error"
 #define S_BAD_CREDENTIALS                              "Bad credentials"

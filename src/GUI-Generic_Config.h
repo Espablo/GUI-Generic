@@ -1,7 +1,7 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
-// #define USE_CUSTOM
+#define USE_CUSTOM
 
 // User configuration
 #ifdef USE_CUSTOM
@@ -14,8 +14,8 @@
 //#define DEBUG_MODE
 #define SUPLA_OTA
 
-// Language en - english, pl - polish (default if not defined UI_LANGUAGE), es- spanish, fr - french
-// #define UI_LANGUAGE en
+// Language en - english, pl - polish (default if not defined UI_LANGUAGE), es- spanish, fr - french, de - german,
+#define UI_LANGUAGE de
 
 #define SUPLA_RELAY
 #define SUPLA_BUTTON
