@@ -138,8 +138,6 @@ void addListBox(String& html, const String& input_id, const String& name, const 
   html += input_id;
   html += F("'>");
 
-  Serial.println(name);
-  Serial.println(sizeof(array_P));
   for (uint8_t suported = 0; suported < size; suported++) {
     html += F("<option value='");
     html += suported;

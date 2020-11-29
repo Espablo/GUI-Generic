@@ -361,7 +361,7 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
 
 #ifdef SUPLA_DS18B20
   addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " Multi DS18B20");
-  addNumberBox(page, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, ConfigESP->countFreeGpio(FUNCTION_DS18B20));
+  addNumberBox(page, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, MAX_DS18B20);
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
     addListGPIOLinkBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20, PATH_MULTI_DS);
   }

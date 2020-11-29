@@ -19,7 +19,7 @@
 #include "GUI-Generic_Config.h"
 
 #ifdef SUPLA_OTA
-#include <ESP8266HTTPUpdateServer.h>
+#include "SuplaHTTPUpdateServer.h"
 #endif
 #include <ESP8266WebServer.h>
 #include <supla/element.h>
@@ -37,8 +37,6 @@
 
 #define PATH_START            "/"
 #define PATH_SAVE_LOGIN       "savelogin"
-#define UPDATE_PATH           "/firmware"
-#define PATH_UPDATE           "update"
 #define PATH_REBOT            "rbt"
 #define PATH_DEVICE_SETTINGS  "devicesettings"
 #define PATH_DEFAULT_SETTINGS "defaultsettings"
@@ -62,7 +60,6 @@ class SuplaWebServer : public Supla::Element {
 
   char www_username[MAX_MLOGIN];
   char www_password[MAX_MPASSWORD];
-  char* update_path = (char*)UPDATE_PATH;
 
   const String SuplaFavicon();
   const String SuplaIconEdit();
@@ -72,10 +69,9 @@ class SuplaWebServer : public Supla::Element {
   void sendContent(const String content);
 
   ESP8266WebServer httpServer = {80};
+  
 #ifdef SUPLA_OTA
-  ESP8266HTTPUpdateServer httpUpdater;
-  void handleFirmwareUp();
-  String supla_webpage_upddate();
+   ESP8266HTTPUpdateServer httpUpdater;
 #endif
 
   bool saveGPIO(const String& input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
@@ -96,7 +92,7 @@ class SuplaWebServer : public Supla::Element {
   String deviceSettings(int save);
   String loginSettings();
 
-  void redirectToIndex();
+  void handleNotFound();
 };
 
 #endif  // SuplaWebServer_h
