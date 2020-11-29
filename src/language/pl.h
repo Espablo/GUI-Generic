@@ -59,7 +59,7 @@
 #define S_WRITE_ERROR_BAD_DATA                                 "Błąd zapisu - złe dane."
 
 //#### SuplaConfigESP.cpp ####
-#define S_ALEREADY_INITIATED                           "Już zainicjalizowane"
+#define S_ALREADY_INITIATED                           "Już zainicjalizowane"
 #define S_NOT_ASSIGNED_CB                              "Nie przypisane CB"
 #define S_INVALID_GUID_OR_DEVICE_REGISTRATION_INACTIVE "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń NIEAKTYWNA"
 #define S_UNKNOWN_SEVER_ADDRESS                        "Nieznany adres serwera"
@@ -67,7 +67,7 @@
 #define S_INITIATED                                    "Zainicjowany"
 #define S_CHANNEL_LIMIT_EXCEEDED                       "Przekroczono limit kanału"
 #define S_DISCONNECTED                                 "Rozłączony"
-#define S_REGISRATION_IS_PENDING                       "Rejestracja w toku"
+#define S_REGIStRATION_IS_PENDING                      "Rejestracja w toku"
 #define S_VARIABLE_ERROR                               "Błąd zmiennej"
 #define S_PROTOCOL_VERSION_ERROR                       "Błąd wersji protokołu"
 #define S_BAD_CREDENTIALS                              "Złe poświadczenia"
