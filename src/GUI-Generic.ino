@@ -27,7 +27,7 @@
 #include <supla/sensor/HC_SR04.h>
 #include <supla/sensor/binary.h>
 #ifdef SUPLA_BME280
-#include <supla/sensor/bme280.h>
+#include <supla/sensor/BME280.h>
 #include "SuplaWebPageSensor.h"
 #endif
 #ifdef SUPLA_SHT3x
