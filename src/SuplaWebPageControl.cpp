@@ -145,7 +145,7 @@ void SuplaWebPageControl::handleButtonSaveSet() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String readUrl, nr_button, key, input;
+  String readUrl, nr_button, input;
   uint8_t place;
 
   String path = PATH_START;
@@ -154,12 +154,11 @@ void SuplaWebPageControl::handleButtonSaveSet() {
 
   place = readUrl.indexOf(path);
   nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
-  key = GPIO;
-  key += ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
+  uint8_t key = KEY_GPIO + ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
 
   input = INPUT_BUTTON_LEVEL;
   input += nr_button;
-  ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:

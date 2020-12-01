@@ -348,11 +348,10 @@ void SuplaWebServer::handleBoardSave() {
     ConfigManager->set(KEY_BOARD, httpServer.arg(input).c_str());
 
     int nr;
-    String key;
+    uint8_t key;
     for (nr = 0; nr <= 17; nr++) {
-      key = GPIO;
-      key += nr;
-      ConfigManager->set(key.c_str(), "0,0,0,0,0");
+      key = KEY_GPIO + nr;
+      ConfigManager->set(key, "0,0,0,0,0");
     }
 
     chooseTemplateBoard(WebServer->httpServer.arg(input).toInt());
@@ -488,8 +487,8 @@ void SuplaWebServer::handleNotFound() {
 }
 
 bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
-  uint8_t current_value;
-  String key, input;
+  uint8_t current_value, key;
+  String input;
   input = _input;
   if (nr != 0) {
     input += nr;
@@ -498,19 +497,18 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     nr = 1;
   }
 
-  key = GPIO;
-  key += WebServer->httpServer.arg(input).toInt();
+  key = KEY_GPIO + WebServer->httpServer.arg(input).toInt();;
 
   if (ConfigESP->getGpio(nr, function) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
   }
 
   if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
       ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, function, 1);
     }
     else if (ConfigESP->getGpio(nr, function) == WebServer->httpServer.arg(input).toInt() &&
-             ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
+             ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, function, ConfigESP->getLevel(nr, function));
     }
     else {
@@ -520,7 +518,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
 
   if (input_max != "\n") {
     current_value = WebServer->httpServer.arg(input_max).toInt();
-    if (ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
+    if (ConfigManager->get(key)->getElement(NR).toInt() > current_value) {
       ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
     }
   }

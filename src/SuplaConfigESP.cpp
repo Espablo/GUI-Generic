@@ -237,17 +237,15 @@ void status_func(int status, const char *msg) {
 }
 
 int SuplaConfigESP::getGpio(int nr, int function) {
-  uint8_t gpio;
-  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
-    String key = GPIO;
-    key += gpio;
+  for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    uint8_t key = KEY_GPIO + gpio;
     if (function == FUNCTION_CFG_BUTTON) {
       if (checkBusyCfg(gpio)) {
         return gpio;
       }
     }
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
-      if (ConfigManager->get(key.c_str())->getElement(NR).toInt() == nr) {
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
+      if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
         return gpio;
       }
     }
@@ -256,13 +254,11 @@ int SuplaConfigESP::getGpio(int nr, int function) {
 }
 
 int SuplaConfigESP::getLevel(int nr, int function) {
-  uint8_t gpio;
-  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
-    String key = GPIO;
-    key += gpio;
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
-      if (ConfigManager->get(key.c_str())->getElement(NR).toInt() == nr) {
-        uint8_t level = ConfigManager->get(key.c_str())->getElement(LEVEL).toInt();
+  for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    uint8_t key = KEY_GPIO + gpio;
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
+      if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
+        uint8_t level = ConfigManager->get(key)->getElement(LEVEL).toInt();
         return level;
       }
     }
@@ -271,13 +267,11 @@ int SuplaConfigESP::getLevel(int nr, int function) {
 }
 
 int SuplaConfigESP::getMemory(int nr, int function) {
-  uint8_t gpio;
-  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
-    String key = GPIO;
-    key += gpio;
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
-      if (ConfigManager->get(key.c_str())->getElement(NR).toInt() == nr) {
-        uint8_t level = ConfigManager->get(key.c_str())->getElement(MEMORY).toInt();
+  for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    uint8_t key = KEY_GPIO + gpio;
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
+      if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
+        uint8_t level = ConfigManager->get(key)->getElement(MEMORY).toInt();
         return level;
       }
     }
@@ -285,9 +279,8 @@ int SuplaConfigESP::getMemory(int nr, int function) {
   return OFF_GPIO;
 }
 bool SuplaConfigESP::checkBusyCfg(int gpio) {
-  String key = GPIO;
-  key += gpio;
-  if (ConfigManager->get(key.c_str())->getElement(FUNCTION_CFG_LED).toInt() == 1) {
+  uint8_t key = KEY_GPIO + gpio;
+  if (ConfigManager->get(key)->getElement(FUNCTION_CFG_LED).toInt() == 1) {
     return true;
   }
   return false;
@@ -298,9 +291,9 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
     return true;
   }
   else {
-    String key = GPIO;
-    key += gpio;
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_BUTTON) {
+    uint8_t key = KEY_GPIO + gpio;
+
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_BUTTON) {
       if (function == FUNCTION_CFG_BUTTON) {
         return false;
       }
@@ -310,8 +303,8 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
         return true;
       }
     }
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != FUNCTION_OFF) {
-      if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() != function) {
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF) {
+      if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != function) {
         return true;
       }
     }
@@ -320,43 +313,42 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
 }
 
 void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory) {
-  String key = GPIO;
-  key += gpio;
+  uint8_t key = KEY_GPIO + gpio;
+
   if (function == FUNCTION_CFG_BUTTON) {
-    ConfigManager->setElement(key.c_str(), CFG, 1);
+    ConfigManager->setElement(key, CFG, 1);
     return;
   }
 
-  ConfigManager->setElement(key.c_str(), NR, nr);
-  ConfigManager->setElement(key.c_str(), FUNCTION, function);
-  ConfigManager->setElement(key.c_str(), LEVEL, level);
-  ConfigManager->setElement(key.c_str(), MEMORY, memory);
+  ConfigManager->setElement(key, NR, nr);
+  ConfigManager->setElement(key, FUNCTION, function);
+  ConfigManager->setElement(key, LEVEL, level);
+  ConfigManager->setElement(key, MEMORY, memory);
 
   // ConfigManager->setElement(key.c_str(), MEMORY, memory);
   // ConfigManager->setElement(key.c_str(), CFG, cfg);
 }
 
 void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
-  String key = GPIO;
-  key += gpio;
+  uint8_t key = KEY_GPIO + gpio;
+
   if (function == FUNCTION_CFG_BUTTON) {
-    ConfigManager->setElement(key.c_str(), CFG, 0);
+    ConfigManager->setElement(key, CFG, 0);
     return;
   }
-  ConfigManager->setElement(key.c_str(), NR, 0);
-  ConfigManager->setElement(key.c_str(), FUNCTION, FUNCTION_OFF);
-  ConfigManager->setElement(key.c_str(), LEVEL, 0);
-  ConfigManager->setElement(key.c_str(), MEMORY, 0);
+  ConfigManager->setElement(key, NR, 0);
+  ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
+  ConfigManager->setElement(key, LEVEL, 0);
+  ConfigManager->setElement(key, MEMORY, 0);
 }
 
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   uint8_t count = 0;
   for (uint8_t gpio = 0; gpio < OFF_GPIO; gpio++) {
     if (gpio != 6 && gpio != 7 && gpio != 8 && gpio != 11) {
-      String key = GPIO;
-      key += gpio;
-      if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-          ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == exception) {
+      uint8_t key = KEY_GPIO + gpio;
+      if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
+          ConfigManager->get(key)->getElement(FUNCTION).toInt() == exception) {
         count++;
       }
     }
@@ -377,35 +369,31 @@ void SuplaConfigESP::factoryReset() {
     ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
     ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
     ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
-    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
     ConfigManager->set(KEY_MAX_RELAY, "1");
     ConfigManager->set(KEY_MAX_BUTTON, "1");
     ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
     ConfigManager->set(KEY_MAX_DHT22, "1");
     ConfigManager->set(KEY_MAX_DHT11, "1");
     ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
+    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
     ConfigManager->set(KEY_ALTITUDE_BME280, "0");
-
-    int nr;
-    String key;
-
-    for (nr = 0; nr <= 17; nr++) {
-      key = GPIO;
-      key += nr;
-      ConfigManager->set(key.c_str(), "0,0,0,0,0");
-    }
-
+    ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "0");
+    ConfigManager->set(KEY_MAX_IMPULSE_COUNTER, "0");
     ConfigManager->set(KEY_ACTIVE_SENSOR, "0,0,0,0,0");
     ConfigManager->set(KEY_BOARD, "0");
     ConfigManager->set(KEY_CFG_MODE, "0");
 
+    uint8_t nr, key;
+    for (nr = 0; nr <= 17; nr++) {
+      key = KEY_GPIO + nr;
+      ConfigManager->set(key, "0,0,0,0,0");
+    }
+
     for (nr = 0; nr <= MAX_DS18B20; nr++) {
-      key = KEY_DS;
-      key += nr;
-      ConfigManager->set(key.c_str(), "");
-      key = KEY_DS_NAME;
-      key += nr;
-      ConfigManager->set(key.c_str(), "");
+      key = KEY_DS + nr;
+      ConfigManager->set(key, "");
+      key = KEY_DS_NAME + nr;
+      ConfigManager->set(key, "");
     }
 
     ConfigManager->save();

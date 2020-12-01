@@ -15,7 +15,7 @@ void addFormHeaderEnd(String& html) {
 void addTextBox(String& html,
                 const String& input_id,
                 const String& name,
-                const String& value_key,
+                uint8_t value_key,
                 const String& placeholder,
                 int minlength,
                 int maxlength,
@@ -36,7 +36,7 @@ void addTextBox(String& html,
   }
 
   html += F("' value='");
-  String value = String(ConfigManager->get(value_key.c_str())->getValue());
+  String value = String(ConfigManager->get(value_key)->getValue());
   if (value != placeholder) {
     html += value;
   }
@@ -64,16 +64,16 @@ void addTextBox(String& html,
 }
 
 void addTextBox(
-    String& html, const String& input_id, const String& name, const String& value_key, int minlength, int maxlength, bool required, bool readonly) {
+    String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required, bool readonly) {
   return addTextBox(html, input_id, name, value_key, "", minlength, maxlength, required, readonly, false);
 }
 
 void addTextBoxPassword(
-    String& html, const String& input_id, const String& name, const String& value_key, int minlength, int maxlength, bool required) {
+    String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required) {
   return addTextBox(html, input_id, name, value_key, "", minlength, maxlength, required, false, true);
 }
 
-void addNumberBox(String& html, const String& input_id, const String& name, const String& value_key, uint16_t max) {
+void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, uint16_t max) {
   html += F("<i><label>");
   html += name;
   html += F("</label><input name='");
@@ -81,7 +81,7 @@ void addNumberBox(String& html, const String& input_id, const String& name, cons
   html += F("' type='number' placeholder='0' step='1' min='0' max='");
   html += String(max);
   html += F("' value='");
-  html += String(ConfigManager->get(value_key.c_str())->getValue());
+  html += String(ConfigManager->get(value_key)->getValue());
   html += F("'></i>");
 }
 

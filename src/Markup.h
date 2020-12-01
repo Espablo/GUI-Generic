@@ -8,7 +8,7 @@ void addFormHeaderEnd(String& html);
 void addTextBox(String& html,
                 const String& input_id,
                 const String& name,
-                const String& value_key,
+                uint8_t value_key,
                 const String& placeholder,
                 int minlength,
                 int maxlength,
@@ -18,15 +18,15 @@ void addTextBox(String& html,
 void addTextBox(String& html,
                 const String& input_id,
                 const String& name,
-                const String& value_key,
+                uint8_t value_key,
                 int minlength,
                 int maxlength,
                 bool required,
                 bool readonly = false);
 void addTextBoxPassword(
-    String& html, const String& input_id, const String& value_key, const String& name, int minlength, int maxlength, bool required);
+    String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required);
 
-void addNumberBox(String& html, const String& input_id, const String& name, const String& value_key, uint16_t max);
+void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, uint16_t max);
 
 void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0);
 
