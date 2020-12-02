@@ -152,26 +152,27 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_HOST_NAME, DEFAULT_HOSTNAME, MAX_HOSTNAME);
   this->addKey(KEY_SUPLA_SERVER, DEFAULT_SERVER, MAX_SUPLA_SERVER);
   this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL, MAX_EMAIL);
+  this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
   this->addKey(KEY_MAX_RELAY, "0", 2);
   this->addKey(KEY_MAX_BUTTON, "0", 2);
   this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
   this->addKey(KEY_MAX_DHT22, "1", 2);
   this->addKey(KEY_MAX_DHT11, "1", 2);
   this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
-  this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
   this->addKey(KEY_ALTITUDE_BME280, "0", 4);
   this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
   this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
-  this->addKey(KEY_ACTIVE_SENSOR, "0,0,0,0,0", 14);
-  this->addKey(KEY_BOARD, "0", 2);
-  this->addKey(KEY_CFG_MODE, "0", 2);
 
   uint8_t nr, key;
-
+  
   for (nr = 0; nr <= 17; nr++) {
     key = KEY_GPIO + nr;
     this->addKey(key, "0,0,0,0,0", 14);
   }
+  
+  this->addKey(KEY_ACTIVE_SENSOR, "0,0,0,0,0", 14);
+  this->addKey(KEY_BOARD, "0", 2);
+  this->addKey(KEY_CFG_MODE, "0", 2);
 
   for (nr = 0; nr <= MAX_DS18B20; nr++) {
     key = KEY_DS + nr;
@@ -179,6 +180,7 @@ SuplaConfigManager::SuplaConfigManager() {
     key = KEY_DS_NAME + nr;
     this->addKey(key, MAX_DS18B20_NAME);
   }
+
   this->load();
   //  switch (this->load()) {
   //    case E_CONFIG_OK:

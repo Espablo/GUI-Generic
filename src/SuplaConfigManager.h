@@ -25,6 +25,25 @@
 #define DEFAULT_SERVER "svrX.supla.org"
 #define DEFAULT_EMAIL  "email@address.com"
 
+#define MAX_GUID                SUPLA_GUID_SIZE
+#define MAX_AUTHKEY             SUPLA_GUID_SIZE
+#define MAX_SSID                32
+#define MAX_PASSWORD            64
+#define MIN_PASSWORD            8
+#define MAX_MLOGIN              32
+#define MAX_MPASSWORD           64
+#define MAX_HOSTNAME            32
+#define MAX_SUPLA_SERVER        SUPLA_SERVER_NAME_MAXSIZE
+#define MAX_EMAIL               SUPLA_EMAIL_MAXSIZE
+#define MAX_DS18B20_ADDRESS_HEX 16
+#define MAX_DS18B20_ADDRESS     8
+#define MAX_DS18B20_NAME        8
+#define MAX_TYPE_BUTTON         4
+#define MAX_MONOSTABLE_TRIGGER  1
+#define MAX_FUNCTION            1
+#define MAX_DS18B20             10
+#define MAX_GPIO                17
+
 enum _key {
 KEY_SUPLA_GUID,
 KEY_SUPLA_AUTHKEY,
@@ -48,9 +67,9 @@ KEY_MAX_IMPULSE_COUNTER,
 KEY_ACTIVE_SENSOR,
 KEY_BOARD,
 KEY_CFG_MODE,
-KEY_GPIO = 40,
-KEY_DS = 57,
-KEY_DS_NAME
+KEY_GPIO,
+KEY_DS = KEY_GPIO + MAX_GPIO + MAX_DS18B20,
+KEY_DS_NAME = KEY_DS + MAX_DS18B20
 };
 
 //#define GPIO      "GPIO"
@@ -86,24 +105,6 @@ enum _function
   FUNCTION_D0,
   FUNCTION_IMPULSE_COUNTER
 };
-
-#define MAX_GUID                SUPLA_GUID_SIZE
-#define MAX_AUTHKEY             SUPLA_GUID_SIZE
-#define MAX_SSID                32
-#define MAX_PASSWORD            64
-#define MIN_PASSWORD            8
-#define MAX_MLOGIN              32
-#define MAX_MPASSWORD           64
-#define MAX_HOSTNAME            32
-#define MAX_SUPLA_SERVER        SUPLA_SERVER_NAME_MAXSIZE
-#define MAX_EMAIL               SUPLA_EMAIL_MAXSIZE
-#define MAX_DS18B20_ADDRESS_HEX 16
-#define MAX_DS18B20_ADDRESS     8
-#define MAX_DS18B20_NAME        8
-#define MAX_TYPE_BUTTON         4
-#define MAX_MONOSTABLE_TRIGGER  1
-#define MAX_FUNCTION            1
-#define MAX_DS18B20             10
 
 enum _e_onfig
 {
