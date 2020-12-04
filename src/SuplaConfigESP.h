@@ -22,8 +22,7 @@
 #include "GUI-Generic_Config.h"
 
 enum _configModeESP { NORMAL_MODE, CONFIG_MODE };
-enum _ConfigMode { CONFIG_MODE_10_ON_PRESSES, CONFIG_MODE_5SEK_HOLD };
-
+enum _ConfigMode { CONFIG_MODE_10_ON_PRESSES, CONFIG_MODE_5SEK_HOLD, FACTORYRESET };
 
 typedef struct {
   int status;
@@ -78,6 +77,8 @@ class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
   int getMemory(int function) {
     return getMemory(1, function);
   }
+
+  int getAction(int nr, int function);
   void factoryReset();
 
  private:

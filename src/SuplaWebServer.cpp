@@ -497,7 +497,8 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     nr = 1;
   }
 
-  key = KEY_GPIO + WebServer->httpServer.arg(input).toInt();;
+  key = KEY_GPIO + WebServer->httpServer.arg(input).toInt();
+  ;
 
   if (ConfigESP->getGpio(nr, function) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);

@@ -81,7 +81,9 @@ enum _settings
   FUNCTION,
   LEVEL,
   MEMORY,
-  CFG
+  CFG,
+  ACTION,
+  SETTINGSCOUNT
 };
 
 enum _function

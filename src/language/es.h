@@ -42,6 +42,7 @@
 #define S_BUTTON_NR_SETTINGS                                   "Parámetros del botón no."
 #define S_NO_BUTTON_NR                                         "Falta del botón no."
 #define S_REACTION_TO                                          "Reacción a"
+#define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Parámetros GPIO para el sensor de apertura"
 #define S_LIMIT_SWITCH                                         "INTERRUPTOR DE LÍMITE"
 #define S_GPIO_SETTINGS_FOR                                    "Parámetros GPIO para"
@@ -84,6 +85,7 @@
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                 "APAGADO"
 #define S_ON                  "ENCENDIDO"
+#define S_TOGGLE              "TOGGLE"
 #define S_LOW                 "BAJO"
 #define S_HIGH                "ALTO"
 #define S_POSITION_MEMORY     "RECORDAR ESTADO"

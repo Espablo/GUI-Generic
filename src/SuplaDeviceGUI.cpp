@@ -78,7 +78,8 @@ void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
 
     button.push_back(new Supla::Control::Button(pinButton, true));
     if (pinButton != OFF_GPIO) {
-      button[size]->addAction(Supla::TOGGLE, *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
+
+      button[size]->addAction(ConfigESP->getAction(size + 1, FUNCTION_BUTTON), *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
       button[size]->setSwNoiseFilterDelay(50);
     }
   }

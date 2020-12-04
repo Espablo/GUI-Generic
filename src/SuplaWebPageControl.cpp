@@ -160,6 +160,10 @@ void SuplaWebPageControl::handleButtonSaveSet() {
   input += nr_button;
   ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
 
+  input = INPUT_BUTTON_ACTION;
+  input += nr_button;
+  ConfigManager->setElement(key, ACTION, WebServer->httpServer.arg(input).toInt());
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
@@ -197,6 +201,8 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
     page += F(" ");
     page += nr_button;
     page += F("</h3>");
+
+
     page += F("<i><label>");
     page += S_REACTION_TO;
     page += F("</label><select name='");
@@ -215,6 +221,28 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
       page += TriggerString(suported);
     }
     page += F("</select></i>");
+
+
+    page += F("<i><label>");
+    page += S_ACTION;
+    page += F("</label><select name='");
+    page += INPUT_BUTTON_ACTION;
+    page += nr_button;
+    page += F("'>");
+    selected = ConfigESP->getAction(nr_button.toInt(), FUNCTION_BUTTON);
+    for (suported = 0; suported < 3; suported++) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else
+        page += F("'>");
+      page += PGMT(ACTION_P[suported]);
+    }
+    page += F("</select></i>");
+
+
     page += F("</div><button type='submit'>");
     page += S_SAVE;
     page += F("</button></form>");

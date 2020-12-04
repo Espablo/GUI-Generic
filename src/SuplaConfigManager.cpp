@@ -101,9 +101,9 @@ String ConfigOption::getElement(int index) {
 
 String ConfigOption::replaceElement(int index, int newvalue) {
   String data = _value;
-  int lenght = 5;
+  int lenght = SETTINGSCOUNT;
   String table;
-  for (int i = 0; i < lenght; i++) {
+  for (int i = 0; i <= lenght; i++) {
     if (i == index) {
       table += newvalue;
     }
@@ -167,7 +167,7 @@ SuplaConfigManager::SuplaConfigManager() {
   
   for (nr = 0; nr <= 17; nr++) {
     key = KEY_GPIO + nr;
-    this->addKey(key, "0,0,0,0,0", 14);
+    this->addKey(key, "0,0,0,0,0,0", 16);
   }
   
   this->addKey(KEY_ACTIVE_SENSOR, "0,0,0,0,0", 14);

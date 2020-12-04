@@ -278,6 +278,20 @@ int SuplaConfigESP::getMemory(int nr, int function) {
   }
   return OFF_GPIO;
 }
+
+int SuplaConfigESP::getAction(int nr, int function) {
+  for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    uint8_t key = KEY_GPIO + gpio;
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
+      if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
+        uint8_t action = ConfigManager->get(key)->getElement(ACTION).toInt();
+        return action;
+      }
+    }
+  }
+  return OFF_GPIO;
+}
+
 bool SuplaConfigESP::checkBusyCfg(int gpio) {
   uint8_t key = KEY_GPIO + gpio;
   if (ConfigManager->get(key)->getElement(FUNCTION_CFG_LED).toInt() == 1) {
@@ -324,6 +338,7 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t
   ConfigManager->setElement(key, FUNCTION, function);
   ConfigManager->setElement(key, LEVEL, level);
   ConfigManager->setElement(key, MEMORY, memory);
+  ConfigManager->setElement(key, ACTION, Supla::TOGGLE);
 
   // ConfigManager->setElement(key.c_str(), MEMORY, memory);
   // ConfigManager->setElement(key.c_str(), CFG, cfg);
@@ -340,6 +355,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
   ConfigManager->setElement(key, LEVEL, 0);
   ConfigManager->setElement(key, MEMORY, 0);
+  ConfigManager->setElement(key, ACTION, Supla::TOGGLE);
 }
 
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {

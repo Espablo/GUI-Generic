@@ -40,6 +40,7 @@
 #define S_BUTTON_NR_SETTINGS                                   "Bouton mettre à jour"
 #define S_NO_BUTTON_NR                                         "Manquant numéro de bouton"
 #define S_REACTION_TO                                          "Réaction à"
+#define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Paramètres GPIO pour capteur de limite"
 #define S_LIMIT_SWITCH                                         "Capteur de limite"
 #define S_GPIO_SETTINGS_FOR                                    "GPIO mettre à jour pour"
@@ -82,6 +83,7 @@
 // #### SuplaCommonPROGMEM.h ####
 #define S_OFF                 "ÉTEINDRE"
 #define S_ON                  "ALLUMER"
+#define S_TOGGLE              "TOGGLE"
 #define S_LOW                 "BASSE"
 #define S_HIGH                "HAUT"
 #define S_POSITION_MEMORY     "MEMOIRE DE POSITION"

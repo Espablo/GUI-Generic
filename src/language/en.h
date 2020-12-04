@@ -39,6 +39,7 @@
 #define S_BUTTON_NR_SETTINGS                                   "Setting button nr."
 #define S_NO_BUTTON_NR                                         "No button nr."
 #define S_REACTION_TO                                          "Reaction to"
+#define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO settings for limit switch"
 #define S_LIMIT_SWITCH                                         "LIMIT SWITCH"
 #define S_GPIO_SETTINGS_FOR                                    "GPIO settigs for"
@@ -81,6 +82,7 @@
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                 "OFF"
 #define S_ON                  "ON"
+#define S_TOGGLE              "TOGGLE"
 #define S_LOW                 "LOW"
 #define S_HIGH                "HIGH"
 #define S_POSITION_MEMORY     "POSITION MEMORY"
