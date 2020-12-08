@@ -76,7 +76,6 @@ void SuplaWebServer::createWebServer() {
   createWebDownload();
   createWebUpload();
   createWebTools();
-
 }
 
 void SuplaWebServer::handle() {

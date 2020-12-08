@@ -372,10 +372,10 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   return count;
 }
 
-void SuplaConfigESP::factoryReset() {
+void SuplaConfigESP::factoryReset(bool forceReset) {
   delay(1000);
   pinMode(0, INPUT);
-  if (!digitalRead(0)) {
+  if (!digitalRead(0) || forceReset) {
     Serial.println(F("FACTORY RESET!!!"));
 
     ConfigManager->set(KEY_WIFI_SSID, "");
@@ -414,6 +414,6 @@ void SuplaConfigESP::factoryReset() {
 
     ConfigManager->save();
 
-    rebootESP();
+   // rebootESP();
   }
 }

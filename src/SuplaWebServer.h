@@ -65,6 +65,7 @@ class SuplaWebServer : public Supla::Element {
   const String SuplaIconEdit();
   const String SuplaJavaScript(String java_return = PATH_START);
   const String SuplaSaveResult(int save);
+  String supla_webpage_start(int save);
 
   void sendContent(const String content);
 
@@ -87,7 +88,6 @@ class SuplaWebServer : public Supla::Element {
   void handleLoginSettings();
   void createWebServer();
 
-  String supla_webpage_start(int save);
   void supla_webpage_reboot();
   String deviceSettings(int save);
   String loginSettings();
