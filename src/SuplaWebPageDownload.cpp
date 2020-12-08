@@ -2,7 +2,7 @@
 #include "SuplaDeviceGUI.h"
 
 void createWebDownload() {
-  WebServer->httpServer.on(F(PATH_DOWNLOAD), handleDownload);
+  WebServer->httpServer.on(getURL(PATH_DOWNLOAD), handleDownload);
 }
 
 void handleDownload() {

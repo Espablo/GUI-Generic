@@ -2,7 +2,7 @@
 #include "SuplaDeviceGUI.h"
 
 void createWebTools() {
-  WebServer->httpServer.on(F(PATH_TOOLS), handleTools);
+  WebServer->httpServer.on(getURL(PATH_TOOLS), handleTools);
 }
 
 void handleTools() {

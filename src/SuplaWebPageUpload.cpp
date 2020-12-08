@@ -12,10 +12,10 @@ File dataFile;
 
 void createWebUpload() {
   // WebServer->httpServer.on(F("/upload"), HTTP_GET, handleUpload);
-  WebServer->httpServer.on(F(PATH_UPLOAD), HTTP_GET, []() { handleUpload(); });
+  WebServer->httpServer.on(getURL(PATH_UPLOAD), HTTP_GET, []() { handleUpload(); });
   // WebServer->httpServer.on(F("/upload"), HTTP_POST, handleFileUpload);
   WebServer->httpServer.on(
-      F(PATH_UPLOAD), HTTP_POST, []() { WebServer->httpServer.send(200); }, handleFileUpload);
+      getURL(PATH_UPLOAD), HTTP_POST, []() { WebServer->httpServer.send(200); }, handleFileUpload);
 }
 
 void handleUpload(int save) {
@@ -69,7 +69,7 @@ void handleFileUpload() {
       }
       else {
         handleUpload(6);
-        //WebServer->httpServer.send(500, "text/plain", "500: couldn't create file");
+        // WebServer->httpServer.send(500, "text/plain", "500: couldn't create file");
       }
     }
   }
