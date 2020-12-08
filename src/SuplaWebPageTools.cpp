@@ -35,7 +35,7 @@ void handleTools() {
 #endif
   addButton(content, "Factory reset", PATH_FACTORY_RESET);
   addFormHeaderEnd(content);
-  addButton(content, S_RETURN, "/");
+  addButton(content, S_RETURN, "");
 
   WebServer->sendContent(content);
 }

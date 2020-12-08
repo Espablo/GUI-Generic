@@ -116,7 +116,7 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
           if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
             _server->send_P(200, PSTR("text/html"), twoStepResponse);
 
-            //_setUpdaterError();
+            _setUpdaterError();
           }
         }
         else if (_authenticated && upload.status == UPLOAD_FILE_END && !_updaterError.length()) {
