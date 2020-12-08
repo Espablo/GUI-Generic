@@ -190,20 +190,9 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += S_SAVE;
   content += F("</button></form> ");
   content += F("<br>");
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_DEVICE_SETTINGS;
-  content += F("'><button>");
-  content += S_DEVICE_SETTINGS;
-  content += F("</button></a>");
-  content += F("<br><br>");
 
-  content += F("<a href='");
-  content += PATH_TOOLS;
-  content += F("'><button>");
-  content += F("Tools");
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
+  addButton(content, "Tools", PATH_TOOLS);
 
   content += F("<form method='post' action='");
   content += PATH_REBOT;
@@ -228,113 +217,50 @@ String SuplaWebServer::deviceSettings(int save) {
 
   content += WebServer->SuplaSaveResult(save);
   content += WebServer->SuplaJavaScript(PATH_DEVICE_SETTINGS);
+  
   content += F("<form method='post' action='");
   content += PATH_SAVE_BOARD;
   content += F("'>");
-  content += F("<div class='w'><h3>");
-  content += S_TEMPLATE_BOARD;
-  content += F("</h3>");
-  content += F("<i><label>");
-  content += S_TYPE;
-  content += F("</label><select name='");
-  content += INPUT_BOARD;
-  content += F("'>");
+
+  addFormHeader(content, S_TEMPLATE_BOARD);
   uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
-  for (uint8_t suported = 0; suported < MAX_MODULE; suported++) {
-    content += F("<option value='");
-    content += suported;
-    if (selected == suported) {
-      content += F("' selected>");
-    }
-    else
-      content += F("'>");
-    content += BoardString(suported);
-  }
-  content += F("</select></i>");
-  content += F("</div><button type='submit'>");
+  addListBox(content, INPUT_BOARD, S_TYPE, BOARD_P, MAX_MODULE, selected);
+  addFormHeaderEnd(content);
+
+  content += F("<button type='submit'>");
   content += S_SAVE;
   content += F("</button></form><br><br>");
-  content += F("<div class='w'>");
-  content += F("<h3>");
-  content += S_DEVICE_SETTINGS;
-  content += F("</h3>");
-  content += F("<br>");
-  content += F("<center>");
 
+  addFormHeader(content, S_DEVICE_SETTINGS);
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_RELAY;
-  content += F("'><button>");
-  content += S_RELAYS;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_RELAYS, PATH_RELAY);
 #endif
 
 #ifdef SUPLA_BUTTON
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_CONTROL;
-  content += F("'><button>");
-  content += S_BUTTONS;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_BUTTONS, PATH_CONTROL);
 #endif
 
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_1WIRE;
-  content += F("'><button>");
-  content += S_SENSORS_1WIRE;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_SENSORS_1WIRE, PATH_1WIRE);
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_I2C;
-  content += F("'><button>");
-  content += S_SENSORS_I2C;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_SENSORS_I2C, PATH_I2C);
 #endif
 
 #if defined(SUPLA_MAX6675)
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_SPI;
-  content += F("'><button>");
-  content += S_SENSORS_SPI;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_SENSORS_SPI, PATH_SPI);
 #endif
 
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_OTHER;
-  content += F("'><button>");
-  content += S_SENSORS_OTHER;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_SENSORS_OTHER, PATH_OTHER);
 #endif
 
 #ifdef SUPLA_CONFIG
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_CONFIG;
-  content += F("'><button>");
-  content += S_LED_BUTTON_CFG;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_LED_BUTTON_CFG, PATH_CONFIG);
 #endif
-  content += F("</div>");
-  content += F("</center>");
-  content += F("<a href='/'><button>");
-  content += S_RETURN;
-  content += F("</button></a></div>");
+  addFormHeaderEnd(content);
+  addButton(content, S_RETURN, "");
 
   return content;
 }
