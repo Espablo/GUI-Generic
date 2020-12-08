@@ -501,7 +501,6 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   }
 
   key = KEY_GPIO + WebServer->httpServer.arg(input).toInt();
-  ;
 
   if (ConfigESP->getGpio(nr, function) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
@@ -514,6 +513,9 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     else if (ConfigESP->getGpio(nr, function) == WebServer->httpServer.arg(input).toInt() &&
              ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, function, ConfigESP->getLevel(nr, function));
+    }
+    else if (function == FUNCTION_CFG_BUTTON) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_CFG_BUTTON);
     }
     else {
       return false;

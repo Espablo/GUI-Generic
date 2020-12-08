@@ -29,74 +29,20 @@ void SuplaWebPageConfig::handleConfig() {
 }
 
 void SuplaWebPageConfig::handleConfigSave() {
-  //  Serial.println(F("HTTP_POST - metoda handleConfigSave"));
-
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String input;
-  uint8_t key;
-  input = INPUT_CFG_LED_GPIO;
-  key = KEY_GPIO + WebServer->httpServer.arg(input).toInt();
-
-  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_LED));
-  }
-  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-    key = KEY_GPIO + WebServer->httpServer.arg(input).toInt();
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
-      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), 1, FUNCTION_CFG_LED, 1);
-    }
-    else if (ConfigESP->getGpio(FUNCTION_CFG_LED) == WebServer->httpServer.arg(input).toInt() &&
-             ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED) {
-      key = KEY_GPIO + ConfigESP->getGpio(FUNCTION_CFG_LED);
-      input = INPUT_CFG_LED_LEVEL;
-      ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
-    }
-    else {
-      WebServer->sendContent(supla_webpage_config(6));
-      return;
-    }
+  if (!WebServer->saveGPIO(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED)) {
+    WebServer->sendContent(supla_webpage_config(6));
+    return;
   }
 
-  input = INPUT_CFG_BTN_GPIO;
-  key = KEY_GPIO + WebServer->httpServer.arg(input).toInt();
-  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
+  if (!WebServer->saveGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON)) {
+    WebServer->sendContent(supla_webpage_config(6));
+    return;
   }
-  if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-    key = KEY_GPIO + WebServer->httpServer.arg(input).toInt();
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
-        (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == WebServer->httpServer.arg(input).toInt() &&
-         ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_CFG_BUTTON)) {
-      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_CFG_BUTTON);
-    }
-    else if (ConfigESP->checkBusyGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_BUTTON) == false) {
-      // ConfigManager->setElement(key, CFG, 1);
-      ConfigESP->setGpio(key, FUNCTION_CFG_BUTTON);
-    }
-    else {
-      WebServer->sendContent(supla_webpage_config(6));
-      return;
-    }
-  }
-
-  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), FUNCTION_CFG_BUTTON);
-  }
-
-  /*#ifdef SUPLA_BUTTON
-    for (int i = 1; i <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); i++) {
-      key = GPIO;
-      key += ConfigESP->getGpio(i, FUNCTION_BUTTON);
-      if (ConfigESP->getGpio(i, FUNCTION_BUTTON) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO)
-    { if (ConfigManager->get(key)->getElement(CFG).toInt() == 1) { ConfigManager->setElement(key, CFG, 0);
-        }
-      }
-    }
-    #endif*/
 
   if (strcmp(WebServer->httpServer.arg(INPUT_CFG_MODE).c_str(), "") != 0) {
     ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer.arg(INPUT_CFG_MODE).c_str());
