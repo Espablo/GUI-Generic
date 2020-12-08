@@ -46,7 +46,7 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
   _username = username;
   _password = password;
 
-  _server->on(PATH_UPDATE_HENDLE, std::bind(&ESP8266HTTPUpdateServer::handleFirmwareUp, this));
+  _server->on(getURL(PATH_UPDATE_HENDLE), std::bind(&ESP8266HTTPUpdateServer::handleFirmwareUp, this));
   // handler for the /update form page
   _server->on(path.c_str(), HTTP_GET, [&]() {
     if (_username != emptyString && _password != emptyString && !_server->authenticate(_username.c_str(), _password.c_str()))
