@@ -30,7 +30,8 @@ static const char serverIndex[] PROGMEM =
      </body>
      </html>)";
 static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='15'>Update Success! Rebooting...";
-static const char twoStepResponse[] PROGMEM = "<META http-equiv='refresh' content='15'><b>WARNING</b> only use 2-step OTA update. Use GUI-GenericUpdater.bin";
+static const char twoStepResponse[] PROGMEM =
+    "<META http-equiv='refresh' content='15'><b>WARNING</b> only use 2-step OTA update. Use GUI-GenericUpdater.bin";
 
 ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
@@ -160,7 +161,9 @@ String ESP8266HTTPUpdateServer::suplaWebPageUpddate() {
   content += F("' frameborder='0' height='200'></iframe>");
   content += F("</center>");
   content += F("</div>");
-  content += F("<a href='/'><button>");
+  content += F("<a href='");
+  content += PATH_TOOLS;
+  content += F("'><button>");
   content += S_RETURN;
   content += F("</button></a></div>");
 

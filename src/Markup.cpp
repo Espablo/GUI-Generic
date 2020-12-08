@@ -85,6 +85,15 @@ void addNumberBox(String& html, const String& input_id, const String& name, uint
   html += F("'></i>");
 }
 
+void addButton(String& html, const String& name, const String& url) {
+  html += F("<a href='");
+  html += getURL(url);
+  html += F("'><button>");
+  html += name;
+  html += F("</button></a>");
+  html += F("<br><br>");
+}
+
 void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr) {
   html += F("<i><label>");
   if (nr > 0) {
@@ -181,4 +190,8 @@ String addListGPIOSelect(const char* input, uint8_t function, uint8_t nr) {
   }
   page += F("</select>");
   return page;
+}
+
+String getURL(const String& url) {
+  return String(F(PATH_START)) + url;
 }

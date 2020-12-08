@@ -22,8 +22,6 @@
 #include "SuplaWebPageSensor.h"
 #include "SuplaCommonPROGMEM.h"
 #include "SuplaTemplateBoard.h"
-#include "GUIGenericCommon.h"
-
 #include "Markup.h"
 
 SuplaWebServer::SuplaWebServer() {
@@ -74,6 +72,11 @@ void SuplaWebServer::createWebServer() {
 #ifdef SUPLA_OTA
   httpUpdater.setup(&httpServer, this->www_username, this->www_password);
 #endif
+
+  createWebDownload();
+  createWebUpload();
+  createWebTools();
+
 }
 
 void SuplaWebServer::handle() {
@@ -195,14 +198,14 @@ String SuplaWebServer::supla_webpage_start(int save) {
   content += S_DEVICE_SETTINGS;
   content += F("</button></a>");
   content += F("<br><br>");
-#ifdef SUPLA_OTA
+
   content += F("<a href='");
-  content += PATH_UPDATE_HENDLE;
+  content += PATH_TOOLS;
   content += F("'><button>");
-  content += S_UPDATE;
+  content += F("Tools");
   content += F("</button></a>");
   content += F("<br><br>");
-#endif
+
   content += F("<form method='post' action='");
   content += PATH_REBOT;
   content += F("'>");

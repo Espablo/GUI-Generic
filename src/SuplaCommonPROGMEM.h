@@ -18,7 +18,8 @@ const char HTTP_STYLE[] PROGMEM =
     "8px;font-family:HelveticaNeueLight,HelveticaNeue-Light,'Helvetica Neue Light',HelveticaNeue,'Helvetica "
     "Neue',TeXGyreHerosRegular,Helvetica,Tahoma,Geneva,Arial,sans-serif;font-weight:300;font-stretch:normal;color:#000;font-size:23px}h1{margin-"
     "bottom:14px;color:#fff}span{display:block;margin:10px 7px 14px}i{display:block;font-style:normal;position:relative;border-bottom:solid 1px "
-    "#00d151;height:42px}i:last-child{border:none}label{position:absolute;display:inline-block;top:0;left:8px;color:#00d151;line-height:41px;}input,"
+    "#00d151;height:42px}i:last-child{border:none}label{position:absolute;display:inline-block;top:0;left:8px;color:#00d151;line-height:41px;}i "
+    "input,"
     "select{width:calc(100% - "
     "145px);border:none;font-size:16px;line-height:40px;border-radius:0;letter-spacing:-.5px;background:#fff;color:#000;padding-left:143px;-webkit-"
     "appearance:none;-moz-appearance:none;appearance:none;outline:0!important;height:40px}select{padding:0;float:right;margin:1px 3px 1px "
@@ -28,8 +29,9 @@ const char HTTP_STYLE[] PROGMEM =
     "(max-width:900px){.s{width:calc(100% - 20px);margin-top:40px;border:none;padding:0 "
     "8px;border-radius:0}#l{max-width:80px;height:auto;margin:10px auto "
     "20px}h1,h3{font-size:19px}i{border:none;height:auto}label{display:block;margin:4px 0 "
-    "12px;color:#00d151;font-size:13px;position:relative;line-height:18px}input,select{width:calc(100% - "
-    "10px);font-size:16px;line-height:28px;padding:0 5px;border-bottom:solid 1px #00d151}select{width:100%;float:none;margin:0}}</style>";
+    "12px;color:#00d151;font-size:13px;position:relative;line-height:18px}i input,select{width:calc(100% - "
+    "10px);font-size:16px;line-height:28px;padding:0 5px;border-bottom:solid 1px "
+    "#00d151}select{width:100%;float:none;margin:0}}iframe{margin:auto;display:block;}.formcenter{color:#000;width:50%;margin: 25px auto 25px auto;}</style> ";
 const char HTTP_LOGO[] PROGMEM =
     "<div class='s'><a href='/'><svg version='1.1' id='l' x='0' y='0' viewBox='0 0 200 200' xml:space='preserve'><path "
     "d='M59.3,2.5c18.1,0.6,31.8,8,40.2,23.5c3.1,5.7,4.3,11.9,4.1,18.3c-0.1,3.6-0.7,7.1-1.9,10.6c-0.2,0.7-0.1,1.1,0.6,1.5c12.8,7.7,25.5,15.4,38.3,"

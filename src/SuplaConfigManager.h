@@ -17,6 +17,8 @@
 #ifndef SuplaConfigManager_h
 #define SuplaConfigManager_h
 
+#define CONFIG_FILE_PATH "/dat"
+
 #define DEFAULT_HOSTNAME "GUI Generic"
 
 #define DEFAULT_LOGIN      "admin"

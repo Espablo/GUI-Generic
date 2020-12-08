@@ -36,6 +36,12 @@
 #include "SuplaWebServer.h"
 #include "SuplaWebPageRelay.h"
 
+#include "SuplaWebPageDownload.h"
+#include "SuplaWebPageUpload.h"
+#include "SuplaWebPageTools.h"
+#include "GUIGenericCommon.h"
+#include "Markup.h"
+
 #include <vector>
 
 namespace Supla {

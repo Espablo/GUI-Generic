@@ -24,8 +24,6 @@
 #include "FS.h"
 #include "SuplaConfigManager.h"
 
-#define CONFIG_FILE_PATH "/dat"
-
 ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength) {
   // size_t size = strlen(key) + 1;
   // _key = (char *)malloc(sizeof(char) * size);
