@@ -144,8 +144,8 @@ String SuplaWebServer::supla_webpage_start(int save) {
   String content = F("");
   content += SuplaSaveResult(save);
   content += SuplaJavaScript();
-  content += F("<form method='post'>");
 
+  addForm(content, F("post"));
   addFormHeader(content, S_SETTING_WIFI_SSID);
   addTextBox(content, INPUT_WIFI_SSID, S_WIFI_SSID, KEY_WIFI_SSID, 0, MAX_SSID, true);
   addTextBoxPassword(content, INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
@@ -165,20 +165,9 @@ String SuplaWebServer::supla_webpage_start(int save) {
 #ifdef SUPLA_ROLLERSHUTTER
   uint8_t maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   if (maxrollershutter >= 2) {
-    content += F("<div class='w'>");
-    content += F("<h3>");
-    content += S_ROLLERSHUTTERS;
-    content += F("</h3>");
-    content += F("<i><label>");
-    content += S_QUANTITY;
-    content += F("</label><input name='");
-    content += INPUT_ROLLERSHUTTER;
-    content += F("' type='number' placeholder='1' step='1' min='0' max='");
-    content += maxrollershutter / 2;
-    content += F("' value='");
-    content += String(ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValue());
-    content += F("'></i>");
-    content += F("</div>");
+    addFormHeader(content, S_ROLLERSHUTTERS);
+    addNumberBox(content, INPUT_ROLLERSHUTTER, S_QUANTITY, KEY_MAX_ROLLERSHUTTER, (maxrollershutter / 2));
+    addFormHeaderEnd(content);
   }
 #endif
 
@@ -186,20 +175,13 @@ String SuplaWebServer::supla_webpage_start(int save) {
   WebPageSensor->showDS18B20(content, true);
 #endif
 
-  content += F("<button type='submit'>");
-  content += S_SAVE;
-  content += F("</button></form> ");
-  content += F("<br>");
+  addButtonSubmit(content, S_SAVE);
+  addFormEnd(content);
 
   addButton(content, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
-  addButton(content, "Tools", PATH_TOOLS);
+  addButton(content, F("Tools"), PATH_TOOLS);
+  addButton(content, S_RESTART, PATH_REBOT);
 
-  content += F("<form method='post' action='");
-  content += PATH_REBOT;
-  content += F("'>");
-  content += F("<button type='submit'>");
-  content += S_RESTART;
-  content += F("</button></form></div>");
   return content;
 }
 
@@ -217,7 +199,7 @@ String SuplaWebServer::deviceSettings(int save) {
 
   content += WebServer->SuplaSaveResult(save);
   content += WebServer->SuplaJavaScript(PATH_DEVICE_SETTINGS);
-  
+
   content += F("<form method='post' action='");
   content += PATH_SAVE_BOARD;
   content += F("'>");
