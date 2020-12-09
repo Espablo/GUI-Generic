@@ -39,6 +39,10 @@ void SuplaWebPageConfig::handleConfigSave() {
     return;
   }
 
+  uint8_t key = KEY_GPIO + ConfigESP->getGpio(FUNCTION_CFG_LED);
+  String input = INPUT_CFG_LED_LEVEL;
+  ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
+
   if (!WebServer->saveGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON)) {
     WebServer->sendContent(supla_webpage_config(6));
     return;
