@@ -145,7 +145,7 @@ void SuplaWebPageControl::handleButtonSaveSet() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String readUrl, nr_button, key, input;
+  String readUrl, nr_button, input;
   uint8_t place;
 
   String path = PATH_START;
@@ -154,12 +154,15 @@ void SuplaWebPageControl::handleButtonSaveSet() {
 
   place = readUrl.indexOf(path);
   nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
-  key = GPIO;
-  key += ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
+  uint8_t key = KEY_GPIO + ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
 
   input = INPUT_BUTTON_LEVEL;
   input += nr_button;
-  ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
+
+  input = INPUT_BUTTON_ACTION;
+  input += nr_button;
+  ConfigManager->setElement(key, ACTION, WebServer->httpServer.arg(input).toInt());
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -198,6 +201,8 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
     page += F(" ");
     page += nr_button;
     page += F("</h3>");
+
+
     page += F("<i><label>");
     page += S_REACTION_TO;
     page += F("</label><select name='");
@@ -216,6 +221,28 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
       page += TriggerString(suported);
     }
     page += F("</select></i>");
+
+
+    page += F("<i><label>");
+    page += S_ACTION;
+    page += F("</label><select name='");
+    page += INPUT_BUTTON_ACTION;
+    page += nr_button;
+    page += F("'>");
+    selected = ConfigESP->getAction(nr_button.toInt(), FUNCTION_BUTTON);
+    for (suported = 0; suported < 3; suported++) {
+      page += F("<option value='");
+      page += suported;
+      if (selected == suported) {
+        page += F("' selected>");
+      }
+      else
+        page += F("'>");
+      page += PGMT(ACTION_P[suported]);
+    }
+    page += F("</select></i>");
+
+
     page += F("</div><button type='submit'>");
     page += S_SAVE;
     page += F("</button></form>");

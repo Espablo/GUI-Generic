@@ -119,7 +119,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String readUrl, nr_relay, key, input;
+  String readUrl, nr_relay, input;
   uint8_t place;
 
   String path = PATH_START;
@@ -128,16 +128,15 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 
   place = readUrl.indexOf(path);
   nr_relay = readUrl.substring(place + path.length(), place + path.length() + 3);
-  key = GPIO;
-  key += ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
+  uint8_t key = KEY_GPIO + ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
 
   input = INPUT_RELAY_MEMORY;
   input += nr_relay;
-  ConfigManager->setElement(key.c_str(), MEMORY, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, MEMORY, WebServer->httpServer.arg(input).toInt());
 
   input = INPUT_RELAY_LEVEL;
   input += nr_relay;
-  ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:

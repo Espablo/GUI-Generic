@@ -24,23 +24,22 @@
 #include "FS.h"
 #include "SuplaConfigManager.h"
 
-#define CONFIG_FILE_PATH "/dat"
-
-ConfigOption::ConfigOption(const char *key, const char *value, int maxLength) {
+ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength) {
   // size_t size = strlen(key) + 1;
   // _key = (char *)malloc(sizeof(char) * size);
   // memcpy(_key, key, size - 1);
   // _key[size - 1] = 0;
-  size_t size = strlen(key) + 1;
+  /*size_t size = strlen(key) + 1;
   _key = new char[size];
   strncpy(_key, key, size);
   _key[size - 1] = '\0';
-
+*/
+  _key = key; 
   _maxLength = maxLength + 1;
   setValue(value);
 }
 
-const char *ConfigOption::getKey() {
+uint8_t ConfigOption::getKey() {
   return _key;
 }
 
@@ -100,9 +99,9 @@ String ConfigOption::getElement(int index) {
 
 String ConfigOption::replaceElement(int index, int newvalue) {
   String data = _value;
-  int lenght = 5;
+  int lenght = SETTINGSCOUNT;
   String table;
-  for (int i = 0; i < lenght; i++) {
+  for (int i = 0; i <= lenght; i++) {
     if (i == index) {
       table += newvalue;
     }
@@ -162,27 +161,24 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
   this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
 
-  int nr;
-  String key;
-
+  uint8_t nr, key;
+  
   for (nr = 0; nr <= 17; nr++) {
-    key = GPIO;
-    key += nr;
-    this->addKey(key.c_str(), "0,0,0,0,0", 14);
+    key = KEY_GPIO + nr;
+    this->addKey(key, "0,0,0,0,0,0", 16);
   }
-
+  
   this->addKey(KEY_ACTIVE_SENSOR, "0,0,0,0,0", 14);
   this->addKey(KEY_BOARD, "0", 2);
   this->addKey(KEY_CFG_MODE, "0", 2);
 
   for (nr = 0; nr <= MAX_DS18B20; nr++) {
-    key = KEY_DS;
-    key += nr;
-    this->addKey(key.c_str(), MAX_DS18B20_ADDRESS_HEX);
-    key = KEY_DS_NAME;
-    key += nr;
-    this->addKey(key.c_str(), MAX_DS18B20_NAME);
+    key = KEY_DS + nr;
+    this->addKey(key, MAX_DS18B20_ADDRESS_HEX);
+    key = KEY_DS_NAME + nr;
+    this->addKey(key, MAX_DS18B20_NAME);
   }
+
   this->load();
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
@@ -203,11 +199,11 @@ SuplaConfigManager::SuplaConfigManager() {
   //  }
 }
 
-uint8_t SuplaConfigManager::addKey(const char *key, int maxLength) {
+uint8_t SuplaConfigManager::addKey(uint8_t key, int maxLength) {
   return addKey(key, "", maxLength);
 }
 
-uint8_t SuplaConfigManager::addKey(const char *key, const char *value, int maxLength) {
+uint8_t SuplaConfigManager::addKey(uint8_t key, const char *value, int maxLength) {
   if (_optionCount == CONFIG_MAX_OPTIONS) {
     return E_CONFIG_MAX;
   }
@@ -217,7 +213,7 @@ uint8_t SuplaConfigManager::addKey(const char *key, const char *value, int maxLe
   return E_CONFIG_OK;
 }
 
-uint8_t SuplaConfigManager::addKeyAndRead(const char *key, const char *value, int maxLength) {
+uint8_t SuplaConfigManager::addKeyAndRead(uint8_t key, const char *value, int maxLength) {
   addKey(key, maxLength);
   if (this->loadItem(key) != E_CONFIG_OK) {
     this->set(key, value);
@@ -225,9 +221,9 @@ uint8_t SuplaConfigManager::addKeyAndRead(const char *key, const char *value, in
   return E_CONFIG_OK;
 }
 
-uint8_t SuplaConfigManager::deleteKey(const char *key) {
+uint8_t SuplaConfigManager::deleteKey(uint8_t key) {
   for (int i = 0; i < _optionCount; i++) {
-    if (strcmp(_options[i]->getKey(), key) == 0) {
+    if (_options[i]->getKey() == key) {
       delete _options[_optionCount];
       _optionCount -= 1;
     }
@@ -281,7 +277,7 @@ uint8_t SuplaConfigManager::load() {
   }
 }
 
-uint8_t SuplaConfigManager::loadItem(const char *key) {
+uint8_t SuplaConfigManager::loadItem(uint8_t key) {
   if (SPIFFS.begin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
@@ -299,7 +295,7 @@ uint8_t SuplaConfigManager::loadItem(const char *key) {
         configFile.read(content, length);
 
         for (i = 0; i < _optionCount; i++) {
-          if (strcmp(_options[i]->getKey(), key) == 0) {
+          if (_options[i]->getKey() == key) {
             _options[i]->setValue((const char *)(content + offset));
           }
           offset += _options[i]->getLength();
@@ -369,18 +365,18 @@ bool SuplaConfigManager::isDeviceConfigured() {
          strcmp(this->get(KEY_LOGIN)->getValue(), "") == 0;
 }
 
-ConfigOption *SuplaConfigManager::get(const char *key) {
+ConfigOption *SuplaConfigManager::get(uint8_t key) {
   for (int i = 0; i < _optionCount; i++) {
-    if (strcmp(_options[i]->getKey(), key) == 0) {
+    if (_options[i]->getKey() == key) {
       return _options[i];
     }
   }
   return NULL;
 }
 
-bool SuplaConfigManager::set(const char *key, const char *value) {
+bool SuplaConfigManager::set(uint8_t key, const char *value) {
   for (int i = 0; i < _optionCount; i++) {
-    if (strcmp(key, _options[i]->getKey()) == 0) {
+    if (key == _options[i]->getKey()) {
       _options[i]->setValue(value);
       return true;
     }
@@ -388,9 +384,9 @@ bool SuplaConfigManager::set(const char *key, const char *value) {
   return false;
 }
 
-bool SuplaConfigManager::setElement(const char *key, int index, int newvalue) {
+bool SuplaConfigManager::setElement(uint8_t key, int index, int newvalue) {
   for (int i = 0; i < _optionCount; i++) {
-    if (strcmp(key, _options[i]->getKey()) == 0) {
+    if (key == _options[i]->getKey()) {
       String data = _options[i]->replaceElement(index, newvalue);
       _options[i]->setValue(data.c_str());
       return true;

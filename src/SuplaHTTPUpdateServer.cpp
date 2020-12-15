@@ -30,7 +30,8 @@ static const char serverIndex[] PROGMEM =
      </body>
      </html>)";
 static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='15'>Update Success! Rebooting...";
-static const char twoStepResponse[] PROGMEM = "<META http-equiv='refresh' content='15'><b>WARNING</b> only use 2-step OTA update. Use GUI-GenericUpdater.bin";
+static const char twoStepResponse[] PROGMEM =
+    "<META http-equiv='refresh' content='15'><b>WARNING</b> only use 2-step OTA update. Use GUI-GenericUpdater.bin";
 
 ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
@@ -45,7 +46,7 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
   _username = username;
   _password = password;
 
-  _server->on(PATH_UPDATE_HENDLE, std::bind(&ESP8266HTTPUpdateServer::handleFirmwareUp, this));
+  _server->on(getURL(PATH_UPDATE_HENDLE), std::bind(&ESP8266HTTPUpdateServer::handleFirmwareUp, this));
   // handler for the /update form page
   _server->on(path.c_str(), HTTP_GET, [&]() {
     if (_username != emptyString && _password != emptyString && !_server->authenticate(_username.c_str(), _password.c_str()))
@@ -115,7 +116,7 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
           if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
             _server->send_P(200, PSTR("text/html"), twoStepResponse);
 
-            //_setUpdaterError();
+            _setUpdaterError();
           }
         }
         else if (_authenticated && upload.status == UPLOAD_FILE_END && !_updaterError.length()) {
@@ -160,7 +161,9 @@ String ESP8266HTTPUpdateServer::suplaWebPageUpddate() {
   content += F("' frameborder='0' height='200'></iframe>");
   content += F("</center>");
   content += F("</div>");
-  content += F("<a href='/'><button>");
+  content += F("<a href='");
+  content += PATH_TOOLS;
+  content += F("'><button>");
   content += S_RETURN;
   content += F("</button></a></div>");
 

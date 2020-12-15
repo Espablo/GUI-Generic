@@ -22,8 +22,6 @@
 #include "SuplaWebPageSensor.h"
 #include "SuplaCommonPROGMEM.h"
 #include "SuplaTemplateBoard.h"
-#include "GUIGenericCommon.h"
-
 #include "Markup.h"
 
 SuplaWebServer::SuplaWebServer() {
@@ -74,6 +72,10 @@ void SuplaWebServer::createWebServer() {
 #ifdef SUPLA_OTA
   httpUpdater.setup(&httpServer, this->www_username, this->www_password);
 #endif
+
+  createWebDownload();
+  createWebUpload();
+  createWebTools();
 }
 
 void SuplaWebServer::handle() {
@@ -142,8 +144,8 @@ String SuplaWebServer::supla_webpage_start(int save) {
   String content = F("");
   content += SuplaSaveResult(save);
   content += SuplaJavaScript();
-  content += F("<form method='post'>");
 
+  addForm(content, F("post"));
   addFormHeader(content, S_SETTING_WIFI_SSID);
   addTextBox(content, INPUT_WIFI_SSID, S_WIFI_SSID, KEY_WIFI_SSID, 0, MAX_SSID, true);
   addTextBoxPassword(content, INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
@@ -163,20 +165,9 @@ String SuplaWebServer::supla_webpage_start(int save) {
 #ifdef SUPLA_ROLLERSHUTTER
   uint8_t maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   if (maxrollershutter >= 2) {
-    content += F("<div class='w'>");
-    content += F("<h3>");
-    content += S_ROLLERSHUTTERS;
-    content += F("</h3>");
-    content += F("<i><label>");
-    content += S_QUANTITY;
-    content += F("</label><input name='");
-    content += INPUT_ROLLERSHUTTER;
-    content += F("' type='number' placeholder='1' step='1' min='0' max='");
-    content += maxrollershutter / 2;
-    content += F("' value='");
-    content += String(ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValue());
-    content += F("'></i>");
-    content += F("</div>");
+    addFormHeader(content, S_ROLLERSHUTTERS);
+    addNumberBox(content, INPUT_ROLLERSHUTTER, S_QUANTITY, KEY_MAX_ROLLERSHUTTER, (maxrollershutter / 2));
+    addFormHeaderEnd(content);
   }
 #endif
 
@@ -184,31 +175,13 @@ String SuplaWebServer::supla_webpage_start(int save) {
   WebPageSensor->showDS18B20(content, true);
 #endif
 
-  content += F("<button type='submit'>");
-  content += S_SAVE;
-  content += F("</button></form> ");
-  content += F("<br>");
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_DEVICE_SETTINGS;
-  content += F("'><button>");
-  content += S_DEVICE_SETTINGS;
-  content += F("</button></a>");
-  content += F("<br><br>");
-#ifdef SUPLA_OTA
-  content += F("<a href='");
-  content += PATH_UPDATE_HENDLE;
-  content += F("'><button>");
-  content += S_UPDATE;
-  content += F("</button></a>");
-  content += F("<br><br>");
-#endif
-  content += F("<form method='post' action='");
-  content += PATH_REBOT;
-  content += F("'>");
-  content += F("<button type='submit'>");
-  content += S_RESTART;
-  content += F("</button></form></div>");
+  addButtonSubmit(content, S_SAVE);
+  addFormEnd(content);
+
+  addButton(content, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
+  addButton(content, F("Tools"), PATH_TOOLS);
+  addButton(content, S_RESTART, PATH_REBOT);
+
   return content;
 }
 
@@ -226,113 +199,50 @@ String SuplaWebServer::deviceSettings(int save) {
 
   content += WebServer->SuplaSaveResult(save);
   content += WebServer->SuplaJavaScript(PATH_DEVICE_SETTINGS);
+
   content += F("<form method='post' action='");
   content += PATH_SAVE_BOARD;
   content += F("'>");
-  content += F("<div class='w'><h3>");
-  content += S_TEMPLATE_BOARD;
-  content += F("</h3>");
-  content += F("<i><label>");
-  content += S_TYPE;
-  content += F("</label><select name='");
-  content += INPUT_BOARD;
-  content += F("'>");
+
+  addFormHeader(content, S_TEMPLATE_BOARD);
   uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
-  for (uint8_t suported = 0; suported < MAX_MODULE; suported++) {
-    content += F("<option value='");
-    content += suported;
-    if (selected == suported) {
-      content += F("' selected>");
-    }
-    else
-      content += F("'>");
-    content += BoardString(suported);
-  }
-  content += F("</select></i>");
-  content += F("</div><button type='submit'>");
+  addListBox(content, INPUT_BOARD, S_TYPE, BOARD_P, MAX_MODULE, selected);
+  addFormHeaderEnd(content);
+
+  content += F("<button type='submit'>");
   content += S_SAVE;
   content += F("</button></form><br><br>");
-  content += F("<div class='w'>");
-  content += F("<h3>");
-  content += S_DEVICE_SETTINGS;
-  content += F("</h3>");
-  content += F("<br>");
-  content += F("<center>");
 
+  addFormHeader(content, S_DEVICE_SETTINGS);
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_RELAY;
-  content += F("'><button>");
-  content += S_RELAYS;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_RELAYS, PATH_RELAY);
 #endif
 
 #ifdef SUPLA_BUTTON
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_CONTROL;
-  content += F("'><button>");
-  content += S_BUTTONS;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_BUTTONS, PATH_CONTROL);
 #endif
 
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_1WIRE;
-  content += F("'><button>");
-  content += S_SENSORS_1WIRE;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_SENSORS_1WIRE, PATH_1WIRE);
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_I2C;
-  content += F("'><button>");
-  content += S_SENSORS_I2C;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_SENSORS_I2C, PATH_I2C);
 #endif
 
 #if defined(SUPLA_MAX6675)
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_SPI;
-  content += F("'><button>");
-  content += S_SENSORS_SPI;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_SENSORS_SPI, PATH_SPI);
 #endif
 
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_OTHER;
-  content += F("'><button>");
-  content += S_SENSORS_OTHER;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_SENSORS_OTHER, PATH_OTHER);
 #endif
 
 #ifdef SUPLA_CONFIG
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_CONFIG;
-  content += F("'><button>");
-  content += S_LED_BUTTON_CFG;
-  content += F("</button></a>");
-  content += F("<br><br>");
+  addButton(content, S_LED_BUTTON_CFG, PATH_CONFIG);
 #endif
-  content += F("</div>");
-  content += F("</center>");
-  content += F("<a href='/'><button>");
-  content += S_RETURN;
-  content += F("</button></a></div>");
+  addFormHeaderEnd(content);
+  addButton(content, S_RETURN, "");
 
   return content;
 }
@@ -348,11 +258,10 @@ void SuplaWebServer::handleBoardSave() {
     ConfigManager->set(KEY_BOARD, httpServer.arg(input).c_str());
 
     int nr;
-    String key;
+    uint8_t key;
     for (nr = 0; nr <= 17; nr++) {
-      key = GPIO;
-      key += nr;
-      ConfigManager->set(key.c_str(), "0,0,0,0,0");
+      key = KEY_GPIO + nr;
+      ConfigManager->set(key, "0,0,0,0,0");
     }
 
     chooseTemplateBoard(WebServer->httpServer.arg(input).toInt());
@@ -488,8 +397,8 @@ void SuplaWebServer::handleNotFound() {
 }
 
 bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
-  uint8_t current_value;
-  String key, input;
+  uint8_t current_value, key;
+  String input;
   input = _input;
   if (nr != 0) {
     input += nr;
@@ -498,20 +407,22 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     nr = 1;
   }
 
-  key = GPIO;
-  key += WebServer->httpServer.arg(input).toInt();
+  key = KEY_GPIO + WebServer->httpServer.arg(input).toInt();
 
   if (ConfigESP->getGpio(nr, function) != WebServer->httpServer.arg(input).toInt() || WebServer->httpServer.arg(input).toInt() == OFF_GPIO) {
     ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
   }
 
   if (WebServer->httpServer.arg(input).toInt() != OFF_GPIO) {
-    if (ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
       ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, function, 1);
     }
     else if (ConfigESP->getGpio(nr, function) == WebServer->httpServer.arg(input).toInt() &&
-             ConfigManager->get(key.c_str())->getElement(FUNCTION).toInt() == function) {
+             ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), nr, function, ConfigESP->getLevel(nr, function));
+    }
+    else if (function == FUNCTION_CFG_BUTTON) {
+      ConfigESP->setGpio(WebServer->httpServer.arg(input).toInt(), FUNCTION_CFG_BUTTON);
     }
     else {
       return false;
@@ -520,7 +431,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
 
   if (input_max != "\n") {
     current_value = WebServer->httpServer.arg(input_max).toInt();
-    if (ConfigManager->get(key.c_str())->getElement(NR).toInt() > current_value) {
+    if (ConfigManager->get(key)->getElement(NR).toInt() > current_value) {
       ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
     }
   }

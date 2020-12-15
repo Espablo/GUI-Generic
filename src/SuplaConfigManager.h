@@ -17,6 +17,8 @@
 #ifndef SuplaConfigManager_h
 #define SuplaConfigManager_h
 
+#define CONFIG_FILE_PATH "/dat"
+
 #define DEFAULT_HOSTNAME "GUI Generic"
 
 #define DEFAULT_LOGIN      "admin"
@@ -25,33 +27,54 @@
 #define DEFAULT_SERVER "svrX.supla.org"
 #define DEFAULT_EMAIL  "email@address.com"
 
-#define KEY_SUPLA_GUID                       "GUID"
-#define KEY_SUPLA_AUTHKEY                    "AUTHKEY"
-#define KEY_WIFI_SSID                        "wifiSSID"
-#define KEY_WIFI_PASS                        "wifiPass"
-#define KEY_LOGIN                            "login"
-#define KEY_LOGIN_PASS                       "loginPass"
-#define KEY_HOST_NAME                        "hostName"
-#define KEY_SUPLA_SERVER                     "suplaServer"
-#define KEY_SUPLA_EMAIL                      "suplaEmail"
-#define KEY_DS                               "ds"
-#define KEY_DS_NAME                          "dsName"
-#define KEY_MULTI_MAX_DS18B20                "multiMaxDs"
-#define KEY_SUPLA_FUNCTION                   "function"
-#define KEY_MAX_RELAY                        "maxRelay"
-#define KEY_MAX_BUTTON                       "maxButton"
-#define KEY_MAX_LIMIT_SWITCH                 "maxLimitSwitch"
-#define KEY_MAX_DHT11                        "maxDht11"
-#define KEY_MAX_DHT22                        "maxDht22"
-#define KEY_MAX_ROLLERSHUTTER                "maxRollerShutter"
-#define KEY_ALTITUDE_BME280                  "altbme280"
-#define KEY_ACTIVE_SENSOR                    "sensor"
-#define KEY_BOARD                            "board"
-#define KEY_CFG_MODE                         "cfgmode"
-#define KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "icDebounceTimeout"
-#define KEY_MAX_IMPULSE_COUNTER              "maxicRaisingEdge"
+#define MAX_GUID                SUPLA_GUID_SIZE
+#define MAX_AUTHKEY             SUPLA_GUID_SIZE
+#define MAX_SSID                32
+#define MAX_PASSWORD            64
+#define MIN_PASSWORD            8
+#define MAX_MLOGIN              32
+#define MAX_MPASSWORD           64
+#define MAX_HOSTNAME            32
+#define MAX_SUPLA_SERVER        SUPLA_SERVER_NAME_MAXSIZE
+#define MAX_EMAIL               SUPLA_EMAIL_MAXSIZE
+#define MAX_DS18B20_ADDRESS_HEX 16
+#define MAX_DS18B20_ADDRESS     8
+#define MAX_DS18B20_NAME        8
+#define MAX_TYPE_BUTTON         4
+#define MAX_MONOSTABLE_TRIGGER  1
+#define MAX_FUNCTION            1
+#define MAX_DS18B20             10
+#define MAX_GPIO                17
 
-#define GPIO      "GPIO"
+enum _key {
+KEY_SUPLA_GUID,
+KEY_SUPLA_AUTHKEY,
+KEY_WIFI_SSID,
+KEY_WIFI_PASS,
+KEY_LOGIN,
+KEY_LOGIN_PASS,
+KEY_HOST_NAME,
+KEY_SUPLA_SERVER,
+KEY_SUPLA_EMAIL,
+KEY_MAX_RELAY,
+KEY_MAX_BUTTON,
+KEY_MAX_LIMIT_SWITCH,
+KEY_MAX_DHT22,
+KEY_MAX_DHT11,
+KEY_MULTI_MAX_DS18B20,
+KEY_MAX_ROLLERSHUTTER,
+KEY_ALTITUDE_BME280,
+KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT,
+KEY_MAX_IMPULSE_COUNTER,
+KEY_ACTIVE_SENSOR,
+KEY_BOARD,
+KEY_CFG_MODE,
+KEY_GPIO,
+KEY_DS = KEY_GPIO + MAX_GPIO + MAX_DS18B20,
+KEY_DS_NAME = KEY_DS + MAX_DS18B20
+};
+
+//#define GPIO      "GPIO"
 #define SEPARATOR ','
 
 enum _settings
@@ -60,7 +83,9 @@ enum _settings
   FUNCTION,
   LEVEL,
   MEMORY,
-  CFG
+  CFG,
+  ACTION,
+  SETTINGSCOUNT
 };
 
 enum _function
@@ -85,24 +110,6 @@ enum _function
   FUNCTION_IMPULSE_COUNTER
 };
 
-#define MAX_GUID                SUPLA_GUID_SIZE
-#define MAX_AUTHKEY             SUPLA_GUID_SIZE
-#define MAX_SSID                32
-#define MAX_PASSWORD            64
-#define MIN_PASSWORD            8
-#define MAX_MLOGIN              32
-#define MAX_MPASSWORD           64
-#define MAX_HOSTNAME            32
-#define MAX_SUPLA_SERVER        SUPLA_SERVER_NAME_MAXSIZE
-#define MAX_EMAIL               SUPLA_EMAIL_MAXSIZE
-#define MAX_DS18B20_ADDRESS_HEX 16
-#define MAX_DS18B20_ADDRESS     8
-#define MAX_DS18B20_NAME        8
-#define MAX_TYPE_BUTTON         4
-#define MAX_MONOSTABLE_TRIGGER  1
-#define MAX_FUNCTION            1
-#define MAX_DS18B20             10
-
 enum _e_onfig
 {
   E_CONFIG_OK,
@@ -117,8 +124,8 @@ enum _e_onfig
 
 class ConfigOption {
  public:
-  ConfigOption(const char *key, const char *value, int maxLength);
-  const char *getKey();
+  ConfigOption(uint8_t key, const char *value, int maxLength);
+  uint8_t getKey();
   const char *getValue();
   int getValueInt();
   uint8_t *getValueBin(size_t size);
@@ -131,7 +138,7 @@ class ConfigOption {
   String replaceElement(int index, int value);
 
  private:
-  char *_key;
+  uint8_t _key;
   char *_value;
   int _maxLength;
 };
@@ -139,18 +146,18 @@ class ConfigOption {
 class SuplaConfigManager {
  public:
   SuplaConfigManager();
-  uint8_t addKey(const char *key, int maxLength);
-  uint8_t addKey(const char *key, const char *value, int maxLength);
-  uint8_t addKeyAndRead(const char *key, const char *value, int maxLength);
-  uint8_t deleteKey(const char *key);
+  uint8_t addKey(uint8_t key, int maxLength);
+  uint8_t addKey(uint8_t key, const char *value, int maxLength);
+  uint8_t addKeyAndRead(uint8_t key, const char *value, int maxLength);
+  uint8_t deleteKey(uint8_t key);
   uint8_t load();
-  uint8_t loadItem(const char *key);
+  uint8_t loadItem(uint8_t key);
   uint8_t save();
   void showAllValue();
 
-  ConfigOption *get(const char *key);
-  bool set(const char *key, const char *value);
-  bool setElement(const char *key, int index, int newvalue);
+  ConfigOption *get(uint8_t key);
+  bool set(uint8_t key, const char *value);
+  bool setElement(uint8_t key, int index, int newvalue);
 
   bool isDeviceConfigured();
   void setGUIDandAUTHKEY();

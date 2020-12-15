@@ -40,6 +40,7 @@
 #define S_BUTTON_NR_SETTINGS                                   "Ustawienia przycisku nr."
 #define S_NO_BUTTON_NR                                         "Brak przycisku nr."
 #define S_REACTION_TO                                          "Reakcja na"
+#define S_ACTION                                               "Akcja"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Ustawienie GPIO dla cz. otwarcia"
 #define S_LIMIT_SWITCH                                         "KRAŃCÓWKA"
 #define S_GPIO_SETTINGS_FOR                                    "Ustawienie GPIO dla"
@@ -80,8 +81,9 @@
 #define S_DEVICE_LIMIT_EXCEEDED                        "Przekroczono limit urządzeń"
 
 //#### SuplaCommonPROGMEM.h ####
-#define S_OFF                 "WYŁĄCZONY"
-#define S_ON                  "ZAŁĄCZONY"
+#define S_OFF                 "WYŁĄCZ"
+#define S_ON                  "ZAŁĄCZ"
+#define S_TOGGLE              "PRZEŁĄCZ"
 #define S_LOW                 "ODWRÓCONE"
 #define S_HIGH                "NORMALNE"
 #define S_POSITION_MEMORY     "PAMIĘTAJ STAN"

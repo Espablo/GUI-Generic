@@ -88,20 +88,18 @@ void SuplaWebPageSensor::handleDSSave() {
       return WebServer->httpServer.requestAuthentication();
   }
   for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-    String ds_key = KEY_DS;
-    String ds_name_key = KEY_DS_NAME;
-    ds_key += i;
-    ds_name_key += i;
+    uint8_t ds_key = KEY_DS + i;
+    uint8_t ds_name_key = KEY_DS_NAME + i;
 
     String ds = F("dschlid");
     String ds_name = F("dsnameid");
     ds += i;
     ds_name += i;
 
-    ConfigManager->set(ds_key.c_str(), WebServer->httpServer.arg(ds).c_str());
-    ConfigManager->set(ds_name_key.c_str(), WebServer->httpServer.arg(ds_name).c_str());
+    ConfigManager->set(ds_key, WebServer->httpServer.arg(ds).c_str());
+    ConfigManager->set(ds_name_key, WebServer->httpServer.arg(ds_name).c_str());
 
-    Supla::GUI::sensorDS[i]->setDeviceAddress(ConfigManager->get(ds_key.c_str())->getValueBin(MAX_DS18B20_ADDRESS));
+    Supla::GUI::sensorDS[i]->setDeviceAddress(ConfigManager->get(ds_key)->getValueBin(MAX_DS18B20_ADDRESS));
   }
 
   switch (ConfigManager->save()) {
@@ -208,16 +206,14 @@ void SuplaWebPageSensor::showDS18B20(String &content, bool readonly) {
     content += S_TEMPERATURE;
     content += F("</h3>");
     for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-      String ds_key = KEY_DS;
-      String ds_name_key = KEY_DS_NAME;
-      ds_key += i;
-      ds_name_key += i;
+      uint8_t ds_key = KEY_DS + i;
+      uint8_t ds_name_key = KEY_DS_NAME + i;
 
       double temp = Supla::GUI::sensorDS[i]->getValue();
       content += F("<i style='border-bottom:none !important;'><input name='dsnameid");
       content += i;
       content += F("' value='");
-      content += String(ConfigManager->get(ds_name_key.c_str())->getValue());
+      content += String(ConfigManager->get(ds_name_key)->getValue());
       content += F("' maxlength=");
       content += MAX_DS18B20_NAME;
       if (readonly) {
@@ -230,7 +226,7 @@ void SuplaWebPageSensor::showDS18B20(String &content, bool readonly) {
       content += F("<i><input name='dschlid");
       content += i;
       content += F("' value='");
-      content += String(ConfigManager->get(ds_key.c_str())->getValue());
+      content += String(ConfigManager->get(ds_key)->getValue());
       content += F("' maxlength=");
       content += MAX_DS18B20_ADDRESS_HEX;
       if (readonly) {
@@ -407,8 +403,8 @@ void SuplaWebPageSensor::handlei2cSave() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String key, input;
-  uint8_t nr, current_value, last_value;
+  String input;
+  uint8_t key, nr, current_value, last_value;
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x)
   if (!WebServer->saveGPIO(INPUT_SDA_GPIO, FUNCTION_SDA)) {
@@ -431,7 +427,7 @@ void SuplaWebPageSensor::handlei2cSave() {
   key = KEY_ALTITUDE_BME280;
   input = INPUT_ALTITUDE_BME280;
   if (strcmp(WebServer->httpServer.arg(INPUT_ALTITUDE_BME280).c_str(), "") != 0) {
-    ConfigManager->set(key.c_str(), WebServer->httpServer.arg(input).c_str());
+    ConfigManager->set(key, WebServer->httpServer.arg(input).c_str());
   }
 #endif
 
@@ -727,7 +723,7 @@ void SuplaWebPageSensor::handleImpulseCounterSaveSet() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String readUrl, nr, key, input;
+  String readUrl, nr, input;
   uint8_t place;
 
   String path = PATH_START;
@@ -736,16 +732,15 @@ void SuplaWebPageSensor::handleImpulseCounterSaveSet() {
 
   place = readUrl.indexOf(path);
   nr = readUrl.substring(place + path.length(), place + path.length() + 3);
-  key = GPIO;
-  key += ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
+  uint8_t key = KEY_GPIO + ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
 
   input = INPUT_IMPULSE_COUNTER_PULL_UP;
   input += nr;
-  ConfigManager->setElement(key.c_str(), MEMORY, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, MEMORY, WebServer->httpServer.arg(input).toInt());
 
   input = INPUT_IMPULSE_COUNTER_RAISING_EDGE;
   input += nr;
-  ConfigManager->setElement(key.c_str(), LEVEL, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
 
   ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
   Supla::GUI::impulseCounter[nr.toInt() - 1]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());

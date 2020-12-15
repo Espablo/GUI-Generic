@@ -3,7 +3,7 @@
 
 #include <ESP8266WebServer.h>
 
-#define PATH_UPDATE_HENDLE    "/update"
+#define PATH_UPDATE_HENDLE    "update"
 #define PATH_UPDATE           "/updateOTA"
 
 class ESP8266HTTPUpdateServer

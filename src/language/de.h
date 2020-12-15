@@ -39,6 +39,7 @@
 #define S_BUTTON_NR_SETTINGS                                   "Parameter für Tasten Nr."
 #define S_NO_BUTTON_NR                                         "Kein Tasten Nr."
 #define S_REACTION_TO                                          "Reaktion auf"
+#define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO-Einstellungen für Endschalter"
 #define S_LIMIT_SWITCH                                         "ENDSCHALTER"
 #define S_GPIO_SETTINGS_FOR                                    "GPIO-Parameter für"
@@ -81,6 +82,7 @@
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                 "AUS"
 #define S_ON                  "EINGESCHALTET"
+#define S_TOGGLE              "TOGGLE"
 #define S_LOW                 "NIEDRIG"
 #define S_HIGH                "HOCH"
 #define S_POSITION_MEMORY     "LETZTEN STAND ZURÜCKSETZEN"

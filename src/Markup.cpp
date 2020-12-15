@@ -1,6 +1,14 @@
 #include "Markup.h"
 #include "SuplaCommonPROGMEM.h"
 
+void addForm(String& html, const String& method, const String& action) {
+  html += "<form method='" + method + "' action='" + action + "'>";
+}
+
+void addFormEnd(String& html) {
+  html += "</form>";
+}
+
 void addFormHeader(String& html, const String& name) {
   html += F("<div class='w'>");
   html += F("<h3>");
@@ -15,7 +23,7 @@ void addFormHeaderEnd(String& html) {
 void addTextBox(String& html,
                 const String& input_id,
                 const String& name,
-                const String& value_key,
+                uint8_t value_key,
                 const String& placeholder,
                 int minlength,
                 int maxlength,
@@ -36,7 +44,7 @@ void addTextBox(String& html,
   }
 
   html += F("' value='");
-  String value = String(ConfigManager->get(value_key.c_str())->getValue());
+  String value = String(ConfigManager->get(value_key)->getValue());
   if (value != placeholder) {
     html += value;
   }
@@ -64,16 +72,15 @@ void addTextBox(String& html,
 }
 
 void addTextBox(
-    String& html, const String& input_id, const String& name, const String& value_key, int minlength, int maxlength, bool required, bool readonly) {
+    String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required, bool readonly) {
   return addTextBox(html, input_id, name, value_key, "", minlength, maxlength, required, readonly, false);
 }
 
-void addTextBoxPassword(
-    String& html, const String& input_id, const String& name, const String& value_key, int minlength, int maxlength, bool required) {
+void addTextBoxPassword(String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required) {
   return addTextBox(html, input_id, name, value_key, "", minlength, maxlength, required, false, true);
 }
 
-void addNumberBox(String& html, const String& input_id, const String& name, const String& value_key, uint16_t max) {
+void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, uint16_t max) {
   html += F("<i><label>");
   html += name;
   html += F("</label><input name='");
@@ -81,7 +88,7 @@ void addNumberBox(String& html, const String& input_id, const String& name, cons
   html += F("' type='number' placeholder='0' step='1' min='0' max='");
   html += String(max);
   html += F("' value='");
-  html += String(ConfigManager->get(value_key.c_str())->getValue());
+  html += String(ConfigManager->get(value_key)->getValue());
   html += F("'></i>");
 }
 
@@ -152,6 +159,22 @@ void addListBox(String& html, const String& input_id, const String& name, const 
   html += F("</select></i>");
 }
 
+void addButton(String& html, const String& name, const String& url) {
+  html += F("<a href='");
+  html += getURL(url);
+  html += F("'><button>");
+  html += name;
+  html += F("</button></a>");
+  html += F("<br><br>");
+}
+
+void addButtonSubmit(String& html, const String& name) {
+  html += F("<button type='submit'>");
+  html += name;
+  html += F("</button>");
+  html += F("<br><br>");
+}
+
 String addListGPIOSelect(const char* input, uint8_t function, uint8_t nr) {
   String page = "";
   page += F("<select name='");
@@ -181,4 +204,8 @@ String addListGPIOSelect(const char* input, uint8_t function, uint8_t nr) {
   }
   page += F("</select>");
   return page;
+}
+
+String getURL(const String& url) {
+  return String(F(PATH_START)) + url;
 }

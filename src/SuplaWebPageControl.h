@@ -12,6 +12,7 @@
 #define  INPUT_BUTTON_SET           "bts"
 #define  INPUT_BUTTON_GPIO          "btg"
 #define  INPUT_BUTTON_LEVEL         "icl"
+#define  INPUT_BUTTON_ACTION        "bta"
 #define  INPUT_LIMIT_SWITCH_GPIO    "lsg"
 #define  INPUT_MAX_BUTTON           "mbt"
 #define  INPUT_MAX_LIMIT_SWITCH     "mls"
