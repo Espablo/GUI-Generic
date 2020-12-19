@@ -11,9 +11,11 @@ void addFormEnd(String& html) {
 
 void addFormHeader(String& html, const String& name) {
   html += F("<div class='w'>");
-  html += F("<h3>");
-  html += name;
-  html += F("</h3>");
+  if (name != "\n") {
+    html += F("<h3>");
+    html += name;
+    html += F("</h3>");
+  }
 }
 
 void addFormHeaderEnd(String& html) {

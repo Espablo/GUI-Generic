@@ -88,7 +88,7 @@ void SuplaConfigESP::runAction(int event, int action) {
   }
 
   if (configModeESP == CONFIG_MODE) {
-    if (event ==  Supla::ON_CLICK_1) {
+    if (event == Supla::ON_CLICK_1) {
       rebootESP();
     }
   }
@@ -113,11 +113,13 @@ void SuplaConfigESP::configModeInit() {
 
 void SuplaConfigESP::iterateAlways() {
   if (configModeESP == CONFIG_MODE) {
-    String CONFIG_WIFI_NAME = "SUPLA-ESP8266-" + getMacAddress(false);
-    WiFi.softAP(CONFIG_WIFI_NAME, "");
+    WiFi.softAP(getConfigNameAP(), "");
   }
 }
 
+String SuplaConfigESP::getConfigNameAP() {
+  return "SUPLA-ESP8266-" + getMacAddress(false);
+}
 const char *SuplaConfigESP::getLastStatusSupla() {
   return supla_status.msg;
 }
@@ -414,6 +416,6 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
 
     ConfigManager->save();
 
-   // rebootESP();
+    // rebootESP();
   }
 }

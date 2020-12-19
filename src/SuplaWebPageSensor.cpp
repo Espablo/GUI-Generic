@@ -5,6 +5,7 @@
 #include "SuplaCommonPROGMEM.h"
 #include "GUIGenericCommon.h"
 #include "Markup.h"
+#include "SuplaOled.h"
 
 SuplaWebPageSensor *WebPageSensor = new SuplaWebPageSensor();
 
@@ -447,6 +448,14 @@ void SuplaWebPageSensor::handlei2cSave() {
   }
 #endif
 
+#ifdef SUPLA_OLED
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_OLED;
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_OLED, WebServer->httpServer.arg(input).toInt());
+  }
+#endif
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       WebServer->sendContent(supla_webpage_i2c(1));
@@ -463,52 +472,52 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   String page, key;
   page += WebServer->SuplaSaveResult(save);
   page += WebServer->SuplaJavaScript(PATH_I2C);
-  page += F("<form method='post' action='");
-  page += PATH_SAVE_I2C;
-  page += F("'>");
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x)
+  addForm(page, F("post"), PATH_SAVE_I2C);
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED)
   addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " i2c");
   addListGPIOBox(page, INPUT_SDA_GPIO, "SDA", FUNCTION_SDA);
   addListGPIOBox(page, INPUT_SCL_GPIO, "SCL", FUNCTION_SCL);
+  addFormHeaderEnd(page);
 
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
 #ifdef SUPLA_BME280
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt();
+    addFormHeader(page);
     addListBox(page, INPUT_BME280, "BME280 adres", BME280_P, 4, selected);
     addNumberBox(page, INPUT_ALTITUDE_BME280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BME280, 1500);
+    addFormHeaderEnd(page);
 #endif
 
 #ifdef SUPLA_SHT3x
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT3x).toInt();
+    addFormHeader(page);
     addListBox(page, INPUT_SHT3x, "SHT3x", SHT3x_P, 4, selected);
+    addFormHeaderEnd(page);
 #endif
 
 #ifdef SUPLA_SI7021
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt();
-    addListBox(page, INPUT_SI7021, "Si7021", STATE_P, 2, selected);
-#endif
-  }
-  addFormHeaderEnd(page);
+    addFormHeader(page);
+    addListBox(page, INPUT_SI7021, "SI7021", STATE_P, 2, selected);
+    addFormHeaderEnd(page);
 #endif
 
-  page += F("<button type='submit'>");
-  page += S_SAVE;
-  page += F("</button></form>");
-  page += F("<br>");
-  page += F("<form method='post' action='");
-  page += PATH_REBOT;
-  page += F("'>");
-  page += F("<button type='submit'>");
-  page += S_RESTART;
-  page += F("</button></form>");
-  page += F("<br>");
-  page += F("<a href='");
-  page += PATH_START;
-  page += PATH_DEVICE_SETTINGS;
-  page += F("'><button>");
-  page += S_RETURN;
-  page += F("</button></a></div>");
+#ifdef SUPLA_OLED
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt();
+    addFormHeader(page);
+    addListBox(page, INPUT_OLED, "OLED", OLED_P, 2, selected);
+    addFormHeaderEnd(page);
+#endif
+  }
+#endif
+
+  addButtonSubmit(page, S_SAVE);
+  addFormEnd(page);
+
+  addButton(page, S_RETURN, PATH_DEVICE_SETTINGS);
+  addButton(page, S_RESTART, PATH_REBOT);
+
   return page;
 }
 #endif

@@ -44,6 +44,13 @@
 
 #include <vector>
 
+#ifdef SUPLA_BME280
+#include <supla/sensor/BME280.h>
+#include "SuplaWebPageSensor.h"
+#endif
+
+#include "SuplaOled.h"
+
 namespace Supla {
 namespace GUI {
 
@@ -78,8 +85,12 @@ extern std::vector<Supla::Control::Button *> RollerShutterButtonClose;
 #ifdef SUPLA_IMPULSE_COUNTER
 extern std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
 void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay);
-
 #endif
+
+#ifdef SUPLA_BME280
+extern std::vector<Supla::Sensor::BME280 *> sensorBme280;
+#endif
+
 };  // namespace GUI
 };  // namespace Supla
 

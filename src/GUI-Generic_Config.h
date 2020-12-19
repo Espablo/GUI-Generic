@@ -33,6 +33,7 @@
 #define SUPLA_BME280
 #define SUPLA_SHT3x
 #define SUPLA_SI7021
+#define SUPLA_OLED
 // #define SUPLA_HTU21D    // 0x40 NOT SUPPORTED
 // #define SUPLA_SHT71     // 0x44 AND 0x45 NOT SUPPORTED
 // #define SUPLA_BH1750    // 0x23 AND 0x5C NOT SUPPORTED

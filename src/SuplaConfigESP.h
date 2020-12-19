@@ -80,6 +80,7 @@ class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
 
   int getAction(int nr, int function);
   void factoryReset(bool forceReset = false);
+  String getConfigNameAP();
 
  private:
   void configModeInit();
