@@ -76,9 +76,8 @@ void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
     relay[size]->keepTurnOnDuration();
     eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
-    button.push_back(new Supla::Control::Button(pinButton, true));
     if (pinButton != OFF_GPIO) {
-
+      button.push_back(new Supla::Control::Button(pinButton, true));
       button[size]->addAction(ConfigESP->getAction(size + 1, FUNCTION_BUTTON), *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
       button[size]->setSwNoiseFilterDelay(50);
     }
@@ -163,7 +162,9 @@ std::vector<Supla::Control::Button *> button;
 #ifdef SUPLA_DS18B20
 std::vector<DS18B20 *> sensorDS;
 #endif
-
+#ifdef SUPLA_BME280
+std::vector<Supla::Sensor::BME280 *> sensorBme280;
+#endif
 
 }  // namespace GUI
 }  // namespace Supla

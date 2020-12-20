@@ -6,7 +6,7 @@
 void addForm(String& html, const String& method, const String& action = "/");
 void addFormEnd(String& html);
 
-void addFormHeader(String& html, const String& name);
+void addFormHeader(String& html, const String& name = "\n");
 void addFormHeaderEnd(String& html);
 
 void addTextBox(String& html,

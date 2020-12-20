@@ -149,18 +149,18 @@ void setup() {
     defined(SUPLA_BH1750) || defined(SUPLA_MAX44009)
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
-
 #ifdef SUPLA_BME280
+
     switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt()) {
       case BME280_ADDRESS_0X76:
-        new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        Supla::GUI::sensorBme280.push_back(new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt()));
         break;
       case BME280_ADDRESS_0X77:
-        new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        Supla::GUI::sensorBme280.push_back(new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt()));
         break;
       case BME280_ADDRESS_0X76_AND_0X77:
-        new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-        new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        Supla::GUI::sensorBme280.push_back(new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt()));
+        Supla::GUI::sensorBme280.push_back(new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt()));
         break;
     }
 #endif
@@ -205,6 +205,10 @@ void setup() {
     }
   }
 
+#endif
+
+#ifdef SUPLA_OLED
+  new SuplaOled();
 #endif
 
   Supla::GUI::begin();
