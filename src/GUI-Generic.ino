@@ -13,40 +13,7 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#include "GUI-Generic_Config.h"
-
-#include <DoubleResetDetector.h>
-#include <EEPROM.h>
-#include <SPI.h>
-#include <SuplaDevice.h>
-#include <Wire.h>
-#include <supla/control/button.h>
-#include <supla/control/relay.h>
-#include <supla/sensor/DHT.h>
-#include <supla/sensor/DS18B20.h>
-#include <supla/sensor/HC_SR04.h>
-#include <supla/sensor/binary.h>
-#ifdef SUPLA_BME280
-#include <supla/sensor/BME280.h>
-#include "SuplaWebPageSensor.h"
-#endif
-#ifdef SUPLA_SHT3x
-#include <supla/sensor/SHT3x.h>
-#endif
-#ifdef SUPLA_SI7021
-#include <supla/sensor/Si7021.h>
-#endif
-#ifdef SUPLA_SI7021_SONOFF
-#include <supla/sensor/Si7021_sonoff.h>
-#endif
-#ifdef SUPLA_MAX6675
-#include <supla/sensor/MAX6675_K.h>
-#endif
-#ifdef SUPLA_IMPULSE_COUNTER
-#include <supla/sensor/impulse_counter.h>
-#endif
 #include "SuplaDeviceGUI.h"
-#include "SuplaWebServer.h"
 
 #define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 #define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
@@ -61,7 +28,6 @@ void setup() {
   }
 
   uint8_t nr, gpio;
-  String key;
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
@@ -122,7 +88,7 @@ void setup() {
 #ifdef SUPLA_DHT22
   if (ConfigESP->getGpio(FUNCTION_DHT22) != OFF_GPIO && ConfigManager->get(KEY_MAX_DHT22)->getValueInt() > 0) {
     for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
-      new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22);
+      Supla::GUI::sensorDHT22.push_back(new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22));
     }
   }
 #endif
@@ -135,7 +101,7 @@ void setup() {
 
 #ifdef SUPLA_SI7021_SONOFF
   if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != OFF_GPIO) {
-    new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
+    Supla::GUI::sensorSi7021Sonoff.push_back(new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF)));
   }
 #endif
 
@@ -190,7 +156,7 @@ void setup() {
 
 #ifdef SUPLA_MAX6675
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
-    new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
+    Supla::GUI::sensorMAX6675_K.push_back(new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0)));
   }
 #endif
 
@@ -208,7 +174,8 @@ void setup() {
 #endif
 
 #ifdef SUPLA_OLED
-  new SuplaOled();
+  oled = new SuplaOled();
+  oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
 #endif
 
   Supla::GUI::begin();

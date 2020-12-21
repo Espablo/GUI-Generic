@@ -76,7 +76,6 @@ void SuplaWebPageRelay::handleRelaySave() {
 }
 
 String SuplaWebPageRelay::supla_webpage_relay(int save) {
-  String key;
   uint8_t selected, suported, nr;
 
   String pagerelay = "";

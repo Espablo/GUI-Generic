@@ -17,6 +17,7 @@
 #ifndef SuplaConfigESP_h
 #define SuplaConfigESP_h
 
+#include "Arduino.h"
 #include <supla/triggerable.h>
 #include <supla/element.h>
 #include "GUI-Generic_Config.h"

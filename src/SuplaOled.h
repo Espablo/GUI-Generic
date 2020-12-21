@@ -5,22 +5,31 @@
 
 #include "GUI-Generic_Config.h"
 #include <pgmspace.h>
+#include <supla/triggerable.h>
 #include <supla/element.h>
 #include <Wire.h>         // Only needed for Arduino 1.6.5 and earlier
 #include "SSD1306Wire.h"  //OLED 0,96"
 #include "SH1106Wire.h"   //OLED 1.3"
 #include "OLEDDisplayUi.h"
 
+enum customActions
+{
+  TURN_ON_OLED
+};
+
 const char SSD1306[] PROGMEM = "SSD1306 - 0,96''";
 const char SH1106[] PROGMEM = "SH1106 - 1,3''";
-const char* const OLED_P[] PROGMEM = {SSD1306, SH1106};
+const char *const OLED_P[] PROGMEM = {SSD1306, SH1106};
 
-class SuplaOled : public Supla::Element {
+class SuplaOled : public Supla::Triggerable, public Supla::Element {
  public:
   SuplaOled();
+  void addButtonOled(int pin);
 
  private:
   void iterateAlways();
+  void runAction(int event, int action);
+
   OLEDDisplay *display;
   OLEDDisplayUi *ui;
 
@@ -30,7 +39,12 @@ class SuplaOled : public Supla::Element {
   int overlaysCount = 1;
 
   int count = 0;
+
+  unsigned long timeLastChangeOled = millis();
+  bool oledON = true;
 };
+
+extern SuplaOled *oled;
 
 // https://www.online-utility.org/image/convert/to/XBM
 #define temp_width  32
@@ -62,6 +76,6 @@ const uint8_t pressure_bits[] PROGMEM = {
     0x01, 0x30, 0x0C, 0x80, 0x01, 0x30, 0x0C, 0x80, 0x01, 0x30, 0x0C, 0x80, 0x01, 0x30, 0x0C, 0x81, 0x81, 0x30, 0x8C, 0x83, 0xC1, 0x31,
     0x8C, 0x81, 0x81, 0x31, 0x08, 0xC0, 0x03, 0x10, 0x08, 0xE0, 0x07, 0x10, 0x00, 0xE0, 0x07, 0x00, 0x00, 0xC0, 0x03, 0x00, 0x00, 0x80,
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    
+
 #endif
 #endif  // SuplaOled_H
