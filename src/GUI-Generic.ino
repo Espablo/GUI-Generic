@@ -151,6 +151,12 @@ void setup() {
       new Supla::Sensor::Si7021();
     }
 #endif
+#ifdef SUPLA_OLED
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
+      oled = new SuplaOled();
+      oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
+    }
+#endif
   }
 #endif
 
@@ -171,11 +177,6 @@ void setup() {
     }
   }
 
-#endif
-
-#ifdef SUPLA_OLED
-  oled = new SuplaOled();
-  oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
 #endif
 
   Supla::GUI::begin();
