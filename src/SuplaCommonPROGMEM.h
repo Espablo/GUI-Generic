@@ -108,6 +108,12 @@ const char CFG_10_PRESSES[] PROGMEM = S_CFG_10_PRESSES;
 const char CFG_5SEK_HOLD[] PROGMEM = S_5SEK_HOLD;
 const char* const CFG_MODE_P[] PROGMEM = {CFG_10_PRESSES, CFG_5SEK_HOLD};
 
+#ifdef SUPLA_OLED
+const char SSD1306[] PROGMEM = "SSD1306 - 0,96''";
+const char SH1106[] PROGMEM = "SH1106 - 1,3''";
+const char *const OLED_P[] PROGMEM = {OFF, SSD1306, SH1106};
+#endif
+
 String StateString(uint8_t adr);
 String LevelString(uint8_t nr);
 String MemoryString(uint8_t nr);
