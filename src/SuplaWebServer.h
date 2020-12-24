@@ -63,8 +63,6 @@ class SuplaWebServer : public Supla::Element {
 
   const String SuplaFavicon();
   const String SuplaIconEdit();
-  const String SuplaJavaScript(String java_return = PATH_START);
-  const String SuplaSaveResult(int save);
   String supla_webpage_start(int save);
 
   void sendContent(const String content);

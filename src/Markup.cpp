@@ -211,3 +211,48 @@ String addListGPIOSelect(const char* input, uint8_t function, uint8_t nr) {
 String getURL(const String& url) {
   return String(F(PATH_START)) + url;
 }
+
+const String SuplaJavaScript(const String& java_return) {
+  String java_script =
+      F("<script type='text/javascript'>setTimeout(function(){var "
+        "element=document.getElementById('msg');if( element != "
+        "null){element.style.visibility='hidden';location.href='");
+  java_script += java_return;
+  java_script += F("';}},1600);</script>\n");
+#ifdef SUPLA_OTA
+  java_script +=
+      F("<script type='text/javascript'>if(window.top.location != window.location){"
+        "window.top.location.href = window.location.href;}</script>\n");
+#endif
+  return java_script;
+}
+
+const String SuplaSaveResult(int save) {
+  if (save == 0)
+    return F("");
+  String saveresult = "";
+  saveresult += F("<div id=\"msg\" class=\"c\">");
+  if (save == 1) {
+    saveresult += S_DATA_SAVED;
+  }
+  else if (save == 2) {
+    saveresult += S_RESTART_MODULE;
+  }
+  else if (save == 3) {
+    saveresult += S_DATA_ERASED_RESTART_DEVICE;
+  }
+  else if (save == 4) {
+    saveresult += S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING;
+  }
+  else if (save == 5) {
+    saveresult += S_DATA_SAVED_RESTART_MODULE;
+  }
+  else if (save == 6) {
+    saveresult += S_WRITE_ERROR_BAD_DATA;
+  }
+  else if (save == 7) {
+    saveresult += F("data saved");
+  }
+  saveresult += F("</div>");
+  return saveresult;
+}

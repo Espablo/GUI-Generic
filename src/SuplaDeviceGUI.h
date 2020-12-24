@@ -33,6 +33,7 @@
 #include "SuplaWebPageUpload.h"
 #include "SuplaWebPageTools.h"
 #include "GUIGenericCommon.h"
+#include "SuplaCommonPROGMEM.h"
 #include "Markup.h"
 #include "SuplaOled.h"
 
