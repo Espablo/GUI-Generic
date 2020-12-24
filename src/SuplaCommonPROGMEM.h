@@ -54,6 +54,9 @@ const char HTTP_COPYRIGHT[] PROGMEM =
     "<a target='_blank' rel='noopener noreferrer' href='https://forum.supla.org/viewtopic.php?f=11&t=7133'><span style='color: #ffffff "
     "!important;'>https://forum.supla.org/</span></a>\n";
 
+const char HTTP_RBT[] PROGMEM =
+    "<form method='post' action='rbt'><button type='submit'>Restart</button></form>";
+
 const char GPIO0[] PROGMEM = "GPIO0-D3";
 const char GPIO1[] PROGMEM = "GPIO1-TX";
 const char GPIO2[] PROGMEM = "GPIO2-D4";

@@ -17,10 +17,6 @@ enum customActions
   TURN_ON_OLED
 };
 
-const char SSD1306[] PROGMEM = "SSD1306 - 0,96''";
-const char SH1106[] PROGMEM = "SH1106 - 1,3''";
-const char *const OLED_P[] PROGMEM = {SSD1306, SH1106};
-
 class SuplaOled : public Supla::Triggerable, public Supla::Element {
  public:
   SuplaOled();
