@@ -147,7 +147,7 @@ void displayBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, in
   display->drawString(10, display->getHeight() / 2, F("SUPLA"));
 }
 
-void displayTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name = "\n") {
+void displayTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name) {
   int drawHeightIcon = display->getHeight() / 2 - 10;
   int drawStringIcon = display->getHeight() / 2 - 5;
 
@@ -342,7 +342,7 @@ void SuplaOled::iterateAlways() {
 void SuplaOled::addButtonOled(int pin) {
   if (pin != OFF_GPIO) {
     Supla::Control::Button* button = new Supla::Control::Button(pin, true, true);
-    button->addAction(TURN_ON_OLED, oled, Supla::ON_PRESS);
+    button->addAction(TURN_ON_OLED, Supla::GUI::oled, Supla::ON_PRESS);
   }
 }
 
@@ -353,6 +353,4 @@ void SuplaOled::runAction(int event, int action) {
     oledON = true;
   }
 }
-
-SuplaOled* oled;
 #endif

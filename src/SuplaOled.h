@@ -1,21 +1,45 @@
 #ifndef SuplaOled_H
 #define SuplaOled_H
 
-#ifdef SUPLA_OLED
-
 #include "GUI-Generic_Config.h"
+
+#ifdef SUPLA_OLED
 #include <pgmspace.h>
 #include <supla/triggerable.h>
 #include <supla/element.h>
 #include <Wire.h>         // Only needed for Arduino 1.6.5 and earlier
-#include "SSD1306Wire.h"  //OLED 0,96"
-#include "SH1106Wire.h"   //OLED 1.3"
-#include "OLEDDisplayUi.h"
+#include <SSD1306Wire.h>  //OLED 0,96"
+#include <SH1106Wire.h>   //OLED 1.3"
+#include <OLEDDisplayUi.h>
 
 enum customActions
 {
   TURN_ON_OLED
 };
+
+String getTempString(double temperature);
+String getHumidityString(double humidity);
+String getPressureString(double pressure);
+uint8_t getFramesCountSensor(OLEDDisplayUiState* state);
+int32_t readRssi(void);
+void displaySignal(OLEDDisplay* display);
+void displayRelayState(OLEDDisplay* display);
+void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state);
+void displaySuplaStatus(OLEDDisplay* display);
+void displayConfigMode(OLEDDisplay* display);
+void displayBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name = "\n");
+void displaHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity);
+void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure);
+void displayDs18b20(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayBme280Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayBme280Humidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayBme280Pressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displaySi7021SonoffTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displaySi7021SonoffHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayDHT22Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayDHT22Humidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayMAX6675Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 
 class SuplaOled : public Supla::Triggerable, public Supla::Element {
  public:
@@ -39,8 +63,6 @@ class SuplaOled : public Supla::Triggerable, public Supla::Element {
   unsigned long timeLastChangeOled = millis();
   bool oledON = true;
 };
-
-extern SuplaOled *oled;
 
 // https://www.online-utility.org/image/convert/to/XBM
 #define temp_width  32

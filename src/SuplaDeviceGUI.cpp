@@ -179,6 +179,9 @@ std::vector<Supla::Sensor::DHT *> sensorDHT22;
 std::vector<Supla::Sensor::MAX6675_K *> sensorMAX6675_K;
 #endif
 
+#ifdef SUPLA_OLED
+SuplaOled *oled;
+#endif
 }  // namespace GUI
 }  // namespace Supla
 

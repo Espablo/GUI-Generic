@@ -153,8 +153,8 @@ void setup() {
 #endif
 #ifdef SUPLA_OLED
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
-      oled = new SuplaOled();
-      oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
+      Supla::GUI::oled = new SuplaOled();
+      Supla::GUI::oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
     }
 #endif
   }
