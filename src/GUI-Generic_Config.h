@@ -45,6 +45,7 @@
 // ##### Other #####
 #define SUPLA_HC_SR04
 #define SUPLA_IMPULSE_COUNTER
+#define SUPLA_HLW8012
 
 #endif
 #endif  // GUI-Generic_Config_h

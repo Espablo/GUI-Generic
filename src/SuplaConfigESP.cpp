@@ -380,6 +380,13 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
   if (!digitalRead(0) || forceReset) {
     Serial.println(F("FACTORY RESET!!!"));
 
+    EEPROM.begin(1024);
+    delay(15);
+    for (int i = 1; i < 1024; ++i) {
+      EEPROM.write(i, 0);
+    }
+    EEPROM.end();
+
     ConfigManager->set(KEY_WIFI_SSID, "");
     ConfigManager->set(KEY_WIFI_PASS, "");
     ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);

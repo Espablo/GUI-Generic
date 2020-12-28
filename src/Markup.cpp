@@ -94,6 +94,41 @@ void addNumberBox(String& html, const String& input_id, const String& name, uint
   html += F("'></i>");
 }
 
+void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value) {
+  html += F("<i><label>");
+  html += name;
+  html += F("</label><input name='");
+  html += input_id;
+  html += F("' type='number'");
+  if (placeholder != "") {
+    html += F("' placeholder='");
+    html += placeholder;
+  }
+  html += F("' step='1' min='0' value='");
+  html += value;
+  html += F("'");
+
+  if (required) {
+    html += F(" required");
+  }
+
+  html += F("></i>");
+}
+
+void addLinkBox(String& html, const String& name, const String& url) {
+  html += F("<i>");
+  html += F("<label>");
+  html += F("<a href='");
+  html += PATH_START;
+  html += url;
+  html += F("'>");
+  html += name;
+  html += WebServer->SuplaIconEdit();
+  html += F("</a>");
+  html += F("</label>");
+  html += F("</i>");
+}
+
 void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr) {
   html += F("<i><label>");
   if (nr > 0) {

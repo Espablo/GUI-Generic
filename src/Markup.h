@@ -25,6 +25,10 @@ void addTextBoxPassword(String& html, const String& input_id, const String& name
 
 void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, uint16_t max);
 
+void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value = "\n");
+
+void addLinkBox(String& html, const String& name, const String& url);
+
 void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0);
 
 void addListGPIOLinkBox(String& html, const String& input_id, const String& name, uint8_t function, const String& url, uint8_t nr = 0);

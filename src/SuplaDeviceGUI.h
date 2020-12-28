@@ -74,6 +74,8 @@
 #include <supla/sensor/esp_free_heap.h>
 #endif
 
+#include <supla/sensor/HJ101.h>
+
 namespace Supla {
 namespace GUI {
 
@@ -129,6 +131,12 @@ extern std::vector<Supla::Sensor::MAX6675_K *> sensorMAX6675_K;
 #ifdef SUPLA_OLED
 extern SuplaOled *oled;
 #endif
+
+#ifdef SUPLA_HLW8012
+extern Supla::Sensor::HJ101 *counterHLW8012;
+void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
+#endif
+
 };  // namespace GUI
 };  // namespace Supla
 
