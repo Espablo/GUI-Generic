@@ -111,7 +111,8 @@ const char* const CFG_MODE_P[] PROGMEM = {CFG_10_PRESSES, CFG_5SEK_HOLD};
 #ifdef SUPLA_OLED
 const char SSD1306[] PROGMEM = "SSD1306 - 0,96''";
 const char SH1106[] PROGMEM = "SH1106 - 1,3''";
-const char *const OLED_P[] PROGMEM = {OFF, SSD1306, SH1106};
+const char SSD1306_WEMOS_SHIELD[] PROGMEM = "SSD1306 - 0,66'' WEMOS OLED shield";
+const char *const OLED_P[] PROGMEM = {OFF, SSD1306, SH1106, SSD1306_WEMOS_SHIELD};
 #endif
 
 String StateString(uint8_t adr);
