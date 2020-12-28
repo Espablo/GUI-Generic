@@ -1,6 +1,8 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
+#define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
+
 //#define USE_CUSTOM
 
 // User configuration
