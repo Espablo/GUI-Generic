@@ -42,6 +42,7 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
   ConfigESP->setGpio(pinCF, FUNCTION_CF);
   ConfigESP->setGpio(pinCF1, FUNCTION_CF1);
   ConfigESP->setGpio(pinSEL, FUNCTION_SEL);
+  Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
 }
 
 void chooseTemplateBoard(uint8_t board) {
