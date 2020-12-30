@@ -19,17 +19,10 @@
 
 #include "GUI-Generic_Config.h"
 
+#include <DoubleResetDetector.h>
+#include <SPI.h>
+
 #include <SuplaDevice.h>
-
-#include <supla/control/button.h>
-#include <supla/control/relay.h>
-#include <supla/control/roller_shutter.h>
-#include "SuplaSensorDS18B20.h"
-#include <supla/sensor/impulse_counter.h>
-
-#ifdef DEBUG_MODE
-#include <supla/sensor/esp_free_heap.h>
-#endif
 
 #include "SuplaConfigESP.h"
 #include "SuplaConfigManager.h"
@@ -40,16 +33,48 @@
 #include "SuplaWebPageUpload.h"
 #include "SuplaWebPageTools.h"
 #include "GUIGenericCommon.h"
+#include "SuplaCommonPROGMEM.h"
 #include "Markup.h"
+#include "SuplaOled.h"
 
 #include <vector>
 
+#include <supla/control/button.h>
+#include <supla/control/relay.h>
+#include <supla/control/roller_shutter.h>
+
+#include "SuplaSensorDS18B20.h"
+#include <supla/sensor/DHT.h>
+#include <supla/sensor/HC_SR04.h>
+#include <supla/sensor/binary.h>
 #ifdef SUPLA_BME280
 #include <supla/sensor/BME280.h>
 #include "SuplaWebPageSensor.h"
 #endif
+#ifdef SUPLA_SI7021_SONOFF
+#include <supla/sensor/Si7021_sonoff.h>
+#endif
+#ifdef SUPLA_BME280
+#include <supla/sensor/BME280.h>
+#include "SuplaWebPageSensor.h"
+#endif
+#ifdef SUPLA_SHT3x
+#include <supla/sensor/SHT3x.h>
+#endif
+#ifdef SUPLA_SI7021
+#include <supla/sensor/Si7021.h>
+#endif
+#ifdef SUPLA_MAX6675
+#include <supla/sensor/MAX6675_K.h>
+#endif
+#ifdef SUPLA_IMPULSE_COUNTER
+#include <supla/sensor/impulse_counter.h>
+#endif
+#ifdef DEBUG_MODE
+#include <supla/sensor/esp_free_heap.h>
+#endif
 
-#include "SuplaOled.h"
+#include <supla/sensor/HJ101.h>
 
 namespace Supla {
 namespace GUI {
@@ -89,6 +114,27 @@ void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int d
 
 #ifdef SUPLA_BME280
 extern std::vector<Supla::Sensor::BME280 *> sensorBme280;
+#endif
+
+#ifdef SUPLA_SI7021_SONOFF
+extern std::vector<Supla::Sensor::Si7021Sonoff *> sensorSi7021Sonoff;
+#endif
+
+#ifdef SUPLA_DHT22
+extern std::vector<Supla::Sensor::DHT *> sensorDHT22;
+#endif
+
+#ifdef SUPLA_MAX6675
+extern std::vector<Supla::Sensor::MAX6675_K *> sensorMAX6675_K;
+#endif
+
+#ifdef SUPLA_OLED
+extern SuplaOled *oled;
+#endif
+
+#ifdef SUPLA_HLW8012
+extern Supla::Sensor::HJ101 *counterHLW8012;
+void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 #endif
 
 };  // namespace GUI

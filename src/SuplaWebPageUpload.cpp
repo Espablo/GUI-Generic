@@ -25,8 +25,8 @@ void handleUpload(int save) {
   }
 
   String content = "";
-  content += WebServer->SuplaSaveResult(save);
-  content += WebServer->SuplaJavaScript();
+  content += SuplaSaveResult(save);
+  content += SuplaJavaScript();
   content += F("<div class='w'>");
   content += F("<h3>");
   content += "Wgraj konfiguracje";
@@ -38,7 +38,7 @@ void handleUpload(int save) {
   content += getURL(PATH_TOOLS);
   content += F("'><button>");
   content += S_RETURN;
-  content += F("</button></a></div>");
+  content += F("</button></a><br><br>");
 
   WebServer->sendContent(content);
   // WebServer->httpServer.send(200, PSTR("text/html"), FPSTR(uploadIndex));
@@ -65,6 +65,7 @@ void handleFileUpload() {
         dataFile.close();
         // WebServer->httpServer.sendHeader("Location", "/upload");
         // WebServer->httpServer.send(303);
+        ConfigManager->load();
         handleUpload(1);
       }
       else {

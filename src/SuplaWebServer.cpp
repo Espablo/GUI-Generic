@@ -180,7 +180,6 @@ String SuplaWebServer::supla_webpage_start(int save) {
 
   addButton(content, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
   addButton(content, F("Tools"), PATH_TOOLS);
-  addButton(content, S_RESTART, PATH_REBOT);
 
   return content;
 }
@@ -197,8 +196,8 @@ void SuplaWebServer::supla_webpage_reboot() {
 String SuplaWebServer::deviceSettings(int save) {
   String content = "";
 
-  content += WebServer->SuplaSaveResult(save);
-  content += WebServer->SuplaJavaScript(PATH_DEVICE_SETTINGS);
+  content += SuplaSaveResult(save);
+  content += SuplaJavaScript(PATH_DEVICE_SETTINGS);
 
   content += F("<form method='post' action='");
   content += PATH_SAVE_BOARD;
@@ -277,13 +276,6 @@ void SuplaWebServer::handleBoardSave() {
   }
 }
 
-const String SuplaWebServer::SuplaFavicon() {
-  //  return F("<link rel='icon'
-  //  href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAB3RJTUUH5AUUCCQbIwTFfgAAAAlwSFlzAAALEgAACxIB0t1+/AAAAARnQU1BAACxjwv8YQUAAAAwUExURf7nNZuNIOvWMci2KWRbFJGEHnRpFy8rCdrGLSAdBgwLAod6G7inJkI8DVJLEKeYIg6cTsoAAAGUSURBVHjaY2CAAFUGNLCF4QAyl4mhmP8BB4LPcWtdAe+BEBiX9QD77Kzl24GKHCAC/OVZH5hkVyUCFQlCRJhnKjAwLVlVb8lQDOY/ZFrG8FDVQbVqbU8BWODc3BX8dbMMGJhfrUyAaOla+/dAP8jyncsbgJTKgVP/b+pOAUudegAkGMsrGZhE1EFyDGwLwNaucmZyl1TgKTdg4JvAwMBzn3txeKWrMwP7wQcMWiAtf2c9YDjUfYBJapsDw66bm4AiUesOnJty0/O9iwLDPI5EhhCD6/q3Chk4dgCleJYpAEOmfCkDB+sbsK1886YBRfgWMTBwbi896wR04YZuAyAH6OmzDCbr3RgYsj6A1HEBPXCfgWHONgaG6eUBII0LFTiA7jn+iIF/MbMTyEu3lphtAJtpvl4BTLPNWgVSySA+y28aWIDdyGtVBgNH5psshVawwHGGO+arLr7MYFoJjZr/zBPYj85a1sC4ulwAIsIdcJzh2qt1WReYBWBR48gxgd1ziQIi6hTYEsxR45pZwRU9+oWgNAB1F3c/H6bYqgAAAABJRU5ErkJggg=='
-  //  type='image/x-png' />\n");
-  return F("");
-}
-
 const String SuplaWebServer::SuplaIconEdit() {
   return F(
       "<img "
@@ -293,51 +285,6 @@ const String SuplaWebServer::SuplaIconEdit() {
       "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
       "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
       "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
-}
-
-const String SuplaWebServer::SuplaJavaScript(String java_return) {
-  String java_script =
-      F("<script type='text/javascript'>setTimeout(function(){var "
-        "element=document.getElementById('msg');if( element != "
-        "null){element.style.visibility='hidden';location.href='");
-  java_script += java_return;
-  java_script += F("';}},1600);</script>\n");
-#ifdef SUPLA_OTA
-  java_script +=
-      F("<script type='text/javascript'>if(window.top.location != window.location){"
-        "window.top.location.href = window.location.href;}</script>\n");
-#endif
-  return java_script;
-}
-
-const String SuplaWebServer::SuplaSaveResult(int save) {
-  if (save == 0)
-    return F("");
-  String saveresult = "";
-  saveresult += F("<div id=\"msg\" class=\"c\">");
-  if (save == 1) {
-    saveresult += S_DATA_SAVED;
-  }
-  else if (save == 2) {
-    saveresult += S_RESTART_MODULE;
-  }
-  else if (save == 3) {
-    saveresult += S_DATA_ERASED_RESTART_DEVICE;
-  }
-  else if (save == 4) {
-    saveresult += S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING;
-  }
-  else if (save == 5) {
-    saveresult += S_DATA_SAVED_RESTART_MODULE;
-  }
-  else if (save == 6) {
-    saveresult += S_WRITE_ERROR_BAD_DATA;
-  }
-  else if (save == 7) {
-    saveresult += F("data saved");
-  }
-  saveresult += F("</div>");
-  return saveresult;
 }
 
 void SuplaWebServer::sendContent(const String content) {
@@ -387,7 +334,7 @@ void SuplaWebServer::sendContent(const String content) {
     bufferCounter = 0;
     _buffer = "";
   }
-
+  httpServer.sendContent_P(HTTP_RBT);
   httpServer.chunkedResponseFinalize();
 }
 

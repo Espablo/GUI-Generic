@@ -1,40 +1,79 @@
 #ifndef SuplaOled_H
 #define SuplaOled_H
 
-#ifdef SUPLA_OLED
-
 #include "GUI-Generic_Config.h"
+
+#ifdef SUPLA_OLED
 #include <pgmspace.h>
+#include <supla/triggerable.h>
 #include <supla/element.h>
 #include <Wire.h>         // Only needed for Arduino 1.6.5 and earlier
-#include "SSD1306Wire.h"  //OLED 0,96"
-#include "SH1106Wire.h"   //OLED 1.3"
-#include "OLEDDisplayUi.h"
+#include <SSD1306Wire.h>  //OLED 0,96" or 0.66" WEMOS OLED shield
+#include <SH1106Wire.h>   //OLED 1.3"
+#include <OLEDDisplayUi.h>
 
-const char SSD1306[] PROGMEM = "SSD1306 - 0,96''";
-const char SH1106[] PROGMEM = "SH1106 - 1,3''";
-const char* const OLED_P[] PROGMEM = {SSD1306, SH1106};
+enum customActions
+{
+  TURN_ON_OLED
+};
 
-class SuplaOled : public Supla::Element {
+enum _OLED
+{
+  OLED_SSD1306_0_96 = 1,
+  OLED_SH1106_1_3,
+  OLED_SSD1306_0_66
+};
+
+String getTempString(double temperature);
+String getHumidityString(double humidity);
+String getPressureString(double pressure);
+uint8_t getFramesCountSensor(OLEDDisplayUiState* state);
+int32_t readRssi(void);
+void displaySignal(OLEDDisplay* display);
+void displayRelayState(OLEDDisplay* display);
+void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state);
+void displaySuplaStatus(OLEDDisplay* display);
+void displayConfigMode(OLEDDisplay* display);
+void displayBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name = "\n");
+void displaHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity);
+void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure);
+void displayDs18b20(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayBme280Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayBme280Humidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayBme280Pressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displaySi7021SonoffTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displaySi7021SonoffHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayDHT22Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayDHT22Humidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayMAX6675Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+
+class SuplaOled : public Supla::Triggerable, public Supla::Element {
  public:
   SuplaOled();
+  void addButtonOled(int pin);
 
  private:
   void iterateAlways();
-  OLEDDisplay *display;
-  OLEDDisplayUi *ui;
+  void runAction(int event, int action);
 
-  FrameCallback *frames;
+  OLEDDisplay* display;
+  OLEDDisplayUi* ui;
+
+  FrameCallback* frames;
   int frameCount = 0;
   OverlayCallback overlays[1];
   int overlaysCount = 1;
 
   int count = 0;
+
+  unsigned long timeLastChangeOled = millis();
+  bool oledON = true;
 };
 
 // https://www.online-utility.org/image/convert/to/XBM
-#define temp_width  32
-#define temp_height 32
+#define TEMP_WIDTH  32
+#define TEMP_HEIGHT 32
 const uint8_t temp_bits[] PROGMEM = {0x00, 0x3C, 0x00, 0x00, 0x00, 0x66, 0x00, 0x00, 0x00, 0xC3, 0x00, 0x00, 0x00, 0x81, 0xF8, 0x03, 0x00, 0x99, 0x00,
                                      0x00, 0x00, 0x99, 0x00, 0x00, 0x00, 0x99, 0x00, 0x00, 0x00, 0x99, 0xF8, 0x03, 0x00, 0x99, 0x00, 0x00, 0x00, 0x99,
                                      0x00, 0x00, 0x00, 0x99, 0x00, 0x00, 0x00, 0x99, 0xF8, 0x03, 0x00, 0x99, 0x00, 0x00, 0x00, 0x99, 0x00, 0x00, 0x00,
@@ -43,8 +82,8 @@ const uint8_t temp_bits[] PROGMEM = {0x00, 0x3C, 0x00, 0x00, 0x00, 0x66, 0x00, 0
                                      0x00, 0x20, 0x7E, 0x04, 0x00, 0x20, 0x7E, 0x04, 0x00, 0x20, 0x7E, 0x04, 0x00, 0x60, 0x3C, 0x06, 0x00, 0xC0, 0x18,
                                      0x03, 0x00, 0x80, 0x81, 0x01, 0x00, 0x00, 0xC3, 0x00, 0x00, 0x00, 0x7E, 0x00, 0x00};
 
-#define humidity_width  32
-#define humidity_height 32
+#define HUMIDITY_WIDTH  32
+#define HUMIDITY_HEIGHT 32
 const uint8_t humidity_bits[] PROGMEM = {
     0x00, 0x80, 0x01, 0x00, 0x00, 0xC0, 0x03, 0x00, 0x00, 0x60, 0x06, 0x00, 0x00, 0x30, 0x0C, 0x00, 0x00, 0x38, 0x1C, 0x00, 0x00, 0x18,
     0x18, 0x00, 0x00, 0x0C, 0x30, 0x00, 0x00, 0x06, 0x60, 0x00, 0x00, 0x06, 0x40, 0x00, 0x00, 0x03, 0xC0, 0x00, 0x80, 0x01, 0x80, 0x00,
@@ -53,8 +92,8 @@ const uint8_t humidity_bits[] PROGMEM = {
     0x30, 0x10, 0x09, 0x0C, 0x30, 0x00, 0x06, 0x0C, 0x20, 0x00, 0x00, 0x04, 0x60, 0x00, 0x00, 0x06, 0xC0, 0x00, 0x00, 0x03, 0x80, 0x01,
     0x80, 0x01, 0x00, 0x03, 0xC0, 0x00, 0x00, 0x0E, 0x70, 0x00, 0x00, 0xFC, 0x3F, 0x00, 0x00, 0xF0, 0x0F, 0x00};
 
-#define pressure_width  32
-#define pressure_height 32
+#define PRESSURE_WIDTH  32
+#define PRESSURE_HEIGHT 32
 const uint8_t pressure_bits[] PROGMEM = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0,
     0x0F, 0x00, 0x00, 0xFC, 0x3F, 0x00, 0x00, 0x06, 0x60, 0x00, 0x00, 0x03, 0xC0, 0x00, 0x80, 0x81, 0x81, 0x01, 0xC0, 0x80, 0x01, 0x03,
@@ -62,6 +101,6 @@ const uint8_t pressure_bits[] PROGMEM = {
     0x01, 0x30, 0x0C, 0x80, 0x01, 0x30, 0x0C, 0x80, 0x01, 0x30, 0x0C, 0x80, 0x01, 0x30, 0x0C, 0x81, 0x81, 0x30, 0x8C, 0x83, 0xC1, 0x31,
     0x8C, 0x81, 0x81, 0x31, 0x08, 0xC0, 0x03, 0x10, 0x08, 0xE0, 0x07, 0x10, 0x00, 0xE0, 0x07, 0x00, 0x00, 0xC0, 0x03, 0x00, 0x00, 0x80,
     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    
+
 #endif
 #endif  // SuplaOled_H

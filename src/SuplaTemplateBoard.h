@@ -10,6 +10,7 @@ void addRelay(uint8_t gpio, uint8_t level = HIGH);
 void addLimitSwitch(uint8_t gpio);
 void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
 void addButtonCFG(uint8_t gpio);
+void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 
 enum _board
 {
@@ -31,6 +32,7 @@ enum _board
   BOARD_SONOFF_4CH,
   BOARD_YUNSHAN,
   BOARD_YUNTONG_SMART,
+  BOARD_GOSUND_SP111,
   MAX_MODULE
 };
 
@@ -53,10 +55,11 @@ const char SONOFF_TOUCH_3CH[] PROGMEM = "SONOFF TOUCH TRIPLE";
 const char SONOFF_4CH[] PROGMEM = "SONOFF 4CH";
 const char YUNSHAN[] PROGMEM = "Yunshan";
 const char YUNTONG_SMART[] PROGMEM = "YUNTONG Smart";
+const char GOSUNG_SP111[] PROGMEM = "Gosund SP111";
 
 const char* const BOARD_P[MAX_MODULE] PROGMEM = {
     BOARD_NULL, ELECTRODRAGON, INCAN3,    INCAN4,       MELINK,           NEO_COOLCAM,      SHELLY1,    SHELLY2, SONOFF_BASIC, SONOFF_DUAL_R2,
-    SONOFF_S2X, SONOFF_SV,     SONOFF_TH, SONOFF_TOUCH, SONOFF_TOUCH_2CH, SONOFF_TOUCH_3CH, SONOFF_4CH, YUNSHAN, YUNTONG_SMART};
+    SONOFF_S2X, SONOFF_SV,     SONOFF_TH, SONOFF_TOUCH, SONOFF_TOUCH_2CH, SONOFF_TOUCH_3CH, SONOFF_4CH, YUNSHAN, YUNTONG_SMART, GOSUNG_SP111};
 
 void chooseTemplateBoard(uint8_t board);
 

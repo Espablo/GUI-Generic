@@ -127,6 +127,22 @@ class SuplaWebPageSensor {
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
   String supla_webpage_other(int save);
 #endif
+
+#if defined(SUPLA_HLW8012)
+#define INPUT_CF  "cf"
+#define INPUT_CF1 "cf1"
+#define INPUT_SEL "sel"
+
+#define PATH_HLW8012_CALIBRATE      "calibrate"
+#define PATH_SAVE_HLW8012_CALIBRATE "savecalibrate"
+
+#define INPUT_CALIB_POWER   "power"
+#define INPUT_CALIB_VOLTAGE "voltage"
+
+  void handleHLW8012Calibrate();
+  void handleHLW8012CalibrateSave();
+  String suplaWebpageHLW8012Calibrate(uint8_t save);
+#endif
 };
 
 extern SuplaWebPageSensor* WebPageSensor;

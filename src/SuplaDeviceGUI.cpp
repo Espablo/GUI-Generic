@@ -17,13 +17,13 @@
 #include "SuplaConfigManager.h"
 #include "SuplaGuiWiFi.h"
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_IMPULSE_COUNTER)
-#define TIME_SAVE_PERIOD_SEK 30  // the time is given in seconds
-#define STORAGE_OFFSET       0
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
+#define TIME_SAVE_PERIOD_SEK                 30   // the time is given in seconds
+#define TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK 600  // 10min
+#define STORAGE_OFFSET                       0
 #include <supla/storage/eeprom.h>
 Supla::Eeprom eeprom(STORAGE_OFFSET);
 #endif
-
 namespace Supla {
 namespace GUI {
 void begin() {
@@ -151,6 +151,7 @@ std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
 
 void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay) {
   impulseCounter.push_back(new Supla::Sensor::ImpulseCounter(pin, lowToHigh, inputPullup, debounceDelay));
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
 }
 #endif
 
@@ -162,10 +163,35 @@ std::vector<Supla::Control::Button *> button;
 #ifdef SUPLA_DS18B20
 std::vector<DS18B20 *> sensorDS;
 #endif
+
 #ifdef SUPLA_BME280
 std::vector<Supla::Sensor::BME280 *> sensorBme280;
 #endif
 
+#ifdef SUPLA_SI7021_SONOFF
+std::vector<Supla::Sensor::Si7021Sonoff *> sensorSi7021Sonoff;
+#endif
+
+#ifdef SUPLA_DHT22
+std::vector<Supla::Sensor::DHT *> sensorDHT22;
+#endif
+
+#ifdef SUPLA_MAX6675
+std::vector<Supla::Sensor::MAX6675_K *> sensorMAX6675_K;
+#endif
+
+#ifdef SUPLA_OLED
+SuplaOled *oled;
+#endif
+
+#ifdef SUPLA_HLW8012
+Supla::Sensor::HJ101 *counterHLW8012;
+
+void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
+  counterHLW8012 = new Supla::Sensor::HJ101(pinCF, pinCF1, pinSEL);
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
 }  // namespace GUI
 }  // namespace Supla
 

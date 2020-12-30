@@ -149,7 +149,7 @@ void ESP8266HTTPUpdateServer::handleFirmwareUp() {
 
 String ESP8266HTTPUpdateServer::suplaWebPageUpddate() {
   String content = "";
-  content += WebServer->SuplaJavaScript();
+  content += SuplaJavaScript();
   content += F("<div class='w'>");
   content += F("<h3>");
   content += S_SOFTWARE_UPDATE;
@@ -165,7 +165,7 @@ String ESP8266HTTPUpdateServer::suplaWebPageUpddate() {
   content += PATH_TOOLS;
   content += F("'><button>");
   content += S_RETURN;
-  content += F("</button></a></div>");
+  content += F("</button></a><br><br>");
 
   return content;
 }

@@ -68,8 +68,8 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
   uint8_t selected, suported;
   String page = "";
 
-  page += WebServer->SuplaSaveResult(save);
-  page += WebServer->SuplaJavaScript(PATH_CONFIG);
+  page += SuplaSaveResult(save);
+  page += SuplaJavaScript(PATH_CONFIG);
 
   addForm(page, F("post"), PATH_SAVE_CONFIG);
   addFormHeader(page, S_GPIO_SETTINGS_FOR_CONFIG);
@@ -81,7 +81,7 @@ String SuplaWebPageConfig::supla_webpage_config(int save) {
 
   selected = ConfigManager->get(KEY_CFG_MODE)->getValueInt();
   addListBox(page, INPUT_CFG_MODE, S_CFG_MODE, CFG_MODE_P, 2, selected);
-  
+
   addFormHeaderEnd(page);
   addButtonSubmit(page, S_SAVE);
   addFormEnd(page);

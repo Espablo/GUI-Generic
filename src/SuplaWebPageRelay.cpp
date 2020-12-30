@@ -76,12 +76,11 @@ void SuplaWebPageRelay::handleRelaySave() {
 }
 
 String SuplaWebPageRelay::supla_webpage_relay(int save) {
-  String key;
   uint8_t selected, suported, nr;
 
   String pagerelay = "";
-  pagerelay += WebServer->SuplaSaveResult(save);
-  pagerelay += WebServer->SuplaJavaScript(PATH_RELAY);
+  pagerelay += SuplaSaveResult(save);
+  pagerelay += SuplaJavaScript(PATH_RELAY);
   pagerelay += F("<form method='post' action='");
   pagerelay += PATH_SAVE_RELAY;
   pagerelay += F("'>");
@@ -100,7 +99,7 @@ String SuplaWebPageRelay::supla_webpage_relay(int save) {
   pagerelay += PATH_DEVICE_SETTINGS;
   pagerelay += F("'><button>");
   pagerelay += S_RETURN;
-  pagerelay += F("</button></a></div>");
+  pagerelay += F("</button></a><br><br>");
   return pagerelay;
 }
 
@@ -163,8 +162,8 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
   nr_relay = readUrl.substring(place + path.length(), place + path.length() + 3);
 
   String page = "";
-  page += WebServer->SuplaSaveResult(save);
-  page += WebServer->SuplaJavaScript(PATH_RELAY);
+  page += SuplaSaveResult(save);
+  page += SuplaJavaScript(PATH_RELAY);
   uint8_t relays = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   if (nr_relay.toInt() <= relays && ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY) != OFF_GPIO) {
     page += F("<form method='post' action='");
@@ -228,7 +227,7 @@ String SuplaWebPageRelay::supla_webpage_relay_set(int save) {
   page += PATH_RELAY;
   page += F("'><button>");
   page += S_RETURN;
-  page += F("</button></a></div>");
+  page += F("</button></a><br><br>");
 
   return page;
 }

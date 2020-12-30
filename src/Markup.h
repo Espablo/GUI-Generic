@@ -19,18 +19,15 @@ void addTextBox(String& html,
                 bool required,
                 bool readonly = false,
                 bool password = false);
-void addTextBox(String& html,
-                const String& input_id,
-                const String& name,
-                uint8_t value_key,
-                int minlength,
-                int maxlength,
-                bool required,
-                bool readonly = false);
-void addTextBoxPassword(
-    String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required);
+void addTextBox(
+    String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required, bool readonly = false);
+void addTextBoxPassword(String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required);
 
 void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, uint16_t max);
+
+void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value = "\n");
+
+void addLinkBox(String& html, const String& name, const String& url);
 
 void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0);
 
@@ -45,4 +42,8 @@ void addButtonSubmit(String& html, const String& name);
 String addListGPIOSelect(const char* input, uint8_t function, uint8_t nr = 0);
 
 String getURL(const String& url);
+
+const String SuplaJavaScript(const String& java_return = PATH_START);
+
+const String SuplaSaveResult(int save);
 #endif  // Markup_h

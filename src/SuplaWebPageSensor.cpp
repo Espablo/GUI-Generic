@@ -5,7 +5,6 @@
 #include "SuplaCommonPROGMEM.h"
 #include "GUIGenericCommon.h"
 #include "Markup.h"
-#include "SuplaOled.h"
 
 SuplaWebPageSensor *WebPageSensor = new SuplaWebPageSensor();
 
@@ -72,6 +71,16 @@ void SuplaWebPageSensor::createWebPageSensor() {
   }
 #endif
 
+#if defined(SUPLA_HLW8012)
+  path = PATH_START;
+  path += PATH_HLW8012_CALIBRATE;
+  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleHLW8012Calibrate, this));
+
+  path = PATH_START;
+  path += PATH_SAVE_HLW8012_CALIBRATE;
+  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleHLW8012CalibrateSave, this));
+#endif
+
 #endif
 }
 #ifdef SUPLA_DS18B20
@@ -127,8 +136,8 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   char strAddr[64];
   uint8_t i;
 
-  content += WebServer->SuplaSaveResult(save);
-  content += WebServer->SuplaJavaScript(PATH_MULTI_DS);
+  content += SuplaSaveResult(save);
+  content += SuplaJavaScript(PATH_MULTI_DS);
   content += F("<center>");
   if (ConfigESP->getGpio(FUNCTION_DS18B20) < OFF_GPIO || !Supla::GUI::sensorDS.empty()) {
     content += F("<form method='post' action='");
@@ -195,7 +204,7 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   content += PATH_1WIRE;
   content += F("'><button>");
   content += S_RETURN;
-  content += F("</button></a></div>");
+  content += F("</button></a><br><br>");
 
   return content;
 }
@@ -327,8 +336,9 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   uint8_t nr, suported, selected;
   uint16_t max;
   String page, key;
-  page += WebServer->SuplaSaveResult(save);
-  page += WebServer->SuplaJavaScript(PATH_1WIRE);
+
+  page += SuplaSaveResult(save);
+  page += SuplaJavaScript(PATH_1WIRE);
   page += F("<form method='post' action='");
   page += PATH_SAVE_1WIRE;
   page += F("'>");
@@ -372,19 +382,12 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
   page += S_SAVE;
   page += F("</button></form>");
   page += F("<br>");
-  page += F("<form method='post' action='");
-  page += PATH_REBOT;
-  page += F("'>");
-  page += F("<button type='submit'>");
-  page += S_RESTART;
-  page += F("</button></form>");
-  page += F("<br>");
   page += F("<a href='");
   page += PATH_START;
   page += PATH_DEVICE_SETTINGS;
   page += F("'><button>");
   page += S_RETURN;
-  page += F("</button></a></div>");
+  page += F("</button></a><br><br>");
   return page;
 }
 #endif
@@ -470,8 +473,8 @@ void SuplaWebPageSensor::handlei2cSave() {
 String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   uint8_t nr, suported, selected, size;
   String page, key;
-  page += WebServer->SuplaSaveResult(save);
-  page += WebServer->SuplaJavaScript(PATH_I2C);
+  page += SuplaSaveResult(save);
+  page += SuplaJavaScript(PATH_I2C);
 
   addForm(page, F("post"), PATH_SAVE_I2C);
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED)
@@ -506,7 +509,7 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
 #ifdef SUPLA_OLED
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt();
     addFormHeader(page);
-    addListBox(page, INPUT_OLED, "OLED", OLED_P, 2, selected);
+    addListBox(page, INPUT_OLED, "OLED", OLED_P, 4, selected);
     addFormHeaderEnd(page);
 #endif
   }
@@ -516,7 +519,6 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
   addFormEnd(page);
 
   addButton(page, S_RETURN, PATH_DEVICE_SETTINGS);
-  addButton(page, S_RESTART, PATH_REBOT);
 
   return page;
 }
@@ -577,8 +579,8 @@ void SuplaWebPageSensor::handleSpiSave() {
 String SuplaWebPageSensor::supla_webpage_spi(int save) {
   uint8_t nr, suported, selected;
   String page, key;
-  page += WebServer->SuplaSaveResult(save);
-  page += WebServer->SuplaJavaScript(PATH_SPI);
+  page += SuplaSaveResult(save);
+  page += SuplaJavaScript(PATH_SPI);
   page += F("<form method='post' action='");
   page += PATH_SAVE_SPI;
   page += F("'>");
@@ -599,24 +601,17 @@ String SuplaWebPageSensor::supla_webpage_spi(int save) {
   page += S_SAVE;
   page += F("</button></form>");
   page += F("<br>");
-  page += F("<form method='post' action='");
-  page += PATH_REBOT;
-  page += F("'>");
-  page += F("<button type='submit'>");
-  page += S_RESTART;
-  page += F("</button></form>");
-  page += F("<br>");
   page += F("<a href='");
   page += PATH_START;
   page += PATH_DEVICE_SETTINGS;
   page += F("'><button>");
   page += S_RETURN;
-  page += F("</button></a></div>");
+  page += F("</button></a><br><br>");
   return page;
 }
 #endif
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
 void SuplaWebPageSensor::handleOther() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
@@ -661,6 +656,21 @@ void SuplaWebPageSensor::handleOtherSave() {
   }
 #endif
 
+#ifdef SUPLA_HLW8012
+  if (!WebServer->saveGPIO(INPUT_CF, FUNCTION_CF)) {
+    WebServer->sendContent(supla_webpage_other(6));
+    return;
+  }
+  if (!WebServer->saveGPIO(INPUT_CF1, FUNCTION_CF1)) {
+    WebServer->sendContent(supla_webpage_other(6));
+    return;
+  }
+  if (!WebServer->saveGPIO(INPUT_SEL, FUNCTION_SEL)) {
+    WebServer->sendContent(supla_webpage_other(6));
+    return;
+  }
+#endif
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       WebServer->sendContent(supla_webpage_other(1));
@@ -675,12 +685,10 @@ void SuplaWebPageSensor::handleOtherSave() {
 String SuplaWebPageSensor::supla_webpage_other(int save) {
   uint8_t nr, suported, selected;
   String page, key;
-  page += WebServer->SuplaSaveResult(save);
-  page += WebServer->SuplaJavaScript(PATH_OTHER);
-  page += F("<form method='post' action='");
-  page += PATH_SAVE_OTHER;
-  page += F("'>");
+  page += SuplaSaveResult(save);
+  page += SuplaJavaScript(PATH_OTHER);
 
+  addForm(page, F("post"), PATH_SAVE_OTHER);
 #ifdef SUPLA_HC_SR04
   addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " HC-SR04");
   addListGPIOBox(page, INPUT_TRIG_GPIO, "TRIG", FUNCTION_TRIG);
@@ -696,23 +704,21 @@ String SuplaWebPageSensor::supla_webpage_other(int save) {
   }
   addFormHeaderEnd(page);
 #endif
-  page += F("<button type='submit'>");
-  page += S_SAVE;
-  page += F("</button></form>");
-  page += F("<br>");
-  page += F("<form method='post' action='");
-  page += PATH_REBOT;
-  page += F("'>");
-  page += F("<button type='submit'>");
-  page += S_RESTART;
-  page += F("</button></form>");
-  page += F("<br>");
-  page += F("<a href='");
-  page += PATH_START;
-  page += PATH_DEVICE_SETTINGS;
-  page += F("'><button>");
-  page += S_RETURN;
-  page += F("</button></a></div>");
+
+#ifdef SUPLA_HLW8012
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " HLW8012");
+  addListGPIOBox(page, INPUT_CF, "CF", FUNCTION_CF);
+  addListGPIOBox(page, INPUT_CF1, "CF1", FUNCTION_CF1);
+  addListGPIOBox(page, INPUT_SEL, "SELi", FUNCTION_SEL);
+  if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
+    addLinkBox(page, "Kalibracja", PATH_HLW8012_CALIBRATE);
+  }
+  addFormHeaderEnd(page);
+#endif
+
+  addButtonSubmit(page, S_SAVE);
+  addFormEnd(page);
+  addButton(page, S_RETURN, PATH_DEVICE_SETTINGS);
   return page;
 }
 #endif
@@ -779,8 +785,8 @@ String SuplaWebPageSensor::supla_impulse_counter_set(int save) {
   nr = readUrl.substring(place + path.length(), place + path.length() + 3);
 
   String page = "";
-  page += WebServer->SuplaSaveResult(save);
-  page += WebServer->SuplaJavaScript(PATH_OTHER);
+  page += SuplaSaveResult(save);
+  page += SuplaJavaScript(PATH_OTHER);
   uint8_t relays = ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt();
   if (nr.toInt() <= relays && ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
     page += F("<form method='post' action='");
@@ -856,8 +862,72 @@ String SuplaWebPageSensor::supla_impulse_counter_set(int save) {
   page += PATH_OTHER;
   page += F("'><button>");
   page += S_RETURN;
-  page += F("</button></a></div>");
+  page += F("</button></a><br><br>");
 
+  return page;
+}
+#endif
+
+#if defined(SUPLA_HLW8012)
+void SuplaWebPageSensor::handleHLW8012Calibrate() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+  WebServer->sendContent(suplaWebpageHLW8012Calibrate(0));
+}
+
+void SuplaWebPageSensor::handleHLW8012CalibrateSave() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+
+  double calibPower, calibVoltage = 0;
+  String input = INPUT_CALIB_POWER;
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    calibPower = WebServer->httpServer.arg(input).toDouble();
+  }
+
+  input = INPUT_CALIB_VOLTAGE;
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    calibVoltage = WebServer->httpServer.arg(input).toDouble();
+  }
+
+  if (calibPower && calibVoltage) {
+    Supla::GUI::counterHLW8012->calibrate(calibPower, calibVoltage);
+    WebServer->sendContent(suplaWebpageHLW8012Calibrate(1));
+  }
+  else {
+    WebServer->sendContent(suplaWebpageHLW8012Calibrate(6));
+  }
+}
+
+String SuplaWebPageSensor::suplaWebpageHLW8012Calibrate(uint8_t save) {
+  String page;
+  page += SuplaSaveResult(save);
+  page += SuplaJavaScript(PATH_HLW8012_CALIBRATE);
+
+  addFormHeader(page);
+  page += F("<p style='color:#000;'>Current Multi: ");
+  page += Supla::GUI::counterHLW8012->getCurrentMultiplier();
+  page += F("<br>Voltage Multi: ");
+  page += Supla::GUI::counterHLW8012->getVoltageMultiplier();
+  page += F("<br>Power Multi: ");
+  page += Supla::GUI::counterHLW8012->getPowerMultiplier();
+  page += F("</p>");
+  addFormHeaderEnd(page);
+
+  addForm(page, F("post"), PATH_SAVE_HLW8012_CALIBRATE);
+  addFormHeader(page, "Ustawienia kalibracji");
+  addNumberBox(page, INPUT_CALIB_POWER, "Moc żarówki [W]", "25", true);
+  addNumberBox(page, INPUT_CALIB_VOLTAGE, "Napięcie [V]", "230", true);
+  addFormHeaderEnd(page);
+
+  addButtonSubmit(page, "Kalibracja");
+  addFormEnd(page);
+
+  addButton(page, S_RETURN, PATH_OTHER);
   return page;
 }
 #endif

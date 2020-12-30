@@ -38,6 +38,13 @@ void addButtonCFG(uint8_t gpio) {
   ConfigESP->setGpio(gpio, FUNCTION_CFG_BUTTON);
 }
 
+void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
+  ConfigESP->setGpio(pinCF, FUNCTION_CF);
+  ConfigESP->setGpio(pinCF1, FUNCTION_CF1);
+  ConfigESP->setGpio(pinSEL, FUNCTION_SEL);
+  Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
+}
+
 void chooseTemplateBoard(uint8_t board) {
   ConfigManager->set(KEY_MAX_BUTTON, "0");
   ConfigManager->set(KEY_MAX_RELAY, "0");
@@ -179,6 +186,18 @@ void chooseTemplateBoard(uint8_t board) {
       addButtonCFG(12);
       addButton(12, Supla::ON_CHANGE);
       addRelay(4);
+      break;
+
+    case BOARD_GOSUND_SP111:
+      addLedCFG(2, LOW);
+      addButtonCFG(13);
+      addButton(13, Supla::ON_RELEASE);
+      addRelay(15);
+      addHLW8012(5, 4, 12);
+      Supla::GUI::counterHLW8012->setCurrentMultiplier(18388);
+      Supla::GUI::counterHLW8012->setVoltageMultiplier(247704);
+      Supla::GUI::counterHLW8012->setPowerMultiplier(2586583);
+      Supla::GUI::counterHLW8012->saveState();
       break;
   }
 }

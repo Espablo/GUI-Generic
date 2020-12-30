@@ -54,6 +54,9 @@ const char HTTP_COPYRIGHT[] PROGMEM =
     "<a target='_blank' rel='noopener noreferrer' href='https://forum.supla.org/viewtopic.php?f=11&t=7133'><span style='color: #ffffff "
     "!important;'>https://forum.supla.org/</span></a>\n";
 
+const char HTTP_RBT[] PROGMEM =
+    "<form method='post' action='rbt'><button type='submit'>Restart</button></form>";
+
 const char GPIO0[] PROGMEM = "GPIO0-D3";
 const char GPIO1[] PROGMEM = "GPIO1-TX";
 const char GPIO2[] PROGMEM = "GPIO2-D4";
@@ -104,6 +107,13 @@ const char* const ACTION_P[] PROGMEM = {ON, OFF, ACTION_TOGGLE};
 const char CFG_10_PRESSES[] PROGMEM = S_CFG_10_PRESSES;
 const char CFG_5SEK_HOLD[] PROGMEM = S_5SEK_HOLD;
 const char* const CFG_MODE_P[] PROGMEM = {CFG_10_PRESSES, CFG_5SEK_HOLD};
+
+#ifdef SUPLA_OLED
+const char SSD1306[] PROGMEM = "SSD1306 - 0,96''";
+const char SH1106[] PROGMEM = "SH1106 - 1,3''";
+const char SSD1306_WEMOS_SHIELD[] PROGMEM = "SSD1306 - 0,66'' WEMOS OLED shield";
+const char *const OLED_P[] PROGMEM = {OFF, SSD1306, SH1106, SSD1306_WEMOS_SHIELD};
+#endif
 
 String StateString(uint8_t adr);
 String LevelString(uint8_t nr);

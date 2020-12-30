@@ -1,7 +1,6 @@
 #include "SuplaWebPageControl.h"
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
-#include "SuplaCommonPROGMEM.h"
 #include "GUIGenericCommon.h"
 #include "Markup.h"
 
@@ -92,8 +91,8 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   uint8_t nr, suported, selected;
   String pagebutton, key;
 
-  pagebutton += WebServer->SuplaSaveResult(save);
-  pagebutton += WebServer->SuplaJavaScript(PATH_CONTROL);
+  pagebutton += SuplaSaveResult(save);
+  pagebutton += SuplaJavaScript(PATH_CONTROL);
   pagebutton += F("<form method='post' action='");
   pagebutton += PATH_SAVE_CONTROL;
   pagebutton += F("'>");
@@ -125,7 +124,7 @@ String SuplaWebPageControl::supla_webpage_control(int save) {
   pagebutton += PATH_DEVICE_SETTINGS;
   pagebutton += F("'><button>");
   pagebutton += S_RETURN;
-  pagebutton += F("</button></a></div>");
+  pagebutton += F("</button></a><br><br>");
   return pagebutton;
 }
 
@@ -189,8 +188,8 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
   nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
 
   String page = "";
-  page += WebServer->SuplaSaveResult(save);
-  page += WebServer->SuplaJavaScript(PATH_CONTROL);
+  page += SuplaSaveResult(save);
+  page += SuplaJavaScript(PATH_CONTROL);
   uint8_t buttons = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   if (nr_button.toInt() <= buttons && ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON) != OFF_GPIO) {
     page += F("<form method='post' action='");
@@ -201,7 +200,6 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
     page += F(" ");
     page += nr_button;
     page += F("</h3>");
-
 
     page += F("<i><label>");
     page += S_REACTION_TO;
@@ -222,7 +220,6 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
     }
     page += F("</select></i>");
 
-
     page += F("<i><label>");
     page += S_ACTION;
     page += F("</label><select name='");
@@ -242,7 +239,6 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
     }
     page += F("</select></i>");
 
-
     page += F("</div><button type='submit'>");
     page += S_SAVE;
     page += F("</button></form>");
@@ -260,7 +256,7 @@ String SuplaWebPageControl::supla_webpage_button_set(int save) {
   page += PATH_CONTROL;
   page += F("'><button>");
   page += S_RETURN;
-  page += F("</button></a></div>");
+  page += F("</button></a><br><br>");
 
   return page;
 }
