@@ -30,7 +30,9 @@ Afore::Afore(IPAddress ip, int port, const char *loginAndPass)
       vFound(false),
       varFound(false),
       dataIsReady(false),
-      dataFetchInProgress(false) {
+      dataFetchInProgress(false),
+      connectionTimeoutMs(0) {
+  refreshRateSec = 15;
   int len = strlen(loginAndPass);
   if (len > LOGIN_AND_PASSOWORD_MAX_LENGTH) {
     len = LOGIN_AND_PASSOWORD_MAX_LENGTH;
@@ -40,6 +42,13 @@ Afore::Afore(IPAddress ip, int port, const char *loginAndPass)
 
 void Afore::iterateAlways() {
   if (dataFetchInProgress) {
+    if (millis() - connectionTimeoutMs > 30000) {
+      Serial.println(F("AFORE: connection timeout. Remote host is not responding"));
+      pvClient.stop();
+      dataFetchInProgress = false;
+      dataIsReady = false;
+      return;
+    }
     if (!pvClient.connected()) {
       Serial.println(F("AFORE fetch completed"));
       dataFetchInProgress = false;
@@ -105,12 +114,13 @@ void Afore::iterateAlways() {
 
 bool Afore::iterateConnected(void *srpc) {
   if (!dataFetchInProgress) {
-    if (lastReadTime == 0 || millis() - lastReadTime > 15000) {
+    if (lastReadTime == 0 || millis() - lastReadTime > refreshRateSec*1000) {
       lastReadTime = millis();
       Serial.println(F("AFORE connecting"));
       if (pvClient.connect(ip, port)) {
         retryCounter = 0;
         dataFetchInProgress = true;
+        connectionTimeoutMs = lastReadTime;
         Serial.println(F("Succesful connect"));
 
         pvClient.print("GET /status.html HTTP/1.1\nAuthorization: Basic ");
@@ -137,3 +147,4 @@ bool Afore::iterateConnected(void *srpc) {
 
 void Afore::readValuesFromDevice() {
 }
+

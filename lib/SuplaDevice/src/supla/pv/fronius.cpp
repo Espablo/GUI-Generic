@@ -36,11 +36,20 @@ Fronius::Fronius(IPAddress ip, int port, int deviceId)
       deviceId(deviceId),
       startCharFound(false),
       dataIsReady(false),
-      dataFetchInProgress(false) {
+      dataFetchInProgress(false),
+      connectionTimeoutMs(0) {
+  refreshRateSec = 15;
 }
 
 void Fronius::iterateAlways() {
   if (dataFetchInProgress) {
+    if (millis() - connectionTimeoutMs > 30000) {
+      Serial.println(F("Fronius: connection timeout. Remote host is not responding"));
+      pvClient.stop();
+      dataFetchInProgress = false;
+      dataIsReady = false;
+      return;
+    }
     if (!pvClient.connected()) {
       Serial.println(F("Fronius fetch completed"));
       dataFetchInProgress = false;
@@ -147,13 +156,14 @@ void Fronius::iterateAlways() {
 
 bool Fronius::iterateConnected(void *srpc) {
   if (!dataFetchInProgress) {
-    if (lastReadTime == 0 || millis() - lastReadTime > 15000) {
+    if (lastReadTime == 0 || millis() - lastReadTime > refreshRateSec*1000) {
       lastReadTime = millis();
       Serial.print(F("Fronius connecting "));
       Serial.println(deviceId);
       if (pvClient.connect(ip, port)) {
         retryCounter = 0;
         dataFetchInProgress = true;
+        connectionTimeoutMs = lastReadTime;
         Serial.println(F("Succesful connect"));
 
         char buf[100];
@@ -189,3 +199,4 @@ bool Fronius::iterateConnected(void *srpc) {
 
 void Fronius::readValuesFromDevice() {
 }
+

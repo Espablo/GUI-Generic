@@ -57,7 +57,7 @@ void Relay::onInit() {
     turnOff();
   }
 
-  pinMode(pin, OUTPUT);  // pin mode is set after setting pin value in order to
+  Supla::Io::pinMode(channel.getChannelNumber(), pin, OUTPUT);  // pin mode is set after setting pin value in order to
                          // avoid problems with LOW trigger relays
 }
 
@@ -94,6 +94,9 @@ void Relay::turnOn(_supla_int_t duration) {
   Supla::Io::digitalWrite(channel.getChannelNumber(), pin, pinOnValue());
 
   channel.setNewValue(true);
+
+  // Schedule save in 5 s after state change
+  Supla::Storage::ScheduleSave(5000);
 }
 
 void Relay::turnOff(_supla_int_t duration) {
@@ -102,6 +105,9 @@ void Relay::turnOff(_supla_int_t duration) {
   Supla::Io::digitalWrite(channel.getChannelNumber(), pin, pinOffValue());
 
   channel.setNewValue(false);
+
+  // Schedule save in 5 s after state change
+  Supla::Storage::ScheduleSave(5000);
 }
 
 bool Relay::isOn() {
@@ -140,39 +146,39 @@ Channel *Relay::getChannel() {
 }
 
 void Relay::onSaveState() {
-  if (keepTurnOnDurationMs) {
-    Supla::Storage::WriteState((unsigned char *)&storedTurnOnDurationMs,
-                               sizeof(storedTurnOnDurationMs));
-  }
+  Supla::Storage::WriteState((unsigned char *)&storedTurnOnDurationMs,
+                             sizeof(storedTurnOnDurationMs));
+  bool enabled = false;
   if (stateOnInit < 0) {
-    bool enabled = isOn();
-    Supla::Storage::WriteState((unsigned char *)&enabled, sizeof(enabled));
-  }
+    enabled = isOn();
+  } 
+  Supla::Storage::WriteState((unsigned char *)&enabled, sizeof(enabled));
 }
 
 void Relay::onLoadState() {
+  Supla::Storage::ReadState((unsigned char *)&storedTurnOnDurationMs,
+                            sizeof(storedTurnOnDurationMs));
   if (keepTurnOnDurationMs) {
-    Supla::Storage::ReadState((unsigned char *)&storedTurnOnDurationMs,
-                              sizeof(storedTurnOnDurationMs));
     Serial.print(F("Relay["));
     Serial.print(channel.getChannelNumber());
     Serial.print(F("]: restored durationMs: "));
     Serial.println(storedTurnOnDurationMs);
+  } else {
+    storedTurnOnDurationMs = 0;
   }
 
+  bool enabled = false;
+  Supla::Storage::ReadState((unsigned char *)&enabled, sizeof(enabled));
   if (stateOnInit < 0) {
-    bool enabled = false;
-    if (Supla::Storage::ReadState((unsigned char *)&enabled, sizeof(enabled))) {
-      Serial.print(F("Relay["));
-      Serial.print(channel.getChannelNumber());
-      Serial.print(F("]: restored relay state: "));
-      if (enabled) {
-        Serial.println(F("ON"));
-        stateOnInit = STATE_ON_INIT_RESTORED_ON;
-      } else {
-        Serial.println(F("OFF"));
-        stateOnInit = STATE_ON_INIT_RESTORED_OFF;
-      }
+    Serial.print(F("Relay["));
+    Serial.print(channel.getChannelNumber());
+    Serial.print(F("]: restored relay state: "));
+    if (enabled) {
+      Serial.println(F("ON"));
+      stateOnInit = STATE_ON_INIT_RESTORED_ON;
+    } else {
+      Serial.println(F("OFF"));
+      stateOnInit = STATE_ON_INIT_RESTORED_OFF;
     }
   }
 }

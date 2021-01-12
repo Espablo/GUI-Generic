@@ -18,58 +18,24 @@
 #define _button_h
 
 #include <Arduino.h>
-
-#include "../element.h"
-#include "../events.h"
-#include "../local_action.h"
+#include "simple_button.h"
 
 namespace Supla {
 namespace Control {
 
-class ButtonState {
- public:
-  ButtonState(int pin, bool pullUp, bool invertLogic);
-  int update();
-  void init();
-
-  void setSwNoiseFilterDelay(unsigned int newDelayMs);
-  void setDebounceDelay(unsigned int newDelayMs);
-  void setHoldTime(unsigned int timeMs);
-  void setMulticlickTime(unsigned int timeMs);
-
- protected:
-  int valueOnPress();
-
-  unsigned long debounceTimeMs;
-  unsigned long filterTimeMs;
-  unsigned int debounceDelayMs;
-  unsigned int swNoiseFilterDelayMs;
-  int pin;
-  int8_t newStatusCandidate;
-  int8_t prevState;
-  bool pullUp;
-  bool invertLogic;
-};
-
-class Button : public Element,
-               public LocalAction {
+class Button : public SimpleButton {
  public:
   Button(int pin, bool pullUp = false, bool invertLogic = false);
 
   void onTimer();
-  void onInit();
-  void setSwNoiseFilterDelay(unsigned int newDelayMs);
-  void setDebounceDelay(unsigned int newDelayMs);
   void setHoldTime(unsigned int timeMs);
   void setMulticlickTime(unsigned int timeMs, bool bistableButton = false);
 
  protected:
-  ButtonState state;
   unsigned int holdTimeMs;
   unsigned int multiclickTimeMs;
-  uint8_t clickCounter;
   unsigned long lastStateChangeMs;
-  bool enableExtDetection;
+  uint8_t clickCounter;
   bool holdSend;
   bool bistable;
 };

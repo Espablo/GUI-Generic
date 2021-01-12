@@ -16,60 +16,13 @@
 
 #include "button.h"
 
-enum StateResults {PRESSED, RELEASED, TO_PRESSED, TO_RELEASED};
-
-Supla::Control::ButtonState::ButtonState(int pin, bool pullUp, bool invertLogic)
-    : debounceTimeMs(0),
-      filterTimeMs(0),
-      debounceDelayMs(50),
-      swNoiseFilterDelayMs(20),
-      pin(pin),
-      newStatusCandidate(LOW),
-      prevState(LOW),
-      pullUp(pullUp),
-      invertLogic(invertLogic) {
-}
-
-int Supla::Control::ButtonState::update() {
-  if (millis() - debounceTimeMs > debounceDelayMs) {
-    int currentState = digitalRead(pin);
-    if (currentState != prevState) {
-      // If status is changed, then make sure that it will be kept at
-      // least swNoiseFilterDelayMs ms to avoid noise
-      if (currentState != newStatusCandidate) {
-        newStatusCandidate = currentState;
-        filterTimeMs = millis();
-      } else if (millis() - filterTimeMs > swNoiseFilterDelayMs) {
-      // If new status is kept at least swNoiseFilterDelayMs ms, then apply
-      // change of status
-        debounceTimeMs = millis();
-        prevState = currentState;
-        if (currentState == valueOnPress()) {
-          return TO_PRESSED;
-        } else {
-          return TO_RELEASED;
-        }
-      }
-    } else {
-      // If current status is the same as prevState, then reset
-      // new status candidate
-      newStatusCandidate = prevState;
-    }
-  }
-  if (prevState == valueOnPress()) {
-    return PRESSED;
-  } else {
-    return RELEASED;
-  }
-}
 
 Supla::Control::Button::Button(int pin, bool pullUp, bool invertLogic)
-    : state(pin, pullUp, invertLogic),
+    : SimpleButton(pin, pullUp, invertLogic),
       holdTimeMs(0),
       multiclickTimeMs(0),
-      clickCounter(0),
       lastStateChangeMs(0),
-      enableExtDetection(false),
+      clickCounter(0),
       holdSend(false),
       bistable(false) {
 }
@@ -88,13 +41,24 @@ void Supla::Control::Button::onTimer() {
     runAction(ON_CHANGE);
   }
 
+  if (stateChanged) {
+    lastStateChangeMs = millis();
+    if (stateResult == TO_PRESSED || bistable) {
+      clickCounter++;
+    }
+  }
+
   if (!stateChanged) {
     if (!bistable && stateResult == PRESSED) {
       if (clickCounter <= 1 && holdTimeMs > 0 && timeDelta > holdTimeMs && !holdSend) {
         runAction(ON_HOLD);
         holdSend = true;
       }
-    } else if (bistable || stateResult == RELEASED) {
+    } else if (clickCounter > 0 && (bistable || stateResult == RELEASED)) {
+      if (multiclickTimeMs == 0) {
+        holdSend = false;
+        clickCounter = 0;
+      }
       if (multiclickTimeMs > 0 && timeDelta > multiclickTimeMs) {
         if (!holdSend) {
           switch (clickCounter) {
@@ -129,49 +93,15 @@ void Supla::Control::Button::onTimer() {
               runAction(ON_CLICK_10);
               break;
           }
-        }
+          if (clickCounter >= 10) {
+            runAction(ON_CRAZY_CLICKER);
+          }
+        } 
         holdSend = false;
         clickCounter = 0;
       }
     }
   }
-
-  if (stateChanged) {
-    lastStateChangeMs = millis();
-    if (stateResult == TO_PRESSED || bistable) {
-      clickCounter++;
-    }
-
-  }
-}
-
-void Supla::Control::Button::onInit() {
-  state.init();
-}
-
-void Supla::Control::ButtonState::init() {
-  pinMode(pin, pullUp ? INPUT_PULLUP : INPUT);
-  prevState = digitalRead(pin);
-  newStatusCandidate = prevState;
-}
-
-int Supla::Control::ButtonState::valueOnPress() {
-  return invertLogic ? LOW : HIGH;
-}
-
-void Supla::Control::Button::setSwNoiseFilterDelay(unsigned int newDelayMs) {
-  state.setSwNoiseFilterDelay(newDelayMs);
-}
-void Supla::Control::ButtonState::setSwNoiseFilterDelay(unsigned int newDelayMs) {
-  swNoiseFilterDelayMs = newDelayMs;
-}
-
-void Supla::Control::Button::setDebounceDelay(unsigned int newDelayMs) {
-  state.setDebounceDelay(newDelayMs);
-}
-
-void Supla::Control::ButtonState::setDebounceDelay(unsigned int newDelayMs) {
-  debounceDelayMs = newDelayMs;
 }
 
 void Supla::Control::Button::setHoldTime(unsigned int timeMs) {
@@ -188,3 +118,4 @@ void Supla::Control::Button::setMulticlickTime(unsigned int timeMs, bool bistabl
     holdTimeMs = 0;
   }
 }
+

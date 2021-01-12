@@ -15,6 +15,7 @@
 */
 
 #include "bistable_roller_shutter.h"
+#include <supla/storage/storage.h>
 
 namespace Supla {
 namespace Control {
@@ -33,28 +34,30 @@ void BistableRollerShutter::stopMovement() {
   }
   currentDirection = STOP_DIR;
   doNothingTime = millis();
+  // Schedule save in 5 s after stop movement of roller shutter
+  Supla::Storage::ScheduleSave(5000);
 }
 
 void BistableRollerShutter::relayDownOn() {
   activeBiRelay = true;
   toggleTime = millis();
-  digitalWrite(pinDown, highIsOn ? HIGH : LOW);
+  Supla::Io::digitalWrite(channel.getChannelNumber(), pinDown, highIsOn ? HIGH : LOW);
 }
 
 void BistableRollerShutter::relayUpOn() {
   activeBiRelay = true;
   toggleTime = millis();
-  digitalWrite(pinUp, highIsOn ? HIGH : LOW);
+  Supla::Io::digitalWrite(channel.getChannelNumber(), pinUp, highIsOn ? HIGH : LOW);
 }
 
 void BistableRollerShutter::relayDownOff() {
   activeBiRelay = false;
-  digitalWrite(pinDown, highIsOn ? LOW : HIGH);
+  Supla::Io::digitalWrite(channel.getChannelNumber(), pinDown, highIsOn ? LOW : HIGH);
 }
 
 void BistableRollerShutter::relayUpOff() {
   activeBiRelay = false;
-  digitalWrite(pinUp, highIsOn ? LOW : HIGH);
+  Supla::Io::digitalWrite(channel.getChannelNumber(), pinUp, highIsOn ? LOW : HIGH);
 }
 
 void BistableRollerShutter::onTimer() {
