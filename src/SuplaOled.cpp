@@ -27,7 +27,7 @@ String getPressureString(double pressure) {
     return F("error");
   }
   else {
-    return String(floor(pressure), 0);
+    return String(pressure, 0);
   }
 }
 
@@ -103,10 +103,8 @@ void displayRelayState(OLEDDisplay* display) {
     }
     x += 15;
   }
-  if (!GEOMETRY_64_48) {
-    display->setColor(WHITE);
-    display->drawHorizontalLine(0, 14, display->getWidth());
-  }
+  display->setColor(WHITE);
+  display->drawHorizontalLine(0, 14, display->getWidth());
 }
 
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state) {
@@ -150,27 +148,29 @@ void displayBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, in
 }
 
 void displayTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name) {
+  uint8_t temp_width, temp_height;
+
   int drawHeightIcon = display->getHeight() / 2 - 10;
   int drawStringIcon = display->getHeight() / 2 - 6;
 
-  int temp_width = TEMP_WIDTH;
-  int temp_height = TEMP_HEIGHT;
+  display->setColor(WHITE);
+  display->setTextAlignment(TEXT_ALIGN_LEFT);
 
-  if (GEOMETRY_64_48) {
+  if (display->getWidth() <= 64 || display->getHeight() <= 48) {
     temp_width = 0;
     temp_height = 0;
   }
   else {
-    temp_width = temp_width + 10;
+    display->drawXbm(x + 0, y + drawHeightIcon, TEMP_WIDTH, TEMP_HEIGHT, temp_bits);
+    display->setFont(ArialMT_Plain_10);
+    if (name != NULL) {
+      display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
+    }
+
+    temp_width = TEMP_WIDTH + 10;
+    temp_height = TEMP_HEIGHT;
   }
 
-  display->setColor(WHITE);
-  display->setTextAlignment(TEXT_ALIGN_LEFT);
-  display->drawXbm(x + 0, y + drawHeightIcon, temp_width, temp_height, temp_bits);
-  display->setFont(ArialMT_Plain_10);
-  if (name != NULL) {
-    display->drawString(x + temp_width, y + display->getHeight() / 2 - 15, name);
-  }
   display->setFont(ArialMT_Plain_24);
   display->drawString(x + temp_width, y + drawStringIcon, getTempString(temp));
   display->setFont(ArialMT_Plain_16);
@@ -178,23 +178,24 @@ void displayTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int
 }
 
 void displaHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity) {
+  uint8_t humidity_width, humidity_height;
+
   int drawHeightIcon = display->getHeight() / 2 - 10;
   int drawStringIcon = display->getHeight() / 2 - 6;
 
-  int humidity_width = HUMIDITY_WIDTH;
-  int humidity_height = HUMIDITY_HEIGHT;
+  display->setColor(WHITE);
+  display->setTextAlignment(TEXT_ALIGN_LEFT);
 
-  if (GEOMETRY_64_48) {
+  if (display->getWidth() <= 64 || display->getHeight() <= 48) {
     humidity_width = 0;
     humidity_height = 0;
   }
   else {
-    humidity_width = humidity_width + 10;
+    display->drawXbm(x + 0, y + drawHeightIcon, HUMIDITY_WIDTH, HUMIDITY_HEIGHT, humidity_bits);
+    humidity_width = HUMIDITY_WIDTH + 20;
+    humidity_height = HUMIDITY_HEIGHT;
   }
 
-  display->setColor(WHITE);
-  display->setTextAlignment(TEXT_ALIGN_LEFT);
-  display->drawXbm(x + 0, y + drawHeightIcon, humidity_width, humidity_height, humidity_bits);
   display->setFont(ArialMT_Plain_24);
   display->drawString(x + humidity_width, y + drawStringIcon, getHumidityString(humidity));
   display->setFont(ArialMT_Plain_16);
@@ -202,23 +203,24 @@ void displaHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, 
 }
 
 void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure) {
+  uint8_t pressure_width, pressure_height;
+
   int drawHeightIcon = display->getHeight() / 2 - 10;
   int drawStringIcon = display->getHeight() / 2 - 6;
 
-  int pressure_width = PRESSURE_WIDTH;
-  int pressure_height = PRESSURE_HEIGHT;
+  display->setColor(WHITE);
+  display->setTextAlignment(TEXT_ALIGN_LEFT);
 
-  if (GEOMETRY_64_48) {
+  if (display->getWidth() <= 64 || display->getHeight() <= 48) {
     pressure_width = 0;
     pressure_height = 0;
   }
   else {
-    pressure_width = pressure_width + 15;
+    display->drawXbm(x + 0, y + drawHeightIcon, PRESSURE_WIDTH, PRESSURE_HEIGHT, pressure_bits);
+    pressure_width = PRESSURE_WIDTH + 15;
+    pressure_height = PRESSURE_HEIGHT;
   }
 
-  display->setColor(WHITE);
-  display->setTextAlignment(TEXT_ALIGN_LEFT);
-  display->drawXbm(x + 0, y + drawHeightIcon, pressure_width, pressure_height, pressure_bits);
   display->setFont(ArialMT_Plain_24);
   display->drawString(x + pressure_width, y + drawStringIcon, getPressureString(pressure));
   display->setFont(ArialMT_Plain_10);
