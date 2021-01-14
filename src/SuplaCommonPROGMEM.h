@@ -21,7 +21,7 @@ const char HTTP_STYLE[] PROGMEM =
     "#00d151;height:42px}i:last-child{border:none}label{position:absolute;display:inline-block;top:0;left:8px;color:#00d151;line-height:41px;}i "
     "input,"
     "select{width:calc(100% - "
-    "145px);border:none;font-size:16px;line-height:40px;border-radius:0;letter-spacing:-.5px;background:#fff;color:#000;padding-left:143px;-webkit-"
+    "150px);border:none;font-size:16px;line-height:40px;border-radius:0;letter-spacing:-.5px;background:#fff;color:#000;padding-left:143px;-webkit-"
     "appearance:none;-moz-appearance:none;appearance:none;outline:0!important;height:40px}select{padding:0;float:right;margin:1px 3px 1px "
     "2px}button{width:100%;border:0;background:#000;padding:5px 10px;font-size:16px;line-height:40px;color:#fff;border-radius:3px;box-shadow:0 1px "
     "3px rgba(0,0,0,.3);cursor:pointer}.c{background:#ffe836;position:fixed;width:100%;line-height:80px;color:#000;top:0;left:0;box-shadow:0 1px 3px "
@@ -31,7 +31,8 @@ const char HTTP_STYLE[] PROGMEM =
     "20px}h1,h3{font-size:19px}i{border:none;height:auto}label{display:block;margin:4px 0 "
     "12px;color:#00d151;font-size:13px;position:relative;line-height:18px}i input,select{width:calc(100% - "
     "10px);font-size:16px;line-height:28px;padding:0 5px;border-bottom:solid 1px "
-    "#00d151}select{width:100%;float:none;margin:0}}iframe{margin:auto;display:block;}.formcenter{color:#000;width:50%;margin: 25px auto 25px auto;}</style> ";
+    "#00d151}select{width:100%;float:none;margin:0}}iframe{margin:auto;display:block;}.formcenter{color:#000;width:50%;margin: 25px auto 25px "
+    "auto;}</style> ";
 const char HTTP_LOGO[] PROGMEM =
     "<div class='s'><a href='/'><svg version='1.1' id='l' x='0' y='0' viewBox='0 0 200 200' xml:space='preserve'><path "
     "d='M59.3,2.5c18.1,0.6,31.8,8,40.2,23.5c3.1,5.7,4.3,11.9,4.1,18.3c-0.1,3.6-0.7,7.1-1.9,10.6c-0.2,0.7-0.1,1.1,0.6,1.5c12.8,7.7,25.5,15.4,38.3,"
@@ -54,8 +55,9 @@ const char HTTP_COPYRIGHT[] PROGMEM =
     "<a target='_blank' rel='noopener noreferrer' href='https://forum.supla.org/viewtopic.php?f=11&t=7133'><span style='color: #ffffff "
     "!important;'>https://forum.supla.org/</span></a>\n";
 
-const char HTTP_RBT[] PROGMEM =
-    "<form method='post' action='rbt'><button type='submit'>Restart</button></form>";
+const char HTTP_FAVICON[] PROGMEM = "<link rel='icon' href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAB3RJTUUH5AUUCCQbIwTFfgAAAAlwSFlzAAALEgAACxIB0t1+/AAAAARnQU1BAACxjwv8YQUAAAAwUExURf7nNZuNIOvWMci2KWRbFJGEHnRpFy8rCdrGLSAdBgwLAod6G7inJkI8DVJLEKeYIg6cTsoAAAGUSURBVHjaY2CAAFUGNLCF4QAyl4mhmP8BB4LPcWtdAe+BEBiX9QD77Kzl24GKHCAC/OVZH5hkVyUCFQlCRJhnKjAwLVlVb8lQDOY/ZFrG8FDVQbVqbU8BWODc3BX8dbMMGJhfrUyAaOla+/dAP8jyncsbgJTKgVP/b+pOAUudegAkGMsrGZhE1EFyDGwLwNaucmZyl1TgKTdg4JvAwMBzn3txeKWrMwP7wQcMWiAtf2c9YDjUfYBJapsDw66bm4AiUesOnJty0/O9iwLDPI5EhhCD6/q3Chk4dgCleJYpAEOmfCkDB+sbsK1886YBRfgWMTBwbi896wR04YZuAyAH6OmzDCbr3RgYsj6A1HEBPXCfgWHONgaG6eUBII0LFTiA7jn+iIF/MbMTyEu3lphtAJtpvl4BTLPNWgVSySA+y28aWIDdyGtVBgNH5psshVawwHGGO+arLr7MYFoJjZr/zBPYj85a1sC4ulwAIsIdcJzh2qt1WReYBWBR48gxgd1ziQIi6hTYEsxR45pZwRU9+oWgNAB1F3c/H6bYqgAAAABJRU5ErkJggg==' type='image/x-png' />\n";
+
+const char HTTP_RBT[] PROGMEM = "<form method='post' action='rbt'><button type='submit'>Restart</button></form>";
 
 const char GPIO0[] PROGMEM = "GPIO0-D3";
 const char GPIO1[] PROGMEM = "GPIO1-TX";
@@ -77,6 +79,26 @@ const char GPIONULL[] PROGMEM = "";
 const char* const GPIO_P[] PROGMEM = {GPIO0, GPIO1,  GPIO2,    GPIO3,  GPIO4,  GPIO5,  GPIONULL, GPIONULL, GPIONULL,
                                       GPIO9, GPIO10, GPIONULL, GPIO12, GPIO13, GPIO14, GPIO15,   GPIO16,   OFF};
 
+const char GPIO_A0[] PROGMEM = "A0";
+const char GPIO_A1[] PROGMEM = "A1";
+const char GPIO_A2[] PROGMEM = "A2";
+const char GPIO_A3[] PROGMEM = "A3";
+const char GPIO_A4[] PROGMEM = "A4";
+const char GPIO_A5[] PROGMEM = "A5";
+const char GPIO_A6[] PROGMEM = "A6";
+const char GPIO_A7[] PROGMEM = "A7";
+const char GPIO_B0[] PROGMEM = "B0";
+const char GPIO_B1[] PROGMEM = "B1";
+const char GPIO_B2[] PROGMEM = "B2";
+const char GPIO_B3[] PROGMEM = "B3";
+const char GPIO_B4[] PROGMEM = "B4";
+const char GPIO_B5[] PROGMEM = "B5";
+const char GPIO_B6[] PROGMEM = "B6";
+const char GPIO_B7[] PROGMEM = "B7";
+
+const char* const GPIO_MCP23017_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7,  GPIO_B0,
+                                               GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7, GPIONULL, OFF};
+
 const char ADR44[] PROGMEM = "0x44";
 const char ADR45[] PROGMEM = "0x45";
 const char ADR44_ADR45[] PROGMEM = "0x44 & 0x45";
@@ -86,6 +108,10 @@ const char ADR76_ADR77[] PROGMEM = "0x76 & 0x77";
 
 const char* const BME280_P[] PROGMEM = {OFF, ADR76, ADR77, ADR76_ADR77};
 const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
+
+const char ADR20[] PROGMEM = "0x20";
+const char ADR21[] PROGMEM = "0x21";
+const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, OFF};
 
 const char* const STATE_P[] PROGMEM = {OFF, ON};
 
@@ -112,7 +138,7 @@ const char* const CFG_MODE_P[] PROGMEM = {CFG_10_PRESSES, CFG_5SEK_HOLD};
 const char SSD1306[] PROGMEM = "SSD1306 - 0,96''";
 const char SH1106[] PROGMEM = "SH1106 - 1,3''";
 const char SSD1306_WEMOS_SHIELD[] PROGMEM = "SSD1306 - 0,66'' WEMOS OLED shield";
-const char *const OLED_P[] PROGMEM = {OFF, SSD1306, SH1106, SSD1306_WEMOS_SHIELD};
+const char* const OLED_P[] PROGMEM = {OFF, SSD1306, SH1106, SSD1306_WEMOS_SHIELD};
 #endif
 
 String StateString(uint8_t adr);

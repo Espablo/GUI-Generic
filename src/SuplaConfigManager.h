@@ -86,6 +86,14 @@ enum _settings
   MEMORY,
   CFG,
   ACTION,
+  MCP23017_NR_1,
+  MCP23017_FUNCTION_1,
+  MCP23017_NR_2,
+  MCP23017_FUNCTION_2,
+  MCP23017_NR_3,
+  MCP23017_FUNCTION_3,
+  MCP23017_NR_4,
+  MCP23017_FUNCTION_4,
   SETTINGSCOUNT
 };
 
@@ -138,8 +146,8 @@ class ConfigOption {
 
   int getLength();
   void setValue(const char *value);
-  String getElement(int index);
-  String replaceElement(int index, int value);
+  const String getElement(int index);
+  const String replaceElement(int index, int value);
 
  private:
   uint8_t _key;

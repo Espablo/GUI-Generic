@@ -35,7 +35,7 @@ void SuplaWebPageControl::handleControl() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(supla_webpage_control(0));
+  supla_webpage_control(0);
 }
 
 void SuplaWebPageControl::handleControlSave() {
@@ -45,14 +45,22 @@ void SuplaWebPageControl::handleControlSave() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  String key, input;
-  uint8_t nr, current_value, last_value;
+
+  uint8_t nr, last_value;
 #ifdef SUPLA_BUTTON
   last_value = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {
-    if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
-      WebServer->sendContent(supla_webpage_control(6));
-      return;
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
+      if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
+        supla_webpage_control(6);
+        return;
+      }
+    }
+    else {
+      if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
+        supla_webpage_control(6);
+        return;
+      }
     }
   }
 
@@ -65,7 +73,7 @@ void SuplaWebPageControl::handleControlSave() {
   last_value = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {
     if (!WebServer->saveGPIO(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr, INPUT_MAX_LIMIT_SWITCH)) {
-      WebServer->sendContent(supla_webpage_control(6));
+      supla_webpage_control(6);
       return;
     }
   }
@@ -77,55 +85,58 @@ void SuplaWebPageControl::handleControlSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      //      Serial.println(F("E_CONFIG_OK: Config save"));
-      WebServer->sendContent(supla_webpage_control(1));
+      supla_webpage_control(1);
       break;
     case E_CONFIG_FILE_OPEN:
-      //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->sendContent(supla_webpage_control(2));
+      supla_webpage_control(2);
       break;
   }
 }
 
-String SuplaWebPageControl::supla_webpage_control(int save) {
-  uint8_t nr, suported, selected;
-  String pagebutton, key;
+void SuplaWebPageControl::supla_webpage_control(int save) {
+  uint8_t nr, countFreeGpio;
 
-  pagebutton += SuplaSaveResult(save);
-  pagebutton += SuplaJavaScript(PATH_CONTROL);
-  pagebutton += F("<form method='post' action='");
-  pagebutton += PATH_SAVE_CONTROL;
-  pagebutton += F("'>");
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_CONTROL);
+  addForm(webContentBuffer, F("post"), PATH_SAVE_CONTROL);
 
 #if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
-  addFormHeader(pagebutton, String(S_GPIO_SETTINGS_FOR_BUTTONS));
-  addNumberBox(pagebutton, INPUT_MAX_BUTTON, S_QUANTITY, KEY_MAX_BUTTON, ConfigESP->countFreeGpio(FUNCTION_BUTTON));
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-    addListGPIOLinkBox(pagebutton, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, PATH_BUTTON_SET, nr);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_BUTTONS));
+
+  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
+    countFreeGpio = 16;
   }
-  addFormHeaderEnd(pagebutton);
+  else {
+    countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_BUTTON);
+  }
+
+  addNumberBox(webContentBuffer, INPUT_MAX_BUTTON, S_QUANTITY, KEY_MAX_BUTTON, countFreeGpio);
+
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
+      addListMCP23017GPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, PATH_BUTTON_SET, nr);
+    }
+    else {
+      addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, PATH_BUTTON_SET, nr);
+    }
+  }
+  addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-  addFormHeader(pagebutton, String(S_GPIO_SETTINGS_FOR_LIMIT_SWITCH));
-  addNumberBox(pagebutton, INPUT_MAX_LIMIT_SWITCH, S_QUANTITY, KEY_MAX_LIMIT_SWITCH, ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_LIMIT_SWITCH));
+  addNumberBox(webContentBuffer, INPUT_MAX_LIMIT_SWITCH, S_QUANTITY, KEY_MAX_LIMIT_SWITCH, ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
-    addListGPIOBox(pagebutton, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
+    addListGPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
   }
-  addFormHeaderEnd(pagebutton);
+  addFormHeaderEnd(webContentBuffer);
 #endif
 
-  pagebutton += F("<button type='submit'>");
-  pagebutton += S_SAVE;
-  pagebutton += F("</button></form>");
-  pagebutton += F("<br>");
-  pagebutton += F("<a href='");
-  pagebutton += PATH_START;
-  pagebutton += PATH_DEVICE_SETTINGS;
-  pagebutton += F("'><button>");
-  pagebutton += S_RETURN;
-  pagebutton += F("</button></a><br><br>");
-  return pagebutton;
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
+  addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
+
+  WebServer->sendContent();
 }
 
 #if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
@@ -134,7 +145,7 @@ void SuplaWebPageControl::handleButtonSet() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(supla_webpage_button_set(0));
+  supla_webpage_button_set(0);
 }
 
 void SuplaWebPageControl::handleButtonSaveSet() {
@@ -144,16 +155,28 @@ void SuplaWebPageControl::handleButtonSaveSet() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String readUrl, nr_button, input;
-  uint8_t place;
+  String readUrl, nr_button, input, path;
+  uint8_t place, key, gpio;
 
-  String path = PATH_START;
+  input.reserve(10);
+  readUrl.reserve(11);
+  nr_button.reserve(2);
+  path.reserve(14);
+
+  path = PATH_START;
   path += PATH_SAVE_BUTTON_SET;
   readUrl = WebServer->httpServer.uri();
 
   place = readUrl.indexOf(path);
   nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
-  uint8_t key = KEY_GPIO + ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
+
+  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
+    gpio = ConfigESP->getGpioMCP23017(nr_button.toInt(), FUNCTION_BUTTON);
+  }
+  else {
+    gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
+  }
+  key = KEY_GPIO + gpio;
 
   input = INPUT_BUTTON_LEVEL;
   input += nr_button;
@@ -165,99 +188,46 @@ void SuplaWebPageControl::handleButtonSaveSet() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
-      WebServer->sendContent(supla_webpage_control(1));
+      supla_webpage_control(1);
       break;
-
     case E_CONFIG_FILE_OPEN:
-      //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->sendContent(supla_webpage_control(2));
+      supla_webpage_control(2);
       break;
   }
 }
 
-String SuplaWebPageControl::supla_webpage_button_set(int save) {
-  String readUrl, nr_button, key;
-  uint8_t place, selected, suported;
+void SuplaWebPageControl::supla_webpage_button_set(int save) {
+  String path, readUrl, nr_button;
+  uint8_t place, selected;
 
-  String path = PATH_START;
+  path.reserve(10);
+  readUrl.reserve(11);
+  nr_button.reserve(2);
+
+  path = PATH_START;
   path += PATH_BUTTON_SET;
   readUrl = WebServer->httpServer.uri();
 
   place = readUrl.indexOf(path);
   nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
 
-  String page = "";
-  page += SuplaSaveResult(save);
-  page += SuplaJavaScript(PATH_CONTROL);
-  uint8_t buttons = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
-  if (nr_button.toInt() <= buttons && ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON) != OFF_GPIO) {
-    page += F("<form method='post' action='");
-    page += PATH_SAVE_BUTTON_SET;
-    page += nr_button;
-    page += F("'><div class='w'><h3>");
-    page += S_BUTTON_NR_SETTINGS;
-    page += F(" ");
-    page += nr_button;
-    page += F("</h3>");
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_CONTROL);
 
-    page += F("<i><label>");
-    page += S_REACTION_TO;
-    page += F("</label><select name='");
-    page += INPUT_BUTTON_LEVEL;
-    page += nr_button;
-    page += F("'>");
-    selected = ConfigESP->getLevel(nr_button.toInt(), FUNCTION_BUTTON);
-    for (suported = 0; suported < 3; suported++) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else
-        page += F("'>");
-      page += TriggerString(suported);
-    }
-    page += F("</select></i>");
+  addForm(webContentBuffer, F("post"), PATH_SAVE_BUTTON_SET + nr_button);
+  addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
 
-    page += F("<i><label>");
-    page += S_ACTION;
-    page += F("</label><select name='");
-    page += INPUT_BUTTON_ACTION;
-    page += nr_button;
-    page += F("'>");
-    selected = ConfigESP->getAction(nr_button.toInt(), FUNCTION_BUTTON);
-    for (suported = 0; suported < 3; suported++) {
-      page += F("<option value='");
-      page += suported;
-      if (selected == suported) {
-        page += F("' selected>");
-      }
-      else
-        page += F("'>");
-      page += PGMT(ACTION_P[suported]);
-    }
-    page += F("</select></i>");
+  selected = ConfigESP->getLevel(nr_button.toInt(), FUNCTION_BUTTON);
+  addListBox(webContentBuffer, INPUT_BUTTON_LEVEL + nr_button, S_REACTION_TO, TRIGGER_P, 3, selected);
 
-    page += F("</div><button type='submit'>");
-    page += S_SAVE;
-    page += F("</button></form>");
-  }
-  else {
-    page += F("<div class='w'><h3>");
-    page += S_NO_BUTTON_NR;
-    page += F(" </h3>");
-    page += nr_button;
-    page += F("</h3>");
-  }
-  page += F("<br>");
-  page += F("<a href='");
-  page += PATH_START;
-  page += PATH_CONTROL;
-  page += F("'><button>");
-  page += S_RETURN;
-  page += F("</button></a><br><br>");
+  selected = ConfigESP->getAction(nr_button.toInt(), FUNCTION_BUTTON);
+  addListBox(webContentBuffer, INPUT_BUTTON_ACTION + nr_button, S_ACTION, ACTION_P, 3, selected);
 
-  return page;
+  addFormHeaderEnd(webContentBuffer);
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
+  addButton(webContentBuffer, S_RETURN, PATH_RELAY);
+
+  WebServer->sendContent();
 }
 #endif

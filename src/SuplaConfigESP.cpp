@@ -20,6 +20,7 @@
 #include "SuplaConfigManager.h"
 #include "SuplaDeviceGUI.h"
 #include "GUIGenericCommon.h"
+#include "SuplaWebPageSensor.h"
 
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
@@ -95,11 +96,7 @@ void SuplaConfigESP::runAction(int event, int action) {
 }
 
 void SuplaConfigESP::rebootESP() {
-  delay(1000);
-  WiFi.forceSleepBegin();
-  wdt_reset();
   ESP.restart();
-  while (1) wdt_reset();
 }
 
 void SuplaConfigESP::configModeInit() {
@@ -117,8 +114,9 @@ void SuplaConfigESP::iterateAlways() {
   }
 }
 
-String SuplaConfigESP::getConfigNameAP() {
-  return "SUPLA-ESP8266-" + getMacAddress(false);
+const String SuplaConfigESP::getConfigNameAP() {
+  String name = F("SUPLA-ESP8266-");
+  return name += getMacAddress(false);
 }
 const char *SuplaConfigESP::getLastStatusSupla() {
   return supla_status.msg;
@@ -251,6 +249,25 @@ int SuplaConfigESP::getGpio(int nr, int function) {
         return gpio;
       }
     }
+    // return OFF_GPIO;
+    //"Pin 100 - 115"
+    // Pin 116 - 131"
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
+      switch (getAdressMCP23017(function)) {
+        case 0:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function &&
+              ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+            return gpio + 100;
+          }
+          break;
+        case 1:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function &&
+              ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+            return gpio + 100 + 16;
+          }
+          break;
+      }
+    }
   }
   return OFF_GPIO;
 }
@@ -260,9 +277,27 @@ int SuplaConfigESP::getLevel(int nr, int function) {
     uint8_t key = KEY_GPIO + gpio;
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
-        uint8_t level = ConfigManager->get(key)->getElement(LEVEL).toInt();
-        return level;
+        return ConfigManager->get(key)->getElement(LEVEL).toInt();
       }
+    }
+
+    switch (getAdressMCP23017(function)) {
+      case 0:
+        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
+          if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+            return ConfigManager->get(key)->getElement(LEVEL).toInt();
+            ;
+          }
+        }
+        break;
+      case 1:
+        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
+          if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+            return ConfigManager->get(key)->getElement(LEVEL).toInt();
+            ;
+          }
+        }
+        break;
     }
   }
   return OFF_GPIO;
@@ -273,9 +308,27 @@ int SuplaConfigESP::getMemory(int nr, int function) {
     uint8_t key = KEY_GPIO + gpio;
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
-        uint8_t level = ConfigManager->get(key)->getElement(MEMORY).toInt();
-        return level;
+        return ConfigManager->get(key)->getElement(MEMORY).toInt();
       }
+    }
+
+    switch (getAdressMCP23017(function)) {
+      case 0:
+        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
+          if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+            return ConfigManager->get(key)->getElement(MEMORY).toInt();
+            ;
+          }
+        }
+        break;
+      case 1:
+        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
+          if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+            return ConfigManager->get(key)->getElement(MEMORY).toInt();
+            ;
+          }
+        }
+        break;
     }
   }
   return OFF_GPIO;
@@ -286,9 +339,28 @@ int SuplaConfigESP::getAction(int nr, int function) {
     uint8_t key = KEY_GPIO + gpio;
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
-        uint8_t action = ConfigManager->get(key)->getElement(ACTION).toInt();
-        return action;
+        return ConfigManager->get(key)->getElement(ACTION).toInt();
+        ;
       }
+    }
+
+    switch (getAdressMCP23017(function)) {
+      case 0:
+        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
+          if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+            return ConfigManager->get(key)->getElement(ACTION).toInt();
+            ;
+          }
+        }
+        break;
+      case 1:
+        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
+          if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+            return ConfigManager->get(key)->getElement(ACTION).toInt();
+            ;
+          }
+        }
+        break;
     }
   }
   return OFF_GPIO;
@@ -304,7 +376,7 @@ bool SuplaConfigESP::checkBusyCfg(int gpio) {
 
 int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11) {
-    return true;
+    return false;
   }
   else {
     uint8_t key = KEY_GPIO + gpio;
@@ -316,15 +388,15 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
     }
     if (checkBusyCfg(gpio)) {
       if (function != FUNCTION_BUTTON) {
-        return true;
+        return false;
       }
     }
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF) {
       if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != function) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
   }
 }
 
@@ -356,7 +428,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   ConfigManager->setElement(key, NR, 0);
   ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
   ConfigManager->setElement(key, LEVEL, 0);
-  ConfigManager->setElement(key, MEMORY, 0);
+  ConfigManager->setElement(key, MEMORY, 2);
   ConfigManager->setElement(key, ACTION, Supla::TOGGLE);
 }
 
@@ -374,10 +446,148 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   return count;
 }
 
+bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t function) {
+  if (gpio == OFF_GPIO) {
+    return true;
+  }
+  else if (gpio == 16) {
+    return false;
+  }
+  else {
+    uint8_t key = KEY_GPIO + gpio;
+    switch (getAdressMCP23017(function)) {
+      case 0:
+        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() != FUNCTION_OFF) {
+          return false;
+        }
+        break;
+      case 1:
+        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() != FUNCTION_OFF) {
+          return false;
+        }
+        break;
+    }
+  }
+  return true;
+}
+
+uint8_t SuplaConfigESP::getGpioMCP23017(uint8_t nr, uint8_t function) {
+  for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    uint8_t key = KEY_GPIO + gpio;
+
+    switch (getAdressMCP23017(function)) {
+      case 0:
+        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
+          if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+            return gpio;
+          }
+        }
+        break;
+      case 1:
+        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
+          if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+            return gpio;
+          }
+        }
+        break;
+    }
+  }
+  return OFF_GPIO;
+}
+
+uint8_t SuplaConfigESP::getAdressMCP23017(uint8_t function) {
+  for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    uint8_t key = KEY_GPIO + gpio;
+    if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() != 0) {
+      if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
+        return 0;
+      }
+    }
+    if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() != 0) {
+      if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
+        return 1;
+      }
+    }
+  }
+  return 2;
+}
+
+void SuplaConfigESP::setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory) {
+  uint8_t key = KEY_GPIO + gpio;
+
+  uint8_t _gpio = ConfigESP->getGpioMCP23017(nr, function);
+  ConfigESP->clearGpioMCP23017(_gpio, function);
+
+  if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
+    ConfigManager->setElement(key, LEVEL, 0);
+    ConfigManager->setElement(key, MEMORY, 2);
+    ConfigManager->setElement(key, ACTION, Supla::TOGGLE);
+  }
+  else {
+    ConfigManager->setElement(key, LEVEL, level);
+    ConfigManager->setElement(key, MEMORY, memory);
+    ConfigManager->setElement(key, ACTION, Supla::TOGGLE);
+  }
+
+  switch (adress) {
+    case 0:
+      ConfigManager->setElement(key, MCP23017_NR_1, nr);
+      ConfigManager->setElement(key, MCP23017_FUNCTION_1, function);
+      break;
+    case 1:
+      ConfigManager->setElement(key, MCP23017_NR_2, nr);
+      ConfigManager->setElement(key, MCP23017_FUNCTION_2, function);
+      break;
+  }
+}
+
+void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t function) {
+  uint8_t key = KEY_GPIO + gpio;
+  uint8_t adress = getAdressMCP23017(function);
+
+  ConfigManager->setElement(key, getNrMCP23017(adress), 0);
+  ConfigManager->setElement(key, getFunctionMCP23017(adress), FUNCTION_OFF);
+}
+
+void SuplaConfigESP::clearFunctionGpio(uint8_t function) {
+  for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    uint8_t key = KEY_GPIO + gpio;
+
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
+      ConfigManager->setElement(key, NR, 0);
+      ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
+    }
+  }
+}
+
+uint8_t SuplaConfigESP::getFunctionMCP23017(uint8_t adress) {
+  switch (adress) {
+    case 0:
+      return MCP23017_FUNCTION_1;
+      break;
+    case 1:
+      return MCP23017_FUNCTION_2;
+      break;
+  }
+  return OFF_GPIO;
+}
+
+uint8_t SuplaConfigESP::getNrMCP23017(uint8_t adress) {
+  switch (adress) {
+    case 0:
+      return MCP23017_NR_1;
+      break;
+    case 1:
+      return MCP23017_NR_2;
+      break;
+  }
+  return OFF_GPIO;
+}
+
 void SuplaConfigESP::factoryReset(bool forceReset) {
   delay(1000);
-  pinMode(0, INPUT);
-  if (!digitalRead(0) || forceReset) {
+  pinMode(0, INPUT_PULLUP);
+  if (digitalRead(0) != HIGH || forceReset) {
     Serial.println(F("FACTORY RESET!!!"));
 
     EEPROM.begin(1024);
@@ -424,5 +634,23 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->save();
 
     // rebootESP();
+  }
+}
+
+uint32_t lowestRAM = 0;
+uint32_t lowestFreeStack = 0;
+
+void checkRAM() {
+  uint32_t freeRAM = ESP.getFreeHeap();
+  Serial.print(F("freeRAM: "));
+  Serial.println(freeRAM);
+  if (freeRAM <= lowestRAM) {
+    lowestRAM = freeRAM;
+  }
+  uint32_t freeStack = ESP.getFreeContStack();
+  Serial.print(F("freeStack: "));
+  Serial.println(freeStack);
+  if (freeStack <= lowestFreeStack) {
+    lowestFreeStack = freeStack;
   }
 }

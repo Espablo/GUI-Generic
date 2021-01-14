@@ -22,8 +22,20 @@
 #include <supla/element.h>
 #include "GUI-Generic_Config.h"
 
-enum _configModeESP { NORMAL_MODE, CONFIG_MODE };
-enum _ConfigMode { CONFIG_MODE_10_ON_PRESSES, CONFIG_MODE_5SEK_HOLD, FACTORYRESET };
+#include <cont.h>
+#include <user_interface.h>
+
+enum _configModeESP
+{
+  NORMAL_MODE,
+  CONFIG_MODE
+};
+enum _ConfigMode
+{
+  CONFIG_MODE_10_ON_PRESSES,
+  CONFIG_MODE_5SEK_HOLD,
+  FACTORYRESET
+};
 
 typedef struct {
   int status;
@@ -81,7 +93,16 @@ class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
 
   int getAction(int nr, int function);
   void factoryReset(bool forceReset = false);
-  String getConfigNameAP();
+  const String getConfigNameAP();
+
+  bool checkBusyGpioMCP23017(uint8_t gpio, uint8_t function);
+  uint8_t getGpioMCP23017(uint8_t nr, uint8_t function);
+  uint8_t getAdressMCP23017(uint8_t function);
+  void setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory);
+  void clearGpioMCP23017(uint8_t gpio, uint8_t function);
+  void clearFunctionGpio(uint8_t function);
+  uint8_t getFunctionMCP23017(uint8_t adress);
+  uint8_t getNrMCP23017(uint8_t adress);
 
  private:
   void configModeInit();
@@ -96,5 +117,10 @@ class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
 
 void ledBlinking_func(void *timer_arg);
 void status_func(int status, const char *msg);
+
+
+uint32_t getFreeStackWatermark();
+unsigned long FreeMem();
+void checkRAM();
 
 #endif  // SuplaConfigESP_h

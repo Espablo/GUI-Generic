@@ -34,7 +34,7 @@ void SuplaWebServer::begin() {
   strcpy(this->www_password, ConfigManager->get(KEY_LOGIN_PASS)->getValue());
 
   httpServer.onNotFound(std::bind(&SuplaWebServer::handleNotFound, this));
-  httpServer.begin();
+  httpServer.begin(80);
 }
 
 void SuplaWebServer::iterateAlways() {
@@ -62,10 +62,7 @@ void SuplaWebServer::createWebServer() {
 #if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH)
   WebPageControl->createWebPageControl();
 #endif
-#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF) || defined(SUPLA_BME280) || \
-    defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_MAX6675) || defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
   WebPageSensor->createWebPageSensor();
-#endif
 #ifdef SUPLA_CONFIG
   WebPageConfig->createWebPageConfig();
 #endif
@@ -225,7 +222,7 @@ String SuplaWebServer::deviceSettings(int save) {
   addButton(content, S_SENSORS_1WIRE, PATH_1WIRE);
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
   addButton(content, S_SENSORS_I2C, PATH_I2C);
 #endif
 
@@ -276,7 +273,7 @@ void SuplaWebServer::handleBoardSave() {
   }
 }
 
-const String SuplaWebServer::SuplaIconEdit() {
+const String& SuplaWebServer::SuplaIconEdit() {
   return F(
       "<img "
       "src='data:image/"
@@ -287,22 +284,29 @@ const String SuplaWebServer::SuplaIconEdit() {
       "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
 }
 
-void SuplaWebServer::sendContent(const String content) {
+void SuplaWebServer::sendContent(const String& content) {
   // httpServer.send(200, "text/html", "");
-  const int bufferSize = 1000;
-  String _buffer;
-  int bufferCounter = 0;
+  // const int bufferSize = 1000;
+  // String _buffer;
+  //_buffer.reserve(bufferSize);
+  // int bufferCounter = 0;
+
   int fileSize = content.length();
 
 #ifdef DEBUG_MODE
-  Serial.print("Content size: ");
+  Serial.print(F("Content size: "));
   Serial.println(fileSize);
+  checkRAM();
 #endif
 
-  httpServer.setContentLength(fileSize);
+  httpServer.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  httpServer.sendHeader("Pragma", "no-cache");
+  httpServer.sendHeader("Expires", "-1");
+  httpServer.setContentLength(CONTENT_LENGTH_UNKNOWN);
   httpServer.chunkedResponseModeStart(200, "text/html");
 
   httpServer.sendContent_P(HTTP_META);
+  httpServer.sendContent_P(HTTP_FAVICON);
   httpServer.sendContent_P(HTTP_STYLE);
   httpServer.sendContent_P(HTTP_LOGO);
 
@@ -317,7 +321,7 @@ void SuplaWebServer::sendContent(const String content) {
   httpServer.sendContent_P(HTTP_COPYRIGHT);
 
   // httpServer.send(200, "text/html", "");
-  for (int i = 0; i < fileSize; i++) {
+  /*for (int i = 0; i < fileSize; i++) {
     _buffer += content[i];
     bufferCounter++;
 
@@ -333,9 +337,72 @@ void SuplaWebServer::sendContent(const String content) {
     yield();
     bufferCounter = 0;
     _buffer = "";
-  }
+  }*/
+
+  httpServer.sendContent(content);
   httpServer.sendContent_P(HTTP_RBT);
   httpServer.chunkedResponseFinalize();
+}
+
+String webContentBuffer;
+
+void SuplaWebServer::sendContent() {
+  // httpServer.send(200, "text/html", "");
+  // const int bufferSize = 1000;
+  // String _buffer;
+  //_buffer.reserve(bufferSize);
+  // int bufferCounter = 0;
+
+  httpServer.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  httpServer.sendHeader("Pragma", "no-cache");
+  httpServer.sendHeader("Expires", "-1");
+  httpServer.setContentLength(CONTENT_LENGTH_UNKNOWN);
+  httpServer.chunkedResponseModeStart(200, "text/html");
+
+  httpServer.sendContent_P(HTTP_META);
+  httpServer.sendContent_P(HTTP_FAVICON);
+  httpServer.sendContent_P(HTTP_STYLE);
+  httpServer.sendContent_P(HTTP_LOGO);
+
+  String summary = FPSTR(HTTP_SUMMARY);
+
+  summary.replace("{h}", ConfigManager->get(KEY_HOST_NAME)->getValue());
+  summary.replace("{s}", ConfigESP->getLastStatusSupla());
+  summary.replace("{v}", Supla::Channel::reg_dev.SoftVer);
+  summary.replace("{g}", ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
+  summary.replace("{m}", ConfigESP->getMacAddress(true));
+  httpServer.sendContent(summary);
+  httpServer.sendContent_P(HTTP_COPYRIGHT);
+
+  // httpServer.send(200, "text/html", "");
+  /*for (int i = 0; i < fileSize; i++) {
+    _buffer += content[i];
+    bufferCounter++;
+
+    if (bufferCounter >= bufferSize) {
+      httpServer.sendContent(_buffer);
+      yield();
+      bufferCounter = 0;
+      _buffer = "";
+    }
+  }
+  if (bufferCounter > 0) {
+    httpServer.sendContent(_buffer);
+    yield();
+    bufferCounter = 0;
+    _buffer = "";
+  }*/
+
+  httpServer.sendContent(webContentBuffer);
+  httpServer.sendContent_P(HTTP_RBT);
+  httpServer.chunkedResponseFinalize();
+
+#ifdef DEBUG_MODE
+  Serial.printf_P(PSTR("Content size=%d\n"), webContentBuffer.length());
+  Serial.printf_P(PSTR("Sent INDEX...Free mem=%d\n"), ESP.getFreeHeap());
+  checkRAM();
+#endif
+  webContentBuffer = "";
 }
 
 void SuplaWebServer::handleNotFound() {
@@ -347,11 +414,16 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   uint8_t current_value, key;
   String input;
   input = _input;
+
   if (nr != 0) {
     input += nr;
   }
   else {
     nr = 1;
+  }
+
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") == 0) {
+    return true;
   }
 
   key = KEY_GPIO + WebServer->httpServer.arg(input).toInt();
@@ -381,6 +453,34 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     if (ConfigManager->get(key)->getElement(NR).toInt() > current_value) {
       ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
     }
+  }
+  return true;
+}
+
+bool SuplaWebServer::saveGpioMCP23017(const String& input, uint8_t function, uint8_t nr, const String& input_max) {
+  uint8_t key, address, addressInput, gpio, gpioInput, functionElementInput;
+  String _input = input + nr;
+
+  if (strcmp(WebServer->httpServer.arg(_input).c_str(), "") == 0) {
+    return true;
+  }
+
+  addressInput = WebServer->httpServer.arg(INPUT_ADRESS_MCP23017).toInt();
+  functionElementInput = ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(addressInput)).toInt();
+  gpioInput = WebServer->httpServer.arg(_input).toInt();
+
+  key = KEY_GPIO + gpioInput;
+  gpio = ConfigESP->getGpioMCP23017(nr, function);
+  address = ConfigESP->getAdressMCP23017(function);
+
+  if (functionElementInput == FUNCTION_OFF) {
+    ConfigESP->setGpioMCP23017(gpioInput, addressInput, nr, function, 1, 0);
+  }
+  else if (gpio == gpioInput && functionElementInput == function) {
+    ConfigESP->setGpioMCP23017(gpioInput, addressInput, nr, function, ConfigESP->getLevel(nr, function), ConfigESP->getMemory(nr, function));
+  }
+  else {
+    return false;
   }
   return true;
 }

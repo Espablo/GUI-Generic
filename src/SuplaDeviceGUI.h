@@ -28,6 +28,7 @@
 #include "SuplaConfigManager.h"
 #include "SuplaWebServer.h"
 #include "SuplaWebPageRelay.h"
+#include "SuplaWebPageSensor.h"
 
 #include "SuplaWebPageDownload.h"
 #include "SuplaWebPageUpload.h"
@@ -47,16 +48,15 @@
 #include <supla/sensor/DHT.h>
 #include <supla/sensor/HC_SR04.h>
 #include <supla/sensor/binary.h>
+
 #ifdef SUPLA_BME280
 #include <supla/sensor/BME280.h>
-#include "SuplaWebPageSensor.h"
 #endif
 #ifdef SUPLA_SI7021_SONOFF
 #include <supla/sensor/Si7021_sonoff.h>
 #endif
 #ifdef SUPLA_BME280
 #include <supla/sensor/BME280.h>
-#include "SuplaWebPageSensor.h"
 #endif
 #ifdef SUPLA_SHT3x
 #include <supla/sensor/SHT3x.h>
@@ -75,6 +75,8 @@
 #endif
 
 #include <supla/sensor/HJ101.h>
+
+#include <Wire.h>
 
 namespace Supla {
 namespace GUI {

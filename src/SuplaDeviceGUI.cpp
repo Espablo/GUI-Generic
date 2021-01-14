@@ -27,6 +27,7 @@ Supla::Eeprom eeprom(STORAGE_OFFSET);
 namespace Supla {
 namespace GUI {
 void begin() {
+
 #ifdef DEBUG_MODE
   new Supla::Sensor::EspFreeHeap();
 #endif
@@ -50,7 +51,6 @@ void begin() {
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
   ConfigManager->showAllValue();
-
   WebServer->begin();
 }
 

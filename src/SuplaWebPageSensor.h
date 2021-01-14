@@ -27,6 +27,7 @@
 #define INPUT_SHT3x                            "sht30"
 #define INPUT_SI7021                           "si7021"
 #define INPUT_OLED                             "oled"
+#define INPUT_MCP23017                         "mcp"
 #define INPUT_SI7021_SONOFF                    "si7021sonoff"
 #define INPUT_TRIG_GPIO                        "trig"
 #define INPUT_ECHO_GPIO                        "echo"
@@ -44,14 +45,15 @@
 #define INPUT_IMPULSE_COUNTER_CHANGE_VALUE     "iccv"
 #define INPUT_MAX_IMPULSE_COUNTER              "imic"
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021) || defined(SUPLA_MAX6675)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_MAX6675) || defined(SUPLA_MCP23017)
 enum _sensor
 {
   SENSOR_BME280,
   SENSOR_SHT3x,
   SENSOR_SI7021,
   SENSOR_MAX6675,
-  SENSOR_OLED
+  SENSOR_OLED,
+  SENSOR_MCP23017
 };
 #endif
 
@@ -78,20 +80,18 @@ class SuplaWebPageSensor {
   SuplaWebPageSensor();
   void createWebPageSensor();
 
-#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
-  void handle1Wire();
-  void handle1WireSave();
-#endif
-
 #ifdef SUPLA_DS18B20
   void handleSearchDS();
   void handleDSSave();
   void showDS18B20(String& content, bool readonly = false);
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
+  void handle1Wire();
+  void handle1WireSave();
   void handlei2c();
   void handlei2cSave();
+  String supla_webpage_i2c(int save);
 #endif
 
 #if defined(SUPLA_MAX6675)
@@ -114,10 +114,6 @@ class SuplaWebPageSensor {
 #ifdef SUPLA_DS18B20
   String supla_webpage_search(int save);
 #endif
-#endif
-
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
-  String supla_webpage_i2c(int save);
 #endif
 
 #if defined(SUPLA_MAX6675)

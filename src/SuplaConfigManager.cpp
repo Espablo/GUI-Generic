@@ -34,8 +34,10 @@ ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength) {
   strncpy(_key, key, size);
   _key[size - 1] = '\0';
 */
-  _key = key; 
+  _key = key;
   _maxLength = maxLength + 1;
+
+  _value = new char[_maxLength];
   setValue(value);
 }
 
@@ -82,8 +84,9 @@ int ConfigOption::getLength() {
   return _maxLength;
 }
 
-String ConfigOption::getElement(int index) {
+const String ConfigOption::getElement(int index) {
   String data = _value;
+  data.reserve(_maxLength);
   int found = 0;
   int strIndex[] = {0, -1};
   int maxIndex = data.length() - 1;
@@ -97,8 +100,9 @@ String ConfigOption::getElement(int index) {
   return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
-String ConfigOption::replaceElement(int index, int newvalue) {
+const String ConfigOption::replaceElement(int index, int newvalue) {
   String data = _value;
+  data.reserve(_maxLength);
   int lenght = SETTINGSCOUNT;
   String table;
   for (int i = 0; i <= lenght; i++) {
@@ -115,16 +119,8 @@ String ConfigOption::replaceElement(int index, int newvalue) {
 }
 
 void ConfigOption::setValue(const char *value) {
-  // size_t size = _maxLength + 1;
-  //_value = (char *)malloc(sizeof(char) * (size));
-
-  // if (value != NULL) {
-  //  memcpy(_value, value, size - 1);
-  // _value[size - 1] = 0;
-  //}
   if (value != NULL) {
     size_t size = getLength();
-    _value = new char[size];
     strncpy(_value, value, size);
     _value[size - 1] = '\0';
   }
@@ -162,13 +158,13 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
 
   uint8_t nr, key;
-  
+
   for (nr = 0; nr <= 17; nr++) {
     key = KEY_GPIO + nr;
-    this->addKey(key, "0,0,0,0,0,0", 16);
+    this->addKey(key, "0,0,0,0,0,0", 28);
   }
-  
-  this->addKey(KEY_ACTIVE_SENSOR, "0,0,0,0,0", 14);
+
+  this->addKey(KEY_ACTIVE_SENSOR, "0,0,0,0,0", 16);
   this->addKey(KEY_BOARD, "0", 2);
   this->addKey(KEY_CFG_MODE, "0", 2);
 
@@ -334,7 +330,8 @@ uint8_t SuplaConfigManager::save() {
     if (configFile) {
       uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
       for (i = 0; i < _optionCount; i++) {
-        Serial.println("Save key " + String(_options[i]->getKey()) + ": " + String(_options[i]->getValue()));
+        Serial.printf_P(PSTR("Save key=%d"), _options[i]->getKey());
+        Serial.printf_P(PSTR(" value=%s\n"), _options[i]->getValue());
         memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
         offset += _options[i]->getLength();
       }
@@ -355,7 +352,9 @@ uint8_t SuplaConfigManager::save() {
 
 void SuplaConfigManager::showAllValue() {
   for (int i = 0; i < _optionCount; i++) {
-    Serial.println("Key: " + String(_options[i]->getKey()) + " Value: " + String(_options[i]->getValue()));
+    // Serial.println("Key: " + String(_options[i]->getKey()) + " Value: " + String(_options[i]->getValue()));
+    Serial.printf_P(PSTR("Key=%d"), _options[i]->getKey());
+    Serial.printf_P(PSTR(" value=%s\n"), _options[i]->getValue());
   }
 }
 

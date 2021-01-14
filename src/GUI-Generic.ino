@@ -15,6 +15,8 @@
 */
 #include "SuplaDeviceGUI.h"
 
+#include <supla/control/MCP23017/supla_mcp23017.h>
+
 #define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 #define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
 DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
@@ -32,8 +34,8 @@ void setup() {
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
-  if (ConfigESP->getGpio(FUNCTION_RELAY) != OFF_GPIO && ConfigManager->get(KEY_MAX_RELAY)->getValueInt() > 0) {
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
+    if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
 #ifdef SUPLA_ROLLERSHUTTER
       if (rollershutters > 0) {
 #ifdef SUPLA_BUTTON
@@ -65,8 +67,8 @@ void setup() {
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-  if (ConfigESP->getGpio(FUNCTION_LIMIT_SWITCH) != OFF_GPIO && ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt() > 0) {
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
+    if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != OFF_GPIO) {
       new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), true);
     }
   }
@@ -78,16 +80,16 @@ void setup() {
 #endif
 
 #ifdef SUPLA_DHT11
-  if (ConfigESP->getGpio(FUNCTION_DHT11) != OFF_GPIO && ConfigManager->get(KEY_MAX_DHT11)->getValueInt() > 0) {
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
+    if (ConfigESP->getGpio(nr, FUNCTION_DHT11) != OFF_GPIO) {
       new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT11), DHT11);
     }
   }
 #endif
 
 #ifdef SUPLA_DHT22
-  if (ConfigESP->getGpio(FUNCTION_DHT22) != OFF_GPIO && ConfigManager->get(KEY_MAX_DHT22)->getValueInt() > 0) {
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
+    if (ConfigESP->getGpio(nr, FUNCTION_DHT22) != OFF_GPIO) {
       Supla::GUI::sensorDHT22.push_back(new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22));
     }
   }
@@ -112,7 +114,7 @@ void setup() {
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || \
-    defined(SUPLA_BH1750) || defined(SUPLA_MAX44009)
+    defined(SUPLA_BH1750) || defined(SUPLA_MAX44009) || defined(SUPLA_MCP23017)
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
 #ifdef SUPLA_BME280
@@ -157,6 +159,17 @@ void setup() {
       Supla::GUI::oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
     }
 #endif
+
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
+      if (!mcp1.begin(0))
+        Serial.println(F("MCP23017 1 not found!"));  // begin(uint8_t address)  "Pin 100 - 115"
+      if (!mcp2.begin(1))
+        Serial.println(F("MCP23017 2 not found!"));  // begin(uint8_t address)  "Pin 116 - 131"
+      if (!mcp3.begin(2))
+        Serial.println(F("MCP23017 3 not found!"));  // begin(uint8_t address)  "Pin 132 - 147"
+      if (!mcp4.begin(3))
+        Serial.println(F("MCP23017 4 not found!"));  // begin(uint8_t address)  "Pin 148 - 163"
+    }
   }
 #endif
 
@@ -170,7 +183,7 @@ void setup() {
 #ifdef SUPLA_IMPULSE_COUNTER
   if (ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() > 0) {
     for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
-      if (ConfigESP->getGpio(FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
+      if (ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
         Supla::GUI::addImpulseCounter(ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER), ConfigESP->getLevel(nr, FUNCTION_IMPULSE_COUNTER),
                                       ConfigESP->getMemory(nr, FUNCTION_IMPULSE_COUNTER),
                                       ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt());

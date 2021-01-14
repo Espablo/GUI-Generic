@@ -31,7 +31,7 @@ void SuplaWebPageSensor::createWebPageSensor() {
 #endif
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_MCP23017)
   path = PATH_START;
   path += PATH_I2C;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handlei2c, this));
@@ -80,9 +80,9 @@ void SuplaWebPageSensor::createWebPageSensor() {
   path += PATH_SAVE_HLW8012_CALIBRATE;
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleHLW8012CalibrateSave, this));
 #endif
-
 #endif
 }
+
 #ifdef SUPLA_DS18B20
 void SuplaWebPageSensor::handleSearchDS() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
@@ -273,8 +273,7 @@ void SuplaWebPageSensor::handle1WireSave() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String key, input;
-  uint8_t nr, current_value, last_value;
+  uint8_t nr, last_value;
 
 #ifdef SUPLA_DHT11
   last_value = ConfigManager->get(KEY_MAX_DHT11)->getValueInt();
@@ -333,9 +332,8 @@ void SuplaWebPageSensor::handle1WireSave() {
 }
 
 String SuplaWebPageSensor::supla_webpage_1wire(int save) {
-  uint8_t nr, suported, selected;
-  uint16_t max;
-  String page, key;
+  uint8_t nr, max;
+  String page;
 
   page += SuplaSaveResult(save);
   page += SuplaJavaScript(PATH_1WIRE);
@@ -392,7 +390,7 @@ String SuplaWebPageSensor::supla_webpage_1wire(int save) {
 }
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT30) || defined(SUPLA_SI7021)
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
 void SuplaWebPageSensor::handlei2c() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
@@ -408,9 +406,8 @@ void SuplaWebPageSensor::handlei2cSave() {
   }
 
   String input;
-  uint8_t key, nr, current_value, last_value;
+  uint8_t key;
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x)
   if (!WebServer->saveGPIO(INPUT_SDA_GPIO, FUNCTION_SDA)) {
     WebServer->sendContent(supla_webpage_i2c(6));
     return;
@@ -419,7 +416,6 @@ void SuplaWebPageSensor::handlei2cSave() {
     WebServer->sendContent(supla_webpage_i2c(6));
     return;
   }
-#endif
 
 #ifdef SUPLA_BME280
   key = KEY_ACTIVE_SENSOR;
@@ -459,6 +455,19 @@ void SuplaWebPageSensor::handlei2cSave() {
   }
 #endif
 
+#ifdef SUPLA_MCP23017
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_MCP23017;
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_MCP23017, WebServer->httpServer.arg(input).toInt());
+
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
+      ConfigESP->clearFunctionGpio(FUNCTION_RELAY);
+      ConfigESP->clearFunctionGpio(FUNCTION_BUTTON);
+    }
+  }
+#endif
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       WebServer->sendContent(supla_webpage_i2c(1));
@@ -471,23 +480,22 @@ void SuplaWebPageSensor::handlei2cSave() {
 }
 
 String SuplaWebPageSensor::supla_webpage_i2c(int save) {
-  uint8_t nr, suported, selected, size;
-  String page, key;
+  uint8_t selected;
+  String page = "";
   page += SuplaSaveResult(save);
   page += SuplaJavaScript(PATH_I2C);
 
   addForm(page, F("post"), PATH_SAVE_I2C);
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED)
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " i2c");
-  addListGPIOBox(page, INPUT_SDA_GPIO, "SDA", FUNCTION_SDA);
-  addListGPIOBox(page, INPUT_SCL_GPIO, "SCL", FUNCTION_SCL);
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + F(" i2c"));
+  addListGPIOBox(page, INPUT_SDA_GPIO, F("SDA"), FUNCTION_SDA);
+  addListGPIOBox(page, INPUT_SCL_GPIO, F("SCL"), FUNCTION_SCL);
   addFormHeaderEnd(page);
 
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
 #ifdef SUPLA_BME280
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt();
     addFormHeader(page);
-    addListBox(page, INPUT_BME280, "BME280 adres", BME280_P, 4, selected);
+    addListBox(page, INPUT_BME280, F("BME280 adres"), BME280_P, 4, selected);
     addNumberBox(page, INPUT_ALTITUDE_BME280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BME280, 1500);
     addFormHeaderEnd(page);
 #endif
@@ -495,25 +503,31 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
 #ifdef SUPLA_SHT3x
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT3x).toInt();
     addFormHeader(page);
-    addListBox(page, INPUT_SHT3x, "SHT3x", SHT3x_P, 4, selected);
+    addListBox(page, INPUT_SHT3x, F("SHT3x"), SHT3x_P, 4, selected);
     addFormHeaderEnd(page);
 #endif
 
 #ifdef SUPLA_SI7021
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt();
     addFormHeader(page);
-    addListBox(page, INPUT_SI7021, "SI7021", STATE_P, 2, selected);
+    addListBox(page, INPUT_SI7021, F("SI7021"), STATE_P, 2, selected);
     addFormHeaderEnd(page);
 #endif
 
 #ifdef SUPLA_OLED
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt();
     addFormHeader(page);
-    addListBox(page, INPUT_OLED, "OLED", OLED_P, 4, selected);
+    addListBox(page, INPUT_OLED, F("OLED"), OLED_P, 4, selected);
+    addFormHeaderEnd(page);
+#endif
+
+#ifdef SUPLA_MCP23017
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt();
+    addFormHeader(page);
+    addListBox(page, INPUT_MCP23017, F("MCP23017"), STATE_P, 2, selected);
     addFormHeaderEnd(page);
 #endif
   }
-#endif
 
   addButtonSubmit(page, S_SAVE);
   addFormEnd(page);
@@ -539,8 +553,8 @@ void SuplaWebPageSensor::handleSpiSave() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String key, input;
-  uint8_t nr, current_value, last_value;
+  String input;
+  uint8_t key;
 
 #if defined(SUPLA_MAX6675)
   if (!WebServer->saveGPIO(INPUT_CLK_GPIO, FUNCTION_CLK)) {
@@ -578,7 +592,7 @@ void SuplaWebPageSensor::handleSpiSave() {
 
 String SuplaWebPageSensor::supla_webpage_spi(int save) {
   uint8_t nr, suported, selected;
-  String page, key;
+  String page;
   page += SuplaSaveResult(save);
   page += SuplaJavaScript(PATH_SPI);
   page += F("<form method='post' action='");
@@ -626,7 +640,6 @@ void SuplaWebPageSensor::handleOtherSave() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String key, input;
   uint8_t nr, current_value, last_value;
 
 #ifdef SUPLA_HC_SR04
@@ -684,15 +697,16 @@ void SuplaWebPageSensor::handleOtherSave() {
 
 String SuplaWebPageSensor::supla_webpage_other(int save) {
   uint8_t nr, suported, selected;
-  String page, key;
+  String page = "";
+
   page += SuplaSaveResult(save);
   page += SuplaJavaScript(PATH_OTHER);
 
   addForm(page, F("post"), PATH_SAVE_OTHER);
 #ifdef SUPLA_HC_SR04
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " HC-SR04");
-  addListGPIOBox(page, INPUT_TRIG_GPIO, "TRIG", FUNCTION_TRIG);
-  addListGPIOBox(page, INPUT_ECHO_GPIO, "ECHO", FUNCTION_ECHO);
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + F(" HC-SR04"));
+  addListGPIOBox(page, INPUT_TRIG_GPIO, F("TRIG"), FUNCTION_TRIG);
+  addListGPIOBox(page, INPUT_ECHO_GPIO, F("ECHO"), FUNCTION_ECHO);
   addFormHeaderEnd(page);
 #endif
 
@@ -700,18 +714,18 @@ String SuplaWebPageSensor::supla_webpage_other(int save) {
   addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " " + S_IMPULSE_COUNTER);
   addNumberBox(page, INPUT_MAX_IMPULSE_COUNTER, S_QUANTITY, KEY_MAX_IMPULSE_COUNTER, ConfigESP->countFreeGpio(FUNCTION_IMPULSE_COUNTER));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
-    addListGPIOLinkBox(page, INPUT_IMPULSE_COUNTER_GPIO, "IC GPIO", FUNCTION_IMPULSE_COUNTER, PATH_IMPULSE_COUNTER_SET, nr);
+    addListGPIOLinkBox(page, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), FUNCTION_IMPULSE_COUNTER, PATH_IMPULSE_COUNTER_SET, nr);
   }
   addFormHeaderEnd(page);
 #endif
 
 #ifdef SUPLA_HLW8012
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " HLW8012");
-  addListGPIOBox(page, INPUT_CF, "CF", FUNCTION_CF);
-  addListGPIOBox(page, INPUT_CF1, "CF1", FUNCTION_CF1);
-  addListGPIOBox(page, INPUT_SEL, "SELi", FUNCTION_SEL);
+  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + F(" HLW8012"));
+  addListGPIOBox(page, INPUT_CF, F("CF"), FUNCTION_CF);
+  addListGPIOBox(page, INPUT_CF1, F("CF1"), FUNCTION_CF1);
+  addListGPIOBox(page, INPUT_SEL, F("SELi"), FUNCTION_SEL);
   if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
-    addLinkBox(page, "Kalibracja", PATH_HLW8012_CALIBRATE);
+    addLinkBox(page, F("Kalibracja"), PATH_HLW8012_CALIBRATE);
   }
   addFormHeaderEnd(page);
 #endif
@@ -774,7 +788,7 @@ void SuplaWebPageSensor::handleImpulseCounterSaveSet() {
 }
 
 String SuplaWebPageSensor::supla_impulse_counter_set(int save) {
-  String readUrl, nr, key;
+  String readUrl, nr;
   uint8_t place, selected, suported;
 
   String path = PATH_START;

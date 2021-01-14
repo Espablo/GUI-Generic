@@ -53,6 +53,25 @@
 #define INPUT_ROLLERSHUTTER "irsr"
 #define INPUT_BOARD         "board"
 
+
+extern String webContentBuffer;
+
+//https://www.esp8266.com/viewtopic.php?p=84249#p84249
+class MyWebServer : public ESP8266WebServer {
+  public:
+  virtual ~MyWebServer() {
+    if (this->_currentArgs) {
+      delete[] this->_currentArgs;
+      this->_currentArgs = nullptr;
+    }
+
+    if (this->_postArgs) {
+      delete[] this->_postArgs;
+      this->_postArgs = nullptr;
+    }
+  }
+};
+
 class SuplaWebServer : public Supla::Element {
  public:
   SuplaWebServer();
@@ -61,19 +80,20 @@ class SuplaWebServer : public Supla::Element {
   char www_username[MAX_MLOGIN];
   char www_password[MAX_MPASSWORD];
 
-  const String SuplaFavicon();
-  const String SuplaIconEdit();
+  const String& SuplaIconEdit();
   String supla_webpage_start(int save);
 
-  void sendContent(const String content);
+  void sendContent(const String& content);
+  void sendContent();
 
-  ESP8266WebServer httpServer = {80};
-  
+  MyWebServer httpServer;
+
 #ifdef SUPLA_OTA
-   ESP8266HTTPUpdateServer httpUpdater;
+  ESP8266HTTPUpdateServer httpUpdater;
 #endif
 
   bool saveGPIO(const String& input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
+  bool saveGpioMCP23017(const String& input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
 
  private:
   void iterateAlways();
@@ -92,5 +112,4 @@ class SuplaWebServer : public Supla::Element {
 
   void handleNotFound();
 };
-
 #endif  // SuplaWebServer_h

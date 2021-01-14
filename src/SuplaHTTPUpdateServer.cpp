@@ -133,7 +133,7 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
         else if (_authenticated && upload.status == UPLOAD_FILE_ABORTED) {
           Update.end();
           if (_serial_output)
-            Serial.println("Update was aborted");
+            Serial.println(F("Update was aborted"));
         }
         delay(0);
       });
