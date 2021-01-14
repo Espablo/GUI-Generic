@@ -14,33 +14,9 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _binary_h
-#define _binary_h
+#include <supla-common/log.h>
 
-#include <Arduino.h>
+void supla_log(int __pri, const char *__fmt, ...) {
+  return;
+}
 
-#include "../channel.h"
-#include "../element.h"
-
-namespace Supla {
-namespace Sensor {
-class Binary : public Element {
- public:
-  Binary(int pin, bool pullUp);
-  bool getValue();
-  void iterateAlways();
-  void onInit();
-  Channel *getChannel();
-
- protected:
-
-  Channel channel;
-  int pin;
-  bool pullUp;
-  unsigned long lastReadTime;
-};
-
-};  // namespace Sensor
-};  // namespace Supla
-
-#endif

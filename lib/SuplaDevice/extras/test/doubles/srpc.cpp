@@ -14,33 +14,16 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _binary_h
-#define _binary_h
+#include <supla-common/srpc.h>
 
-#include <Arduino.h>
+_supla_int_t SRPC_ICACHE_FLASH srpc_ds_async_channel_extendedvalue_changed(
+    void *_srpc, unsigned char channel_number,
+    TSuplaChannelExtendedValue *value) {
+  return 0;
+}
+         
+_supla_int_t SRPC_ICACHE_FLASH srpc_ds_async_channel_value_changed(
+    void *_srpc, unsigned char channel_number, char *value) {
+  return 0;
+}
 
-#include "../channel.h"
-#include "../element.h"
-
-namespace Supla {
-namespace Sensor {
-class Binary : public Element {
- public:
-  Binary(int pin, bool pullUp);
-  bool getValue();
-  void iterateAlways();
-  void onInit();
-  Channel *getChannel();
-
- protected:
-
-  Channel channel;
-  int pin;
-  bool pullUp;
-  unsigned long lastReadTime;
-};
-
-};  // namespace Sensor
-};  // namespace Supla
-
-#endif

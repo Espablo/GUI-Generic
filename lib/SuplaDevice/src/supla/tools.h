@@ -19,9 +19,11 @@
 #ifndef _tools_H_
 #define _tools_H_
 
+#include <Arduino.h>
 #include "supla-common/IEEE754tools.h"
 
 void float2DoublePacked(float number, uint8_t *bar, int byteOrder = LSBFIRST);
+float doublePacked2float(uint8_t *bar);
 
 
 #endif

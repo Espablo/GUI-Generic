@@ -14,33 +14,13 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _binary_h
-#define _binary_h
+#include <gtest/gtest.h>
 
-#include <Arduino.h>
+#include <supla/io.h>
 
-#include "../channel.h"
-#include "../element.h"
 
-namespace Supla {
-namespace Sensor {
-class Binary : public Element {
- public:
-  Binary(int pin, bool pullUp);
-  bool getValue();
-  void iterateAlways();
-  void onInit();
-  Channel *getChannel();
+TEST(IoTests, DefaultBehavior) {
+  EXPECT_TRUE(true);
 
- protected:
+}
 
-  Channel channel;
-  int pin;
-  bool pullUp;
-  unsigned long lastReadTime;
-};
-
-};  // namespace Sensor
-};  // namespace Supla
-
-#endif

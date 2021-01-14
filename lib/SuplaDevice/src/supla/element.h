@@ -76,11 +76,12 @@ class Element {
   virtual int handleCalcfgFromServer(TSD_DeviceCalCfgRequest *request);
 
   int getChannelNumber();
+  virtual Channel *getChannel();
+  virtual Channel *getSecondaryChannel();
 
   Element &disableChannelState();
 
  protected:
-  virtual Channel *getChannel();
   static Element *firstPtr;
   Element *nextPtr;
 };

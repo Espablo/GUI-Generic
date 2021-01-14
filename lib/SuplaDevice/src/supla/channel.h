@@ -26,14 +26,11 @@ namespace Supla {
 class Channel {
  public:
   Channel();
-
-  static Channel *begin();
-  static Channel *last();
-  static int size();
+  ~Channel();
 
   void setNewValue(double dbl);
   void setNewValue(double temp, double humi);
-  void setNewValue(int value);
+  void setNewValue(_supla_int_t value);
   void setNewValue(bool value);
   void setNewValue(TElectricityMeter_ExtendedValue_V2 &emValue);
   void setNewValue(uint8_t red,
@@ -43,6 +40,18 @@ class Channel {
                    uint8_t brightness);
   void setNewValue(_supla_int64_t value);
   bool setNewValue(char *newValue);
+
+  double getValueDouble();
+  double getValueDoubleFirst();
+  double getValueDoubleSecond();
+  _supla_int_t getValueInt32();
+  _supla_int64_t getValueInt64();
+  bool getValueBool();
+  uint8_t getValueRed();
+  uint8_t getValueGreen();
+  uint8_t getValueBlue();
+  uint8_t getValueColorBrightness();
+  uint8_t getValueBrightness();
 
   virtual bool isExtended();
   bool isUpdateReady();
@@ -57,8 +66,6 @@ class Channel {
   void clearUpdateReady();
   void sendUpdate(void *srpc);
   virtual TSuplaChannelExtendedValue *getExtValue();
-  static void clearAllUpdateReady();
-  Channel *next();
 
   static unsigned long lastCommunicationTimeMs;
   static TDS_SuplaRegisterDevice_E reg_dev;
@@ -69,8 +76,6 @@ class Channel {
   bool valueChanged;
   int channelNumber;
 
-  Channel *nextPtr;
-  static Channel *firstPtr;
 };
 
 };  // namespace Supla
