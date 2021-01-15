@@ -2,7 +2,9 @@
 #include "SuplaDeviceGUI.h"
 
 #ifdef SUPLA_OLED
+
 uint8_t* framesCountSensor;
+uint8_t* chanelSensor;
 
 String getTempString(double temperature) {
   if (temperature == -275) {
@@ -49,7 +51,7 @@ int32_t readRssi(void) {
   return (2 * (rssi + 100));
 }
 
-void displaySignal(OLEDDisplay* display) {
+void displayUiSignal(OLEDDisplay* display) {
   int x = display->getWidth() - 17;
   int y = 0;
   int value = readRssi();
@@ -84,7 +86,7 @@ void displaySignal(OLEDDisplay* display) {
   }
 }
 
-void displayRelayState(OLEDDisplay* display) {
+void displayUiRelayState(OLEDDisplay* display) {
   int y = 0;
   int x = 0;
 
@@ -108,18 +110,18 @@ void displayRelayState(OLEDDisplay* display) {
 }
 
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state) {
-  displaySignal(display);
+  displayUiSignal(display);
   if (Supla::GUI::relay.size()) {
-    displayRelayState(display);
+    displayUiRelayState(display);
   }
 }
 
-void displaySuplaStatus(OLEDDisplay* display) {
+void displayUiSuplaStatus(OLEDDisplay* display) {
   int x = 0;
   int y = display->getHeight() / 3;
   display->clear();
 
-  displaySignal(display);
+  displayUiSignal(display);
 
   display->setFont(ArialMT_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
@@ -140,14 +142,14 @@ void displayConfigMode(OLEDDisplay* display) {
   display->display();
 }
 
-void displayBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
   // display->drawXbm(10, 17, supla_logo_width, supla_logo_height, supla_logo_bits);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setFont(ArialMT_Plain_16);
   display->drawString(10, display->getHeight() / 2, F("SUPLA"));
 }
 
-void displayTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name) {
+void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name) {
   uint8_t temp_width, temp_height;
 
   int drawHeightIcon = display->getHeight() / 2 - 10;
@@ -177,7 +179,7 @@ void displayTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int
   display->drawString(x + temp_width + (getTempString(temp).length() * 12), y + drawStringIcon, "ºC");
 }
 
-void displaHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity) {
+void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity) {
   uint8_t humidity_width, humidity_height;
 
   int drawHeightIcon = display->getHeight() / 2 - 10;
@@ -202,7 +204,7 @@ void displaHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, 
   display->drawString(x + humidity_width + (getHumidityString(humidity).length() * 12), y + drawStringIcon, "%");
 }
 
-void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure) {
+void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure) {
   uint8_t pressure_width, pressure_height;
 
   int drawHeightIcon = display->getHeight() / 2 - 10;
@@ -227,41 +229,58 @@ void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x,
   display->drawString(x + pressure_width + (getPressureString(pressure).length() * 14), y + drawStringIcon, "hPa");
 }
 
-void displayDs18b20(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  displayTemp(display, state, x, y, Supla::GUI::sensorDS[getFramesCountSensor(state)]->getValue(),
-              String(ConfigManager->get(KEY_DS_NAME + getFramesCountSensor(state))->getValue()));
+void displayTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      if (channel->getChannelNumber() == chanelSensor[state->currentFrame]) {
+        double lastTemperature = channel->getValueDouble();
+
+        if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() >= state->currentFrame) {
+          displayUiTemperature(display, state, x, y, lastTemperature, ConfigManager->get(KEY_DS_NAME + state->currentFrame)->getValue());
+        }
+        else {
+          displayUiTemperature(display, state, x, y, lastTemperature);
+        }
+      }
+    }
+  }
 }
 
-void displayBme280Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  displayTemp(display, state, x, y, Supla::GUI::sensorBme280[getFramesCountSensor(state)]->getTemp());
+void displayDoubleTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      if (channel->getChannelNumber() == chanelSensor[state->currentFrame]) {
+        double lastTemperature = channel->getValueDoubleFirst();
+        displayUiTemperature(display, state, x, y, lastTemperature);
+      }
+    }
+  }
 }
 
-void displayBme280Humidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  displaHumidity(display, state, x, y, Supla::GUI::sensorBme280[getFramesCountSensor(state)]->getHumi());
+void displayDoubleHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      if (channel->getChannelNumber() == chanelSensor[state->currentFrame]) {
+        double lastHumidit = channel->getValueDoubleSecond();
+        displaUiHumidity(display, state, x, y, lastHumidit);
+      }
+    }
+  }
 }
 
-void displayBme280Pressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  displayPressure(display, state, x, y, Supla::GUI::sensorBme280[getFramesCountSensor(state)]->getPressure());
-}
-
-void displaySi7021SonoffTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  displayTemp(display, state, x, y, Supla::GUI::sensorSi7021Sonoff[getFramesCountSensor(state)]->getTemp());
-}
-
-void displaySi7021SonoffHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  displaHumidity(display, state, x, y, Supla::GUI::sensorSi7021Sonoff[getFramesCountSensor(state)]->getHumi());
-}
-
-void displayDHT22Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  displayTemp(display, state, x, y, Supla::GUI::sensorDHT22[getFramesCountSensor(state)]->getTemp());
-}
-
-void displayDHT22Humidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  displaHumidity(display, state, x, y, Supla::GUI::sensorDHT22[getFramesCountSensor(state)]->getHumi());
-}
-
-void displayMAX6675Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  displayTemp(display, state, x, y, Supla::GUI::sensorMAX6675_K[getFramesCountSensor(state)]->getValue());
+void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getSecondaryChannel()) {
+      auto channel = element->getSecondaryChannel();
+      if (channel->getChannelNumber() == chanelSensor[state->currentFrame]) {
+        double lastPressure = channel->getValueDouble();
+        displayUiPressure(display, state, x, y, lastPressure);
+      }
+    }
+  }
 }
 
 SuplaOled::SuplaOled() {
@@ -281,60 +300,43 @@ SuplaOled::SuplaOled() {
     ui = new OLEDDisplayUi(display);
 
     overlays[0] = {msOverlay};
-
-    int maxFrame = Supla::GUI::sensorDS.size() + (Supla::GUI::sensorBme280.size() * 3) + Supla::GUI::sensorSi7021Sonoff.size() +
-                   (Supla::GUI::sensorDHT22.size() * 2) + Supla::GUI::sensorMAX6675_K.size();
-
-    if (maxFrame == 0)
-      maxFrame = 1;
+    int maxFrame = getMaxFrame();
 
     frames = (FrameCallback*)malloc(sizeof(FrameCallback) * maxFrame);
-    framesCountSensor = (uint8_t*)malloc(sizeof(uint8_t) * maxFrame);
+    chanelSensor = (uint8_t*)malloc(sizeof(uint8_t) * maxFrame);
 
-    for (int i = 0; i < Supla::GUI::sensorDS.size(); i++) {
-      frames[frameCount] = {displayDs18b20};
-      framesCountSensor[frameCount] = i;
-      frameCount += 1;
-    }
+    for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+      if (element->getChannel()) {
+        auto channel = element->getChannel();
+        Serial.println(channel->getChannelType());
 
-    for (int i = 0; i < Supla::GUI::sensorBme280.size(); i++) {
-      frames[frameCount] = {displayBme280Temp};
-      framesCountSensor[frameCount] = i;
-      frameCount += 1;
-      frames[frameCount] = {displayBme280Humidity};
-      framesCountSensor[frameCount] = i;
-      frameCount += 1;
-      frames[frameCount] = {displayBme280Pressure};
-      framesCountSensor[frameCount] = i;
-      frameCount += 1;
-    }
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
+          frames[frameCount] = {displayTemperature};
+          chanelSensor[frameCount] = channel->getChannelNumber();
+          frameCount += 1;
+        }
 
-    for (int i = 0; i < Supla::GUI::sensorSi7021Sonoff.size(); i++) {
-      frames[frameCount] = {displaySi7021SonoffTemp};
-      framesCountSensor[frameCount] = i;
-      frameCount += 1;
-      frames[frameCount] = {displaySi7021SonoffHumidity};
-      framesCountSensor[frameCount] = i;
-      frameCount += 1;
-    }
-
-    for (int i = 0; i < Supla::GUI::sensorDHT22.size(); i++) {
-      frames[frameCount] = {displayDHT22Temp};
-      framesCountSensor[frameCount] = i;
-      frameCount += 1;
-      frames[frameCount] = {displayDHT22Humidity};
-      framesCountSensor[frameCount] = i;
-      frameCount += 1;
-    }
-
-    for (int i = 0; i < Supla::GUI::sensorMAX6675_K.size(); i++) {
-      frames[frameCount] = {displayMAX6675Temp};
-      framesCountSensor[frameCount] = i;
-      frameCount += 1;
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
+          frames[frameCount] = {displayDoubleTemperature};
+          chanelSensor[frameCount] = channel->getChannelNumber();
+          frameCount += 1;
+          frames[frameCount] = {displayDoubleHumidity};
+          chanelSensor[frameCount] = channel->getChannelNumber();
+          frameCount += 1;
+        }
+      }
+      if (element->getSecondaryChannel()) {
+        auto channel = element->getSecondaryChannel();
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
+          frames[frameCount] = {displayPressure};
+          chanelSensor[frameCount] = channel->getChannelNumber();
+          frameCount += 1;
+        }
+      }
     }
 
     if (frameCount == 0) {
-      frames[frameCount] = {displayBlank};
+      frames[frameCount] = {displayUiBlank};
       frameCount += 1;
     }
 
@@ -359,7 +361,7 @@ SuplaOled::SuplaOled() {
 void SuplaOled::iterateAlways() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     if (ConfigESP->supla_status.status != STATUS_REGISTERED_AND_READY) {
-      displaySuplaStatus(display);
+      displayUiSuplaStatus(display);
       return;
     }
 
@@ -384,7 +386,7 @@ void SuplaOled::iterateAlways() {
 void SuplaOled::addButtonOled(int pin) {
   if (pin != OFF_GPIO) {
     Supla::Control::Button* button = new Supla::Control::Button(pin, true, true);
-    button->addAction(TURN_ON_OLED, Supla::GUI::oled, Supla::ON_PRESS);
+    button->addAction(TURN_ON_OLED, this, Supla::ON_PRESS);
   }
 }
 
@@ -394,5 +396,35 @@ void SuplaOled::runAction(int event, int action) {
     timeLastChangeOled = millis();
     oledON = true;
   }
+}
+
+int SuplaOled::getMaxFrame() {
+  int maxFrame = 0;
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      Serial.println(channel->getChannelType());
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
+        maxFrame += 1;
+      }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
+        maxFrame += 2;
+      }
+    }
+
+    if (element->getSecondaryChannel()) {
+      auto channel = element->getSecondaryChannel();
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
+        maxFrame += 1;
+      }
+    }
+  }
+
+  if (maxFrame == 0)
+    maxFrame = 1;
+
+  return maxFrame;
 }
 #endif

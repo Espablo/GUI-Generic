@@ -29,24 +29,22 @@ String getHumidityString(double humidity);
 String getPressureString(double pressure);
 uint8_t getFramesCountSensor(OLEDDisplayUiState* state);
 int32_t readRssi(void);
-void displaySignal(OLEDDisplay* display);
-void displayRelayState(OLEDDisplay* display);
+
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state);
-void displaySuplaStatus(OLEDDisplay* display);
-void displayConfigMode(OLEDDisplay* display);
-void displayBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displayTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name = "\n");
-void displaHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity);
-void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure);
-void displayDs18b20(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displayBme280Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displayBme280Humidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displayBme280Pressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displaySi7021SonoffTemp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displaySi7021SonoffHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displayDHT22Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displayDHT22Humidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displayMAX6675Temp(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+
+void displayUiSignal(OLEDDisplay* display);
+void displayUiRelayState(OLEDDisplay* display);
+void displayUiSuplaStatus(OLEDDisplay* display);
+void displayUiConfigMode(OLEDDisplay* display);
+void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name = "\n");
+void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity);
+void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure);
+
+void displayTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayDoubleTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayDoubleHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
+void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 
 class SuplaOled : public Supla::Triggerable, public Supla::Element {
  public:
@@ -56,6 +54,7 @@ class SuplaOled : public Supla::Triggerable, public Supla::Element {
  private:
   void iterateAlways();
   void runAction(int event, int action);
+  int getMaxFrame();
 
   OLEDDisplay* display;
   OLEDDisplayUi* ui;

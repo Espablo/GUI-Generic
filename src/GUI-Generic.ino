@@ -90,7 +90,7 @@ void setup() {
 #ifdef SUPLA_DHT22
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_DHT22) != OFF_GPIO) {
-      Supla::GUI::sensorDHT22.push_back(new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22));
+      new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22);
     }
   }
 #endif
@@ -103,7 +103,7 @@ void setup() {
 
 #ifdef SUPLA_SI7021_SONOFF
   if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != OFF_GPIO) {
-    Supla::GUI::sensorSi7021Sonoff.push_back(new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF)));
+    new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
   }
 #endif
 
@@ -121,14 +121,14 @@ void setup() {
 
     switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt()) {
       case BME280_ADDRESS_0X76:
-        Supla::GUI::sensorBme280.push_back(new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt()));
+        new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
         break;
       case BME280_ADDRESS_0X77:
-        Supla::GUI::sensorBme280.push_back(new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt()));
+        new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
         break;
       case BME280_ADDRESS_0X76_AND_0X77:
-        Supla::GUI::sensorBme280.push_back(new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt()));
-        Supla::GUI::sensorBme280.push_back(new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt()));
+        new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
         break;
     }
 #endif
@@ -155,8 +155,8 @@ void setup() {
 #endif
 #ifdef SUPLA_OLED
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
-      Supla::GUI::oled = new SuplaOled();
-      Supla::GUI::oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
+      SuplaOled *oled = new SuplaOled();
+      oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
     }
 #endif
 
@@ -175,8 +175,7 @@ void setup() {
 
 #ifdef SUPLA_MAX6675
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
-    Supla::GUI::sensorMAX6675_K.push_back(
-        new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0)));
+    new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
   }
 #endif
 

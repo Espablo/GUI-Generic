@@ -114,26 +114,6 @@ extern std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
 void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay);
 #endif
 
-#ifdef SUPLA_BME280
-extern std::vector<Supla::Sensor::BME280 *> sensorBme280;
-#endif
-
-#ifdef SUPLA_SI7021_SONOFF
-extern std::vector<Supla::Sensor::Si7021Sonoff *> sensorSi7021Sonoff;
-#endif
-
-#ifdef SUPLA_DHT22
-extern std::vector<Supla::Sensor::DHT *> sensorDHT22;
-#endif
-
-#ifdef SUPLA_MAX6675
-extern std::vector<Supla::Sensor::MAX6675_K *> sensorMAX6675_K;
-#endif
-
-#ifdef SUPLA_OLED
-extern SuplaOled *oled;
-#endif
-
 #ifdef SUPLA_HLW8012
 extern Supla::Sensor::HJ101 *counterHLW8012;
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
