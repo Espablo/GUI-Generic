@@ -12,6 +12,17 @@ void addFormHeaderEnd(String& html);
 void addTextBox(String& html,
                 const String& input_id,
                 const String& name,
+                const String& value,
+                const String& placeholder,
+                int minlength,
+                int maxlength,
+                bool required,
+                bool readonly = false,
+                bool password = false);
+
+void addTextBox(String& html,
+                const String& input_id,
+                const String& name,
                 uint8_t value_key,
                 const String& placeholder,
                 int minlength,
@@ -19,8 +30,13 @@ void addTextBox(String& html,
                 bool required,
                 bool readonly = false,
                 bool password = false);
+
 void addTextBox(
     String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required, bool readonly = false);
+
+void addTextBox(
+    String& html, const String& input_id, const String& name, const String& value, int minlength, int maxlength, bool required,  bool readonly = false);
+
 void addTextBoxPassword(String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required);
 
 void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, uint16_t max);

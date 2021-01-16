@@ -10,4 +10,9 @@
 #include INCLUDE_FILE(UI_LANGUAGE)
 #endif
 
+#include "SuplaDeviceGUI.h"
+
+uint8_t *HexToBytes(String _value);
+int getNumberChannels();
+
 #endif  // GUI_GENERIC_COMMON_H

@@ -27,8 +27,7 @@ enum _OLED
 String getTempString(double temperature);
 String getHumidityString(double humidity);
 String getPressureString(double pressure);
-uint8_t getFramesCountSensor(OLEDDisplayUiState* state);
-int32_t readRssi(void);
+int32_t getQuality();
 
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state);
 
@@ -38,8 +37,8 @@ void displayUiSuplaStatus(OLEDDisplay* display);
 void displayUiConfigMode(OLEDDisplay* display);
 void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name = "\n");
-void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity);
-void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure);
+void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity, const String& name = "\n");
+void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure, const String& name = "\n");
 
 void displayTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 void displayDoubleTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
@@ -54,7 +53,6 @@ class SuplaOled : public Supla::Triggerable, public Supla::Element {
  private:
   void iterateAlways();
   void runAction(int event, int action);
-  int getMaxFrame();
 
   OLEDDisplay* display;
   OLEDDisplayUi* ui;
@@ -63,8 +61,6 @@ class SuplaOled : public Supla::Triggerable, public Supla::Element {
   int frameCount = 0;
   OverlayCallback overlays[1];
   int overlaysCount = 1;
-
-  int count = 0;
 
   unsigned long timeLastChangeOled = millis();
   bool oledON = true;

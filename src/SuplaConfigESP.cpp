@@ -624,12 +624,12 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
       ConfigManager->set(key, "0,0,0,0,0");
     }
 
-    for (nr = 0; nr <= MAX_DS18B20; nr++) {
+   /* for (nr = 0; nr <= MAX_DS18B20; nr++) {
       key = KEY_DS + nr;
       ConfigManager->set(key, "");
       key = KEY_DS_NAME + nr;
       ConfigManager->set(key, "");
-    }
+    }*/
 
     ConfigManager->save();
 

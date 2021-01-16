@@ -98,18 +98,18 @@ void SuplaWebPageSensor::handleDSSave() {
       return WebServer->httpServer.requestAuthentication();
   }
   for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-    uint8_t ds_key = KEY_DS + i;
-    uint8_t ds_name_key = KEY_DS_NAME + i;
+    String dsAddr = INPUT_DS18B20_ADDR;
+    String dsName = INPUT_DS18B20_NAME;
+    dsAddr += i;
+    dsName += i;
 
-    String ds = F("dschlid");
-    String ds_name = F("dsnameid");
-    ds += i;
-    ds_name += i;
+    ConfigManager->setElement(KEY_ADDR_DS18B20, i, WebServer->httpServer.arg(dsAddr).c_str());
 
-    ConfigManager->set(ds_key, WebServer->httpServer.arg(ds).c_str());
-    ConfigManager->set(ds_name_key, WebServer->httpServer.arg(ds_name).c_str());
+    if (strcmp(WebServer->httpServer.arg(dsName).c_str(), "") != 0) {
+      ConfigManager->setElement(KEY_NAME_SENSOR, i, WebServer->httpServer.arg(dsName).c_str());
+    }
 
-    Supla::GUI::sensorDS[i]->setDeviceAddress(ConfigManager->get(ds_key)->getValueBin(MAX_DS18B20_ADDRESS));
+    Supla::GUI::sensorDS[i]->setDeviceAddress(HexToBytes(ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i)));
   }
 
   switch (ConfigManager->save()) {
@@ -139,7 +139,7 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   content += SuplaSaveResult(save);
   content += SuplaJavaScript(PATH_MULTI_DS);
   content += F("<center>");
-  if (ConfigESP->getGpio(FUNCTION_DS18B20) < OFF_GPIO || !Supla::GUI::sensorDS.empty()) {
+  if (ConfigESP->getGpio(FUNCTION_DS18B20) < OFF_GPIO) {
     content += F("<form method='post' action='");
     content += PATH_SAVE_MULTI_DS;
     content += F("'>");
@@ -174,7 +174,8 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
               address[7]);
       supla_log(LOG_DEBUG, "Index %d - address %s", i, strAddr);
 
-      content += F("<i><input name='dschlid");
+      content += F("<i><input name='");
+      content += INPUT_DS18B20_ADDR;
       content += count;
 
       content += F("' value='");
@@ -216,14 +217,12 @@ void SuplaWebPageSensor::showDS18B20(String &content, bool readonly) {
     content += S_TEMPERATURE;
     content += F("</h3>");
     for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
-      uint8_t ds_key = KEY_DS + i;
-      uint8_t ds_name_key = KEY_DS_NAME + i;
-
       double temp = Supla::GUI::sensorDS[i]->getValue();
-      content += F("<i style='border-bottom:none !important;'><input name='dsnameid");
+      content += F("<i style='border-bottom:none !important;'><input name='");
+      content += INPUT_DS18B20_NAME;
       content += i;
       content += F("' value='");
-      content += String(ConfigManager->get(ds_name_key)->getValue());
+      content += String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
       content += F("' maxlength=");
       content += MAX_DS18B20_NAME;
       if (readonly) {
@@ -233,10 +232,11 @@ void SuplaWebPageSensor::showDS18B20(String &content, bool readonly) {
       content += S_NAME;
       content += i + 1;
       content += F("</label></i>");
-      content += F("<i><input name='dschlid");
+      content += F("<i><input name='");
+      content += INPUT_DS18B20_ADDR;
       content += i;
       content += F("' value='");
-      content += String(ConfigManager->get(ds_key)->getValue());
+      content += String(ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i));
       content += F("' maxlength=");
       content += MAX_DS18B20_ADDRESS_HEX;
       if (readonly) {
@@ -453,6 +453,14 @@ void SuplaWebPageSensor::handlei2cSave() {
   if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_OLED, WebServer->httpServer.arg(input).toInt());
   }
+
+  for (uint8_t i = 0; i < getNumberChannels(); i++) {
+    input = INPUT_DS18B20_NAME;
+    input += i;
+    if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
+      ConfigManager->setElement(KEY_NAME_SENSOR, i, WebServer->httpServer.arg(input).c_str());
+    }
+  }
 #endif
 
 #ifdef SUPLA_MCP23017
@@ -518,6 +526,18 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt();
     addFormHeader(page);
     addListBox(page, INPUT_OLED, F("OLED"), OLED_P, 4, selected);
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
+      String name, sensorName, input;
+
+      for (uint8_t i = 0; i < getNumberChannels(); i++) {
+        sensorName = String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
+        input = INPUT_DS18B20_NAME;
+        input += i;
+        name = F("Ekran ");
+        name += i + 1;
+        addTextBox(page, input, name, sensorName, 0, MAX_DS18B20_NAME, false);
+      }
+    }
     addFormHeaderEnd(page);
 #endif
 

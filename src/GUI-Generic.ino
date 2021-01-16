@@ -79,6 +79,12 @@ void setup() {
                            ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(FUNCTION_CFG_LED));
 #endif
 
+#ifdef SUPLA_DS18B20
+  if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
+    Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(FUNCTION_DS18B20));
+  }
+#endif
+
 #ifdef SUPLA_DHT11
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_DHT11) != OFF_GPIO) {
@@ -95,12 +101,6 @@ void setup() {
   }
 #endif
 
-#ifdef SUPLA_DS18B20
-  if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
-    Supla::GUI::addDS18B20MultiThermometer(ConfigESP->getGpio(FUNCTION_DS18B20));
-  }
-#endif
-
 #ifdef SUPLA_SI7021_SONOFF
   if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != OFF_GPIO) {
     new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
@@ -114,11 +114,11 @@ void setup() {
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || \
-    defined(SUPLA_BH1750) || defined(SUPLA_MAX44009) || defined(SUPLA_MCP23017)
+    defined(SUPLA_BH1750) || defined(SUPLA_MAX44009) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
-#ifdef SUPLA_BME280
 
+#ifdef SUPLA_BME280
     switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt()) {
       case BME280_ADDRESS_0X76:
         new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
@@ -153,6 +153,7 @@ void setup() {
       new Supla::Sensor::Si7021();
     }
 #endif
+
 #ifdef SUPLA_OLED
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
       SuplaOled *oled = new SuplaOled();

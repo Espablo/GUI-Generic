@@ -27,7 +27,6 @@ Supla::Eeprom eeprom(STORAGE_OFFSET);
 namespace Supla {
 namespace GUI {
 void begin() {
-
 #ifdef DEBUG_MODE
   new Supla::Sensor::EspFreeHeap();
 #endif
@@ -89,9 +88,8 @@ void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
 void addDS18B20MultiThermometer(int pinNumber) {
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
     for (int i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); ++i) {
-      uint8_t ds_key = KEY_DS + i;
-      sensorDS.push_back(new DS18B20(pinNumber, ConfigManager->get(ds_key)->getValueBin(MAX_DS18B20_ADDRESS)));
-      supla_log(LOG_DEBUG, "Index %d - address %s", i, ConfigManager->get(ds_key)->getValue());
+      sensorDS.push_back(new DS18B20(pinNumber, HexToBytes(ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i))));
+      supla_log(LOG_DEBUG, "Index %d - address %s", i, ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i).c_str());
     }
   }
   else {

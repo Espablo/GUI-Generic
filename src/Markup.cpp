@@ -25,7 +25,7 @@ void addFormHeaderEnd(String& html) {
 void addTextBox(String& html,
                 const String& input_id,
                 const String& name,
-                uint8_t value_key,
+                const String& value,
                 const String& placeholder,
                 int minlength,
                 int maxlength,
@@ -46,7 +46,6 @@ void addTextBox(String& html,
   }
 
   html += F("' value='");
-  String value = String(ConfigManager->get(value_key)->getValue());
   if (value != placeholder) {
     html += value;
   }
@@ -73,9 +72,28 @@ void addTextBox(String& html,
   html += F("</label></i> ");
 }
 
+void addTextBox(String& html,
+                const String& input_id,
+                const String& name,
+                uint8_t value_key,
+                const String& placeholder,
+                int minlength,
+                int maxlength,
+                bool required,
+                bool readonly,
+                bool password) {
+  String value = String(ConfigManager->get(value_key)->getValue());
+  return addTextBox(html, input_id, name, value, "", minlength, maxlength, required, readonly, password);
+}
+
 void addTextBox(
     String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required, bool readonly) {
   return addTextBox(html, input_id, name, value_key, "", minlength, maxlength, required, readonly, false);
+}
+
+void addTextBox(
+    String& html, const String& input_id, const String& name, const String& value, int minlength, int maxlength, bool required, bool readonly) {
+  return addTextBox(html, input_id, name, value, "", minlength, maxlength, required, readonly, false);
 }
 
 void addTextBoxPassword(String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required) {

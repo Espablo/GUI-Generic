@@ -53,15 +53,6 @@ int ConfigOption::getValueInt() {
   return atoi(_value);
 }
 
-uint8_t *ConfigOption::getValueBin(size_t size) {
-  uint8_t *buffer = (uint8_t *)malloc(sizeof(uint8_t) * (size));
-
-  for (int i = 0; i < size; i++) {
-    sscanf(&_value[i * 2], "%2hhx", &buffer[i]);
-  }
-  return buffer;
-}
-
 const char *ConfigOption::getValueHex(size_t size) {
   char *buffer = (char *)malloc(sizeof(char) * (size * 2));
   int a, b;
@@ -103,6 +94,22 @@ const String ConfigOption::getElement(int index) {
 const String ConfigOption::replaceElement(int index, int newvalue) {
   String data = _value;
   data.reserve(_maxLength);
+  int lenght = SETTINGSCOUNT;
+  String table;
+  for (int i = 0; i <= lenght; i++) {
+    if (i == index) {
+      table += newvalue;
+    }
+    else {
+      table += this->getElement(i);
+    }
+    if (i < lenght - 1)
+      table += SEPARATOR;
+  }
+  return table;
+}
+
+const String ConfigOption::replaceElement(int index, const char *newvalue) {
   int lenght = SETTINGSCOUNT;
   String table;
   for (int i = 0; i <= lenght; i++) {
@@ -161,19 +168,14 @@ SuplaConfigManager::SuplaConfigManager() {
 
   for (nr = 0; nr <= 17; nr++) {
     key = KEY_GPIO + nr;
-    this->addKey(key, "0,0,0,0,0,0", 28);
+    this->addKey(key, "0,0,0,0,0,0", SETTINGSCOUNT * 2);
   }
 
   this->addKey(KEY_ACTIVE_SENSOR, "0,0,0,0,0", 16);
   this->addKey(KEY_BOARD, "0", 2);
   this->addKey(KEY_CFG_MODE, "0", 2);
-
-  for (nr = 0; nr <= MAX_DS18B20; nr++) {
-    key = KEY_DS + nr;
-    this->addKey(key, MAX_DS18B20_ADDRESS_HEX);
-    key = KEY_DS_NAME + nr;
-    this->addKey(key, MAX_DS18B20_NAME);
-  }
+  this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20);
+  this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20);
 
   this->load();
   //  switch (this->load()) {
@@ -384,6 +386,17 @@ bool SuplaConfigManager::set(uint8_t key, const char *value) {
 }
 
 bool SuplaConfigManager::setElement(uint8_t key, int index, int newvalue) {
+  for (int i = 0; i < _optionCount; i++) {
+    if (key == _options[i]->getKey()) {
+      String data = _options[i]->replaceElement(index, newvalue);
+      _options[i]->setValue(data.c_str());
+      return true;
+    }
+  }
+  return false;
+}
+
+bool SuplaConfigManager::setElement(uint8_t key, int index, const char *newvalue) {
   for (int i = 0; i < _optionCount; i++) {
     if (key == _options[i]->getKey()) {
       String data = _options[i]->replaceElement(index, newvalue);

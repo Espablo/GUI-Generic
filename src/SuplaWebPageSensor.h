@@ -81,6 +81,9 @@ class SuplaWebPageSensor {
   void createWebPageSensor();
 
 #ifdef SUPLA_DS18B20
+#define INPUT_DS18B20_ADDR "dsaddr"
+#define INPUT_DS18B20_NAME "dsname"
+
   void handleSearchDS();
   void handleDSSave();
   void showDS18B20(String& content, bool readonly = false);

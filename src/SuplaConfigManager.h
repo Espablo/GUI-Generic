@@ -43,7 +43,8 @@
 #define MAX_TYPE_BUTTON         4
 #define MAX_MONOSTABLE_TRIGGER  1
 #define MAX_FUNCTION            1
-#define MAX_DS18B20             10
+
+#define MAX_DS18B20             20
 #define MAX_GPIO                17
 
 enum _key
@@ -70,9 +71,12 @@ enum _key
   KEY_ACTIVE_SENSOR,
   KEY_BOARD,
   KEY_CFG_MODE,
+  KEY_ADDR_DS18B20,
+  KEY_NAME_SENSOR,
+
   KEY_GPIO,
-  KEY_DS = KEY_GPIO + MAX_GPIO + MAX_DS18B20,
-  KEY_DS_NAME = KEY_DS + MAX_DS18B20
+  //KEY_DS = KEY_GPIO + MAX_GPIO + MAX_DS18B20,
+  //KEY_DS_NAME = KEY_DS + MAX_DS18B20
 };
 
 //#define GPIO      "GPIO"
@@ -140,14 +144,15 @@ class ConfigOption {
   uint8_t getKey();
   const char *getValue();
   int getValueInt();
-  uint8_t *getValueBin(size_t size);
   const char *getValueHex(size_t size);
   int getValueElement(int element);
 
   int getLength();
   void setValue(const char *value);
   const String getElement(int index);
+  uint8_t getElement(int index, size_t size);
   const String replaceElement(int index, int value);
+  const String replaceElement(int index, const char *newvalue);
 
  private:
   uint8_t _key;
@@ -170,6 +175,7 @@ class SuplaConfigManager {
   ConfigOption *get(uint8_t key);
   bool set(uint8_t key, const char *value);
   bool setElement(uint8_t key, int index, int newvalue);
+  bool setElement(uint8_t key, int index, const char *newvalue);
 
   bool isDeviceConfigured();
   void setGUIDandAUTHKEY();
