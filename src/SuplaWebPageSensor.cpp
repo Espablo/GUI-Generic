@@ -671,7 +671,7 @@ void SuplaWebPageSensor::handleOtherSave() {
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-  Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
+  //Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
 
   last_value = ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {
