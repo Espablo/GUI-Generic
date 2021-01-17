@@ -58,7 +58,7 @@ void SuplaWebPageSensor::createWebPageSensor() {
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleOtherSave, this));
 
 #if defined(SUPLA_IMPULSE_COUNTER)
-  for (uint8_t i = 1; i <= MAX_GPIO; i++) {
+  for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); i++) {
     path = PATH_START;
     path += PATH_IMPULSE_COUNTER_SET;
     path += i;
