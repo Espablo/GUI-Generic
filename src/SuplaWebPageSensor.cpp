@@ -89,7 +89,7 @@ void SuplaWebPageSensor::handleSearchDS() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(supla_webpage_search(0));
+  supla_webpage_search(0);
 }
 
 void SuplaWebPageSensor::handleDSSave() {
@@ -115,18 +115,17 @@ void SuplaWebPageSensor::handleDSSave() {
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       // Serial.println(F("E_CONFIG_OK: Config save"));
-      WebServer->sendContent(supla_webpage_search(1));
+      supla_webpage_search(1);
       // WebServer->rebootESP();
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->sendContent(supla_webpage_search(2));
+      supla_webpage_search(2);
       break;
   }
 }
 
-String SuplaWebPageSensor::supla_webpage_search(int save) {
-  String content = "";
+void SuplaWebPageSensor::supla_webpage_search(int save) {
   uint8_t count = 0;
   uint8_t pin = ConfigESP->getGpio(FUNCTION_DS18B20);
 
@@ -136,26 +135,26 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   char strAddr[64];
   uint8_t i;
 
-  content += SuplaSaveResult(save);
-  content += SuplaJavaScript(PATH_MULTI_DS);
-  content += F("<center>");
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_MULTI_DS);
+  webContentBuffer += F("<center>");
   if (ConfigESP->getGpio(FUNCTION_DS18B20) < OFF_GPIO) {
-    content += F("<form method='post' action='");
-    content += PATH_SAVE_MULTI_DS;
-    content += F("'>");
-    this->showDS18B20(content);
-    content += F("<button type='submit'>");
-    content += S_SAVE;
-    content += F("</button></form>");
-    content += F("<br>");
+    webContentBuffer += F("<form method='post' action='");
+    webContentBuffer += PATH_SAVE_MULTI_DS;
+    webContentBuffer += F("'>");
+    this->showDS18B20();
+    webContentBuffer += F("<button type='submit'>");
+    webContentBuffer += S_SAVE;
+    webContentBuffer += F("</button></form>");
+    webContentBuffer += F("<br>");
   }
-  content += F("<form method='post' action='");
-  content += PATH_SAVE_MULTI_DS;
-  content += F("'>");
-  content += F("<div class='w'>");
-  content += F("<h3>");
-  content += S_FOUND;
-  content += F(" DS18b20</h3>");
+  webContentBuffer += F("<form method='post' action='");
+  webContentBuffer += PATH_SAVE_MULTI_DS;
+  webContentBuffer += F("'>");
+  webContentBuffer += F("<div class='w'>");
+  webContentBuffer += F("<h3>");
+  webContentBuffer += S_FOUND;
+  webContentBuffer += F(" DS18b20</h3>");
   sensors.setOneWire(&ow);
   sensors.begin();
   if (sensors.isParasitePowerMode()) {
@@ -174,15 +173,15 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
               address[7]);
       supla_log(LOG_DEBUG, "Index %d - address %s", i, strAddr);
 
-      content += F("<i><input name='");
-      content += INPUT_DS18B20_ADDR;
-      content += count;
+      webContentBuffer += F("<i><input name='");
+      webContentBuffer += INPUT_DS18B20_ADDR;
+      webContentBuffer += count;
 
-      content += F("' value='");
-      content += String(strAddr);
-      content += F("' maxlength=");
-      content += MAX_DS18B20_ADDRESS_HEX;
-      content += F(" readonly><label></i>");
+      webContentBuffer += F("' value='");
+      webContentBuffer += String(strAddr);
+      webContentBuffer += F("' maxlength=");
+      webContentBuffer += MAX_DS18B20_ADDRESS_HEX;
+      webContentBuffer += F(" readonly><label></i>");
 
       count++;
     }
@@ -190,70 +189,69 @@ String SuplaWebPageSensor::supla_webpage_search(int save) {
   }
 
   if (count == 0) {
-    content += F("<i><label>");
-    content += S_NO_SENSORS_CONNECTED;
-    content += F("</label></i>");
+    webContentBuffer += F("<i><label>");
+    webContentBuffer += S_NO_SENSORS_CONNECTED;
+    webContentBuffer += F("</label></i>");
   }
-  content += F("</div>");
-  content += F("</center>");
-  content += F("<button type='submit'>");
-  content += S_SAVE_FOUND;
-  content += F("DS18b20</button></form>");
-  content += F("<br><br>");
-  content += F("<a href='");
-  content += PATH_START;
-  content += PATH_1WIRE;
-  content += F("'><button>");
-  content += S_RETURN;
-  content += F("</button></a><br><br>");
-
-  return content;
+  webContentBuffer += F("</div>");
+  webContentBuffer += F("</center>");
+  webContentBuffer += F("<button type='submit'>");
+  webContentBuffer += S_SAVE_FOUND;
+  webContentBuffer += F("DS18b20</button></form>");
+  webContentBuffer += F("<br><br>");
+  webContentBuffer += F("<a href='");
+  webContentBuffer += PATH_START;
+  webContentBuffer += PATH_1WIRE;
+  webContentBuffer += F("'><button>");
+  webContentBuffer += S_RETURN;
+  webContentBuffer += F("</button></a><br><br>");
+  WebServer->sendContent();
 }
 
-void SuplaWebPageSensor::showDS18B20(String &content, bool readonly) {
+void SuplaWebPageSensor::showDS18B20(bool readonly) {
   if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
-    content += F("<div class='w'>");
-    content += F("<h3>");
-    content += S_TEMPERATURE;
-    content += F("</h3>");
+    webContentBuffer += F("<div class='w'>");
+    webContentBuffer += F("<h3>");
+    webContentBuffer += S_TEMPERATURE;
+    webContentBuffer += F("</h3>");
     for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
       double temp = Supla::GUI::sensorDS[i]->getValue();
-      content += F("<i style='border-bottom:none !important;'><input name='");
-      content += INPUT_DS18B20_NAME;
-      content += i;
-      content += F("' value='");
-      content += String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
-      content += F("' maxlength=");
-      content += MAX_DS18B20_NAME;
+      webContentBuffer += F("<i style='border-bottom:none !important;'><input name='");
+      webContentBuffer += INPUT_DS18B20_NAME;
+      webContentBuffer += i;
+      webContentBuffer += F("' value='");
+      webContentBuffer += String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
+      webContentBuffer += F("' maxlength=");
+      webContentBuffer += MAX_DS18B20_NAME;
       if (readonly) {
-        content += F(" readonly");
+        webContentBuffer += F(" readonly");
       }
-      content += F("><label>");
-      content += S_NAME;
-      content += i + 1;
-      content += F("</label></i>");
-      content += F("<i><input name='");
-      content += INPUT_DS18B20_ADDR;
-      content += i;
-      content += F("' value='");
-      content += String(ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i));
-      content += F("' maxlength=");
-      content += MAX_DS18B20_ADDRESS_HEX;
+      webContentBuffer += F("><label>");
+      webContentBuffer += S_NAME;
+      webContentBuffer += i + 1;
+      webContentBuffer += F("</label></i>");
+      webContentBuffer += F("<i><input name='");
+      webContentBuffer += INPUT_DS18B20_ADDR;
+      webContentBuffer += i;
+      webContentBuffer += F("' value='");
+      webContentBuffer += String(ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i));
+      webContentBuffer += F("' maxlength=");
+      webContentBuffer += MAX_DS18B20_ADDRESS_HEX;
       if (readonly) {
-        content += F(" readonly");
+        webContentBuffer += F(" readonly");
       }
-      content += F("><label>");
+      webContentBuffer += F("><label>");
       if (temp != -275) {
-        content += temp;
+        webContentBuffer += temp;
       }
       else {
-        content += F("--.--");
+        webContentBuffer += F("--.--");
       }
-      content += F(" <b>&deg;C</b> ");
-      content += F("</label></i>");
+      webContentBuffer += F(" <b>&deg;C</b> ");
+      webContentBuffer += F("</label></i>");
       delay(0);
     }
-    content += F("</div>");
+    webContentBuffer += F("</div>");
   }
 }
 #endif
@@ -264,7 +262,7 @@ void SuplaWebPageSensor::handle1Wire() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(supla_webpage_1wire(0));
+  supla_webpage_1wire(0);
 }
 
 void SuplaWebPageSensor::handle1WireSave() {
@@ -279,7 +277,7 @@ void SuplaWebPageSensor::handle1WireSave() {
   last_value = ConfigManager->get(KEY_MAX_DHT11)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {
     if (!WebServer->saveGPIO(INPUT_DHT11_GPIO, FUNCTION_DHT11, nr, INPUT_MAX_DHT11)) {
-      WebServer->sendContent(supla_webpage_1wire(6));
+      supla_webpage_1wire(6);
       return;
     }
   }
@@ -293,7 +291,7 @@ void SuplaWebPageSensor::handle1WireSave() {
   last_value = ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {
     if (!WebServer->saveGPIO(INPUT_DHT22_GPIO, FUNCTION_DHT22, nr, INPUT_MAX_DHT22)) {
-      WebServer->sendContent(supla_webpage_1wire(6));
+      supla_webpage_1wire(6);
       return;
     }
   }
@@ -305,7 +303,7 @@ void SuplaWebPageSensor::handle1WireSave() {
 
 #ifdef SUPLA_DS18B20
   if (!WebServer->saveGPIO(INPUT_MULTI_DS_GPIO, FUNCTION_DS18B20)) {
-    WebServer->sendContent(supla_webpage_1wire(6));
+    supla_webpage_1wire(6);
     return;
   }
   if (strcmp(WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str(), "") > 0) {
@@ -315,78 +313,78 @@ void SuplaWebPageSensor::handle1WireSave() {
 
 #ifdef SUPLA_SI7021_SONOFF
   if (!WebServer->saveGPIO(INPUT_SI7021_SONOFF, FUNCTION_SI7021_SONOFF)) {
-    WebServer->sendContent(supla_webpage_1wire(6));
+    supla_webpage_1wire(6);
     return;
   }
 #endif
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      WebServer->sendContent(supla_webpage_1wire(1));
+      supla_webpage_1wire(1);
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->sendContent(supla_webpage_1wire(2));
+      supla_webpage_1wire(2);
       break;
   }
 }
 
-String SuplaWebPageSensor::supla_webpage_1wire(int save) {
+void SuplaWebPageSensor::supla_webpage_1wire(int save) {
   uint8_t nr, max;
-  String page;
 
-  page += SuplaSaveResult(save);
-  page += SuplaJavaScript(PATH_1WIRE);
-  page += F("<form method='post' action='");
-  page += PATH_SAVE_1WIRE;
-  page += F("'>");
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_1WIRE);
+  webContentBuffer += F("<form method='post' action='");
+  webContentBuffer += PATH_SAVE_1WIRE;
+  webContentBuffer += F("'>");
 #ifdef SUPLA_DHT11
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " DHT11");
-  addNumberBox(page, INPUT_MAX_DHT11, S_QUANTITY, KEY_MAX_DHT11, ConfigESP->countFreeGpio(FUNCTION_DHT11));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " DHT11");
+  addNumberBox(webContentBuffer, INPUT_MAX_DHT11, S_QUANTITY, KEY_MAX_DHT11, ConfigESP->countFreeGpio(FUNCTION_DHT11));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
-    addListGPIOBox(page, INPUT_DHT11_GPIO, "DHT11", FUNCTION_DHT11, nr);
+    addListGPIOBox(webContentBuffer, INPUT_DHT11_GPIO, "DHT11", FUNCTION_DHT11, nr);
   }
-  addFormHeaderEnd(page);
+  addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_DHT22
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " DHT22");
-  addNumberBox(page, INPUT_MAX_DHT22, S_QUANTITY, KEY_MAX_DHT22, ConfigESP->countFreeGpio(FUNCTION_DHT22));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " DHT22");
+  addNumberBox(webContentBuffer, INPUT_MAX_DHT22, S_QUANTITY, KEY_MAX_DHT22, ConfigESP->countFreeGpio(FUNCTION_DHT22));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
-    addListGPIOBox(page, INPUT_DHT22_GPIO, "DHT22", FUNCTION_DHT22, nr);
+    addListGPIOBox(webContentBuffer, INPUT_DHT22_GPIO, "DHT22", FUNCTION_DHT22, nr);
   }
-  addFormHeaderEnd(page);
+  addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_SI7021_SONOFF
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " Si7021 Sonoff");
-  addListGPIOBox(page, INPUT_SI7021_SONOFF, "Si7021 Sonoff", FUNCTION_SI7021_SONOFF);
-  addFormHeaderEnd(page);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " Si7021 Sonoff");
+  addListGPIOBox(webContentBuffer, INPUT_SI7021_SONOFF, "Si7021 Sonoff", FUNCTION_SI7021_SONOFF);
+  addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_DS18B20
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " Multi DS18B20");
-  addNumberBox(page, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, MAX_DS18B20);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " Multi DS18B20");
+  addNumberBox(webContentBuffer, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, MAX_DS18B20);
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
-    addListGPIOLinkBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20, PATH_MULTI_DS);
+    addListGPIOLinkBox(webContentBuffer, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20, PATH_MULTI_DS);
   }
   else {
-    addListGPIOBox(page, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20);
+    addListGPIOBox(webContentBuffer, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20);
   }
-  addFormHeaderEnd(page);
+  addFormHeaderEnd(webContentBuffer);
 #endif
 
-  page += F("<button type='submit'>");
-  page += S_SAVE;
-  page += F("</button></form>");
-  page += F("<br>");
-  page += F("<a href='");
-  page += PATH_START;
-  page += PATH_DEVICE_SETTINGS;
-  page += F("'><button>");
-  page += S_RETURN;
-  page += F("</button></a><br><br>");
-  return page;
+  webContentBuffer += F("<button type='submit'>");
+  webContentBuffer += S_SAVE;
+  webContentBuffer += F("</button></form>");
+  webContentBuffer += F("<br>");
+  webContentBuffer += F("<a href='");
+  webContentBuffer += PATH_START;
+  webContentBuffer += PATH_DEVICE_SETTINGS;
+  webContentBuffer += F("'><button>");
+  webContentBuffer += S_RETURN;
+  webContentBuffer += F("</button></a><br><br>");
+
+  WebServer->sendContent();
 }
 #endif
 
@@ -396,7 +394,7 @@ void SuplaWebPageSensor::handlei2c() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(supla_webpage_i2c(0));
+  supla_webpage_i2c(0);
 }
 
 void SuplaWebPageSensor::handlei2cSave() {
@@ -409,11 +407,11 @@ void SuplaWebPageSensor::handlei2cSave() {
   uint8_t key;
 
   if (!WebServer->saveGPIO(INPUT_SDA_GPIO, FUNCTION_SDA)) {
-    WebServer->sendContent(supla_webpage_i2c(6));
+    supla_webpage_i2c(6);
     return;
   }
   if (!WebServer->saveGPIO(INPUT_SCL_GPIO, FUNCTION_SCL)) {
-    WebServer->sendContent(supla_webpage_i2c(6));
+    supla_webpage_i2c(6);
     return;
   }
 
@@ -478,54 +476,54 @@ void SuplaWebPageSensor::handlei2cSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      WebServer->sendContent(supla_webpage_i2c(1));
+      supla_webpage_i2c(1);
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->sendContent(supla_webpage_i2c(2));
+      supla_webpage_i2c(2);
       break;
   }
 }
 
-String SuplaWebPageSensor::supla_webpage_i2c(int save) {
+void SuplaWebPageSensor::supla_webpage_i2c(int save) {
   uint8_t selected;
-  String page = "";
-  page += SuplaSaveResult(save);
-  page += SuplaJavaScript(PATH_I2C);
 
-  addForm(page, F("post"), PATH_SAVE_I2C);
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + F(" i2c"));
-  addListGPIOBox(page, INPUT_SDA_GPIO, F("SDA"), FUNCTION_SDA);
-  addListGPIOBox(page, INPUT_SCL_GPIO, F("SCL"), FUNCTION_SCL);
-  addFormHeaderEnd(page);
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_I2C);
+
+  addForm(webContentBuffer, F("post"), PATH_SAVE_I2C);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" i2c"));
+  addListGPIOBox(webContentBuffer, INPUT_SDA_GPIO, F("SDA"), FUNCTION_SDA);
+  addListGPIOBox(webContentBuffer, INPUT_SCL_GPIO, F("SCL"), FUNCTION_SCL);
+  addFormHeaderEnd(webContentBuffer);
 
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
 #ifdef SUPLA_BME280
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_BME280).toInt();
-    addFormHeader(page);
-    addListBox(page, INPUT_BME280, F("BME280 adres"), BME280_P, 4, selected);
-    addNumberBox(page, INPUT_ALTITUDE_BME280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BME280, 1500);
-    addFormHeaderEnd(page);
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_BME280, F("BME280 adres"), BME280_P, 4, selected);
+    addNumberBox(webContentBuffer, INPUT_ALTITUDE_BME280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BME280, 1500);
+    addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_SHT3x
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SHT3x).toInt();
-    addFormHeader(page);
-    addListBox(page, INPUT_SHT3x, F("SHT3x"), SHT3x_P, 4, selected);
-    addFormHeaderEnd(page);
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_SHT3x, F("SHT3x"), SHT3x_P, 4, selected);
+    addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_SI7021
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SI7021).toInt();
-    addFormHeader(page);
-    addListBox(page, INPUT_SI7021, F("SI7021"), STATE_P, 2, selected);
-    addFormHeaderEnd(page);
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_SI7021, F("SI7021"), STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_OLED
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt();
-    addFormHeader(page);
-    addListBox(page, INPUT_OLED, F("OLED"), OLED_P, 4, selected);
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_OLED, F("OLED"), OLED_P, 4, selected);
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
       String name, sensorName, input;
 
@@ -535,26 +533,25 @@ String SuplaWebPageSensor::supla_webpage_i2c(int save) {
         input += i;
         name = F("Ekran ");
         name += i + 1;
-        addTextBox(page, input, name, sensorName, 0, MAX_DS18B20_NAME, false);
+        addTextBox(webContentBuffer, input, name, sensorName, 0, MAX_DS18B20_NAME, false);
       }
     }
-    addFormHeaderEnd(page);
+    addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_MCP23017
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt();
-    addFormHeader(page);
-    addListBox(page, INPUT_MCP23017, F("MCP23017"), STATE_P, 2, selected);
-    addFormHeaderEnd(page);
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_MCP23017, F("MCP23017"), STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
 #endif
   }
 
-  addButtonSubmit(page, S_SAVE);
-  addFormEnd(page);
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
 
-  addButton(page, S_RETURN, PATH_DEVICE_SETTINGS);
-
-  return page;
+  addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
+  WebServer->sendContent();
 }
 #endif
 
@@ -564,7 +561,7 @@ void SuplaWebPageSensor::handleSpi() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(supla_webpage_spi(0));
+  supla_webpage_spi(0);
 }
 
 void SuplaWebPageSensor::handleSpiSave() {
@@ -578,15 +575,15 @@ void SuplaWebPageSensor::handleSpiSave() {
 
 #if defined(SUPLA_MAX6675)
   if (!WebServer->saveGPIO(INPUT_CLK_GPIO, FUNCTION_CLK)) {
-    WebServer->sendContent(supla_webpage_spi(6));
+    supla_webpage_spi(6);
     return;
   }
   if (!WebServer->saveGPIO(INPUT_CS_GPIO, FUNCTION_CS)) {
-    WebServer->sendContent(supla_webpage_spi(6));
+    supla_webpage_spi(6);
     return;
   }
   if (!WebServer->saveGPIO(INPUT_D0_GPIO, FUNCTION_D0)) {
-    WebServer->sendContent(supla_webpage_spi(6));
+    supla_webpage_spi(6);
     return;
   }
 #endif
@@ -601,47 +598,47 @@ void SuplaWebPageSensor::handleSpiSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      WebServer->sendContent(supla_webpage_spi(1));
+      supla_webpage_spi(1);
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->sendContent(supla_webpage_spi(2));
+      supla_webpage_spi(2);
       break;
   }
 }
 
-String SuplaWebPageSensor::supla_webpage_spi(int save) {
+void SuplaWebPageSensor::supla_webpage_spi(int save) {
   uint8_t nr, suported, selected;
-  String page;
-  page += SuplaSaveResult(save);
-  page += SuplaJavaScript(PATH_SPI);
-  page += F("<form method='post' action='");
-  page += PATH_SAVE_SPI;
-  page += F("'>");
+
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_SPI);
+  webContentBuffer += F("<form method='post' action='");
+  webContentBuffer += PATH_SAVE_SPI;
+  webContentBuffer += F("'>");
 
 #if defined(SUPLA_MAX6675)
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " SPI");
-  addListGPIOBox(page, INPUT_CLK_GPIO, "CLK", FUNCTION_CLK);
-  addListGPIOBox(page, INPUT_CS_GPIO, "CS", FUNCTION_CS);
-  addListGPIOBox(page, INPUT_D0_GPIO, "D0", FUNCTION_D0);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " SPI");
+  addListGPIOBox(webContentBuffer, INPUT_CLK_GPIO, "CLK", FUNCTION_CLK);
+  addListGPIOBox(webContentBuffer, INPUT_CS_GPIO, "CS", FUNCTION_CS);
+  addListGPIOBox(webContentBuffer, INPUT_D0_GPIO, "D0", FUNCTION_D0);
 
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MAX6675).toInt();
-    addListBox(page, INPUT_MAX6675, "MAX6675", STATE_P, 2, selected);
+    addListBox(webContentBuffer, INPUT_MAX6675, "MAX6675", STATE_P, 2, selected);
   }
-  addFormHeaderEnd(page);
+  addFormHeaderEnd(webContentBuffer);
 #endif
-  page += F("<button type='submit'>");
-  page += S_SAVE;
-  page += F("</button></form>");
-  page += F("<br>");
-  page += F("<a href='");
-  page += PATH_START;
-  page += PATH_DEVICE_SETTINGS;
-  page += F("'><button>");
-  page += S_RETURN;
-  page += F("</button></a><br><br>");
-  return page;
+  webContentBuffer += F("<button type='submit'>");
+  webContentBuffer += S_SAVE;
+  webContentBuffer += F("</button></form>");
+  webContentBuffer += F("<br>");
+  webContentBuffer += F("<a href='");
+  webContentBuffer += PATH_START;
+  webContentBuffer += PATH_DEVICE_SETTINGS;
+  webContentBuffer += F("'><button>");
+  webContentBuffer += S_RETURN;
+  webContentBuffer += F("</button></a><br><br>");
+  WebServer->sendContent();
 }
 #endif
 
@@ -651,7 +648,7 @@ void SuplaWebPageSensor::handleOther() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(supla_webpage_other(0));
+  supla_webpage_other(0);
 }
 
 void SuplaWebPageSensor::handleOtherSave() {
@@ -664,11 +661,11 @@ void SuplaWebPageSensor::handleOtherSave() {
 
 #ifdef SUPLA_HC_SR04
   if (!WebServer->saveGPIO(INPUT_TRIG_GPIO, FUNCTION_TRIG)) {
-    WebServer->sendContent(supla_webpage_other(6));
+    supla_webpage_other(6);
     return;
   }
   if (!WebServer->saveGPIO(INPUT_ECHO_GPIO, FUNCTION_ECHO)) {
-    WebServer->sendContent(supla_webpage_other(6));
+    supla_webpage_other(6);
     return;
   }
 #endif
@@ -679,7 +676,7 @@ void SuplaWebPageSensor::handleOtherSave() {
   last_value = ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {
     if (!WebServer->saveGPIO(INPUT_IMPULSE_COUNTER_GPIO, FUNCTION_IMPULSE_COUNTER, nr, INPUT_MAX_IMPULSE_COUNTER)) {
-      WebServer->sendContent(supla_webpage_other(6));
+      supla_webpage_other(6);
       return;
     }
   }
@@ -691,69 +688,68 @@ void SuplaWebPageSensor::handleOtherSave() {
 
 #ifdef SUPLA_HLW8012
   if (!WebServer->saveGPIO(INPUT_CF, FUNCTION_CF)) {
-    WebServer->sendContent(supla_webpage_other(6));
+    supla_webpage_other(6);
     return;
   }
   if (!WebServer->saveGPIO(INPUT_CF1, FUNCTION_CF1)) {
-    WebServer->sendContent(supla_webpage_other(6));
+    supla_webpage_other(6);
     return;
   }
   if (!WebServer->saveGPIO(INPUT_SEL, FUNCTION_SEL)) {
-    WebServer->sendContent(supla_webpage_other(6));
+    supla_webpage_other(6);
     return;
   }
 #endif
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      WebServer->sendContent(supla_webpage_other(1));
+      supla_webpage_other(1);
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->sendContent(supla_webpage_other(2));
+      supla_webpage_other(2);
       break;
   }
 }
 
-String SuplaWebPageSensor::supla_webpage_other(int save) {
+void SuplaWebPageSensor::supla_webpage_other(int save) {
   uint8_t nr, suported, selected;
-  String page = "";
 
-  page += SuplaSaveResult(save);
-  page += SuplaJavaScript(PATH_OTHER);
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_OTHER);
 
-  addForm(page, F("post"), PATH_SAVE_OTHER);
+  addForm(webContentBuffer, F("post"), PATH_SAVE_OTHER);
 #ifdef SUPLA_HC_SR04
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + F(" HC-SR04"));
-  addListGPIOBox(page, INPUT_TRIG_GPIO, F("TRIG"), FUNCTION_TRIG);
-  addListGPIOBox(page, INPUT_ECHO_GPIO, F("ECHO"), FUNCTION_ECHO);
-  addFormHeaderEnd(page);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" HC-SR04"));
+  addListGPIOBox(webContentBuffer, INPUT_TRIG_GPIO, F("TRIG"), FUNCTION_TRIG);
+  addListGPIOBox(webContentBuffer, INPUT_ECHO_GPIO, F("ECHO"), FUNCTION_ECHO);
+  addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + " " + S_IMPULSE_COUNTER);
-  addNumberBox(page, INPUT_MAX_IMPULSE_COUNTER, S_QUANTITY, KEY_MAX_IMPULSE_COUNTER, ConfigESP->countFreeGpio(FUNCTION_IMPULSE_COUNTER));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " " + S_IMPULSE_COUNTER);
+  addNumberBox(webContentBuffer, INPUT_MAX_IMPULSE_COUNTER, S_QUANTITY, KEY_MAX_IMPULSE_COUNTER, ConfigESP->countFreeGpio(FUNCTION_IMPULSE_COUNTER));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
-    addListGPIOLinkBox(page, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), FUNCTION_IMPULSE_COUNTER, PATH_IMPULSE_COUNTER_SET, nr);
+    addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), FUNCTION_IMPULSE_COUNTER, PATH_IMPULSE_COUNTER_SET, nr);
   }
-  addFormHeaderEnd(page);
+  addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_HLW8012
-  addFormHeader(page, String(S_GPIO_SETTINGS_FOR) + F(" HLW8012"));
-  addListGPIOBox(page, INPUT_CF, F("CF"), FUNCTION_CF);
-  addListGPIOBox(page, INPUT_CF1, F("CF1"), FUNCTION_CF1);
-  addListGPIOBox(page, INPUT_SEL, F("SELi"), FUNCTION_SEL);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" HLW8012"));
+  addListGPIOBox(webContentBuffer, INPUT_CF, F("CF"), FUNCTION_CF);
+  addListGPIOBox(webContentBuffer, INPUT_CF1, F("CF1"), FUNCTION_CF1);
+  addListGPIOBox(webContentBuffer, INPUT_SEL, F("SELi"), FUNCTION_SEL);
   if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
-    addLinkBox(page, F("Kalibracja"), PATH_HLW8012_CALIBRATE);
+    addLinkBox(webContentBuffer, F("Kalibracja"), PATH_HLW8012_CALIBRATE);
   }
-  addFormHeaderEnd(page);
+  addFormHeaderEnd(webContentBuffer);
 #endif
 
-  addButtonSubmit(page, S_SAVE);
-  addFormEnd(page);
-  addButton(page, S_RETURN, PATH_DEVICE_SETTINGS);
-  return page;
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
+  addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
+  WebServer->sendContent();
 }
 #endif
 
@@ -763,7 +759,7 @@ void SuplaWebPageSensor::handleImpulseCounterSet() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(supla_impulse_counter_set(0));
+  supla_impulse_counter_set(0);
 }
 
 void SuplaWebPageSensor::handleImpulseCounterSaveSet() {
@@ -797,17 +793,17 @@ void SuplaWebPageSensor::handleImpulseCounterSaveSet() {
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
-      WebServer->sendContent(supla_webpage_other(1));
+      supla_webpage_other(1);
       break;
 
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->sendContent(supla_webpage_other(2));
+      supla_webpage_other(2);
       break;
   }
 }
 
-String SuplaWebPageSensor::supla_impulse_counter_set(int save) {
+void SuplaWebPageSensor::supla_impulse_counter_set(int save) {
   String readUrl, nr;
   uint8_t place, selected, suported;
 
@@ -818,87 +814,86 @@ String SuplaWebPageSensor::supla_impulse_counter_set(int save) {
   place = readUrl.indexOf(path);
   nr = readUrl.substring(place + path.length(), place + path.length() + 3);
 
-  String page = "";
-  page += SuplaSaveResult(save);
-  page += SuplaJavaScript(PATH_OTHER);
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_OTHER);
   uint8_t relays = ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt();
   if (nr.toInt() <= relays && ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
-    page += F("<form method='post' action='");
-    page += PATH_SAVE_IMPULSE_COUNTER_SET;
-    page += nr;
-    page += F("'><div class='w'><h3>");
-    page += S_IMPULSE_COUNTER_SETTINGS_NR;
-    page += F(" ");
-    page += nr;
-    page += F("</h3>");
-    page += F("<i><label>");
-    page += S_IMPULSE_COUNTER_PULL_UP;
-    page += F("</label><select name='");
-    page += INPUT_IMPULSE_COUNTER_PULL_UP;
-    page += nr;
-    page += F("'>");
+    webContentBuffer += F("<form method='post' action='");
+    webContentBuffer += PATH_SAVE_IMPULSE_COUNTER_SET;
+    webContentBuffer += nr;
+    webContentBuffer += F("'><div class='w'><h3>");
+    webContentBuffer += S_IMPULSE_COUNTER_SETTINGS_NR;
+    webContentBuffer += F(" ");
+    webContentBuffer += nr;
+    webContentBuffer += F("</h3>");
+    webContentBuffer += F("<i><label>");
+    webContentBuffer += S_IMPULSE_COUNTER_PULL_UP;
+    webContentBuffer += F("</label><select name='");
+    webContentBuffer += INPUT_IMPULSE_COUNTER_PULL_UP;
+    webContentBuffer += nr;
+    webContentBuffer += F("'>");
     selected = ConfigESP->getMemory(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
     for (suported = 0; suported < 2; suported++) {
-      page += F("<option value='");
-      page += suported;
+      webContentBuffer += F("<option value='");
+      webContentBuffer += suported;
       if (selected == suported) {
-        page += F("' selected>");
+        webContentBuffer += F("' selected>");
       }
       else
-        page += F("'>");
-      page += StateString(suported);
+        webContentBuffer += F("'>");
+      webContentBuffer += PGMT(STATE_P[suported]);
     }
-    page += F("</select></i>");
-    page += F("<i><label>");
-    page += S_IMPULSE_COUNTER_RAISING_EDGE;
-    page += F("</label><select name='");
-    page += INPUT_IMPULSE_COUNTER_RAISING_EDGE;
-    page += nr;
-    page += F("'>");
+    webContentBuffer += F("</select></i>");
+    webContentBuffer += F("<i><label>");
+    webContentBuffer += S_IMPULSE_COUNTER_RAISING_EDGE;
+    webContentBuffer += F("</label><select name='");
+    webContentBuffer += INPUT_IMPULSE_COUNTER_RAISING_EDGE;
+    webContentBuffer += nr;
+    webContentBuffer += F("'>");
     selected = ConfigESP->getLevel(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
     for (suported = 0; suported < 2; suported++) {
-      page += F("<option value='");
-      page += suported;
+      webContentBuffer += F("<option value='");
+      webContentBuffer += suported;
       if (selected == suported) {
-        page += F("' selected>");
+        webContentBuffer += F("' selected>");
       }
       else
-        page += F("'>");
-      page += StateString(suported);
+        webContentBuffer += F("'>");
+      webContentBuffer += PGMT(STATE_P[suported]);
     }
-    page += F("</select></i>");
-    addNumberBox(page, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, 99999999);
-    page += F("<i><label>");
-    page += S_IMPULSE_COUNTER_CHANGE_VALUE;
-    page += F("</label><input name='");
-    page += INPUT_IMPULSE_COUNTER_CHANGE_VALUE;
-    page += F("' type='number' placeholder='0' step='1' min='0' max='");
-    page += 100;
-    page += F("' value='");
+    webContentBuffer += F("</select></i>");
+    addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT,
+                 99999999);
+    webContentBuffer += F("<i><label>");
+    webContentBuffer += S_IMPULSE_COUNTER_CHANGE_VALUE;
+    webContentBuffer += F("</label><input name='");
+    webContentBuffer += INPUT_IMPULSE_COUNTER_CHANGE_VALUE;
+    webContentBuffer += F("' type='number' placeholder='0' step='1' min='0' max='");
+    webContentBuffer += 100;
+    webContentBuffer += F("' value='");
     uint32_t count = Supla::GUI::impulseCounter[nr.toInt() - 1]->getCounter();
-    page += count;
-    page += F("'></i>");
+    webContentBuffer += count;
+    webContentBuffer += F("'></i>");
 
-    page += F("</div><button type='submit'>");
-    page += S_SAVE;
-    page += F("</button></form>");
+    webContentBuffer += F("</div><button type='submit'>");
+    webContentBuffer += S_SAVE;
+    webContentBuffer += F("</button></form>");
   }
   else {
-    page += F("<div class='w'><h3>");
-    page += S_NO_IMPULSE_COUNTER_NR;
-    page += F(" ");
-    page += nr;
-    page += F("</h3>");
+    webContentBuffer += F("<div class='w'><h3>");
+    webContentBuffer += S_NO_IMPULSE_COUNTER_NR;
+    webContentBuffer += F(" ");
+    webContentBuffer += nr;
+    webContentBuffer += F("</h3>");
   }
-  page += F("<br>");
-  page += F("<a href='");
-  page += PATH_START;
-  page += PATH_OTHER;
-  page += F("'><button>");
-  page += S_RETURN;
-  page += F("</button></a><br><br>");
-
-  return page;
+  webContentBuffer += F("<br>");
+  webContentBuffer += F("<a href='");
+  webContentBuffer += PATH_START;
+  webContentBuffer += PATH_OTHER;
+  webContentBuffer += F("'><button>");
+  webContentBuffer += S_RETURN;
+  webContentBuffer += F("</button></a><br><br>");
+  WebServer->sendContent();
 }
 #endif
 
@@ -908,7 +903,7 @@ void SuplaWebPageSensor::handleHLW8012Calibrate() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(suplaWebpageHLW8012Calibrate(0));
+  suplaWebpageHLW8012Calibrate(0);
 }
 
 void SuplaWebPageSensor::handleHLW8012CalibrateSave() {
@@ -930,38 +925,37 @@ void SuplaWebPageSensor::handleHLW8012CalibrateSave() {
 
   if (calibPower && calibVoltage) {
     Supla::GUI::counterHLW8012->calibrate(calibPower, calibVoltage);
-    WebServer->sendContent(suplaWebpageHLW8012Calibrate(1));
+    suplaWebpageHLW8012Calibrate(1);
   }
   else {
-    WebServer->sendContent(suplaWebpageHLW8012Calibrate(6));
+    suplaWebpageHLW8012Calibrate(6);
   }
 }
 
-String SuplaWebPageSensor::suplaWebpageHLW8012Calibrate(uint8_t save) {
-  String page;
-  page += SuplaSaveResult(save);
-  page += SuplaJavaScript(PATH_HLW8012_CALIBRATE);
+void SuplaWebPageSensor::suplaWebpageHLW8012Calibrate(uint8_t save) {
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_HLW8012_CALIBRATE);
 
-  addFormHeader(page);
-  page += F("<p style='color:#000;'>Current Multi: ");
-  page += Supla::GUI::counterHLW8012->getCurrentMultiplier();
-  page += F("<br>Voltage Multi: ");
-  page += Supla::GUI::counterHLW8012->getVoltageMultiplier();
-  page += F("<br>Power Multi: ");
-  page += Supla::GUI::counterHLW8012->getPowerMultiplier();
-  page += F("</p>");
-  addFormHeaderEnd(page);
+  addFormHeader(webContentBuffer);
+  webContentBuffer += F("<p style='color:#000;'>Current Multi: ");
+  webContentBuffer += Supla::GUI::counterHLW8012->getCurrentMultiplier();
+  webContentBuffer += F("<br>Voltage Multi: ");
+  webContentBuffer += Supla::GUI::counterHLW8012->getVoltageMultiplier();
+  webContentBuffer += F("<br>Power Multi: ");
+  webContentBuffer += Supla::GUI::counterHLW8012->getPowerMultiplier();
+  webContentBuffer += F("</p>");
+  addFormHeaderEnd(webContentBuffer);
 
-  addForm(page, F("post"), PATH_SAVE_HLW8012_CALIBRATE);
-  addFormHeader(page, "Ustawienia kalibracji");
-  addNumberBox(page, INPUT_CALIB_POWER, "Moc żarówki [W]", "25", true);
-  addNumberBox(page, INPUT_CALIB_VOLTAGE, "Napięcie [V]", "230", true);
-  addFormHeaderEnd(page);
+  addForm(webContentBuffer, F("post"), PATH_SAVE_HLW8012_CALIBRATE);
+  addFormHeader(webContentBuffer, "Ustawienia kalibracji");
+  addNumberBox(webContentBuffer, INPUT_CALIB_POWER, "Moc żarówki [W]", "25", true);
+  addNumberBox(webContentBuffer, INPUT_CALIB_VOLTAGE, "Napięcie [V]", "230", true);
+  addFormHeaderEnd(webContentBuffer);
 
-  addButtonSubmit(page, "Kalibracja");
-  addFormEnd(page);
+  addButtonSubmit(webContentBuffer, "Kalibracja");
+  addFormEnd(webContentBuffer);
 
-  addButton(page, S_RETURN, PATH_OTHER);
-  return page;
+  addButton(webContentBuffer, S_RETURN, PATH_OTHER);
+  WebServer->sendContent();
 }
 #endif

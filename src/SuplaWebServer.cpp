@@ -24,6 +24,8 @@
 #include "SuplaTemplateBoard.h"
 #include "Markup.h"
 
+String webContentBuffer;
+
 SuplaWebServer::SuplaWebServer() {
 }
 
@@ -81,7 +83,7 @@ void SuplaWebServer::handle() {
     if (!httpServer.authenticate(this->www_username, this->www_password))
       return httpServer.requestAuthentication();
   }
-  this->sendContent(supla_webpage_start(0));
+  supla_webpage_start(0);
 }
 
 void SuplaWebServer::handleSave() {
@@ -114,17 +116,17 @@ void SuplaWebServer::handleSave() {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
       if (ConfigESP->configModeESP == NORMAL_MODE) {
-        this->sendContent(supla_webpage_start(1));
+        supla_webpage_start(1);
         ConfigESP->rebootESP();
       }
       else {
-        this->sendContent(supla_webpage_start(7));
+        supla_webpage_start(7);
       }
       break;
 
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      this->sendContent(supla_webpage_start(4));
+      supla_webpage_start(4);
       break;
   }
 }
@@ -134,51 +136,50 @@ void SuplaWebServer::handleDeviceSettings() {
     if (!httpServer.authenticate(www_username, www_password))
       return httpServer.requestAuthentication();
   }
-  this->sendContent(deviceSettings(0));
+  deviceSettings(0);
 }
 
-String SuplaWebServer::supla_webpage_start(int save) {
-  String content = F("");
-  content += SuplaSaveResult(save);
-  content += SuplaJavaScript();
+void SuplaWebServer::supla_webpage_start(int save) {
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript();
 
-  addForm(content, F("post"));
-  addFormHeader(content, S_SETTING_WIFI_SSID);
-  addTextBox(content, INPUT_WIFI_SSID, S_WIFI_SSID, KEY_WIFI_SSID, 0, MAX_SSID, true);
-  addTextBoxPassword(content, INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
-  addTextBox(content, INPUT_HOSTNAME, S_HOST_NAME, KEY_HOST_NAME, 0, MAX_HOSTNAME, true);
-  addFormHeaderEnd(content);
+  addForm(webContentBuffer, F("post"));
+  addFormHeader(webContentBuffer, S_SETTING_WIFI_SSID);
+  addTextBox(webContentBuffer, INPUT_WIFI_SSID, S_WIFI_SSID, KEY_WIFI_SSID, 0, MAX_SSID, true);
+  addTextBoxPassword(webContentBuffer, INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
+  addTextBox(webContentBuffer, INPUT_HOSTNAME, S_HOST_NAME, KEY_HOST_NAME, 0, MAX_HOSTNAME, true);
+  addFormHeaderEnd(webContentBuffer);
 
-  addFormHeader(content, S_SETTING_SUPLA);
-  addTextBox(content, INPUT_SERVER, S_SUPLA_SERVER, KEY_SUPLA_SERVER, DEFAULT_SERVER, 0, MAX_SUPLA_SERVER, true);
-  addTextBox(content, INPUT_EMAIL, S_SUPLA_EMAIL, KEY_SUPLA_EMAIL, DEFAULT_EMAIL, 0, MAX_EMAIL, true);
-  addFormHeaderEnd(content);
+  addFormHeader(webContentBuffer, S_SETTING_SUPLA);
+  addTextBox(webContentBuffer, INPUT_SERVER, S_SUPLA_SERVER, KEY_SUPLA_SERVER, DEFAULT_SERVER, 0, MAX_SUPLA_SERVER, true);
+  addTextBox(webContentBuffer, INPUT_EMAIL, S_SUPLA_EMAIL, KEY_SUPLA_EMAIL, DEFAULT_EMAIL, 0, MAX_EMAIL, true);
+  addFormHeaderEnd(webContentBuffer);
 
-  addFormHeader(content, S_SETTING_ADMIN);
-  addTextBox(content, INPUT_MODUL_LOGIN, S_LOGIN, KEY_LOGIN, 0, MAX_MLOGIN, true);
-  addTextBoxPassword(content, INPUT_MODUL_PASS, S_LOGIN_PASS, KEY_LOGIN_PASS, MIN_PASSWORD, MAX_MPASSWORD, true);
-  addFormHeaderEnd(content);
+  addFormHeader(webContentBuffer, S_SETTING_ADMIN);
+  addTextBox(webContentBuffer, INPUT_MODUL_LOGIN, S_LOGIN, KEY_LOGIN, 0, MAX_MLOGIN, true);
+  addTextBoxPassword(webContentBuffer, INPUT_MODUL_PASS, S_LOGIN_PASS, KEY_LOGIN_PASS, MIN_PASSWORD, MAX_MPASSWORD, true);
+  addFormHeaderEnd(webContentBuffer);
 
 #ifdef SUPLA_ROLLERSHUTTER
   uint8_t maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   if (maxrollershutter >= 2) {
-    addFormHeader(content, S_ROLLERSHUTTERS);
-    addNumberBox(content, INPUT_ROLLERSHUTTER, S_QUANTITY, KEY_MAX_ROLLERSHUTTER, (maxrollershutter / 2));
-    addFormHeaderEnd(content);
+    addFormHeader(webContentBuffer, S_ROLLERSHUTTERS);
+    addNumberBox(webContentBuffer, INPUT_ROLLERSHUTTER, S_QUANTITY, KEY_MAX_ROLLERSHUTTER, (maxrollershutter / 2));
+    addFormHeaderEnd(webContentBuffer);
   }
 #endif
 
 #ifdef SUPLA_DS18B20
-  WebPageSensor->showDS18B20(content, true);
+  WebPageSensor->showDS18B20(true);
 #endif
 
-  addButtonSubmit(content, S_SAVE);
-  addFormEnd(content);
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
 
-  addButton(content, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
-  addButton(content, F("Tools"), PATH_TOOLS);
+  addButton(webContentBuffer, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
+  addButton(webContentBuffer, F("Tools"), PATH_TOOLS);
 
-  return content;
+  WebServer->sendContent();
 }
 
 void SuplaWebServer::supla_webpage_reboot() {
@@ -186,65 +187,63 @@ void SuplaWebServer::supla_webpage_reboot() {
     if (!httpServer.authenticate(www_username, www_password))
       return httpServer.requestAuthentication();
   }
-  this->sendContent(supla_webpage_start(2));
+  supla_webpage_start(2);
   ConfigESP->rebootESP();
 }
 
-String SuplaWebServer::deviceSettings(int save) {
-  String content = "";
+void SuplaWebServer::deviceSettings(int save) {
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_DEVICE_SETTINGS);
 
-  content += SuplaSaveResult(save);
-  content += SuplaJavaScript(PATH_DEVICE_SETTINGS);
+  webContentBuffer += F("<form method='post' action='");
+  webContentBuffer += PATH_SAVE_BOARD;
+  webContentBuffer += F("'>");
 
-  content += F("<form method='post' action='");
-  content += PATH_SAVE_BOARD;
-  content += F("'>");
-
-  addFormHeader(content, S_TEMPLATE_BOARD);
+  addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
   uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
-  addListBox(content, INPUT_BOARD, S_TYPE, BOARD_P, MAX_MODULE, selected);
-  addFormHeaderEnd(content);
+  addListBox(webContentBuffer, INPUT_BOARD, S_TYPE, BOARD_P, MAX_MODULE, selected);
+  addFormHeaderEnd(webContentBuffer);
 
-  content += F("<button type='submit'>");
-  content += S_SAVE;
-  content += F("</button></form><br><br>");
+  webContentBuffer += F("<button type='submit'>");
+  webContentBuffer += S_SAVE;
+  webContentBuffer += F("</button></form><br><br>");
 
-  addFormHeader(content, S_DEVICE_SETTINGS);
+  addFormHeader(webContentBuffer, S_DEVICE_SETTINGS);
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-  addButton(content, S_RELAYS, PATH_RELAY);
+  addButton(webContentBuffer, S_RELAYS, PATH_RELAY);
 #endif
 
 #ifdef SUPLA_BUTTON
-  addButton(content, S_BUTTONS, PATH_CONTROL);
+  addButton(webContentBuffer, S_BUTTONS, PATH_CONTROL);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-  addButton(content, F("KONTAKTRON"), PATH_SWITCH);
+  addButton(webContentBuffer, F("KONTAKTRON"), PATH_SWITCH);
 #endif
 
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
-  addButton(content, S_SENSORS_1WIRE, PATH_1WIRE);
+  addButton(webContentBuffer, S_SENSORS_1WIRE, PATH_1WIRE);
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
-  addButton(content, S_SENSORS_I2C, PATH_I2C);
+  addButton(webContentBuffer, S_SENSORS_I2C, PATH_I2C);
 #endif
 
 #if defined(SUPLA_MAX6675)
-  addButton(content, S_SENSORS_SPI, PATH_SPI);
+  addButton(webContentBuffer, S_SENSORS_SPI, PATH_SPI);
 #endif
 
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
-  addButton(content, S_SENSORS_OTHER, PATH_OTHER);
+  addButton(webContentBuffer, S_SENSORS_OTHER, PATH_OTHER);
 #endif
 
 #ifdef SUPLA_CONFIG
-  addButton(content, S_LED_BUTTON_CFG, PATH_CONFIG);
+  addButton(webContentBuffer, S_LED_BUTTON_CFG, PATH_CONFIG);
 #endif
-  addFormHeaderEnd(content);
-  addButton(content, S_RETURN, "");
+  addFormHeaderEnd(webContentBuffer);
+  addButton(webContentBuffer, S_RETURN, "");
 
-  return content;
+  WebServer->sendContent();
 }
 
 void SuplaWebServer::handleBoardSave() {
@@ -269,87 +268,13 @@ void SuplaWebServer::handleBoardSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      WebServer->sendContent(deviceSettings(1));
+      deviceSettings(1);
       break;
     case E_CONFIG_FILE_OPEN:
-      WebServer->sendContent(deviceSettings(2));
+      deviceSettings(2);
       break;
   }
 }
-
-const String& SuplaWebServer::SuplaIconEdit() {
-  return F(
-      "<img "
-      "src='data:image/"
-      "png;base64,"
-      "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
-      "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
-      "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
-      "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>");
-}
-
-void SuplaWebServer::sendContent(const String& content) {
-  // httpServer.send(200, "text/html", "");
-  // const int bufferSize = 1000;
-  // String _buffer;
-  //_buffer.reserve(bufferSize);
-  // int bufferCounter = 0;
-
-  int fileSize = content.length();
-
-#ifdef DEBUG_MODE
-  Serial.print(F("Content size: "));
-  Serial.println(fileSize);
-  checkRAM();
-#endif
-
-  httpServer.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-  httpServer.sendHeader("Pragma", "no-cache");
-  httpServer.sendHeader("Expires", "-1");
-  httpServer.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  httpServer.chunkedResponseModeStart(200, "text/html");
-
-  httpServer.sendContent_P(HTTP_META);
-  httpServer.sendContent_P(HTTP_FAVICON);
-  httpServer.sendContent_P(HTTP_STYLE);
-  httpServer.sendContent_P(HTTP_LOGO);
-
-  String summary = FPSTR(HTTP_SUMMARY);
-
-  summary.replace("{h}", ConfigManager->get(KEY_HOST_NAME)->getValue());
-  summary.replace("{s}", ConfigESP->getLastStatusSupla());
-  summary.replace("{v}", Supla::Channel::reg_dev.SoftVer);
-  summary.replace("{g}", ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
-  summary.replace("{m}", ConfigESP->getMacAddress(true));
-  summary.replace("{f}", String(ESP.getFreeHeap() / 1024.0));
-  httpServer.sendContent(summary);
-  httpServer.sendContent_P(HTTP_COPYRIGHT);
-
-  // httpServer.send(200, "text/html", "");
-  /*for (int i = 0; i < fileSize; i++) {
-    _buffer += content[i];
-    bufferCounter++;
-
-    if (bufferCounter >= bufferSize) {
-      httpServer.sendContent(_buffer);
-      yield();
-      bufferCounter = 0;
-      _buffer = "";
-    }
-  }
-  if (bufferCounter > 0) {
-    httpServer.sendContent(_buffer);
-    yield();
-    bufferCounter = 0;
-    _buffer = "";
-  }*/
-
-  httpServer.sendContent(content);
-  httpServer.sendContent_P(HTTP_RBT);
-  httpServer.chunkedResponseFinalize();
-}
-
-String webContentBuffer;
 
 void SuplaWebServer::sendContent() {
   // httpServer.send(200, "text/html", "");

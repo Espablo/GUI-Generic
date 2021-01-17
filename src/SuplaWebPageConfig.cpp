@@ -25,7 +25,7 @@ void SuplaWebPageConfig::handleConfig() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(supla_webpage_config(0));
+  supla_webpage_config(0);
 }
 
 void SuplaWebPageConfig::handleConfigSave() {
@@ -35,7 +35,7 @@ void SuplaWebPageConfig::handleConfigSave() {
   }
 
   if (!WebServer->saveGPIO(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED)) {
-    WebServer->sendContent(supla_webpage_config(6));
+    supla_webpage_config(6);
     return;
   }
 
@@ -44,7 +44,7 @@ void SuplaWebPageConfig::handleConfigSave() {
   ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
 
   if (!WebServer->saveGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON)) {
-    WebServer->sendContent(supla_webpage_config(6));
+    supla_webpage_config(6);
     return;
   }
 
@@ -55,38 +55,36 @@ void SuplaWebPageConfig::handleConfigSave() {
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Config save"));
-      WebServer->sendContent(supla_webpage_config(1));
+      supla_webpage_config(1);
       break;
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      WebServer->sendContent(supla_webpage_config(2));
+      supla_webpage_config(2);
       break;
   }
 }
 
-String SuplaWebPageConfig::supla_webpage_config(int save) {
+void SuplaWebPageConfig::supla_webpage_config(int save) {
   uint8_t selected, suported;
-  String page = "";
 
-  page += SuplaSaveResult(save);
-  page += SuplaJavaScript(PATH_CONFIG);
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_CONFIG);
 
-  addForm(page, F("post"), PATH_SAVE_CONFIG);
-  addFormHeader(page, S_GPIO_SETTINGS_FOR_CONFIG);
-  addListGPIOBox(page, INPUT_CFG_LED_GPIO, F("LED"), FUNCTION_CFG_LED);
+  addForm(webContentBuffer, F("post"), PATH_SAVE_CONFIG);
+  addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_CONFIG);
+  addListGPIOBox(webContentBuffer, INPUT_CFG_LED_GPIO, F("LED"), FUNCTION_CFG_LED);
 
   selected = ConfigESP->getLevel(FUNCTION_CFG_LED);
-  addListBox(page, INPUT_CFG_LED_LEVEL, S_STATE_CONTROL, LEVEL_P, 2, selected);
-  addListGPIOBox(page, INPUT_CFG_BTN_GPIO, S_BUTTON, FUNCTION_CFG_BUTTON);
+  addListBox(webContentBuffer, INPUT_CFG_LED_LEVEL, S_STATE_CONTROL, LEVEL_P, 2, selected);
+  addListGPIOBox(webContentBuffer, INPUT_CFG_BTN_GPIO, S_BUTTON, FUNCTION_CFG_BUTTON);
 
   selected = ConfigManager->get(KEY_CFG_MODE)->getValueInt();
-  addListBox(page, INPUT_CFG_MODE, S_CFG_MODE, CFG_MODE_P, 2, selected);
+  addListBox(webContentBuffer, INPUT_CFG_MODE, S_CFG_MODE, CFG_MODE_P, 2, selected);
 
-  addFormHeaderEnd(page);
-  addButtonSubmit(page, S_SAVE);
-  addFormEnd(page);
+  addFormHeaderEnd(webContentBuffer);
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
 
-  addButton(page, S_RETURN, PATH_DEVICE_SETTINGS);
-
-  return page;
+  addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
+  WebServer->sendContent();
 }

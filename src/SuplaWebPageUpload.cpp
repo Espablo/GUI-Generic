@@ -24,23 +24,22 @@ void handleUpload(int save) {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String content = "";
-  content += SuplaSaveResult(save);
-  content += SuplaJavaScript();
-  content += F("<div class='w'>");
-  content += F("<h3>");
-  content += "Wgraj konfiguracje";
-  content += F("</h3>");
-  content += F("<br>");
-  content += FPSTR(uploadIndex);
-  content += F("</div>");
-  content += F("<a href='");
-  content += getURL(PATH_TOOLS);
-  content += F("'><button>");
-  content += S_RETURN;
-  content += F("</button></a><br><br>");
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript();
+  webContentBuffer += F("<div class='w'>");
+  webContentBuffer += F("<h3>");
+  webContentBuffer += F("Wgraj konfiguracje");
+  webContentBuffer += F("</h3>");
+  webContentBuffer += F("<br>");
+  webContentBuffer += FPSTR(uploadIndex);
+  webContentBuffer += F("</div>");
+  webContentBuffer += F("<a href='");
+  webContentBuffer += getURL(PATH_TOOLS);
+  webContentBuffer += F("'><button>");
+  webContentBuffer += S_RETURN;
+  webContentBuffer += F("</button></a><br><br>");
 
-  WebServer->sendContent(content);
+  WebServer->sendContent();
   // WebServer->httpServer.send(200, PSTR("text/html"), FPSTR(uploadIndex));
 }
 

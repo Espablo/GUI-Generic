@@ -86,7 +86,7 @@ class SuplaWebPageSensor {
 
   void handleSearchDS();
   void handleDSSave();
-  void showDS18B20(String& content, bool readonly = false);
+  void showDS18B20(bool readonly = false);
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
@@ -94,7 +94,7 @@ class SuplaWebPageSensor {
   void handle1WireSave();
   void handlei2c();
   void handlei2cSave();
-  String supla_webpage_i2c(int save);
+  void supla_webpage_i2c(int save);
 #endif
 
 #if defined(SUPLA_MAX6675)
@@ -108,23 +108,23 @@ class SuplaWebPageSensor {
 
   void handleImpulseCounterSet();
   void handleImpulseCounterSaveSet();
-  String supla_impulse_counter_set(int save);
+  void supla_impulse_counter_set(int save);
 #endif
 
  private:
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
-  String supla_webpage_1wire(int save);
+  void supla_webpage_1wire(int save);
 #ifdef SUPLA_DS18B20
-  String supla_webpage_search(int save);
+  void supla_webpage_search(int save);
 #endif
 #endif
 
 #if defined(SUPLA_MAX6675)
-  String supla_webpage_spi(int save);
+  void supla_webpage_spi(int save);
 #endif
 
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
-  String supla_webpage_other(int save);
+  void supla_webpage_other(int save);
 #endif
 
 #if defined(SUPLA_HLW8012)
@@ -140,7 +140,7 @@ class SuplaWebPageSensor {
 
   void handleHLW8012Calibrate();
   void handleHLW8012CalibrateSave();
-  String suplaWebpageHLW8012Calibrate(uint8_t save);
+  void suplaWebpageHLW8012Calibrate(uint8_t save);
 #endif
 };
 

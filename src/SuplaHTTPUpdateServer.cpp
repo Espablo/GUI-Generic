@@ -17,7 +17,7 @@ static const char serverIndex[] PROGMEM =
      <html lang='en'>
      <head>
          <meta charset='utf-8'>
-         <meta name='viewport' content='width=device-width,initial-scale=1'/>
+         <meta name='viewport' webContentBuffer='width=device-width,initial-scale=1'/>
      </head>
      <body>
      <div>Flash Size: {f}kB</div>
@@ -29,9 +29,9 @@ static const char serverIndex[] PROGMEM =
      </form>
      </body>
      </html>)";
-static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='15'>Update Success! Rebooting...";
+static const char successResponse[] PROGMEM = "<META http-equiv='refresh' webContentBuffer='15'>Update Success! Rebooting...";
 static const char twoStepResponse[] PROGMEM =
-    "<META http-equiv='refresh' content='15'><b>WARNING</b> only use 2-step OTA update. Use GUI-GenericUpdater.bin";
+    "<META http-equiv='refresh' webContentBuffer='15'><b>WARNING</b> only use 2-step OTA update. Use GUI-GenericUpdater.bin";
 
 ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
@@ -144,30 +144,27 @@ void ESP8266HTTPUpdateServer::handleFirmwareUp() {
     if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
       return WebServer->httpServer.requestAuthentication();
   }
-  WebServer->sendContent(suplaWebPageUpddate());
+  suplaWebPageUpddate();
 }
 
-String ESP8266HTTPUpdateServer::suplaWebPageUpddate() {
-  String content = "";
-  content += SuplaJavaScript();
-  content += F("<div class='w'>");
-  content += F("<h3>");
-  content += S_SOFTWARE_UPDATE;
-  content += F("</h3>");
-  content += F("<br>");
-  content += F("<center>");
-  content += F("<iframe src='");
-  content += PATH_UPDATE;
-  content += F("' frameborder='0' height='200'></iframe>");
-  content += F("</center>");
-  content += F("</div>");
-  content += F("<a href='");
-  content += PATH_TOOLS;
-  content += F("'><button>");
-  content += S_RETURN;
-  content += F("</button></a><br><br>");
-
-  return content;
+void ESP8266HTTPUpdateServer::suplaWebPageUpddate() {
+  webContentBuffer += SuplaJavaScript();
+  webContentBuffer += F("<div class='w'>");
+  webContentBuffer += F("<h3>");
+  webContentBuffer += S_SOFTWARE_UPDATE;
+  webContentBuffer += F("</h3>");
+  webContentBuffer += F("<br>");
+  webContentBuffer += F("<center>");
+  webContentBuffer += F("<iframe src='");
+  webContentBuffer += PATH_UPDATE;
+  webContentBuffer += F("' frameborder='0' height='200'></iframe>");
+  webContentBuffer += F("</center>");
+  webContentBuffer += F("</div>");
+  webContentBuffer += F("<a href='");
+  webContentBuffer += PATH_TOOLS;
+  webContentBuffer += F("'><button>");
+  webContentBuffer += S_RETURN;
+  webContentBuffer += F("</button></a><br><br>");
 }
 
 void ESP8266HTTPUpdateServer::_setUpdaterError() {

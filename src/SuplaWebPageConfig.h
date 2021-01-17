@@ -19,7 +19,7 @@ class SuplaWebPageConfig {
   void handleConfigSave();
 
  private:
-  String supla_webpage_config(int save);
+  void supla_webpage_config(int save);
 };
 
 extern SuplaWebPageConfig *WebPageConfig;

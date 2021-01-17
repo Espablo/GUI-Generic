@@ -11,7 +11,7 @@ void createWebTools() {
     }
     WebServer->httpServer.sendHeader("Location", "/");
     WebServer->httpServer.send(303);
-    WebServer->sendContent(WebServer->supla_webpage_start(0));
+    WebServer->supla_webpage_start(0);
     ConfigESP->factoryReset(true);
   });
 }
@@ -22,20 +22,19 @@ void handleTools() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String content = "";
-  addFormHeader(content, "Tools");
+  addFormHeader(webContentBuffer, F("Tools"));
   //#ifdef SUPLA_BUTTON
-  addButton(content, "Save config", PATH_DOWNLOAD);
+  addButton(webContentBuffer, F("Save config"), PATH_DOWNLOAD);
   //#endif
   //#ifdef SUPLA_BUTTON
-  addButton(content, "Load config", PATH_UPLOAD);
+  addButton(webContentBuffer, F("Load config"), PATH_UPLOAD);
   //#endif
 #ifdef SUPLA_OTA
-  addButton(content, S_UPDATE, PATH_UPDATE_HENDLE);
+  addButton(webContentBuffer, S_UPDATE, PATH_UPDATE_HENDLE);
 #endif
-  addButton(content, "Factory reset", PATH_FACTORY_RESET);
-  addFormHeaderEnd(content);
-  addButton(content, S_RETURN, "");
+  addButton(webContentBuffer, F("Factory reset"), PATH_FACTORY_RESET);
+  addFormHeaderEnd(webContentBuffer);
+  addButton(webContentBuffer, S_RETURN, "");
 
-  WebServer->sendContent(content);
+  WebServer->sendContent();
 }

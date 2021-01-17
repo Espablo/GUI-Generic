@@ -80,10 +80,9 @@ class SuplaWebServer : public Supla::Element {
   char www_username[MAX_MLOGIN];
   char www_password[MAX_MPASSWORD];
 
-  const String& SuplaIconEdit();
-  String supla_webpage_start(int save);
+  void supla_webpage_start(int save);
 
-  void sendContent(const String& content);
+  //void sendContent(const String& content);
   void sendContent();
 
   MyWebServer httpServer;
@@ -107,8 +106,7 @@ class SuplaWebServer : public Supla::Element {
   void createWebServer();
 
   void supla_webpage_reboot();
-  String deviceSettings(int save);
-  String loginSettings();
+  void deviceSettings(int save);
 
   void handleNotFound();
 };
