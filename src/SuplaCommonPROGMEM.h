@@ -50,7 +50,7 @@ const char HTTP_LOGO[] PROGMEM =
     "102.1,188.6z "
     "M167.7,88.5c-1,0-2.1,0.1-3.1,0.3c-9,1.7-14.2,10.6-10.8,18.6c2.9,6.8,11.4,10.3,19,7.8c7.1-2.3,11.1-9.1,9.6-15.9C180.9,93,174.8,88.5,167.7,88.5z'/"
     "></a></svg>";
-const char HTTP_SUMMARY[] PROGMEM = "<h1>{h}</h1><span>LAST STATE: {s}<br>Firmware: SuplaDevice {v}<br>GUID: {g}<br>MAC: {m}</span>\n";
+const char HTTP_SUMMARY[] PROGMEM = "<h1>{h}</h1><span>LAST STATE: {s}<br>Firmware: SuplaDevice {v}<br>GUID: {g}<br>MAC: {m}<br>Free Mem: {f}KB</span>\n";
 const char HTTP_COPYRIGHT[] PROGMEM =
     "<a target='_blank' rel='noopener noreferrer' href='https://forum.supla.org/viewtopic.php?f=11&t=7133'><span style='color: #ffffff "
     "!important;'>https://forum.supla.org/</span></a>\n";
@@ -111,7 +111,9 @@ const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
 
 const char ADR20[] PROGMEM = "0x20";
 const char ADR21[] PROGMEM = "0x21";
-const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, OFF};
+const char ADR22[] PROGMEM = "0x22";
+const char ADR23[] PROGMEM = "0x23";
+const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, ADR22, OFF};
 
 const char* const STATE_P[] PROGMEM = {OFF, ON};
 
@@ -140,11 +142,5 @@ const char SH1106[] PROGMEM = "SH1106 - 1,3''";
 const char SSD1306_WEMOS_SHIELD[] PROGMEM = "SSD1306 - 0,66'' WEMOS OLED shield";
 const char* const OLED_P[] PROGMEM = {OFF, SSD1306, SH1106, SSD1306_WEMOS_SHIELD};
 #endif
-
-String StateString(uint8_t adr);
-String LevelString(uint8_t nr);
-String MemoryString(uint8_t nr);
-String TriggerString(uint8_t nr);
-String BoardString(uint8_t board);
 
 #endif  // SuplaCommonPROGMEM_h

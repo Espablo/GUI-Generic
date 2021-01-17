@@ -5,6 +5,8 @@
 #include "SuplaDeviceGUI.h"
 
 #define PATH_CONTROL            "control"
+#define PATH_SWITCH             "switch"
+#define PATH_SAVE_SWITCH        "saveswitch"
 #define PATH_SAVE_CONTROL       "savecontrol"
 #define PATH_BUTTON_SET         "setbutton"
 #define PATH_SAVE_BUTTON_SET    "savesetbutton"
@@ -28,6 +30,12 @@ class SuplaWebPageControl {
   void createWebPageControl();
   void handleControl();
   void handleControlSave();
+
+#ifdef SUPLA_LIMIT_SWITCH
+  void handleLimitSwitch();
+  void handleLimitSwitchSave();
+  void suplaWebpageLimitSwitch(int save);
+#endif
 
 #if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
   void handleButtonSet();

@@ -218,6 +218,10 @@ String SuplaWebServer::deviceSettings(int save) {
   addButton(content, S_BUTTONS, PATH_CONTROL);
 #endif
 
+#ifdef SUPLA_LIMIT_SWITCH
+  addButton(content, F("KONTAKTRON"), PATH_SWITCH);
+#endif
+
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
   addButton(content, S_SENSORS_1WIRE, PATH_1WIRE);
 #endif
@@ -317,6 +321,7 @@ void SuplaWebServer::sendContent(const String& content) {
   summary.replace("{v}", Supla::Channel::reg_dev.SoftVer);
   summary.replace("{g}", ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
   summary.replace("{m}", ConfigESP->getMacAddress(true));
+  summary.replace("{f}", String(ESP.getFreeHeap() / 1024.0));
   httpServer.sendContent(summary);
   httpServer.sendContent_P(HTTP_COPYRIGHT);
 
@@ -371,6 +376,8 @@ void SuplaWebServer::sendContent() {
   summary.replace("{v}", Supla::Channel::reg_dev.SoftVer);
   summary.replace("{g}", ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
   summary.replace("{m}", ConfigESP->getMacAddress(true));
+  summary.replace("{f}", String(ESP.getFreeHeap() / 1024.0));
+
   httpServer.sendContent(summary);
   httpServer.sendContent_P(HTTP_COPYRIGHT);
 
@@ -457,30 +464,34 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   return true;
 }
 
-bool SuplaWebServer::saveGpioMCP23017(const String& input, uint8_t function, uint8_t nr, const String& input_max) {
+bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
   uint8_t key, address, addressInput, gpio, gpioInput, functionElementInput;
-  String _input = input + nr;
+  String input = _input + nr;
 
-  if (strcmp(WebServer->httpServer.arg(_input).c_str(), "") == 0) {
+  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") == 0) {
     return true;
   }
 
   addressInput = WebServer->httpServer.arg(INPUT_ADRESS_MCP23017).toInt();
-  functionElementInput = ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(addressInput)).toInt();
-  gpioInput = WebServer->httpServer.arg(_input).toInt();
 
+  gpioInput = WebServer->httpServer.arg(input).toInt();
   key = KEY_GPIO + gpioInput;
+  functionElementInput = ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(addressInput)).toInt();
   gpio = ConfigESP->getGpioMCP23017(nr, function);
-  address = ConfigESP->getAdressMCP23017(function);
+  if (addressInput == OFF_MCP23017) {
+    ConfigESP->clearGpioMCP23017(gpio, nr, function);
+  }
 
-  if (functionElementInput == FUNCTION_OFF) {
-    ConfigESP->setGpioMCP23017(gpioInput, addressInput, nr, function, 1, 0);
-  }
-  else if (gpio == gpioInput && functionElementInput == function) {
-    ConfigESP->setGpioMCP23017(gpioInput, addressInput, nr, function, ConfigESP->getLevel(nr, function), ConfigESP->getMemory(nr, function));
-  }
-  else {
-    return false;
+  if (gpioInput != OFF_GPIO) {
+    if (functionElementInput == FUNCTION_OFF) {
+      ConfigESP->setGpioMCP23017(gpioInput, addressInput, nr, function, 1, 0);
+    }
+    else if (gpio == gpioInput && functionElementInput == function) {
+      ConfigESP->setGpioMCP23017(gpioInput, addressInput, nr, function, ConfigESP->getLevel(nr, function), ConfigESP->getMemory(nr, function));
+    }
+    else {
+      return false;
+    }
   }
   return true;
 }

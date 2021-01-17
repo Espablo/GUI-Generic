@@ -37,6 +37,8 @@ enum _ConfigMode
   FACTORYRESET
 };
 
+#define OFF_MCP23017 3
+
 typedef struct {
   int status;
   const char *msg;
@@ -97,9 +99,9 @@ class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
 
   bool checkBusyGpioMCP23017(uint8_t gpio, uint8_t function);
   uint8_t getGpioMCP23017(uint8_t nr, uint8_t function);
-  uint8_t getAdressMCP23017(uint8_t function);
+  uint8_t getAdressMCP23017(uint8_t nr, uint8_t function);
   void setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory);
-  void clearGpioMCP23017(uint8_t gpio, uint8_t function);
+  void clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function);
   void clearFunctionGpio(uint8_t function);
   uint8_t getFunctionMCP23017(uint8_t adress);
   uint8_t getNrMCP23017(uint8_t adress);

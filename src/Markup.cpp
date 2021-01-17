@@ -83,7 +83,7 @@ void addTextBox(String& html,
                 bool readonly,
                 bool password) {
   String value = String(ConfigManager->get(value_key)->getValue());
-  return addTextBox(html, input_id, name, value, "", minlength, maxlength, required, readonly, password);
+  return addTextBox(html, input_id, name, value, placeholder, minlength, maxlength, required, readonly, password);
 }
 
 void addTextBox(
@@ -160,10 +160,28 @@ void addListGPIOBox(String& html, const String& input_id, const String& name, ui
   html += F("</i>");
 }
 
+void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr) {
+  if (nr == 1) {
+    uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
+    addListBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 4, address);
+  }
+
+  html += F("<i><label>");
+  if (nr > 0) {
+    html += nr;
+    html += F(".");
+  }
+  html += F(" ");
+  html += name;
+  html += F("</label>");
+  addListMCP23017GPIO(html, input_id, function, nr);
+  html += F("</i>");
+}
+
 void addListMCP23017GPIOLinkBox(String& html, const String& input_id, const String& name, uint8_t function, const String& url, uint8_t nr) {
   if (nr == 1) {
-    uint8_t address = ConfigESP->getAdressMCP23017(function);
-    addListBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 3, address);
+    uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
+    addListBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 4, address);
   }
 
   html += F("<i>");
@@ -305,7 +323,6 @@ void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function,
   html += F("'>");
 
   uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
-  uint8_t address = ConfigESP->getAdressMCP23017(function);
 
   for (uint8_t suported = 0; suported < sizeof(GPIO_MCP23017_P) / sizeof(GPIO_MCP23017_P[0]); suported++) {
     if (ConfigESP->checkBusyGpioMCP23017(suported, function) || selected == suported) {

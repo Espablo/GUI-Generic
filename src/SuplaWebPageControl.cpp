@@ -28,6 +28,15 @@ void SuplaWebPageControl::createWebPageControl() {
     WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleButtonSaveSet, this));
   }
 #endif
+
+#ifdef SUPLA_LIMIT_SWITCH
+  path = PATH_START;
+  path += PATH_SWITCH;
+  WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleLimitSwitch, this));
+  path = PATH_START;
+  path += PATH_SAVE_SWITCH;
+  WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleLimitSwitchSave, this));
+#endif
 }
 
 void SuplaWebPageControl::handleControl() {
@@ -69,20 +78,6 @@ void SuplaWebPageControl::handleControlSave() {
   }
 #endif
 
-#ifdef SUPLA_LIMIT_SWITCH
-  last_value = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
-  for (nr = 1; nr <= last_value; nr++) {
-    if (!WebServer->saveGPIO(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr, INPUT_MAX_LIMIT_SWITCH)) {
-      supla_webpage_control(6);
-      return;
-    }
-  }
-
-  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_LIMIT_SWITCH, WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str());
-  }
-#endif
-
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       supla_webpage_control(1);
@@ -119,15 +114,6 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
     else {
       addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, PATH_BUTTON_SET, nr);
     }
-  }
-  addFormHeaderEnd(webContentBuffer);
-#endif
-
-#ifdef SUPLA_LIMIT_SWITCH
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_LIMIT_SWITCH));
-  addNumberBox(webContentBuffer, INPUT_MAX_LIMIT_SWITCH, S_QUANTITY, KEY_MAX_LIMIT_SWITCH, ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH));
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
-    addListGPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -226,7 +212,90 @@ void SuplaWebPageControl::supla_webpage_button_set(int save) {
   addFormHeaderEnd(webContentBuffer);
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
-  addButton(webContentBuffer, S_RETURN, PATH_RELAY);
+  addButton(webContentBuffer, S_RETURN, PATH_CONTROL);
+
+  WebServer->sendContent();
+}
+#endif
+
+#ifdef SUPLA_LIMIT_SWITCH
+void SuplaWebPageControl::handleLimitSwitch() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+  suplaWebpageLimitSwitch(0);
+}
+
+void SuplaWebPageControl::handleLimitSwitchSave() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+
+  uint8_t nr, last_value;
+
+  last_value = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
+  for (nr = 1; nr <= last_value; nr++) {
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
+      if (!WebServer->saveGpioMCP23017(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr, INPUT_MAX_LIMIT_SWITCH)) {
+        suplaWebpageLimitSwitch(6);
+        return;
+      }
+    }
+    else {
+      if (!WebServer->saveGPIO(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr, INPUT_MAX_LIMIT_SWITCH)) {
+        suplaWebpageLimitSwitch(6);
+        return;
+      }
+    }
+  }
+
+  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_LIMIT_SWITCH, WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str());
+  }
+
+  switch (ConfigManager->save()) {
+    case E_CONFIG_OK:
+      suplaWebpageLimitSwitch(1);
+      break;
+    case E_CONFIG_FILE_OPEN:
+      suplaWebpageLimitSwitch(2);
+      break;
+  }
+}
+
+void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
+    uint8_t nr, countFreeGpio;
+
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_SWITCH);
+  addForm(webContentBuffer, F("post"), PATH_SAVE_SWITCH);
+  
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_LIMIT_SWITCH));
+
+  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
+    countFreeGpio = 16;
+  }
+  else {
+    countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH);
+  }
+
+  addNumberBox(webContentBuffer, INPUT_MAX_LIMIT_SWITCH, S_QUANTITY, KEY_MAX_LIMIT_SWITCH, countFreeGpio);
+
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
+      addListMCP23017GPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
+    }
+    else {
+      addListGPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
+    }
+  }
+  addFormHeaderEnd(webContentBuffer);
+
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
+  addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
 
   WebServer->sendContent();
 }

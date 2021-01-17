@@ -92,8 +92,8 @@ class SuplaWebServer : public Supla::Element {
   ESP8266HTTPUpdateServer httpUpdater;
 #endif
 
-  bool saveGPIO(const String& input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
-  bool saveGpioMCP23017(const String& input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
+  bool saveGPIO(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
+  bool saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
 
  private:
   void iterateAlways();
