@@ -163,7 +163,7 @@ void addListGPIOBox(String& html, const String& input_id, const String& name, ui
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr) {
   if (nr == 1) {
     uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
-    addListBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 4, address);
+    addListBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 3, address);
   }
 
   html += F("<i><label>");
@@ -181,7 +181,7 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
 void addListMCP23017GPIOLinkBox(String& html, const String& input_id, const String& name, uint8_t function, const String& url, uint8_t nr) {
   if (nr == 1) {
     uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
-    addListBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 4, address);
+    addListBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 3, address);
   }
 
   html += F("<i>");

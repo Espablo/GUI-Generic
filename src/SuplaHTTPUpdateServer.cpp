@@ -17,7 +17,7 @@ static const char serverIndex[] PROGMEM =
      <html lang='en'>
      <head>
          <meta charset='utf-8'>
-         <meta name='viewport' webContentBuffer='width=device-width,initial-scale=1'/>
+         <meta name='viewport' content='width=device-width,initial-scale=1'/>
      </head>
      <body>
      <div>Flash Size: {f}kB</div>
@@ -29,9 +29,9 @@ static const char serverIndex[] PROGMEM =
      </form>
      </body>
      </html>)";
-static const char successResponse[] PROGMEM = "<META http-equiv='refresh' webContentBuffer='15'>Update Success! Rebooting...";
+static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='10'>Update Success! Rebooting...";
 static const char twoStepResponse[] PROGMEM =
-    "<META http-equiv='refresh' webContentBuffer='15'><b>WARNING</b> only use 2-step OTA update. Use GUI-GenericUpdater.bin";
+    "<META http-equiv='refresh' content='5'><b>WARNING</b> only use 2-step OTA update. Use GUI-GenericUpdater.bin";
 
 ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
@@ -165,6 +165,7 @@ void ESP8266HTTPUpdateServer::suplaWebPageUpddate() {
   webContentBuffer += F("'><button>");
   webContentBuffer += S_RETURN;
   webContentBuffer += F("</button></a><br><br>");
+  WebServer->sendContent();
 }
 
 void ESP8266HTTPUpdateServer::_setUpdaterError() {

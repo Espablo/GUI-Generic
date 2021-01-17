@@ -338,37 +338,37 @@ void SuplaWebPageSensor::supla_webpage_1wire(int save) {
   webContentBuffer += PATH_SAVE_1WIRE;
   webContentBuffer += F("'>");
 #ifdef SUPLA_DHT11
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " DHT11");
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" DHT11"));
   addNumberBox(webContentBuffer, INPUT_MAX_DHT11, S_QUANTITY, KEY_MAX_DHT11, ConfigESP->countFreeGpio(FUNCTION_DHT11));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
-    addListGPIOBox(webContentBuffer, INPUT_DHT11_GPIO, "DHT11", FUNCTION_DHT11, nr);
+    addListGPIOBox(webContentBuffer, INPUT_DHT11_GPIO, F("DHT11"), FUNCTION_DHT11, nr);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_DHT22
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " DHT22");
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" DHT22"));
   addNumberBox(webContentBuffer, INPUT_MAX_DHT22, S_QUANTITY, KEY_MAX_DHT22, ConfigESP->countFreeGpio(FUNCTION_DHT22));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
-    addListGPIOBox(webContentBuffer, INPUT_DHT22_GPIO, "DHT22", FUNCTION_DHT22, nr);
+    addListGPIOBox(webContentBuffer, INPUT_DHT22_GPIO, F("DHT22"), FUNCTION_DHT22, nr);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_SI7021_SONOFF
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " Si7021 Sonoff");
-  addListGPIOBox(webContentBuffer, INPUT_SI7021_SONOFF, "Si7021 Sonoff", FUNCTION_SI7021_SONOFF);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" Si7021 Sonoff"));
+  addListGPIOBox(webContentBuffer, INPUT_SI7021_SONOFF, F("Si7021 Sonoff"), FUNCTION_SI7021_SONOFF);
   addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_DS18B20
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " Multi DS18B20");
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" Multi DS18B20"));
   addNumberBox(webContentBuffer, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, MAX_DS18B20);
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
-    addListGPIOLinkBox(webContentBuffer, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20, PATH_MULTI_DS);
+    addListGPIOLinkBox(webContentBuffer, INPUT_MULTI_DS_GPIO, F("MULTI DS18B20"), FUNCTION_DS18B20, PATH_MULTI_DS);
   }
   else {
-    addListGPIOBox(webContentBuffer, INPUT_MULTI_DS_GPIO, "MULTI DS18B20", FUNCTION_DS18B20);
+    addListGPIOBox(webContentBuffer, INPUT_MULTI_DS_GPIO, F("MULTI DS18B20"), FUNCTION_DS18B20);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -617,14 +617,14 @@ void SuplaWebPageSensor::supla_webpage_spi(int save) {
   webContentBuffer += F("'>");
 
 #if defined(SUPLA_MAX6675)
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " SPI");
-  addListGPIOBox(webContentBuffer, INPUT_CLK_GPIO, "CLK", FUNCTION_CLK);
-  addListGPIOBox(webContentBuffer, INPUT_CS_GPIO, "CS", FUNCTION_CS);
-  addListGPIOBox(webContentBuffer, INPUT_D0_GPIO, "D0", FUNCTION_D0);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" SPI"));
+  addListGPIOBox(webContentBuffer, INPUT_CLK_GPIO, F("CLK"), FUNCTION_CLK);
+  addListGPIOBox(webContentBuffer, INPUT_CS_GPIO, F("CS"), FUNCTION_CS);
+  addListGPIOBox(webContentBuffer, INPUT_D0_GPIO, F("D0"), FUNCTION_D0);
 
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MAX6675).toInt();
-    addListBox(webContentBuffer, INPUT_MAX6675, "MAX6675", STATE_P, 2, selected);
+    addListBox(webContentBuffer, INPUT_MAX6675, F("MAX6675"), STATE_P, 2, selected);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -671,7 +671,7 @@ void SuplaWebPageSensor::handleOtherSave() {
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-  // Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
+  Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
 
   last_value = ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {
@@ -947,12 +947,12 @@ void SuplaWebPageSensor::suplaWebpageHLW8012Calibrate(uint8_t save) {
   addFormHeaderEnd(webContentBuffer);
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_HLW8012_CALIBRATE);
-  addFormHeader(webContentBuffer, "Ustawienia kalibracji");
-  addNumberBox(webContentBuffer, INPUT_CALIB_POWER, "Moc żarówki [W]", "25", true);
-  addNumberBox(webContentBuffer, INPUT_CALIB_VOLTAGE, "Napięcie [V]", "230", true);
+  addFormHeader(webContentBuffer, F("Ustawienia kalibracji"));
+  addNumberBox(webContentBuffer, INPUT_CALIB_POWER, F("Moc żarówki [W]"), F("25"), true);
+  addNumberBox(webContentBuffer, INPUT_CALIB_VOLTAGE, F("Napięcie [V]"), F("230"), true);
   addFormHeaderEnd(webContentBuffer);
 
-  addButtonSubmit(webContentBuffer, "Kalibracja");
+  addButtonSubmit(webContentBuffer, F("Kalibracja"));
   addFormEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_RETURN, PATH_OTHER);

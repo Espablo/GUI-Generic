@@ -487,6 +487,10 @@ bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t function) {
     uint8_t key = KEY_GPIO + gpio;
     uint8_t address = ConfigESP->getAdressMCP23017(1, function);
 
+    if (address == OFF_MCP23017) {
+      return true;
+    }
+
     if (ConfigManager->get(key)->getElement(getFunctionMCP23017(address)).toInt() != FUNCTION_OFF) {
       return false;
     }
@@ -632,7 +636,7 @@ uint8_t SuplaConfigESP::getNrMCP23017(uint8_t adress) {
 }
 
 void SuplaConfigESP::factoryReset(bool forceReset) {
-  delay(1000);
+  delay(2000);
   pinMode(0, INPUT_PULLUP);
   if (digitalRead(0) != HIGH || forceReset) {
     Serial.println(F("FACTORY RESET!!!"));
@@ -661,43 +665,21 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_ALTITUDE_BME280, "0");
     ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "0");
     ConfigManager->set(KEY_MAX_IMPULSE_COUNTER, "0");
-    ConfigManager->set(KEY_ACTIVE_SENSOR, "0,0,0,0,0");
+    ConfigManager->set(KEY_ACTIVE_SENSOR, "");
     ConfigManager->set(KEY_BOARD, "0");
     ConfigManager->set(KEY_CFG_MODE, "0");
 
     uint8_t nr, key;
     for (nr = 0; nr <= 17; nr++) {
       key = KEY_GPIO + nr;
-      ConfigManager->set(key, "0,0,0,0,0");
+      ConfigManager->set(key, "");
     }
 
-    /* for (nr = 0; nr <= MAX_DS18B20; nr++) {
-       key = KEY_DS + nr;
-       ConfigManager->set(key, "");
-       key = KEY_DS_NAME + nr;
-       ConfigManager->set(key, "");
-     }*/
+    ConfigManager->set(KEY_ADDR_DS18B20, "");
+    ConfigManager->set(KEY_NAME_SENSOR, "");
 
     ConfigManager->save();
 
     // rebootESP();
-  }
-}
-
-uint32_t lowestRAM = 0;
-uint32_t lowestFreeStack = 0;
-
-void checkRAM() {
-  uint32_t freeRAM = ESP.getFreeHeap();
-  Serial.print(F("freeRAM: "));
-  Serial.println(freeRAM);
-  if (freeRAM <= lowestRAM) {
-    lowestRAM = freeRAM;
-  }
-  uint32_t freeStack = ESP.getFreeContStack();
-  Serial.print(F("freeStack: "));
-  Serial.println(freeStack);
-  if (freeStack <= lowestFreeStack) {
-    lowestFreeStack = freeStack;
   }
 }

@@ -168,10 +168,10 @@ SuplaConfigManager::SuplaConfigManager() {
 
   for (nr = 0; nr <= 17; nr++) {
     key = KEY_GPIO + nr;
-    this->addKey(key, "0,0,0,0,0,0", SETTINGSCOUNT * 2);
+    this->addKey(key, "", SETTINGSCOUNT * 2);
   }
 
-  this->addKey(KEY_ACTIVE_SENSOR, "0,0,0,0,0", 16);
+  this->addKey(KEY_ACTIVE_SENSOR, "", 16);
   this->addKey(KEY_BOARD, "0", 2);
   this->addKey(KEY_CFG_MODE, "0", 2);
   this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20);

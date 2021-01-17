@@ -260,7 +260,7 @@ void SuplaWebServer::handleBoardSave() {
     uint8_t key;
     for (nr = 0; nr <= 17; nr++) {
       key = KEY_GPIO + nr;
-      ConfigManager->set(key, "0,0,0,0,0");
+      ConfigManager->set(key, "");
     }
 
     chooseTemplateBoard(WebServer->httpServer.arg(input).toInt());
@@ -405,6 +405,7 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
   gpio = ConfigESP->getGpioMCP23017(nr, function);
   if (addressInput == OFF_MCP23017) {
     ConfigESP->clearGpioMCP23017(gpio, nr, function);
+    return true;
   }
 
   if (gpioInput != OFF_GPIO) {

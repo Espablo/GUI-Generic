@@ -37,7 +37,7 @@ enum _ConfigMode
   FACTORYRESET
 };
 
-#define OFF_MCP23017 3
+#define OFF_MCP23017 2
 
 typedef struct {
   int status;
