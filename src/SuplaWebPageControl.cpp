@@ -16,7 +16,7 @@ void SuplaWebPageControl::createWebPageControl() {
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleControlSave, this));
 
 #ifdef SUPLA_BUTTON
-  for (uint8_t i = 1; i <= MAX_GPIO; i++) {
+  for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); i++) {
     path = PATH_START;
     path += PATH_BUTTON_SET;
     path += i;
