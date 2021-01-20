@@ -23,16 +23,27 @@ void SuplaWebPageRelay::createWebPageRelay() {
   path += PATH_SAVE_RELAY;
   WebServer->httpServer.on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySave, this));
 
-  for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); i++) {
+  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
     path = PATH_START;
     path += PATH_RELAY_SET;
-    path += i;
-    WebServer->httpServer.on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelaySet, this));
+    WebServer->httpServer.on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelaySetMCP23017, this));
 
     path = PATH_START;
     path += PATH_SAVE_RELAY_SET;
-    path += i;
-    WebServer->httpServer.on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSet, this));
+    WebServer->httpServer.on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSetMCP23017, this));
+  }
+  else {
+    for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); i++) {
+      path = PATH_START;
+      path += PATH_RELAY_SET;
+      path += i;
+      WebServer->httpServer.on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelaySet, this));
+
+      path = PATH_START;
+      path += PATH_SAVE_RELAY_SET;
+      path += i;
+      WebServer->httpServer.on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSet, this));
+    }
   }
 }
 
@@ -205,5 +216,72 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save) {
   addButton(webContentBuffer, S_RETURN, PATH_RELAY);
 
   WebServer->sendContent();
+}
+
+void SuplaWebPageRelay::handleRelaySetMCP23017() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+  supla_webpage_relay_set_MCP23017(0);
+}
+
+void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
+  uint8_t selected;
+
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_RELAY);
+
+  addForm(webContentBuffer, F("post"), PATH_SAVE_RELAY_SET);
+  addFormHeader(webContentBuffer, F("Ustawienia dla przekaźników"));
+
+  selected = ConfigESP->getLevel(1, FUNCTION_RELAY);
+  addListBox(webContentBuffer, INPUT_RELAY_LEVEL, S_STATE_CONTROL, LEVEL_P, 2, selected);
+
+  selected = ConfigESP->getMemory(1, FUNCTION_RELAY);
+  addListBox(webContentBuffer, INPUT_RELAY_MEMORY, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
+
+  addFormHeaderEnd(webContentBuffer);
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
+  addButton(webContentBuffer, S_RETURN, PATH_RELAY);
+
+  WebServer->sendContent();
+}
+
+void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+
+  String input;
+  uint8_t key, gpio, memory, level;
+
+  input.reserve(9);
+
+  input = INPUT_RELAY_MEMORY;
+  memory = WebServer->httpServer.arg(input).toInt();
+
+  input = INPUT_RELAY_LEVEL;
+  level = WebServer->httpServer.arg(input).toInt();
+
+  for (uint8_t i = 1; i <= OFF_GPIO; i++) {
+    gpio = ConfigESP->getGpioMCP23017(i, FUNCTION_RELAY);
+    if (gpio != OFF_GPIO) {
+      key = KEY_GPIO + gpio;
+      ConfigManager->setElement(key, MEMORY, memory);
+      ConfigManager->setElement(key, LEVEL, level);
+    }
+  }
+
+  switch (ConfigManager->save()) {
+    case E_CONFIG_OK:
+      supla_webpage_relay(1);
+      break;
+    case E_CONFIG_FILE_OPEN:
+      supla_webpage_relay(2);
+      break;
+  }
 }
 #endif

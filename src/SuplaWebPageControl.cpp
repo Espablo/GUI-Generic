@@ -16,16 +16,27 @@ void SuplaWebPageControl::createWebPageControl() {
   WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleControlSave, this));
 
 #ifdef SUPLA_BUTTON
-  for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); i++) {
+  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
     path = PATH_START;
     path += PATH_BUTTON_SET;
-    path += i;
-    WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleButtonSet, this));
+    WebServer->httpServer.on(path, HTTP_GET, std::bind(&SuplaWebPageControl::handleButtonSetMCP23017, this));
 
     path = PATH_START;
     path += PATH_SAVE_BUTTON_SET;
-    path += i;
-    WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleButtonSaveSet, this));
+    WebServer->httpServer.on(path, HTTP_POST, std::bind(&SuplaWebPageControl::handleButtonSaveSetMCP23017, this));
+  }
+  else {
+    for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); i++) {
+      path = PATH_START;
+      path += PATH_BUTTON_SET;
+      path += i;
+      WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleButtonSet, this));
+
+      path = PATH_START;
+      path += PATH_SAVE_BUTTON_SET;
+      path += i;
+      WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleButtonSaveSet, this));
+    }
   }
 #endif
 
@@ -266,12 +277,12 @@ void SuplaWebPageControl::handleLimitSwitchSave() {
 }
 
 void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
-    uint8_t nr, countFreeGpio;
+  uint8_t nr, countFreeGpio;
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_SWITCH);
   addForm(webContentBuffer, F("post"), PATH_SAVE_SWITCH);
-  
+
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_LIMIT_SWITCH));
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
@@ -300,3 +311,69 @@ void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
   WebServer->sendContent();
 }
 #endif
+
+void SuplaWebPageControl::handleButtonSetMCP23017() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+  supla_webpage_button_set_MCP23017(0);
+}
+
+void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
+  uint8_t selected;
+
+  webContentBuffer += SuplaSaveResult(save);
+  webContentBuffer += SuplaJavaScript(PATH_CONTROL);
+
+  addForm(webContentBuffer, F("post"), PATH_SAVE_BUTTON_SET);
+  addFormHeader(webContentBuffer, F("Ustawienia dla przycisków"));
+
+  selected = ConfigESP->getLevel(1, FUNCTION_BUTTON);
+  addListBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_REACTION_TO, TRIGGER_P, 3, selected);
+
+  selected = ConfigESP->getAction(1, FUNCTION_BUTTON);
+  addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
+
+  addFormHeaderEnd(webContentBuffer);
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
+  addButton(webContentBuffer, S_RETURN, PATH_CONTROL);
+
+  WebServer->sendContent();
+}
+
+void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer.requestAuthentication();
+  }
+
+  String input;
+  uint8_t key, gpio, level, action;
+
+  input.reserve(10);
+
+  input = INPUT_BUTTON_LEVEL;
+  level = WebServer->httpServer.arg(input).toInt();
+
+  input = INPUT_BUTTON_ACTION;
+  action = WebServer->httpServer.arg(input).toInt();
+
+  for (uint8_t i = 1; i <= OFF_GPIO; i++) {
+    gpio = ConfigESP->getGpioMCP23017(i, FUNCTION_BUTTON);
+    if (gpio != OFF_GPIO) {
+      key = KEY_GPIO + gpio;
+      ConfigManager->setElement(key, LEVEL, level);
+      ConfigManager->setElement(key, ACTION, action);
+    }
+  }
+  switch (ConfigManager->save()) {
+    case E_CONFIG_OK:
+      supla_webpage_control(1);
+      break;
+    case E_CONFIG_FILE_OPEN:
+      supla_webpage_control(2);
+      break;
+  }
+}

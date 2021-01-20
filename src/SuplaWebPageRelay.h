@@ -33,10 +33,14 @@ class SuplaWebPageRelay {
   void handleRelaySave();
   void handleRelaySet();
   void handleRelaySaveSet();
+  void handleRelaySaveSetMCP23017();
+  void handleRelaySetMCP23017();
+
 
  private:
   void supla_webpage_relay_set(int save);
   void supla_webpage_relay(int save);
+  void supla_webpage_relay_set_MCP23017(int save);
 };
 
 extern SuplaWebPageRelay* WebPageRelay;

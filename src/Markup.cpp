@@ -190,9 +190,6 @@ void addListMCP23017GPIOLinkBox(String& html, const String& input_id, const Stri
     html += F("<a href='");
     html += PATH_START;
     html += url;
-    if (nr > 0) {
-      html += nr;
-    }
     html += F("'>");
   }
   if (nr > 0) {

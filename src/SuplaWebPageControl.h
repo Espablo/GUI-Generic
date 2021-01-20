@@ -48,6 +48,11 @@ class SuplaWebPageControl {
 #ifdef SUPLA_BUTTON
   void supla_webpage_button_set(int save);
 #endif
+
+void handleButtonSetMCP23017();
+void handleButtonSaveSetMCP23017();
+void supla_webpage_button_set_MCP23017(int save);
+
 };
 
 extern SuplaWebPageControl* WebPageControl;
