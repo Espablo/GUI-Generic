@@ -34,6 +34,10 @@ void addLedCFG(uint8_t gpio, uint8_t level) {
   ConfigESP->setGpio(gpio, FUNCTION_CFG_LED, level);
 }
 
+void addLed(uint8_t gpio) {
+  ConfigESP->setGpio(gpio, FUNCTION_LED);
+}
+
 void addButtonCFG(uint8_t gpio) {
   ConfigESP->setGpio(gpio, FUNCTION_CFG_BUTTON);
 }
@@ -195,6 +199,7 @@ void chooseTemplateBoard(uint8_t board) {
       addButtonCFG(13);
       addButton(13, Supla::ON_RELEASE);
       addRelay(15);
+      addLed(0);
 #ifdef SUPLA_HLW8012
       addHLW8012(5, 4, 12);
       Supla::GUI::counterHLW8012->setCurrentMultiplier(18388);

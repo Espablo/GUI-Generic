@@ -54,7 +54,15 @@ void begin() {
 }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
+void addRelayButton(uint8_t nr) {
+  uint8_t pinRelay, pinButton, pinLED;
+  bool highIsOn;
+
+  pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
+  pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+  pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
+  highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+
   if (pinRelay != OFF_GPIO) {
     relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
 
@@ -79,6 +87,10 @@ void addRelayButton(int pinRelay, int pinButton, bool highIsOn) {
       button.push_back(new Supla::Control::Button(pinButton, true));
       button[size]->addAction(ConfigESP->getAction(size + 1, FUNCTION_BUTTON), *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
       button[size]->setSwNoiseFilterDelay(50);
+    }
+
+    if (pinLED != OFF_GPIO) {
+      new Supla::Control::PinStatusLed(pinRelay, pinLED, highIsOn);
     }
   }
 }
@@ -109,7 +121,19 @@ std::vector<Supla::Control::RollerShutter *> RollerShutterRelay;
 std::vector<Supla::Control::Button *> RollerShutterButtonOpen;
 std::vector<Supla::Control::Button *> RollerShutterButtonClose;
 
-void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn) {
+void addRolleShutter(uint8_t nr) {
+  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinLedUP, pinLedDown;
+  bool highIsOn;
+
+  pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
+  pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
+  pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+  pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
+  pinLedUP = ConfigESP->getGpio(nr, FUNCTION_LED);
+  pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
+
+  highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+
   RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
   if (pinButtonUp != OFF_GPIO)
     RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
@@ -124,9 +148,28 @@ void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinB
     RollerShutterButtonOpen[size]->addAction(Supla::STEP_BY_STEP, *RollerShutterRelay[size], Supla::ON_PRESS);
   }
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
+
+  if (pinLedUP != OFF_GPIO) {
+    new Supla::Control::PinStatusLed(pinRelayUp, pinLedUP, highIsOn);
+  }
+  if (pinLedDown != OFF_GPIO) {
+    new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, highIsOn);
+  }
 }
 
-void addRolleShutterMomentary(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn) {
+void addRolleShutterMomentary(uint8_t nr) {
+  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinLedUP, pinLedDown;
+  bool highIsOn;
+
+  pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
+  pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
+  pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+  pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
+  pinLedUP = ConfigESP->getGpio(nr, FUNCTION_LED);
+  pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
+
+  highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+
   RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
   if (pinButtonUp != OFF_GPIO)
     RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
@@ -141,6 +184,13 @@ void addRolleShutterMomentary(int pinRelayUp, int pinRelayDown, int pinButtonUp,
     RollerShutterButtonClose[size]->addAction(Supla::STOP, *RollerShutterRelay[size], Supla::ON_RELEASE);
   }
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
+
+  if (pinLedUP != OFF_GPIO) {
+    new Supla::Control::PinStatusLed(pinRelayUp, pinLedUP, highIsOn);
+  }
+  if (pinLedDown != OFF_GPIO) {
+    new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, highIsOn);
+  }
 }
 #endif
 

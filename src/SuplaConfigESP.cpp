@@ -287,31 +287,33 @@ int SuplaConfigESP::getLevel(int nr, int function) {
       }
     }
 
-    switch (getAdressMCP23017(nr, function)) {
-      case 0:
-        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
-          if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
-            return ConfigManager->get(key)->getElement(LEVEL).toInt();
-            ;
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
+      switch (getAdressMCP23017(nr, function)) {
+        case 0:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
+            if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+              return ConfigManager->get(key)->getElement(LEVEL).toInt();
+              ;
+            }
           }
-        }
-        break;
-      case 1:
-        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
-          if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
-            return ConfigManager->get(key)->getElement(LEVEL).toInt();
-            ;
+          break;
+        case 1:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
+            if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+              return ConfigManager->get(key)->getElement(LEVEL).toInt();
+              ;
+            }
           }
-        }
-        break;
-      case 2:
-        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function) {
-          if (ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
-            return ConfigManager->get(key)->getElement(LEVEL).toInt();
-            ;
+          break;
+        case 2:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function) {
+            if (ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
+              return ConfigManager->get(key)->getElement(LEVEL).toInt();
+              ;
+            }
           }
-        }
-        break;
+          break;
+      }
     }
   }
   return OFF_GPIO;
@@ -326,31 +328,33 @@ int SuplaConfigESP::getMemory(int nr, int function) {
       }
     }
 
-    switch (getAdressMCP23017(nr, function)) {
-      case 0:
-        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
-          if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
-            return ConfigManager->get(key)->getElement(MEMORY).toInt();
-            ;
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
+      switch (getAdressMCP23017(nr, function)) {
+        case 0:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
+            if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+              return ConfigManager->get(key)->getElement(MEMORY).toInt();
+              ;
+            }
           }
-        }
-        break;
-      case 1:
-        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
-          if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
-            return ConfigManager->get(key)->getElement(MEMORY).toInt();
-            ;
+          break;
+        case 1:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
+            if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+              return ConfigManager->get(key)->getElement(MEMORY).toInt();
+              ;
+            }
           }
-        }
-        break;
-      case 2:
-        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function) {
-          if (ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
-            return ConfigManager->get(key)->getElement(MEMORY).toInt();
-            ;
+          break;
+        case 2:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function) {
+            if (ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
+              return ConfigManager->get(key)->getElement(MEMORY).toInt();
+              ;
+            }
           }
-        }
-        break;
+          break;
+      }
     }
   }
   return OFF_GPIO;
@@ -366,31 +370,33 @@ int SuplaConfigESP::getAction(int nr, int function) {
       }
     }
 
-    switch (getAdressMCP23017(nr, function)) {
-      case 0:
-        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
-          if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
-            return ConfigManager->get(key)->getElement(ACTION).toInt();
-            ;
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
+      switch (getAdressMCP23017(nr, function)) {
+        case 0:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
+            if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+              return ConfigManager->get(key)->getElement(ACTION).toInt();
+              ;
+            }
           }
-        }
-        break;
-      case 1:
-        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
-          if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
-            return ConfigManager->get(key)->getElement(ACTION).toInt();
-            ;
+          break;
+        case 1:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
+            if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+              return ConfigManager->get(key)->getElement(ACTION).toInt();
+              ;
+            }
           }
-        }
-        break;
-      case 2:
-        if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function) {
-          if (ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
-            return ConfigManager->get(key)->getElement(ACTION).toInt();
-            ;
+          break;
+        case 2:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function) {
+            if (ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
+              return ConfigManager->get(key)->getElement(ACTION).toInt();
+              ;
+            }
           }
-        }
-        break;
+          break;
+      }
     }
   }
   return OFF_GPIO;

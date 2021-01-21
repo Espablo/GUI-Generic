@@ -155,10 +155,10 @@ void SuplaWebPageControl::handleButtonSaveSet() {
   String readUrl, nr_button, input, path;
   uint8_t place, key, gpio;
 
-  input.reserve(10);
-  readUrl.reserve(11);
+  input.reserve(5);
+  readUrl.reserve(16);
   nr_button.reserve(2);
-  path.reserve(14);
+  path.reserve(16);
 
   path = PATH_START;
   path += PATH_SAVE_BUTTON_SET;
@@ -167,12 +167,7 @@ void SuplaWebPageControl::handleButtonSaveSet() {
   place = readUrl.indexOf(path);
   nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
 
-  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
-    gpio = ConfigESP->getGpioMCP23017(nr_button.toInt(), FUNCTION_BUTTON);
-  }
-  else {
-    gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
-  }
+  gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
   key = KEY_GPIO + gpio;
 
   input = INPUT_BUTTON_LEVEL;

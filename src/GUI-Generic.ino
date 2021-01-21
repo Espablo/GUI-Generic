@@ -40,15 +40,11 @@ void setup() {
       if (rollershutters > 0) {
 #ifdef SUPLA_BUTTON
         if (ConfigESP->getLevel(nr, FUNCTION_BUTTON) == Supla::ON_CHANGE && ConfigESP->getLevel(nr + 1, FUNCTION_BUTTON) == Supla::ON_CHANGE) {
-          Supla::GUI::addRolleShutterMomentary(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr + 1, FUNCTION_RELAY),
-                                               ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON),
-                                               ConfigESP->getLevel(nr, FUNCTION_RELAY));
+          Supla::GUI::addRolleShutterMomentary(nr);
         }
         else {
 #endif
-          Supla::GUI::addRolleShutter(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr + 1, FUNCTION_RELAY),
-                                      ConfigESP->getGpio(nr, FUNCTION_BUTTON), ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON),
-                                      ConfigESP->getLevel(nr, FUNCTION_RELAY));
+          Supla::GUI::addRolleShutter(nr);
 #ifdef SUPLA_BUTTON
         }
 #endif
@@ -57,8 +53,7 @@ void setup() {
       }
       else {
 #endif
-        Supla::GUI::addRelayButton(ConfigESP->getGpio(nr, FUNCTION_RELAY), ConfigESP->getGpio(nr, FUNCTION_BUTTON),
-                                   ConfigESP->getLevel(nr, FUNCTION_RELAY));
+        Supla::GUI::addRelayButton(nr);
 #ifdef SUPLA_ROLLERSHUTTER
       }
 #endif

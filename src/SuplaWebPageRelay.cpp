@@ -142,27 +142,22 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  String readUrl, nr_relay, input;
+  String readUrl, nr_relay, input, path;
   uint8_t place, key, gpio;
 
-  input.reserve(9);
+  input.reserve(6);
   readUrl.reserve(11);
   nr_relay.reserve(2);
+  path.reserve(15);
 
-  String path = PATH_START;
+  path = PATH_START;
   path += PATH_SAVE_RELAY_SET;
   readUrl = WebServer->httpServer.uri();
 
   place = readUrl.indexOf(path);
   nr_relay = readUrl.substring(place + path.length(), place + path.length() + 3);
 
-  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt() != FUNCTION_OFF) {
-    gpio = ConfigESP->getGpioMCP23017(nr_relay.toInt(), FUNCTION_RELAY);
-  }
-  else {
-    gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
-  }
-
+  gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
   key = KEY_GPIO + gpio;
 
   input = INPUT_RELAY_MEMORY;
@@ -187,7 +182,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save) {
   String path, readUrl, nr_relay;
   uint8_t place, selected;
 
-  path.reserve(9);
+  path.reserve(10);
   readUrl.reserve(11);
   nr_relay.reserve(2);
 

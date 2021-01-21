@@ -30,6 +30,7 @@
 #define S_CFG_MODE                                             "Tryb"
 #define S_QUANTITY                                             "ILOŚĆ"
 #define S_GPIO_SETTINGS_FOR_RELAYS                             "Ustawienie GPIO dla przekaźników"
+#define S_GPIO_SETTINGS_FOR                                    "Ustawienie GPIO dla"
 #define S_RELAY                                                "PRZEKAŹNIK"
 #define S_RELAY_NR_SETTINGS                                    "Ustawienia przekaźnika nr."
 #define S_NO_RELAY_NR                                          "Brak przekaźnika nr."
@@ -60,7 +61,7 @@
 #define S_WRITE_ERROR_BAD_DATA                                 "Błąd zapisu - złe dane."
 
 //#### SuplaConfigESP.cpp ####
-#define S_ALREADY_INITIATED                           "Już zainicjalizowane"
+#define S_ALREADY_INITIATED                            "Już zainicjalizowane"
 #define S_NOT_ASSIGNED_CB                              "Nie przypisane CB"
 #define S_INVALID_GUID_OR_DEVICE_REGISTRATION_INACTIVE "Nieprawidłowy identyfikator GUID lub rejestracja urządzeń NIEAKTYWNA"
 #define S_UNKNOWN_SEVER_ADDRESS                        "Nieznany adres serwera"

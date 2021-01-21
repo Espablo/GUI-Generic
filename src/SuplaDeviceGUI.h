@@ -75,6 +75,7 @@
 #endif
 
 #include <supla/sensor/HJ101.h>
+#include <supla/control/pin_status_led.h>
 
 #include <Wire.h>
 
@@ -84,7 +85,7 @@ namespace GUI {
 void begin();
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-void addRelayButton(int pinRelay, int pinButton, bool highIsOn = true);
+void addRelayButton(uint8_t nr);
 
 extern std::vector<Supla::Control::Relay *> relay;
 extern std::vector<Supla::Control::Button *> button;
@@ -101,8 +102,8 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 #endif
 
 #ifdef SUPLA_ROLLERSHUTTER
-void addRolleShutter(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn = true);
-void addRolleShutterMomentary(int pinRelayUp, int pinRelayDown, int pinButtonUp, int pinButtonDown, bool highIsOn = true);
+void addRolleShutter(uint8_t nr);
+void addRolleShutterMomentary(uint8_t nr);
 
 extern std::vector<Supla::Control::RollerShutter *> RollerShutterRelay;
 extern std::vector<Supla::Control::Button *> RollerShutterButtonOpen;

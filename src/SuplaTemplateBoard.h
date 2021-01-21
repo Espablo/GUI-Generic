@@ -9,6 +9,7 @@ void addButton(uint8_t gpio, uint8_t event = 0);
 void addRelay(uint8_t gpio, uint8_t level = HIGH);
 void addLimitSwitch(uint8_t gpio);
 void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
+void addLed(uint8_t gpio);
 void addButtonCFG(uint8_t gpio);
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 
