@@ -45,12 +45,12 @@ typedef struct {
   const char *old_msg;
 } _supla_status;
 
-class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
+class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
  public:
   SuplaConfigESP();
 
   void addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _highIsOn = true);
-  void runAction(int event, int action);
+  void handleAction(int event, int action);
   void rebootESP();
 
   const char *getLastStatusSupla();
@@ -119,7 +119,6 @@ class SuplaConfigESP : public Supla::Triggerable, public Supla::Element {
 
 void ledBlinking_func(void *timer_arg);
 void status_func(int status, const char *msg);
-
 
 uint32_t getFreeStackWatermark();
 unsigned long FreeMem();

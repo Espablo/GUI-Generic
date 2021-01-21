@@ -21,13 +21,12 @@
 #include <stdint.h>
 
 #include "../actions.h"
-#include "../channel.h"
-#include "../element.h"
-#include "../triggerable.h"
+#include "../channel_element.h"
+#include "../action_handler.h"
 
 namespace Supla {
 namespace Control {
-class RGBWBase : public Element, public Triggerable {
+class RGBWBase : public ChannelElement, public ActionHandler {
  public:
   RGBWBase();
 
@@ -44,7 +43,7 @@ class RGBWBase : public Element, public Triggerable {
   virtual void turnOn();
   virtual void turnOff();
   virtual void toggle();
-  void runAction(int event, int action);
+  void handleAction(int event, int action);
   void setStep(int step);
   void setDefaultDimmedBrightness(int dimmedBrightness);
   void setFadeEffectTime(int timeMs);
@@ -56,13 +55,10 @@ class RGBWBase : public Element, public Triggerable {
         curRed, curGreen, curBlue, curColorBrightness, curBrightness);
   }
 
-  Channel *getChannel();
-
  protected:
   uint8_t addWithLimit(int value, int addition, int limit = 255);
   void iterateDimmerRGBW(int rgbStep, int wStep);
 
-  Channel channel;
   uint8_t buttonStep;               // 10
   uint8_t curRed;                   // 0 - 255
   uint8_t curGreen;                 // 0 - 255

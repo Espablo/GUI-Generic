@@ -121,7 +121,7 @@ uint8_t RGBWBase::addWithLimit(int value, int addition, int limit) {
   return value + addition;
 }
 
-void RGBWBase::runAction(int event, int action) {
+void RGBWBase::handleAction(int event, int action) {
   (void)(event);
   switch (action) {
     case TURN_ON: {
@@ -306,10 +306,6 @@ void RGBWBase::iterateDimmerRGBW(int rgbStep, int wStep) {
       -1,
       addWithLimit(curColorBrightness, rgbStep, 100),
       addWithLimit(curBrightness, wStep, 100));
-}
-
-Channel *RGBWBase::getChannel() {
-  return &channel;
 }
 
 void RGBWBase::setStep(int step) {

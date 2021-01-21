@@ -76,7 +76,7 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _
   }
 }
 
-void SuplaConfigESP::runAction(int event, int action) {
+void SuplaConfigESP::handleAction(int event, int action) {
   if (action == CONFIG_MODE_10_ON_PRESSES) {
     if (event == Supla::ON_CLICK_10) {
       configModeInit();

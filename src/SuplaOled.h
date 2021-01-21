@@ -45,14 +45,14 @@ void displayDoubleTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, i
 void displayDoubleHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 
-class SuplaOled : public Supla::Triggerable, public Supla::Element {
+class SuplaOled : public Supla::ActionHandler, public Supla::Element {
  public:
   SuplaOled();
   void addButtonOled(int pin);
 
  private:
   void iterateAlways();
-  void runAction(int event, int action);
+  void handleAction(int event, int action);
 
   OLEDDisplay* display;
   OLEDDisplayUi* ui;

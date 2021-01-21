@@ -385,7 +385,7 @@ void SuplaOled::addButtonOled(int pin) {
   }
 }
 
-void SuplaOled::runAction(int event, int action) {
+void SuplaOled::handleAction(int event, int action) {
   if (action == TURN_ON_OLED) {
     display->setBrightness(255);
     timeLastChangeOled = millis();
