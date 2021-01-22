@@ -108,6 +108,31 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_MAX6675
+  if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
+    new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
+  }
+#endif
+
+#ifdef SUPLA_IMPULSE_COUNTER
+  if (ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() > 0) {
+    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
+      if (ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
+        Supla::GUI::addImpulseCounter(ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER), ConfigESP->getLevel(nr, FUNCTION_IMPULSE_COUNTER),
+                                      ConfigESP->getMemory(nr, FUNCTION_IMPULSE_COUNTER),
+                                      ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt());
+      }
+    }
+  }
+
+#endif
+
+#ifdef SUPLA_HLW8012
+  if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
+    Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
+  }
+#endif
+
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || \
     defined(SUPLA_BH1750) || defined(SUPLA_MAX44009) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
@@ -149,13 +174,7 @@ void setup() {
     }
 #endif
 
-#ifdef SUPLA_OLED
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
-      SuplaOled *oled = new SuplaOled();
-      oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
-    }
-#endif
-
+#ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
       if (!mcp1.begin(0))
         Serial.println(F("MCP23017 1 not found!"));  // begin(uint8_t address)  "Pin 100 - 115"
@@ -169,29 +188,13 @@ void setup() {
   }
 #endif
 
-#ifdef SUPLA_MAX6675
-  if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
-    new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
+#ifdef SUPLA_OLED
+  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
+    SuplaOled *oled = new SuplaOled();
+    oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
   }
 #endif
 
-#ifdef SUPLA_IMPULSE_COUNTER
-  if (ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() > 0) {
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
-      if (ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
-        Supla::GUI::addImpulseCounter(ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER), ConfigESP->getLevel(nr, FUNCTION_IMPULSE_COUNTER),
-                                      ConfigESP->getMemory(nr, FUNCTION_IMPULSE_COUNTER),
-                                      ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt());
-      }
-    }
-  }
-
-#endif
-
-#ifdef SUPLA_HLW8012
-  if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
-    Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
-  }
 #endif
 
   Supla::GUI::begin();

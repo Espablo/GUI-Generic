@@ -293,7 +293,7 @@ SuplaOled::SuplaOled() {
     ui = new OLEDDisplayUi(display);
 
     overlays[0] = {msOverlay};
-    int maxFrame = getNumberChannels();
+    int maxFrame = getCountSensorChannels();
 
     if (maxFrame == 0)
       maxFrame = 1;

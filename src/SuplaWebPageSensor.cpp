@@ -452,7 +452,7 @@ void SuplaWebPageSensor::handlei2cSave() {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_OLED, WebServer->httpServer.arg(input).toInt());
   }
 
-  for (uint8_t i = 0; i < getNumberChannels(); i++) {
+  for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
     input = INPUT_DS18B20_NAME;
     input += i;
     if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
@@ -527,7 +527,7 @@ void SuplaWebPageSensor::supla_webpage_i2c(int save) {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
       String name, sensorName, input;
 
-      for (uint8_t i = 0; i < getNumberChannels(); i++) {
+      for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
         sensorName = String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
         input = INPUT_DS18B20_NAME;
         input += i;
@@ -671,7 +671,7 @@ void SuplaWebPageSensor::handleOtherSave() {
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-  //Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
+  // Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
 
   last_value = ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {

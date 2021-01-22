@@ -11,12 +11,12 @@ uint8_t *HexToBytes(String _value) {
   return buffer;
 }
 
-int getNumberChannels() {
+int getCountSensorChannels() {
   int maxFrame = 0;
   for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
     if (element->getChannel()) {
       auto channel = element->getChannel();
-      
+
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
         maxFrame += 1;
       }

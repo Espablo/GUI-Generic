@@ -13,6 +13,6 @@
 #include "SuplaDeviceGUI.h"
 
 uint8_t *HexToBytes(String _value);
-int getNumberChannels();
+int getCountSensorChannels();
 
 #endif  // GUI_GENERIC_COMMON_H
