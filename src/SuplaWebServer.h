@@ -32,9 +32,6 @@
 #define DEFAULT_LOGIN    "admin"
 #define DEFAULT_PASSWORD "password"
 
-#define MAX_GPIO 13
-#define OFF_GPIO 17
-
 #define PATH_START            "/"
 #define PATH_SAVE_LOGIN       "savelogin"
 #define PATH_REBOT            "rbt"

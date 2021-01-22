@@ -56,12 +56,13 @@ void begin() {
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void addRelayButton(uint8_t nr) {
   uint8_t pinRelay, pinButton, pinLED;
-  bool highIsOn;
+  bool highIsOn, levelLed;
 
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
   highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+  levelLed = ConfigManager->get(KEY_LEVEL_LED)->getValueInt();
 
   if (pinRelay != OFF_GPIO) {
     relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
@@ -90,7 +91,7 @@ void addRelayButton(uint8_t nr) {
     }
 
     if (pinLED != OFF_GPIO) {
-      new Supla::Control::PinStatusLed(pinRelay, pinLED, highIsOn);
+      new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
     }
   }
 }
@@ -123,7 +124,7 @@ std::vector<Supla::Control::Button *> RollerShutterButtonClose;
 
 void addRolleShutter(uint8_t nr) {
   int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinLedUP, pinLedDown;
-  bool highIsOn;
+  bool highIsOn, levelLed;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
@@ -133,6 +134,7 @@ void addRolleShutter(uint8_t nr) {
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
 
   highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+  levelLed = ConfigManager->get(KEY_LEVEL_LED)->getValueInt();
 
   RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
   if (pinButtonUp != OFF_GPIO)
@@ -150,16 +152,16 @@ void addRolleShutter(uint8_t nr) {
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
   if (pinLedUP != OFF_GPIO) {
-    new Supla::Control::PinStatusLed(pinRelayUp, pinLedUP, highIsOn);
+    new Supla::Control::PinStatusLed(pinRelayUp, pinLedUP, !levelLed);
   }
   if (pinLedDown != OFF_GPIO) {
-    new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, highIsOn);
+    new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, !levelLed);
   }
 }
 
 void addRolleShutterMomentary(uint8_t nr) {
   int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinLedUP, pinLedDown;
-  bool highIsOn;
+  bool highIsOn, levelLed;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
@@ -169,6 +171,7 @@ void addRolleShutterMomentary(uint8_t nr) {
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
 
   highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+  levelLed = ConfigManager->get(KEY_LEVEL_LED)->getValueInt();
 
   RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
   if (pinButtonUp != OFF_GPIO)
@@ -186,10 +189,10 @@ void addRolleShutterMomentary(uint8_t nr) {
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
   if (pinLedUP != OFF_GPIO) {
-    new Supla::Control::PinStatusLed(pinRelayUp, pinLedUP, highIsOn);
+    new Supla::Control::PinStatusLed(pinRelayUp, pinLedUP, !levelLed);
   }
   if (pinLedDown != OFF_GPIO) {
-    new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, highIsOn);
+    new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, !levelLed);
   }
 }
 #endif

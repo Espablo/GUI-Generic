@@ -141,7 +141,7 @@ void addLinkBox(String& html, const String& name, const String& url) {
   html += url;
   html += F("'>");
   html += name;
-  html += PGMT(ICON_EDIT);
+  //html += PGMT(ICON_EDIT);
   html += F("</a>");
   html += F("</label>");
   html += F("</i>");
@@ -198,7 +198,7 @@ void addListMCP23017GPIOLinkBox(String& html, const String& input_id, const Stri
   }
   html += name;
   if (ConfigESP->getGpioMCP23017(nr, function) != OFF_GPIO) {
-    html += PGMT(ICON_EDIT);
+   // html += PGMT(ICON_EDIT);
     html += F("</a>");
   }
   html += F("</label>");

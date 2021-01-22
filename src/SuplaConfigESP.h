@@ -37,6 +37,7 @@ enum _ConfigMode
   FACTORYRESET
 };
 
+#define OFF_GPIO 17
 #define OFF_MCP23017 2
 
 typedef struct {

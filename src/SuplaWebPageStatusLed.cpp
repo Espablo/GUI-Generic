@@ -25,6 +25,10 @@ void handleStatusLedSave() {
       return WebServer->httpServer.requestAuthentication();
   }
 
+  if (strcmp(WebServer->httpServer.arg(INPUT_LEVEL_LED).c_str(), "") != 0) {
+    ConfigManager->set(KEY_LEVEL_LED, WebServer->httpServer.arg(INPUT_LEVEL_LED).c_str());
+  }
+
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
     if (!WebServer->saveGPIO(INPUT_LED, FUNCTION_LED, nr)) {
       webStatusLed(6);
@@ -43,13 +47,15 @@ void handleStatusLedSave() {
 }
 
 void webStatusLed(int save) {
-  uint8_t nr;
+  uint8_t nr, selected;
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_LED);
   addForm(webContentBuffer, F("post"), PATH_SAVE_LED);
 
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" LED"));
+  selected = ConfigManager->get(KEY_LEVEL_LED)->getValueInt();
+  addListBox(webContentBuffer, INPUT_LEVEL_LED, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
     addListGPIOBox(webContentBuffer, INPUT_LED, F("LED"), FUNCTION_LED, nr);
