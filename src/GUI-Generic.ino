@@ -185,18 +185,16 @@ void setup() {
       if (!mcp4.begin(3))
         Serial.println(F("MCP23017 4 not found!"));  // begin(uint8_t address)  "Pin 148 - 163"
     }
-  }
 #endif
 
 #ifdef SUPLA_OLED
-  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
-    SuplaOled *oled = new SuplaOled();
-    oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
+      SuplaOled *oled = new SuplaOled();
+      oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
+    }
+#endif
   }
 #endif
-
-#endif
-
   Supla::GUI::begin();
 }
 
