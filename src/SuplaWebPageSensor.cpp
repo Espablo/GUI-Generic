@@ -452,6 +452,16 @@ void SuplaWebPageSensor::handlei2cSave() {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_OLED, WebServer->httpServer.arg(input).toInt());
   }
 
+  if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_CFG_BUTTON)) {
+    supla_webpage_i2c(6);
+    return;
+  }
+
+  input = INPUT_OLED_ANIMATION;
+  ConfigManager->set(KEY_OLED_ANIMATION, WebServer->httpServer.arg(input).c_str());
+  input = INPUT_OLED_BRIGHTNESS;
+  ConfigManager->set(KEY_OLED_BACK_LIGHT_TIME, WebServer->httpServer.arg(input).c_str());
+
   for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
     input = INPUT_DS18B20_NAME;
     input += i;
@@ -521,17 +531,24 @@ void SuplaWebPageSensor::supla_webpage_i2c(int save) {
 #endif
 
 #ifdef SUPLA_OLED
-    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt();
     addFormHeader(webContentBuffer);
+
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt();
     addListBox(webContentBuffer, INPUT_OLED, F("OLED"), OLED_P, 4, selected);
+
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
       String name, sensorName, input;
+
+      addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, F("PRZYCISK OLED"), FUNCTION_CFG_BUTTON);
+      selected = ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt();
+      addListBox(webContentBuffer, INPUT_OLED_ANIMATION, F("STEROWANIE"), OLED_CONTROLL_P, 3, selected);
+      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS, F("PODŚWIETLENIE[s]"), KEY_OLED_BACK_LIGHT_TIME, 99);
 
       for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
         sensorName = String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
         input = INPUT_DS18B20_NAME;
         input += i;
-        name = F("Ekran ");
+        name = F("EKRAN ");
         name += i + 1;
         addTextBox(webContentBuffer, input, name, sensorName, 0, MAX_DS18B20_NAME, false);
       }

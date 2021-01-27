@@ -14,7 +14,8 @@
 
 enum customActions
 {
-  TURN_ON_OLED
+  TURN_ON_OLED,
+  NEXT_FRAME
 };
 
 enum _OLED
@@ -22,6 +23,13 @@ enum _OLED
   OLED_SSD1306_0_96 = 1,
   OLED_SH1106_1_3,
   OLED_SSD1306_0_66
+};
+
+enum
+{
+  OLED_CONTROLL_NORMAL,
+  OLED_CONTROLL_SLOW,
+  OLED_CONTROLL_MANUAL
 };
 
 String getTempString(double temperature);

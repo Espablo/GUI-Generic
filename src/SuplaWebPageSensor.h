@@ -3,6 +3,7 @@
 
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
+#include "SuplaWebPageControl.h"
 
 #define PATH_MULTI_DS                 "multids"
 #define PATH_SAVE_MULTI_DS            "savemultids"
@@ -27,6 +28,8 @@
 #define INPUT_SHT3x                            "sht30"
 #define INPUT_SI7021                           "si7021"
 #define INPUT_OLED                             "oled"
+#define INPUT_OLED_ANIMATION                   "oleda"
+#define INPUT_OLED_BRIGHTNESS                  "oledb"
 #define INPUT_MCP23017                         "mcp"
 #define INPUT_SI7021_SONOFF                    "si7021sonoff"
 #define INPUT_TRIG_GPIO                        "trig"

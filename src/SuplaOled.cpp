@@ -340,12 +340,24 @@ SuplaOled::SuplaOled() {
       ui->disableAutoTransition();
     }
     else {
+      switch (ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt()) {
+        case OLED_CONTROLL_NORMAL:
+          ui->setTimePerFrame(5000);
+          break;
+        case OLED_CONTROLL_SLOW:
+          ui->setTimePerFrame(10000);
+          break;
+        case OLED_CONTROLL_MANUAL:
+          ui->disableAutoTransition();
+          ui->setTimePerTransition(250);
+          break;
+      }
+      /*ui->setTargetFPS(30);
       ui->setIndicatorPosition(BOTTOM);
       ui->setIndicatorDirection(LEFT_RIGHT);
-      ui->setFrameAnimation(SLIDE_LEFT);
+      ui->setFrameAnimation(SLIDE_LEFT);*/
     }
 
-    ui->setTargetFPS(60);
     ui->setFrames(frames, frameCount);
     ui->setOverlays(overlays, overlaysCount);
     ui->init();
@@ -360,7 +372,8 @@ void SuplaOled::iterateAlways() {
       return;
     }
 
-    if (millis() - timeLastChangeOled > 30000 && oledON) {
+    if (millis() - timeLastChangeOled > (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() * 1000) && oledON &&
+        ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
       display->setBrightness(50);
       oledON = false;
       // display.displayOff();
@@ -381,11 +394,22 @@ void SuplaOled::iterateAlways() {
 void SuplaOled::addButtonOled(int pin) {
   if (pin != OFF_GPIO) {
     Supla::Control::Button* button = new Supla::Control::Button(pin, true, true);
-    button->addAction(TURN_ON_OLED, this, Supla::ON_PRESS);
+
+    if (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
+      button->addAction(TURN_ON_OLED, this, Supla::ON_PRESS);
+    }
+
+    if (ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() == OLED_CONTROLL_MANUAL) {
+      button->addAction(NEXT_FRAME, this, Supla::ON_PRESS);
+    }
   }
 }
 
 void SuplaOled::handleAction(int event, int action) {
+  if (action == NEXT_FRAME) {
+    ui->nextFrame();
+  }
+
   if (action == TURN_ON_OLED) {
     display->setBrightness(255);
     timeLastChangeOled = millis();

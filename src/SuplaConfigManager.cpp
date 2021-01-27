@@ -177,6 +177,8 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20);
   this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20);
   this->addKey(KEY_LEVEL_LED, "0", 1);
+  this->addKey(KEY_OLED_ANIMATION, "0", 1);
+  this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
 
   this->load();
   //  switch (this->load()) {

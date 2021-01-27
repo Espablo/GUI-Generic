@@ -44,8 +44,8 @@
 #define MAX_MONOSTABLE_TRIGGER  1
 #define MAX_FUNCTION            1
 
-#define MAX_DS18B20             20
-#define MAX_GPIO                17
+#define MAX_DS18B20 20
+#define MAX_GPIO    17
 
 enum _key
 {
@@ -74,9 +74,11 @@ enum _key
   KEY_ADDR_DS18B20,
   KEY_NAME_SENSOR,
   KEY_GPIO,
-  KEY_LEVEL_LED = KEY_GPIO + MAX_GPIO + 1
-  //KEY_DS = KEY_GPIO + MAX_GPIO + MAX_DS18B20,
-  //KEY_DS_NAME = KEY_DS + MAX_DS18B20
+  KEY_LEVEL_LED = KEY_GPIO + MAX_GPIO + 1,
+  KEY_OLED_ANIMATION,
+  KEY_OLED_BACK_LIGHT_TIME
+  // KEY_DS = KEY_GPIO + MAX_GPIO + MAX_DS18B20,
+  // KEY_DS_NAME = KEY_DS + MAX_DS18B20
 };
 
 //#define GPIO      "GPIO"
