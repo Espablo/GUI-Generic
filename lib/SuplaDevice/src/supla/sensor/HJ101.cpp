@@ -50,14 +50,14 @@ void HJ101::readValuesFromDevice() {
 }
 
 void HJ101::onSaveState() {
-  double current_multiplier = getCurrentMultiplier();
-  double voltage_multiplier = getVoltageMultiplier();
-  double power_multiplier = getPowerMultiplier();
+  //double current_multiplier = getCurrentMultiplier();
+  //double voltage_multiplier = getVoltageMultiplier();
+  //double power_multiplier = getPowerMultiplier();
 
   Supla::Storage::WriteState((unsigned char *)&energy, sizeof(energy));
-  Supla::Storage::WriteState((unsigned char *)&current_multiplier, sizeof(current_multiplier));
-  Supla::Storage::WriteState((unsigned char *)&voltage_multiplier, sizeof(voltage_multiplier));
-  Supla::Storage::WriteState((unsigned char *)&power_multiplier, sizeof(power_multiplier));
+  //Supla::Storage::WriteState((unsigned char *)&current_multiplier, sizeof(current_multiplier));
+  //Supla::Storage::WriteState((unsigned char *)&voltage_multiplier, sizeof(voltage_multiplier));
+  //Supla::Storage::WriteState((unsigned char *)&power_multiplier, sizeof(power_multiplier));
 }
 
 void HJ101::onLoadState() {
@@ -134,16 +134,8 @@ void HJ101::calibrate(double calibPower, double calibVoltage) {
   Serial.println(voltage_multi);
   Serial.print(F("[HLW] New power multiplier   : "));
   Serial.println(power_multi);
-  saveState();
+  Supla::Storage::ScheduleSave(1000);
   yield();
-}
-
-void HJ101::saveState() {
-  Supla::Storage::PrepareState();
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    element->onSaveState();
-  }
-  Supla::Storage::FinalizeSaveState();
 }
 
 HLW8012 *HJ101::hj101 = nullptr;

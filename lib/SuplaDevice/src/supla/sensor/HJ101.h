@@ -6,8 +6,9 @@
 
 // https://github.com/xoseperez/hlw8012
 #include <HLW8012.h>
-#include <supla/storage/storage.h>
 #include <supla/element.h>
+#include <supla/storage/storage.h>
+
 #include "one_phase_electricity_meter.h"
 
 namespace Supla {
@@ -15,7 +16,11 @@ namespace Sensor {
 
 class HJ101 : public OnePhaseElectricityMeter, public Element {
  public:
-  HJ101(int8_t pinCF, int8_t pinCF1, int8_t pinSEL, bool currentWhen = LOW, bool use_interrupts = true);
+  HJ101(int8_t pinCF,
+        int8_t pinCF1,
+        int8_t pinSEL,
+        bool currentWhen = LOW,
+        bool use_interrupts = true);
 
   void onInit();
   void readValuesFromDevice();
@@ -26,7 +31,6 @@ class HJ101 : public OnePhaseElectricityMeter, public Element {
   static void ICACHE_RAM_ATTR hjl01_cf1_interrupt();
   static void ICACHE_RAM_ATTR hjl01_cf_interrupt();
   void calibrate(double calibPower, double calibVoltage);
-  void saveState();
 
   double getCurrentMultiplier() {
     return hj101->getCurrentMultiplier();
@@ -40,12 +44,15 @@ class HJ101 : public OnePhaseElectricityMeter, public Element {
 
   void setCurrentMultiplier(double current_multiplier) {
     hj101->setCurrentMultiplier(current_multiplier);
+    Supla::Storage::ScheduleSave(1000);
   };
   void setVoltageMultiplier(double voltage_multiplier) {
     hj101->setVoltageMultiplier(voltage_multiplier);
+    Supla::Storage::ScheduleSave(1000);
   };
   void setPowerMultiplier(double power_multiplier) {
     hj101->setPowerMultiplier(power_multiplier);
+    Supla::Storage::ScheduleSave(1000);
   };
 
  protected:
@@ -57,7 +64,7 @@ class HJ101 : public OnePhaseElectricityMeter, public Element {
   bool use_interrupts;
 
   unsigned _supla_int64_t energy;
-  unsigned _supla_int64_t _energy;  // ----------  energy value read from memory at startup ----
+  unsigned _supla_int64_t _energy;  // energy value read from memory at startup
 };
 
 };  // namespace Sensor
