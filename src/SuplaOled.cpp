@@ -352,15 +352,17 @@ SuplaOled::SuplaOled() {
           ui->setTimePerTransition(250);
           break;
       }
-      /*ui->setTargetFPS(30);
+      ui->setTargetFPS(30);
       ui->setIndicatorPosition(BOTTOM);
       ui->setIndicatorDirection(LEFT_RIGHT);
-      ui->setFrameAnimation(SLIDE_LEFT);*/
+      ui->setFrameAnimation(SLIDE_LEFT);
     }
 
     ui->setFrames(frames, frameCount);
     ui->setOverlays(overlays, overlaysCount);
     ui->init();
+    
+    display->setBrightness(255);
     display->flipScreenVertically();
   }
 }
