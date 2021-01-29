@@ -355,13 +355,10 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   input = INPUT_BUTTON_ACTION;
   action = WebServer->httpServer.arg(input).toInt();
 
-  for (uint8_t i = 1; i <= OFF_GPIO; i++) {
-    gpio = ConfigESP->getGpioMCP23017(i, FUNCTION_BUTTON);
-    if (gpio != OFF_GPIO) {
-      key = KEY_GPIO + gpio;
-      ConfigManager->setElement(key, LEVEL, level);
-      ConfigManager->setElement(key, ACTION, action);
-    }
+  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    key = KEY_GPIO + gpio;
+    ConfigManager->setElement(key, LEVEL_BUTTON, level);
+    ConfigManager->setElement(key, ACTION, action);
   }
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:

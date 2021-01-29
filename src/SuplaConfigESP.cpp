@@ -292,24 +292,42 @@ int SuplaConfigESP::getLevel(int nr, int function) {
         case 0:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
-              return ConfigManager->get(key)->getElement(LEVEL).toInt();
-              ;
+              switch (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt()) {
+                case FUNCTION_RELAY:
+                  return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
+                  break;
+                case FUNCTION_BUTTON:
+                  return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
+                  break;
+              }
             }
           }
           break;
         case 1:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
-              return ConfigManager->get(key)->getElement(LEVEL).toInt();
-              ;
+              switch (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt()) {
+                case FUNCTION_RELAY:
+                  return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
+                  break;
+                case FUNCTION_BUTTON:
+                  return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
+                  break;
+              }
             }
           }
           break;
         case 2:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
-              return ConfigManager->get(key)->getElement(LEVEL).toInt();
-              ;
+              switch (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt()) {
+                case FUNCTION_RELAY:
+                  return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
+                  break;
+                case FUNCTION_BUTTON:
+                  return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
+                  break;
+              }
             }
           }
           break;

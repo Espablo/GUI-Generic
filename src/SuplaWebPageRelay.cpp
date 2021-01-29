@@ -261,13 +261,10 @@ void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {
   input = INPUT_RELAY_LEVEL;
   level = WebServer->httpServer.arg(input).toInt();
 
-  for (uint8_t i = 1; i <= OFF_GPIO; i++) {
-    gpio = ConfigESP->getGpioMCP23017(i, FUNCTION_RELAY);
-    if (gpio != OFF_GPIO) {
-      key = KEY_GPIO + gpio;
-      ConfigManager->setElement(key, MEMORY, memory);
-      ConfigManager->setElement(key, LEVEL, level);
-    }
+  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
+    key = KEY_GPIO + gpio;
+    ConfigManager->setElement(key, MEMORY, memory);
+    ConfigManager->setElement(key, LEVEL_RELAY, level);
   }
 
   switch (ConfigManager->save()) {

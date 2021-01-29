@@ -344,6 +344,8 @@ void SuplaWebServer::sendContent() {
 void SuplaWebServer::handleNotFound() {
   httpServer.sendHeader("Location", "/", true);
   httpServer.send(302, "text/plane", "");
+
+  supla_webpage_reboot();
 }
 
 bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {

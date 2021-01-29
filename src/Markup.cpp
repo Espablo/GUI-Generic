@@ -141,7 +141,7 @@ void addLinkBox(String& html, const String& name, const String& url) {
   html += url;
   html += F("'>");
   html += name;
-  //html += PGMT(ICON_EDIT);
+  // html += PGMT(ICON_EDIT);
   html += F("</a>");
   html += F("</label>");
   html += F("</i>");
@@ -181,26 +181,16 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
 void addListMCP23017GPIOLinkBox(String& html, const String& input_id, const String& name, uint8_t function, const String& url, uint8_t nr) {
   if (nr == 1) {
     uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
-    addListBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 3, address);
+    addListLinkBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 3, address, url);
   }
 
-  html += F("<i>");
-  html += F("<label>");
-  if (ConfigESP->getGpioMCP23017(nr, function) != OFF_GPIO) {
-    html += F("<a href='");
-    html += PATH_START;
-    html += url;
-    html += F("'>");
-  }
+  html += F("<i><label>");
   if (nr > 0) {
     html += nr;
-    html += F(". ");
+    html += F(".");
   }
+  html += F(" ");
   html += name;
-  if (ConfigESP->getGpioMCP23017(nr, function) != OFF_GPIO) {
-   // html += PGMT(ICON_EDIT);
-    html += F("</a>");
-  }
   html += F("</label>");
   addListMCP23017GPIO(html, input_id, function, nr);
   html += F("</i>");
@@ -246,6 +236,46 @@ void addListBox(String& html, const String& input_id, const String& name, const 
     html += F(". ");
   }
   html += name;
+  html += "</label><select name='";
+  html += input_id;
+  if (nr != 0) {
+    html += nr;
+  }
+  html += F("'>");
+
+  for (uint8_t suported = 0; suported < size; suported++) {
+    html += F("<option value='");
+    html += suported;
+    if (selected == suported) {
+      html += F("' selected>");
+    }
+    else {
+      html += F("'>");
+    }
+    html += PGMT(array_P[suported]);
+  }
+  html += F("</select></i>");
+}
+
+void addListLinkBox(String& html,
+                    const String& input_id,
+                    const String& name,
+                    const char* const* array_P,
+                    uint8_t size,
+                    uint8_t selected,
+                    const String& url,
+                    uint8_t nr) {
+  html += F("<i><label><a href='");
+  html += PATH_START;
+  html += url;
+  html += F("'>");
+
+  if (nr != 0) {
+    html += nr;
+    html += F(". ");
+  }
+  html += name;
+  html += F("</a>");
   html += "</label><select name='";
   html += input_id;
   if (nr != 0) {
@@ -313,7 +343,6 @@ void addListGPIOSelect(String& html, const String& input_id, uint8_t function, u
 }
 
 void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function, uint8_t nr) {
-  ;
   html += F("<select name='");
   html += input_id;
   html += nr;
