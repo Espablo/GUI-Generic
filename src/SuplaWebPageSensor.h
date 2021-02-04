@@ -41,12 +41,6 @@
 #define INPUT_CS_GPIO                          "cs"
 #define INPUT_D0_GPIO                          "d0"
 #define INPUT_MAX6675                          "max6675"
-#define INPUT_IMPULSE_COUNTER_GPIO             "ic"
-#define INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT "icdt"
-#define INPUT_IMPULSE_COUNTER_PULL_UP          "icpu"
-#define INPUT_IMPULSE_COUNTER_RAISING_EDGE     "icre"
-#define INPUT_IMPULSE_COUNTER_CHANGE_VALUE     "iccv"
-#define INPUT_MAX_IMPULSE_COUNTER              "imic"
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_MAX6675) || defined(SUPLA_MCP23017)
 enum _sensor
@@ -105,15 +99,6 @@ class SuplaWebPageSensor {
   void handleSpiSave();
 #endif
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
-  void handleOther();
-  void handleOtherSave();
-
-  void handleImpulseCounterSet();
-  void handleImpulseCounterSaveSet();
-  void supla_impulse_counter_set(int save);
-#endif
-
  private:
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
   void supla_webpage_1wire(int save);
@@ -124,26 +109,6 @@ class SuplaWebPageSensor {
 
 #if defined(SUPLA_MAX6675)
   void supla_webpage_spi(int save);
-#endif
-
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
-  void supla_webpage_other(int save);
-#endif
-
-#if defined(SUPLA_HLW8012)
-#define INPUT_CF  "cf"
-#define INPUT_CF1 "cf1"
-#define INPUT_SEL "sel"
-
-#define PATH_HLW8012_CALIBRATE      "calibrate"
-#define PATH_SAVE_HLW8012_CALIBRATE "savecalibrate"
-
-#define INPUT_CALIB_POWER   "power"
-#define INPUT_CALIB_VOLTAGE "voltage"
-
-  void handleHLW8012Calibrate();
-  void handleHLW8012CalibrateSave();
-  void suplaWebpageHLW8012Calibrate(uint8_t save);
 #endif
 };
 

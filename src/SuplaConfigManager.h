@@ -76,9 +76,8 @@ enum _key
   KEY_GPIO,
   KEY_LEVEL_LED = KEY_GPIO + MAX_GPIO + 1,
   KEY_OLED_ANIMATION,
-  KEY_OLED_BACK_LIGHT_TIME
-  // KEY_DS = KEY_GPIO + MAX_GPIO + MAX_DS18B20,
-  // KEY_DS_NAME = KEY_DS + MAX_DS18B20
+  KEY_OLED_BACK_LIGHT_TIME,
+  KEY_MAX_RGBW
 };
 
 //#define GPIO      "GPIO"
@@ -128,7 +127,12 @@ enum _function
   FUNCTION_CF,
   FUNCTION_CF1,
   FUNCTION_SEL,
-  FUNCTION_LED
+  FUNCTION_LED,
+  FUNCTION_RGBW_RED,
+  FUNCTION_RGBW_GREEN,
+  FUNCTION_RGBW_BLUE,
+  FUNCTION_RGBW_BRIGHTNESS,
+  FUNCTION_RGBW_COLOR_BRIGHTNESS
 };
 
 enum _e_onfig
@@ -178,6 +182,7 @@ class SuplaConfigManager {
   void showAllValue();
 
   ConfigOption *get(uint8_t key);
+  bool set(uint8_t key, int value);
   bool set(uint8_t key, const char *value);
   bool setElement(uint8_t key, int index, int newvalue);
   bool setElement(uint8_t key, int index, const char *newvalue);

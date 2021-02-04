@@ -147,8 +147,14 @@ void addLinkBox(String& html, const String& name, const String& url) {
   html += F("</i>");
 }
 
-void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr) {
-  html += F("<i><label>");
+void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, bool underline) {
+  if (underline) {
+    html += F("<i><label>");
+  }
+  else {
+    html += F("<i style='border-bottom:none !important;'><label>");
+  }
+
   if (nr > 0) {
     html += nr;
     html += F(".");
@@ -368,6 +374,10 @@ void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function,
 
 String getURL(const String& url) {
   return String(F(PATH_START)) + url;
+}
+
+String getURL(const String& url, uint8_t nr) {
+  return String(F(PATH_START)) + url + nr;
 }
 
 const String SuplaJavaScript(const String& java_return) {

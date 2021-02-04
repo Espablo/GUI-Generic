@@ -679,12 +679,12 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
     ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
     ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
-    ConfigManager->set(KEY_MAX_RELAY, "1");
-    ConfigManager->set(KEY_MAX_BUTTON, "1");
+    ConfigManager->set(KEY_MAX_RELAY, "0");
+    ConfigManager->set(KEY_MAX_BUTTON, "0");
     ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
-    ConfigManager->set(KEY_MAX_DHT22, "1");
-    ConfigManager->set(KEY_MAX_DHT11, "1");
-    ConfigManager->set(KEY_MULTI_MAX_DS18B20, "1");
+    ConfigManager->set(KEY_MAX_DHT22, "0");
+    ConfigManager->set(KEY_MAX_DHT11, "0");
+    ConfigManager->set(KEY_MULTI_MAX_DS18B20, "0");
     ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
     ConfigManager->set(KEY_ALTITUDE_BME280, "0");
     ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "0");
@@ -694,7 +694,7 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_CFG_MODE, "0");
 
     uint8_t nr, key;
-    for (nr = 0; nr <= 17; nr++) {
+    for (nr = 0; nr <= OFF_GPIO; nr++) {
       key = KEY_GPIO + nr;
       ConfigManager->set(key, "");
     }
@@ -704,6 +704,8 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
 
     ConfigManager->save();
 
-    // rebootESP();
+    if (!forceReset) {
+      rebootESP();
+    }
   }
 }

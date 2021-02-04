@@ -24,6 +24,7 @@
 #include "SuplaCommonPROGMEM.h"
 #include "SuplaTemplateBoard.h"
 #include "Markup.h"
+#include "SuplaWebPageOther.h"
 
 String webContentBuffer;
 
@@ -77,6 +78,7 @@ void SuplaWebServer::createWebServer() {
   createWebUpload();
   createWebTools();
   createWebStatusLed();
+  createWebPageOther();
 }
 
 void SuplaWebServer::handle() {
@@ -287,11 +289,11 @@ void SuplaWebServer::sendContent() {
   //_buffer.reserve(bufferSize);
   // int bufferCounter = 0;
 
-  httpServer.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-  httpServer.sendHeader("Pragma", "no-cache");
-  httpServer.sendHeader("Expires", "-1");
+  httpServer.sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
+  httpServer.sendHeader(F("Pragma"), F("no-cache"));
+  httpServer.sendHeader(F("Expires"), F("-1"));
   httpServer.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  httpServer.chunkedResponseModeStart(200, "text/html");
+  httpServer.chunkedResponseModeStart(200, F("text/html"));
 
   httpServer.sendContent_P(HTTP_META);
   httpServer.sendContent_P(HTTP_FAVICON);
@@ -300,12 +302,12 @@ void SuplaWebServer::sendContent() {
 
   String summary = FPSTR(HTTP_SUMMARY);
 
-  summary.replace("{h}", ConfigManager->get(KEY_HOST_NAME)->getValue());
-  summary.replace("{s}", ConfigESP->getLastStatusSupla());
-  summary.replace("{v}", Supla::Channel::reg_dev.SoftVer);
-  summary.replace("{g}", ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
-  summary.replace("{m}", ConfigESP->getMacAddress(true));
-  summary.replace("{f}", String(ESP.getFreeHeap() / 1024.0));
+  summary.replace(F("{h}"), ConfigManager->get(KEY_HOST_NAME)->getValue());
+  summary.replace(F("{s}"), ConfigESP->getLastStatusSupla());
+  summary.replace(F("{v}"), Supla::Channel::reg_dev.SoftVer);
+  summary.replace(F("{g}"), ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
+  summary.replace(F("{m}"), ConfigESP->getMacAddress(true));
+  summary.replace(F("{f}"), String(ESP.getFreeHeap() / 1024.0));
 
   httpServer.sendContent(summary);
   httpServer.sendContent_P(HTTP_COPYRIGHT);
@@ -343,7 +345,7 @@ void SuplaWebServer::sendContent() {
 
 void SuplaWebServer::handleNotFound() {
   httpServer.sendHeader("Location", "/", true);
-  httpServer.send(302, "text/plane", "");
+  //httpServer.send(302, "text/plane", "");
 
   supla_webpage_reboot();
 }

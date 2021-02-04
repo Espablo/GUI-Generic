@@ -4,30 +4,24 @@
 
 void addButton(uint8_t gpio, uint8_t event) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
-  String test;
-  nr = nr + 1;
-  test = nr;
-  ConfigManager->set(KEY_MAX_BUTTON, test.c_str());
+  nr++;
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON, event);
+  ConfigManager->set(KEY_MAX_BUTTON, nr++);
 }
 
 void addRelay(uint8_t gpio, uint8_t level) {
   uint8_t nr = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
-  String test;
-  nr = nr + 1;
-  test = nr;
-  ConfigManager->set(KEY_MAX_RELAY, test.c_str());
+  nr++;
   ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY, level, MEMORY_RELAY_RESTORE);
+  ConfigManager->set(KEY_MAX_RELAY, nr++);
 }
 
 void addLimitSwitch(uint8_t gpio) {
   uint8_t nr = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
-  String test;
-  nr = nr + 1;
-  test = nr;
-  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, test.c_str());
+  nr++;
   ConfigESP->setGpio(gpio, nr, FUNCTION_LIMIT_SWITCH, 0);
   ConfigESP->setGpio(4, 1, FUNCTION_LIMIT_SWITCH, 0);
+  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, nr++);
 }
 
 void addLedCFG(uint8_t gpio, uint8_t level) {
@@ -51,10 +45,32 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
 }
 #endif
 
+void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t colorBrightnessPin, int8_t brightnessPin) {
+  uint8_t nr = ConfigManager->get(KEY_MAX_RGBW)->getValueInt();
+  nr++;
+  ConfigESP->setGpio(redPin, nr, FUNCTION_RGBW_RED, 0);
+  ConfigESP->setGpio(greenPin, nr, FUNCTION_RGBW_GREEN, 0);
+  ConfigESP->setGpio(bluePin, nr, FUNCTION_RGBW_BLUE, 0);
+  ConfigESP->setGpio(colorBrightnessPin, nr, FUNCTION_RGBW_COLOR_BRIGHTNESS, 0);
+  ConfigESP->setGpio(brightnessPin, nr, FUNCTION_RGBW_BRIGHTNESS, 0);
+  ConfigManager->set(KEY_MAX_RGBW, nr++);
+}
+
+void addDimmer(int8_t brightnessPin) {
+  addRGBW(OFF_GPIO, OFF_GPIO, OFF_GPIO, OFF_GPIO, brightnessPin);
+}
+
 void chooseTemplateBoard(uint8_t board) {
+  int8_t nr, key;
+  for (nr = 0; nr <= OFF_GPIO; nr++) {
+    key = KEY_GPIO + nr;
+    ConfigManager->set(key, "");
+  }
+  
   ConfigManager->set(KEY_MAX_BUTTON, "0");
   ConfigManager->set(KEY_MAX_RELAY, "0");
   ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
+  ConfigManager->set(KEY_MAX_RGBW, "0");
 
   switch (board) {
     case BOARD_ELECTRODRAGON:
@@ -206,6 +222,16 @@ void chooseTemplateBoard(uint8_t board) {
       Supla::GUI::counterHLW8012->setVoltageMultiplier(247704);
       Supla::GUI::counterHLW8012->setPowerMultiplier(2586583);
 #endif
+      break;
+    case BOARD_DIMMER_LUKASZH:
+      addLedCFG(15);
+      addButtonCFG(0);
+      addDimmer(14);
+      addDimmer(12);
+      addDimmer(13);
+      addButton(5);
+      addButton(4);
+      addButton(16);
       break;
   }
 }

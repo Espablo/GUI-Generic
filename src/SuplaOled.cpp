@@ -280,13 +280,13 @@ SuplaOled::SuplaOled() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
       case OLED_SSD1306_0_96:
-        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
+        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64, I2C_ONE, -1);
         break;
       case OLED_SH1106_1_3:
-        display = new SH1106Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
+        display = new SH1106Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64, I2C_ONE, -1);
         break;
       case OLED_SSD1306_0_66:
-        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_64_48);
+        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_64_48, I2C_ONE, -1);
         break;
     }
 
@@ -361,7 +361,7 @@ SuplaOled::SuplaOled() {
     ui->setFrames(frames, frameCount);
     ui->setOverlays(overlays, overlaysCount);
     ui->init();
-    
+
     display->setBrightness(255);
     display->flipScreenVertically();
   }
@@ -401,7 +401,7 @@ void SuplaOled::addButtonOled(int pin) {
       button->addAction(TURN_ON_OLED, this, Supla::ON_PRESS);
     }
 
-    if (ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() == OLED_CONTROLL_MANUAL) {
+    if (ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() == OLED_CONTROLL_MANUAL && frameCount > 1) {
       button->addAction(NEXT_FRAME, this, Supla::ON_PRESS);
     }
   }

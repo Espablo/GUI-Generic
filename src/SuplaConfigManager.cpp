@@ -77,7 +77,7 @@ int ConfigOption::getLength() {
 
 const String ConfigOption::getElement(int index) {
   String data = _value;
-  data.reserve(_maxLength);
+ // data.reserve(_maxLength);
   int found = 0;
   int strIndex[] = {0, -1};
   int maxIndex = data.length() - 1;
@@ -168,7 +168,7 @@ SuplaConfigManager::SuplaConfigManager() {
 
   for (nr = 0; nr <= 17; nr++) {
     key = KEY_GPIO + nr;
-    this->addKey(key, "", SETTINGSCOUNT * 2);
+    this->addKey(key, "", SETTINGSCOUNT * 3);
   }
 
   this->addKey(KEY_ACTIVE_SENSOR, "", 16);
@@ -179,6 +179,7 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_LEVEL_LED, "0", 1);
   this->addKey(KEY_OLED_ANIMATION, "0", 1);
   this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
+  this->addKey(KEY_MAX_RGBW, "0", 2);
 
   this->load();
   //  switch (this->load()) {
@@ -376,6 +377,11 @@ ConfigOption *SuplaConfigManager::get(uint8_t key) {
     }
   }
   return NULL;
+}
+bool SuplaConfigManager::set(uint8_t key, int value) {
+  char buffer[10];
+  itoa(value, buffer, 10);
+  return set(key, buffer);
 }
 
 bool SuplaConfigManager::set(uint8_t key, const char *value) {

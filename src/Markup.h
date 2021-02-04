@@ -51,7 +51,7 @@ void addNumberBox(String& html, const String& input_id, const String& name, cons
 
 void addLinkBox(String& html, const String& name, const String& url);
 
-void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0);
+void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0, bool underline = true);
 
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr);
 
@@ -79,6 +79,8 @@ void addListGPIOSelect(String& html, const String& input_id, uint8_t function, u
 void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function, uint8_t nr);
 
 String getURL(const String& url);
+
+String getURL(const String& url, uint8_t nr);
 
 const String SuplaJavaScript(const String& java_return = PATH_START);
 

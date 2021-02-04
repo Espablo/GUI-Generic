@@ -30,7 +30,6 @@
 #define S_CFG_MODE                                             "Tryb"
 #define S_QUANTITY                                             "ILOŚĆ"
 #define S_GPIO_SETTINGS_FOR_RELAYS                             "Ustawienie GPIO dla przekaźników"
-#define S_GPIO_SETTINGS_FOR                                    "Ustawienie GPIO dla"
 #define S_RELAY                                                "PRZEKAŹNIK"
 #define S_RELAY_NR_SETTINGS                                    "Ustawienia przekaźnika nr."
 #define S_NO_RELAY_NR                                          "Brak przekaźnika nr."

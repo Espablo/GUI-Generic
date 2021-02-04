@@ -1,7 +1,9 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
+#ifndef DEBUG_MODE
 #define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
+#endif
 
 //#define USE_CUSTOM
 
@@ -49,6 +51,7 @@
 #define SUPLA_HC_SR04
 #define SUPLA_IMPULSE_COUNTER
 #define SUPLA_HLW8012
+#define SUPLA_RGBW
 
 #endif
 #endif  // GUI-Generic_Config_h

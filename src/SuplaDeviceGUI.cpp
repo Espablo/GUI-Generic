@@ -54,6 +54,7 @@ void begin() {
 }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+
 void addRelayButton(uint8_t nr) {
   uint8_t pinRelay, pinButton, pinLED;
   bool highIsOn, levelLed;
@@ -82,7 +83,7 @@ void addRelayButton(uint8_t nr) {
     }
 
     relay[size]->keepTurnOnDuration();
-    eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
+        // eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
     if (pinButton != OFF_GPIO) {
       button.push_back(new Supla::Control::Button(pinButton, true));
@@ -149,7 +150,7 @@ void addRolleShutter(uint8_t nr) {
   else if ((pinButtonUp == OFF_GPIO && pinButtonDown != OFF_GPIO) || (pinButtonUp != OFF_GPIO && pinButtonDown == OFF_GPIO)) {
     RollerShutterButtonOpen[size]->addAction(Supla::STEP_BY_STEP, *RollerShutterRelay[size], Supla::ON_PRESS);
   }
-  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
+  // eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
   if (pinLedUP != OFF_GPIO) {
     new Supla::Control::PinStatusLed(pinRelayUp, pinLedUP, !levelLed);
@@ -186,7 +187,7 @@ void addRolleShutterMomentary(uint8_t nr) {
     RollerShutterButtonClose[size]->addAction(Supla::CLOSE, *RollerShutterRelay[size], Supla::ON_PRESS);
     RollerShutterButtonClose[size]->addAction(Supla::STOP, *RollerShutterRelay[size], Supla::ON_RELEASE);
   }
-  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
+  // eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
   if (pinLedUP != OFF_GPIO) {
     new Supla::Control::PinStatusLed(pinRelayUp, pinLedUP, !levelLed);
@@ -203,6 +204,64 @@ std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
 void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay) {
   impulseCounter.push_back(new Supla::Sensor::ImpulseCounter(pin, lowToHigh, inputPullup, debounceDelay));
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
+
+#ifdef SUPLA_RGBW
+void addRGBWLeds(uint8_t nr) {
+  int redPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_RED);
+  int greenPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_GREEN);
+  int bluePin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BLUE);
+  int colorBrightnessPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_COLOR_BRIGHTNESS);
+  int brightnessPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BRIGHTNESS);
+  int buttonPin = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+
+  if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO && colorBrightnessPin != OFF_GPIO && brightnessPin != OFF_GPIO) {
+    Serial.println("---------------------------------------");
+
+    Serial.println(redPin);
+    Serial.println(greenPin);
+    Serial.println(bluePin);
+    Serial.println(colorBrightnessPin);
+    Serial.println(colorBrightnessPin);
+    auto rgbw = new Supla::Control::RGBWLeds(redPin, greenPin, bluePin, colorBrightnessPin, brightnessPin);
+
+    if (buttonPin != OFF_GPIO) {
+      auto button = new Supla::Control::Button(buttonPin, true, true);
+      button->setMulticlickTime(200);
+      button->setHoldTime(400);
+      button->repeatOnHoldEvery(200);
+
+      button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
+      button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
+    }
+  }
+  else if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO && colorBrightnessPin != OFF_GPIO) {
+    auto rgbw = new Supla::Control::RGBLeds(redPin, greenPin, bluePin, colorBrightnessPin);
+
+    if (buttonPin != OFF_GPIO) {
+      auto button = new Supla::Control::Button(buttonPin, true, true);
+      button->setMulticlickTime(200);
+      button->setHoldTime(400);
+      button->repeatOnHoldEvery(200);
+
+      button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
+      button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
+    }
+  }
+  else if (brightnessPin != OFF_GPIO) {
+    auto rgbw = new Supla::Control::DimmerLeds(brightnessPin);
+
+    if (buttonPin != OFF_GPIO) {
+      auto button = new Supla::Control::Button(buttonPin, true, true);
+      button->setMulticlickTime(200);
+      button->setHoldTime(400);
+      button->repeatOnHoldEvery(200);
+
+      button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
+      button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
+    }
+  }
 }
 #endif
 

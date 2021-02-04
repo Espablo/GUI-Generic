@@ -77,7 +77,15 @@
 #include <supla/sensor/HJ101.h>
 #include <supla/control/pin_status_led.h>
 
+#ifdef SUPLA_RGBW
+#include <supla/control/rgbw_leds.h>
+#include <supla/control/rgb_leds.h>
+#include <supla/control/dimmer_leds.h>
+#endif
+
 #include <Wire.h>
+
+#include <supla/control/pushover.h>
 
 namespace Supla {
 namespace GUI {
@@ -113,6 +121,10 @@ extern std::vector<Supla::Control::Button *> RollerShutterButtonClose;
 #ifdef SUPLA_IMPULSE_COUNTER
 extern std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
 void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay);
+#endif
+
+#ifdef SUPLA_RGBW
+void addRGBWLeds(uint8_t nr);
 #endif
 
 #ifdef SUPLA_HLW8012

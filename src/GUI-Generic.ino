@@ -195,6 +195,13 @@ void setup() {
 #endif
   }
 #endif
+
+#ifdef SUPLA_RGBW
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
+    Supla::GUI::addRGBWLeds(nr);
+  }
+#endif
+
   Supla::GUI::begin();
 }
 
