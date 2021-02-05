@@ -168,6 +168,11 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
   input += nr_relay;
   ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
 
+#if defined(SUPLA_PUSHOVER)
+  input = INPUT_PUSHOVER;
+  ConfigManager->setElement(KEY_PUSHOVER, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).toInt());
+#endif
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       supla_webpage_relay(1);
@@ -204,6 +209,11 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save) {
 
   selected = ConfigESP->getMemory(nr_relay.toInt(), FUNCTION_RELAY);
   addListBox(webContentBuffer, INPUT_RELAY_MEMORY + nr_relay, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
+
+#if defined(SUPLA_PUSHOVER)
+  selected = ConfigManager->get(KEY_PUSHOVER)->getElement(nr_relay.toInt() - 1).toInt();
+  addListBox(webContentBuffer, INPUT_PUSHOVER, F("Pushover"), STATE_P, 2, selected);
+#endif
 
   addFormHeaderEnd(webContentBuffer);
   addButtonSubmit(webContentBuffer, S_SAVE);

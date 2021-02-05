@@ -99,6 +99,10 @@ extern std::vector<Supla::Control::Relay *> relay;
 extern std::vector<Supla::Control::Button *> button;
 #endif
 
+#if defined(SUPLA_PUSHOVER)
+extern std::vector<Supla::Control::Pushover *> pushover;
+#endif
+
 #ifdef SUPLA_DS18B20
 void addDS18B20MultiThermometer(int pinNumber);
 

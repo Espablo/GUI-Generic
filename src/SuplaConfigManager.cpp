@@ -23,6 +23,7 @@
 
 #include "FS.h"
 #include "SuplaConfigManager.h"
+#include "SuplaDeviceGUI.h"
 
 ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength) {
   // size_t size = strlen(key) + 1;
@@ -77,7 +78,7 @@ int ConfigOption::getLength() {
 
 const String ConfigOption::getElement(int index) {
   String data = _value;
- // data.reserve(_maxLength);
+  // data.reserve(_maxLength);
   int found = 0;
   int strIndex[] = {0, -1};
   int maxIndex = data.length() - 1;
@@ -166,7 +167,7 @@ SuplaConfigManager::SuplaConfigManager() {
 
   uint8_t nr, key;
 
-  for (nr = 0; nr <= 17; nr++) {
+  for (nr = 0; nr <= MAX_GPIO; nr++) {
     key = KEY_GPIO + nr;
     this->addKey(key, "", SETTINGSCOUNT * 3);
   }
@@ -181,7 +182,11 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
   this->addKey(KEY_MAX_RGBW, "0", 2);
 
-  this->load();
+  this->addKey(KEY_PUSHOVER, "", MAX_GPIO * 2);
+  this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
+  this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
+
+      this->load();
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
   //      Serial.println(F("Config read"));

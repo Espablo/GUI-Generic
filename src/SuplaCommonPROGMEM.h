@@ -59,14 +59,14 @@ const char HTTP_FAVICON[] PROGMEM = "<link rel='icon' href='data:image/png;base6
 
 const char HTTP_RBT[] PROGMEM = "<form method='post' action='rbt'><button type='submit'>Restart</button></form>";
 
-const char ICON_EDIT[] PROGMEM = 
+/*const char ICON_EDIT[] PROGMEM = 
       "<img "
       "src='data:image/"
       "png;base64,"
       "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
       "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
       "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
-      "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>";
+      "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>";*/
 
 const char GPIO0[] PROGMEM = "GPIO0-D3";
 const char GPIO1[] PROGMEM = "GPIO1-TX";

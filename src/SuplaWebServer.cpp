@@ -199,18 +199,13 @@ void SuplaWebServer::deviceSettings(int save) {
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_DEVICE_SETTINGS);
 
-  webContentBuffer += F("<form method='post' action='");
-  webContentBuffer += PATH_SAVE_BOARD;
-  webContentBuffer += F("'>");
-
+  addForm(webContentBuffer, F("post"), PATH_SAVE_BOARD);
   addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
   uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
   addListBox(webContentBuffer, INPUT_BOARD, S_TYPE, BOARD_P, MAX_MODULE, selected);
   addFormHeaderEnd(webContentBuffer);
-
-  webContentBuffer += F("<button type='submit'>");
-  webContentBuffer += S_SAVE;
-  webContentBuffer += F("</button></form><br><br>");
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
 
   addFormHeader(webContentBuffer, S_DEVICE_SETTINGS);
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
@@ -345,7 +340,7 @@ void SuplaWebServer::sendContent() {
 
 void SuplaWebServer::handleNotFound() {
   httpServer.sendHeader("Location", "/", true);
-  //httpServer.send(302, "text/plane", "");
+  // httpServer.send(302, "text/plane", "");
 
   supla_webpage_reboot();
 }

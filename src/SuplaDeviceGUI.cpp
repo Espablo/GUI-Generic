@@ -83,7 +83,7 @@ void addRelayButton(uint8_t nr) {
     }
 
     relay[size]->keepTurnOnDuration();
-        // eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
+    // eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
     if (pinButton != OFF_GPIO) {
       button.push_back(new Supla::Control::Button(pinButton, true));
@@ -94,6 +94,20 @@ void addRelayButton(uint8_t nr) {
     if (pinLED != OFF_GPIO) {
       new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
     }
+
+#if defined(SUPLA_PUSHOVER)
+    if (ConfigManager->get(KEY_PUSHOVER)->getElement(size).toInt() && strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 &&
+        strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
+      pushover.push_back(
+          new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true));
+
+      int sizePushover = pushover.size() - 1;
+      Serial.println(pushover.size());
+      pushover[sizePushover]->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
+      pushover[sizePushover]->setMessage(String("Przekaźnik " + String(size + 1) + " - ZAŁĄCZONY").c_str());
+      relay[size]->addAction(Supla::SEND_NOTIF_1, pushover[sizePushover], Supla::ON_TURN_ON);
+    }
+#endif
   }
 }
 #endif
@@ -265,9 +279,13 @@ void addRGBWLeds(uint8_t nr) {
 }
 #endif
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER)
 std::vector<Supla::Control::Relay *> relay;
 std::vector<Supla::Control::Button *> button;
+#endif
+
+#if defined(SUPLA_PUSHOVER)
+std::vector<Supla::Control::Pushover *> pushover;
 #endif
 
 #ifdef SUPLA_DS18B20

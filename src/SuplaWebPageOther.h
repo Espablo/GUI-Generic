@@ -47,7 +47,11 @@ void suplaWebpageHLW8012Calibrate(uint8_t save);
 #define INPUT_RGBW_BLUE             "rgbwb"
 #define INPUT_RGBW_BRIGHTNESS       "rgbwbr"
 #define INPUT_RGBW_COLOR_BRIGHTNESS "rgbwcb"
+#endif
 
+#ifdef SUPLA_PUSHOVER
+#define INPUT_PUSHOVER_TOKEN "pot"
+#define INPUT_PUSHOVER_USER  "pou"
 #endif
 
 #endif  // SuplaWebPageOther_h
