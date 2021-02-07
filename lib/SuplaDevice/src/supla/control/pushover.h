@@ -30,7 +30,12 @@
 #define MAX_MESSAGE_SIZE 64
 
 namespace Supla {
+enum Pushover { SEND_NOTIF_1 };
+}  // namespace Supla
+
+namespace Supla {
 namespace Control {
+
 class Pushover : public Element, public ActionHandler {
  public:
   Pushover(const char *token = nullptr,

@@ -14,27 +14,25 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _local_action_h
-#define _local_action_h
+#include <gtest/gtest.h>
 
-#include <stdint.h>
-#include "action_handler.h"
+#include <supla/condition.h>
 
-namespace Supla {
+TEST(OnGreaterTests, OnGreaterConditionTests) {
+  auto cond = OnGreater(20);
 
-class ActionHandlerClient;
+  EXPECT_FALSE(cond->checkConditionFor(5));
+  EXPECT_FALSE(cond->checkConditionFor(15));
 
-class LocalAction {
- public:
-  virtual ~LocalAction();
-  virtual void addAction(int action, ActionHandler &client, int event);
-  virtual void addAction(int action, ActionHandler *client, int event);
+  EXPECT_FALSE(cond->checkConditionFor(20));
+  EXPECT_TRUE(cond->checkConditionFor(20.001));
+  EXPECT_FALSE(cond->checkConditionFor(25));
 
-  virtual void runAction(int event);
+  EXPECT_FALSE(cond->checkConditionFor(5));
+  EXPECT_FALSE(cond->checkConditionFor(5));
+  EXPECT_FALSE(cond->checkConditionFor(5));
 
-  static ActionHandlerClient *getClientListPtr();
-};
+  EXPECT_TRUE(cond->checkConditionFor(50));
+  EXPECT_FALSE(cond->checkConditionFor(5));
 
-};  // namespace Supla
-
-#endif
+}

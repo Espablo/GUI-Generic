@@ -14,27 +14,26 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _local_action_h
-#define _local_action_h
+#include "../condition.h"
 
-#include <stdint.h>
-#include "action_handler.h"
-
-namespace Supla {
-
-class ActionHandlerClient;
-
-class LocalAction {
+class OnBetweenEqCond : public Supla::Condition {
  public:
-  virtual ~LocalAction();
-  virtual void addAction(int action, ActionHandler &client, int event);
-  virtual void addAction(int action, ActionHandler *client, int event);
+  OnBetweenEqCond(double threshold1, double threshold2, bool useAlternativeMeasurement)
+      : Supla::Condition(threshold1, useAlternativeMeasurement), threshold2(threshold2) {
+  }
 
-  virtual void runAction(int event);
+  bool condition(double val) {
+    return val >= threshold && val <= threshold2;
+  }
 
-  static ActionHandlerClient *getClientListPtr();
+  double threshold2;
 };
 
-};  // namespace Supla
 
-#endif
+Supla::Condition *OnBetweenEq(double threshold1, double threshold2, bool useAlternativeMeasurement) {
+  return new OnBetweenEqCond(threshold1, threshold2, useAlternativeMeasurement);
+}
+
+
+
+

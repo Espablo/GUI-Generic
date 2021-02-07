@@ -14,27 +14,30 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _local_action_h
-#define _local_action_h
+#include <gtest/gtest.h>
 
-#include <stdint.h>
-#include "action_handler.h"
+#include <supla/condition.h>
 
-namespace Supla {
+TEST(OnEqualEqTests, OnLessEqConditionTests) {
+  auto cond = OnLessEq(10);
 
-class ActionHandlerClient;
+  EXPECT_TRUE(cond->checkConditionFor(5));
+  EXPECT_FALSE(cond->checkConditionFor(15));
 
-class LocalAction {
- public:
-  virtual ~LocalAction();
-  virtual void addAction(int action, ActionHandler &client, int event);
-  virtual void addAction(int action, ActionHandler *client, int event);
+  EXPECT_TRUE(cond->checkConditionFor(10));
+  EXPECT_FALSE(cond->checkConditionFor(9.9999));
 
-  virtual void runAction(int event);
+  // "On" conditions should fire actions only on transition to meet condition.
+  EXPECT_FALSE(cond->checkConditionFor(5));
+  EXPECT_FALSE(cond->checkConditionFor(5));
+  EXPECT_FALSE(cond->checkConditionFor(5));
 
-  static ActionHandlerClient *getClientListPtr();
-};
+  // Going back above threshold value, should reset expectation and it should return
+  // true on next call with met condition
+  EXPECT_FALSE(cond->checkConditionFor(50));
+  EXPECT_TRUE(cond->checkConditionFor(5));
 
-};  // namespace Supla
+}
 
-#endif
+
+

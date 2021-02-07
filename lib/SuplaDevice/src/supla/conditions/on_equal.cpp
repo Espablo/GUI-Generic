@@ -14,27 +14,23 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _local_action_h
-#define _local_action_h
+#include "../condition.h"
 
-#include <stdint.h>
-#include "action_handler.h"
-
-namespace Supla {
-
-class ActionHandlerClient;
-
-class LocalAction {
+class OnEqualCond : public Supla::Condition {
  public:
-  virtual ~LocalAction();
-  virtual void addAction(int action, ActionHandler &client, int event);
-  virtual void addAction(int action, ActionHandler *client, int event);
+  OnEqualCond(double threshold, bool useAlternativeMeasurement)
+      : Supla::Condition(threshold, useAlternativeMeasurement) {
+  }
 
-  virtual void runAction(int event);
-
-  static ActionHandlerClient *getClientListPtr();
+  bool condition(double val) {
+    return val == threshold;
+  }
 };
 
-};  // namespace Supla
 
-#endif
+Supla::Condition *OnEqual(double threshold, bool useAlternativeMeasurement) {
+  return new OnEqualCond(threshold, useAlternativeMeasurement);
+}
+
+
+
