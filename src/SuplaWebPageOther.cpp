@@ -47,6 +47,7 @@ void handleOtherSave() {
     suplaWebPageOther(6);
     return;
   }
+  ConfigManager->set(KEY_HC_SR04_MAX_SENSOR_READ, WebServer->httpServer.arg(INPUT_HC_SR04_MAX_SENSOR_READ).c_str());
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
@@ -118,6 +119,8 @@ void suplaWebPageOther(int save) {
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" HC-SR04"));
   addListGPIOBox(webContentBuffer, INPUT_TRIG_GPIO, F("TRIG"), FUNCTION_TRIG);
   addListGPIOBox(webContentBuffer, INPUT_ECHO_GPIO, F("ECHO"), FUNCTION_ECHO);
+  addNumberBox(webContentBuffer, INPUT_HC_SR04_MAX_SENSOR_READ, F("Odległość[cm]"), F("maksymalna odległość odczytu czujnika"), false,
+               ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValue());
   addFormHeaderEnd(webContentBuffer);
 #endif
 

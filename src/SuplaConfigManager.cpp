@@ -191,6 +191,8 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_CONDITIONS_MIN, "", MAX_GPIO * 4);
   this->addKey(KEY_CONDITIONS_MAX, "", MAX_GPIO * 4);
 
+  this->addKey(KEY_HC_SR04_MAX_SENSOR_READ, "", 3);
+
   this->load();
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
@@ -427,10 +429,6 @@ bool SuplaConfigManager::setElement(uint8_t key, int index, const char *newvalue
 }
 
 void SuplaConfigManager::setGUIDandAUTHKEY() {
-  if (strcmp(this->get(KEY_SUPLA_GUID)->getValue(), "") != 0 || strcmp(this->get(KEY_SUPLA_AUTHKEY)->getValue(), "") != 0) {
-    return;
-  }
-
   char mac[6];
   int a;
 

@@ -54,4 +54,10 @@ void suplaWebpageHLW8012Calibrate(uint8_t save);
 #define INPUT_PUSHOVER_USER  "pou"
 #endif
 
+#ifdef SUPLA_HC_SR04
+#define INPUT_TRIG_GPIO               "trig"
+#define INPUT_ECHO_GPIO               "echo"
+#define INPUT_HC_SR04_MAX_SENSOR_READ "hsm"
+#endif
+
 #endif  // SuplaWebPageOther_h

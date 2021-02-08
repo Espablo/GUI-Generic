@@ -116,7 +116,16 @@ void setup() {
 
 #ifdef SUPLA_HC_SR04
   if (ConfigESP->getGpio(FUNCTION_TRIG) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_ECHO) != OFF_GPIO) {
-    auto hcsr04 = new Supla::Sensor::HC_SR04(ConfigESP->getGpio(FUNCTION_TRIG), ConfigESP->getGpio(FUNCTION_ECHO));
+    Supla::Sensor::HC_SR04 *hcsr04;
+    if (strcmp(ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValue(), "") != 0) {
+      hcsr04 = new Supla::Sensor::HC_SR04(ConfigESP->getGpio(FUNCTION_TRIG), ConfigESP->getGpio(FUNCTION_ECHO), 0,
+                                          ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValueInt(),
+                                          ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValueInt(), 0);
+    }
+    else {
+      hcsr04 = new Supla::Sensor::HC_SR04(ConfigESP->getGpio(FUNCTION_TRIG), ConfigESP->getGpio(FUNCTION_ECHO));
+    }
+
     Supla::GUI::addConditionsTurnON(SENSOR_HC_SR04, hcsr04);
     Supla::GUI::addConditionsTurnOFF(SENSOR_HC_SR04, hcsr04);
   }
