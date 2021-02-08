@@ -96,11 +96,6 @@ void begin();
 void addRelayButton(uint8_t nr);
 
 extern std::vector<Supla::Control::Relay *> relay;
-extern std::vector<Supla::Control::Button *> button;
-#endif
-
-#if defined(SUPLA_PUSHOVER)
-extern std::vector<Supla::Control::Pushover *> pushover;
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -116,10 +111,6 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 #ifdef SUPLA_ROLLERSHUTTER
 void addRolleShutter(uint8_t nr);
 void addRolleShutterMomentary(uint8_t nr);
-
-extern std::vector<Supla::Control::RollerShutter *> RollerShutterRelay;
-extern std::vector<Supla::Control::Button *> RollerShutterButtonOpen;
-extern std::vector<Supla::Control::Button *> RollerShutterButtonClose;
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
@@ -135,6 +126,9 @@ void addRGBWLeds(uint8_t nr);
 extern Supla::Sensor::HJ101 *counterHLW8012;
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 #endif
+
+void addConditionsTurnON(int function, Supla::ChannelElement *client);
+void addConditionsTurnOFF(int function, Supla::ChannelElement *client);
 
 };  // namespace GUI
 };  // namespace Supla

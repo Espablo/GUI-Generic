@@ -186,7 +186,12 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
   this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
 
-      this->load();
+  this->addKey(KEY_CONDITIONS_SENSOR_TYPE, "", MAX_GPIO * 2);
+  this->addKey(KEY_CONDITIONS_TYPE, "", MAX_GPIO * 1);
+  this->addKey(KEY_CONDITIONS_MIN, "", MAX_GPIO * 4);
+  this->addKey(KEY_CONDITIONS_MAX, "", MAX_GPIO * 4);
+
+  this->load();
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
   //      Serial.println(F("Config read"));

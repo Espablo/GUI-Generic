@@ -18,39 +18,39 @@
 #define PATH_IMPULSE_COUNTER_SET      "setimpulsecounter"
 #define PATH_SAVE_IMPULSE_COUNTER_SET "savesetimpulsecounter"
 
-#define INPUT_MULTI_DS_GPIO                    "mdsg"
-#define INPUT_DHT11_GPIO                       "dht11"
-#define INPUT_DHT22_GPIO                       "dht22"
-#define INPUT_SDA_GPIO                         "sdag"
-#define INPUT_SCL_GPIO                         "sclg"
-#define INPUT_BME280                           "bme280"
-#define INPUT_ALTITUDE_BME280                  "abme280"
-#define INPUT_SHT3x                            "sht30"
-#define INPUT_SI7021                           "si7021"
-#define INPUT_OLED                             "oled"
-#define INPUT_OLED_ANIMATION                   "oleda"
-#define INPUT_OLED_BRIGHTNESS                  "oledb"
-#define INPUT_MCP23017                         "mcp"
-#define INPUT_SI7021_SONOFF                    "si7021sonoff"
-#define INPUT_TRIG_GPIO                        "trig"
-#define INPUT_ECHO_GPIO                        "echo"
-#define INPUT_MAX_DHT11                        "mdht11"
-#define INPUT_MAX_DHT22                        "mdht22"
-#define INPUT_MAX_DS18B20                      "maxds"
-#define INPUT_CLK_GPIO                         "clk"
-#define INPUT_CS_GPIO                          "cs"
-#define INPUT_D0_GPIO                          "d0"
-#define INPUT_MAX6675                          "max6675"
+#define INPUT_MULTI_DS_GPIO   "mdsg"
+#define INPUT_DHT11_GPIO      "dht11"
+#define INPUT_DHT22_GPIO      "dht22"
+#define INPUT_SDA_GPIO        "sdag"
+#define INPUT_SCL_GPIO        "sclg"
+#define INPUT_BME280          "bme280"
+#define INPUT_ALTITUDE_BME280 "abme280"
+#define INPUT_SHT3x           "sht30"
+#define INPUT_SI7021          "si7021"
+#define INPUT_OLED            "oled"
+#define INPUT_OLED_ANIMATION  "oleda"
+#define INPUT_OLED_BRIGHTNESS "oledb"
+#define INPUT_MCP23017        "mcp"
+#define INPUT_SI7021_SONOFF   "si7021sonoff"
+#define INPUT_TRIG_GPIO       "trig"
+#define INPUT_ECHO_GPIO       "echo"
+#define INPUT_MAX_DHT11       "mdht11"
+#define INPUT_MAX_DHT22       "mdht22"
+#define INPUT_MAX_DS18B20     "maxds"
+#define INPUT_CLK_GPIO        "clk"
+#define INPUT_CS_GPIO         "cs"
+#define INPUT_D0_GPIO         "d0"
+#define INPUT_MAX6675         "max6675"
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_MAX6675) || defined(SUPLA_MCP23017)
-enum _sensor
+enum _sensorI2C
 {
-  SENSOR_BME280,
-  SENSOR_SHT3x,
-  SENSOR_SI7021,
-  SENSOR_MAX6675,
-  SENSOR_OLED,
-  SENSOR_MCP23017
+  SENSOR_I2C_BME280,
+  SENSOR_I2C_SHT3x,
+  SENSOR_I2C_SI7021,
+  SENSOR_I2C_MAX6675,
+  SENSOR_I2C_OLED,
+  SENSOR_I2C_MCP23017
 };
 #endif
 

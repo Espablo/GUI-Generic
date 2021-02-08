@@ -50,16 +50,25 @@ const char HTTP_LOGO[] PROGMEM =
     "102.1,188.6z "
     "M167.7,88.5c-1,0-2.1,0.1-3.1,0.3c-9,1.7-14.2,10.6-10.8,18.6c2.9,6.8,11.4,10.3,19,7.8c7.1-2.3,11.1-9.1,9.6-15.9C180.9,93,174.8,88.5,167.7,88.5z'/"
     "></a></svg>";
-const char HTTP_SUMMARY[] PROGMEM = "<h1>{h}</h1><span>LAST STATE: {s}<br>Firmware: SuplaDevice {v}<br>GUID: {g}<br>MAC: {m}<br>Free Mem: {f}KB</span>\n";
+const char HTTP_SUMMARY[] PROGMEM =
+    "<h1>{h}</h1><span>LAST STATE: {s}<br>Firmware: SuplaDevice {v}<br>GUID: {g}<br>MAC: {m}<br>Free Mem: {f}KB</span>\n";
 const char HTTP_COPYRIGHT[] PROGMEM =
     "<a target='_blank' rel='noopener noreferrer' href='https://forum.supla.org/viewtopic.php?f=11&t=7133'><span style='color: #ffffff "
     "!important;'>https://forum.supla.org/</span></a>\n";
 
-const char HTTP_FAVICON[] PROGMEM = "<link rel='icon' href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAB3RJTUUH5AUUCCQbIwTFfgAAAAlwSFlzAAALEgAACxIB0t1+/AAAAARnQU1BAACxjwv8YQUAAAAwUExURf7nNZuNIOvWMci2KWRbFJGEHnRpFy8rCdrGLSAdBgwLAod6G7inJkI8DVJLEKeYIg6cTsoAAAGUSURBVHjaY2CAAFUGNLCF4QAyl4mhmP8BB4LPcWtdAe+BEBiX9QD77Kzl24GKHCAC/OVZH5hkVyUCFQlCRJhnKjAwLVlVb8lQDOY/ZFrG8FDVQbVqbU8BWODc3BX8dbMMGJhfrUyAaOla+/dAP8jyncsbgJTKgVP/b+pOAUudegAkGMsrGZhE1EFyDGwLwNaucmZyl1TgKTdg4JvAwMBzn3txeKWrMwP7wQcMWiAtf2c9YDjUfYBJapsDw66bm4AiUesOnJty0/O9iwLDPI5EhhCD6/q3Chk4dgCleJYpAEOmfCkDB+sbsK1886YBRfgWMTBwbi896wR04YZuAyAH6OmzDCbr3RgYsj6A1HEBPXCfgWHONgaG6eUBII0LFTiA7jn+iIF/MbMTyEu3lphtAJtpvl4BTLPNWgVSySA+y28aWIDdyGtVBgNH5psshVawwHGGO+arLr7MYFoJjZr/zBPYj85a1sC4ulwAIsIdcJzh2qt1WReYBWBR48gxgd1ziQIi6hTYEsxR45pZwRU9+oWgNAB1F3c/H6bYqgAAAABJRU5ErkJggg==' type='image/x-png' />\n";
+const char HTTP_FAVICON[] PROGMEM =
+    "<link rel='icon' "
+    "href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAB3RJTUUH5AUUCCQbIwTFfgAAAAlwSFlzAAALEgAACxIB0t1+/"
+    "AAAAARnQU1BAACxjwv8YQUAAAAwUExURf7nNZuNIOvWMci2KWRbFJGEHnRpFy8rCdrGLSAdBgwLAod6G7inJkI8DVJLEKeYIg6cTsoAAAGUSURBVHjaY2CAAFUGNLCF4QAyl4mhmP8BB4LPc"
+    "WtdAe+BEBiX9QD77Kzl24GKHCAC/OVZH5hkVyUCFQlCRJhnKjAwLVlVb8lQDOY/ZFrG8FDVQbVqbU8BWODc3BX8dbMMGJhfrUyAaOla+/dAP8jyncsbgJTKgVP/"
+    "b+pOAUudegAkGMsrGZhE1EFyDGwLwNaucmZyl1TgKTdg4JvAwMBzn3txeKWrMwP7wQcMWiAtf2c9YDjUfYBJapsDw66bm4AiUesOnJty0/O9iwLDPI5EhhCD6/"
+    "q3Chk4dgCleJYpAEOmfCkDB+sbsK1886YBRfgWMTBwbi896wR04YZuAyAH6OmzDCbr3RgYsj6A1HEBPXCfgWHONgaG6eUBII0LFTiA7jn+iIF/"
+    "MbMTyEu3lphtAJtpvl4BTLPNWgVSySA+y28aWIDdyGtVBgNH5psshVawwHGGO+arLr7MYFoJjZr/"
+    "zBPYj85a1sC4ulwAIsIdcJzh2qt1WReYBWBR48gxgd1ziQIi6hTYEsxR45pZwRU9+oWgNAB1F3c/H6bYqgAAAABJRU5ErkJggg==' type='image/x-png' />\n";
 
 const char HTTP_RBT[] PROGMEM = "<form method='post' action='rbt'><button type='submit'>Restart</button></form>";
 
-/*const char ICON_EDIT[] PROGMEM = 
+/*const char ICON_EDIT[] PROGMEM =
       "<img "
       "src='data:image/"
       "png;base64,"
@@ -156,5 +165,50 @@ const char CONTROLL_SLOW[] PROGMEM = "WOLNE";
 const char CONTROLL_MANUAL[] PROGMEM = "RĘCZNE";
 const char* const OLED_CONTROLL_P[] PROGMEM = {CONTROLL_NORMAL, CONTROLL_SLOW, CONTROLL_MANUAL};
 #endif
+
+enum conditioningType
+{
+  HEATING,
+  COOLING,
+  MOISTURIZING,
+  DRAINGE
+};
+
+/*const char CONDITIONING__HEATING[] PROGMEM = "Temperatura - ogrzewanie";
+const char CONDITIONING__COOLING[] PROGMEM = "Temperatura - chłodzenie";
+const char CONDITIONING__MOISTURIZING[] PROGMEM = "Wilgotność - nawilżanie";
+const char CONDITIONING__DRAINGE[] PROGMEM = "Wilgotność - osuszanie";*/
+const char CONDITIONING__HEATING[] PROGMEM = "ON < wartość kanału > OFF";
+const char CONDITIONING__COOLING[] PROGMEM = "ON > wartość kanału < OFF";
+const char CONDITIONING__MOISTURIZING[] PROGMEM = "ON < wartość kanału wilgotność > OFF";
+const char CONDITIONING__DRAINGE[] PROGMEM = "ON > wartość kanału wilgotność < OFF";
+const char* const CONDITIONS_TYPE_P[] PROGMEM = {CONDITIONING__HEATING, CONDITIONING__COOLING, CONDITIONING__MOISTURIZING, CONDITIONING__DRAINGE};
+
+enum sensorList
+{
+  SENSOR_DS18B20 = 1,
+  SENSOR_DHT11,
+  SENSOR_DHT22,
+  SENSOR_SI7021_SONOFF,
+  SENSOR_HC_SR04,
+  SENSOR_BME280,
+  SENSOR_SHT3x,
+  SENSOR_SI7021,
+  SENSOR_MAX6675,
+  COUNT_SENSOR_LIST
+};
+
+const char NAME_DS18B20[] PROGMEM = "DS18B20";
+const char NAME_DHT11[] PROGMEM = "DHT11";
+const char NAME_DHT22[] PROGMEM = "DHT22";
+const char NAME_SI7021_SONOFF[] PROGMEM = "SI7021 SONOFF";
+const char NAME_HC_SR04[] PROGMEM = "HC-SR04";
+const char NAME_BME280[] PROGMEM = "BME280";
+const char NAME_SHT3x[] PROGMEM = "SHT3x";
+const char NAME_SI7021[] PROGMEM = "SI7021";
+const char NAME_MAX6675[] PROGMEM = "MAX6675";
+
+const char* const SENSOR_LIST_P[] PROGMEM = {OFF,          NAME_DS18B20, NAME_DHT11, NAME_DHT22,  NAME_SI7021_SONOFF,
+                                             NAME_HC_SR04, NAME_BME280,  NAME_SHT3x, NAME_SI7021, NAME_MAX6675};
 
 #endif  // SuplaCommonPROGMEM_h

@@ -278,7 +278,7 @@ void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x,
 
 SuplaOled::SuplaOled() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
-    switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
+    switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       case OLED_SSD1306_0_96:
         display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64, I2C_ONE, -1);
         break;

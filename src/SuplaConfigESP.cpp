@@ -252,7 +252,7 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     // return OFF_GPIO;
     //"Pin 100 - 115"
     // Pin 116 - 131"
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       switch (getAdressMCP23017(nr, function)) {
         case 0:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function &&
@@ -287,7 +287,7 @@ int SuplaConfigESP::getLevel(int nr, int function) {
       }
     }
 
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       switch (getAdressMCP23017(nr, function)) {
         case 0:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
@@ -346,7 +346,7 @@ int SuplaConfigESP::getMemory(int nr, int function) {
       }
     }
 
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       switch (getAdressMCP23017(nr, function)) {
         case 0:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
@@ -388,7 +388,7 @@ int SuplaConfigESP::getAction(int nr, int function) {
       }
     }
 
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_MCP23017).toInt()) {
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       switch (getAdressMCP23017(nr, function)) {
         case 0:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
@@ -701,6 +701,11 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
 
     ConfigManager->set(KEY_ADDR_DS18B20, "");
     ConfigManager->set(KEY_NAME_SENSOR, "");
+
+    ConfigManager->set(KEY_CONDITIONS_SENSOR_TYPE, "");
+    ConfigManager->set(KEY_CONDITIONS_TYPE, "");
+    ConfigManager->set(KEY_CONDITIONS_MIN, "");
+    ConfigManager->set(KEY_CONDITIONS_MAX, "");
 
     ConfigManager->save();
 

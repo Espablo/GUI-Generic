@@ -16,6 +16,11 @@
 #define INPUT_RELAY_DURATION  "ird"
 #define INPUT_ROLLERSHUTTER   "irsr"
 
+#define INPUT_CONDITIONS_SENSOR_TYPE "cst"
+#define INPUT_CONDITIONS_TYPE        "ct"
+#define INPUT_CONDITIONS_MIN         "cmi"
+#define INPUT_CONDITIONS_MAX         "cma"
+
 #if defined(SUPLA_PUSHOVER)
 #define INPUT_PUSHOVER "po"
 #endif
@@ -25,6 +30,13 @@ enum _memory_relay
   MEMORY_RELAY_OFF,
   MEMORY_RELAY_ON,
   MEMORY_RELAY_RESTORE
+};
+
+enum _conditions
+{
+  CONDITIONS_DS18B20 = 1,
+  CONDITIONS_DHT_TEMP,
+  CONDITIONS_DHT_HUMI,
 };
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
@@ -41,7 +53,7 @@ class SuplaWebPageRelay {
   void handleRelaySetMCP23017();
 
  private:
-  void supla_webpage_relay_set(int save);
+  void supla_webpage_relay_set(int save, int nr = 0);
   void supla_webpage_relay(int save);
   void supla_webpage_relay_set_MCP23017(int save);
 };

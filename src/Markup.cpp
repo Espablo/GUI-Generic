@@ -122,7 +122,7 @@ void addNumberBox(String& html, const String& input_id, const String& name, cons
     html += F("' placeholder='");
     html += placeholder;
   }
-  html += F("' step='1' min='0' value='");
+  html += F("' step='0.01' value='");
   html += value;
   html += F("'");
 
@@ -227,7 +227,7 @@ void addListGPIOLinkBox(String& html, const String& input_id, const String& name
   }
   html += name;
   if (ConfigESP->getGpio(_nr, function) != OFF_GPIO) {
-    //html += PGMT(ICON_EDIT);
+    // html += PGMT(ICON_EDIT);
     html += F("</a>");
   }
   html += F("</label>");
