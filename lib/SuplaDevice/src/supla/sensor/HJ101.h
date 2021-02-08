@@ -26,34 +26,20 @@ class HJ101 : public OnePhaseElectricityMeter, public Element {
   void readValuesFromDevice();
   void onSaveState();
   void onLoadState();
+
+  double getCurrentMultiplier();
+  double getVoltageMultiplier();
+  double getPowerMultiplier();
   _supla_int64_t getCounter();
-  void setCounter(_supla_int64_t value);
+
+  void setCurrentMultiplier(double current_multiplier);
+  void setVoltageMultiplier(double voltage_multiplier);
+  void setPowerMultiplier(double power_multiplier);
+  void setCounter(_supla_int64_t energy);
+
   static void ICACHE_RAM_ATTR hjl01_cf1_interrupt();
   static void ICACHE_RAM_ATTR hjl01_cf_interrupt();
   void calibrate(double calibPower, double calibVoltage);
-
-  double getCurrentMultiplier() {
-    return hj101->getCurrentMultiplier();
-  };
-  double getVoltageMultiplier() {
-    return hj101->getVoltageMultiplier();
-  };
-  double getPowerMultiplier() {
-    return hj101->getPowerMultiplier();
-  };
-
-  void setCurrentMultiplier(double current_multiplier) {
-    hj101->setCurrentMultiplier(current_multiplier);
-    Supla::Storage::ScheduleSave(1000);
-  };
-  void setVoltageMultiplier(double voltage_multiplier) {
-    hj101->setVoltageMultiplier(voltage_multiplier);
-    Supla::Storage::ScheduleSave(1000);
-  };
-  void setPowerMultiplier(double power_multiplier) {
-    hj101->setPowerMultiplier(power_multiplier);
-    Supla::Storage::ScheduleSave(1000);
-  };
 
  protected:
   static HLW8012 *hj101;
