@@ -32,8 +32,6 @@
 #define INPUT_OLED_BRIGHTNESS "oledb"
 #define INPUT_MCP23017        "mcp"
 #define INPUT_SI7021_SONOFF   "si7021sonoff"
-#define INPUT_TRIG_GPIO       "trig"
-#define INPUT_ECHO_GPIO       "echo"
 #define INPUT_MAX_DHT11       "mdht11"
 #define INPUT_MAX_DHT22       "mdht22"
 #define INPUT_MAX_DS18B20     "maxds"

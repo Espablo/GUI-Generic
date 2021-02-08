@@ -236,15 +236,15 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
   addFormHeader(webContentBuffer, F("Warunkowanie"));
 
   selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-  addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, "Sensor", SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
+  addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, F("Sensor"), SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
 
   selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-  addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, "Warunek", CONDITIONS_TYPE_P, 4, selected);
+  addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, F("Warunek"), CONDITIONS_TYPE_P, 4, selected);
 
   String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr_relay.toInt() - 1);
-  addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, "ON", "wartość włączenia", false, value);
+  addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, F("ON"), F("wartość włączenia"), false, value);
   value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr_relay.toInt() - 1);
-  addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, "OFF", "wartość wyłączenia", false, value);
+  addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, F("OFF"), F("wartość wyłączenia"), false, value);
   addFormHeaderEnd(webContentBuffer);
 
   addButtonSubmit(webContentBuffer, S_SAVE);
