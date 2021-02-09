@@ -3,8 +3,8 @@
 
 static const char uploadIndex[] PROGMEM =
     R"(<form class="formcenter" method="POST" action="/upload" enctype="multipart/form-data">
-         <input type="file" accept=".dat" name="config">
-         </br>
+         <input type="file" accept=".dat" name="config"></br>
+         <input type="checkbox" name='generateGUIDandAUTHKEY' value='1'>Generuj GUID & AUTHKEY</br></br>
          <input type="submit" value="Upload">
      </form>)";
 
@@ -15,7 +15,17 @@ void createWebUpload() {
   WebServer->httpServer.on(getURL(PATH_UPLOAD), HTTP_GET, []() { handleUpload(); });
   // WebServer->httpServer.on(F("/upload"), HTTP_POST, handleFileUpload);
   WebServer->httpServer.on(
-      getURL(PATH_UPLOAD), HTTP_POST, []() { WebServer->httpServer.send(200); }, handleFileUpload);
+      getURL(PATH_UPLOAD), HTTP_POST,
+      []() {
+        if (WebServer->httpServer.hasArg("generateGUIDandAUTHKEY")) {
+          if (WebServer->httpServer.arg("generateGUIDandAUTHKEY") == "1") {
+            ConfigManager->setGUIDandAUTHKEY();
+            ConfigManager->save();
+          }
+        }
+        WebServer->httpServer.send(200);
+      },
+      handleFileUpload);
 }
 
 void handleUpload(int save) {
@@ -25,7 +35,7 @@ void handleUpload(int save) {
   }
 
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript();
+  webContentBuffer += SuplaJavaScript(PATH_UPLOAD);
   webContentBuffer += F("<div class='w'>");
   webContentBuffer += F("<h3>");
   webContentBuffer += F("Wgraj konfiguracje");

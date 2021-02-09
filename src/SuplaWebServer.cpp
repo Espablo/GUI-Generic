@@ -181,7 +181,7 @@ void SuplaWebServer::supla_webpage_start(int save) {
   addFormEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
-  addButton(webContentBuffer, F("Tools"), PATH_TOOLS);
+  addButton(webContentBuffer, F("Narzędzia"), PATH_TOOLS);
 
   WebServer->sendContent();
 }
