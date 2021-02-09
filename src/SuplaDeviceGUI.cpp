@@ -101,7 +101,13 @@ void addRelayButton(uint8_t nr) {
       auto pushover =
           new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
       pushover->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
-      pushover->setMessage(String("Przekaźnik " + String(size + 1) + " - ZAŁĄCZONY").c_str());
+
+      if (size <= MAX_PUSHOVER_MESSAGE) {
+        pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(size).c_str());
+      }
+      else {
+        pushover->setMessage(String("Przekaźnik " + String(size + 1) + " - ZAŁĄCZONY").c_str());
+      }
       relay[size]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
     }
 #endif
@@ -219,17 +225,11 @@ void addRGBWLeds(uint8_t nr) {
   int redPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_RED);
   int greenPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_GREEN);
   int bluePin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BLUE);
-  int colorBrightnessPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_COLOR_BRIGHTNESS);
   int brightnessPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BRIGHTNESS);
   int buttonPin = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
 
-  if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO && colorBrightnessPin != OFF_GPIO && brightnessPin != OFF_GPIO) {
-    Serial.println(redPin);
-    Serial.println(greenPin);
-    Serial.println(bluePin);
-    Serial.println(colorBrightnessPin);
-    Serial.println(colorBrightnessPin);
-    auto rgbw = new Supla::Control::RGBWLeds(redPin, greenPin, bluePin, colorBrightnessPin, brightnessPin);
+  if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO && brightnessPin != OFF_GPIO) {
+    auto rgbw = new Supla::Control::RGBWLeds(redPin, greenPin, bluePin, brightnessPin);
 
     if (buttonPin != OFF_GPIO) {
       auto button = new Supla::Control::Button(buttonPin, true, true);
@@ -241,8 +241,8 @@ void addRGBWLeds(uint8_t nr) {
       button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
     }
   }
-  else if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO && colorBrightnessPin != OFF_GPIO) {
-    auto rgbw = new Supla::Control::RGBLeds(redPin, greenPin, bluePin, colorBrightnessPin);
+  else if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO) {
+    auto rgbw = new Supla::Control::RGBLeds(redPin, greenPin, bluePin);
 
     if (buttonPin != OFF_GPIO) {
       auto button = new Supla::Control::Button(buttonPin, true, true);

@@ -71,8 +71,7 @@ void handleOtherSave() {
     if (!WebServer->saveGPIO(INPUT_RGBW_RED, FUNCTION_RGBW_RED, nr, INPUT_RGBW_MAX) ||
         !WebServer->saveGPIO(INPUT_RGBW_GREEN, FUNCTION_RGBW_GREEN, nr, INPUT_RGBW_MAX) ||
         !WebServer->saveGPIO(INPUT_RGBW_BLUE, FUNCTION_RGBW_BLUE, nr, INPUT_RGBW_MAX) ||
-        !WebServer->saveGPIO(INPUT_RGBW_BRIGHTNESS, FUNCTION_RGBW_BRIGHTNESS, nr, INPUT_RGBW_MAX) ||
-        !WebServer->saveGPIO(INPUT_RGBW_COLOR_BRIGHTNESS, FUNCTION_RGBW_COLOR_BRIGHTNESS, nr, INPUT_RGBW_MAX)) {
+        !WebServer->saveGPIO(INPUT_RGBW_BRIGHTNESS, FUNCTION_RGBW_BRIGHTNESS, nr, INPUT_RGBW_MAX)) {
       suplaWebPageOther(6);
       return;
     }
@@ -152,13 +151,12 @@ void suplaWebPageOther(int save) {
     addListGPIOBox(webContentBuffer, INPUT_RGBW_GREEN, F("GREEN"), FUNCTION_RGBW_GREEN, nr, false);
     addListGPIOBox(webContentBuffer, INPUT_RGBW_BLUE, F("BLUE"), FUNCTION_RGBW_BLUE, nr, false);
     addListGPIOBox(webContentBuffer, INPUT_RGBW_BRIGHTNESS, F("WHITE / DIMMER"), FUNCTION_RGBW_BRIGHTNESS, nr, false);
-    addListGPIOBox(webContentBuffer, INPUT_RGBW_COLOR_BRIGHTNESS, F("BRIGHTNESS"), FUNCTION_RGBW_COLOR_BRIGHTNESS, nr);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " PUSHOVER");
+  addFormHeader(webContentBuffer, String(S_SETTING_FOR) + " PUSHOVER");
   addTextBox(webContentBuffer, INPUT_PUSHOVER_TOKEN, F("Token"), KEY_PUSHOVER_TOKEN, 0, MAX_TOKEN_SIZE, false);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_USER, F("Users"), KEY_PUSHOVER_USER, 0, MAX_USER_SIZE, false);
   addFormHeaderEnd(webContentBuffer);

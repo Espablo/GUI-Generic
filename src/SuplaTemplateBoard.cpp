@@ -45,19 +45,18 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
 }
 #endif
 
-void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t colorBrightnessPin, int8_t brightnessPin) {
+void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t brightnessPin) {
   uint8_t nr = ConfigManager->get(KEY_MAX_RGBW)->getValueInt();
   nr++;
   ConfigESP->setGpio(redPin, nr, FUNCTION_RGBW_RED, 0);
   ConfigESP->setGpio(greenPin, nr, FUNCTION_RGBW_GREEN, 0);
   ConfigESP->setGpio(bluePin, nr, FUNCTION_RGBW_BLUE, 0);
-  ConfigESP->setGpio(colorBrightnessPin, nr, FUNCTION_RGBW_COLOR_BRIGHTNESS, 0);
   ConfigESP->setGpio(brightnessPin, nr, FUNCTION_RGBW_BRIGHTNESS, 0);
   ConfigManager->set(KEY_MAX_RGBW, nr++);
 }
 
 void addDimmer(int8_t brightnessPin) {
-  addRGBW(OFF_GPIO, OFF_GPIO, OFF_GPIO, OFF_GPIO, brightnessPin);
+  addRGBW(OFF_GPIO, OFF_GPIO, OFF_GPIO, brightnessPin);
 }
 
 void chooseTemplateBoard(uint8_t board) {

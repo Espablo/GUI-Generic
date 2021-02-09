@@ -12,7 +12,7 @@ void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
 void addLed(uint8_t gpio);
 void addButtonCFG(uint8_t gpio);
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
-void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t colorBrightnessPin, int8_t brightnessPin);
+void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t brightnessPin);
 void addDimmer(int8_t brightnessPin);
 
 enum _board

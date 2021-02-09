@@ -83,8 +83,8 @@ const char GPIO2[] PROGMEM = "GPIO2-D4";
 const char GPIO3[] PROGMEM = "GPIO3-RX";
 const char GPIO4[] PROGMEM = "GPIO4-D2";
 const char GPIO5[] PROGMEM = "GPIO5-D1";
-const char GPIO9[] PROGMEM = "GPIO9-D11";
-const char GPIO10[] PROGMEM = "GPIO10-D12";
+const char GPIO9[] PROGMEM = "GPIO9-FL ESP8285";
+const char GPIO10[] PROGMEM = "GPIO10-FL ESP8285";
 const char GPIO12[] PROGMEM = "GPIO12-D6";
 const char GPIO13[] PROGMEM = "GPIO13-D7";
 const char GPIO14[] PROGMEM = "GPIO14-D5";
@@ -178,10 +178,10 @@ enum conditioningType
 const char CONDITIONING__COOLING[] PROGMEM = "Temperatura - chłodzenie";
 const char CONDITIONING__MOISTURIZING[] PROGMEM = "Wilgotność - nawilżanie";
 const char CONDITIONING__DRAINGE[] PROGMEM = "Wilgotność - osuszanie";*/
-const char CONDITIONING__HEATING[] PROGMEM = "ON < wartość kanału > OFF";
-const char CONDITIONING__COOLING[] PROGMEM = "ON > wartość kanału < OFF";
-const char CONDITIONING__MOISTURIZING[] PROGMEM = "ON < wartość kanału wilgotność > OFF";
-const char CONDITIONING__DRAINGE[] PROGMEM = "ON > wartość kanału wilgotność < OFF";
+const char CONDITIONING__HEATING[] PROGMEM = "ON < wartość kanału > OFF - ogrzewanie";
+const char CONDITIONING__COOLING[] PROGMEM = "ON > wartość kanału < OFF - chłodzenie";
+const char CONDITIONING__MOISTURIZING[] PROGMEM = "ON < 2 wartość kanału > OFF - nawilżanie";
+const char CONDITIONING__DRAINGE[] PROGMEM = "ON > 2 wartość kanału < OFF - osuszanie";
 const char* const CONDITIONS_TYPE_P[] PROGMEM = {CONDITIONING__HEATING, CONDITIONING__COOLING, CONDITIONING__MOISTURIZING, CONDITIONING__DRAINGE};
 
 enum sensorList

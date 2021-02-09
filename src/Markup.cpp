@@ -55,7 +55,7 @@ void addTextBox(String& html,
     html += F("'");
   }
   if (maxlength > 0) {
-    html += F("' length='");
+    html += F("' maxlength='");
     html += maxlength;
     html += F("'");
   }

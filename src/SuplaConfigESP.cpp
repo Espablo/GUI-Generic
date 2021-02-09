@@ -712,6 +712,7 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_CONDITIONS_MIN, "");
     ConfigManager->set(KEY_CONDITIONS_MAX, "");
 
+    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
     ConfigManager->save();
 
     if (!forceReset) {
