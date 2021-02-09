@@ -178,11 +178,13 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
   input = INPUT_CONDITIONS_TYPE;
   ConfigManager->setElement(KEY_CONDITIONS_TYPE, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).toInt());
   input = INPUT_CONDITIONS_MIN;
-  Serial.println(WebServer->httpServer.arg(input).toDouble());
   ConfigManager->setElement(KEY_CONDITIONS_MIN, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).c_str());
   input = INPUT_CONDITIONS_MAX;
-  Serial.println(WebServer->httpServer.arg(input).toDouble());
   ConfigManager->setElement(KEY_CONDITIONS_MAX, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).c_str());
+  if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
+    input = INPUT_PUSHOVER_MESSAGE;
+    ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).c_str());
+  }
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -230,6 +232,11 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
 #if defined(SUPLA_PUSHOVER)
   selected = ConfigManager->get(KEY_PUSHOVER)->getElement(nr_relay.toInt() - 1).toInt();
   addListBox(webContentBuffer, INPUT_PUSHOVER, F("Pushover"), STATE_P, 2, selected);
+
+  if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
+    String pushoverMassage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr_relay.toInt() - 1).c_str();
+    addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, "Wiadomość", pushoverMassage, 0, 16, false);
+  }
 #endif
   addFormHeaderEnd(webContentBuffer);
 

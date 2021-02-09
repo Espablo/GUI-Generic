@@ -22,7 +22,8 @@
 #define INPUT_CONDITIONS_MAX         "cma"
 
 #if defined(SUPLA_PUSHOVER)
-#define INPUT_PUSHOVER "po"
+#define INPUT_PUSHOVER         "po"
+#define INPUT_PUSHOVER_MESSAGE "pm"
 #endif
 
 enum _memory_relay
