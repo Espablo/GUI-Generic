@@ -24,11 +24,16 @@
 #define RGBW_STATE_ON_INIT_OFF 0
 #define RGBW_STATE_ON_INIT_ON 1
 
+#ifdef ARDUINO_ARCH_ESP32
+  int esp32PwmChannelCouner = 0;
+#endif
+
+
 namespace Supla {
 namespace Control {
 
 RGBWBase::RGBWBase()
-    : buttonStep(10),
+    : buttonStep(5),
       curRed(0),
       curGreen(255),
       curBlue(0),
@@ -39,7 +44,7 @@ RGBWBase::RGBWBase()
       defaultDimmedBrightness(20),
       dimIterationDirection(false),
       iterationDelayCounter(0),
-      fadeEffect(1000),
+      fadeEffect(500),
       hwRed(0),
       hwGreen(0),
       hwBlue(0),
@@ -47,7 +52,7 @@ RGBWBase::RGBWBase()
       hwBrightness(0),
       lastTick(0),
       lastMsgReceivedMs(0),
-      stateOnInit(RGBW_STATE_ON_INIT_OFF) {
+      stateOnInit(RGBW_STATE_ON_INIT_RESTORE) {
   channel.setType(SUPLA_CHANNELTYPE_DIMMERANDRGBLED);
   channel.setDefault(SUPLA_CHANNELFNC_DIMMERANDRGBLIGHTING);
 }
@@ -57,7 +62,7 @@ void RGBWBase::setRGBW(int red,
                        int blue,
                        int colorBrightness,
                        int brightness,
-                       bool toggle = false) {
+                       bool toggle) {
   if (toggle) {
     lastMsgReceivedMs = 1;
   } else {
