@@ -65,7 +65,7 @@ void chooseTemplateBoard(uint8_t board) {
     key = KEY_GPIO + nr;
     ConfigManager->set(key, "");
   }
-  
+
   ConfigManager->set(KEY_MAX_BUTTON, "0");
   ConfigManager->set(KEY_MAX_RELAY, "0");
   ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
@@ -232,6 +232,11 @@ void chooseTemplateBoard(uint8_t board) {
       addButton(5);
       addButton(4);
       addButton(16);
+      break;
+    case BOARD_H801:
+      addLedCFG(1);
+      addButtonCFG(0);
+      addRGBW(15, 13, 12, 4);
       break;
   }
 }
