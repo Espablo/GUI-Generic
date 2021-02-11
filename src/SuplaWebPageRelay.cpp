@@ -85,7 +85,13 @@ void SuplaWebPageRelay::handleRelaySave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      supla_webpage_relay(1);
+      if (last_value >= ConfigManager->get(KEY_MAX_RELAY)->getValueInt()) {
+        supla_webpage_relay(1);
+      }
+      else {
+        supla_webpage_relay(2);
+        ConfigESP->rebootESP();
+      }
       break;
     case E_CONFIG_FILE_OPEN:
       supla_webpage_relay(2);

@@ -91,7 +91,13 @@ void SuplaWebPageControl::handleControlSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      supla_webpage_control(1);
+      if (last_value >= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()) {
+        supla_webpage_control(1);
+      }
+      else {
+        supla_webpage_control(2);
+        ConfigESP->rebootESP();
+      }
       break;
     case E_CONFIG_FILE_OPEN:
       supla_webpage_control(2);

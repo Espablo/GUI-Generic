@@ -36,7 +36,7 @@ void handleOtherSave() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  uint8_t nr, current_value, last_value;
+  uint8_t nr, last_value;
 
 #ifdef SUPLA_HC_SR04
   if (!WebServer->saveGPIO(INPUT_TRIG_GPIO, FUNCTION_TRIG)) {
@@ -118,13 +118,13 @@ void suplaWebPageOther(int save) {
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" HC-SR04"));
   addListGPIOBox(webContentBuffer, INPUT_TRIG_GPIO, F("TRIG"), FUNCTION_TRIG);
   addListGPIOBox(webContentBuffer, INPUT_ECHO_GPIO, F("ECHO"), FUNCTION_ECHO);
-  addNumberBox(webContentBuffer, INPUT_HC_SR04_MAX_SENSOR_READ, F("Odległość[cm]"), F("maksymalna odległość odczytu czujnika"), false,
+  addNumberBox(webContentBuffer, INPUT_HC_SR04_MAX_SENSOR_READ, F("Głębokość[cm]"), F("maksymalna odległość odczytu czujnika"), false,
                ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValue());
   addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " " + S_IMPULSE_COUNTER);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" ") + S_IMPULSE_COUNTER);
   addNumberBox(webContentBuffer, INPUT_MAX_IMPULSE_COUNTER, S_QUANTITY, KEY_MAX_IMPULSE_COUNTER, ConfigESP->countFreeGpio(FUNCTION_IMPULSE_COUNTER));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
     addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), FUNCTION_IMPULSE_COUNTER, PATH_IMPULSE_COUNTER_SET, nr);
@@ -144,7 +144,7 @@ void suplaWebPageOther(int save) {
 #endif
 
 #ifdef SUPLA_RGBW
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + " RGBW/RGB/DIMMER");
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" RGBW/RGB/DIMMER"));
   addNumberBox(webContentBuffer, INPUT_RGBW_MAX, S_QUANTITY, KEY_MAX_RGBW, ConfigESP->countFreeGpio());
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     addListGPIOBox(webContentBuffer, INPUT_RGBW_RED, F("RED"), FUNCTION_RGBW_RED, nr, false);
@@ -156,7 +156,7 @@ void suplaWebPageOther(int save) {
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-  addFormHeader(webContentBuffer, String(S_SETTING_FOR) + " PUSHOVER");
+  addFormHeader(webContentBuffer, String(S_SETTING_FOR) + F(" PUSHOVER"));
   addTextBox(webContentBuffer, INPUT_PUSHOVER_TOKEN, F("Token"), KEY_PUSHOVER_TOKEN, 0, MAX_TOKEN_SIZE, false);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_USER, F("Users"), KEY_PUSHOVER_USER, 0, MAX_USER_SIZE, false);
   addFormHeaderEnd(webContentBuffer);
@@ -340,6 +340,9 @@ void handleHLW8012CalibrateSave() {
   }
 
   if (calibPower && calibVoltage) {
+    for (int i = 0; i < Supla::GUI::relay.size(); i++) {
+      Supla::GUI::relay[i]->turnOn();
+    }
     Supla::GUI::counterHLW8012->calibrate(calibPower, calibVoltage);
     suplaWebpageHLW8012Calibrate(1);
   }

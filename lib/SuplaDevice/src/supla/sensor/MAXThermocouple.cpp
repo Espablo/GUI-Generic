@@ -14,36 +14,54 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "MAX6675_K.h"
+#include "MAXThermocouple.h"
 
 namespace Supla {
 namespace Sensor {
-MAX6675_K::MAX6675_K(uint8_t pin_CLK, uint8_t pin_CS, uint8_t pin_DO)
+MAXThermocouple::MAXThermocouple(uint8_t pin_CLK, uint8_t pin_CS, uint8_t pin_DO)
     : pin_CLK(pin_CLK), pin_CS(pin_CS), pin_DO(pin_DO) {
 }
 
-double MAX6675_K::getValue() {
-  uint16_t value;
+double MAXThermocouple::getValue() {
+  int32_t value;
 
   digitalWrite(pin_CS, LOW);
   delay(1);
 
   value = spiRead();
-  value <<= 8;
-  value |= spiRead();
 
   digitalWrite(pin_CS, HIGH);
 
-  if (value & 0x4) {  // this means there is no probe connected to Max6675
-    Serial.print(F("no probe connected to Max6675"));
-    return TEMPERATURE_NOT_AVAILABLE;
-  }
-  value >>= 3;
+  if ((value >> 16) == (value & 0xffff)) {  // MAX6675
+    value >>= 16;
 
-  return value * 0.25;
+    if ((value & 0x4) || (value <= 0)) {  // this means there is no probe connected to Max6675
+      Serial.println(F("Max6675 Error"));
+      return TEMPERATURE_NOT_AVAILABLE;
+    }
+    value >>= 3;
+
+    return (double)value * 0.25;
+
+  } else {  // MAX31855
+
+    if (value & 0x7) {
+      Serial.println(F("Max31855 Error"));
+      return TEMPERATURE_NOT_AVAILABLE;
+    } else {
+      uint16_t _internTemp = (value >> 4) & 0xfff;
+
+      value >>= 18;
+      if (value & 0x2000) {  // is -
+        value |= 0xffffc000;
+      }
+
+      return (double)value * 0.25;
+    }
+  }
 }
 
-void MAX6675_K::onInit() {
+void MAXThermocouple::onInit() {
   digitalWrite(pin_CS, HIGH);
 
   pinMode(pin_CS, OUTPUT);
@@ -53,16 +71,14 @@ void MAX6675_K::onInit() {
   channel.setNewValue(getValue());
 }
 
-byte MAX6675_K::spiRead() {
-  int i;
-  byte d = 0;
+uint32_t MAXThermocouple::spiRead() {
+  uint32_t d = 0;
 
-  for (i = 7; i >= 0; i--) {
+  for (int i = 31; i >= 0; i--) {
     digitalWrite(pin_CLK, LOW);
     delay(1);
-    if (digitalRead(pin_DO)) {
-      d |= (1 << i);
-    }
+    d <<= 1;
+    d |= digitalRead(pin_DO);
 
     digitalWrite(pin_CLK, HIGH);
     delay(1);

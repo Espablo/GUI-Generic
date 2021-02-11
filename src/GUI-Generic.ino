@@ -117,7 +117,7 @@ void setup() {
 #ifdef SUPLA_HC_SR04
   if (ConfigESP->getGpio(FUNCTION_TRIG) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_ECHO) != OFF_GPIO) {
     Supla::Sensor::HC_SR04 *hcsr04;
-    if (strcmp(ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValue(), "") != 0) {
+    if (ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValueInt() > 0) {
       hcsr04 = new Supla::Sensor::HC_SR04(ConfigESP->getGpio(FUNCTION_TRIG), ConfigESP->getGpio(FUNCTION_ECHO), 0,
                                           ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValueInt(),
                                           ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValueInt(), 0);
@@ -133,9 +133,10 @@ void setup() {
 
 #ifdef SUPLA_MAX6675
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
-    auto max6675 = new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
-    Supla::GUI::addConditionsTurnON(SENSOR_MAX6675, max6675);
-    Supla::GUI::addConditionsTurnOFF(SENSOR_MAX6675, max6675);
+    auto thermocouple =
+        new Supla::Sensor::MAXThermocouple(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
+    Supla::GUI::addConditionsTurnON(SENSOR_MAX6675, thermocouple);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_MAX6675, thermocouple);
   }
 #endif
 

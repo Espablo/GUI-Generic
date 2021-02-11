@@ -608,7 +608,7 @@ void SuplaWebPageSensor::supla_webpage_spi(int save) {
 
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MAX6675).toInt();
-    addListBox(webContentBuffer, INPUT_MAX6675, F("MAX6675"), STATE_P, 2, selected);
+    addListBox(webContentBuffer, INPUT_MAX6675, F("MAX6675/MAX31855"), STATE_P, 2, selected);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
