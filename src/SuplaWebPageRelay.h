@@ -1,7 +1,6 @@
 #ifndef SuplaWebPageRelay_h
 #define SuplaWebPageRelay_h
 
-#include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 
 #define PATH_RELAY            "relay"
@@ -24,6 +23,11 @@
 #if defined(SUPLA_PUSHOVER)
 #define INPUT_PUSHOVER         "po"
 #define INPUT_PUSHOVER_MESSAGE "pm"
+#endif
+
+#if defined(SUPLA_DIRECT_LINKS)
+#define INPUT_DIRECT_LINK_ON  "dlo"
+#define INPUT_DIRECT_LINK_OFF "dlof"
 #endif
 
 enum _memory_relay

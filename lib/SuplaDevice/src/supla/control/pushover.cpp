@@ -22,7 +22,7 @@ namespace Supla {
 namespace Control {
 
 Pushover::Pushover(const char *token, const char *user, bool isSecured)
-    : lastMsgReceivedMs(0) {
+    : lastStateSend(false) {
   setToken(token);
   setUser(user);
   _isSecured = isSecured;
@@ -81,7 +81,8 @@ void Pushover::toggleConnection() {
     if (_isSecured) {
       client = new WiFiClientSecure();
       ((WiFiClientSecure *)client)->setInsecure();
-      ((WiFiClientSecure *)client)->setBufferSizes(1024, 1024);
+      ((WiFiClientSecure *)client)->setBufferSizes(256, 256);
+      ((WiFiClientSecure *)client)->setTimeout(200);
     } else {
       client = new WiFiClient();
     }
@@ -119,13 +120,13 @@ void Pushover::sendRequest() {
       }
     }
 
-   /* String line = client->readString();
-    if (line.indexOf("\"status\":1") != -1 || line.indexOf("200 OK") != -1) {
-      Serial.println(F("Alert sent successfully!"));
-    } else {
-      Serial.print(F("Alert failure"));
-      Serial.println(line);
-    }*/
+    /* String line = client->readString();
+     if (line.indexOf("\"status\":1") != -1 || line.indexOf("200 OK") != -1) {
+       Serial.println(F("Alert sent successfully!"));
+     } else {
+       Serial.print(F("Alert failure"));
+       Serial.println(line);
+     }*/
   }
 }
 
@@ -141,8 +142,8 @@ void Pushover::send() {
 }
 
 void Pushover::iterateAlways() {
-  if (lastMsgReceivedMs != 0 && millis() - lastMsgReceivedMs > 400) {
-    lastMsgReceivedMs = 0;
+  if (lastStateSend) {
+    lastStateSend = false;
     send();
   }
 }
@@ -150,7 +151,7 @@ void Pushover::iterateAlways() {
 void Pushover::handleAction(int event, int action) {
   (void)(event);
   if (action == SEND_NOTIF_1) {
-    lastMsgReceivedMs = millis();
+    lastStateSend = true;
   }
 }
 

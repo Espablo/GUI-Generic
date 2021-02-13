@@ -47,6 +47,7 @@
 #define MAX_DS18B20          20
 #define MAX_GPIO             17
 #define MAX_PUSHOVER_MESSAGE 2
+#define MAX_DIRECT_LINK      2
 
 enum _key
 {
@@ -87,7 +88,9 @@ enum _key
   KEY_CONDITIONS_TYPE,
   KEY_CONDITIONS_MIN,
   KEY_CONDITIONS_MAX,
-  KEY_HC_SR04_MAX_SENSOR_READ
+  KEY_HC_SR04_MAX_SENSOR_READ,
+  KEY_DIRECT_LINKS_ON,
+  KEY_DIRECT_LINKS_OFF,
 };
 
 //#define GPIO      "GPIO"
@@ -189,6 +192,7 @@ class SuplaConfigManager {
   uint8_t loadItem(uint8_t key);
   uint8_t save();
   void showAllValue();
+  void deleteAllValues();
 
   ConfigOption *get(uint8_t key);
   bool set(uint8_t key, int value);

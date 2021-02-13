@@ -86,6 +86,7 @@
 #include <Wire.h>
 
 #include <supla/control/pushover.h>
+#include <supla/control/direct_link.h>
 
 namespace Supla {
 namespace GUI {

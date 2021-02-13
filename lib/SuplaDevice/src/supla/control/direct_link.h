@@ -14,8 +14,8 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _pushover_h
-#define _pushover_h
+#ifndef _direct_link_h
+#define _direct_link_h
 
 #include <Arduino.h>
 #include <WiFiClientSecure.h>
@@ -24,29 +24,28 @@
 #include "../actions.h"
 #include "../channel_element.h"
 
-#define MAX_TOKEN_SIZE   32
-#define MAX_USER_SIZE    32
-#define MAX_TITLE_SIZE   32
-#define MAX_MESSAGE_SIZE 64
+#define MAX_DIRECT_LINKS_SIZE 32
+#define MAX_HOST_SIZE         32
 
 namespace Supla {
-enum Pushover { SEND_NOTIF_1 };
-}  // namespace Supla
+enum DirectLink {
+  SEND_DIRECT_LINKS_ON,
+  SEND_DIRECT_LINKS_OFF,
+};
+}
 
 namespace Supla {
 namespace Control {
 
-class Pushover : public Element, public ActionHandler {
+class DirectLink : public Element, public ActionHandler {
  public:
-  Pushover(const char *token = nullptr,
-           const char *user = nullptr,
-           bool isSecured = true);
-  ~Pushover();
+  DirectLink(const char *host, bool isSecured = true);
+  ~DirectLink();
 
-  void setToken(const char *token);
-  void setUser(const char *user);
-  void setMessage(const char *message);
-  void setTitle(const char *title);
+  void setHost(const char *host);
+  void setUrlON(const char *url);
+  void setUrlOFF(const char *url);
+  void enableSSL(bool isSecured);
 
   void iterateAlways();
   void handleAction(int event, int action);
@@ -55,20 +54,19 @@ class Pushover : public Element, public ActionHandler {
   void toggleConnection();
   bool openConnection();
   bool closeConnection();
-  void sendRequest();
-  void send();
+  void sendRequest(const char *url);
+  void send(const char *url);
 
  protected:
   WiFiClient *client = NULL;
-  const char *host = "api.pushover.net";
-  const char *path = "/1/messages.json";
-  bool lastStateSend;
+  bool _lastStateON;
+  bool _lastStateOFF;
+  int _action;
 
   bool _isSecured;
-  char _token[MAX_TOKEN_SIZE];
-  char _user[MAX_USER_SIZE];
-  char _title[MAX_TITLE_SIZE];
-  char _message[MAX_MESSAGE_SIZE];
+  char _urlON[MAX_DIRECT_LINKS_SIZE];
+  char _urlOFF[MAX_DIRECT_LINKS_SIZE];
+  char _host[MAX_HOST_SIZE];
 };
 
 };  // namespace Control

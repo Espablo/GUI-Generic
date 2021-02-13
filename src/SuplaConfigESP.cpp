@@ -427,7 +427,7 @@ int SuplaConfigESP::getAction(int nr, int function) {
 
 bool SuplaConfigESP::checkBusyCfg(int gpio) {
   uint8_t key = KEY_GPIO + gpio;
-  if (ConfigManager->get(key)->getElement(FUNCTION_CFG_LED).toInt() == 1) {
+  if (ConfigManager->get(key)->getElement(CFG).toInt() == 1) {
     return true;
   }
   return false;
@@ -440,21 +440,17 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   else {
     uint8_t key = KEY_GPIO + gpio;
 
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_BUTTON) {
-      if (function == FUNCTION_CFG_BUTTON) {
-        return false;
-      }
-    }
-    if (checkBusyCfg(gpio)) {
-      if (function != FUNCTION_BUTTON) {
-        return false;
-      }
-    }
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF) {
-      if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != function) {
-        return false;
-      }
-    }
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_BUTTON)
+      if (function == FUNCTION_CFG_BUTTON)
+        return true;
+
+    if (checkBusyCfg(gpio))
+      if (function == FUNCTION_BUTTON)
+        return true;
+
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF || checkBusyCfg(gpio))
+      return false;
+
     return true;
   }
 }
@@ -677,42 +673,15 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     }
     EEPROM.end();
 
-    ConfigManager->set(KEY_WIFI_SSID, "");
-    ConfigManager->set(KEY_WIFI_PASS, "");
+    ConfigManager->deleteAllValues();
+
     ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);
     ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
     ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
     ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
     ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
-    ConfigManager->set(KEY_MAX_RELAY, "0");
-    ConfigManager->set(KEY_MAX_BUTTON, "0");
-    ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
-    ConfigManager->set(KEY_MAX_DHT22, "0");
-    ConfigManager->set(KEY_MAX_DHT11, "0");
-    ConfigManager->set(KEY_MULTI_MAX_DS18B20, "0");
-    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, "0");
-    ConfigManager->set(KEY_ALTITUDE_BME280, "0");
-    ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "0");
-    ConfigManager->set(KEY_MAX_IMPULSE_COUNTER, "0");
-    ConfigManager->set(KEY_ACTIVE_SENSOR, "");
-    ConfigManager->set(KEY_BOARD, "0");
-    ConfigManager->set(KEY_CFG_MODE, "0");
-
-    uint8_t nr, key;
-    for (nr = 0; nr <= OFF_GPIO; nr++) {
-      key = KEY_GPIO + nr;
-      ConfigManager->set(key, "");
-    }
-
-    ConfigManager->set(KEY_ADDR_DS18B20, "");
-    ConfigManager->set(KEY_NAME_SENSOR, "");
-
-    ConfigManager->set(KEY_CONDITIONS_SENSOR_TYPE, "");
-    ConfigManager->set(KEY_CONDITIONS_TYPE, "");
-    ConfigManager->set(KEY_CONDITIONS_MIN, "");
-    ConfigManager->set(KEY_CONDITIONS_MAX, "");
-
     ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+
     ConfigManager->save();
 
     if (!forceReset) {

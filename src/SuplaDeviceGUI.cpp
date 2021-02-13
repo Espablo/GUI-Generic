@@ -40,13 +40,13 @@ void begin() {
   supla_hostname.replace(" ", "_");
   wifi->setHostName(supla_hostname.c_str());
 
-  SuplaDevice.setName((char *)ConfigManager->get(KEY_HOST_NAME)->getValue());
+  SuplaDevice.setName(ConfigManager->get(KEY_HOST_NAME)->getValue());
 
   SuplaDevice.setSwVersion(BUILD_VERSION);
 
   SuplaDevice.begin((char *)ConfigManager->get(KEY_SUPLA_GUID)->getValue(),      // Global Unique Identifier
-                    (char *)ConfigManager->get(KEY_SUPLA_SERVER)->getValue(),    // SUPLA server address
-                    (char *)ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),     // Email address used to login to Supla Cloud
+                    ConfigManager->get(KEY_SUPLA_SERVER)->getValue(),            // SUPLA server address
+                    ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),             // Email address used to login to Supla Cloud
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
   ConfigManager->showAllValue();
@@ -96,19 +96,29 @@ void addRelayButton(uint8_t nr) {
     }
 
 #if defined(SUPLA_PUSHOVER)
-    if (ConfigManager->get(KEY_PUSHOVER)->getElement(size).toInt() && strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 &&
-        strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
-      auto pushover =
-          new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
-      pushover->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
+    if (size <= MAX_PUSHOVER_MESSAGE) {
+      if (ConfigManager->get(KEY_PUSHOVER)->getElement(size).toInt() && strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 &&
+          strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
+        auto pushover =
+            new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
 
-      if (size <= MAX_PUSHOVER_MESSAGE) {
+        pushover->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
         pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(size).c_str());
+
+        relay[size]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
       }
-      else {
-        pushover->setMessage(String("Przekaźnik " + String(size + 1) + " - ZAŁĄCZONY").c_str());
-      }
-      relay[size]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
+    }
+#endif
+
+#if defined(SUPLA_DIRECT_LINKS)
+    if (size <= MAX_DIRECT_LINK) {
+      auto directLink = new Supla::Control::DirectLink(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+
+      directLink->setUrlON(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str());
+      directLink->setUrlOFF(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str());
+
+      relay[size]->addAction(DirectLink::SEND_DIRECT_LINKS_ON, directLink, Supla::ON_TURN_ON);
+      relay[size]->addAction(DirectLink::SEND_DIRECT_LINKS_OFF, directLink, Supla::ON_TURN_OFF);
     }
 #endif
   }
