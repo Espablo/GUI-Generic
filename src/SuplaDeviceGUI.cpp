@@ -83,10 +83,16 @@ void addRelayButton(uint8_t nr) {
     }
 
     relay[size]->keepTurnOnDuration();
-    // eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
     if (pinButton != OFF_GPIO) {
-      auto button = new Supla::Control::Button(pinButton, true);
+      Supla::Control::Button *button;
+      if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
+        button = new Supla::Control::Button(pinButton, true, false);
+      }
+      else {
+        button = new Supla::Control::Button(pinButton, true);
+      }
+
       button->addAction(ConfigESP->getAction(size + 1, FUNCTION_BUTTON), *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
       button->setSwNoiseFilterDelay(50);
     }
@@ -112,13 +118,19 @@ void addRelayButton(uint8_t nr) {
 
 #if defined(SUPLA_DIRECT_LINKS)
     if (size <= MAX_DIRECT_LINK) {
-      auto directLink = new Supla::Control::DirectLinks(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+      if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str(), "") != 0 ||
+          strcmp(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str(), "") != 0) {
+        auto directLink = new Supla::Control::DirectLinks(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
 
-      directLink->setUrlON(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str());
-      directLink->setUrlOFF(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str());
-
-      relay[size]->addAction(DirectLinks::SEND_DIRECT_LINKS_ON, directLink, Supla::ON_TURN_ON);
-      relay[size]->addAction(DirectLinks::SEND_DIRECT_LINKS_OFF, directLink, Supla::ON_TURN_OFF);
+        if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str(), "") != 0) {
+          directLink->setUrlON(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str());
+          relay[size]->addAction(DirectLinks::SEND_DIRECT_LINKS_ON, directLink, Supla::ON_TURN_ON);
+        }
+        if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str(), "") != 0) {
+          directLink->setUrlOFF(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str());
+          relay[size]->addAction(DirectLinks::SEND_DIRECT_LINKS_OFF, directLink, Supla::ON_TURN_OFF);
+        }
+      }
     }
 #endif
   }
