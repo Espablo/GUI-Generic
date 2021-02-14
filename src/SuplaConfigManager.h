@@ -31,7 +31,7 @@
 #define MAX_AUTHKEY             SUPLA_GUID_SIZE
 #define MAX_SSID                32
 #define MAX_PASSWORD            64
-#define MIN_PASSWORD            8
+#define MIN_PASSWORD            4
 #define MAX_MLOGIN              32
 #define MAX_MPASSWORD           64
 #define MAX_HOSTNAME            32

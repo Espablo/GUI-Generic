@@ -1,6 +1,6 @@
 #include "SuplaWebPageDownload.h"
 #include "SuplaDeviceGUI.h"
-#include "LittleFS.h"
+#include "FS.h"
 
 void createWebDownload() {
   WebServer->httpServer.on(getURL(PATH_DOWNLOAD), handleDownload);
@@ -12,7 +12,7 @@ void handleDownload() {
       return WebServer->httpServer.requestAuthentication();
   }
 
-  File dataFile = LittleFS.open(F(CONFIG_FILE_PATH), "r");
+  File dataFile = SPIFFS.open(F(CONFIG_FILE_PATH), "r");
 
   if (!dataFile) {
     return;
