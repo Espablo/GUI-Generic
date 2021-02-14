@@ -28,7 +28,7 @@
 #define MAX_HOST_SIZE         32
 
 namespace Supla {
-enum DirectLink {
+enum DirectLinks {
   SEND_DIRECT_LINKS_ON,
   SEND_DIRECT_LINKS_OFF,
 };
@@ -37,10 +37,10 @@ enum DirectLink {
 namespace Supla {
 namespace Control {
 
-class DirectLink : public Element, public ActionHandler {
+class DirectLinks : public Element, public ActionHandler {
  public:
-  DirectLink(const char *host, bool isSecured = true);
-  ~DirectLink();
+  DirectLinks(const char *host, bool isSecured = true);
+  ~DirectLinks();
 
   void setHost(const char *host);
   void setUrlON(const char *url);

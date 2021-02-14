@@ -112,13 +112,13 @@ void addRelayButton(uint8_t nr) {
 
 #if defined(SUPLA_DIRECT_LINKS)
     if (size <= MAX_DIRECT_LINK) {
-      auto directLink = new Supla::Control::DirectLink(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+      auto directLink = new Supla::Control::DirectLinks(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
 
       directLink->setUrlON(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str());
       directLink->setUrlOFF(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str());
 
-      relay[size]->addAction(DirectLink::SEND_DIRECT_LINKS_ON, directLink, Supla::ON_TURN_ON);
-      relay[size]->addAction(DirectLink::SEND_DIRECT_LINKS_OFF, directLink, Supla::ON_TURN_OFF);
+      relay[size]->addAction(DirectLinks::SEND_DIRECT_LINKS_ON, directLink, Supla::ON_TURN_ON);
+      relay[size]->addAction(DirectLinks::SEND_DIRECT_LINKS_OFF, directLink, Supla::ON_TURN_OFF);
     }
 #endif
   }

@@ -14,58 +14,58 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "direct_link.h"
+#include "direct_links.h"
 
 #include <Arduino.h>
 
 namespace Supla {
 namespace Control {
 
-DirectLink::DirectLink(const char *host, bool isSecured)
+DirectLinks::DirectLinks(const char *host, bool isSecured)
     : _lastStateON(false), _lastStateOFF(false) {
   setHost(host);
   enableSSL(isSecured);
 }
 
-DirectLink::~DirectLink() {
+DirectLinks::~DirectLinks() {
   delete[] client;
 }
 
-void DirectLink::setHost(const char *host) {
+void DirectLinks::setHost(const char *host) {
   if (host) {
     strncpy(_host, host, MAX_HOST_SIZE);
   }
 }
 
-void DirectLink::setUrlON(const char *url) {
+void DirectLinks::setUrlON(const char *url) {
   if (url) {
     strncpy(_urlON, url, MAX_DIRECT_LINKS_SIZE);
   }
 }
 
-void DirectLink::setUrlOFF(const char *url) {
+void DirectLinks::setUrlOFF(const char *url) {
   if (url) {
     strncpy(_urlOFF, url, MAX_DIRECT_LINKS_SIZE);
   }
 }
 
-void DirectLink::enableSSL(bool isSecured) {
+void DirectLinks::enableSSL(bool isSecured) {
   _isSecured = isSecured;
 }
 
-bool DirectLink::openConnection() {
+bool DirectLinks::openConnection() {
   if (!client->connect(_host, _isSecured ? 443 : 80)) {
     return false;
   }
   return true;
 }
 
-bool DirectLink::closeConnection() {
+bool DirectLinks::closeConnection() {
   client->stop();
   return checkConnection();
 }
 
-bool DirectLink::checkConnection() {
+bool DirectLinks::checkConnection() {
   if (client->connected() == 1) {
     return true;
   } else {
@@ -73,7 +73,7 @@ bool DirectLink::checkConnection() {
   }
 }
 
-void DirectLink::toggleConnection() {
+void DirectLinks::toggleConnection() {
   if (client == NULL) {
     if (_isSecured) {
       client = new WiFiClientSecure();
@@ -92,7 +92,7 @@ void DirectLink::toggleConnection() {
   }
 }
 
-void DirectLink::sendRequest(const char *url) {
+void DirectLinks::sendRequest(const char *url) {
   if (client) {
     (WiFiClientSecure *)client->print(
         String("GET /direct/") + url + " HTTP/1.1\r\n" + "Host: " + _host +
@@ -117,7 +117,7 @@ void DirectLink::sendRequest(const char *url) {
   }
 }
 
-void DirectLink::send(const char *url) {
+void DirectLinks::send(const char *url) {
   toggleConnection();
   sendRequest(url);
   toggleConnection();
@@ -128,7 +128,7 @@ void DirectLink::send(const char *url) {
   }
 }
 
-void DirectLink::iterateAlways() {
+void DirectLinks::iterateAlways() {
   if (_lastStateON) {
     _lastStateON = false;
     send(_urlON);
@@ -139,7 +139,7 @@ void DirectLink::iterateAlways() {
   }
 }
 
-void DirectLink::handleAction(int event, int action) {
+void DirectLinks::handleAction(int event, int action) {
   (void)(event);
 
   switch (action) {
