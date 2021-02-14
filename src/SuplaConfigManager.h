@@ -171,7 +171,7 @@ class ConfigOption {
   int getLength();
   void setValue(const char *value);
   const String getElement(int index);
-  uint8_t getElement(int index, size_t size);
+  //uint8_t getElement(int index, size_t size);
   const String replaceElement(int index, int value);
   const String replaceElement(int index, const char *newvalue);
 

@@ -71,7 +71,7 @@ void SuplaWebServer::createWebServer() {
   WebPageConfig->createWebPageConfig();
 #endif
 #ifdef SUPLA_OTA
-  httpUpdater.setup(&httpServer, this->www_username, this->www_password);
+  httpUpdater.setup(&httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());
 #endif
 
   createWebDownload();
