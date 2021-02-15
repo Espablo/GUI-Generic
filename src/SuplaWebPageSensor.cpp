@@ -412,7 +412,7 @@ if (!WebServer->isLoggedIn()) { return; }
   ConfigManager->set(KEY_OLED_BACK_LIGHT_TIME, WebServer->httpServer->arg(input).c_str());
 
   for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
-    input = INPUT_DS18B20_NAME;
+    input = INPUT_OLED_NAME;
     input += i;
     if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
       ConfigManager->setElement(KEY_NAME_SENSOR, i, WebServer->httpServer->arg(input).c_str());
@@ -495,7 +495,7 @@ void SuplaWebPageSensor::supla_webpage_i2c(int save) {
 
       for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
         sensorName = String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
-        input = INPUT_DS18B20_NAME;
+        input = INPUT_OLED_NAME;
         input += i;
         name = F("EKRAN ");
         name += i + 1;

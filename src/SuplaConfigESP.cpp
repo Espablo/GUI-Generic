@@ -254,9 +254,10 @@ int SuplaConfigESP::getGpio(int nr, int function) {
         return gpio;
       }
     }
-    // return OFF_GPIO;
-    //"Pin 100 - 115"
-    // Pin 116 - 131"
+// return OFF_GPIO;
+//"Pin 100 - 115"
+// Pin 116 - 131"
+#ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       switch (getAdressMCP23017(nr, function)) {
         case 0:
@@ -279,6 +280,7 @@ int SuplaConfigESP::getGpio(int nr, int function) {
           break;
       }
     }
+#endif
   }
   return OFF_GPIO;
 }
@@ -295,6 +297,7 @@ int SuplaConfigESP::getLevel(int nr, int function) {
       }
     }
 
+#ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       switch (getAdressMCP23017(nr, function)) {
         case 0:
@@ -329,6 +332,7 @@ int SuplaConfigESP::getLevel(int nr, int function) {
           break;
       }
     }
+#endif
   }
   return OFF_GPIO;
 }
@@ -342,6 +346,7 @@ int SuplaConfigESP::getMemory(int nr, int function) {
       }
     }
 
+#ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       switch (getAdressMCP23017(nr, function)) {
         case 0:
@@ -367,6 +372,7 @@ int SuplaConfigESP::getMemory(int nr, int function) {
           break;
       }
     }
+#endif
   }
   return OFF_GPIO;
 }
@@ -380,6 +386,7 @@ int SuplaConfigESP::getAction(int nr, int function) {
       }
     }
 
+#ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       switch (getAdressMCP23017(nr, function)) {
         case 0:
@@ -405,6 +412,7 @@ int SuplaConfigESP::getAction(int nr, int function) {
           break;
       }
     }
+#endif
   }
   return OFF_GPIO;
 }
