@@ -102,18 +102,18 @@ void DirectLinks::sendRequest(const char *url) {
     while (client->connected() || client->available()) {
       String line = client->readStringUntil('\n');
       if (line == "\r") {
-        Serial.println(F("Headers received"));
+        Serial.println(F("Direct links - Headers received"));
         break;
       }
     }
 
-    /* String line = client->readString();
-      if (line.indexOf("true") > 0) {
-        Serial.println(F("Alert sent successfully!"));
-      } else {
-        Serial.print(F("Alert failure"));
-        Serial.println(line);
-      }*/
+    String line = client->readString();
+    if (line.indexOf("true") != -1) {
+      Serial.println(F("Alert sent successfully!"));
+    } else {
+      Serial.print(F("Alert failure"));
+      Serial.println(line);
+    }
   }
 }
 
