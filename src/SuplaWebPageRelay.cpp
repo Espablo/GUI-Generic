@@ -172,7 +172,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 
   input = INPUT_RELAY_LEVEL;
   input += nr_relay;
-  ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer.arg(input).toInt());
 
   input = INPUT_CONDITIONS_SENSOR_TYPE;
   ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).toInt());
@@ -306,7 +306,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
   input.reserve(9);
 
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_RELAY);
+  webContentBuffer += SuplaJavaScript(PATH_RELAY_SET);
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_RELAY_SET);
   addFormHeader(webContentBuffer, F("Ustawienia dla przekaźników"));
@@ -383,10 +383,10 @@ void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      supla_webpage_relay(1);
+      supla_webpage_relay_set_MCP23017(1);
       break;
     case E_CONFIG_FILE_OPEN:
-      supla_webpage_relay(2);
+      supla_webpage_relay_set_MCP23017(2);
       break;
   }
 }

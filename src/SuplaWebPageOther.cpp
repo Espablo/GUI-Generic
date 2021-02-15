@@ -201,7 +201,7 @@ void handleImpulseCounterSaveSet() {
 
   input = INPUT_IMPULSE_COUNTER_RAISING_EDGE;
   input += nr;
-  ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer.arg(input).toInt());
 
   ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
   Supla::GUI::impulseCounter[nr.toInt() - 1]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());

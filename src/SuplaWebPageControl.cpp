@@ -26,7 +26,7 @@ void SuplaWebPageControl::createWebPageControl() {
     WebServer->httpServer.on(path, HTTP_POST, std::bind(&SuplaWebPageControl::handleButtonSaveSetMCP23017, this));
   }
   else {
-    for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); i++) {
+    for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); i++) {
       path = PATH_START;
       path += PATH_BUTTON_SET;
       path += i;
@@ -176,25 +176,29 @@ void SuplaWebPageControl::handleButtonSaveSet() {
   gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
   key = KEY_GPIO + gpio;
 
-  input = INPUT_BUTTON_LEVEL;
+  input = INPUT_BUTTON_EVENT;
   input += nr_button;
-  ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, MEMORY, WebServer->httpServer.arg(input).toInt());
+
+  input = INPUT_RELAY_LEVEL;
+  input += nr_button;
+  ConfigManager->setElement(key, LEVEL_BUTTON, WebServer->httpServer.arg(input).toInt());
 
   input = INPUT_BUTTON_ACTION;
   input += nr_button;
-  ConfigManager->setElement(key, ACTION, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, ACTION_BUTTON, WebServer->httpServer.arg(input).toInt());
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      supla_webpage_control(1);
+      supla_webpage_button_set(1, nr_button.toInt());
       break;
     case E_CONFIG_FILE_OPEN:
-      supla_webpage_control(2);
+      supla_webpage_button_set(2, nr_button.toInt());
       break;
   }
 }
 
-void SuplaWebPageControl::supla_webpage_button_set(int save) {
+void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
   String path, readUrl, nr_button;
   uint8_t place, selected;
 
@@ -202,21 +206,28 @@ void SuplaWebPageControl::supla_webpage_button_set(int save) {
   readUrl.reserve(11);
   nr_button.reserve(2);
 
-  path = PATH_START;
-  path += PATH_BUTTON_SET;
-  readUrl = WebServer->httpServer.uri();
+  if (nr != 0) {
+    webContentBuffer += SuplaJavaScript(PATH_BUTTON_SET + String(nr));
+    nr_button = nr;
+  }
+  else {
+    path = PATH_START;
+    path += PATH_BUTTON_SET;
+    readUrl = WebServer->httpServer.uri();
 
-  place = readUrl.indexOf(path);
-  nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
-
-  webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_CONTROL);
+    place = readUrl.indexOf(path);
+    nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
+    webContentBuffer += SuplaJavaScript(String(PATH_BUTTON_SET + nr_button));
+  }
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_BUTTON_SET + nr_button);
   addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
 
   selected = ConfigESP->getLevel(nr_button.toInt(), FUNCTION_BUTTON);
-  addListBox(webContentBuffer, INPUT_BUTTON_LEVEL + nr_button, S_REACTION_TO, TRIGGER_P, 3, selected);
+  addListBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_button, S_STATE_CONTROL, LEVEL_P, 2, selected);
+
+  selected = ConfigESP->getMemory(nr_button.toInt(), FUNCTION_BUTTON);
+  addListBox(webContentBuffer, INPUT_BUTTON_EVENT + nr_button, S_REACTION_TO, TRIGGER_P, 3, selected);
 
   selected = ConfigESP->getAction(nr_button.toInt(), FUNCTION_BUTTON);
   addListBox(webContentBuffer, INPUT_BUTTON_ACTION + nr_button, S_ACTION, ACTION_P, 3, selected);
@@ -325,13 +336,16 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   uint8_t selected;
 
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_CONTROL);
+  webContentBuffer += SuplaJavaScript(PATH_BUTTON_SET);
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_BUTTON_SET);
   addFormHeader(webContentBuffer, F("Ustawienia dla przycisków"));
 
   selected = ConfigESP->getLevel(1, FUNCTION_BUTTON);
-  addListBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_REACTION_TO, TRIGGER_P, 3, selected);
+  addListBox(webContentBuffer, INPUT_RELAY_LEVEL, S_STATE_CONTROL, LEVEL_P, 2, selected);
+
+  selected = ConfigESP->getMemory(1, FUNCTION_BUTTON);
+  addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
 
   selected = ConfigESP->getAction(1, FUNCTION_BUTTON);
   addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
@@ -351,11 +365,14 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   }
 
   String input;
-  uint8_t key, gpio, level, action;
+  uint8_t key, gpio, level, event, action;
 
   input.reserve(10);
 
-  input = INPUT_BUTTON_LEVEL;
+  input = INPUT_BUTTON_EVENT;
+  event = WebServer->httpServer.arg(input).toInt();
+
+  input = INPUT_RELAY_LEVEL;
   level = WebServer->httpServer.arg(input).toInt();
 
   input = INPUT_BUTTON_ACTION;
@@ -364,14 +381,15 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
     key = KEY_GPIO + gpio;
     ConfigManager->setElement(key, LEVEL_BUTTON, level);
-    ConfigManager->setElement(key, ACTION, action);
+    ConfigManager->setElement(key, MEMORY, event);
+    ConfigManager->setElement(key, ACTION_BUTTON, action);
   }
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      supla_webpage_control(1);
+      supla_webpage_button_set_MCP23017(1);
       break;
     case E_CONFIG_FILE_OPEN:
-      supla_webpage_control(2);
+      supla_webpage_button_set_MCP23017(2);
       break;
   }
 }

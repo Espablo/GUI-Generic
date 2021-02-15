@@ -13,7 +13,7 @@
 #define INPUT_TRIGGER           "trs"
 #define INPUT_BUTTON_SET        "bts"
 #define INPUT_BUTTON_GPIO       "btg"
-#define INPUT_BUTTON_LEVEL      "icl"
+#define INPUT_BUTTON_EVENT      "icl"
 #define INPUT_BUTTON_ACTION     "bta"
 #define INPUT_LIMIT_SWITCH_GPIO "lsg"
 #define INPUT_MAX_BUTTON        "mbt"
@@ -46,13 +46,12 @@ class SuplaWebPageControl {
 #endif
 
 #ifdef SUPLA_BUTTON
-  void supla_webpage_button_set(int save);
+  void supla_webpage_button_set(int save, int nr = 0);
 #endif
 
-void handleButtonSetMCP23017();
-void handleButtonSaveSetMCP23017();
-void supla_webpage_button_set_MCP23017(int save);
-
+  void handleButtonSetMCP23017();
+  void handleButtonSaveSetMCP23017();
+  void supla_webpage_button_set_MCP23017(int save);
 };
 
 extern SuplaWebPageControl* WebPageControl;

@@ -100,10 +100,10 @@ enum _settings
 {
   NR,
   FUNCTION,
-  LEVEL,
-  MEMORY,
+  LEVEL_RELAY,
+  MEMORY,  // for the button EVENT
   CFG,
-  ACTION,
+  ACTION_BUTTON,
   MCP23017_NR_1,
   MCP23017_FUNCTION_1,
   MCP23017_NR_2,
@@ -112,7 +112,7 @@ enum _settings
   MCP23017_FUNCTION_3,
   MCP23017_NR_4,
   MCP23017_FUNCTION_4,
-  LEVEL_RELAY,
+  EVENT_BUTTON,
   LEVEL_BUTTON,
   SETTINGSCOUNT
 };
@@ -171,7 +171,7 @@ class ConfigOption {
   int getLength();
   void setValue(const char *value);
   const String getElement(int index);
-  //uint8_t getElement(int index, size_t size);
+  // uint8_t getElement(int index, size_t size);
   const String replaceElement(int index, int value);
   const String replaceElement(int index, const char *newvalue);
 

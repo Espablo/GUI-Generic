@@ -288,7 +288,10 @@ int SuplaConfigESP::getLevel(int nr, int function) {
     uint8_t key = KEY_GPIO + gpio;
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
-        return ConfigManager->get(key)->getElement(LEVEL).toInt();
+        if (function == FUNCTION_BUTTON)
+          return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
+        else
+          return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
       }
     }
 
@@ -297,42 +300,30 @@ int SuplaConfigESP::getLevel(int nr, int function) {
         case 0:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
-              switch (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt()) {
-                case FUNCTION_RELAY:
-                  return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
-                  break;
-                case FUNCTION_BUTTON:
-                  return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
-                  break;
-              }
+              if (function == FUNCTION_BUTTON)
+                return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
+              else
+                return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
             }
           }
           break;
         case 1:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
-              switch (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt()) {
-                case FUNCTION_RELAY:
-                  return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
-                  break;
-                case FUNCTION_BUTTON:
-                  return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
-                  break;
-              }
+              if (function == FUNCTION_BUTTON)
+                return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
+              else
+                return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
             }
           }
           break;
         case 2:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
-              switch (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt()) {
-                case FUNCTION_RELAY:
-                  return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
-                  break;
-                case FUNCTION_BUTTON:
-                  return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
-                  break;
-              }
+              if (function == FUNCTION_BUTTON)
+                return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
+              else
+                return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
             }
           }
           break;
@@ -357,7 +348,6 @@ int SuplaConfigESP::getMemory(int nr, int function) {
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
               return ConfigManager->get(key)->getElement(MEMORY).toInt();
-              ;
             }
           }
           break;
@@ -365,7 +355,6 @@ int SuplaConfigESP::getMemory(int nr, int function) {
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
               return ConfigManager->get(key)->getElement(MEMORY).toInt();
-              ;
             }
           }
           break;
@@ -373,7 +362,6 @@ int SuplaConfigESP::getMemory(int nr, int function) {
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
               return ConfigManager->get(key)->getElement(MEMORY).toInt();
-              ;
             }
           }
           break;
@@ -388,8 +376,7 @@ int SuplaConfigESP::getAction(int nr, int function) {
     uint8_t key = KEY_GPIO + gpio;
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
-        return ConfigManager->get(key)->getElement(ACTION).toInt();
-        ;
+        return ConfigManager->get(key)->getElement(ACTION_BUTTON).toInt();
       }
     }
 
@@ -398,24 +385,21 @@ int SuplaConfigESP::getAction(int nr, int function) {
         case 0:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
-              return ConfigManager->get(key)->getElement(ACTION).toInt();
-              ;
+              return ConfigManager->get(key)->getElement(ACTION_BUTTON).toInt();
             }
           }
           break;
         case 1:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
-              return ConfigManager->get(key)->getElement(ACTION).toInt();
-              ;
+              return ConfigManager->get(key)->getElement(ACTION_BUTTON).toInt();
             }
           }
           break;
         case 2:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function) {
             if (ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
-              return ConfigManager->get(key)->getElement(ACTION).toInt();
-              ;
+              return ConfigManager->get(key)->getElement(ACTION_BUTTON).toInt();
             }
           }
           break;
@@ -465,12 +449,16 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t
 
   ConfigManager->setElement(key, NR, nr);
   ConfigManager->setElement(key, FUNCTION, function);
-  ConfigManager->setElement(key, LEVEL, level);
-  ConfigManager->setElement(key, MEMORY, memory);
-  ConfigManager->setElement(key, ACTION, Supla::TOGGLE);
 
-  // ConfigManager->setElement(key.c_str(), MEMORY, memory);
-  // ConfigManager->setElement(key.c_str(), CFG, cfg);
+  if (function == FUNCTION_BUTTON) {
+    ConfigManager->setElement(key, LEVEL_BUTTON, level);
+  }
+  else {
+    ConfigManager->setElement(key, LEVEL_RELAY, level);
+  }
+
+  ConfigManager->setElement(key, MEMORY, memory);
+  ConfigManager->setElement(key, ACTION_BUTTON, Supla::TOGGLE);
 }
 
 void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
@@ -482,9 +470,10 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   }
   ConfigManager->setElement(key, NR, 0);
   ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
-  ConfigManager->setElement(key, LEVEL, 0);
+  ConfigManager->setElement(key, LEVEL_RELAY, 0);
+  ConfigManager->setElement(key, LEVEL_BUTTON, 1);
   ConfigManager->setElement(key, MEMORY, 2);
-  ConfigManager->setElement(key, ACTION, Supla::TOGGLE);
+  ConfigManager->setElement(key, ACTION_BUTTON, Supla::TOGGLE);
 }
 
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
@@ -583,14 +572,14 @@ void SuplaConfigESP::setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, u
   ConfigESP->clearGpioMCP23017(_gpio, nr, function);
 
   if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
-    ConfigManager->setElement(key, LEVEL, 0);
+    ConfigManager->setElement(key, LEVEL_RELAY, 0);
     ConfigManager->setElement(key, MEMORY, 2);
-    ConfigManager->setElement(key, ACTION, Supla::TOGGLE);
+    ConfigManager->setElement(key, ACTION_BUTTON, Supla::TOGGLE);
   }
   else {
-    ConfigManager->setElement(key, LEVEL, level);
+    ConfigManager->setElement(key, LEVEL_RELAY, level);
     ConfigManager->setElement(key, MEMORY, memory);
-    ConfigManager->setElement(key, ACTION, Supla::TOGGLE);
+    ConfigManager->setElement(key, ACTION_BUTTON, Supla::TOGGLE);
   }
 
   switch (adress) {
@@ -616,6 +605,10 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
   if (adress != OFF_MCP23017) {
     ConfigManager->setElement(key, getNrMCP23017(adress), 0);
     ConfigManager->setElement(key, getFunctionMCP23017(adress), FUNCTION_OFF);
+    ConfigManager->setElement(key, LEVEL_RELAY, 0);
+    ConfigManager->setElement(key, LEVEL_BUTTON, 1);
+    ConfigManager->setElement(key, MEMORY, 2);
+    ConfigManager->setElement(key, ACTION_BUTTON, Supla::TOGGLE);
   }
 }
 
