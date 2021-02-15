@@ -17,52 +17,52 @@ void SuplaWebPageSensor::createWebPageSensor() {
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
   path = PATH_START;
   path += PATH_1WIRE;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handle1Wire, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageSensor::handle1Wire, this));
   path = PATH_START;
   path += PATH_SAVE_1WIRE;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handle1WireSave, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageSensor::handle1WireSave, this));
 #ifdef SUPLA_DS18B20
   path = PATH_START;
   path += PATH_MULTI_DS;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleSearchDS, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageSensor::handleSearchDS, this));
   path = PATH_START;
   path += PATH_SAVE_MULTI_DS;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleDSSave, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageSensor::handleDSSave, this));
 #endif
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_MCP23017)
   path = PATH_START;
   path += PATH_I2C;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handlei2c, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageSensor::handlei2c, this));
   path = PATH_START;
   path += PATH_SAVE_I2C;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handlei2cSave, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageSensor::handlei2cSave, this));
 #endif
 
 #if defined(SUPLA_MAX6675)
   path = PATH_START;
   path += PATH_SPI;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleSpi, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageSensor::handleSpi, this));
   path = PATH_START;
   path += PATH_SAVE_SPI;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageSensor::handleSpiSave, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageSensor::handleSpiSave, this));
 #endif
 }
 
 #ifdef SUPLA_DS18B20
 void SuplaWebPageSensor::handleSearchDS() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_search(0);
 }
 
 void SuplaWebPageSensor::handleDSSave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
     String dsAddr = INPUT_DS18B20_ADDR;
@@ -70,10 +70,10 @@ void SuplaWebPageSensor::handleDSSave() {
     dsAddr += i;
     dsName += i;
 
-    ConfigManager->setElement(KEY_ADDR_DS18B20, i, WebServer->httpServer.arg(dsAddr).c_str());
+    ConfigManager->setElement(KEY_ADDR_DS18B20, i, WebServer->httpServer->arg(dsAddr).c_str());
 
-    if (strcmp(WebServer->httpServer.arg(dsName).c_str(), "") != 0) {
-      ConfigManager->setElement(KEY_NAME_SENSOR, i, WebServer->httpServer.arg(dsName).c_str());
+    if (strcmp(WebServer->httpServer->arg(dsName).c_str(), "") != 0) {
+      ConfigManager->setElement(KEY_NAME_SENSOR, i, WebServer->httpServer->arg(dsName).c_str());
     }
 
     Supla::GUI::sensorDS[i]->setDeviceAddress(HexToBytes(ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i)));
@@ -226,16 +226,16 @@ void SuplaWebPageSensor::showDS18B20(bool readonly) {
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
 void SuplaWebPageSensor::handle1Wire() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_1wire(0);
 }
 
 void SuplaWebPageSensor::handle1WireSave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   uint8_t nr, last_value;
@@ -249,8 +249,8 @@ void SuplaWebPageSensor::handle1WireSave() {
     }
   }
 
-  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_DHT11).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_DHT11, WebServer->httpServer.arg(INPUT_MAX_DHT11).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_DHT11).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_DHT11, WebServer->httpServer->arg(INPUT_MAX_DHT11).c_str());
   }
 #endif
 
@@ -263,8 +263,8 @@ void SuplaWebPageSensor::handle1WireSave() {
     }
   }
 
-  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_DHT22).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_DHT22, WebServer->httpServer.arg(INPUT_MAX_DHT22).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_DHT22).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_DHT22, WebServer->httpServer->arg(INPUT_MAX_DHT22).c_str());
   }
 #endif
 
@@ -273,8 +273,8 @@ void SuplaWebPageSensor::handle1WireSave() {
     supla_webpage_1wire(6);
     return;
   }
-  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str(), "") > 0) {
-    ConfigManager->set(KEY_MULTI_MAX_DS18B20, WebServer->httpServer.arg(INPUT_MAX_DS18B20).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_DS18B20).c_str(), "") > 0) {
+    ConfigManager->set(KEY_MULTI_MAX_DS18B20, WebServer->httpServer->arg(INPUT_MAX_DS18B20).c_str());
   }
 #endif
 
@@ -358,16 +358,16 @@ void SuplaWebPageSensor::supla_webpage_1wire(int save) {
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
 void SuplaWebPageSensor::handlei2c() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_i2c(0);
 }
 
 void SuplaWebPageSensor::handlei2cSave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   String input;
@@ -385,38 +385,38 @@ void SuplaWebPageSensor::handlei2cSave() {
 #ifdef SUPLA_BME280
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_BME280;
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_BME280, WebServer->httpServer.arg(input).toInt());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_BME280, WebServer->httpServer->arg(input).toInt());
   }
 
   key = KEY_ALTITUDE_BME280;
   input = INPUT_ALTITUDE_BME280;
-  if (strcmp(WebServer->httpServer.arg(INPUT_ALTITUDE_BME280).c_str(), "") != 0) {
-    ConfigManager->set(key, WebServer->httpServer.arg(input).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_ALTITUDE_BME280).c_str(), "") != 0) {
+    ConfigManager->set(key, WebServer->httpServer->arg(input).c_str());
   }
 #endif
 
 #ifdef SUPLA_SHT3x
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_SHT3x;
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_SHT3x, WebServer->httpServer.arg(input).toInt());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_SHT3x, WebServer->httpServer->arg(input).toInt());
   }
 #endif
 
 #ifdef SUPLA_SI7021
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_SI7021;
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_SI7021, WebServer->httpServer.arg(input).toInt());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_SI7021, WebServer->httpServer->arg(input).toInt());
   }
 #endif
 
 #ifdef SUPLA_OLED
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_OLED;
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_OLED, WebServer->httpServer.arg(input).toInt());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_OLED, WebServer->httpServer->arg(input).toInt());
   }
 
   if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_CFG_BUTTON)) {
@@ -425,15 +425,15 @@ void SuplaWebPageSensor::handlei2cSave() {
   }
 
   input = INPUT_OLED_ANIMATION;
-  ConfigManager->set(KEY_OLED_ANIMATION, WebServer->httpServer.arg(input).c_str());
+  ConfigManager->set(KEY_OLED_ANIMATION, WebServer->httpServer->arg(input).c_str());
   input = INPUT_OLED_BRIGHTNESS;
-  ConfigManager->set(KEY_OLED_BACK_LIGHT_TIME, WebServer->httpServer.arg(input).c_str());
+  ConfigManager->set(KEY_OLED_BACK_LIGHT_TIME, WebServer->httpServer->arg(input).c_str());
 
   for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
     input = INPUT_DS18B20_NAME;
     input += i;
-    if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-      ConfigManager->setElement(KEY_NAME_SENSOR, i, WebServer->httpServer.arg(input).c_str());
+    if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+      ConfigManager->setElement(KEY_NAME_SENSOR, i, WebServer->httpServer->arg(input).c_str());
     }
   }
 #endif
@@ -441,8 +441,8 @@ void SuplaWebPageSensor::handlei2cSave() {
 #ifdef SUPLA_MCP23017
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_MCP23017;
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, WebServer->httpServer.arg(input).toInt());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, WebServer->httpServer->arg(input).toInt());
 
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       ConfigESP->clearFunctionGpio(FUNCTION_RELAY);
@@ -542,16 +542,16 @@ void SuplaWebPageSensor::supla_webpage_i2c(int save) {
 #if defined(SUPLA_MAX6675)
 void SuplaWebPageSensor::handleSpi() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_spi(0);
 }
 
 void SuplaWebPageSensor::handleSpiSave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   String input;
@@ -575,8 +575,8 @@ void SuplaWebPageSensor::handleSpiSave() {
 #ifdef SUPLA_MAX6675
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_MAX6675;
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MAX6675, WebServer->httpServer.arg(input).toInt());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MAX6675, WebServer->httpServer->arg(input).toInt());
   }
 #endif
 

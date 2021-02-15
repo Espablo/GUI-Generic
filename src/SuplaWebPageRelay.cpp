@@ -18,47 +18,47 @@ void SuplaWebPageRelay::createWebPageRelay() {
 
   path += PATH_START;
   path += PATH_RELAY;
-  WebServer->httpServer.on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelay, this));
+  WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelay, this));
   path = PATH_START;
   path += PATH_SAVE_RELAY;
-  WebServer->httpServer.on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySave, this));
+  WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySave, this));
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
     path = PATH_START;
     path += PATH_RELAY_SET;
-    WebServer->httpServer.on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelaySetMCP23017, this));
+    WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelaySetMCP23017, this));
 
     path = PATH_START;
     path += PATH_SAVE_RELAY_SET;
-    WebServer->httpServer.on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSetMCP23017, this));
+    WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSetMCP23017, this));
   }
   else {
     for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); i++) {
       path = PATH_START;
       path += PATH_RELAY_SET;
       path += i;
-      WebServer->httpServer.on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelaySet, this));
+      WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelaySet, this));
 
       path = PATH_START;
       path += PATH_SAVE_RELAY_SET;
       path += i;
-      WebServer->httpServer.on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSet, this));
+      WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSet, this));
     }
   }
 }
 
 void SuplaWebPageRelay::handleRelay() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_relay(0);
 }
 
 void SuplaWebPageRelay::handleRelaySave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   uint8_t nr, last_value;
@@ -79,8 +79,8 @@ void SuplaWebPageRelay::handleRelaySave() {
     }
   }
 
-  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_RELAY).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_RELAY, WebServer->httpServer.arg(INPUT_MAX_RELAY).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_RELAY).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_RELAY, WebServer->httpServer->arg(INPUT_MAX_RELAY).c_str());
   }
 
   switch (ConfigManager->save()) {
@@ -136,16 +136,16 @@ void SuplaWebPageRelay::supla_webpage_relay(int save) {
 
 void SuplaWebPageRelay::handleRelaySet() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_relay_set(0);
 }
 
 void SuplaWebPageRelay::handleRelaySaveSet() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   String readUrl, nr_relay, input, path;
@@ -158,7 +158,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 
   path = PATH_START;
   path += PATH_SAVE_RELAY_SET;
-  readUrl = WebServer->httpServer.uri();
+  readUrl = WebServer->httpServer->uri();
 
   place = readUrl.indexOf(path);
   nr_relay = readUrl.substring(place + path.length(), place + path.length() + 3);
@@ -168,36 +168,36 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 
   input = INPUT_RELAY_MEMORY;
   input += nr_relay;
-  ConfigManager->setElement(key, MEMORY, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, MEMORY, WebServer->httpServer->arg(input).toInt());
 
   input = INPUT_RELAY_LEVEL;
   input += nr_relay;
-  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer->arg(input).toInt());
 
   input = INPUT_CONDITIONS_SENSOR_TYPE;
-  ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
   input = INPUT_CONDITIONS_TYPE;
-  ConfigManager->setElement(KEY_CONDITIONS_TYPE, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(KEY_CONDITIONS_TYPE, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
   input = INPUT_CONDITIONS_MIN;
-  ConfigManager->setElement(KEY_CONDITIONS_MIN, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).c_str());
+  ConfigManager->setElement(KEY_CONDITIONS_MIN, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
   input = INPUT_CONDITIONS_MAX;
-  ConfigManager->setElement(KEY_CONDITIONS_MAX, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).c_str());
+  ConfigManager->setElement(KEY_CONDITIONS_MAX, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
 
 #if defined(SUPLA_PUSHOVER)
   if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
     input = INPUT_PUSHOVER;
-    ConfigManager->setElement(KEY_PUSHOVER, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).toInt());
+    ConfigManager->setElement(KEY_PUSHOVER, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
     input = INPUT_PUSHOVER_MESSAGE;
-    ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).c_str());
+    ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
   }
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
   if (nr_relay.toInt() <= MAX_DIRECT_LINKS_SIZE) {
     input = INPUT_DIRECT_LINK_ON;
-    ConfigManager->setElement(KEY_DIRECT_LINKS_ON, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).c_str());
+    ConfigManager->setElement(KEY_DIRECT_LINKS_ON, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
     input = INPUT_DIRECT_LINK_OFF;
-    ConfigManager->setElement(KEY_DIRECT_LINKS_OFF, (nr_relay.toInt() - 1), WebServer->httpServer.arg(input).c_str());
+    ConfigManager->setElement(KEY_DIRECT_LINKS_OFF, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
   }
 #endif
 
@@ -229,7 +229,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
   else {
     path = PATH_START;
     path += PATH_RELAY_SET;
-    readUrl = WebServer->httpServer.uri();
+    readUrl = WebServer->httpServer->uri();
 
     place = readUrl.indexOf(path);
     nr_relay = readUrl.substring(place + path.length(), place + path.length() + 3);
@@ -294,8 +294,8 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
 
 void SuplaWebPageRelay::handleRelaySetMCP23017() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_relay_set_MCP23017(0);
 }
@@ -349,8 +349,8 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
 
 void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   String input;
@@ -359,10 +359,10 @@ void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {
   input.reserve(9);
 
   input = INPUT_RELAY_MEMORY;
-  memory = WebServer->httpServer.arg(input).toInt();
+  memory = WebServer->httpServer->arg(input).toInt();
 
   input = INPUT_RELAY_LEVEL;
-  level = WebServer->httpServer.arg(input).toInt();
+  level = WebServer->httpServer->arg(input).toInt();
 
   for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
     key = KEY_GPIO + gpio;
@@ -374,10 +374,10 @@ void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {
   for (uint8_t i = 0; i < MAX_PUSHOVER_MESSAGE; i++) {
     input = INPUT_PUSHOVER;
     input += i;
-    ConfigManager->setElement(KEY_PUSHOVER, i, WebServer->httpServer.arg(input).toInt());
+    ConfigManager->setElement(KEY_PUSHOVER, i, WebServer->httpServer->arg(input).toInt());
     input = INPUT_PUSHOVER_MESSAGE;
     input += i;
-    ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, i, WebServer->httpServer.arg(input).c_str());
+    ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, i, WebServer->httpServer->arg(input).c_str());
   }
 #endif
 

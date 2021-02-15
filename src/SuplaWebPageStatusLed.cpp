@@ -5,14 +5,14 @@
 #include "Markup.h"
 
 void createWebStatusLed() {
-  WebServer->httpServer.on(getURL(PATH_LED), handleStatusLed);
-  WebServer->httpServer.on(getURL(PATH_SAVE_LED), handleStatusLedSave);
+  WebServer->httpServer->on(getURL(PATH_LED), handleStatusLed);
+  WebServer->httpServer->on(getURL(PATH_SAVE_LED), handleStatusLedSave);
 }
 
 void handleStatusLed() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   webStatusLed(0);
 }
@@ -21,12 +21,12 @@ void handleStatusLedSave() {
   uint8_t nr;
 
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
-  if (strcmp(WebServer->httpServer.arg(INPUT_LEVEL_LED).c_str(), "") != 0) {
-    ConfigManager->set(KEY_LEVEL_LED, WebServer->httpServer.arg(INPUT_LEVEL_LED).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_LEVEL_LED).c_str(), "") != 0) {
+    ConfigManager->set(KEY_LEVEL_LED, WebServer->httpServer->arg(INPUT_LEVEL_LED).c_str());
   }
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {

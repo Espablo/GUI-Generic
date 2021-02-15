@@ -10,32 +10,32 @@ void SuplaWebPageControl::createWebPageControl() {
   String path;
   path += PATH_START;
   path += PATH_CONTROL;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleControl, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleControl, this));
   path = PATH_START;
   path += PATH_SAVE_CONTROL;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleControlSave, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleControlSave, this));
 
 #ifdef SUPLA_BUTTON
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
     path = PATH_START;
     path += PATH_BUTTON_SET;
-    WebServer->httpServer.on(path, HTTP_GET, std::bind(&SuplaWebPageControl::handleButtonSetMCP23017, this));
+    WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageControl::handleButtonSetMCP23017, this));
 
     path = PATH_START;
     path += PATH_SAVE_BUTTON_SET;
-    WebServer->httpServer.on(path, HTTP_POST, std::bind(&SuplaWebPageControl::handleButtonSaveSetMCP23017, this));
+    WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageControl::handleButtonSaveSetMCP23017, this));
   }
   else {
     for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); i++) {
       path = PATH_START;
       path += PATH_BUTTON_SET;
       path += i;
-      WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleButtonSet, this));
+      WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleButtonSet, this));
 
       path = PATH_START;
       path += PATH_SAVE_BUTTON_SET;
       path += i;
-      WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleButtonSaveSet, this));
+      WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleButtonSaveSet, this));
     }
   }
 #endif
@@ -43,17 +43,17 @@ void SuplaWebPageControl::createWebPageControl() {
 #ifdef SUPLA_LIMIT_SWITCH
   path = PATH_START;
   path += PATH_SWITCH;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleLimitSwitch, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleLimitSwitch, this));
   path = PATH_START;
   path += PATH_SAVE_SWITCH;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageControl::handleLimitSwitchSave, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleLimitSwitchSave, this));
 #endif
 }
 
 void SuplaWebPageControl::handleControl() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_control(0);
 }
@@ -62,8 +62,8 @@ void SuplaWebPageControl::handleControlSave() {
   //  Serial.println(F("HTTP_POST - metoda handleControlSave"));
 
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   uint8_t nr, last_value;
@@ -84,8 +84,8 @@ void SuplaWebPageControl::handleControlSave() {
     }
   }
 
-  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_BUTTON).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_BUTTON, WebServer->httpServer.arg(INPUT_MAX_BUTTON).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_BUTTON, WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str());
   }
 #endif
 
@@ -145,8 +145,8 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
 #if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
 void SuplaWebPageControl::handleButtonSet() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_button_set(0);
 }
@@ -154,8 +154,8 @@ void SuplaWebPageControl::handleButtonSet() {
 void SuplaWebPageControl::handleButtonSaveSet() {
   //  Serial.println(F("HTTP_POST - metoda handleRelaySaveSet"));
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   String readUrl, nr_button, input, path;
@@ -168,7 +168,7 @@ void SuplaWebPageControl::handleButtonSaveSet() {
 
   path = PATH_START;
   path += PATH_SAVE_BUTTON_SET;
-  readUrl = WebServer->httpServer.uri();
+  readUrl = WebServer->httpServer->uri();
 
   place = readUrl.indexOf(path);
   nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
@@ -178,15 +178,15 @@ void SuplaWebPageControl::handleButtonSaveSet() {
 
   input = INPUT_BUTTON_EVENT;
   input += nr_button;
-  ConfigManager->setElement(key, MEMORY, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, MEMORY, WebServer->httpServer->arg(input).toInt());
 
   input = INPUT_RELAY_LEVEL;
   input += nr_button;
-  ConfigManager->setElement(key, LEVEL_BUTTON, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL_BUTTON, WebServer->httpServer->arg(input).toInt());
 
   input = INPUT_BUTTON_ACTION;
   input += nr_button;
-  ConfigManager->setElement(key, ACTION_BUTTON, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, ACTION_BUTTON, WebServer->httpServer->arg(input).toInt());
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -213,7 +213,7 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
   else {
     path = PATH_START;
     path += PATH_BUTTON_SET;
-    readUrl = WebServer->httpServer.uri();
+    readUrl = WebServer->httpServer->uri();
 
     place = readUrl.indexOf(path);
     nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
@@ -244,16 +244,16 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
 #ifdef SUPLA_LIMIT_SWITCH
 void SuplaWebPageControl::handleLimitSwitch() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   suplaWebpageLimitSwitch(0);
 }
 
 void SuplaWebPageControl::handleLimitSwitchSave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   uint8_t nr, last_value;
@@ -274,8 +274,8 @@ void SuplaWebPageControl::handleLimitSwitchSave() {
     }
   }
 
-  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_LIMIT_SWITCH, WebServer->httpServer.arg(INPUT_MAX_LIMIT_SWITCH).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_LIMIT_SWITCH).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_LIMIT_SWITCH, WebServer->httpServer->arg(INPUT_MAX_LIMIT_SWITCH).c_str());
   }
 
   switch (ConfigManager->save()) {
@@ -326,8 +326,8 @@ void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
 
 void SuplaWebPageControl::handleButtonSetMCP23017() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_button_set_MCP23017(0);
 }
@@ -360,8 +360,8 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
 
 void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   String input;
@@ -370,13 +370,13 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   input.reserve(10);
 
   input = INPUT_BUTTON_EVENT;
-  event = WebServer->httpServer.arg(input).toInt();
+  event = WebServer->httpServer->arg(input).toInt();
 
   input = INPUT_RELAY_LEVEL;
-  level = WebServer->httpServer.arg(input).toInt();
+  level = WebServer->httpServer->arg(input).toInt();
 
   input = INPUT_BUTTON_ACTION;
-  action = WebServer->httpServer.arg(input).toInt();
+  action = WebServer->httpServer->arg(input).toInt();
 
   for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
     key = KEY_GPIO + gpio;

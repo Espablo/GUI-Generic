@@ -12,27 +12,27 @@ static const char uploadIndex[] PROGMEM =
 File dataFile;
 
 void createWebUpload() {
-  // WebServer->httpServer.on(F("/upload"), HTTP_GET, handleUpload);
-  WebServer->httpServer.on(getURL(PATH_UPLOAD), HTTP_GET, []() { handleUpload(); });
-  // WebServer->httpServer.on(F("/upload"), HTTP_POST, handleFileUpload);
-  WebServer->httpServer.on(
+  // WebServer->httpServer->on(F("/upload"), HTTP_GET, handleUpload);
+  WebServer->httpServer->on(getURL(PATH_UPLOAD), HTTP_GET, []() { handleUpload(); });
+  // WebServer->httpServer->on(F("/upload"), HTTP_POST, handleFileUpload);
+  WebServer->httpServer->on(
       getURL(PATH_UPLOAD), HTTP_POST,
       []() {
-        if (WebServer->httpServer.hasArg("generateGUIDandAUTHKEY")) {
-          if (WebServer->httpServer.arg("generateGUIDandAUTHKEY") == "1") {
+        if (WebServer->httpServer->hasArg("generateGUIDandAUTHKEY")) {
+          if (WebServer->httpServer->arg("generateGUIDandAUTHKEY") == "1") {
             ConfigManager->setGUIDandAUTHKEY();
             ConfigManager->save();
           }
         }
-        WebServer->httpServer.send(200);
+        WebServer->httpServer->send(200);
       },
       handleFileUpload);
 }
 
 void handleUpload(int save) {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   webContentBuffer += SuplaSaveResult(save);
@@ -51,17 +51,17 @@ void handleUpload(int save) {
   webContentBuffer += F("</button></a><br><br>");
 
   WebServer->sendContent();
-  // WebServer->httpServer.send(200, PSTR("text/html"), FPSTR(uploadIndex));
+  // WebServer->httpServer->send(200, PSTR("text/html"), FPSTR(uploadIndex));
 }
 
 void handleFileUpload() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   if (LittleFS.begin()) {
-    HTTPUpload& upload = WebServer->httpServer.upload();
+    HTTPUpload& upload = WebServer->httpServer->upload();
 
     if (upload.status == UPLOAD_FILE_START) {
       dataFile = LittleFS.open(CONFIG_FILE_PATH, "w");
@@ -73,14 +73,14 @@ void handleFileUpload() {
     else if (upload.status == UPLOAD_FILE_END) {
       if (dataFile) {
         dataFile.close();
-        // WebServer->httpServer.sendHeader("Location", "/upload");
-        // WebServer->httpServer.send(303);
+        // WebServer->httpServer->sendHeader("Location", "/upload");
+        // WebServer->httpServer->send(303);
         ConfigManager->load();
         handleUpload(1);
       }
       else {
         handleUpload(6);
-        // WebServer->httpServer.send(500, "text/plain", "500: couldn't create file");
+        // WebServer->httpServer->send(500, "text/plain", "500: couldn't create file");
       }
     }
   }

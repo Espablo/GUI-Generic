@@ -3,13 +3,13 @@
 #include "LittleFS.h"
 
 void createWebDownload() {
-  WebServer->httpServer.on(getURL(PATH_DOWNLOAD), handleDownload);
+  WebServer->httpServer->on(getURL(PATH_DOWNLOAD), handleDownload);
 }
 
 void handleDownload() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   File dataFile = LittleFS.open(F(CONFIG_FILE_PATH), "r");
@@ -24,7 +24,7 @@ void handleDownload() {
   str += '_';
   str += F(".dat");
 
-  WebServer->httpServer.sendHeader(F("Content-Disposition"), str);
-  WebServer->httpServer.streamFile(dataFile, F("application/octet-stream"));
+  WebServer->httpServer->sendHeader(F("Content-Disposition"), str);
+  WebServer->httpServer->streamFile(dataFile, F("application/octet-stream"));
   dataFile.close();
 }

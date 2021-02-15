@@ -50,11 +50,10 @@
 #define INPUT_ROLLERSHUTTER "irsr"
 #define INPUT_BOARD         "board"
 
-
 extern String webContentBuffer;
 
-//https://www.esp8266.com/viewtopic.php?p=84249#p84249
-class MyWebServer : public ESP8266WebServer {
+// https://www.esp8266.com/viewtopic.php?p=84249#p84249
+/*class MyWebServer : public ESP8266WebServer {
   public:
   virtual ~MyWebServer() {
     if (this->_currentArgs) {
@@ -67,7 +66,7 @@ class MyWebServer : public ESP8266WebServer {
       this->_postArgs = nullptr;
     }
   }
-};
+};*/
 
 class SuplaWebServer : public Supla::Element {
  public:
@@ -79,15 +78,13 @@ class SuplaWebServer : public Supla::Element {
 
   void supla_webpage_start(int save);
 
-  //void sendContent(const String& content);
   void sendContent();
 
-  MyWebServer httpServer;
+  ESP8266WebServer* httpServer;
 
 #ifdef SUPLA_OTA
-  ESP8266HTTPUpdateServer httpUpdater;
+  ESP8266HTTPUpdateServer* httpUpdater;
 #endif
-
   bool saveGPIO(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
   bool saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
 

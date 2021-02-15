@@ -2,20 +2,20 @@
 
 void createWebPageOther() {
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
-  WebServer->httpServer.on(getURL(PATH_OTHER), handleOther);
-  WebServer->httpServer.on(getURL(PATH_SAVE_OTHER), handleOtherSave);
+  WebServer->httpServer->on(getURL(PATH_OTHER), handleOther);
+  WebServer->httpServer->on(getURL(PATH_SAVE_OTHER), handleOtherSave);
 
 #if defined(SUPLA_IMPULSE_COUNTER)
   for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); i++) {
-    WebServer->httpServer.on(getURL(PATH_IMPULSE_COUNTER_SET, i), handleImpulseCounterSet);
-    WebServer->httpServer.on(getURL(PATH_SAVE_IMPULSE_COUNTER_SET, i), handleImpulseCounterSaveSet);
+    WebServer->httpServer->on(getURL(PATH_IMPULSE_COUNTER_SET, i), handleImpulseCounterSet);
+    WebServer->httpServer->on(getURL(PATH_SAVE_IMPULSE_COUNTER_SET, i), handleImpulseCounterSaveSet);
   }
 #endif
 
 #if defined(SUPLA_HLW8012)
   if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
-    WebServer->httpServer.on(getURL(PATH_HLW8012_CALIBRATE), handleHLW8012Calibrate);
-    WebServer->httpServer.on(getURL(PATH_SAVE_HLW8012_CALIBRATE), handleHLW8012CalibrateSave);
+    WebServer->httpServer->on(getURL(PATH_HLW8012_CALIBRATE), handleHLW8012Calibrate);
+    WebServer->httpServer->on(getURL(PATH_SAVE_HLW8012_CALIBRATE), handleHLW8012CalibrateSave);
   }
 #endif
 #endif
@@ -24,16 +24,16 @@ void createWebPageOther() {
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
 void handleOther() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   suplaWebPageOther(0);
 }
 
 void handleOtherSave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   uint8_t nr, last_value;
@@ -47,11 +47,11 @@ void handleOtherSave() {
     suplaWebPageOther(6);
     return;
   }
-  ConfigManager->set(KEY_HC_SR04_MAX_SENSOR_READ, WebServer->httpServer.arg(INPUT_HC_SR04_MAX_SENSOR_READ).c_str());
+  ConfigManager->set(KEY_HC_SR04_MAX_SENSOR_READ, WebServer->httpServer->arg(INPUT_HC_SR04_MAX_SENSOR_READ).c_str());
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-  // Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
+  // Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
 
   last_value = ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {
@@ -61,8 +61,8 @@ void handleOtherSave() {
     }
   }
 
-  if (strcmp(WebServer->httpServer.arg(INPUT_MAX_IMPULSE_COUNTER).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_IMPULSE_COUNTER, WebServer->httpServer.arg(INPUT_MAX_IMPULSE_COUNTER).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_IMPULSE_COUNTER).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_IMPULSE_COUNTER, WebServer->httpServer->arg(INPUT_MAX_IMPULSE_COUNTER).c_str());
   }
 #endif
 
@@ -76,7 +76,7 @@ void handleOtherSave() {
       return;
     }
   }
-  ConfigManager->set(KEY_MAX_RGBW, WebServer->httpServer.arg(INPUT_RGBW_MAX).c_str());
+  ConfigManager->set(KEY_MAX_RGBW, WebServer->httpServer->arg(INPUT_RGBW_MAX).c_str());
 #endif
 
 #ifdef SUPLA_HLW8012
@@ -87,12 +87,12 @@ void handleOtherSave() {
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-  if (strcmp(WebServer->httpServer.arg(INPUT_PUSHOVER_TOKEN).c_str(), "") != 0) {
-    ConfigManager->set(KEY_PUSHOVER_TOKEN, WebServer->httpServer.arg(INPUT_PUSHOVER_TOKEN).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_PUSHOVER_TOKEN).c_str(), "") != 0) {
+    ConfigManager->set(KEY_PUSHOVER_TOKEN, WebServer->httpServer->arg(INPUT_PUSHOVER_TOKEN).c_str());
   }
 
-  if (strcmp(WebServer->httpServer.arg(INPUT_PUSHOVER_USER).c_str(), "") != 0) {
-    ConfigManager->set(KEY_PUSHOVER_USER, WebServer->httpServer.arg(INPUT_PUSHOVER_USER).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_PUSHOVER_USER).c_str(), "") != 0) {
+    ConfigManager->set(KEY_PUSHOVER_USER, WebServer->httpServer->arg(INPUT_PUSHOVER_USER).c_str());
   }
 #endif
 
@@ -172,16 +172,16 @@ void suplaWebPageOther(int save) {
 #ifdef SUPLA_IMPULSE_COUNTER
 void handleImpulseCounterSet() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_impulse_counter_set(0);
 }
 
 void handleImpulseCounterSaveSet() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   String readUrl, nr, input;
@@ -189,7 +189,7 @@ void handleImpulseCounterSaveSet() {
 
   String path = PATH_START;
   path += PATH_SAVE_IMPULSE_COUNTER_SET;
-  readUrl = WebServer->httpServer.uri();
+  readUrl = WebServer->httpServer->uri();
 
   place = readUrl.indexOf(path);
   nr = readUrl.substring(place + path.length(), place + path.length() + 3);
@@ -197,14 +197,14 @@ void handleImpulseCounterSaveSet() {
 
   input = INPUT_IMPULSE_COUNTER_PULL_UP;
   input += nr;
-  ConfigManager->setElement(key, MEMORY, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, MEMORY, WebServer->httpServer->arg(input).toInt());
 
   input = INPUT_IMPULSE_COUNTER_RAISING_EDGE;
   input += nr;
-  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer->arg(input).toInt());
 
-  ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
-  Supla::GUI::impulseCounter[nr.toInt() - 1]->setCounter((unsigned long long)WebServer->httpServer.arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
+  ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
+  Supla::GUI::impulseCounter[nr.toInt() - 1]->setCounter((unsigned long long)WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -225,7 +225,7 @@ void supla_impulse_counter_set(int save) {
 
   String path = PATH_START;
   path += PATH_IMPULSE_COUNTER_SET;
-  readUrl = WebServer->httpServer.uri();
+  readUrl = WebServer->httpServer->uri();
 
   place = readUrl.indexOf(path);
   nr = readUrl.substring(place + path.length(), place + path.length() + 3);
@@ -316,27 +316,27 @@ void supla_impulse_counter_set(int save) {
 #if defined(SUPLA_HLW8012)
 void handleHLW8012Calibrate() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   suplaWebpageHLW8012Calibrate(0);
 }
 
 void handleHLW8012CalibrateSave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   double calibPower, calibVoltage = 0;
   String input = INPUT_CALIB_POWER;
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-    calibPower = WebServer->httpServer.arg(input).toDouble();
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    calibPower = WebServer->httpServer->arg(input).toDouble();
   }
 
   input = INPUT_CALIB_VOLTAGE;
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-    calibVoltage = WebServer->httpServer.arg(input).toDouble();
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    calibVoltage = WebServer->httpServer->arg(input).toDouble();
   }
 
   if (calibPower && calibVoltage) {

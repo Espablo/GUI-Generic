@@ -14,24 +14,24 @@ void SuplaWebPageConfig::createWebPageConfig() {
   String path;
   path = PATH_START;
   path += PATH_CONFIG;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageConfig::handleConfig, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageConfig::handleConfig, this));
   path = PATH_START;
   path += PATH_SAVE_CONFIG;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageConfig::handleConfigSave, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageConfig::handleConfigSave, this));
 }
 
 void SuplaWebPageConfig::handleConfig() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
   supla_webpage_config(0);
 }
 
 void SuplaWebPageConfig::handleConfigSave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
+      return WebServer->httpServer->requestAuthentication();
   }
 
   if (!WebServer->saveGPIO(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED)) {
@@ -41,15 +41,15 @@ void SuplaWebPageConfig::handleConfigSave() {
 
   uint8_t key = KEY_GPIO + ConfigESP->getGpio(FUNCTION_CFG_LED);
   String input = INPUT_CFG_LED_LEVEL;
-  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer->arg(input).toInt());
 
   if (!WebServer->saveGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON)) {
     supla_webpage_config(6);
     return;
   }
 
-  if (strcmp(WebServer->httpServer.arg(INPUT_CFG_MODE).c_str(), "") != 0) {
-    ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer.arg(INPUT_CFG_MODE).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_CFG_MODE).c_str(), "") != 0) {
+    ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer->arg(INPUT_CFG_MODE).c_str());
   }
 
   switch (ConfigManager->save()) {

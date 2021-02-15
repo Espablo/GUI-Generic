@@ -29,6 +29,8 @@
 String webContentBuffer;
 
 SuplaWebServer::SuplaWebServer() {
+  httpServer = new ESP8266WebServer(80);
+  httpUpdater = new ESP8266HTTPUpdateServer();
 }
 
 void SuplaWebServer::begin() {
@@ -37,28 +39,28 @@ void SuplaWebServer::begin() {
   strcpy(this->www_username, ConfigManager->get(KEY_LOGIN)->getValue());
   strcpy(this->www_password, ConfigManager->get(KEY_LOGIN_PASS)->getValue());
 
-  httpServer.onNotFound(std::bind(&SuplaWebServer::handleNotFound, this));
-  httpServer.begin(80);
+  httpServer->onNotFound(std::bind(&SuplaWebServer::handleNotFound, this));
+  httpServer->begin();
 }
 
 void SuplaWebServer::iterateAlways() {
-  httpServer.handleClient();
+  httpServer->handleClient();
 }
 
 void SuplaWebServer::createWebServer() {
   String path = PATH_START;
-  httpServer.on(path, HTTP_GET, std::bind(&SuplaWebServer::handle, this));
+  httpServer->on(path, HTTP_GET, std::bind(&SuplaWebServer::handle, this));
   path = PATH_START;
-  httpServer.on(path, std::bind(&SuplaWebServer::handleSave, this));
+  httpServer->on(path, std::bind(&SuplaWebServer::handleSave, this));
   path = PATH_START;
   path += PATH_REBOT;
-  httpServer.on(path, std::bind(&SuplaWebServer::supla_webpage_reboot, this));
+  httpServer->on(path, std::bind(&SuplaWebServer::supla_webpage_reboot, this));
   path = PATH_START;
   path += PATH_DEVICE_SETTINGS;
-  httpServer.on(path, std::bind(&SuplaWebServer::handleDeviceSettings, this));
+  httpServer->on(path, std::bind(&SuplaWebServer::handleDeviceSettings, this));
   path = PATH_START;
   path += PATH_SAVE_BOARD;
-  httpServer.on(path, std::bind(&SuplaWebServer::handleBoardSave, this));
+  httpServer->on(path, std::bind(&SuplaWebServer::handleBoardSave, this));
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   WebPageRelay->createWebPageRelay();
@@ -71,7 +73,7 @@ void SuplaWebServer::createWebServer() {
   WebPageConfig->createWebPageConfig();
 #endif
 #ifdef SUPLA_OTA
-  httpUpdater.setup(&httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());
+  httpUpdater->setup(httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());
 #endif
 
   createWebDownload();
@@ -84,8 +86,8 @@ void SuplaWebServer::createWebServer() {
 void SuplaWebServer::handle() {
   //  Serial.println(F("HTTP_GET - metoda handle"));
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer.authenticate(this->www_username, this->www_password))
-      return httpServer.requestAuthentication();
+    if (!httpServer->authenticate(this->www_username, this->www_password))
+      return httpServer->requestAuthentication();
   }
   supla_webpage_start(0);
 }
@@ -93,26 +95,26 @@ void SuplaWebServer::handle() {
 void SuplaWebServer::handleSave() {
   //  Serial.println(F("HTTP_POST - metoda handleSave"));
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer.authenticate(this->www_username, this->www_password))
-      return httpServer.requestAuthentication();
+    if (!httpServer->authenticate(this->www_username, this->www_password))
+      return httpServer->requestAuthentication();
   }
 
-  if (strcmp(httpServer.arg(PATH_REBOT).c_str(), "1") == 0) {
+  if (strcmp(httpServer->arg(PATH_REBOT).c_str(), "1") == 0) {
     ConfigESP->rebootESP();
     return;
   }
 
-  ConfigManager->set(KEY_WIFI_SSID, httpServer.arg(INPUT_WIFI_SSID).c_str());
-  ConfigManager->set(KEY_WIFI_PASS, httpServer.arg(INPUT_WIFI_PASS).c_str());
-  ConfigManager->set(KEY_SUPLA_SERVER, httpServer.arg(INPUT_SERVER).c_str());
-  ConfigManager->set(KEY_SUPLA_EMAIL, httpServer.arg(INPUT_EMAIL).c_str());
-  ConfigManager->set(KEY_HOST_NAME, httpServer.arg(INPUT_HOSTNAME).c_str());
-  ConfigManager->set(KEY_LOGIN, httpServer.arg(INPUT_MODUL_LOGIN).c_str());
-  ConfigManager->set(KEY_LOGIN_PASS, httpServer.arg(INPUT_MODUL_PASS).c_str());
+  ConfigManager->set(KEY_WIFI_SSID, httpServer->arg(INPUT_WIFI_SSID).c_str());
+  ConfigManager->set(KEY_WIFI_PASS, httpServer->arg(INPUT_WIFI_PASS).c_str());
+  ConfigManager->set(KEY_SUPLA_SERVER, httpServer->arg(INPUT_SERVER).c_str());
+  ConfigManager->set(KEY_SUPLA_EMAIL, httpServer->arg(INPUT_EMAIL).c_str());
+  ConfigManager->set(KEY_HOST_NAME, httpServer->arg(INPUT_HOSTNAME).c_str());
+  ConfigManager->set(KEY_LOGIN, httpServer->arg(INPUT_MODUL_LOGIN).c_str());
+  ConfigManager->set(KEY_LOGIN_PASS, httpServer->arg(INPUT_MODUL_PASS).c_str());
 
 #ifdef SUPLA_ROLLERSHUTTER
-  if (strcmp(WebServer->httpServer.arg(INPUT_ROLLERSHUTTER).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, httpServer.arg(INPUT_ROLLERSHUTTER).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, httpServer->arg(INPUT_ROLLERSHUTTER).c_str());
   }
 #endif
 
@@ -137,8 +139,8 @@ void SuplaWebServer::handleSave() {
 
 void SuplaWebServer::handleDeviceSettings() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer.authenticate(www_username, www_password))
-      return httpServer.requestAuthentication();
+    if (!httpServer->authenticate(www_username, www_password))
+      return httpServer->requestAuthentication();
   }
   deviceSettings(0);
 }
@@ -188,8 +190,8 @@ void SuplaWebServer::supla_webpage_start(int save) {
 
 void SuplaWebServer::supla_webpage_reboot() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer.authenticate(www_username, www_password))
-      return httpServer.requestAuthentication();
+    if (!httpServer->authenticate(www_username, www_password))
+      return httpServer->requestAuthentication();
   }
   supla_webpage_start(2);
   ConfigESP->rebootESP();
@@ -249,13 +251,13 @@ void SuplaWebServer::deviceSettings(int save) {
 
 void SuplaWebServer::handleBoardSave() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer.authenticate(this->www_username, this->www_password))
-      return httpServer.requestAuthentication();
+    if (!httpServer->authenticate(this->www_username, this->www_password))
+      return httpServer->requestAuthentication();
   }
   String input = INPUT_BOARD;
 
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") != 0) {
-    ConfigManager->set(KEY_BOARD, httpServer.arg(input).c_str());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->set(KEY_BOARD, httpServer->arg(input).c_str());
 
     int nr;
     uint8_t key;
@@ -264,7 +266,7 @@ void SuplaWebServer::handleBoardSave() {
       ConfigManager->set(key, "");
     }
 
-    chooseTemplateBoard(WebServer->httpServer.arg(input).toInt());
+    chooseTemplateBoard(WebServer->httpServer->arg(input).toInt());
   }
 
   switch (ConfigManager->save()) {
@@ -278,22 +280,22 @@ void SuplaWebServer::handleBoardSave() {
 }
 
 void SuplaWebServer::sendContent() {
-  // httpServer.send(200, "text/html", "");
+  // httpServer->send(200, "text/html", "");
   // const int bufferSize = 1000;
   // String _buffer;
   //_buffer.reserve(bufferSize);
   // int bufferCounter = 0;
 
-  httpServer.sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
-  httpServer.sendHeader(F("Pragma"), F("no-cache"));
-  httpServer.sendHeader(F("Expires"), F("-1"));
-  httpServer.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  httpServer.chunkedResponseModeStart(200, F("text/html"));
+  httpServer->sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
+  httpServer->sendHeader(F("Pragma"), F("no-cache"));
+  httpServer->sendHeader(F("Expires"), F("-1"));
+  httpServer->setContentLength(CONTENT_LENGTH_UNKNOWN);
+  httpServer->chunkedResponseModeStart(200, F("text/html"));
 
-  httpServer.sendContent_P(HTTP_META);
-  httpServer.sendContent_P(HTTP_FAVICON);
-  httpServer.sendContent_P(HTTP_STYLE);
-  httpServer.sendContent_P(HTTP_LOGO);
+  httpServer->sendContent_P(HTTP_META);
+  httpServer->sendContent_P(HTTP_FAVICON);
+  httpServer->sendContent_P(HTTP_STYLE);
+  httpServer->sendContent_P(HTTP_LOGO);
 
   String summary = FPSTR(HTTP_SUMMARY);
 
@@ -304,31 +306,31 @@ void SuplaWebServer::sendContent() {
   summary.replace(F("{m}"), ConfigESP->getMacAddress(true));
   summary.replace(F("{f}"), String(ESP.getFreeHeap() / 1024.0));
 
-  httpServer.sendContent(summary);
-  httpServer.sendContent_P(HTTP_COPYRIGHT);
+  httpServer->sendContent(summary);
+  httpServer->sendContent_P(HTTP_COPYRIGHT);
 
-  // httpServer.send(200, "text/html", "");
+  // httpServer->send(200, "text/html", "");
   /*for (int i = 0; i < fileSize; i++) {
     _buffer += content[i];
     bufferCounter++;
 
     if (bufferCounter >= bufferSize) {
-      httpServer.sendContent(_buffer);
+      httpServer->sendContent(_buffer);
       yield();
       bufferCounter = 0;
       _buffer = "";
     }
   }
   if (bufferCounter > 0) {
-    httpServer.sendContent(_buffer);
+    httpServer->sendContent(_buffer);
     yield();
     bufferCounter = 0;
     _buffer = "";
   }*/
 
-  httpServer.sendContent(webContentBuffer);
-  httpServer.sendContent_P(HTTP_RBT);
-  httpServer.chunkedResponseFinalize();
+  httpServer->sendContent(webContentBuffer);
+  httpServer->sendContent_P(HTTP_RBT);
+  httpServer->chunkedResponseFinalize();
 
 #ifdef DEBUG_MODE
   Serial.printf_P(PSTR("Content size=%d\n"), webContentBuffer.length());
@@ -339,8 +341,8 @@ void SuplaWebServer::sendContent() {
 }
 
 void SuplaWebServer::handleNotFound() {
-  httpServer.sendHeader("Location", "/", true);
-  // httpServer.send(302, "text/plane", "");
+  httpServer->sendHeader("Location", "/", true);
+  // httpServer->send(302, "text/plane", "");
 
   supla_webpage_reboot();
 }
@@ -357,10 +359,10 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     nr = 1;
   }
 
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") == 0) {
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") == 0) {
     return true;
   }
-  gpioInput = WebServer->httpServer.arg(input).toInt();
+  gpioInput = WebServer->httpServer->arg(input).toInt();
   key = KEY_GPIO + gpioInput;
 
   if (ConfigESP->getGpio(nr, function) != gpioInput || gpioInput == OFF_GPIO) {
@@ -385,7 +387,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   }
 
   if (input_max != "\n") {
-    current_value = WebServer->httpServer.arg(input_max).toInt();
+    current_value = WebServer->httpServer->arg(input_max).toInt();
     if (ConfigManager->get(key)->getElement(NR).toInt() > current_value) {
       ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
     }
@@ -397,13 +399,13 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
   uint8_t key, address, addressInput, gpio, gpioInput, functionElementInput;
   String input = _input + nr;
 
-  if (strcmp(WebServer->httpServer.arg(input).c_str(), "") == 0) {
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") == 0) {
     return true;
   }
 
-  addressInput = WebServer->httpServer.arg(INPUT_ADRESS_MCP23017).toInt();
+  addressInput = WebServer->httpServer->arg(INPUT_ADRESS_MCP23017).toInt();
 
-  gpioInput = WebServer->httpServer.arg(input).toInt();
+  gpioInput = WebServer->httpServer->arg(input).toInt();
   key = KEY_GPIO + gpioInput;
   functionElementInput = ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(addressInput)).toInt();
   gpio = ConfigESP->getGpioMCP23017(nr, function);
