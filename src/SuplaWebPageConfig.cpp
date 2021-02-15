@@ -21,17 +21,15 @@ void SuplaWebPageConfig::createWebPageConfig() {
 }
 
 void SuplaWebPageConfig::handleConfig() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   supla_webpage_config(0);
 }
 
 void SuplaWebPageConfig::handleConfigSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   if (!WebServer->saveGPIO(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED)) {

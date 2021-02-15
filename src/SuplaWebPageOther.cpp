@@ -23,17 +23,15 @@ void createWebPageOther() {
 
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
 void handleOther() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   suplaWebPageOther(0);
 }
 
 void handleOtherSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   uint8_t nr, last_value;
@@ -171,17 +169,15 @@ void suplaWebPageOther(int save) {
 
 #ifdef SUPLA_IMPULSE_COUNTER
 void handleImpulseCounterSet() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   supla_impulse_counter_set(0);
 }
 
 void handleImpulseCounterSaveSet() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   String readUrl, nr, input;
@@ -315,17 +311,15 @@ void supla_impulse_counter_set(int save) {
 
 #if defined(SUPLA_HLW8012)
 void handleHLW8012Calibrate() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   suplaWebpageHLW8012Calibrate(0);
 }
 
 void handleHLW8012CalibrateSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   double calibPower, calibVoltage = 0;

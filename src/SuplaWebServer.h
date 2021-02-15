@@ -72,12 +72,7 @@ class SuplaWebServer : public Supla::Element {
  public:
   SuplaWebServer();
   void begin();
-
-  char www_username[MAX_MLOGIN];
-  char www_password[MAX_MPASSWORD];
-
   void supla_webpage_start(int save);
-
   void sendContent();
 
   ESP8266WebServer* httpServer;
@@ -85,6 +80,7 @@ class SuplaWebServer : public Supla::Element {
 #ifdef SUPLA_OTA
   ESP8266HTTPUpdateServer* httpUpdater;
 #endif
+  bool isLoggedIn();
   bool saveGPIO(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
   bool saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
 

@@ -48,17 +48,15 @@ void SuplaWebPageRelay::createWebPageRelay() {
 }
 
 void SuplaWebPageRelay::handleRelay() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   supla_webpage_relay(0);
 }
 
 void SuplaWebPageRelay::handleRelaySave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   uint8_t nr, last_value;
@@ -135,17 +133,15 @@ void SuplaWebPageRelay::supla_webpage_relay(int save) {
 }
 
 void SuplaWebPageRelay::handleRelaySet() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   supla_webpage_relay_set(0);
 }
 
 void SuplaWebPageRelay::handleRelaySaveSet() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   String readUrl, nr_relay, input, path;
@@ -293,9 +289,8 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
 }
 
 void SuplaWebPageRelay::handleRelaySetMCP23017() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   supla_webpage_relay_set_MCP23017(0);
 }
@@ -348,9 +343,8 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
 }
 
 void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   String input;

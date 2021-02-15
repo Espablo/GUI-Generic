@@ -52,18 +52,12 @@ void SuplaWebPageSensor::createWebPageSensor() {
 
 #ifdef SUPLA_DS18B20
 void SuplaWebPageSensor::handleSearchDS() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
-  }
+if (!WebServer->isLoggedIn()) { return; }
   supla_webpage_search(0);
 }
 
 void SuplaWebPageSensor::handleDSSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
-  }
+if (!WebServer->isLoggedIn()) { return; }
   for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
     String dsAddr = INPUT_DS18B20_ADDR;
     String dsName = INPUT_DS18B20_NAME;
@@ -225,18 +219,12 @@ void SuplaWebPageSensor::showDS18B20(bool readonly) {
 
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
 void SuplaWebPageSensor::handle1Wire() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
-  }
+if (!WebServer->isLoggedIn()) { return; }
   supla_webpage_1wire(0);
 }
 
 void SuplaWebPageSensor::handle1WireSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
-  }
+if (!WebServer->isLoggedIn()) { return; }
 
   uint8_t nr, last_value;
 
@@ -357,18 +345,12 @@ void SuplaWebPageSensor::supla_webpage_1wire(int save) {
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
 void SuplaWebPageSensor::handlei2c() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
-  }
+if (!WebServer->isLoggedIn()) { return; }
   supla_webpage_i2c(0);
 }
 
 void SuplaWebPageSensor::handlei2cSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
-  }
+if (!WebServer->isLoggedIn()) { return; }
 
   String input;
   uint8_t key;
@@ -541,18 +523,12 @@ void SuplaWebPageSensor::supla_webpage_i2c(int save) {
 
 #if defined(SUPLA_MAX6675)
 void SuplaWebPageSensor::handleSpi() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
-  }
+if (!WebServer->isLoggedIn()) { return; }
   supla_webpage_spi(0);
 }
 
 void SuplaWebPageSensor::handleSpiSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
-  }
+if (!WebServer->isLoggedIn()) { return; }
 
   String input;
   uint8_t key;

@@ -36,9 +36,6 @@ SuplaWebServer::SuplaWebServer() {
 void SuplaWebServer::begin() {
   this->createWebServer();
 
-  strcpy(this->www_username, ConfigManager->get(KEY_LOGIN)->getValue());
-  strcpy(this->www_password, ConfigManager->get(KEY_LOGIN_PASS)->getValue());
-
   httpServer->onNotFound(std::bind(&SuplaWebServer::handleNotFound, this));
   httpServer->begin();
 }
@@ -84,19 +81,16 @@ void SuplaWebServer::createWebServer() {
 }
 
 void SuplaWebServer::handle() {
-  //  Serial.println(F("HTTP_GET - metoda handle"));
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer->authenticate(this->www_username, this->www_password))
-      return httpServer->requestAuthentication();
+  if (!isLoggedIn()) {
+    return;
   }
   supla_webpage_start(0);
 }
 
 void SuplaWebServer::handleSave() {
   //  Serial.println(F("HTTP_POST - metoda handleSave"));
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer->authenticate(this->www_username, this->www_password))
-      return httpServer->requestAuthentication();
+  if (!isLoggedIn()) {
+    return;
   }
 
   if (strcmp(httpServer->arg(PATH_REBOT).c_str(), "1") == 0) {
@@ -138,9 +132,8 @@ void SuplaWebServer::handleSave() {
 }
 
 void SuplaWebServer::handleDeviceSettings() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer->authenticate(www_username, www_password))
-      return httpServer->requestAuthentication();
+  if (!isLoggedIn()) {
+    return;
   }
   deviceSettings(0);
 }
@@ -189,9 +182,8 @@ void SuplaWebServer::supla_webpage_start(int save) {
 }
 
 void SuplaWebServer::supla_webpage_reboot() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer->authenticate(www_username, www_password))
-      return httpServer->requestAuthentication();
+  if (!isLoggedIn()) {
+    return;
   }
   supla_webpage_start(2);
   ConfigESP->rebootESP();
@@ -250,9 +242,8 @@ void SuplaWebServer::deviceSettings(int save) {
 }
 
 void SuplaWebServer::handleBoardSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer->authenticate(this->www_username, this->www_password))
-      return httpServer->requestAuthentication();
+  if (!isLoggedIn()) {
+    return;
   }
   String input = INPUT_BOARD;
 
@@ -345,6 +336,15 @@ void SuplaWebServer::handleNotFound() {
   // httpServer->send(302, "text/plane", "");
 
   supla_webpage_reboot();
+}
+
+bool SuplaWebServer::isLoggedIn() {
+  if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (!httpServer->authenticate(ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue()))
+      httpServer->requestAuthentication();
+    return true;
+  }
+  return true;
 }
 
 bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {

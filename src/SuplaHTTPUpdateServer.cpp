@@ -140,9 +140,8 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
 }
 
 void ESP8266HTTPUpdateServer::handleFirmwareUp() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   suplaWebPageUpddate();
 }

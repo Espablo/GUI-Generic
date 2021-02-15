@@ -7,9 +7,8 @@ void createWebDownload() {
 }
 
 void handleDownload() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   File dataFile = LittleFS.open(F(CONFIG_FILE_PATH), "r");

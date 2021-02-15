@@ -30,9 +30,8 @@ void createWebUpload() {
 }
 
 void handleUpload(int save) {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   webContentBuffer += SuplaSaveResult(save);
@@ -55,9 +54,8 @@ void handleUpload(int save) {
 }
 
 void handleFileUpload() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   if (LittleFS.begin()) {

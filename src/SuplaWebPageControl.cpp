@@ -51,9 +51,8 @@ void SuplaWebPageControl::createWebPageControl() {
 }
 
 void SuplaWebPageControl::handleControl() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   supla_webpage_control(0);
 }
@@ -61,9 +60,8 @@ void SuplaWebPageControl::handleControl() {
 void SuplaWebPageControl::handleControlSave() {
   //  Serial.println(F("HTTP_POST - metoda handleControlSave"));
 
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   uint8_t nr, last_value;
@@ -144,18 +142,16 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
 
 #if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
 void SuplaWebPageControl::handleButtonSet() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   supla_webpage_button_set(0);
 }
 
 void SuplaWebPageControl::handleButtonSaveSet() {
   //  Serial.println(F("HTTP_POST - metoda handleRelaySaveSet"));
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   String readUrl, nr_button, input, path;
@@ -243,17 +239,15 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
 
 #ifdef SUPLA_LIMIT_SWITCH
 void SuplaWebPageControl::handleLimitSwitch() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   suplaWebpageLimitSwitch(0);
 }
 
 void SuplaWebPageControl::handleLimitSwitchSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   uint8_t nr, last_value;
@@ -325,9 +319,8 @@ void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
 #endif
 
 void SuplaWebPageControl::handleButtonSetMCP23017() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   supla_webpage_button_set_MCP23017(0);
 }
@@ -359,9 +352,8 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
 }
 
 void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   String input;

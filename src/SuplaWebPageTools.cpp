@@ -5,9 +5,8 @@ void createWebTools() {
   WebServer->httpServer->on(getURL(PATH_TOOLS), handleTools);
 
   WebServer->httpServer->on(getURL(PATH_FACTORY_RESET), [&]() {
-    if (ConfigESP->configModeESP == NORMAL_MODE) {
-      if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-        return WebServer->httpServer->requestAuthentication();
+    if (!WebServer->isLoggedIn()) {
+      return;
     }
     WebServer->httpServer->sendHeader("Location", "/");
     WebServer->httpServer->send(303);
@@ -17,9 +16,8 @@ void createWebTools() {
 }
 
 void handleTools() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   addFormHeader(webContentBuffer, F("Narzędzia"));

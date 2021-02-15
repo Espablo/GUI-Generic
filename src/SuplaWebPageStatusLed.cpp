@@ -10,9 +10,8 @@ void createWebStatusLed() {
 }
 
 void handleStatusLed() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   webStatusLed(0);
 }
@@ -20,9 +19,8 @@ void handleStatusLed() {
 void handleStatusLedSave() {
   uint8_t nr;
 
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer->authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer->requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   if (strcmp(WebServer->httpServer->arg(INPUT_LEVEL_LED).c_str(), "") != 0) {
