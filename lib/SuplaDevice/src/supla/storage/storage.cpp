@@ -15,6 +15,7 @@
 */
 
 #include <Arduino.h>
+#include <string.h>
 
 #include "storage.h"
 
@@ -104,6 +105,10 @@ Storage::Storage(unsigned int storageStartingOffset)
       saveStatePeriod(1000), 
       lastWriteTimestamp(0) {
   instance = this;
+}
+
+Storage::~Storage() {
+  instance = nullptr;
 }
 
 void Storage::prepareState(bool performDryRun) {

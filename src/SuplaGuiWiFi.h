@@ -8,7 +8,7 @@
 namespace Supla {
 class GUIESPWifi : public Supla::ESPWifi {
  public:
-  GUIESPWifi(const char *wifiSsid = nullptr, const char *wifiPassword = nullptr, IPAddress *ip = nullptr) : ESPWifi(wifiSsid, wifiPassword, ip) {
+  GUIESPWifi(const char *wifiSsid = nullptr, const char *wifiPassword = nullptr) : ESPWifi(wifiSsid, wifiPassword) {
   }
 
   int connect(const char *server, int port = -1) {

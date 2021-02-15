@@ -14,27 +14,30 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _supla_eeprom_h
-#define _supla_eeprom_h
+#ifndef _max6675_k_h
+#define _max6675_k_h
 
-#include "storage.h"
+#include <Arduino.h>
+#include <supla/sensor/thermometer.h>
 
 namespace Supla {
-
-class Eeprom : public Storage {
+namespace Sensor {
+class MAX6675_K : public Thermometer {
  public:
-  Eeprom(unsigned int storageStartingOffset = 0, int reservedSize = -1);
-  bool init();
-  void commit();
+  MAX6675_K(uint8_t pin_CLK, uint8_t pin_CS, uint8_t pin_DO);
+  double getValue();
+
+ private:
+  void onInit();
+  byte spiRead();
 
  protected:
-  int readStorage(unsigned int, unsigned char *, int, bool);
-  int writeStorage(unsigned int, const unsigned char *, int);
-
-  int reservedSize;
-  bool dataChanged;
+  int8_t pin_CLK;
+  int8_t pin_CS;
+  int8_t pin_DO;
 };
 
+};  // namespace Sensor
 };  // namespace Supla
 
 #endif
