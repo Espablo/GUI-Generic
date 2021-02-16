@@ -37,7 +37,7 @@ enum _ConfigMode
   FACTORYRESET
 };
 
-#define OFF_GPIO 17
+#define OFF_GPIO     17
 #define OFF_MCP23017 2
 
 typedef struct {
@@ -83,10 +83,12 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   bool checkBusyCfg(int gpio);
   int checkBusyGpio(int gpio, int function);
   uint8_t countFreeGpio(uint8_t exception = 0);
+
   void setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory = 0);
   void setGpio(uint8_t gpio, uint8_t function, uint8_t level = 0) {
     setGpio(gpio, 1, function, level);
   }
+  
   void clearGpio(uint8_t gpio, uint8_t function = 0);
 
   int getMemory(int nr, int function);
@@ -95,13 +97,14 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   }
 
   int getAction(int nr, int function);
+  int getEvent(int nr, int function);
   void factoryReset(bool forceReset = false);
   const String getConfigNameAP();
 
   bool checkBusyGpioMCP23017(uint8_t gpio, uint8_t function);
   uint8_t getGpioMCP23017(uint8_t nr, uint8_t function);
   uint8_t getAdressMCP23017(uint8_t nr, uint8_t function);
-  void setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory);
+  void setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, uint8_t function);
   void clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function);
   void clearFunctionGpio(uint8_t function);
   uint8_t getFunctionMCP23017(uint8_t adress);

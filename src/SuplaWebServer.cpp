@@ -348,7 +348,7 @@ bool SuplaWebServer::isLoggedIn() {
 }
 
 bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
-  uint8_t gpioInput, current_value, key;
+  uint8_t gpio, gpioInput, current_value, key;
   String input;
   input = _input;
 
@@ -362,20 +362,22 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") == 0) {
     return true;
   }
+
+  gpio = ConfigESP->getGpio(nr, function);
   gpioInput = WebServer->httpServer->arg(input).toInt();
+
   key = KEY_GPIO + gpioInput;
 
-  if (ConfigESP->getGpio(nr, function) != gpioInput || gpioInput == OFF_GPIO) {
-    ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
+  if (gpio != gpioInput || gpioInput == OFF_GPIO) {
+    ConfigESP->clearGpio(gpio, function);
   }
 
   if (gpioInput != OFF_GPIO) {
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_OFF) {
       ConfigESP->clearGpio(gpioInput, function);
-      ConfigESP->setGpio(gpioInput, nr, function, ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt(),
-                         ConfigManager->get(key)->getElement(MEMORY).toInt());
+      ConfigESP->setGpio(gpioInput, nr, function, ConfigESP->getLevel(nr, function), ConfigESP->getMemory(nr, function));
     }
-    else if (ConfigESP->getGpio(nr, function) == gpioInput && ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
+    else if (gpio == gpioInput && ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       ConfigESP->setGpio(gpioInput, nr, function, ConfigESP->getLevel(nr, function), ConfigESP->getMemory(nr, function));
     }
     else if (function == FUNCTION_CFG_BUTTON) {
@@ -389,39 +391,39 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   if (input_max != "\n") {
     current_value = WebServer->httpServer->arg(input_max).toInt();
     if (ConfigManager->get(key)->getElement(NR).toInt() > current_value) {
-      ConfigESP->clearGpio(ConfigESP->getGpio(nr, function), function);
+      ConfigESP->clearGpio(gpio, function);
     }
   }
   return true;
 }
 
 bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
-  uint8_t key, address, addressInput, gpio, gpioInput, functionElementInput;
+  uint8_t key, address, addressInput, gpio, gpioInput, functionElement;
   String input = _input + nr;
 
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") == 0) {
     return true;
   }
 
+  address = ConfigESP->getAdressMCP23017(nr, function);
   addressInput = WebServer->httpServer->arg(INPUT_ADRESS_MCP23017).toInt();
 
-  gpioInput = WebServer->httpServer->arg(input).toInt();
-  key = KEY_GPIO + gpioInput;
-  functionElementInput = ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(addressInput)).toInt();
   gpio = ConfigESP->getGpioMCP23017(nr, function);
-  if (addressInput == OFF_MCP23017 || gpioInput == OFF_GPIO) {
+  gpioInput = WebServer->httpServer->arg(input).toInt();
+
+  key = KEY_GPIO + gpioInput;
+  functionElement = ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(addressInput)).toInt();
+
+  if (gpio != gpioInput || gpioInput == OFF_GPIO || address != addressInput || addressInput == OFF_MCP23017) {
     ConfigESP->clearGpioMCP23017(gpio, nr, function);
-    return true;
   }
 
   if (gpioInput != OFF_GPIO) {
-    if (functionElementInput == FUNCTION_OFF) {
-      ConfigESP->clearGpioMCP23017(gpioInput, nr, function);
-      ConfigESP->setGpioMCP23017(gpioInput, addressInput, nr, function, ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt(),
-                                 ConfigManager->get(key)->getElement(MEMORY).toInt());
+    if (functionElement == FUNCTION_OFF) {
+      ConfigESP->setGpioMCP23017(gpioInput, addressInput, nr, function);
     }
-    else if (gpio == gpioInput && functionElementInput == function) {
-      ConfigESP->setGpioMCP23017(gpioInput, addressInput, nr, function, ConfigESP->getLevel(nr, function), ConfigESP->getMemory(nr, function));
+    else if (gpio == gpioInput && functionElement == function) {
+      ConfigESP->setGpioMCP23017(gpioInput, addressInput, nr, function);
     }
     else {
       return false;

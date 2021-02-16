@@ -174,7 +174,7 @@ void SuplaWebPageControl::handleButtonSaveSet() {
 
   input = INPUT_BUTTON_EVENT;
   input += nr_button;
-  ConfigManager->setElement(key, MEMORY, WebServer->httpServer->arg(input).toInt());
+  ConfigManager->setElement(key, EVENT_BUTTON, WebServer->httpServer->arg(input).toInt());
 
   input = INPUT_RELAY_LEVEL;
   input += nr_button;
@@ -222,7 +222,7 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
   selected = ConfigESP->getLevel(nr_button.toInt(), FUNCTION_BUTTON);
   addListBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_button, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
-  selected = ConfigESP->getMemory(nr_button.toInt(), FUNCTION_BUTTON);
+  selected = ConfigESP->getEvent(nr_button.toInt(), FUNCTION_BUTTON);
   addListBox(webContentBuffer, INPUT_BUTTON_EVENT + nr_button, S_REACTION_TO, TRIGGER_P, 3, selected);
 
   selected = ConfigESP->getAction(nr_button.toInt(), FUNCTION_BUTTON);
@@ -337,7 +337,7 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   selected = ConfigESP->getLevel(1, FUNCTION_BUTTON);
   addListBox(webContentBuffer, INPUT_RELAY_LEVEL, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
-  selected = ConfigESP->getMemory(1, FUNCTION_BUTTON);
+  selected = ConfigESP->getEvent(1, FUNCTION_BUTTON);
   addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
 
   selected = ConfigESP->getAction(1, FUNCTION_BUTTON);
@@ -357,7 +357,7 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   }
 
   String input;
-  uint8_t key, gpio, level, event, action;
+  uint8_t key, gpio, level, event, action, address;
 
   input.reserve(10);
 
@@ -370,11 +370,14 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   input = INPUT_BUTTON_ACTION;
   action = WebServer->httpServer->arg(input).toInt();
 
+  address = ConfigESP->getAdressMCP23017(1, FUNCTION_BUTTON);
   for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
     key = KEY_GPIO + gpio;
-    ConfigManager->setElement(key, LEVEL_BUTTON, level);
-    ConfigManager->setElement(key, MEMORY, event);
-    ConfigManager->setElement(key, ACTION_BUTTON, action);
+    if (ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(address)).toInt() == FUNCTION_BUTTON) {
+      ConfigManager->setElement(key, LEVEL_BUTTON, level);
+      ConfigManager->setElement(key, EVENT_BUTTON, event);
+      ConfigManager->setElement(key, ACTION_BUTTON, action);
+    }
   }
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:

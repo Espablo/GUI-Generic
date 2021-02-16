@@ -95,7 +95,7 @@ void addRelayButton(uint8_t nr) {
 
       Serial.println(ConfigESP->getLevel(nr, FUNCTION_BUTTON));
 
-      button->addAction(ConfigESP->getAction(nr, FUNCTION_BUTTON), *relay[size], ConfigESP->getMemory(nr, FUNCTION_BUTTON));
+      button->addAction(ConfigESP->getAction(nr, FUNCTION_BUTTON), *relay[size], ConfigESP->getEvent(nr, FUNCTION_BUTTON));
       button->setSwNoiseFilterDelay(50);
     }
 
@@ -312,6 +312,8 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
 }
 #endif
+
+#if defined(SUPLA_RELAY)
 void addConditionsTurnON(int function, Supla::ChannelElement *client) {
   if (Supla::GUI::relay.size() == 0)
     return;
@@ -371,6 +373,7 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client) {
     }
   }
 }
+#endif
 
 }  // namespace GUI
 }  // namespace Supla
