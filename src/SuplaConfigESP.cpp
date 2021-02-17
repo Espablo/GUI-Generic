@@ -259,15 +259,33 @@ int SuplaConfigESP::getGpio(int nr, int function) {
 // Pin 116 - 131"
 #ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-      uint8_t address = getAdressMCP23017(nr, function);
-      if (address == 0)
-        return gpio + 100;
-      if (address == 1)
-        return gpio + 100 + 16;
-      if (address == 2)
-        return gpio + 100 + 16 + 16;
-      if (address == 3)
-        return gpio + 100 + 16 + 16 + 16;
+      
+      switch (getAdressMCP23017(nr, function)) {
+        case 0:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function &&
+              ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+            return gpio + 100;
+          }
+          break;
+        case 1:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function &&
+              ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+            return gpio + 100 + 16;
+          }
+          break;
+        case 2:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function &&
+              ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
+            return gpio + 100 + 16 + 16;
+          }
+          break;
+        case 3:
+          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_4).toInt() == function &&
+              ConfigManager->get(key)->getElement(MCP23017_NR_4).toInt() == nr) {
+            return gpio + 100 + 16 + 16 + 16;
+          }
+          break;
+      }
     }
 #endif
   }
@@ -275,8 +293,9 @@ int SuplaConfigESP::getGpio(int nr, int function) {
 }
 
 int SuplaConfigESP::getLevel(int nr, int function) {
+  uint8_t key;
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
-    uint8_t key = KEY_GPIO + gpio;
+    key = KEY_GPIO + gpio;
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
         if (function == FUNCTION_BUTTON)
@@ -289,12 +308,15 @@ int SuplaConfigESP::getLevel(int nr, int function) {
 #ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       uint8_t address = getAdressMCP23017(nr, function);
+
       if (ConfigManager->get(key)->getElement(getFunctionMCP23017(address)).toInt() == function) {
         if (ConfigManager->get(key)->getElement(getNrMCP23017(address)).toInt() == nr) {
-          if (function == FUNCTION_BUTTON)
+          if (function == FUNCTION_BUTTON) {
             return ConfigManager->get(key)->getElement(LEVEL_BUTTON).toInt();
-          else
+          }
+          else {
             return ConfigManager->get(key)->getElement(LEVEL_RELAY).toInt();
+          }
         }
       }
     }

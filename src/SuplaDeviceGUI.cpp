@@ -85,13 +85,8 @@ void addRelayButton(uint8_t nr) {
     relay[size]->keepTurnOnDuration();
 
     if (pinButton != OFF_GPIO) {
-      Supla::Control::Button *button;
-      if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-        button = new Supla::Control::Button(pinButton, ConfigESP->getLevel(nr, FUNCTION_BUTTON), false);
-      }
-      else {
-        button = new Supla::Control::Button(pinButton, ConfigESP->getLevel(nr, FUNCTION_BUTTON));
-      }
+      Serial.println(ConfigESP->getLevel(nr, FUNCTION_BUTTON));
+      auto button = new Supla::Control::Button(pinButton, ConfigESP->getLevel(nr, FUNCTION_BUTTON));
 
       button->addAction(ConfigESP->getAction(nr, FUNCTION_BUTTON), *relay[size], ConfigESP->getEvent(nr, FUNCTION_BUTTON));
       button->setSwNoiseFilterDelay(50);
