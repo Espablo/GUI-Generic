@@ -141,7 +141,7 @@ void addLinkBox(String& html, const String& name, const String& url) {
   html += url;
   html += F("'>");
   html += name;
-  // html += PGMT(ICON_EDIT);
+  // html += FPSTR(ICON_EDIT);
   html += F("</a>");
   html += F("</label>");
   html += F("</i>");
@@ -169,7 +169,7 @@ void addListGPIOBox(String& html, const String& input_id, const String& name, ui
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr) {
   if (nr == 1) {
     uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
-    addListBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 3, address);
+    addListBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 5, address);
   }
 
   html += F("<i><label>");
@@ -187,7 +187,7 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
 void addListMCP23017GPIOLinkBox(String& html, const String& input_id, const String& name, uint8_t function, const String& url, uint8_t nr) {
   if (nr == 1) {
     uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
-    addListLinkBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 3, address, url);
+    addListLinkBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 5, address, url);
   }
 
   html += F("<i><label>");
@@ -227,7 +227,7 @@ void addListGPIOLinkBox(String& html, const String& input_id, const String& name
   }
   html += name;
   if (ConfigESP->getGpio(_nr, function) != OFF_GPIO) {
-    // html += PGMT(ICON_EDIT);
+    // html += FPSTR(ICON_EDIT);
     html += F("</a>");
   }
   html += F("</label>");
@@ -258,7 +258,7 @@ void addListBox(String& html, const String& input_id, const String& name, const 
     else {
       html += F("'>");
     }
-    html += PGMT(array_P[suported]);
+    html += FPSTR(array_P[suported]);
   }
   html += F("</select></i>");
 }
@@ -298,7 +298,7 @@ void addListLinkBox(String& html,
     else {
       html += F("'>");
     }
-    html += PGMT(array_P[suported]);
+    html += FPSTR(array_P[suported]);
   }
   html += F("</select></i>");
 }
@@ -332,7 +332,7 @@ void addListGPIOSelect(String& html, const String& input_id, uint8_t function, u
 
   uint8_t selected = ConfigESP->getGpio(nr, function);
 
-  for (uint8_t suported = 0; suported < sizeof(GPIO_P) / sizeof(GPIO_P[0]); suported++) {
+  for (uint8_t suported = 0; suported < 18; suported++) {
     if (ConfigESP->checkBusyGpio(suported, function) || selected == suported) {
       html += F("<option value='");
       html += suported;
@@ -342,7 +342,7 @@ void addListGPIOSelect(String& html, const String& input_id, uint8_t function, u
       else {
         html += F("'>");
       }
-      html += PGMT(GPIO_P[suported]);
+      html += FPSTR(GPIO_P[suported]);
     }
   }
   html += F("</select>");
@@ -356,7 +356,7 @@ void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function,
 
   uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
 
-  for (uint8_t suported = 0; suported < sizeof(GPIO_MCP23017_P) / sizeof(GPIO_MCP23017_P[0]); suported++) {
+  for (uint8_t suported = 0; suported < 18; suported++) {
     if (ConfigESP->checkBusyGpioMCP23017(suported, function) || selected == suported) {
       html += F("<option value='");
       html += suported;
@@ -366,7 +366,7 @@ void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function,
       else {
         html += F("'>");
       }
-      html += PGMT(GPIO_MCP23017_P[suported]);
+      html += FPSTR(GPIO_MCP23017_P[suported]);
     }
   }
   html += F("</select>");

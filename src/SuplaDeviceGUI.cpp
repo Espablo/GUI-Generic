@@ -93,8 +93,6 @@ void addRelayButton(uint8_t nr) {
         button = new Supla::Control::Button(pinButton, ConfigESP->getLevel(nr, FUNCTION_BUTTON));
       }
 
-      Serial.println(ConfigESP->getLevel(nr, FUNCTION_BUTTON));
-
       button->addAction(ConfigESP->getAction(nr, FUNCTION_BUTTON), *relay[size], ConfigESP->getEvent(nr, FUNCTION_BUTTON));
       button->setSwNoiseFilterDelay(50);
     }

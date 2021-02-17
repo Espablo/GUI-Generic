@@ -131,7 +131,7 @@ const char ADR20[] PROGMEM = "0x20";
 const char ADR21[] PROGMEM = "0x21";
 const char ADR22[] PROGMEM = "0x22";
 const char ADR23[] PROGMEM = "0x23";
-const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, OFF};
+const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, ADR22, ADR23, OFF};
 
 const char* const STATE_P[] PROGMEM = {OFF, ON};
 

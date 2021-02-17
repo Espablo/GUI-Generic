@@ -5,7 +5,7 @@
 void addButton(uint8_t gpio, uint8_t event) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   nr++;
-  ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON, event);
+  ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON, -1, -1, -1, event);
   ConfigManager->set(KEY_MAX_BUTTON, nr++);
 }
 
@@ -19,8 +19,8 @@ void addRelay(uint8_t gpio, uint8_t level) {
 void addLimitSwitch(uint8_t gpio) {
   uint8_t nr = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
   nr++;
-  ConfigESP->setGpio(gpio, nr, FUNCTION_LIMIT_SWITCH, 0);
-  ConfigESP->setGpio(4, 1, FUNCTION_LIMIT_SWITCH, 0);
+  ConfigESP->setGpio(gpio, nr, FUNCTION_LIMIT_SWITCH);
+  ConfigESP->setGpio(4, 1, FUNCTION_LIMIT_SWITCH);
   ConfigManager->set(KEY_MAX_LIMIT_SWITCH, nr++);
 }
 
@@ -48,10 +48,10 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
 void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t brightnessPin) {
   uint8_t nr = ConfigManager->get(KEY_MAX_RGBW)->getValueInt();
   nr++;
-  ConfigESP->setGpio(redPin, nr, FUNCTION_RGBW_RED, 0);
-  ConfigESP->setGpio(greenPin, nr, FUNCTION_RGBW_GREEN, 0);
-  ConfigESP->setGpio(bluePin, nr, FUNCTION_RGBW_BLUE, 0);
-  ConfigESP->setGpio(brightnessPin, nr, FUNCTION_RGBW_BRIGHTNESS, 0);
+  ConfigESP->setGpio(redPin, nr, FUNCTION_RGBW_RED);
+  ConfigESP->setGpio(greenPin, nr, FUNCTION_RGBW_GREEN);
+  ConfigESP->setGpio(bluePin, nr, FUNCTION_RGBW_BLUE);
+  ConfigESP->setGpio(brightnessPin, nr, FUNCTION_RGBW_BRIGHTNESS);
   ConfigManager->set(KEY_MAX_RGBW, nr++);
 }
 

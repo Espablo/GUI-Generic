@@ -38,7 +38,7 @@ enum _ConfigMode
 };
 
 #define OFF_GPIO     17
-#define OFF_MCP23017 2
+#define OFF_MCP23017 4
 
 typedef struct {
   int status;
@@ -84,11 +84,11 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   int checkBusyGpio(int gpio, int function);
   uint8_t countFreeGpio(uint8_t exception = 0);
 
-  void setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory = 0);
-  void setGpio(uint8_t gpio, uint8_t function, uint8_t level = 0) {
-    setGpio(gpio, 1, function, level);
+  void setGpio(uint8_t gpio, uint8_t nr, uint8_t function, int level = -1, int memory = -1, int action = -1, int event = -1);
+  void setGpio(uint8_t gpio, uint8_t function) {
+    setGpio(gpio, 1, function);
   }
-  
+
   void clearGpio(uint8_t gpio, uint8_t function = 0);
 
   int getMemory(int nr, int function);
