@@ -21,7 +21,7 @@
 #include <IPAddress.h>
 #include <supla-common/proto.h>
 
-#include "LittleFS.h"
+#include "FS.h"
 #include "SuplaConfigManager.h"
 #include "SuplaDeviceGUI.h"
 
@@ -139,10 +139,10 @@ void ConfigOption::setValue(const char *value) {
 // class SuplaConfigManager
 //
 SuplaConfigManager::SuplaConfigManager() {
-  if (LittleFS.begin()) {
-    //    Serial.println(F("\nLittleFS mounted"));
+  if (SPIFFS.begin()) {
+    //    Serial.println(F("\nSPIFFS mounted"));
     //  } else {
-    //    Serial.println(F("\nFailed to mount LittleFS"));
+    //    Serial.println(F("\nFailed to mount SPIFFS"));
   }
   _optionCount = 0;
 
@@ -251,9 +251,9 @@ uint8_t SuplaConfigManager::deleteKey(uint8_t key) {
 }
 
 uint8_t SuplaConfigManager::load() {
-  if (LittleFS.begin()) {
-    if (LittleFS.exists(CONFIG_FILE_PATH)) {
-      File configFile = LittleFS.open(CONFIG_FILE_PATH, "r");
+  if (SPIFFS.begin()) {
+    if (SPIFFS.exists(CONFIG_FILE_PATH)) {
+      File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
 
       if (configFile) {
         int i = 0;
@@ -296,9 +296,9 @@ uint8_t SuplaConfigManager::load() {
 }
 
 uint8_t SuplaConfigManager::loadItem(uint8_t key) {
-  if (LittleFS.begin()) {
-    if (LittleFS.exists(CONFIG_FILE_PATH)) {
-      File configFile = LittleFS.open(CONFIG_FILE_PATH, "r");
+  if (SPIFFS.begin()) {
+    if (SPIFFS.exists(CONFIG_FILE_PATH)) {
+      File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
 
       if (configFile) {
         int i = 0;
@@ -339,7 +339,7 @@ uint8_t SuplaConfigManager::loadItem(uint8_t key) {
 }
 
 uint8_t SuplaConfigManager::save() {
-  if (LittleFS.begin()) {
+  if (SPIFFS.begin()) {
     int i = 0;
     int offset = 0;
     int length = 0;
@@ -348,7 +348,7 @@ uint8_t SuplaConfigManager::save() {
       length += _options[i]->getLength();
     }
 
-    File configFile = LittleFS.open(CONFIG_FILE_PATH, "w+");
+    File configFile = SPIFFS.open(CONFIG_FILE_PATH, "w+");
     if (configFile) {
       uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
       for (i = 0; i < _optionCount; i++) {

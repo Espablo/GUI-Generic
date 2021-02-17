@@ -1,6 +1,6 @@
 #include "SuplaWebPageUpload.h"
 #include "SuplaDeviceGUI.h"
-#include "LittleFS.h"
+#include "FS.h"
 
 static const char uploadIndex[] PROGMEM =
     R"(<form class="formcenter" method="POST" action="/upload" enctype="multipart/form-data">
@@ -58,11 +58,11 @@ void handleFileUpload() {
     return;
   }
 
-  if (LittleFS.begin()) {
+  if (SPIFFS.begin()) {
     HTTPUpload& upload = WebServer->httpServer->upload();
 
     if (upload.status == UPLOAD_FILE_START) {
-      dataFile = LittleFS.open(CONFIG_FILE_PATH, "w");
+      dataFile = SPIFFS.open(CONFIG_FILE_PATH, "w");
     }
     else if (upload.status == UPLOAD_FILE_WRITE) {
       if (dataFile)
