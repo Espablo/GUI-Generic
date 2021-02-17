@@ -29,7 +29,7 @@
 String webContentBuffer;
 
 SuplaWebServer::SuplaWebServer() {
-  httpServer = new ESP8266WebServer(80);
+  httpServer = new MyWebServer();
   httpUpdater = new ESP8266HTTPUpdateServer();
 }
 
@@ -37,7 +37,7 @@ void SuplaWebServer::begin() {
   this->createWebServer();
 
   httpServer->onNotFound(std::bind(&SuplaWebServer::handleNotFound, this));
-  httpServer->begin();
+  httpServer->begin(80);
 }
 
 void SuplaWebServer::iterateAlways() {
@@ -329,7 +329,8 @@ void SuplaWebServer::sendContent() {
   checkRAM();
 #endif
   webContentBuffer.clear();
-  //webContentBuffer.reserve(0);
+  httpServer->client().flush();
+  httpServer->client().stop();
 }
 
 void SuplaWebServer::handleNotFound() {

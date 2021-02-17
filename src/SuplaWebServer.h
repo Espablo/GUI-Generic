@@ -53,8 +53,8 @@
 extern String webContentBuffer;
 
 // https://www.esp8266.com/viewtopic.php?p=84249#p84249
-/*class MyWebServer : public ESP8266WebServer {
-  public:
+class MyWebServer : public ESP8266WebServer {
+ public:
   virtual ~MyWebServer() {
     if (this->_currentArgs) {
       delete[] this->_currentArgs;
@@ -66,7 +66,7 @@ extern String webContentBuffer;
       this->_postArgs = nullptr;
     }
   }
-};*/
+};
 
 class SuplaWebServer : public Supla::Element {
  public:
@@ -75,7 +75,7 @@ class SuplaWebServer : public Supla::Element {
   void supla_webpage_start(int save);
   void sendContent();
 
-  ESP8266WebServer* httpServer;
+  MyWebServer* httpServer;
 
 #ifdef SUPLA_OTA
   ESP8266HTTPUpdateServer* httpUpdater;
