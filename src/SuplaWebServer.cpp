@@ -329,6 +329,7 @@ void SuplaWebServer::sendContent() {
   checkRAM();
 #endif
   webContentBuffer.clear();
+  webContentBuffer = String();
   httpServer->client().flush();
   httpServer->client().stop();
 }
@@ -375,7 +376,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   //  ConfigESP->clearGpio(gpio, function);
 
   if (gpioInput == OFF_GPIO)
-    ConfigESP->clearGpio(gpioInput, function);
+    ConfigESP->clearGpio(gpio, function);
 
   if (gpioInput != OFF_GPIO) {
     if (functionElement == FUNCTION_OFF) {
@@ -423,7 +424,7 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
   //  ConfigESP->clearGpioMCP23017(gpio, nr, function);
 
   if (gpioInput == OFF_GPIO || addressInput == OFF_MCP23017)
-    ConfigESP->clearGpioMCP23017(gpioInput, nr, function);
+    ConfigESP->clearGpioMCP23017(gpio, nr, function);
 
   if (gpioInput != OFF_GPIO && addressInput != OFF_MCP23017) {
     if (functionElement == FUNCTION_OFF) {

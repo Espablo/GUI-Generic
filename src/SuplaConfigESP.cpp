@@ -567,8 +567,11 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
   uint8_t key = KEY_GPIO + gpio;
   uint8_t adress = getAdressMCP23017(nr, function);
 
-  ConfigManager->setElement(key, getNrMCP23017(adress), 0);
-  ConfigManager->setElement(key, getFunctionMCP23017(adress), FUNCTION_OFF);
+  if (getNrMCP23017(adress) != OFF_MCP23017)
+    ConfigManager->setElement(key, getNrMCP23017(adress), 0);
+  if (getFunctionMCP23017(adress) != OFF_MCP23017)
+    ConfigManager->setElement(key, getFunctionMCP23017(adress), FUNCTION_OFF);
+
   if (function == FUNCTION_BUTTON) {
     ConfigManager->setElement(key, LEVEL_BUTTON, 1);
     ConfigManager->setElement(key, ACTION_BUTTON, Supla::Action::TOGGLE);
@@ -606,7 +609,7 @@ uint8_t SuplaConfigESP::getFunctionMCP23017(uint8_t adress) {
       return MCP23017_FUNCTION_4;
       break;
   }
-  return FUNCTION_OFF;
+  return OFF_MCP23017;
 }
 
 uint8_t SuplaConfigESP::getNrMCP23017(uint8_t adress) {
@@ -624,7 +627,7 @@ uint8_t SuplaConfigESP::getNrMCP23017(uint8_t adress) {
       return MCP23017_NR_4;
       break;
   }
-  return FUNCTION_OFF;
+  return OFF_MCP23017;
 }
 
 void SuplaConfigESP::factoryReset(bool forceReset) {
