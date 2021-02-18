@@ -83,6 +83,7 @@ void addRelayButton(uint8_t nr) {
     }
 
     relay[size]->keepTurnOnDuration();
+    relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinButton != OFF_GPIO) {
       Serial.println(ConfigESP->getLevel(nr, FUNCTION_BUTTON));
