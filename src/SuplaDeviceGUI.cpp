@@ -42,7 +42,9 @@ void begin() {
 
   SuplaDevice.setName(ConfigManager->get(KEY_HOST_NAME)->getValue());
 
+#ifdef BUILD_VERSION
   SuplaDevice.setSwVersion(BUILD_VERSION);
+#endif
 
   SuplaDevice.begin((char *)ConfigManager->get(KEY_SUPLA_GUID)->getValue(),      // Global Unique Identifier
                     ConfigManager->get(KEY_SUPLA_SERVER)->getValue(),            // SUPLA server address
