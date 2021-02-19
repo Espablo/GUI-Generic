@@ -70,6 +70,7 @@ void displayUiSignal(OLEDDisplay* display) {
   }
 }
 
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void displayUiRelayState(OLEDDisplay* display) {
   int y = 0;
   int x = 0;
@@ -92,12 +93,16 @@ void displayUiRelayState(OLEDDisplay* display) {
   display->setColor(WHITE);
   display->drawHorizontalLine(0, 14, display->getWidth());
 }
+#endif
 
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state) {
   displayUiSignal(display);
+
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   if (Supla::GUI::relay.size()) {
     displayUiRelayState(display);
   }
+#endif
 }
 
 void displayUiSuplaStatus(OLEDDisplay* display) {

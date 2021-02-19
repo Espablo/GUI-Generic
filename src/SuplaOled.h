@@ -40,7 +40,9 @@ int32_t getQuality();
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state);
 
 void displayUiSignal(OLEDDisplay* display);
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void displayUiRelayState(OLEDDisplay* display);
+#endif
 void displayUiSuplaStatus(OLEDDisplay* display);
 void displayUiConfigMode(OLEDDisplay* display);
 void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);

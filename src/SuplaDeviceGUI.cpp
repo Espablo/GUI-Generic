@@ -309,8 +309,8 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
 }
 #endif
 
-#if defined(SUPLA_RELAY)
 void addConditionsTurnON(int function, Supla::ChannelElement *client) {
+#if defined(SUPLA_RELAY)
   if (Supla::GUI::relay.size() == 0)
     return;
 
@@ -338,9 +338,11 @@ void addConditionsTurnON(int function, Supla::ChannelElement *client) {
       }
     }
   }
+#endif
 }
 
 void addConditionsTurnOFF(int function, Supla::ChannelElement *client) {
+#if defined(SUPLA_RELAY)
   if (Supla::GUI::relay.size() == 0)
     return;
 
@@ -368,8 +370,8 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client) {
       }
     }
   }
-}
 #endif
+}
 
 }  // namespace GUI
 }  // namespace Supla

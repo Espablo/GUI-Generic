@@ -334,9 +334,11 @@ void handleHLW8012CalibrateSave() {
   }
 
   if (calibPower && calibVoltage) {
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
     for (int i = 0; i < Supla::GUI::relay.size(); i++) {
       Supla::GUI::relay[i]->turnOn();
     }
+#endif
     Supla::GUI::counterHLW8012->calibrate(calibPower, calibVoltage);
     suplaWebpageHLW8012Calibrate(1);
   }

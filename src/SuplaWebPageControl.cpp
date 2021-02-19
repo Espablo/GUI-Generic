@@ -50,6 +50,7 @@ void SuplaWebPageControl::createWebPageControl() {
 #endif
 }
 
+#ifdef SUPLA_BUTTON
 void SuplaWebPageControl::handleControl() {
   if (!WebServer->isLoggedIn()) {
     return;
@@ -65,7 +66,7 @@ void SuplaWebPageControl::handleControlSave() {
   }
 
   uint8_t nr, last_value;
-#ifdef SUPLA_BUTTON
+
   last_value = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
@@ -85,7 +86,6 @@ void SuplaWebPageControl::handleControlSave() {
   if (strcmp(WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_BUTTON, WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str());
   }
-#endif
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -112,7 +112,6 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
   webContentBuffer += SuplaJavaScript(PATH_CONTROL);
   addForm(webContentBuffer, F("post"), PATH_SAVE_CONTROL);
 
-#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_BUTTONS));
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
@@ -133,7 +132,6 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
     }
   }
   addFormHeaderEnd(webContentBuffer);
-#endif
 
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
@@ -141,6 +139,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
 
   WebServer->sendHeaderEnd();
 }
+#endif
 
 #if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
 void SuplaWebPageControl::handleButtonSet() {
