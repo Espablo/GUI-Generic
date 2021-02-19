@@ -190,6 +190,8 @@ void SuplaWebServer::supla_webpage_reboot() {
 }
 
 void SuplaWebServer::deviceSettings(int save) {
+  WebServer->sendHeaderStart();
+
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_DEVICE_SETTINGS);
 
@@ -238,7 +240,7 @@ void SuplaWebServer::deviceSettings(int save) {
   addFormHeaderEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, "");
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 
 void SuplaWebServer::handleBoardSave() {
@@ -270,13 +272,9 @@ void SuplaWebServer::handleBoardSave() {
   }
 }
 
-void SuplaWebServer::sendContent() {
-  // httpServer->send(200, "text/html", "");
-  // const int bufferSize = 1000;
-  // String _buffer;
-  //_buffer.reserve(bufferSize);
-  // int bufferCounter = 0;
-
+void SuplaWebServer::sendHeaderStart() {
+  chunkedSendHeader = true;
+  tcpCleanup();
   httpServer->sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
   httpServer->sendHeader(F("Pragma"), F("no-cache"));
   httpServer->sendHeader(F("Expires"), F("-1"));
@@ -299,44 +297,50 @@ void SuplaWebServer::sendContent() {
 
   httpServer->sendContent(summary);
   httpServer->sendContent_P(HTTP_COPYRIGHT);
+}
 
-  // httpServer->send(200, "text/html", "");
-  /*for (int i = 0; i < fileSize; i++) {
-    _buffer += content[i];
-    bufferCounter++;
-
-    if (bufferCounter >= bufferSize) {
-      httpServer->sendContent(_buffer);
-      yield();
-      bufferCounter = 0;
-      _buffer = "";
-    }
-  }
-  if (bufferCounter > 0) {
-    httpServer->sendContent(_buffer);
-    yield();
-    bufferCounter = 0;
-    _buffer = "";
-  }*/
+void SuplaWebServer::sendHeader() {
+  if (!chunkedSendHeader)
+    return;
 
   httpServer->sendContent(webContentBuffer);
-  httpServer->sendContent_P(HTTP_RBT);
-  httpServer->chunkedResponseFinalize();
 
 #ifdef DEBUG_MODE
   Serial.printf_P(PSTR("Content size=%d\n"), webContentBuffer.length());
   Serial.printf_P(PSTR("Sent INDEX...Free mem=%d\n"), ESP.getFreeHeap());
-  checkRAM();
 #endif
+
   webContentBuffer.clear();
   webContentBuffer = String();
+  delay(0);
+}
+
+void SuplaWebServer::sendHeaderEnd() {
+  if (!chunkedSendHeader)
+    return;
+
+  WebServer->sendHeader();
+  httpServer->sendContent_P(HTTP_RBT);
+  httpServer->chunkedResponseFinalize();
+
+  tcpCleanup();
   httpServer->client().flush();
   httpServer->client().stop();
+  chunkedSendHeader = false;
+
+#ifdef DEBUG_MODE
+  checkRAM();
+#endif
+}
+
+void SuplaWebServer::sendContent() {
+  sendHeaderStart();
+  sendHeader();
+  sendHeaderEnd();
 }
 
 void SuplaWebServer::handleNotFound() {
   httpServer->sendHeader("Location", "/", true);
-  // httpServer->send(302, "text/plane", "");
 
   supla_webpage_reboot();
 }
@@ -436,3 +440,16 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
   }
   return true;
 }
+
+#if defined(ESP8266)
+
+struct tcp_pcb;
+extern struct tcp_pcb* tcp_tw_pcbs;
+extern "C" void tcp_abort(struct tcp_pcb* pcb);
+
+void tcpCleanup() {
+  while (tcp_tw_pcbs != NULL) {
+    tcp_abort(tcp_tw_pcbs);
+  }
+}
+#endif

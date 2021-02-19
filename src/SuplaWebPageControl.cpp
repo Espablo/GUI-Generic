@@ -106,6 +106,8 @@ void SuplaWebPageControl::handleControlSave() {
 void SuplaWebPageControl::supla_webpage_control(int save) {
   uint8_t nr, countFreeGpio;
 
+  WebServer->sendHeaderStart();
+
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_CONTROL);
   addForm(webContentBuffer, F("post"), PATH_SAVE_CONTROL);
@@ -137,7 +139,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 
 #if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
@@ -285,6 +287,8 @@ void SuplaWebPageControl::handleLimitSwitchSave() {
 void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
   uint8_t nr, countFreeGpio;
 
+  WebServer->sendHeaderStart();
+
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_SWITCH);
   addForm(webContentBuffer, F("post"), PATH_SAVE_SWITCH);
@@ -314,7 +318,7 @@ void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 #endif
 

@@ -52,27 +52,17 @@
 
 extern String webContentBuffer;
 
-/*// https://www.esp8266.com/viewtopic.php?p=84249#p84249
-class MyWebServer : public ESP8266WebServer {
- public:
-  virtual ~MyWebServer() {
-    if (this->_currentArgs) {
-      delete[] this->_currentArgs;
-      this->_currentArgs = nullptr;
-    }
-
-    if (this->_postArgs) {
-      delete[] this->_postArgs;
-      this->_postArgs = nullptr;
-    }
-  }
-};*/
-
 class SuplaWebServer : public Supla::Element {
  public:
   SuplaWebServer();
   void begin();
   void supla_webpage_start(int save);
+
+  bool chunkedSendHeader = false;
+  void sendHeaderStart();
+  void sendHeader();
+  void sendHeaderEnd();
+
   void sendContent();
 
   ESP8266WebServer* httpServer;
@@ -100,4 +90,16 @@ class SuplaWebServer : public Supla::Element {
 
   void handleNotFound();
 };
+
+#if defined(ESP8266)
+#include <md5.h>
+#endif
+#if defined(ESP8266)
+
+struct tcp_pcb;
+extern struct tcp_pcb* tcp_tw_pcbs;
+extern "C" void tcp_abort(struct tcp_pcb* pcb);
+
+void tcpCleanup();
+#endif
 #endif  // SuplaWebServer_h

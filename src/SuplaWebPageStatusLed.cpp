@@ -47,6 +47,7 @@ void handleStatusLedSave() {
 void webStatusLed(int save) {
   uint8_t nr, selected;
 
+  WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_LED);
   addForm(webContentBuffer, F("post"), PATH_SAVE_LED);
@@ -64,6 +65,5 @@ void webStatusLed(int save) {
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
-
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }

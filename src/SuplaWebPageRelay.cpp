@@ -100,6 +100,8 @@ void SuplaWebPageRelay::handleRelaySave() {
 void SuplaWebPageRelay::supla_webpage_relay(int save) {
   uint8_t nr, countFreeGpio;
 
+  WebServer->sendHeaderStart();
+  
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_RELAY);
 
@@ -107,7 +109,7 @@ void SuplaWebPageRelay::supla_webpage_relay(int save) {
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_RELAYS);
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
-    countFreeGpio = 16;
+    countFreeGpio = 32;
   }
   else {
     countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_RELAY);
@@ -129,7 +131,7 @@ void SuplaWebPageRelay::supla_webpage_relay(int save) {
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 
 void SuplaWebPageRelay::handleRelaySet() {

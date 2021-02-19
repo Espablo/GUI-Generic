@@ -260,6 +260,7 @@ void addListBox(String& html, const String& input_id, const String& name, const 
     }
     html += FPSTR(array_P[suported]);
   }
+  WebServer->sendHeader();
   html += F("</select></i>");
 }
 
@@ -345,6 +346,7 @@ void addListGPIOSelect(String& html, const String& input_id, uint8_t function, u
       html += FPSTR(GPIO_P[suported]);
     }
   }
+  WebServer->sendHeader();
   html += F("</select>");
 }
 
@@ -369,6 +371,7 @@ void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function,
       html += FPSTR(GPIO_MCP23017_P[suported]);
     }
   }
+  WebServer->sendHeader();
   html += F("</select>");
 }
 
