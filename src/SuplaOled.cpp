@@ -1,5 +1,9 @@
 #include "SuplaOled.h"
 #include "SuplaDeviceGUI.h"
+#include "CharsetConverter.h"
+#include "ArialMT_Win1250_Plain_10.h"
+#include "ArialMT_Win1250_Plain_16.h"
+#include "ArialMT_Win1250_Plain_24.h"
 
 #ifdef SUPLA_OLED
 
@@ -52,7 +56,7 @@ void displayUiSignal(OLEDDisplay* display) {
   display->fillRect(x, y, x + 46, 16);
   display->setColor(WHITE);
   if (value == -1) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + 1, y, "x");
   }
   else {
@@ -75,7 +79,7 @@ void displayUiRelayState(OLEDDisplay* display) {
   int y = 0;
   int x = 0;
 
-  display->setFont(ArialMT_Plain_10);
+  display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   for (int i = 0; i < Supla::GUI::relay.size(); i++) {
     if (Supla::GUI::relay[i]->isOn()) {
@@ -112,7 +116,7 @@ void displayUiSuplaStatus(OLEDDisplay* display) {
 
   displayUiSignal(display);
 
-  display->setFont(ArialMT_Plain_10);
+  display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setColor(WHITE);
   display->drawStringMaxWidth(x, y, display->getWidth(), ConfigESP->supla_status.msg);
@@ -121,7 +125,7 @@ void displayUiSuplaStatus(OLEDDisplay* display) {
 
 void displayConfigMode(OLEDDisplay* display) {
   display->clear();
-  display->setFont(ArialMT_Plain_10);
+  display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setColor(WHITE);
   display->drawString(0, 15, F("Tryb konfiguracyjny"));
@@ -134,7 +138,7 @@ void displayConfigMode(OLEDDisplay* display) {
 void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
   // display->drawXbm(10, 17, supla_logo_width, supla_logo_height, supla_logo_bits);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(10, display->getHeight() / 2, F("SUPLA"));
 }
 
@@ -159,13 +163,13 @@ void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16
   }
 
   if (name != NULL) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
-  display->setFont(ArialMT_Plain_24);
+  display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + temp_width, y + drawStringIcon, getTempString(temp));
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(x + temp_width + (getTempString(temp).length() * 12), y + drawStringIcon, "ºC");
 }
 
@@ -189,13 +193,13 @@ void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x
   }
 
   if (name != NULL) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
-  display->setFont(ArialMT_Plain_24);
+  display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + humidity_width, y + drawStringIcon, getHumidityString(humidity));
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(x + humidity_width + (getHumidityString(humidity).length() * 12), y + drawStringIcon, "%");
 }
 
@@ -219,13 +223,13 @@ void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t 
   }
 
   if (name != NULL) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
-  display->setFont(ArialMT_Plain_24);
+  display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + pressure_width, y + drawStringIcon, getPressureString(pressure));
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(x + pressure_width + (getPressureString(pressure).length() * 14), y + drawStringIcon, "hPa");
 }
 
@@ -369,6 +373,7 @@ SuplaOled::SuplaOled() {
 
     display->setBrightness(255);
     display->flipScreenVertically();
+    display->setFontTableLookupFunction(&utf8win1250);
   }
 }
 
