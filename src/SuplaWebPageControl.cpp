@@ -116,7 +116,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_BUTTONS));
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
-    countFreeGpio = 16;
+    countFreeGpio = 32;
   }
   else {
     countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_BUTTON);
@@ -296,7 +296,7 @@ void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_LIMIT_SWITCH));
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
-    countFreeGpio = 16;
+    countFreeGpio = 32;
   }
   else {
     countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH);
@@ -374,14 +374,11 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   input = INPUT_BUTTON_ACTION;
   action = WebServer->httpServer->arg(input).toInt();
 
-  address = ConfigESP->getAdressMCP23017(1, FUNCTION_BUTTON);
   for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
     key = KEY_GPIO + gpio;
-    if (ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(address)).toInt() == FUNCTION_BUTTON) {
-      ConfigManager->setElement(key, LEVEL_BUTTON, level);
-      ConfigManager->setElement(key, EVENT_BUTTON, event);
-      ConfigManager->setElement(key, ACTION_BUTTON, action);
-    }
+    ConfigManager->setElement(key, LEVEL_BUTTON, level);
+    ConfigManager->setElement(key, EVENT_BUTTON, event);
+    ConfigManager->setElement(key, ACTION_BUTTON, action);
   }
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:

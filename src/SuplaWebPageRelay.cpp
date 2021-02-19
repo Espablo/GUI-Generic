@@ -101,7 +101,7 @@ void SuplaWebPageRelay::supla_webpage_relay(int save) {
   uint8_t nr, countFreeGpio;
 
   WebServer->sendHeaderStart();
-  
+
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_RELAY);
 
@@ -360,13 +360,10 @@ void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {
   input = INPUT_RELAY_LEVEL;
   level = WebServer->httpServer->arg(input).toInt();
 
-  address = ConfigESP->getAdressMCP23017(1, FUNCTION_RELAY);
   for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
     key = KEY_GPIO + gpio;
-    if (ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(address)).toInt() == FUNCTION_RELAY) {
-      ConfigManager->setElement(key, MEMORY, memory);
-      ConfigManager->setElement(key, LEVEL_RELAY, level);
-    }
+    ConfigManager->setElement(key, MEMORY, memory);
+    ConfigManager->setElement(key, LEVEL_RELAY, level);
   }
 
 #if defined(SUPLA_PUSHOVER)

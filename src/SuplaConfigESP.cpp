@@ -259,7 +259,6 @@ int SuplaConfigESP::getGpio(int nr, int function) {
 // Pin 116 - 131"
 #ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-      
       switch (getAdressMCP23017(nr, function)) {
         case 0:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function &&
@@ -501,7 +500,7 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   return count;
 }
 
-bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t function) {
+bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function) {
   if (gpio == OFF_GPIO) {
     return true;
   }
@@ -510,7 +509,12 @@ bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t function) {
   }
   else {
     uint8_t key = KEY_GPIO + gpio;
-    uint8_t address = ConfigESP->getAdressMCP23017(1, function);
+    uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
+
+    if (nr <= 16)
+      address = ConfigESP->getAdressMCP23017(1, function);
+    if (nr >= 17)
+      address = ConfigESP->getAdressMCP23017(17, function);
 
     if (address == OFF_MCP23017) {
       return true;

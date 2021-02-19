@@ -86,7 +86,6 @@ void addRelayButton(uint8_t nr) {
     relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinButton != OFF_GPIO) {
-      Serial.println(ConfigESP->getLevel(nr, FUNCTION_BUTTON));
       auto button = new Supla::Control::Button(pinButton, ConfigESP->getLevel(nr, FUNCTION_BUTTON));
 
       button->addAction(ConfigESP->getAction(nr, FUNCTION_BUTTON), *relay[size], ConfigESP->getEvent(nr, FUNCTION_BUTTON));
@@ -130,6 +129,7 @@ void addRelayButton(uint8_t nr) {
     }
 #endif
   }
+  delay(0);
 }
 #endif
 
@@ -191,6 +191,7 @@ void addRolleShutter(uint8_t nr) {
   if (pinLedDown != OFF_GPIO) {
     new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, !levelLed);
   }
+  delay(0);
 }
 
 void addRolleShutterMomentary(uint8_t nr) {
@@ -226,6 +227,7 @@ void addRolleShutterMomentary(uint8_t nr) {
   if (pinLedDown != OFF_GPIO) {
     new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, !levelLed);
   }
+  delay(0);
 }
 #endif
 

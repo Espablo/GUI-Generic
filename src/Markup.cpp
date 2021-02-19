@@ -185,9 +185,14 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
 }
 
 void addListMCP23017GPIOLinkBox(String& html, const String& input_id, const String& name, uint8_t function, const String& url, uint8_t nr) {
+  uint8_t address;
   if (nr == 1) {
-    uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
-    addListLinkBox(html, INPUT_ADRESS_MCP23017, F("MCP23017 Adres"), MCP23017_P, 5, address, url);
+    address = ConfigESP->getAdressMCP23017(nr, function);
+    addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 1"), MCP23017_P, 5, address, url);
+  }
+  if (nr == 17) {
+    address = ConfigESP->getAdressMCP23017(nr, function);
+    addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 2"), MCP23017_P, 5, address);
   }
 
   html += F("<i><label>");
@@ -359,7 +364,7 @@ void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function,
   uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
 
   for (uint8_t suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpioMCP23017(suported, function) || selected == suported) {
+    if (ConfigESP->checkBusyGpioMCP23017(suported, nr, function) || selected == suported) {
       html += F("<option value='");
       html += suported;
       if (selected == suported) {
