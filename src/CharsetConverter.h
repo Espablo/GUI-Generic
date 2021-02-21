@@ -1,7 +1,7 @@
 #ifndef CHARSETCONVERTER_H
 #define CHARSETCONVERTER_H
 
-#include <arduino.h>
+#include <Arduino.h>
 
 char utf8win1250(const uint8_t ch);
 

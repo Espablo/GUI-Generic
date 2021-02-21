@@ -5,7 +5,7 @@
 #define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
 #endif
 
-#define USE_CUSTOM
+// #define USE_CUSTOM
 
 // User configuration
 #ifdef USE_CUSTOM

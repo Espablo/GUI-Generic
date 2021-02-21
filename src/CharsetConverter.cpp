@@ -1,4 +1,4 @@
-#include <arduino.h>
+#include <Arduino.h>
 #include "CharsetConverter.h"
 
 // In ESP8266 Arduino core v2.3.0 missing bsearch: https://github.com/esp8266/Arduino/issues/2314
