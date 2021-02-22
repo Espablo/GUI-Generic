@@ -26,8 +26,18 @@ void HJ101::onInit() {
 }
 
 void HJ101::readValuesFromDevice() {
-  energy = _energy +
-           (hj101->getEnergy() / 36);  // current energy value = value at start
+  for (auto element = Supla::Element::begin(); element != nullptr;
+       element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_RELAY) {
+        if (channel->getValueBool()) {
+          energy = _energy + (hj101->getEnergy() /
+                              36);  // current energy value = value at start
+        }
+      }
+    }
+  }
 
   unsigned int _reactive = 0;
   double _pf = 0;
@@ -83,16 +93,22 @@ void HJ101::onLoadState() {
   if (Supla::Storage::ReadState((unsigned char *)&current_multiplier,
                                 sizeof(current_multiplier))) {
     setCurrentMultiplier(current_multiplier);
+  } else {
+    setCurrentMultiplier(18388);
   }
 
   if (Supla::Storage::ReadState((unsigned char *)&voltage_multiplier,
                                 sizeof(voltage_multiplier))) {
     setVoltageMultiplier(voltage_multiplier);
+  } else {
+    setVoltageMultiplier(247704);
   }
 
   if (Supla::Storage::ReadState((unsigned char *)&power_multiplier,
                                 sizeof(power_multiplier))) {
     setPowerMultiplier(power_multiplier);
+  } else {
+    setPowerMultiplier(2586583);
   }
 }
 
