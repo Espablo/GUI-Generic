@@ -1,4 +1,4 @@
-#include "hj101.h"
+#include "HJ101.h"
 
 namespace Supla {
 namespace Sensor {

@@ -52,7 +52,7 @@ void displayUiSignal(OLEDDisplay* display) {
   display->fillRect(x, y, x + 46, 16);
   display->setColor(WHITE);
   if (value == -1) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + 1, y, "x");
   }
   else {
@@ -75,7 +75,7 @@ void displayUiRelayState(OLEDDisplay* display) {
   int y = 0;
   int x = 0;
 
-  display->setFont(ArialMT_Plain_10);
+  display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   for (int i = 0; i < Supla::GUI::relay.size(); i++) {
     if (Supla::GUI::relay[i]->isOn()) {
@@ -112,7 +112,7 @@ void displayUiSuplaStatus(OLEDDisplay* display) {
 
   displayUiSignal(display);
 
-  display->setFont(ArialMT_Plain_10);
+  display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setColor(WHITE);
   display->drawStringMaxWidth(x, y, display->getWidth(), ConfigESP->supla_status.msg);
@@ -121,7 +121,7 @@ void displayUiSuplaStatus(OLEDDisplay* display) {
 
 void displayConfigMode(OLEDDisplay* display) {
   display->clear();
-  display->setFont(ArialMT_Plain_10);
+  display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setColor(WHITE);
   display->drawString(0, 15, F("Tryb konfiguracyjny"));
@@ -134,7 +134,7 @@ void displayConfigMode(OLEDDisplay* display) {
 void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
   // display->drawXbm(10, 17, supla_logo_width, supla_logo_height, supla_logo_bits);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(10, display->getHeight() / 2, F("SUPLA"));
 }
 
@@ -159,13 +159,13 @@ void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16
   }
 
   if (name != NULL) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
-  display->setFont(ArialMT_Plain_24);
+  display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + temp_width, y + drawStringIcon, getTempString(temp));
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(x + temp_width + (getTempString(temp).length() * 12), y + drawStringIcon, "ºC");
 }
 
@@ -189,13 +189,13 @@ void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x
   }
 
   if (name != NULL) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
-  display->setFont(ArialMT_Plain_24);
+  display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + humidity_width, y + drawStringIcon, getHumidityString(humidity));
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(x + humidity_width + (getHumidityString(humidity).length() * 12), y + drawStringIcon, "%");
 }
 
@@ -219,13 +219,13 @@ void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t 
   }
 
   if (name != NULL) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
-  display->setFont(ArialMT_Plain_24);
+  display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + pressure_width, y + drawStringIcon, getPressureString(pressure));
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(x + pressure_width + (getPressureString(pressure).length() * 14), y + drawStringIcon, "hPa");
 }
 
@@ -369,6 +369,7 @@ SuplaOled::SuplaOled() {
 
     display->setBrightness(255);
     display->flipScreenVertically();
+    display->setFontTableLookupFunction(&utf8win1250);
   }
 }
 
@@ -423,4 +424,79 @@ void SuplaOled::handleAction(int event, int action) {
     oledON = true;
   }
 }
+
+// In ESP8266 Arduino core v2.3.0 missing bsearch: https://github.com/esp8266/Arduino/issues/2314
+// Part of GNU C Library
+void * gnu_c_bsearch (const void *key, const void *base, size_t nmemb, size_t size, int (*compar) (const void *, const void *)) {
+  size_t l, u, idx;
+  const void *p;
+  int comparison;
+
+  l = 0;
+  u = nmemb;
+  while (l < u) {
+    idx = (l + u) / 2;
+
+    p = (void *) (((const char *) base) + (idx * size));
+    comparison = (*compar) (key, p);
+    if (comparison < 0)
+      u = idx;
+    else if (comparison > 0)
+      l = idx + 1;
+    else
+      return (void *) p;
+  }
+
+  return NULL;
+}
+
+// compare function for bsearch
+int charset_table_cmp(const void* p_key, const void* p_item) {
+  const uint16_t key = *(uint16_t *) p_key;
+  const uint16_t item = (*((char *) p_item)) << 8 | *(((char *) p_item) + 1);
+
+  if (key < item) return -1;
+  else if (key == item) return 0;
+  else return 1;
+}
+
+// convert utf-8 character to windows-1250
+// if utf-8 char continue with next byte, returns 0, otherwise windows-1250 char
+// for unconvertable char returns 0
+char utf8win1250(const uint8_t ch) {
+  static uint16_t uChar;
+  static uint8_t len;
+  char *found;
+
+  if ((ch & 0x80) == 0x00) {
+    uChar = len = 0;
+    return ch;
+  } else if ((ch & 0xE0) == 0xC0) {
+    uChar = ch & 0x1F; len = 1;
+    return 0;
+  } else if ((ch & 0xF0) == 0xE0) {
+    uChar = ch & 0x0F; len = 2;
+    return 0;
+  } else if ((ch & 0xF8) == 0xF0) {
+    uChar = ch & 0x07; len = 3;
+    return 0;
+  } else if ((ch & 0xC0) == 0x80 && len > 0) {
+    uChar = (uChar << 6) | (ch & 0x7F); len--;
+    if (len > 0)
+      return 0;
+  } else {
+    uChar = len = 0;
+    return 0;
+  }
+
+  found = (char*) gnu_c_bsearch(&uChar, utf8_win1250_table + 1, utf8_win1250_table[0], 3 * sizeof(char), charset_table_cmp);
+
+  if (found != NULL) {
+    uChar = len = 0;
+    return *(found + 2); // return win1250 char at 3rd position;
+  }
+
+  return 0;
+}
+
 #endif

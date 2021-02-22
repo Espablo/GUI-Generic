@@ -30,7 +30,9 @@ String webContentBuffer;
 
 SuplaWebServer::SuplaWebServer() {
   httpServer = new ESP8266WebServer(80);
+#ifdef SUPLA_OTA
   httpUpdater = new ESP8266HTTPUpdateServer();
+#endif
 }
 
 void SuplaWebServer::begin() {
