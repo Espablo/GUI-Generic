@@ -170,10 +170,6 @@ void SuplaWebServer::supla_webpage_start(int save) {
   }
 #endif
 
-#ifdef SUPLA_DS18B20
-  WebPageSensor->showDS18B20(true);
-#endif
-
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
 
