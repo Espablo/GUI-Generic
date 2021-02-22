@@ -17,7 +17,6 @@
 #include <ESP8266WiFi.h>
 
 #include "SuplaConfigESP.h"
-#include "SuplaConfigManager.h"
 #include "SuplaDeviceGUI.h"
 #include "GUIGenericCommon.h"
 #include "SuplaWebPageSensor.h"
@@ -422,46 +421,54 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   }
 }
 
-void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function, int level, int memory, int action, int event) {
-  uint8_t _key, _level, _memory, _action, _event;
-  _key = KEY_GPIO + gpio;
+void SuplaConfigESP::setLevel(uint8_t gpio, int level, uint8_t function) {
+  uint8_t key = KEY_GPIO + gpio;
+
+  if (function == FUNCTION_BUTTON) {
+    ConfigManager->setElement(key, LEVEL_BUTTON, level);
+  }
+  else {
+    ConfigManager->setElement(key, LEVEL_RELAY, level);
+  }
+}
+void SuplaConfigESP::setMemory(uint8_t gpio, int memory) {
+  uint8_t key = KEY_GPIO + gpio;
+
+  ConfigManager->setElement(key, MEMORY, memory);
+}
+
+void SuplaConfigESP::setAction(uint8_t gpio, int action) {
+  uint8_t key = KEY_GPIO + gpio;
+
+  ConfigManager->setElement(key, ACTION_BUTTON, action);
+}
+void SuplaConfigESP::setEvent(uint8_t gpio, int event) {
+  uint8_t key = KEY_GPIO + gpio;
+
+  ConfigManager->setElement(key, EVENT_BUTTON, event);
+}
+
+void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
+  uint8_t key, level, memory, action, event;
+  key = KEY_GPIO + gpio;
 
   if (function == FUNCTION_CFG_BUTTON) {
-    ConfigManager->setElement(_key, CFG, 1);
+    ConfigManager->setElement(key, CFG, 1);
     return;
   }
 
-  ConfigManager->setElement(_key, NR, nr);
-  ConfigManager->setElement(_key, FUNCTION, function);
+  ConfigManager->setElement(key, NR, nr);
+  ConfigManager->setElement(key, FUNCTION, function);
 
-  if (level == -1)
-    _level = ConfigESP->getLevel(nr, function);
-  else
-    _level = level;
-  if (memory == -1)
-    _memory = ConfigESP->getMemory(nr, function);
-  else
-    _memory = memory;
+  level = ConfigESP->getLevel(nr, function);
+  memory = ConfigESP->getMemory(nr, function);
+  action = ConfigESP->getAction(nr, function);
+  event = ConfigESP->getEvent(nr, function);
 
-  if (action == -1)
-    _action = ConfigESP->getAction(nr, function);
-  else
-    _action = action;
-
-  if (event == -1)
-    _event = ConfigESP->getEvent(nr, function);
-  else
-    _event = event;
-
-  if (function == FUNCTION_BUTTON) {
-    ConfigManager->setElement(_key, LEVEL_BUTTON, _level);
-    ConfigManager->setElement(_key, ACTION_BUTTON, _action);
-    ConfigManager->setElement(_key, EVENT_BUTTON, _event);
-  }
-  if (function == FUNCTION_RELAY) {
-    ConfigManager->setElement(_key, LEVEL_RELAY, _level);
-    ConfigManager->setElement(_key, MEMORY, _memory);
-  }
+  setLevel(gpio, level, function);
+  setMemory(gpio, memory);
+  setAction(gpio, action);
+  setEvent(gpio, event);
 }
 
 void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {

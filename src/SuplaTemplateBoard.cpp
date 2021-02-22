@@ -5,14 +5,17 @@
 void addButton(uint8_t gpio, uint8_t event) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   nr++;
-  ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON, -1, -1, -1, event);
+  ConfigESP->setEvent(gpio, event);
+  ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
   ConfigManager->set(KEY_MAX_BUTTON, nr++);
 }
 
 void addRelay(uint8_t gpio, uint8_t level) {
   uint8_t nr = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   nr++;
-  ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY, level, MEMORY_RELAY_RESTORE);
+  ConfigESP->setLevel(gpio, level, FUNCTION_RELAY);
+  ConfigESP->setMemory(gpio, MEMORY_RELAY_RESTORE);
+  ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY);
   ConfigManager->set(KEY_MAX_RELAY, nr++);
 }
 
@@ -20,12 +23,12 @@ void addLimitSwitch(uint8_t gpio) {
   uint8_t nr = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
   nr++;
   ConfigESP->setGpio(gpio, nr, FUNCTION_LIMIT_SWITCH);
-  ConfigESP->setGpio(4, 1, FUNCTION_LIMIT_SWITCH);
   ConfigManager->set(KEY_MAX_LIMIT_SWITCH, nr++);
 }
 
 void addLedCFG(uint8_t gpio, uint8_t level) {
-  ConfigESP->setGpio(gpio, FUNCTION_CFG_LED, level);
+  ConfigESP->setLevel(gpio, level);
+  ConfigESP->setGpio(gpio, FUNCTION_CFG_LED);
 }
 
 void addLed(uint8_t gpio) {

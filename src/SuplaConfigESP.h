@@ -21,6 +21,7 @@
 #include <supla/triggerable.h>
 #include <supla/element.h>
 #include "GUI-Generic_Config.h"
+#include "SuplaConfigManager.h"
 
 #include <cont.h>
 #include <user_interface.h>
@@ -84,7 +85,12 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   int checkBusyGpio(int gpio, int function);
   uint8_t countFreeGpio(uint8_t exception = 0);
 
-  void setGpio(uint8_t gpio, uint8_t nr, uint8_t function, int level = -1, int memory = -1, int action = -1, int event = -1);
+  void setLevel(uint8_t gpio, int level, uint8_t function = FUNCTION_RELAY);
+  void setMemory(uint8_t gpio, int memory);
+  void setAction(uint8_t gpio, int action);
+  void setEvent(uint8_t gpio, int event);
+
+  void setGpio(uint8_t gpio, uint8_t nr, uint8_t function);
   void setGpio(uint8_t gpio, uint8_t function) {
     setGpio(gpio, 1, function);
   }
