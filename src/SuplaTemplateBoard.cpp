@@ -1,10 +1,11 @@
 #include "SuplaTemplateBoard.h"
 #include "SuplaWebPageRelay.h"
-#include <supla/events.h>
 
 void addButton(uint8_t gpio, uint8_t event) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   nr++;
+  ConfigESP->setLevel(gpio, HIGH, FUNCTION_BUTTON);
+  ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
   ConfigESP->setEvent(gpio, event);
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
   ConfigManager->set(KEY_MAX_BUTTON, nr++);
