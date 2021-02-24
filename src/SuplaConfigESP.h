@@ -82,13 +82,15 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
     return getLevel(1, function);
   }
   int getPullUp(int nr, int function);
-  
+
   bool checkBusyCfg(int gpio);
   int checkBusyGpio(int gpio, int function);
   uint8_t countFreeGpio(uint8_t exception = 0);
 
-  void setLevel(uint8_t gpio, int level, uint8_t function = FUNCTION_RELAY);
+  void setLevel(uint8_t gpio, int level);
   void setMemory(uint8_t gpio, int memory);
+
+  void setPullUp(uint8_t gpio, int pullup);
   void setAction(uint8_t gpio, int action);
   void setEvent(uint8_t gpio, int event);
 

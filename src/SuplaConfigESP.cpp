@@ -438,20 +438,19 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   }
 }
 
-void SuplaConfigESP::setLevel(uint8_t gpio, int level, uint8_t function) {
+void SuplaConfigESP::setLevel(uint8_t gpio, int level) {
   uint8_t key = KEY_GPIO + gpio;
-
-  if (function == FUNCTION_BUTTON) {
-    ConfigManager->setElement(key, PULL_UP_BUTTON, level);
-  }
-  else {
-    ConfigManager->setElement(key, LEVEL_RELAY, level);
-  }
+  ConfigManager->setElement(key, LEVEL_RELAY, level);
 }
 void SuplaConfigESP::setMemory(uint8_t gpio, int memory) {
   uint8_t key = KEY_GPIO + gpio;
 
   ConfigManager->setElement(key, MEMORY, memory);
+}
+
+void SuplaConfigESP::setPullUp(uint8_t gpio, int pullup) {
+  uint8_t key = KEY_GPIO + gpio;
+  ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);
 }
 
 void SuplaConfigESP::setAction(uint8_t gpio, int action) {
@@ -466,7 +465,7 @@ void SuplaConfigESP::setEvent(uint8_t gpio, int event) {
 }
 
 void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
-  uint8_t key, level, memory, action, event;
+  uint8_t key;
   key = KEY_GPIO + gpio;
 
   if (function == FUNCTION_CFG_BUTTON) {
@@ -477,15 +476,11 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
   ConfigManager->setElement(key, NR, nr);
   ConfigManager->setElement(key, FUNCTION, function);
 
-  level = ConfigESP->getLevel(nr, function);
-  memory = ConfigESP->getMemory(nr, function);
-  action = ConfigESP->getAction(nr, function);
-  event = ConfigESP->getEvent(nr, function);
-
-  setLevel(gpio, level, function);
-  setMemory(gpio, memory);
-  setAction(gpio, action);
-  setEvent(gpio, event);
+  setLevel(gpio, ConfigESP->getLevel(nr, function));
+  setMemory(gpio, ConfigESP->getMemory(nr, function));
+  setPullUp(gpio, ConfigESP->getPullUp(nr, function));
+  setAction(gpio, ConfigESP->getAction(nr, function));
+  setEvent(gpio, ConfigESP->getEvent(nr, function));
 }
 
 void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {

@@ -4,7 +4,7 @@
 void addButton(uint8_t gpio, uint8_t event) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   nr++;
-  ConfigESP->setLevel(gpio, HIGH, FUNCTION_BUTTON);
+  ConfigESP->setPullUp(gpio, HIGH);
   ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
   ConfigESP->setEvent(gpio, event);
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
@@ -14,7 +14,7 @@ void addButton(uint8_t gpio, uint8_t event) {
 void addRelay(uint8_t gpio, uint8_t level) {
   uint8_t nr = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
   nr++;
-  ConfigESP->setLevel(gpio, level, FUNCTION_RELAY);
+  ConfigESP->setLevel(gpio, level);
   ConfigESP->setMemory(gpio, MEMORY_RELAY_RESTORE);
   ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY);
   ConfigManager->set(KEY_MAX_RELAY, nr++);
