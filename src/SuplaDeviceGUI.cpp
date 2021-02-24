@@ -88,7 +88,7 @@ void addRelayButton(uint8_t nr) {
     relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinButton != OFF_GPIO) {
-      auto button = new Supla::Control::Button(pinButton, ConfigESP->getLevel(nr, FUNCTION_BUTTON));
+      auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(nr, FUNCTION_BUTTON), true);
 
       button->addAction(ConfigESP->getAction(nr, FUNCTION_BUTTON), *relay[size], ConfigESP->getEvent(nr, FUNCTION_BUTTON));
       button->setSwNoiseFilterDelay(50);

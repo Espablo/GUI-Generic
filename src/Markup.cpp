@@ -100,6 +100,20 @@ void addTextBoxPassword(String& html, const String& input_id, const String& name
   return addTextBox(html, input_id, name, value_key, "", minlength, maxlength, required, false, true);
 }
 
+void addCheckBox(String& html, const String& input_id, const String& name, bool checked) {
+  html += F("<i><label>");
+  html += name;
+  html += F("</label><input type='checkbox' name='");
+  html += input_id;
+  if (checked) {
+    html += F("' checked>");
+  }
+  else {
+    html += F("'>");
+  }
+  html += F("</i>");
+}
+
 void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, uint16_t max) {
   html += F("<i><label>");
   html += name;

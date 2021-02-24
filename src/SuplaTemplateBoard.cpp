@@ -87,8 +87,8 @@ void chooseTemplateBoard(uint8_t board) {
     case BOARD_INCAN3:
       addLedCFG(2, LOW);
       addButtonCFG(0);
-      addButton(14, Supla::ON_CHANGE);
-      addButton(12, Supla::ON_CHANGE);
+      addButton(14, Supla::Event::ON_CHANGE);
+      addButton(12, Supla::Event::ON_CHANGE);
       addRelay(5);
       addRelay(13);
       addLimitSwitch(4);
@@ -97,8 +97,8 @@ void chooseTemplateBoard(uint8_t board) {
     case BOARD_INCAN4:
       addLedCFG(12);
       addButtonCFG(0);
-      addButton(2, Supla::ON_CHANGE);
-      addButton(10, Supla::ON_CHANGE);
+      addButton(2, Supla::Event::ON_CHANGE);
+      addButton(10, Supla::Event::ON_CHANGE);
       addRelay(4);
       addRelay(14);
       addLimitSwitch(4);
@@ -202,21 +202,21 @@ void chooseTemplateBoard(uint8_t board) {
     case BOARD_YUNSHAN:
       addLedCFG(2, LOW);
       addButtonCFG(0);
-      addButton(3, Supla::ON_CHANGE);
+      addButton(3, Supla::Event::ON_CHANGE);
       addRelay(4);
       break;
 
     case BOARD_YUNTONG_SMART:
       addLedCFG(15);
       addButtonCFG(12);
-      addButton(12, Supla::ON_CHANGE);
+      addButton(12, Supla::Event::ON_CHANGE);
       addRelay(4);
       break;
 
     case BOARD_GOSUND_SP111:
       addLedCFG(2, LOW);
       addButtonCFG(13);
-      addButton(13, Supla::ON_RELEASE);
+      addButton(13);
       addRelay(15);
       addLed(0);
 #ifdef SUPLA_HLW8012
