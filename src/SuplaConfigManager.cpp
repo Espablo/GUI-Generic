@@ -174,7 +174,7 @@ SuplaConfigManager::SuplaConfigManager() {
   uint8_t nr, key;
   for (nr = 0; nr <= MAX_GPIO; nr++) {
     key = KEY_GPIO + nr;
-    this->addKey(key, "", SETTINGSCOUNT * 2);
+    this->addKey(key, "", 16 * 2);
   }
 
   this->addKey(KEY_LEVEL_LED, "0", 1);

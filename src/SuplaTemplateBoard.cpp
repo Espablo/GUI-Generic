@@ -4,7 +4,8 @@
 void addButton(uint8_t gpio, uint8_t event) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   nr++;
-  ConfigESP->setPullUp(gpio, HIGH);
+  ConfigESP->setPullUp(gpio, true);
+  ConfigESP->setInversed(gpio, true);
   ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
   ConfigESP->setEvent(gpio, event);
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);

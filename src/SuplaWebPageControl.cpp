@@ -173,6 +173,15 @@ void SuplaWebPageControl::handleButtonSaveSet() {
   gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
   key = KEY_GPIO + gpio;
 
+  input = INPUT_BUTTON_INVERSED;
+  input += nr_button;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(key, INVERSED_BUTTON, 1);
+  }
+  else {
+    ConfigManager->setElement(key, INVERSED_BUTTON, 0);
+  }
+
   input = INPUT_RELAY_LEVEL;
   input += nr_button;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
@@ -227,6 +236,9 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
 
   selected = ConfigESP->getPullUp(nr_button.toInt(), FUNCTION_BUTTON);
   addCheckBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_button, "Pull-UP", selected);
+
+  selected = ConfigESP->getInversed(nr_button.toInt(), FUNCTION_BUTTON);
+  addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED + nr_button, "Odwrócony", selected);
 
   selected = ConfigESP->getEvent(nr_button.toInt(), FUNCTION_BUTTON);
   addListBox(webContentBuffer, INPUT_BUTTON_EVENT + nr_button, S_REACTION_TO, TRIGGER_P, 3, selected);
@@ -345,6 +357,9 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   selected = ConfigESP->getPullUp(1, FUNCTION_BUTTON);
   addCheckBox(webContentBuffer, INPUT_RELAY_LEVEL, "Pull-UP", selected);
 
+  selected = ConfigESP->getInversed(1, FUNCTION_BUTTON);
+  addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, "Odwrócony", selected);
+
   selected = ConfigESP->getEvent(1, FUNCTION_BUTTON);
   addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
 
@@ -365,7 +380,7 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   }
 
   String input;
-  uint8_t key, gpio, pullup, event, action, address;
+  uint8_t key, gpio, pullup, inversed, event, action, address;
 
   input.reserve(10);
 
@@ -375,12 +390,16 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   input = INPUT_RELAY_LEVEL;
   pullup = WebServer->httpServer->arg(input).toInt();
 
+  input = INPUT_BUTTON_INVERSED;
+  inversed = WebServer->httpServer->arg(input).toInt();
+
   input = INPUT_BUTTON_ACTION;
   action = WebServer->httpServer->arg(input).toInt();
 
   for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
     key = KEY_GPIO + gpio;
     ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);
+    ConfigManager->setElement(key, INVERSED_BUTTON, inversed);
     ConfigManager->setElement(key, EVENT_BUTTON, event);
     ConfigManager->setElement(key, ACTION_BUTTON, action);
   }

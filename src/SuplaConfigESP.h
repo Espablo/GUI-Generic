@@ -82,6 +82,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
     return getLevel(1, function);
   }
   int getPullUp(int nr, int function);
+  int getInversed(int nr, int function);
 
   bool checkBusyCfg(int gpio);
   int checkBusyGpio(int gpio, int function);
@@ -91,6 +92,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void setMemory(uint8_t gpio, int memory);
 
   void setPullUp(uint8_t gpio, int pullup);
+  void setInversed(uint8_t gpio, int inversed);
   void setAction(uint8_t gpio, int action);
   void setEvent(uint8_t gpio, int event);
 

@@ -13,6 +13,7 @@
 #define INPUT_TRIGGER           "trs"
 #define INPUT_BUTTON_SET        "bts"
 #define INPUT_BUTTON_GPIO       "btg"
+#define INPUT_BUTTON_INVERSED   "ibi"
 #define INPUT_BUTTON_EVENT      "icl"
 #define INPUT_BUTTON_ACTION     "bta"
 #define INPUT_LIMIT_SWITCH_GPIO "lsg"
