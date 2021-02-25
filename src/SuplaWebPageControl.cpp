@@ -235,10 +235,10 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
   addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
 
   selected = ConfigESP->getPullUp(nr_button.toInt(), FUNCTION_BUTTON);
-  addCheckBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_button, "Pull-UP", selected);
+  addCheckBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_button, "Wewnętrzny pull-up", selected);
 
   selected = ConfigESP->getInversed(nr_button.toInt(), FUNCTION_BUTTON);
-  addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED + nr_button, "Odwrócony", selected);
+  addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED + nr_button, "Odwrócona logika", selected);
 
   selected = ConfigESP->getEvent(nr_button.toInt(), FUNCTION_BUTTON);
   addListBox(webContentBuffer, INPUT_BUTTON_EVENT + nr_button, S_REACTION_TO, TRIGGER_P, 3, selected);
@@ -355,10 +355,10 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   addFormHeader(webContentBuffer, F("Ustawienia dla przycisków"));
 
   selected = ConfigESP->getPullUp(1, FUNCTION_BUTTON);
-  addCheckBox(webContentBuffer, INPUT_RELAY_LEVEL, "Pull-UP", selected);
+  addCheckBox(webContentBuffer, INPUT_RELAY_LEVEL, "Wewnętrzny pull-up", selected);
 
   selected = ConfigESP->getInversed(1, FUNCTION_BUTTON);
-  addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, "Odwrócony", selected);
+  addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, "Odwrócona logika", selected);
 
   selected = ConfigESP->getEvent(1, FUNCTION_BUTTON);
   addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
