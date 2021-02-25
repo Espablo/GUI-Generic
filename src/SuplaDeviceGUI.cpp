@@ -206,8 +206,8 @@ void addRolleShutter(uint8_t nr) {
 }
 
 void addRolleShutterMomentary(uint8_t nr) {
-  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinButtonDown, pullupButtonUp, pullupButtonDown, inversedButtonUp, inversedButtonDown,
-      pinLedUP, pinLedDown;
+  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pullupButtonUp, pullupButtonDown, inversedButtonUp, inversedButtonDown, pinLedUP,
+      pinLedDown;
   bool highIsOn, levelLed;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
