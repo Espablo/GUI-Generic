@@ -39,7 +39,7 @@ void setup() {
 #ifdef SUPLA_ROLLERSHUTTER
       if (rollershutters > 0) {
 #ifdef SUPLA_BUTTON
-        if (ConfigESP->getLevel(nr, FUNCTION_BUTTON) == Supla::ON_CHANGE && ConfigESP->getLevel(nr + 1, FUNCTION_BUTTON) == Supla::ON_CHANGE) {
+        if (ConfigESP->getEvent(nr, FUNCTION_BUTTON) == Supla::Event::ON_CHANGE && ConfigESP->getEvent(nr + 1, FUNCTION_BUTTON) == Supla::Event::ON_CHANGE) {
           Supla::GUI::addRolleShutterMomentary(nr);
         }
         else {

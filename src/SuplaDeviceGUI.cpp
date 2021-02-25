@@ -160,13 +160,22 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 
 #ifdef SUPLA_ROLLERSHUTTER
 void addRolleShutter(uint8_t nr) {
-  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinLedUP, pinLedDown;
+  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pullupButtonUp, pullupButtonDown, inversedButtonUp, inversedButtonDown, pinLedUP,
+      pinLedDown;
   bool highIsOn, levelLed;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
+
   pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
+
+  pullupButtonUp = ConfigESP->getPullUp(nr, FUNCTION_BUTTON);
+  pullupButtonDown = ConfigESP->getPullUp(nr + 1, FUNCTION_BUTTON);
+
+  inversedButtonUp = ConfigESP->getInversed(nr, FUNCTION_BUTTON);
+  inversedButtonDown = ConfigESP->getInversed(nr + 1, FUNCTION_BUTTON);
+
   pinLedUP = ConfigESP->getGpio(nr, FUNCTION_LED);
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
 
@@ -176,13 +185,13 @@ void addRolleShutter(uint8_t nr) {
   auto RollerShutterRelay = new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn);
 
   if (pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO) {
-    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, true, true);
-    auto RollerShutterButtonClose = new Supla::Control::Button(pinButtonDown, true, true);
-    RollerShutterButtonOpen->addAction(Supla::OPEN_OR_STOP, RollerShutterRelay, Supla::ON_PRESS);
-    RollerShutterButtonClose->addAction(Supla::CLOSE_OR_STOP, RollerShutterRelay, Supla::ON_PRESS);
+    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
+    auto RollerShutterButtonClose = new Supla::Control::Button(pinButtonDown, pullupButtonDown, inversedButtonDown);
+    RollerShutterButtonOpen->addAction(Supla::Action::OPEN_OR_STOP, RollerShutterRelay, Supla::Event::ON_PRESS);
+    RollerShutterButtonClose->addAction(Supla::Action::CLOSE_OR_STOP, RollerShutterRelay, Supla::Event::ON_PRESS);
   }
   else if ((pinButtonUp == OFF_GPIO && pinButtonDown != OFF_GPIO) || (pinButtonUp != OFF_GPIO && pinButtonDown == OFF_GPIO)) {
-    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, true, true);
+    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
     RollerShutterButtonOpen->addAction(Supla::STEP_BY_STEP, RollerShutterRelay, Supla::ON_PRESS);
   }
   // eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
@@ -197,13 +206,22 @@ void addRolleShutter(uint8_t nr) {
 }
 
 void addRolleShutterMomentary(uint8_t nr) {
-  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinLedUP, pinLedDown;
+  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinButtonDown, pullupButtonUp, pullupButtonDown, inversedButtonUp, inversedButtonDown,
+      pinLedUP, pinLedDown;
   bool highIsOn, levelLed;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
+
   pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
+
+  pullupButtonUp = ConfigESP->getPullUp(nr, FUNCTION_BUTTON);
+  pullupButtonDown = ConfigESP->getPullUp(nr + 1, FUNCTION_BUTTON);
+
+  inversedButtonUp = ConfigESP->getInversed(nr, FUNCTION_BUTTON);
+  inversedButtonDown = ConfigESP->getInversed(nr + 1, FUNCTION_BUTTON);
+
   pinLedUP = ConfigESP->getGpio(nr, FUNCTION_LED);
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
 
@@ -213,13 +231,13 @@ void addRolleShutterMomentary(uint8_t nr) {
   auto RollerShutterRelay = new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn);
 
   if (pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO) {
-    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, true, true);
-    auto RollerShutterButtonClose = new Supla::Control::Button(pinButtonDown, true, true);
-    RollerShutterButtonOpen->addAction(Supla::OPEN, RollerShutterRelay, Supla::ON_PRESS);
-    RollerShutterButtonOpen->addAction(Supla::STOP, RollerShutterRelay, Supla::ON_RELEASE);
+    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
+    auto RollerShutterButtonClose = new Supla::Control::Button(pinButtonDown, pullupButtonDown, inversedButtonDown);
+    RollerShutterButtonOpen->addAction(Supla::Action::OPEN, RollerShutterRelay, Supla::Event::ON_PRESS);
+    RollerShutterButtonOpen->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
 
-    RollerShutterButtonClose->addAction(Supla::CLOSE, RollerShutterRelay, Supla::ON_PRESS);
-    RollerShutterButtonClose->addAction(Supla::STOP, RollerShutterRelay, Supla::ON_RELEASE);
+    RollerShutterButtonClose->addAction(Supla::Action::CLOSE, RollerShutterRelay, Supla::Event::ON_PRESS);
+    RollerShutterButtonClose->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
   }
   // eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
