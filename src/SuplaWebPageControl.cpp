@@ -388,10 +388,20 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   event = WebServer->httpServer->arg(input).toInt();
 
   input = INPUT_RELAY_LEVEL;
-  pullup = WebServer->httpServer->arg(input).toInt();
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    pullup = 1;
+  }
+  else {
+    pullup = 0;
+  }
 
   input = INPUT_BUTTON_INVERSED;
-  inversed = WebServer->httpServer->arg(input).toInt();
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    inversed = 1;
+  }
+  else {
+    inversed = 0;
+  }
 
   input = INPUT_BUTTON_ACTION;
   action = WebServer->httpServer->arg(input).toInt();
