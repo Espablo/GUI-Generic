@@ -141,7 +141,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
 }
 #endif
 
-#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_BUTTON) && defined(SUPLA_ROLLERSHUTTER))
+#if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER)
 void SuplaWebPageControl::handleButtonSet() {
   if (!WebServer->isLoggedIn()) {
     return;

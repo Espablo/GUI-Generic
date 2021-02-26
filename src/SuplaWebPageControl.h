@@ -38,7 +38,7 @@ class SuplaWebPageControl {
   void suplaWebpageLimitSwitch(int save);
 #endif
 
-#if (defined(SUPLA_BUTTON) && defined(SUPLA_RELAY)) || (defined(SUPLA_RSUPLA_BUTTONELAY) || defined(SUPLA_ROLLERSHUTTER))
+#if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER)
   void handleButtonSet();
   void handleButtonSaveSet();
 
