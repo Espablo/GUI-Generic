@@ -4,7 +4,7 @@
 #include "SuplaWebServer.h"
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
+#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
 #define PATH_CONTROL            "control"
 #define PATH_SWITCH             "switch"
 #define PATH_SAVE_SWITCH        "saveswitch"
