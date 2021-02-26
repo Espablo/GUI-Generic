@@ -41,7 +41,6 @@
 #define INPUT_MAX6675         "max6675"
 #define INPUT_OLED_NAME       "ion"
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
 enum _sensorI2C
 {
   SENSOR_I2C_BME280,
@@ -51,7 +50,6 @@ enum _sensorI2C
   SENSOR_I2C_OLED,
   SENSOR_I2C_MCP23017
 };
-#endif
 
 #ifdef SUPLA_BME280
 enum _bmeAdress

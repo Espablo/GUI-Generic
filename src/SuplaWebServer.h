@@ -26,12 +26,6 @@
 
 #include "SuplaConfigManager.h"
 
-#define GUI_BLUE  "#005c96"
-#define GUI_GREEN "#00D151"
-
-#define DEFAULT_LOGIN    "admin"
-#define DEFAULT_PASSWORD "password"
-
 #define PATH_START            "/"
 #define PATH_SAVE_LOGIN       "savelogin"
 #define PATH_REBOT            "rbt"

@@ -245,6 +245,7 @@ void supla_impulse_counter_set(int save) {
     webContentBuffer += nr;
     webContentBuffer += F("'>");
     selected = ConfigESP->getMemory(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
+    return;
     for (suported = 0; suported < 2; suported++) {
       webContentBuffer += F("<option value='");
       webContentBuffer += suported;

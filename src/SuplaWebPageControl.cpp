@@ -6,9 +6,11 @@
 
 SuplaWebPageControl *WebPageControl = new SuplaWebPageControl();
 
+#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
 void SuplaWebPageControl::createWebPageControl() {
   String path;
-#if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_MCP23017)
+
+#if defined(SUPLA_BUTTON) || defined(SUPLA_MCP23017)
   path += PATH_START;
   path += PATH_CONTROL;
   WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleControl, this));
@@ -17,8 +19,8 @@ void SuplaWebPageControl::createWebPageControl() {
   WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleControlSave, this));
 #endif
 
-#ifdef SUPLA_BUTTON
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+#ifdef SUPLA_MCP23017
     path = PATH_START;
     path += PATH_BUTTON_SET;
     WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageControl::handleButtonSetMCP23017, this));
@@ -26,8 +28,10 @@ void SuplaWebPageControl::createWebPageControl() {
     path = PATH_START;
     path += PATH_SAVE_BUTTON_SET;
     WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageControl::handleButtonSaveSetMCP23017, this));
+#endif
   }
   else {
+#if defined(SUPLA_BUTTON)
     for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); i++) {
       path = PATH_START;
       path += PATH_BUTTON_SET;
@@ -39,8 +43,8 @@ void SuplaWebPageControl::createWebPageControl() {
       path += i;
       WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleButtonSaveSet, this));
     }
-  }
 #endif
+  }
 
 #ifdef SUPLA_LIMIT_SWITCH
   path = PATH_START;
@@ -51,8 +55,9 @@ void SuplaWebPageControl::createWebPageControl() {
   WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleLimitSwitchSave, this));
 #endif
 }
+#endif
 
-#if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_MCP23017)
+#if defined(SUPLA_BUTTON) || defined(SUPLA_MCP23017)
 void SuplaWebPageControl::handleControl() {
   if (!WebServer->isLoggedIn()) {
     return;
@@ -141,7 +146,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
 }
 #endif
 
-#if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER)
+#if defined(SUPLA_BUTTON)
 void SuplaWebPageControl::handleButtonSet() {
   if (!WebServer->isLoggedIn()) {
     return;
@@ -338,6 +343,7 @@ void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
 }
 #endif
 
+#ifdef SUPLA_MCP23017
 void SuplaWebPageControl::handleButtonSetMCP23017() {
   if (!WebServer->isLoggedIn()) {
     return;
@@ -345,7 +351,6 @@ void SuplaWebPageControl::handleButtonSetMCP23017() {
   supla_webpage_button_set_MCP23017(0);
 }
 
-#ifdef SUPLA_MCP23017 || defined(SUPLA_ROLLERSHUTTER)
 void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   uint8_t selected;
 

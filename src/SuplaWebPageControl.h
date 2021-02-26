@@ -4,6 +4,7 @@
 #include "SuplaWebServer.h"
 #include "SuplaDeviceGUI.h"
 
+#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
 #define PATH_CONTROL            "control"
 #define PATH_SWITCH             "switch"
 #define PATH_SAVE_SWITCH        "saveswitch"
@@ -19,11 +20,15 @@
 #define INPUT_LIMIT_SWITCH_GPIO "lsg"
 #define INPUT_MAX_BUTTON        "mbt"
 #define INPUT_MAX_LIMIT_SWITCH  "mls"
+#endif
 
 class SuplaWebPageControl {
  public:
-#if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_MCP23017)
+#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
   void createWebPageControl();
+#endif
+
+#if defined(SUPLA_BUTTON) || defined(SUPLA_MCP23017)
   void handleControl();
   void handleControlSave();
   void supla_webpage_control(int save);
@@ -35,13 +40,13 @@ class SuplaWebPageControl {
   void suplaWebpageLimitSwitch(int save);
 #endif
 
-#if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER)
+#if defined(SUPLA_BUTTON)
   void handleButtonSet();
   void handleButtonSaveSet();
   void supla_webpage_button_set(int save, int nr = 0);
 #endif
 
-#ifdef SUPLA_MCP23017 || defined(SUPLA_ROLLERSHUTTER)
+#ifdef SUPLA_MCP23017
   void handleButtonSetMCP23017();
   void handleButtonSaveSetMCP23017();
   void supla_webpage_button_set_MCP23017(int save);

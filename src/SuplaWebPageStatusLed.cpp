@@ -4,6 +4,7 @@
 #include "GUIGenericCommon.h"
 #include "Markup.h"
 
+#ifdef SUPLA_LED
 void createWebStatusLed() {
   WebServer->httpServer->on(getURL(PATH_LED), handleStatusLed);
   WebServer->httpServer->on(getURL(PATH_SAVE_LED), handleStatusLedSave);
@@ -67,3 +68,4 @@ void webStatusLed(int save) {
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
   WebServer->sendHeaderEnd();
 }
+#endif

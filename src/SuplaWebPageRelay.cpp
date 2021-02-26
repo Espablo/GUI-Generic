@@ -6,12 +6,12 @@
 #include "Markup.h"
 #include "SuplaWebPageSensor.h"
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 SuplaWebPageRelay *WebPageRelay = new SuplaWebPageRelay();
 
 SuplaWebPageRelay::SuplaWebPageRelay() {
 }
 
+#if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
 void SuplaWebPageRelay::createWebPageRelay() {
   String path;
   path.reserve(11);
@@ -24,6 +24,7 @@ void SuplaWebPageRelay::createWebPageRelay() {
   WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySave, this));
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+#ifdef SUPLA_MCP23017
     path = PATH_START;
     path += PATH_RELAY_SET;
     WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelaySetMCP23017, this));
@@ -31,8 +32,10 @@ void SuplaWebPageRelay::createWebPageRelay() {
     path = PATH_START;
     path += PATH_SAVE_RELAY_SET;
     WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSetMCP23017, this));
+#endif
   }
   else {
+#if defined(SUPLA_RELAY)
     for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); i++) {
       path = PATH_START;
       path += PATH_RELAY_SET;
@@ -44,6 +47,7 @@ void SuplaWebPageRelay::createWebPageRelay() {
       path += i;
       WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSet, this));
     }
+#endif
   }
 }
 
@@ -133,7 +137,9 @@ void SuplaWebPageRelay::supla_webpage_relay(int save) {
 
   WebServer->sendHeaderEnd();
 }
+#endif
 
+#if defined(SUPLA_RELAY)
 void SuplaWebPageRelay::handleRelaySet() {
   if (!WebServer->isLoggedIn()) {
     return;
@@ -289,7 +295,9 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
 
   WebServer->sendContent();
 }
+#endif
 
+#ifdef SUPLA_MCP23017
 void SuplaWebPageRelay::handleRelaySetMCP23017() {
   if (!WebServer->isLoggedIn()) {
     return;

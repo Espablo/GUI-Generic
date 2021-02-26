@@ -61,10 +61,10 @@ void SuplaWebServer::createWebServer() {
   path += PATH_SAVE_BOARD;
   httpServer->on(path, std::bind(&SuplaWebServer::handleBoardSave, this));
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+#if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
   WebPageRelay->createWebPageRelay();
 #endif
-#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH)
+#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
   WebPageControl->createWebPageControl();
 #endif
   WebPageSensor->createWebPageSensor();
@@ -78,7 +78,9 @@ void SuplaWebServer::createWebServer() {
   createWebDownload();
   createWebUpload();
   createWebTools();
+#ifdef SUPLA_LED
   createWebStatusLed();
+#endif
   createWebPageOther();
 }
 
@@ -90,7 +92,6 @@ void SuplaWebServer::handle() {
 }
 
 void SuplaWebServer::handleSave() {
-  //  Serial.println(F("HTTP_POST - metoda handleSave"));
   if (!isLoggedIn()) {
     return;
   }
@@ -211,10 +212,12 @@ void SuplaWebServer::deviceSettings(int save) {
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-  addButton(webContentBuffer, F("KONTAKTRON"), PATH_SWITCH);
+  addButton(webContentBuffer, F("KRAŃCÓWKI"), PATH_SWITCH);
 #endif
 
+#ifdef SUPLA_LED
   addButton(webContentBuffer, F("LED"), PATH_LED);
+#endif
 
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
   addButton(webContentBuffer, S_SENSORS_1WIRE, PATH_1WIRE);
