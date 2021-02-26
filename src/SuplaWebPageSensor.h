@@ -41,6 +41,7 @@
 #define INPUT_MAX6675         "max6675"
 #define INPUT_OLED_NAME       "ion"
 
+#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
 enum _sensorI2C
 {
   SENSOR_I2C_BME280,
@@ -50,6 +51,7 @@ enum _sensorI2C
   SENSOR_I2C_OLED,
   SENSOR_I2C_MCP23017
 };
+#endif
 
 #ifdef SUPLA_BME280
 enum _bmeAdress
@@ -81,11 +83,10 @@ class SuplaWebPageSensor {
   void handleSearchDS();
   void handleDSSave();
   void showDS18B20(bool readonly = false);
+  void supla_webpage_search(int save);
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
-  void handle1Wire();
-  void handle1WireSave();
   void handlei2c();
   void handlei2cSave();
   void supla_webpage_i2c(int save);
@@ -96,12 +97,10 @@ class SuplaWebPageSensor {
   void handleSpiSave();
 #endif
 
- private:
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
+  void handle1Wire();
+  void handle1WireSave();
   void supla_webpage_1wire(int save);
-#ifdef SUPLA_DS18B20
-  void supla_webpage_search(int save);
-#endif
 #endif
 
 #if defined(SUPLA_MAX6675)
