@@ -8,12 +8,14 @@ SuplaWebPageControl *WebPageControl = new SuplaWebPageControl();
 
 void SuplaWebPageControl::createWebPageControl() {
   String path;
+#if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_MCP23017)
   path += PATH_START;
   path += PATH_CONTROL;
   WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleControl, this));
   path = PATH_START;
   path += PATH_SAVE_CONTROL;
   WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleControlSave, this));
+#endif
 
 #ifdef SUPLA_BUTTON
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
@@ -50,7 +52,7 @@ void SuplaWebPageControl::createWebPageControl() {
 #endif
 }
 
-#ifdef SUPLA_BUTTON
+#if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_MCP23017)
 void SuplaWebPageControl::handleControl() {
   if (!WebServer->isLoggedIn()) {
     return;
@@ -59,8 +61,6 @@ void SuplaWebPageControl::handleControl() {
 }
 
 void SuplaWebPageControl::handleControlSave() {
-  //  Serial.println(F("HTTP_POST - metoda handleControlSave"));
-
   if (!WebServer->isLoggedIn()) {
     return;
   }
@@ -345,6 +345,7 @@ void SuplaWebPageControl::handleButtonSetMCP23017() {
   supla_webpage_button_set_MCP23017(0);
 }
 
+#ifdef SUPLA_MCP23017 || defined(SUPLA_ROLLERSHUTTER)
 void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   uint8_t selected;
 
@@ -422,3 +423,4 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
       break;
   }
 }
+#endif

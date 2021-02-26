@@ -20,17 +20,14 @@
 #define INPUT_MAX_BUTTON        "mbt"
 #define INPUT_MAX_LIMIT_SWITCH  "mls"
 
-/*enum _trigger_button {
-  TRIGGER_PRESS,
-  TRIGGER_RELEASE,
-  TRIGGER_CHANGE
-};*/
-
 class SuplaWebPageControl {
  public:
+#if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_MCP23017)
   void createWebPageControl();
   void handleControl();
   void handleControlSave();
+  void supla_webpage_control(int save);
+#endif
 
 #ifdef SUPLA_LIMIT_SWITCH
   void handleLimitSwitch();
@@ -41,18 +38,14 @@ class SuplaWebPageControl {
 #if defined(SUPLA_BUTTON) || defined(SUPLA_ROLLERSHUTTER)
   void handleButtonSet();
   void handleButtonSaveSet();
-
- private:
-  void supla_webpage_control(int save);
-#endif
-
-#ifdef SUPLA_BUTTON
   void supla_webpage_button_set(int save, int nr = 0);
 #endif
 
+#ifdef SUPLA_MCP23017 || defined(SUPLA_ROLLERSHUTTER)
   void handleButtonSetMCP23017();
   void handleButtonSaveSetMCP23017();
   void supla_webpage_button_set_MCP23017(int save);
+#endif
 };
 
 extern SuplaWebPageControl* WebPageControl;
