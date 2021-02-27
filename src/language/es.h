@@ -105,6 +105,5 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Cambia el valor"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Configuración contador de impulsos no."
-#define S_NO_IMPULSE_COUNTER_NR            "Falta de contador de impulsos no."
 
 #endif  // _LANGUAGE_ES_S_H_

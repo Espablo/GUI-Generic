@@ -103,6 +103,5 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Remonter"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Modifier la valeur"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Paramètres Compteur d'impulsions No."
-#define S_NO_IMPULSE_COUNTER_NR            "Aucun Compteur d'impulsions No."
 
 #endif  // _LANGUAGE_FR_S_H_

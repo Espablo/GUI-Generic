@@ -102,6 +102,5 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Change value"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Settings IC nr."
-#define S_NO_IMPULSE_COUNTER_NR            "No IC nr."
 
 #endif  // _LANGUAGE_EN_S_H_

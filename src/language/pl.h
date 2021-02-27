@@ -104,6 +104,5 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Podciąganie do VCC"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Zmień wartość"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Ustawienia IC nr"
-#define S_NO_IMPULSE_COUNTER_NR            "Brak IC nr"
 
 #endif  // _LANGUAGE_PL_S_H_
