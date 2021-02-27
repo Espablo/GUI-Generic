@@ -102,6 +102,4 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Wertänderung"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Einstellung Impulszähler Nr."
-#define S_NO_IMPULSE_COUNTER_NR            "Fehlender Impulszähler Nr."
-
 #endif  // _LANGUAGE_DE_S_H_

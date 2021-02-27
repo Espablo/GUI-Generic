@@ -65,6 +65,7 @@ void SuplaWebPageConfig::handleConfigSave() {
 void SuplaWebPageConfig::supla_webpage_config(int save) {
   uint8_t selected, suported;
 
+  WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_CONFIG);
 
@@ -84,5 +85,5 @@ void SuplaWebPageConfig::supla_webpage_config(int save) {
   addFormEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }

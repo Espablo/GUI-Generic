@@ -34,7 +34,12 @@ void begin() {
   Supla::GUIESPWifi *wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
 
   wifi->enableBuffer(true);
+
+#ifdef SUPLA_ENABLE_SSL
+  wifi->enableSSL(true);
+#else
   wifi->enableSSL(false);
+#endif
 
   String supla_hostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
   supla_hostname.replace(" ", "_");

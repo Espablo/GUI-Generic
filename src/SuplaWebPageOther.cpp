@@ -108,6 +108,7 @@ void handleOtherSave() {
 void suplaWebPageOther(int save) {
   uint8_t nr, suported, selected;
 
+  WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_OTHER);
 
@@ -163,7 +164,7 @@ void suplaWebPageOther(int save) {
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 #endif
 
@@ -193,14 +194,26 @@ void handleImpulseCounterSaveSet() {
 
   input = INPUT_IMPULSE_COUNTER_PULL_UP;
   input += nr;
-  ConfigManager->setElement(key, MEMORY, WebServer->httpServer->arg(input).toInt());
+
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(key, MEMORY, 1);
+  }
+  else {
+    ConfigManager->setElement(key, MEMORY, 0);
+  }
 
   input = INPUT_IMPULSE_COUNTER_RAISING_EDGE;
   input += nr;
-  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer->arg(input).toInt());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(key, LEVEL_RELAY, 1);
+  }
+  else {
+    ConfigManager->setElement(key, LEVEL_RELAY, 0);
+  }
 
   ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
   Supla::GUI::impulseCounter[nr.toInt() - 1]->setCounter((unsigned long long)WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
+  Supla::Storage::ScheduleSave(2000);
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -228,84 +241,29 @@ void supla_impulse_counter_set(int save) {
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_OTHER);
-  uint8_t relays = ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt();
-  if (nr.toInt() <= relays && ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
-    webContentBuffer += F("<form method='post' action='");
-    webContentBuffer += PATH_SAVE_IMPULSE_COUNTER_SET;
-    webContentBuffer += nr;
-    webContentBuffer += F("'><div class='w'><h3>");
-    webContentBuffer += S_IMPULSE_COUNTER_SETTINGS_NR;
-    webContentBuffer += F(" ");
-    webContentBuffer += nr;
-    webContentBuffer += F("</h3>");
-    webContentBuffer += F("<i><label>");
-    webContentBuffer += S_IMPULSE_COUNTER_PULL_UP;
-    webContentBuffer += F("</label><select name='");
-    webContentBuffer += INPUT_IMPULSE_COUNTER_PULL_UP;
-    webContentBuffer += nr;
-    webContentBuffer += F("'>");
-    selected = ConfigESP->getMemory(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
-    return;
-    for (suported = 0; suported < 2; suported++) {
-      webContentBuffer += F("<option value='");
-      webContentBuffer += suported;
-      if (selected == suported) {
-        webContentBuffer += F("' selected>");
-      }
-      else
-        webContentBuffer += F("'>");
-      webContentBuffer += PGMT(STATE_P[suported]);
-    }
-    webContentBuffer += F("</select></i>");
-    webContentBuffer += F("<i><label>");
-    webContentBuffer += S_IMPULSE_COUNTER_RAISING_EDGE;
-    webContentBuffer += F("</label><select name='");
-    webContentBuffer += INPUT_IMPULSE_COUNTER_RAISING_EDGE;
-    webContentBuffer += nr;
-    webContentBuffer += F("'>");
-    selected = ConfigESP->getLevel(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
-    for (suported = 0; suported < 2; suported++) {
-      webContentBuffer += F("<option value='");
-      webContentBuffer += suported;
-      if (selected == suported) {
-        webContentBuffer += F("' selected>");
-      }
-      else
-        webContentBuffer += F("'>");
-      webContentBuffer += PGMT(STATE_P[suported]);
-    }
-    webContentBuffer += F("</select></i>");
-    addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT,
-                 99999999);
-    webContentBuffer += F("<i><label>");
-    webContentBuffer += S_IMPULSE_COUNTER_CHANGE_VALUE;
-    webContentBuffer += F("</label><input name='");
-    webContentBuffer += INPUT_IMPULSE_COUNTER_CHANGE_VALUE;
-    webContentBuffer += F("' type='number' placeholder='0' step='1' min='0' max='");
-    webContentBuffer += 100;
-    webContentBuffer += F("' value='");
-    uint32_t count = Supla::GUI::impulseCounter[nr.toInt() - 1]->getCounter();
-    webContentBuffer += count;
-    webContentBuffer += F("'></i>");
 
-    webContentBuffer += F("</div><button type='submit'>");
-    webContentBuffer += S_SAVE;
-    webContentBuffer += F("</button></form>");
+  if (nr.toInt() <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() &&
+      ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
+    addForm(webContentBuffer, F("post"), PATH_SAVE_IMPULSE_COUNTER_SET + nr);
+    addFormHeader(webContentBuffer, S_IMPULSE_COUNTER_SETTINGS_NR + nr);
+
+    selected = ConfigESP->getMemory(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
+    addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_PULL_UP + nr, S_IMPULSE_COUNTER_PULL_UP, selected);
+
+    selected = ConfigESP->getLevel(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
+    addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_RAISING_EDGE + nr, S_IMPULSE_COUNTER_RAISING_EDGE, selected);
+
+    addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT);
+
+    uint32_t count = Supla::GUI::impulseCounter[nr.toInt() - 1]->getCounter();
+    addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_CHANGE_VALUE, S_IMPULSE_COUNTER_CHANGE_VALUE, F(""), false, String(count));
+
+    addFormHeaderEnd(webContentBuffer);
+    addButtonSubmit(webContentBuffer, S_SAVE);
+    addFormEnd(webContentBuffer);
   }
-  else {
-    webContentBuffer += F("<div class='w'><h3>");
-    webContentBuffer += S_NO_IMPULSE_COUNTER_NR;
-    webContentBuffer += F(" ");
-    webContentBuffer += nr;
-    webContentBuffer += F("</h3>");
-  }
-  webContentBuffer += F("<br>");
-  webContentBuffer += F("<a href='");
-  webContentBuffer += PATH_START;
-  webContentBuffer += PATH_OTHER;
-  webContentBuffer += F("'><button>");
-  webContentBuffer += S_RETURN;
-  webContentBuffer += F("</button></a><br><br>");
+
+  addButton(webContentBuffer, S_RETURN, PATH_OTHER);
   WebServer->sendContent();
 }
 #endif

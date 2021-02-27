@@ -142,6 +142,8 @@ void SuplaWebServer::handleDeviceSettings() {
 }
 
 void SuplaWebServer::supla_webpage_start(int save) {
+  WebServer->sendHeaderStart();
+
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript();
 
@@ -177,7 +179,7 @@ void SuplaWebServer::supla_webpage_start(int save) {
   addButton(webContentBuffer, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
   addButton(webContentBuffer, F("Narzędzia"), PATH_TOOLS);
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 
 void SuplaWebServer::supla_webpage_reboot() {
@@ -203,7 +205,7 @@ void SuplaWebServer::deviceSettings(int save) {
   addFormEnd(webContentBuffer);
 
   addFormHeader(webContentBuffer, S_DEVICE_SETTINGS);
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+#if defined(SUPLA_RELAY)
   addButton(webContentBuffer, S_RELAYS, PATH_RELAY);
 #endif
 
@@ -231,7 +233,7 @@ void SuplaWebServer::deviceSettings(int save) {
   addButton(webContentBuffer, S_SENSORS_SPI, PATH_SPI);
 #endif
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PUSHOVER)
   addButton(webContentBuffer, S_SENSORS_OTHER, PATH_OTHER);
 #endif
 

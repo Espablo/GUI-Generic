@@ -13,10 +13,6 @@
 #define PATH_SAVE_I2C                 "savei2c"
 #define PATH_SPI                      "spi"
 #define PATH_SAVE_SPI                 "savespi"
-#define PATH_OTHER                    "other"
-#define PATH_SAVE_OTHER               "saveother"
-#define PATH_IMPULSE_COUNTER_SET      "setimpulsecounter"
-#define PATH_SAVE_IMPULSE_COUNTER_SET "savesetimpulsecounter"
 
 #define INPUT_MULTI_DS_GPIO   "mdsg"
 #define INPUT_DHT11_GPIO      "dht11"

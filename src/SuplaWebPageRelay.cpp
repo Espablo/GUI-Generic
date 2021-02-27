@@ -224,6 +224,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
   nr_relay.reserve(2);
   massage.reserve(MAX_DIRECT_LINKS_SIZE);
 
+  WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
 
   if (nr != 0) {
@@ -293,7 +294,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_RELAY);
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 #endif
 
@@ -310,6 +311,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
   String massage, name, input;
   input.reserve(9);
 
+  WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_RELAY_SET);
 
@@ -349,7 +351,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_RELAY);
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 
 void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {

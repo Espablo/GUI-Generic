@@ -4,6 +4,9 @@
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 
+#define PATH_OTHER                    "other"
+#define PATH_SAVE_OTHER               "saveother"
+
 void createWebPageOther();
 
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
@@ -58,6 +61,11 @@ void suplaWebpageHLW8012Calibrate(uint8_t save);
 #define INPUT_TRIG_GPIO               "trig"
 #define INPUT_ECHO_GPIO               "echo"
 #define INPUT_HC_SR04_MAX_SENSOR_READ "hsm"
+#endif
+
+#ifdef SUPLA_IMPULSE_COUNTER
+#define PATH_IMPULSE_COUNTER_SET      "setcounter"
+#define PATH_SAVE_IMPULSE_COUNTER_SET "savesetcounter"
 #endif
 
 #endif  // SuplaWebPageOther_h

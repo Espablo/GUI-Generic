@@ -47,7 +47,7 @@ void addTextBoxPassword(String& html, const String& input_id, const String& name
 
 void addCheckBox(String& html, const String& input_id, const String& name, bool checked);
 
-void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, uint16_t max);
+void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, int max = -1);
 
 void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value = "\n");
 
