@@ -212,6 +212,7 @@ void handleImpulseCounterSaveSet() {
 
   ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
   Supla::GUI::impulseCounter[nr.toInt() - 1]->setCounter((unsigned long long)WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
+  Supla::Storage::ScheduleSave(2000);
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
