@@ -52,12 +52,16 @@ void SuplaWebPageSensor::createWebPageSensor() {
 
 #ifdef SUPLA_DS18B20
 void SuplaWebPageSensor::handleSearchDS() {
-if (!WebServer->isLoggedIn()) { return; }
+  if (!WebServer->isLoggedIn()) {
+    return;
+  }
   supla_webpage_search(0);
 }
 
 void SuplaWebPageSensor::handleDSSave() {
-if (!WebServer->isLoggedIn()) { return; }
+  if (!WebServer->isLoggedIn()) {
+    return;
+  }
   for (uint8_t i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); i++) {
     String dsAddr = INPUT_DS18B20_ADDR;
     String dsName = INPUT_DS18B20_NAME;
@@ -219,12 +223,16 @@ void SuplaWebPageSensor::showDS18B20(bool readonly) {
 
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
 void SuplaWebPageSensor::handle1Wire() {
-if (!WebServer->isLoggedIn()) { return; }
+  if (!WebServer->isLoggedIn()) {
+    return;
+  }
   supla_webpage_1wire(0);
 }
 
 void SuplaWebPageSensor::handle1WireSave() {
-if (!WebServer->isLoggedIn()) { return; }
+  if (!WebServer->isLoggedIn()) {
+    return;
+  }
 
   uint8_t nr, last_value;
 
@@ -287,6 +295,7 @@ if (!WebServer->isLoggedIn()) { return; }
 void SuplaWebPageSensor::supla_webpage_1wire(int save) {
   uint8_t nr, max;
 
+  WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_1WIRE);
   webContentBuffer += F("<form method='post' action='");
@@ -339,18 +348,22 @@ void SuplaWebPageSensor::supla_webpage_1wire(int save) {
   webContentBuffer += S_RETURN;
   webContentBuffer += F("</button></a><br><br>");
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
 void SuplaWebPageSensor::handlei2c() {
-if (!WebServer->isLoggedIn()) { return; }
+  if (!WebServer->isLoggedIn()) {
+    return;
+  }
   supla_webpage_i2c(0);
 }
 
 void SuplaWebPageSensor::handlei2cSave() {
-if (!WebServer->isLoggedIn()) { return; }
+  if (!WebServer->isLoggedIn()) {
+    return;
+  }
 
   String input;
   uint8_t key;
@@ -447,6 +460,7 @@ if (!WebServer->isLoggedIn()) { return; }
 void SuplaWebPageSensor::supla_webpage_i2c(int save) {
   uint8_t selected;
 
+  WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_I2C);
 
@@ -517,18 +531,22 @@ void SuplaWebPageSensor::supla_webpage_i2c(int save) {
   addFormEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 #endif
 
 #if defined(SUPLA_MAX6675)
 void SuplaWebPageSensor::handleSpi() {
-if (!WebServer->isLoggedIn()) { return; }
+  if (!WebServer->isLoggedIn()) {
+    return;
+  }
   supla_webpage_spi(0);
 }
 
 void SuplaWebPageSensor::handleSpiSave() {
-if (!WebServer->isLoggedIn()) { return; }
+  if (!WebServer->isLoggedIn()) {
+    return;
+  }
 
   String input;
   uint8_t key;
@@ -570,6 +588,7 @@ if (!WebServer->isLoggedIn()) { return; }
 void SuplaWebPageSensor::supla_webpage_spi(int save) {
   uint8_t nr, suported, selected;
 
+  WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_SPI);
   webContentBuffer += F("<form method='post' action='");
@@ -598,6 +617,6 @@ void SuplaWebPageSensor::supla_webpage_spi(int save) {
   webContentBuffer += F("'><button>");
   webContentBuffer += S_RETURN;
   webContentBuffer += F("</button></a><br><br>");
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 #endif

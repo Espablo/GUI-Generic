@@ -108,6 +108,7 @@ void handleOtherSave() {
 void suplaWebPageOther(int save) {
   uint8_t nr, suported, selected;
 
+  WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_OTHER);
 
@@ -163,7 +164,7 @@ void suplaWebPageOther(int save) {
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 #endif
 
@@ -243,7 +244,6 @@ void supla_impulse_counter_set(int save) {
 
   if (nr.toInt() <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() &&
       ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
-
     addForm(webContentBuffer, F("post"), PATH_SAVE_IMPULSE_COUNTER_SET + nr);
     addFormHeader(webContentBuffer, S_IMPULSE_COUNTER_SETTINGS_NR + nr);
 

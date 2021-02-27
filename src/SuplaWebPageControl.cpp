@@ -222,6 +222,8 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
   readUrl.reserve(11);
   nr_button.reserve(2);
 
+  WebServer->sendHeaderStart();
+
   if (nr != 0) {
     webContentBuffer += SuplaJavaScript(PATH_BUTTON_SET + String(nr));
     nr_button = nr;
@@ -256,7 +258,7 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_CONTROL);
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 #endif
 
@@ -354,6 +356,8 @@ void SuplaWebPageControl::handleButtonSetMCP23017() {
 void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   uint8_t selected;
 
+  WebServer->sendHeaderStart();
+
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_BUTTON_SET);
 
@@ -377,7 +381,7 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_CONTROL);
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 
 void SuplaWebPageControl::handleButtonSaveSetMCP23017() {

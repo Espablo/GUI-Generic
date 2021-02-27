@@ -142,6 +142,8 @@ void SuplaWebServer::handleDeviceSettings() {
 }
 
 void SuplaWebServer::supla_webpage_start(int save) {
+  WebServer->sendHeaderStart();
+
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript();
 
@@ -177,7 +179,7 @@ void SuplaWebServer::supla_webpage_start(int save) {
   addButton(webContentBuffer, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
   addButton(webContentBuffer, F("Narzędzia"), PATH_TOOLS);
 
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 
 void SuplaWebServer::supla_webpage_reboot() {

@@ -70,6 +70,7 @@ void addTextBox(String& html,
   html += F(" ><label>");
   html += name;
   html += F("</label></i> ");
+  WebServer->sendHeader();
 }
 
 void addTextBox(String& html,
@@ -130,6 +131,7 @@ void addNumberBox(String& html, const String& input_id, const String& name, uint
   html += F(" value='");
   html += String(ConfigManager->get(value_key)->getValue());
   html += F("'></i>");
+  WebServer->sendHeader();
 }
 
 void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value) {
@@ -151,6 +153,7 @@ void addNumberBox(String& html, const String& input_id, const String& name, cons
   }
 
   html += F("></i>");
+  WebServer->sendHeader();
 }
 
 void addLinkBox(String& html, const String& name, const String& url) {
@@ -165,6 +168,7 @@ void addLinkBox(String& html, const String& name, const String& url) {
   html += F("</a>");
   html += F("</label>");
   html += F("</i>");
+  WebServer->sendHeader();
 }
 
 void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, bool underline) {
@@ -326,6 +330,7 @@ void addListLinkBox(String& html,
     }
     html += FPSTR(array_P[suported]);
   }
+  WebServer->sendHeader();
   html += F("</select></i>");
 }
 
