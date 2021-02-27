@@ -55,5 +55,11 @@
 #define SUPLA_PUSHOVER
 #define SUPLA_DIRECT_LINKS
 
+#endif  // USE_CUSTOM
+
+#ifdef SUPLA_ROLLERSHUTTER
+#define SUPLA_RELAY
+#define SUPLA_BUTTON
 #endif
+
 #endif  // GUI-Generic_Config_h
