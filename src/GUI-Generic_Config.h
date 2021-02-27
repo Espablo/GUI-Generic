@@ -58,17 +58,16 @@
 
 #endif  // USE_CUSTOM
 
-#if defined(SUPLA_ROLLERSHUTTER)
-#define SUPLA_RELAY
+#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_OLED) || defined(SUPLA_RGBW)
+#if !defined(SUPLA_BUTTON)
 #define SUPLA_BUTTON
 #endif
-
-#if defined(SUPLA_OLED) || defined(SUPLA_RGBW)
-#define SUPLA_BUTTON
 #endif
 
-#if defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS)
+#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS)
+#if !defined(SUPLA_RELAY)
 #define SUPLA_RELAY
+#endif
 #endif
 
 #endif  // GUI-Generic_Config_h
