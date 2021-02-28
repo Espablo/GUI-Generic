@@ -2,6 +2,7 @@
 #define _LANGUAGE_FR_S_H_
 
 // translated by Fryga
+#define S_SETTING_FOR                                          "Paramètres pour "
 #define S_SETTING_WIFI_SSID                                    "Mettre à jour du WIFI"
 #define S_WIFI_SSID                                            "Nom du WIFI"
 #define S_WIFI_PASS                                            "Mot de passe"
