@@ -115,5 +115,8 @@
 
 //#### SuplaWebPageControl.cpp ####
 #define S_SETTINGS_FOR_BUTTONS "Paramètres des boutons"
+#define S_REVERSE_LOGIC "Logique inversée"
+#define S_INTERNAL_PULL_UP "Pull-up interne"
+
 
 #endif  // _LANGUAGE_FR_S_H_

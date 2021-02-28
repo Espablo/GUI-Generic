@@ -114,5 +114,8 @@
 
 //#### SuplaWebPageControl.cpp ####
 #define S_SETTINGS_FOR_BUTTONS "Einstellungen für Schaltflächen"
+#define S_REVERSE_LOGIC "Umgekehrte Logik"
+#define S_INTERNAL_PULL_UP "Interner Klimmzug"
+
 
 #endif  // _LANGUAGE_DE_S_H_
