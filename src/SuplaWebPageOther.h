@@ -9,7 +9,7 @@
 
 void createWebPageOther();
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER)
 void suplaWebPageOther(int save);
 void handleOther();
 void handleOtherSave();
