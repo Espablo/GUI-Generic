@@ -117,5 +117,12 @@
 #define S_REVERSE_LOGIC "Umgekehrte Logik"
 #define S_INTERNAL_PULL_UP "Interner Klimmzug"
 
+//#### SuplaWebPageOther.cpp ####
+#define S_CALIBRATION "Kalibrierung"
+#define S_CALIBRATION_SETTINGS "Kalibrierungseinstellungen"
+#define S_BULB_POWER_W "Lampenleistung [W]"
+#define S_VOLTAGE_V "Spannung [V]"
+#define S_DEPTH_CM "Tiefe [cm]"
+#define S_SENSOR_READING_DISTANCE "Sensorleseabstand"
 
 #endif  // _LANGUAGE_DE_S_H_

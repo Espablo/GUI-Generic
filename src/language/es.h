@@ -120,4 +120,12 @@
 #define S_REVERSE_LOGIC "Lógica inversa"
 #define S_INTERNAL_PULL_UP "Pull-up interno"
 
+//#### SuplaWebPageOther.cpp ####
+#define S_CALIBRATION "Calibración"
+#define S_CALIBRATION_SETTINGS "Configuraciones de calibracion"
+#define S_BULB_POWER_W "Potencia de la bombilla [W]"
+#define S_VOLTAGE_V "Voltaje [V]"
+#define S_DEPTH_CM "Profundidad [cm]"
+#define S_SENSOR_READING_DISTANCE "distancia de lectura del sensor"
+
 #endif  // _LANGUAGE_ES_S_H_

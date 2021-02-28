@@ -118,4 +118,12 @@
 #define S_REVERSE_LOGIC "Odwrócona logika"
 #define S_INTERNAL_PULL_UP "Wewnętrzny pull-up"
 
+//#### SuplaWebPageOther.cpp ####
+#define S_CALIBRATION "Kalibracja"
+#define S_CALIBRATION_SETTINGS "Ustawienia kalibracji"
+#define S_BULB_POWER_W "Moc żarówki [W]"
+#define S_VOLTAGE_V "Napięcie [V]"
+#define S_DEPTH_CM "Głębokość [cm]"
+#define S_SENSOR_READING_DISTANCE "maksymalna odległość odczytu czujnika"
+
 #endif  // _LANGUAGE_PL_S_H_

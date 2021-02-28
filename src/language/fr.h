@@ -118,5 +118,12 @@
 #define S_REVERSE_LOGIC "Logique inversée"
 #define S_INTERNAL_PULL_UP "Pull-up interne"
 
+//#### SuplaWebPageOther.cpp ####
+#define S_CALIBRATION "Étalonnage"
+#define S_CALIBRATION_SETTINGS "Paramètres d'étalonnage"
+#define S_BULB_POWER_W "Puissance de l'ampoule [W]"
+#define S_VOLTAGE_V "Tension [V]"
+#define S_DEPTH_CM "Profondeur [cm]"
+#define S_SENSOR_READING_DISTANCE "distance de lecture du capteur"
 
 #endif  // _LANGUAGE_FR_S_H_

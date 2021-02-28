@@ -117,4 +117,12 @@
 #define S_REVERSE_LOGIC "Reverse logic"
 #define S_INTERNAL_PULL_UP "Internal pull-up"
 
+//#### SuplaWebPageOther.cpp ####
+#define S_CALIBRATION "Calibration"
+#define S_CALIBRATION_SETTINGS "Calibration settings"
+#define S_BULB_POWER_W "Bulb power [W]"
+#define S_VOLTAGE_V "Voltage [V]"
+#define S_DEPTH_CM "Depth [cm]"
+#define S_SENSOR_READING_DISTANCE "sensor reading distance"
+
 #endif  // _LANGUAGE_EN_S_H_

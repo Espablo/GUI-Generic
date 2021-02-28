@@ -117,7 +117,7 @@ void suplaWebPageOther(int save) {
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" HC-SR04"));
   addListGPIOBox(webContentBuffer, INPUT_TRIG_GPIO, F("TRIG"), FUNCTION_TRIG);
   addListGPIOBox(webContentBuffer, INPUT_ECHO_GPIO, F("ECHO"), FUNCTION_ECHO);
-  addNumberBox(webContentBuffer, INPUT_HC_SR04_MAX_SENSOR_READ, F("Głębokość[cm]"), F("maksymalna odległość odczytu czujnika"), false,
+  addNumberBox(webContentBuffer, INPUT_HC_SR04_MAX_SENSOR_READ, S_DEPTH_CM, S_SENSOR_READING_DISTANCE, false,
                ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValue());
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -137,7 +137,7 @@ void suplaWebPageOther(int save) {
   addListGPIOBox(webContentBuffer, INPUT_CF1, F("CF1"), FUNCTION_CF1);
   addListGPIOBox(webContentBuffer, INPUT_SEL, F("SELi"), FUNCTION_SEL);
   if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
-    addLinkBox(webContentBuffer, F("Kalibracja"), PATH_HLW8012_CALIBRATE);
+    addLinkBox(webContentBuffer, S_CALIBRATION, PATH_HLW8012_CALIBRATE);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -321,12 +321,12 @@ void suplaWebpageHLW8012Calibrate(uint8_t save) {
   addFormHeaderEnd(webContentBuffer);
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_HLW8012_CALIBRATE);
-  addFormHeader(webContentBuffer, F("Ustawienia kalibracji"));
-  addNumberBox(webContentBuffer, INPUT_CALIB_POWER, F("Moc żarówki [W]"), F("25"), true);
-  addNumberBox(webContentBuffer, INPUT_CALIB_VOLTAGE, F("Napięcie [V]"), F("230"), true);
+  addFormHeader(webContentBuffer, S_CALIBRATION_SETTINGS);
+  addNumberBox(webContentBuffer, INPUT_CALIB_POWER, S_BULB_POWER_W, F("25"), true);
+  addNumberBox(webContentBuffer, INPUT_CALIB_VOLTAGE, S_VOLTAGE_V, F("230"), true);
   addFormHeaderEnd(webContentBuffer);
 
-  addButtonSubmit(webContentBuffer, F("Kalibracja"));
+  addButtonSubmit(webContentBuffer, S_CALIBRATION);
   addFormEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_RETURN, PATH_OTHER);
