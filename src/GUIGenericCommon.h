@@ -6,7 +6,7 @@
 #else
 #define QUOTE(x)        QUOTE_1(x)
 #define QUOTE_1(x)      #x
-#define INCLUDE_FILE(x) QUOTE(language/x.h)
+#define INCLUDE_FILE(x) QUOTE(language / x.h)
 #include INCLUDE_FILE(UI_LANGUAGE)
 #endif
 
