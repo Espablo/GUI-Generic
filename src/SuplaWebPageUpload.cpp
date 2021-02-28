@@ -6,7 +6,7 @@ static const char uploadIndex[] PROGMEM =
     R"(<form class="formcenter" method="POST" action="/upload" enctype="multipart/form-data">
          <input type="file" accept=".dat" name="config"></br>
          <input type="checkbox" name='generateGUIDandAUTHKEY' value='1'>{g}</br></br>
-         <input type="submit" value="Upload">
+         <input type="submit" value="{u}">
      </form>)";
 
 File dataFile;
@@ -36,6 +36,7 @@ void handleUpload(int save) {
 
   String upload = FPSTR(uploadIndex);
   upload.replace("{g}", S_GENERATE_GUID_AND_KEY);
+  upload.replace("{u}", S_UPLOAD);
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_UPLOAD);

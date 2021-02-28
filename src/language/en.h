@@ -110,5 +110,6 @@
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generate GUID & AUTHKEY"
+#define S_UPLOAD "Upload"
 
 #endif  // _LANGUAGE_EN_S_H_

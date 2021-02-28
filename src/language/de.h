@@ -107,7 +107,9 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Wertänderung"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Einstellung Impulszähler Nr."
-#endif  // _LANGUAGE_DE_S_H_
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generieren GUID & AUTHKEY"
+#define S_UPLOAD "Hochladen"
+
+#endif  // _LANGUAGE_DE_S_H_
