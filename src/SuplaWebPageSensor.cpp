@@ -31,7 +31,7 @@ void SuplaWebPageSensor::createWebPageSensor() {
 #endif
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_MCP23017)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
   path = PATH_START;
   path += PATH_I2C;
   WebServer->httpServer->on(path, std::bind(&SuplaWebPageSensor::handlei2c, this));
