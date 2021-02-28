@@ -271,7 +271,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
   addFormHeaderEnd(webContentBuffer);
 
 #if defined(SUPLA_LED)
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" LED"));
+  addFormHeader(webContentBuffer, F("Status załączenia przekaźnika"));
 
   addListGPIOBox(webContentBuffer, INPUT_LED + nr_relay, F("LED"), FUNCTION_LED, nr_relay.toInt());
 
