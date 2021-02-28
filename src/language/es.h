@@ -18,6 +18,10 @@
 #define S_ROLLERSHUTTERS                                       "Persianas"
 #define S_SAVE                                                 "Guardar"
 #define S_DEVICE_SETTINGS                                      "Configuración de dispositivo"
+#define S_TOOLS                                                "Instrumentos"
+#define S_SAVE_CONFIGURATION                                   "Guardar configuración"
+#define S_LOAD_CONFIGURATION                                   "Cargar configuración"
+#define S_RESTORE_FACTORY_SETTING                              "Restaurar la configuración de fábrica"
 #define S_UPDATE                                               "Actualización"
 #define S_RESTART                                              "Reiniciar"
 #define S_RETURN                                               "Volver"
@@ -109,6 +113,9 @@
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generar GUID & AUTHKEY"
+#define S_UPLOAD "Subir"
 
+//#### SuplaWebPageControl.cpp ####
+#define S_SETTINGS_FOR_BUTTONS "Configuración de botones"
 
 #endif  // _LANGUAGE_ES_S_H_

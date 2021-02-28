@@ -16,6 +16,10 @@
 #define S_ROLLERSHUTTERS                                       "Volet roulant"
 #define S_SAVE                                                 "Enregistrer"
 #define S_DEVICE_SETTINGS                                      "Paramètres du module"
+#define S_TOOLS                                                "Outils"
+#define S_SAVE_CONFIGURATION                                   "Enregistrer la configuration"
+#define S_LOAD_CONFIGURATION                                   "Charger la configuration"
+#define S_RESTORE_FACTORY_SETTING                              "Rétablir les paramètres d'usine"
 #define S_UPDATE                                               "Mettre à jour"
 #define S_RESTART                                              "Réinitialisation"
 #define S_RETURN                                               "Retour"
@@ -107,5 +111,9 @@
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Produire GUID & AUTHKEY"
+#define S_UPLOAD "Télécharger"
+
+//#### SuplaWebPageControl.cpp ####
+#define S_SETTINGS_FOR_BUTTONS "Paramètres des boutons"
 
 #endif  // _LANGUAGE_FR_S_H_

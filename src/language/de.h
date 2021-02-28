@@ -15,6 +15,10 @@
 #define S_ROLLERSHUTTERS                                       "Schalousien"
 #define S_SAVE                                                 "Speichern"
 #define S_DEVICE_SETTINGS                                      "Gerät Einstellung"
+#define S_TOOLS                                                "Werkzeuge"
+#define S_SAVE_CONFIGURATION                                   "Konfiguration speichern"
+#define S_LOAD_CONFIGURATION                                   "Konfiguration laden"
+#define S_RESTORE_FACTORY_SETTING                              "Stellen Sie die Werkseinstellungen wieder her"
 #define S_UPDATE                                               "Aktualisierung"
 #define S_RESTART                                              "Neustart"
 #define S_RETURN                                               "Zurück"
@@ -103,7 +107,12 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Wertänderung"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Einstellung Impulszähler Nr."
-#endif  // _LANGUAGE_DE_S_H_
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generieren GUID & AUTHKEY"
+#define S_UPLOAD "Hochladen"
+
+//#### SuplaWebPageControl.cpp ####
+#define S_SETTINGS_FOR_BUTTONS "Einstellungen für Schaltflächen"
+
+#endif  // _LANGUAGE_DE_S_H_

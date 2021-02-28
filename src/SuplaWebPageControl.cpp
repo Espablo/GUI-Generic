@@ -117,7 +117,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
   webContentBuffer += SuplaJavaScript(PATH_CONTROL);
   addForm(webContentBuffer, F("post"), PATH_SAVE_CONTROL);
 
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_BUTTONS));
+  addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_BUTTONS);
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
     countFreeGpio = 32;
@@ -316,7 +316,7 @@ void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
   webContentBuffer += SuplaJavaScript(PATH_SWITCH);
   addForm(webContentBuffer, F("post"), PATH_SAVE_SWITCH);
 
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_LIMIT_SWITCH));
+  addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_LIMIT_SWITCH);
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
     countFreeGpio = 32;
@@ -362,7 +362,7 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   webContentBuffer += SuplaJavaScript(PATH_BUTTON_SET);
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_BUTTON_SET);
-  addFormHeader(webContentBuffer, F("Ustawienia dla przycisków"));
+  addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);
 
   selected = ConfigESP->getPullUp(1, FUNCTION_BUTTON);
   addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, "Wewnętrzny pull-up", selected);

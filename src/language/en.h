@@ -15,6 +15,10 @@
 #define S_ROLLERSHUTTERS                                       "Roller shuter"
 #define S_SAVE                                                 "Save"
 #define S_DEVICE_SETTINGS                                      "Device settings"
+#define S_TOOLS                                                "Tools"
+#define S_SAVE_CONFIGURATION                                   "Save configuration"
+#define S_LOAD_CONFIGURATION                                   "Load configuration"
+#define S_RESTORE_FACTORY_SETTING                              "Restore factory settings"
 #define S_UPDATE                                               "Update"
 #define S_RESTART                                              "Restart"
 #define S_RETURN                                               "Return"
@@ -106,5 +110,9 @@
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generate GUID & AUTHKEY"
+#define S_UPLOAD "Upload"
+
+//#### SuplaWebPageControl.cpp ####
+#define S_SETTINGS_FOR_BUTTONS "Settings for buttons"
 
 #endif  // _LANGUAGE_EN_S_H_
