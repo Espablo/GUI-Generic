@@ -187,7 +187,6 @@ void SuplaWebPageControl::handleButtonSaveSet() {
     ConfigManager->setElement(key, INVERSED_BUTTON, 0);
   }
 
-#ifdef SUPLA_RELAY
   input = INPUT_RELAY_LEVEL;
   input += nr_button;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
@@ -196,7 +195,6 @@ void SuplaWebPageControl::handleButtonSaveSet() {
   else {
     ConfigManager->setElement(key, PULL_UP_BUTTON, 0);
   }
-#endif
 
   input = INPUT_BUTTON_EVENT;
   input += nr_button;
@@ -243,10 +241,8 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
   addForm(webContentBuffer, F("post"), PATH_SAVE_BUTTON_SET + nr_button);
   addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
 
-#ifdef SUPLA_RELAY
   selected = ConfigESP->getPullUp(nr_button.toInt(), FUNCTION_BUTTON);
   addCheckBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_button, "Wewnętrzny pull-up", selected);
-#endif
 
   selected = ConfigESP->getInversed(nr_button.toInt(), FUNCTION_BUTTON);
   addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED + nr_button, "Odwrócona logika", selected);
