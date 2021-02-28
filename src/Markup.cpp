@@ -341,6 +341,7 @@ void addButton(String& html, const String& name, const String& url) {
   html += name;
   html += F("</button></a>");
   html += F("<br><br>");
+  WebServer->sendHeader();
 }
 
 void addButtonSubmit(String& html, const String& name) {
@@ -348,6 +349,7 @@ void addButtonSubmit(String& html, const String& name) {
   html += name;
   html += F("</button>");
   html += F("<br><br>");
+  WebServer->sendHeader();
 }
 
 void addListGPIOSelect(String& html, const String& input_id, uint8_t function, uint8_t nr) {
