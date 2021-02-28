@@ -64,7 +64,7 @@
 #endif
 #endif
 
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS)
+#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS) || defined(SUPLA_LED)
 #if !defined(SUPLA_RELAY)
 #define SUPLA_RELAY
 #endif
