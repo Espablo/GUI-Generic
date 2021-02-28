@@ -71,6 +71,13 @@ class SuplaWebPageRelay {
   void handleRelaySaveSetMCP23017();
   void handleRelaySetMCP23017();
 #endif
+
+#if defined(SUPLA_LED)
+#define PATH_LED        "led"
+#define PATH_SAVE_LED   "saveled"
+#define INPUT_LED       "led"
+#define INPUT_LEVEL_LED "ill"
+#endif
 };
 
 extern SuplaWebPageRelay* WebPageRelay;

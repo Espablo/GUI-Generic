@@ -20,7 +20,6 @@
 #include "SuplaWebPageControl.h"
 #include "SuplaWebPageRelay.h"
 #include "SuplaWebPageSensor.h"
-#include "SuplaWebPageStatusLed.h"
 #include "SuplaCommonPROGMEM.h"
 #include "SuplaTemplateBoard.h"
 #include "Markup.h"
@@ -78,9 +77,6 @@ void SuplaWebServer::createWebServer() {
   createWebDownload();
   createWebUpload();
   createWebTools();
-#ifdef SUPLA_LED
-  createWebStatusLed();
-#endif
   createWebPageOther();
 }
 
@@ -215,10 +211,6 @@ void SuplaWebServer::deviceSettings(int save) {
 
 #ifdef SUPLA_LIMIT_SWITCH
   addButton(webContentBuffer, F("KRAŃCÓWKI"), PATH_SWITCH);
-#endif
-
-#ifdef SUPLA_LED
-  addButton(webContentBuffer, F("LED"), PATH_LED);
 #endif
 
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)

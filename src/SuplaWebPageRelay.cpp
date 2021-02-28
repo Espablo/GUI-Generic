@@ -187,6 +187,25 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
   input = INPUT_CONDITIONS_MAX;
   ConfigManager->setElement(KEY_CONDITIONS_MAX, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
 
+#if defined(SUPLA_LED)
+  input = INPUT_LED;
+  input += nr_relay;
+  if (!WebServer->saveGPIO(input, FUNCTION_LED, nr_relay.toInt())) {
+    supla_webpage_relay_set(6, nr_relay.toInt());
+    return;
+  }
+
+  if (ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED) != OFF_GPIO) {
+    gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED);
+    key = KEY_GPIO + gpio;
+    input = INPUT_LEVEL_LED;
+    input += nr_relay;
+
+    ConfigManager->setElement(key, INVERSED_BUTTON, WebServer->httpServer->arg(input).toInt());
+  }
+
+#endif
+
 #if defined(SUPLA_PUSHOVER)
   if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
     input = INPUT_PUSHOVER;
@@ -250,6 +269,17 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
   selected = ConfigESP->getMemory(nr_relay.toInt(), FUNCTION_RELAY);
   addListBox(webContentBuffer, INPUT_RELAY_MEMORY + nr_relay, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
   addFormHeaderEnd(webContentBuffer);
+
+#if defined(SUPLA_LED)
+  addFormHeader(webContentBuffer, F("Status załączenia przekaźnika"));
+
+  addListGPIOBox(webContentBuffer, INPUT_LED + nr_relay, F("LED"), FUNCTION_LED, nr_relay.toInt());
+
+  selected = ConfigESP->getInversed(nr_relay.toInt(), FUNCTION_LED);
+  addListBox(webContentBuffer, INPUT_LEVEL_LED + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
+
+  addFormHeaderEnd(webContentBuffer);
+#endif
 
 #if defined(SUPLA_PUSHOVER)
   if (nr_relay.toInt() < MAX_PUSHOVER_MESSAGE) {
