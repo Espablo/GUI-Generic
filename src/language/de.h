@@ -1,6 +1,7 @@
 #ifndef _LANGUAGE_DE_S_H_
 #define _LANGUAGE_DE_S_H_
 
+#define S_SETTING_FOR                                          "Einstellungen für"
 #define S_SETTING_WIFI_SSID                                    "WIFI Einstellung"
 #define S_WIFI_SSID                                            "WIFI Name"
 #define S_WIFI_PASS                                            "Passwort"

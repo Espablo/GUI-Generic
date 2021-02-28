@@ -4,6 +4,7 @@
 // Translated by EñE Partycja Gajek-Nowrot
 // Checked by elmaya
 
+#define S_SETTING_FOR                                          "Configuraciones para"
 #define S_SETTING_WIFI_SSID                                    "Configuración de WIFI"
 #define S_WIFI_SSID                                            "Nombre WIFI"
 #define S_WIFI_PASS                                            "Contraseña"
