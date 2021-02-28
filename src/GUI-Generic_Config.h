@@ -1,10 +1,6 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
-#ifndef DEBUG_MODE
-#define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
-#endif
-
 // #define USE_CUSTOM
 
 // User configuration
@@ -57,6 +53,10 @@
 #define SUPLA_DIRECT_LINKS
 
 #endif  // USE_CUSTOM
+
+#ifndef DEBUG_MODE
+#define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
+#endif
 
 #if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_OLED) || defined(SUPLA_RGBW)
 #if !defined(SUPLA_BUTTON)
