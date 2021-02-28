@@ -1,5 +1,5 @@
 #include "SuplaWebPageStatusLed.h"
-#include "SuplaDeviceGUI.h"
+
 #include "SuplaWebServer.h"
 #include "GUIGenericCommon.h"
 #include "Markup.h"

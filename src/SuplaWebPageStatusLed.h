@@ -1,6 +1,8 @@
 #ifndef SuplaWebPageStatusLed_h
 #define SuplaWebPageStatusLed_h
 
+#include "SuplaDeviceGUI.h"
+
 #ifdef SUPLA_LED
 #define PATH_LED        "led"
 #define PATH_SAVE_LED   "saveled"
