@@ -112,4 +112,7 @@
 #define S_GENERATE_GUID_AND_KEY "Generieren GUID & AUTHKEY"
 #define S_UPLOAD "Hochladen"
 
+//#### SuplaWebPageControl.cpp ####
+#define S_SETTINGS_FOR_BUTTONS "Einstellungen für Schaltflächen"
+
 #endif  // _LANGUAGE_DE_S_H_

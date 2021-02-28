@@ -113,4 +113,7 @@
 #define S_GENERATE_GUID_AND_KEY "Generuj GUID & AUTHKEY"
 #define S_UPLOAD "Prześlij"
 
+//#### SuplaWebPageControl.cpp ####
+#define S_SETTINGS_FOR_BUTTONS "Ustawienia dla przycisków"
+
 #endif  // _LANGUAGE_PL_S_H_
