@@ -20,17 +20,17 @@ void handleTools() {
     return;
   }
 
-  addFormHeader(webContentBuffer, F("Narzędzia"));
+  addFormHeader(webContentBuffer, S_TOOLS);
   //#ifdef SUPLA_BUTTON
-  addButton(webContentBuffer, F("Zapisz konfigurację"), PATH_DOWNLOAD);
+  addButton(webContentBuffer, S_SAVE_CONFIGURATION, PATH_DOWNLOAD);
   //#endif
   //#ifdef SUPLA_BUTTON
-  addButton(webContentBuffer, F("Wczytaj konfigurację"), PATH_UPLOAD);
+  addButton(webContentBuffer, S_LOAD_CONFIGURATION, PATH_UPLOAD);
   //#endif
 #ifdef SUPLA_OTA
   addButton(webContentBuffer, S_UPDATE, PATH_UPDATE_HENDLE);
 #endif
-  addButton(webContentBuffer, F("Przywróć ustawienia fabryczne"), PATH_FACTORY_RESET);
+  addButton(webContentBuffer, S_RESTORE_FACTORY_SETTING, PATH_FACTORY_RESET);
   addFormHeaderEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, "");
 

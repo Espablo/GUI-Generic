@@ -117,7 +117,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
   webContentBuffer += SuplaJavaScript(PATH_CONTROL);
   addForm(webContentBuffer, F("post"), PATH_SAVE_CONTROL);
 
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_BUTTONS));
+  addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_BUTTONS);
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
     countFreeGpio = 32;
@@ -316,7 +316,7 @@ void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
   webContentBuffer += SuplaJavaScript(PATH_SWITCH);
   addForm(webContentBuffer, F("post"), PATH_SAVE_SWITCH);
 
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR_LIMIT_SWITCH));
+  addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_LIMIT_SWITCH);
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
     countFreeGpio = 32;

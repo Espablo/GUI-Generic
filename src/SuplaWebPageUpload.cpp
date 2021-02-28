@@ -38,7 +38,7 @@ void handleUpload(int save) {
   webContentBuffer += SuplaJavaScript(PATH_UPLOAD);
   webContentBuffer += F("<div class='w'>");
   webContentBuffer += F("<h3>");
-  webContentBuffer += F("Wgraj konfiguracje");
+  webContentBuffer += S_LOAD_CONFIGURATION;
   webContentBuffer += F("</h3>");
   webContentBuffer += F("<br>");
   webContentBuffer += FPSTR(uploadIndex);
