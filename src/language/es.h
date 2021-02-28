@@ -107,4 +107,8 @@
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Cambia el valor"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Configuración contador de impulsos no."
 
+//#### SuplaWebPageUpload.cpp ####
+#define S_GENERATE_GUID_AND_KEY "Generar GUID & AUTHKEY"
+
+
 #endif  // _LANGUAGE_ES_S_H_

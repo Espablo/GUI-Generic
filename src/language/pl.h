@@ -105,4 +105,7 @@
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Zmień wartość"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Ustawienia IC nr"
 
+//#### SuplaWebPageUpload.cpp ####
+#define S_GENERATE_GUID_AND_KEY "Generuj GUID & AUTHKEY"
+
 #endif  // _LANGUAGE_PL_S_H_
