@@ -1,7 +1,7 @@
 #include "SuplaWebPageOther.h"
 
 void createWebPageOther() {
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER)
   WebServer->httpServer->on(getURL(PATH_OTHER), handleOther);
   WebServer->httpServer->on(getURL(PATH_SAVE_OTHER), handleOtherSave);
 
@@ -21,7 +21,7 @@ void createWebPageOther() {
 #endif
 }
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER)
 void handleOther() {
   if (!WebServer->isLoggedIn()) {
     return;
