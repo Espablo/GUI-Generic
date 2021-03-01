@@ -104,6 +104,9 @@
 #define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < 2nd channel value > OFF - humidification"
 #define S_ON_2CH_VAL_OFF_DRYING "ON > 2nd channel value < OFF - drying"
 
+//#### SuplaWebServer.cpp ####
+#define S_LIMIT_SWITCHES "LIMIT SWITCHES"
+
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "ABSENT"
 

@@ -104,6 +104,9 @@
 #define S_ON_2CH_VAL_OFF_HUMIDIFICATION "EIN < 2. Kanalwert > AUS - Befeuchtung"
 #define S_ON_2CH_VAL_OFF_DRYING "EIN > 2. Kanalwert < AUS - Trocknen"
 
+//#### SuplaWebServer.cpp ####
+#define S_LIMIT_SWITCHES "GRENZSCHALTER"
+
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "ABWESEND"
 

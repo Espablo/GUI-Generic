@@ -105,6 +105,9 @@
 #define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < 2 wartość kanału > OFF - nawilżanie"
 #define S_ON_2CH_VAL_OFF_DRYING "ON > 2 wartość kanału < OFF - osuszanie"
 
+//#### SuplaWebServer.cpp ####
+#define S_LIMIT_SWITCHES "KRAŃCÓWKI"
+
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"
 

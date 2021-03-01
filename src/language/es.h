@@ -107,6 +107,9 @@
 #define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < valor del segundo canal > OFF - humidificación"
 #define S_ON_2CH_VAL_OFF_DRYING "ON > valor del segundo canal < OFF - secado"
 
+//#### SuplaWebServer.cpp ####
+#define S_LIMIT_SWITCHES "FINALES DE CARRERA"
+
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"
 
