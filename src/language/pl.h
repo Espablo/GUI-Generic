@@ -96,7 +96,14 @@
 #define S_REACTION_ON_RELEASE "ZWOLNIENIE"
 #define S_REACTION_ON_CHANGE  "ZMIANA STANU"
 #define S_CFG_10_PRESSES      "10 WCIŚNIĘĆ"
-#define S_5SEK_HOLD           "5 SEK"
+#define S_5SEK_HOLD           "WCIŚNIĘTY 5 SEKUND"
+#define S_NORMAL "NORMALNE"
+#define S_SLOW "WOLNE"
+#define S_MANUALLY "RĘCZNE"
+#define S_ON_CH_VAL_OFF_HEATING "ON < wartość kanału > OFF - ogrzewanie"
+#define S_ON_CH_VAL_OFF_COOLING "ON > wartość kanału < OFF - chłodzenie"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < 2 wartość kanału > OFF - nawilżanie"
+#define S_ON_2CH_VAL_OFF_DRYING "ON > 2 wartość kanału < OFF - osuszanie"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"

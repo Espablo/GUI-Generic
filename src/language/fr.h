@@ -97,6 +97,13 @@
 #define S_REACTION_ON_CHANGE  "SUR LE CHANGEMENT"
 #define S_CFG_10_PRESSES      "10 FOIS SUR PRESSE"
 #define S_5SEK_HOLD           "5 SEC TENIR"
+#define S_NORMAL "ORDINAIRE"
+#define S_SLOW "LENT"
+#define S_MANUALLY "MANUELLEMENT"
+#define S_ON_CH_VAL_OFF_HEATING "ON < valeur de canal > OFF - chauffage"
+#define S_ON_CH_VAL_OFF_COOLING "ON > valeur du canal < OFF - refroidissement"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < Valeur 2ème canal > OFF - humidification"
+#define S_ON_2CH_VAL_OFF_DRYING "ON > Valeur 2ème canal < OFF - séchage"
 
 // #### SuplaTemplateBoard.h ####
 #define S_ABSENT "ABSENT"

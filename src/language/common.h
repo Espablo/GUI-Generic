@@ -15,6 +15,7 @@
 #define S_RGBW_RGB_DIMMER "RGBW/RGB/DIMMER"
 #define S_PUSHOVER "PUSHOVER"
 #define S_OLED "OLED"
+#define S_BME280 "BME280"
 #define S_DS18B20 "DS18B20"
 #define S_MULTI_DS18B20 "Multi DS18B20"
 #define S_DHT11 "DHT11"
@@ -23,6 +24,7 @@
 #define S_SI702 "Si7021"
 #define S_SI7021_SONOFF "Si7021 Sonoff"
 #define S_MCP23017 "MCP23017"
+#define S_MAX6675 "MAX6675"
 #define S_MAX6675_MAX31855 "MAX6675/MAX31855"
 #define S_PUSHOVER "Pushover"
 //### PIN codes not translated ###

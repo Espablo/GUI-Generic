@@ -95,7 +95,14 @@
 #define S_REACTION_ON_RELEASE "ON RELEASE"
 #define S_REACTION_ON_CHANGE  "ON CHANGE"
 #define S_CFG_10_PRESSES      "10 ON PRESSES"
-#define S_5SEK_HOLD           "5 SEK HOLD"
+#define S_5SEK_HOLD           "5 SEC HOLD"
+#define S_NORMAL "NORMAL"
+#define S_SLOW "SLOW"
+#define S_MANUALLY "MANUALLY"
+#define S_ON_CH_VAL_OFF_HEATING "ON < channel value > OFF - heating"
+#define S_ON_CH_VAL_OFF_COOLING "ON > channel value < OFF - cooling"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < 2nd channel value > OFF - humidification"
+#define S_ON_2CH_VAL_OFF_DRYING "ON > 2nd channel value < OFF - drying"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "ABSENT"

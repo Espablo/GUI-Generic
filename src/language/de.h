@@ -96,6 +96,13 @@
 #define S_REACTION_ON_CHANGE  "STATUS ÄNDERUNG"
 #define S_CFG_10_PRESSES      "10 MAL DRÜCKEN"
 #define S_5SEK_HOLD           "5 SEKUNDEN GEDRÜCKT HALTEN"
+#define S_NORMAL "NORMAL"
+#define S_SLOW "SCHLEPPEND"
+#define S_MANUALLY "MANUELL"
+#define S_ON_CH_VAL_OFF_HEATING "EIN < Kanalwert > AUS - Heizung"
+#define S_ON_CH_VAL_OFF_COOLING "EIN > Kanalwert < AUS - Kühlung"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "EIN < 2. Kanalwert > AUS - Befeuchtung"
+#define S_ON_2CH_VAL_OFF_DRYING "EIN > 2. Kanalwert < AUS - Trocknen"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "ABWESEND"
