@@ -131,4 +131,16 @@
 #define S_DEPTH_CM "Profondeur [cm]"
 #define S_SENSOR_READING_DISTANCE "distance de lecture du capteur"
 
+//#### SuplaWebPageRelay.cpp ####
+#define S_RELAY_ACTIVATION_STATUS "État d'activation du relais"
+#define S_STATE "État"
+#define S_MESSAGE "Un message"
+#define S_DIRECT_LINKS "Liens directs"
+#define S_CONDITIONING "Conditionnement"
+#define S_SENSOR "Capteur"
+#define S_CONDITION "Condition"
+#define S_SWITCH_ON_VALUE "valeur d'enclenchement"
+#define S_SWITCH_OFF_VALUE "valeur de coupure"
+#define S_SETTINGS_FOR_RELAYS "Paramètres des relais"
+
 #endif  // _LANGUAGE_FR_S_H_

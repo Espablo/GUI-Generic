@@ -131,4 +131,16 @@
 #define S_DEPTH_CM "Głębokość [cm]"
 #define S_SENSOR_READING_DISTANCE "maksymalna odległość odczytu czujnika"
 
+//#### SuplaWebPageRelay.cpp ####
+#define S_RELAY_ACTIVATION_STATUS "Status załączenia przekaźnika"
+#define S_STATE "Stan"
+#define S_MESSAGE "Wiadomość"
+#define S_DIRECT_LINKS "Linki bezpośrednie"
+#define S_CONDITIONING "Warunkowanie"
+#define S_SENSOR "Czujnik"
+#define S_CONDITION "Warunek"
+#define S_SWITCH_ON_VALUE "wartość włączenia"
+#define S_SWITCH_OFF_VALUE "wartość wyłączenia"
+#define S_SETTINGS_FOR_RELAYS "Ustawienia dla przekaźników"
+
 #endif  // _LANGUAGE_PL_S_H_

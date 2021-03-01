@@ -130,4 +130,16 @@
 #define S_DEPTH_CM "Depth [cm]"
 #define S_SENSOR_READING_DISTANCE "sensor reading distance"
 
+//#### SuplaWebPageRelay.cpp ####
+#define S_RELAY_ACTIVATION_STATUS "Relay activation status"
+#define S_STATE "State"
+#define S_MESSAGE "Message"
+#define S_DIRECT_LINKS "Direct links"
+#define S_CONDITIONING "Conditioning"
+#define S_SENSOR "Sensor"
+#define S_CONDITION "Condition"
+#define S_SWITCH_ON_VALUE "switch-on value"
+#define S_SWITCH_OFF_VALUE "switch-off value"
+#define S_SETTINGS_FOR_RELAYS "Settings for relays"
+
 #endif  // _LANGUAGE_EN_S_H_

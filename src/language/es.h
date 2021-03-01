@@ -133,4 +133,16 @@
 #define S_DEPTH_CM "Profundidad [cm]"
 #define S_SENSOR_READING_DISTANCE "distancia de lectura del sensor"
 
+//#### SuplaWebPageRelay.cpp ####
+#define S_RELAY_ACTIVATION_STATUS "Estado de activación del relé"
+#define S_STATE "Expresar"
+#define S_MESSAGE "Mensaje"
+#define S_DIRECT_LINKS "Enlaces directos"
+#define S_CONDITIONING "Acondicionamiento"
+#define S_SENSOR "Sensor"
+#define S_CONDITION "Condición"
+#define S_SWITCH_ON_VALUE "valor de encendido"
+#define S_SWITCH_OFF_VALUE "valor de desconexión"
+#define S_SETTINGS_FOR_RELAYS "Configuraciones para relés"
+
 #endif  // _LANGUAGE_ES_S_H_
