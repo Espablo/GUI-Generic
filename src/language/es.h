@@ -110,6 +110,11 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Cambia el valor"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Configuración contador de impulsos no."
+#define S_CONTROL                          "Control"
+#define S_OLED_BUTTON                      "Botón OLED"
+#define S_SCREEN                           "Pantalla"
+#define S_BACKLIGHT_S                      "Luz de fondo [s]"
+#define S_ADDRESS_BMPE280                  "Dirección BME280"
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generar GUID & AUTHKEY"

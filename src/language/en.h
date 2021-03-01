@@ -29,7 +29,7 @@
 #define S_SENSORS_1WIRE                                        "SENSORS 1Wire"
 #define S_SENSORS_I2C                                          "SENSORS i2c"
 #define S_SENSORS_SPI                                          "SENSORS SPI"
-#define S_SENSORS_OTHER                                        "SENSORY OTHER"
+#define S_SENSORS_OTHER                                        "SENSORS OTHER"
 #define S_LED_BUTTON_CFG                                       "LED, BUTTON CONFIG"
 #define S_CFG_MODE                                             "CFG mode"
 #define S_QUANTITY                                             "QUANTITY"
@@ -47,7 +47,7 @@
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO settings for limit switch"
 #define S_LIMIT_SWITCH                                         "LIMIT SWITCH"
-#define S_GPIO_SETTINGS_FOR                                    "GPIO settigs for"
+#define S_GPIO_SETTINGS_FOR                                    "GPIO settings for"
 #define S_FOUND                                                "Found"
 #define S_NO_SENSORS_CONNECTED                                 "No sensor conected"
 #define S_SAVE_FOUND                                           "Save found"
@@ -59,7 +59,7 @@
 #define S_DATA_SAVED                                           "Data saved"
 #define S_RESTART_MODULE                                       "Restart module"
 #define S_DATA_ERASED_RESTART_DEVICE                           "Data erased - restart module"
-#define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Write error - ubable to read file FS. Partition missing"
+#define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Write error - unable to read file FS. Partition missing"
 #define S_DATA_SAVED_RESTART_MODULE                            "Data saved - restart module"
 #define S_WRITE_ERROR_BAD_DATA                                 "Write error - bad data"
 
@@ -107,6 +107,11 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Change value"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Settings IC nr."
+#define S_CONTROL                          "Control"
+#define S_OLED_BUTTON                      "OLED button"
+#define S_SCREEN                           "Screen"
+#define S_BACKLIGHT_S                      "Backlight [s]"
+#define S_ADDRESS_BMPE280                  "Address BME280"
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generate GUID & AUTHKEY"

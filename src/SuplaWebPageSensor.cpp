@@ -119,7 +119,9 @@ void SuplaWebPageSensor::supla_webpage_search(int save) {
   webContentBuffer += F("<div class='w'>");
   webContentBuffer += F("<h3>");
   webContentBuffer += S_FOUND;
-  webContentBuffer += F(" DS18b20</h3>");
+  webContentBuffer += S_SPACE;
+  webContentBuffer += S_DS18B20;
+  webContentBuffer += F("</h3>");
   sensors.setOneWire(&ow);
   sensors.begin();
   if (sensors.isParasitePowerMode()) {
@@ -162,7 +164,8 @@ void SuplaWebPageSensor::supla_webpage_search(int save) {
   webContentBuffer += F("</center>");
   webContentBuffer += F("<button type='submit'>");
   webContentBuffer += S_SAVE_FOUND;
-  webContentBuffer += F("DS18b20</button></form>");
+  webContentBuffer += S_DS18B20;
+  webContentBuffer += F("</button></form>");
   webContentBuffer += F("<br><br>");
   webContentBuffer += F("<a href='");
   webContentBuffer += PATH_START;
@@ -302,37 +305,37 @@ void SuplaWebPageSensor::supla_webpage_1wire(int save) {
   webContentBuffer += PATH_SAVE_1WIRE;
   webContentBuffer += F("'>");
 #ifdef SUPLA_DHT11
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" DHT11"));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_DHT11);
   addNumberBox(webContentBuffer, INPUT_MAX_DHT11, S_QUANTITY, KEY_MAX_DHT11, ConfigESP->countFreeGpio(FUNCTION_DHT11));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
-    addListGPIOBox(webContentBuffer, INPUT_DHT11_GPIO, F("DHT11"), FUNCTION_DHT11, nr);
+    addListGPIOBox(webContentBuffer, INPUT_DHT11_GPIO, S_DHT11, FUNCTION_DHT11, nr);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_DHT22
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" DHT22"));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_DHT22);
   addNumberBox(webContentBuffer, INPUT_MAX_DHT22, S_QUANTITY, KEY_MAX_DHT22, ConfigESP->countFreeGpio(FUNCTION_DHT22));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
-    addListGPIOBox(webContentBuffer, INPUT_DHT22_GPIO, F("DHT22"), FUNCTION_DHT22, nr);
+    addListGPIOBox(webContentBuffer, INPUT_DHT22_GPIO, S_DHT22, FUNCTION_DHT22, nr);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_SI7021_SONOFF
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" Si7021 Sonoff"));
-  addListGPIOBox(webContentBuffer, INPUT_SI7021_SONOFF, F("Si7021 Sonoff"), FUNCTION_SI7021_SONOFF);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_SI7021_SONOFF);
+  addListGPIOBox(webContentBuffer, INPUT_SI7021_SONOFF, S_SI7021_SONOFF, FUNCTION_SI7021_SONOFF);
   addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_DS18B20
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" Multi DS18B20"));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_MULTI_DS18B20);
   addNumberBox(webContentBuffer, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, MAX_DS18B20);
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
-    addListGPIOLinkBox(webContentBuffer, INPUT_MULTI_DS_GPIO, F("MULTI DS18B20"), FUNCTION_DS18B20, PATH_MULTI_DS);
+    addListGPIOLinkBox(webContentBuffer, INPUT_MULTI_DS_GPIO, S_MULTI_DS18B20, FUNCTION_DS18B20, PATH_MULTI_DS);
   }
   else {
-    addListGPIOBox(webContentBuffer, INPUT_MULTI_DS_GPIO, F("MULTI DS18B20"), FUNCTION_DS18B20);
+    addListGPIOBox(webContentBuffer, INPUT_MULTI_DS_GPIO, S_MULTI_DS18B20, FUNCTION_DS18B20);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -465,16 +468,16 @@ void SuplaWebPageSensor::supla_webpage_i2c(int save) {
   webContentBuffer += SuplaJavaScript(PATH_I2C);
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_I2C);
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" i2c"));
-  addListGPIOBox(webContentBuffer, INPUT_SDA_GPIO, F("SDA"), FUNCTION_SDA);
-  addListGPIOBox(webContentBuffer, INPUT_SCL_GPIO, F("SCL"), FUNCTION_SCL);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_I2C);
+  addListGPIOBox(webContentBuffer, INPUT_SDA_GPIO, S_SDA, FUNCTION_SDA);
+  addListGPIOBox(webContentBuffer, INPUT_SCL_GPIO, S_SCL, FUNCTION_SCL);
   addFormHeaderEnd(webContentBuffer);
 
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
 #ifdef SUPLA_BME280
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt();
     addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_BME280, F("BME280 adres"), BME280_P, 4, selected);
+    addListBox(webContentBuffer, INPUT_BME280, S_ADDRESS_BMPE280, BME280_P, 4, selected);
     addNumberBox(webContentBuffer, INPUT_ALTITUDE_BME280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BME280, 1500);
     addFormHeaderEnd(webContentBuffer);
 #endif
@@ -482,14 +485,14 @@ void SuplaWebPageSensor::supla_webpage_i2c(int save) {
 #ifdef SUPLA_SHT3x
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SHT3x).toInt();
     addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_SHT3x, F("SHT3x"), SHT3x_P, 4, selected);
+    addListBox(webContentBuffer, INPUT_SHT3x, S_SHT3X, SHT3x_P, 4, selected);
     addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_SI7021
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SI7021).toInt();
     addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_SI7021, F("SI7021"), STATE_P, 2, selected);
+    addListBox(webContentBuffer, INPUT_SI7021, S_SI702, STATE_P, 2, selected);
     addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -497,21 +500,21 @@ void SuplaWebPageSensor::supla_webpage_i2c(int save) {
     addFormHeader(webContentBuffer);
 
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt();
-    addListBox(webContentBuffer, INPUT_OLED, F("OLED"), OLED_P, 4, selected);
+    addListBox(webContentBuffer, INPUT_OLED, S_OLED, OLED_P, 4, selected);
 
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       String name, sensorName, input;
 
-      addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, F("PRZYCISK OLED"), FUNCTION_CFG_BUTTON);
+      addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_CFG_BUTTON);
       selected = ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt();
-      addListBox(webContentBuffer, INPUT_OLED_ANIMATION, F("STEROWANIE"), OLED_CONTROLL_P, 3, selected);
-      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS, F("PODŚWIETLENIE[s]"), KEY_OLED_BACK_LIGHT_TIME, 99);
+      addListBox(webContentBuffer, INPUT_OLED_ANIMATION, S_CONTROL, OLED_CONTROLL_P, 3, selected);
+      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
 
       for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
         sensorName = String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
         input = INPUT_OLED_NAME;
         input += i;
-        name = F("EKRAN ");
+        name = S_SCREEN;
         name += i + 1;
         addTextBox(webContentBuffer, input, name, sensorName, 0, MAX_DS18B20_NAME, false);
       }
@@ -522,7 +525,7 @@ void SuplaWebPageSensor::supla_webpage_i2c(int save) {
 #ifdef SUPLA_MCP23017
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt();
     addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_MCP23017, F("MCP23017"), STATE_P, 2, selected);
+    addListBox(webContentBuffer, INPUT_MCP23017, S_MCP23017, STATE_P, 2, selected);
     addFormHeaderEnd(webContentBuffer);
 #endif
   }
@@ -597,13 +600,13 @@ void SuplaWebPageSensor::supla_webpage_spi(int save) {
 
 #if defined(SUPLA_MAX6675)
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" SPI"));
-  addListGPIOBox(webContentBuffer, INPUT_CLK_GPIO, F("CLK"), FUNCTION_CLK);
-  addListGPIOBox(webContentBuffer, INPUT_CS_GPIO, F("CS"), FUNCTION_CS);
-  addListGPIOBox(webContentBuffer, INPUT_D0_GPIO, F("D0"), FUNCTION_D0);
+  addListGPIOBox(webContentBuffer, INPUT_CLK_GPIO, S_CLK, FUNCTION_CLK);
+  addListGPIOBox(webContentBuffer, INPUT_CS_GPIO, S_CS, FUNCTION_CS);
+  addListGPIOBox(webContentBuffer, INPUT_D0_GPIO, S_D0, FUNCTION_D0);
 
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MAX6675).toInt();
-    addListBox(webContentBuffer, INPUT_MAX6675, F("MAX6675/MAX31855"), STATE_P, 2, selected);
+    addListBox(webContentBuffer, INPUT_MAX6675, S_MAX6675_MAX31855, STATE_P, 2, selected);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
