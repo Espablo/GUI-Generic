@@ -114,7 +114,7 @@ void suplaWebPageOther(int save) {
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_OTHER);
 #ifdef SUPLA_HC_SR04
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" HC-SR04"));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_HC_SR04);
   addListGPIOBox(webContentBuffer, INPUT_TRIG_GPIO, F("TRIG"), FUNCTION_TRIG);
   addListGPIOBox(webContentBuffer, INPUT_ECHO_GPIO, F("ECHO"), FUNCTION_ECHO);
   addNumberBox(webContentBuffer, INPUT_HC_SR04_MAX_SENSOR_READ, S_DEPTH_CM, S_SENSOR_READING_DISTANCE, false,
@@ -123,7 +123,7 @@ void suplaWebPageOther(int save) {
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" ") + S_IMPULSE_COUNTER);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_IMPULSE_COUNTER);
   addNumberBox(webContentBuffer, INPUT_MAX_IMPULSE_COUNTER, S_QUANTITY, KEY_MAX_IMPULSE_COUNTER, ConfigESP->countFreeGpio(FUNCTION_IMPULSE_COUNTER));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
     addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), FUNCTION_IMPULSE_COUNTER, PATH_IMPULSE_COUNTER_SET, nr);
@@ -132,7 +132,7 @@ void suplaWebPageOther(int save) {
 #endif
 
 #ifdef SUPLA_HLW8012
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" HLW8012"));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_HLW8012);
   addListGPIOBox(webContentBuffer, INPUT_CF, F("CF"), FUNCTION_CF);
   addListGPIOBox(webContentBuffer, INPUT_CF1, F("CF1"), FUNCTION_CF1);
   addListGPIOBox(webContentBuffer, INPUT_SEL, F("SELi"), FUNCTION_SEL);
@@ -143,7 +143,7 @@ void suplaWebPageOther(int save) {
 #endif
 
 #ifdef SUPLA_RGBW
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" RGBW/RGB/DIMMER"));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_RGBW_RGB_DIMMER);
   addNumberBox(webContentBuffer, INPUT_RGBW_MAX, S_QUANTITY, KEY_MAX_RGBW, ConfigESP->countFreeGpio());
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     addListGPIOBox(webContentBuffer, INPUT_RGBW_RED, F("RED"), FUNCTION_RGBW_RED, nr, false);
@@ -155,7 +155,7 @@ void suplaWebPageOther(int save) {
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-  addFormHeader(webContentBuffer, String(S_SETTING_FOR) + F(" PUSHOVER"));
+  addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_PUSHOVER);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_TOKEN, F("Token"), KEY_PUSHOVER_TOKEN, 0, MAX_TOKEN_SIZE, false);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_USER, F("Users"), KEY_PUSHOVER_USER, 0, MAX_USER_SIZE, false);
   addFormHeaderEnd(webContentBuffer);

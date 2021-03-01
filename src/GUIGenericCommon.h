@@ -1,6 +1,7 @@
 #ifndef GUI_GENERIC_COMMON_H
 #define GUI_GENERIC_COMMON_H
 
+#include "language/common.h"
 #ifndef UI_LANGUAGE
 #include "language/pl.h"
 #else
