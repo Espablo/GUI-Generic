@@ -22,7 +22,7 @@ namespace Supla {
 namespace Control {
 
 Pushover::Pushover(const char *token, const char *user, bool isSecured)
-    : lastStateSend(false) {
+    : lastMsgReceivedMs(0) {
   setToken(token);
   setUser(user);
   _isSecured = isSecured;
@@ -142,8 +142,8 @@ void Pushover::send() {
 }
 
 void Pushover::iterateAlways() {
-  if (lastStateSend) {
-    lastStateSend = false;
+  if (lastMsgReceivedMs != 0 && millis() - lastMsgReceivedMs > 1000) {
+    lastMsgReceivedMs = 0;
     send();
   }
 }
@@ -151,7 +151,7 @@ void Pushover::iterateAlways() {
 void Pushover::handleAction(int event, int action) {
   (void)(event);
   if (action == SEND_NOTIF_1) {
-    lastStateSend = true;
+    lastMsgReceivedMs = millis();
   }
 }
 

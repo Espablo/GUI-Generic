@@ -62,7 +62,7 @@ class Pushover : public Element, public ActionHandler {
   WiFiClient *client = NULL;
   const char *host = "api.pushover.net";
   const char *path = "/1/messages.json";
-  bool lastStateSend;
+  unsigned long lastMsgReceivedMs;
 
   bool _isSecured;
   char _token[MAX_TOKEN_SIZE];
