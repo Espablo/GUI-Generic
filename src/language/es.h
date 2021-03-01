@@ -1,6 +1,8 @@
 #ifndef _LANGUAGE_ES_S_H_
 #define _LANGUAGE_ES_S_H_
 
+#define S_LANG "es"
+
 // Translated by EñE Partycja Gajek-Nowrot
 // Checked by elmaya
 
@@ -154,5 +156,14 @@
 #define S_SWITCH_ON_VALUE "valor de encendido"
 #define S_SWITCH_OFF_VALUE "valor de desconexión"
 #define S_SETTINGS_FOR_RELAYS "Configuraciones para relés"
+
+//#### SuplaHTTPUpdateServer.cpp ####
+#define S_FLASH_MEMORY_SIZE "Tamaño de la memoria flash"
+#define S_SKETCH_LOADED_SIZE "Tamaño de boceto cargado"
+#define S_SKETCH_UPLOAD_MAX_SIZE "Tamaño máx de carga de bocetos"
+#define S_UPDATE_FIRMWARE "Actualice el firmware"
+#define S_UPDATE_SUCCESS_REBOOTING "¡Actualización exitosa! Reiniciando ..."
+#define S_WARNING "ADVERTENCIA"
+#define S_ONLY_2_STEP_OTA "solo use la actualización OTA de 2 pasos. Usar"
 
 #endif  // _LANGUAGE_ES_S_H_

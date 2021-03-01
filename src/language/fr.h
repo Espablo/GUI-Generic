@@ -1,6 +1,8 @@
 #ifndef _LANGUAGE_FR_S_H_
 #define _LANGUAGE_FR_S_H_
 
+#define S_LANG "fr"
+
 // translated by Fryga
 #define S_SETTING_FOR                                          "Paramètres pour "
 #define S_SETTING_WIFI_SSID                                    "Mettre à jour du WIFI"
@@ -152,5 +154,14 @@
 #define S_SWITCH_ON_VALUE "valeur d'enclenchement"
 #define S_SWITCH_OFF_VALUE "valeur de coupure"
 #define S_SETTINGS_FOR_RELAYS "Paramètres des relais"
+
+//#### SuplaHTTPUpdateServer.cpp ####
+#define S_FLASH_MEMORY_SIZE "Taille de la mémoire flash"
+#define S_SKETCH_LOADED_SIZE "Taille chargée de l'esquisse"
+#define S_SKETCH_UPLOAD_MAX_SIZE "Taille max. du téléchargement de l'esquisse"
+#define S_UPDATE_FIRMWARE "Mise à jour du firmware"
+#define S_UPDATE_SUCCESS_REBOOTING "Mise à jour réussie! Redémarrage ..."
+#define S_WARNING "ATTENTION"
+#define S_ONLY_2_STEP_OTA "utilisez uniquement la mise à jour OTA en 2 étapes. Utilisation"
 
 #endif  // _LANGUAGE_FR_S_H_

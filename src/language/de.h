@@ -1,6 +1,8 @@
 #ifndef _LANGUAGE_DE_S_H_
 #define _LANGUAGE_DE_S_H_
 
+#define S_LANG "de"
+
 #define S_SETTING_FOR                                          "Einstellungen für"
 #define S_SETTING_WIFI_SSID                                    "WIFI Einstellung"
 #define S_WIFI_SSID                                            "WIFI Name"
@@ -151,5 +153,14 @@
 #define S_SWITCH_ON_VALUE "Einschaltwert"
 #define S_SWITCH_OFF_VALUE "Ausschaltwert"
 #define S_SETTINGS_FOR_RELAYS "Einstellungen für Relais"
+
+//#### SuplaHTTPUpdateServer.cpp ####
+#define S_FLASH_MEMORY_SIZE "Flash-Speichergröße"
+#define S_SKETCH_LOADED_SIZE "Skizze geladene Größe"
+#define S_SKETCH_UPLOAD_MAX_SIZE "Skizze Hochladen Max Größe"
+#define S_UPDATE_FIRMWARE "Firmware aktualisieren"
+#define S_UPDATE_SUCCESS_REBOOTING "Update Erfolg! Neustart ..."
+#define S_WARNING "WARNUNG"
+#define S_ONLY_2_STEP_OTA "Verwenden Sie nur das 2-Schritt-OTA-Update. Benutzen"
 
 #endif  // _LANGUAGE_DE_S_H_

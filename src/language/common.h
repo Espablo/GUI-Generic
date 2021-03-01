@@ -13,7 +13,6 @@
 #define S_HC_SR04 "HC-SR04"
 #define S_HLW8012 "HLW8012"
 #define S_RGBW_RGB_DIMMER "RGBW/RGB/DIMMER"
-#define S_PUSHOVER "PUSHOVER"
 #define S_OLED "OLED"
 #define S_BME280 "BME280"
 #define S_DS18B20 "DS18B20"
