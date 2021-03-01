@@ -35,11 +35,14 @@ void setup() {
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-    if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
+    gpio = ConfigESP->getGpio(nr, FUNCTION_RELAY);
+    if (gpio != OFF_GPIO) {
 #ifdef SUPLA_ROLLERSHUTTER
       if (rollershutters > 0) {
 #ifdef SUPLA_BUTTON
-        if (ConfigESP->getEvent(nr, FUNCTION_BUTTON) == Supla::Event::ON_CHANGE && ConfigESP->getEvent(nr + 1, FUNCTION_BUTTON) == Supla::Event::ON_CHANGE) {
+        uint8_t pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+        uint8_t pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
+        if (ConfigESP->getEvent(pinButtonUp) == Supla::Event::ON_CHANGE && ConfigESP->getEvent(pinButtonDown) == Supla::Event::ON_CHANGE) {
           Supla::GUI::addRolleShutterMomentary(nr);
         }
         else {
@@ -70,8 +73,8 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONFIG
-  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED),
-                           ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(FUNCTION_CFG_LED));
+  gpio = ConfigESP->getGpio(FUNCTION_CFG_LED);
+  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), gpio, ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(gpio));
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -143,9 +146,9 @@ void setup() {
 #ifdef SUPLA_IMPULSE_COUNTER
   if (ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() > 0) {
     for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
-      if (ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
-        Supla::GUI::addImpulseCounter(ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER), ConfigESP->getLevel(nr, FUNCTION_IMPULSE_COUNTER),
-                                      ConfigESP->getMemory(nr, FUNCTION_IMPULSE_COUNTER),
+      gpio = ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER);
+      if (gpio != OFF_GPIO) {
+        Supla::GUI::addImpulseCounter(gpio, ConfigESP->getLevel(gpio), ConfigESP->getMemory(gpio),
                                       ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt());
       }
     }

@@ -72,7 +72,7 @@ void SuplaWebPageConfig::supla_webpage_config(int save) {
   addForm(webContentBuffer, F("post"), PATH_SAVE_CONFIG);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_CONFIG);
   addListGPIOBox(webContentBuffer, INPUT_CFG_LED_GPIO, F("LED"), FUNCTION_CFG_LED);
-  selected = ConfigESP->getLevel(FUNCTION_CFG_LED);
+  selected = ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED));
   addListBox(webContentBuffer, INPUT_CFG_LED_LEVEL, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
   addListGPIOBox(webContentBuffer, INPUT_CFG_BTN_GPIO, S_BUTTON, FUNCTION_CFG_BUTTON);
