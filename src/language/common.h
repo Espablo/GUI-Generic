@@ -6,6 +6,7 @@
 
 //### Category codes not translated ###
 #define S_I2C "i2c"
+#define S_SPI "SPI"
 
 //### Device codes not translated ###
 #define S_HC_SR04 "HC-SR04"

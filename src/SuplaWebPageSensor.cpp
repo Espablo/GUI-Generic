@@ -599,7 +599,7 @@ void SuplaWebPageSensor::supla_webpage_spi(int save) {
   webContentBuffer += F("'>");
 
 #if defined(SUPLA_MAX6675)
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + F(" SPI"));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_SPI);
   addListGPIOBox(webContentBuffer, INPUT_CLK_GPIO, S_CLK, FUNCTION_CLK);
   addListGPIOBox(webContentBuffer, INPUT_CS_GPIO, S_CS, FUNCTION_CS);
   addListGPIOBox(webContentBuffer, INPUT_D0_GPIO, S_D0, FUNCTION_D0);
