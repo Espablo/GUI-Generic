@@ -210,7 +210,7 @@ void SuplaWebServer::deviceSettings(int save) {
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-  addButton(webContentBuffer, F("KRAŃCÓWKI"), PATH_SWITCH);
+  addButton(webContentBuffer, S_LIMIT_SWITCHES, PATH_SWITCH);
 #endif
 
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)

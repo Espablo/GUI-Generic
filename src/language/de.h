@@ -1,6 +1,8 @@
 #ifndef _LANGUAGE_DE_S_H_
 #define _LANGUAGE_DE_S_H_
 
+#define S_LANG "de"
+
 #define S_SETTING_FOR                                          "Einstellungen für"
 #define S_SETTING_WIFI_SSID                                    "WIFI Einstellung"
 #define S_WIFI_SSID                                            "WIFI Name"
@@ -96,6 +98,16 @@
 #define S_REACTION_ON_CHANGE  "STATUS ÄNDERUNG"
 #define S_CFG_10_PRESSES      "10 MAL DRÜCKEN"
 #define S_5SEK_HOLD           "5 SEKUNDEN GEDRÜCKT HALTEN"
+#define S_NORMAL "NORMAL"
+#define S_SLOW "SCHLEPPEND"
+#define S_MANUALLY "MANUELL"
+#define S_ON_CH_VAL_OFF_HEATING "EIN < Kanalwert > AUS - Heizung"
+#define S_ON_CH_VAL_OFF_COOLING "EIN > Kanalwert < AUS - Kühlung"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "EIN < 2. Kanalwert > AUS - Befeuchtung"
+#define S_ON_2CH_VAL_OFF_DRYING "EIN > 2. Kanalwert < AUS - Trocknen"
+
+//#### SuplaWebServer.cpp ####
+#define S_LIMIT_SWITCHES "GRENZSCHALTER"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "ABWESEND"
@@ -107,6 +119,11 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Wertänderung"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Einstellung Impulszähler Nr."
+#define S_CONTROL                          "Steuerung"
+#define S_OLED_BUTTON                      "OLED-Taste"
+#define S_SCREEN                           "Bildschirm"
+#define S_BACKLIGHT_S                      "Hintergrundbeleuchtung [s]"
+#define S_ADDRESS_BMPE280                  "Adresse BME280"
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generieren GUID & AUTHKEY"
@@ -114,5 +131,36 @@
 
 //#### SuplaWebPageControl.cpp ####
 #define S_SETTINGS_FOR_BUTTONS "Einstellungen für Schaltflächen"
+#define S_REVERSE_LOGIC "Umgekehrte Logik"
+#define S_INTERNAL_PULL_UP "Interner Klimmzug"
+
+//#### SuplaWebPageOther.cpp ####
+#define S_CALIBRATION "Kalibrierung"
+#define S_CALIBRATION_SETTINGS "Kalibrierungseinstellungen"
+#define S_BULB_POWER_W "Lampenleistung [W]"
+#define S_VOLTAGE_V "Spannung [V]"
+#define S_DEPTH_CM "Tiefe [cm]"
+#define S_SENSOR_READING_DISTANCE "Sensorleseabstand"
+
+//#### SuplaWebPageRelay.cpp ####
+#define S_RELAY_ACTIVATION_STATUS "Relaisaktivierungsstatus"
+#define S_STATE "Zustand"
+#define S_MESSAGE "Botschaft"
+#define S_DIRECT_LINKS "Direkte Links"
+#define S_CONDITIONING "Konditionierung"
+#define S_SENSOR "Sensor"
+#define S_CONDITION "Bedingung"
+#define S_SWITCH_ON_VALUE "Einschaltwert"
+#define S_SWITCH_OFF_VALUE "Ausschaltwert"
+#define S_SETTINGS_FOR_RELAYS "Einstellungen für Relais"
+
+//#### SuplaHTTPUpdateServer.cpp ####
+#define S_FLASH_MEMORY_SIZE "Flash-Speichergröße"
+#define S_SKETCH_LOADED_SIZE "Skizze geladene Größe"
+#define S_SKETCH_UPLOAD_MAX_SIZE "Skizze Hochladen Max Größe"
+#define S_UPDATE_FIRMWARE "Firmware aktualisieren"
+#define S_UPDATE_SUCCESS_REBOOTING "Update Erfolg! Neustart ..."
+#define S_WARNING "WARNUNG"
+#define S_ONLY_2_STEP_OTA "Verwenden Sie nur das 2-Schritt-OTA-Update. Benutzen"
 
 #endif  // _LANGUAGE_DE_S_H_

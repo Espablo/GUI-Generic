@@ -1,6 +1,8 @@
 #ifndef _LANGUAGE_EN_S_H_
 #define _LANGUAGE_EN_S_H_
 
+#define S_LANG "en"
+
 #define S_SETTING_FOR                                          "Setting for"
 #define S_SETTING_WIFI_SSID                                    "Setting WIFI"
 #define S_WIFI_SSID                                            "Name WIFI"
@@ -29,7 +31,7 @@
 #define S_SENSORS_1WIRE                                        "SENSORS 1Wire"
 #define S_SENSORS_I2C                                          "SENSORS i2c"
 #define S_SENSORS_SPI                                          "SENSORS SPI"
-#define S_SENSORS_OTHER                                        "SENSORY OTHER"
+#define S_SENSORS_OTHER                                        "SENSORS OTHER"
 #define S_LED_BUTTON_CFG                                       "LED, BUTTON CONFIG"
 #define S_CFG_MODE                                             "CFG mode"
 #define S_QUANTITY                                             "QUANTITY"
@@ -47,7 +49,7 @@
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO settings for limit switch"
 #define S_LIMIT_SWITCH                                         "LIMIT SWITCH"
-#define S_GPIO_SETTINGS_FOR                                    "GPIO settigs for"
+#define S_GPIO_SETTINGS_FOR                                    "GPIO settings for"
 #define S_FOUND                                                "Found"
 #define S_NO_SENSORS_CONNECTED                                 "No sensor conected"
 #define S_SAVE_FOUND                                           "Save found"
@@ -59,7 +61,7 @@
 #define S_DATA_SAVED                                           "Data saved"
 #define S_RESTART_MODULE                                       "Restart module"
 #define S_DATA_ERASED_RESTART_DEVICE                           "Data erased - restart module"
-#define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Write error - ubable to read file FS. Partition missing"
+#define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Write error - unable to read file FS. Partition missing"
 #define S_DATA_SAVED_RESTART_MODULE                            "Data saved - restart module"
 #define S_WRITE_ERROR_BAD_DATA                                 "Write error - bad data"
 
@@ -95,7 +97,17 @@
 #define S_REACTION_ON_RELEASE "ON RELEASE"
 #define S_REACTION_ON_CHANGE  "ON CHANGE"
 #define S_CFG_10_PRESSES      "10 ON PRESSES"
-#define S_5SEK_HOLD           "5 SEK HOLD"
+#define S_5SEK_HOLD           "5 SEC HOLD"
+#define S_NORMAL "NORMAL"
+#define S_SLOW "SLOW"
+#define S_MANUALLY "MANUALLY"
+#define S_ON_CH_VAL_OFF_HEATING "ON < channel value > OFF - heating"
+#define S_ON_CH_VAL_OFF_COOLING "ON > channel value < OFF - cooling"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < 2nd channel value > OFF - humidification"
+#define S_ON_2CH_VAL_OFF_DRYING "ON > 2nd channel value < OFF - drying"
+
+//#### SuplaWebServer.cpp ####
+#define S_LIMIT_SWITCHES "LIMIT SWITCHES"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "ABSENT"
@@ -107,6 +119,11 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Change value"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Settings IC nr."
+#define S_CONTROL                          "Control"
+#define S_OLED_BUTTON                      "OLED button"
+#define S_SCREEN                           "Screen"
+#define S_BACKLIGHT_S                      "Backlight [s]"
+#define S_ADDRESS_BMPE280                  "Address BME280"
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generate GUID & AUTHKEY"
@@ -114,5 +131,36 @@
 
 //#### SuplaWebPageControl.cpp ####
 #define S_SETTINGS_FOR_BUTTONS "Settings for buttons"
+#define S_REVERSE_LOGIC "Reverse logic"
+#define S_INTERNAL_PULL_UP "Internal pull-up"
+
+//#### SuplaWebPageOther.cpp ####
+#define S_CALIBRATION "Calibration"
+#define S_CALIBRATION_SETTINGS "Calibration settings"
+#define S_BULB_POWER_W "Bulb power [W]"
+#define S_VOLTAGE_V "Voltage [V]"
+#define S_DEPTH_CM "Depth [cm]"
+#define S_SENSOR_READING_DISTANCE "sensor reading distance"
+
+//#### SuplaWebPageRelay.cpp ####
+#define S_RELAY_ACTIVATION_STATUS "Relay activation status"
+#define S_STATE "State"
+#define S_MESSAGE "Message"
+#define S_DIRECT_LINKS "Direct links"
+#define S_CONDITIONING "Conditioning"
+#define S_SENSOR "Sensor"
+#define S_CONDITION "Condition"
+#define S_SWITCH_ON_VALUE "switch-on value"
+#define S_SWITCH_OFF_VALUE "switch-off value"
+#define S_SETTINGS_FOR_RELAYS "Settings for relays"
+
+//#### SuplaHTTPUpdateServer.cpp ####
+#define S_FLASH_MEMORY_SIZE "Flash Memory Size"
+#define S_SKETCH_LOADED_SIZE "Sketch Loaded Size"
+#define S_SKETCH_UPLOAD_MAX_SIZE "Sketch Upload Max Size"
+#define S_UPDATE_FIRMWARE "Update Firmware"
+#define S_UPDATE_SUCCESS_REBOOTING "Update Success! Rebooting..."
+#define S_WARNING "WARNING"
+#define S_ONLY_2_STEP_OTA "only use 2-step OTA update. Use"
 
 #endif  // _LANGUAGE_EN_S_H_
