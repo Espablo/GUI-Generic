@@ -4,11 +4,14 @@
 #include <Arduino.h>
 #include <functional>
 
+#include <supla/io.h>
+
 class MCP23017 {
-public:
+ public:
   typedef std::function<void(uint16_t pins, uint16_t values)> callback_t;
 
-  MCP23017() : _callback(NULL) {}
+  MCP23017() : _callback(NULL) {
+  }
 
 #ifdef ESP8266
   static void init(uint8_t sda, uint8_t scl, bool fast = true);
@@ -33,7 +36,7 @@ public:
   void setupInterrupt(uint8_t pin, bool enable = true);
   void setupInterrupts(uint16_t pins, bool enable = true);
 
-protected:
+ protected:
   bool writeReg(uint8_t reg, uint8_t value);
   bool writeReg16(uint8_t reg, uint16_t value);
   uint8_t readReg(uint8_t reg);
@@ -49,4 +52,21 @@ protected:
   callback_t _callback;
 };
 
+namespace Supla {
+namespace Control {
+class MCP_23017 : public Supla::Io {
+ public:
+  MCP_23017();
+  void customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val);
+  int customDigitalRead(int channelNumber, uint8_t pin);
+  void customPinMode(int channelNumber, uint8_t pin, uint8_t mode);
+
+  MCP23017 *mcp1;
+  MCP23017 *mcp2;
+  MCP23017 *mcp3;
+  MCP23017 *mcp4;
+};
+
+}  // namespace Control
+}  // namespace Supla
 #endif
