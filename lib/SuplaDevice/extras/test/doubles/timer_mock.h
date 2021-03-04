@@ -14,16 +14,19 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include <supla-common/srpc.h>
+#include <supla/timer.h>
+#include <gmock/gmock.h>
 
-_supla_int_t SRPC_ICACHE_FLASH srpc_ds_async_channel_extendedvalue_changed(
-    void *_srpc, unsigned char channel_number,
-    TSuplaChannelExtendedValue *value) {
-  return 0;
-}
-         
-_supla_int_t SRPC_ICACHE_FLASH srpc_ds_async_channel_value_changed(
-    void *_srpc, unsigned char channel_number, char *value) {
-  return 0;
-}
+class TimerInterface {
+  public:
+    TimerInterface();
+    virtual ~TimerInterface();
+    virtual void initTimers() = 0;
+};
+
+class TimerMock : public TimerInterface {
+  public:
+    MOCK_METHOD((void), initTimers, (), (override));
+};
+
 

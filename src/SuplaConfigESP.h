@@ -18,7 +18,7 @@
 #define SuplaConfigESP_h
 
 #include "Arduino.h"
-#include <supla/triggerable.h>
+#include <supla/action_handler.h>
 #include <supla/element.h>
 #include "GUI-Generic_Config.h"
 #include "SuplaConfigManager.h"

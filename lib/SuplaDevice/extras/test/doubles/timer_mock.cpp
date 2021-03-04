@@ -14,15 +14,21 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _triggerable_h
-#define _triggerable_h
+#include <supla/timer.h>
+#include <timer_mock.h>
 
-namespace Supla {
-class Triggerable {
- public:
-  virtual void runAction(int event, int action) = 0;
-};
+TimerInterface *timerInterfaceInstance = nullptr;
 
-};
+TimerInterface::TimerInterface() {
+  timerInterfaceInstance = this;
+}
 
-#endif
+TimerInterface::~TimerInterface() {
+  timerInterfaceInstance = nullptr;
+}
+
+
+void Supla::initTimers() {
+  assert(timerInterfaceInstance);
+  timerInterfaceInstance->initTimers();
+}
