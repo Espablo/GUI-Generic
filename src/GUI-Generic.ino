@@ -15,10 +15,6 @@
 */
 #include "SuplaDeviceGUI.h"
 
-#ifdef SUPLA_MCP23017
-#include <supla/control/MCP23017/supla_mcp23017.h>
-#endif
-
 #define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 #define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
 DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
@@ -220,14 +216,7 @@ void setup() {
 
 #ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-      if (!mcp1.begin(0))
-        Serial.println(F("MCP23017 1 not found!"));  // begin(uint8_t address)  "Pin 100 - 115"
-      if (!mcp2.begin(1))
-        Serial.println(F("MCP23017 2 not found!"));  // begin(uint8_t address)  "Pin 116 - 131"
-      if (!mcp3.begin(2))
-        Serial.println(F("MCP23017 3 not found!"));  // begin(uint8_t address)  "Pin 132 - 147"
-      if (!mcp4.begin(3))
-        Serial.println(F("MCP23017 4 not found!"));  // begin(uint8_t address)  "Pin 148 - 163"
+      new Supla::Control::MCP_23017();
     }
 #endif
 

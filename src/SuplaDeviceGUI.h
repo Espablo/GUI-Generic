@@ -44,7 +44,7 @@
 #include <supla/control/relay.h>
 #include <supla/control/roller_shutter.h>
 
-#include "SuplaSensorDS18B20.h"
+#include <supla/sensor/DS18B20.h>
 #include <supla/sensor/DHT.h>
 #include <supla/sensor/HC_SR04.h>
 #include <supla/sensor/binary.h>
@@ -74,7 +74,7 @@
 #include <supla/sensor/esp_free_heap.h>
 #endif
 
-#include <supla/sensor/HJ101.h>
+#include <supla/sensor/HLW_8012.h>
 #include <supla/control/pin_status_led.h>
 
 #ifdef SUPLA_RGBW
@@ -87,6 +87,10 @@
 
 #include <supla/control/pushover.h>
 #include <supla/control/direct_links.h>
+
+#ifdef SUPLA_MCP23017
+#include <supla/control/MCP_23017.h>
+#endif
 
 namespace Supla {
 namespace GUI {
@@ -124,7 +128,7 @@ void addRGBWLeds(uint8_t nr);
 #endif
 
 #ifdef SUPLA_HLW8012
-extern Supla::Sensor::HJ101 *counterHLW8012;
+extern Supla::Sensor::HLW_8012 *counterHLW8012;
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 #endif
 
