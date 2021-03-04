@@ -44,7 +44,7 @@
 #include <supla/control/relay.h>
 #include <supla/control/roller_shutter.h>
 
-#include "SuplaSensorDS18B20.h"
+#include <supla/sensor/DS18B20.h>
 #include <supla/sensor/DHT.h>
 #include <supla/sensor/HC_SR04.h>
 #include <supla/sensor/binary.h>
