@@ -82,7 +82,8 @@ int Clock::getSec() {
 
 
 void Clock::parseLocaltimeFromServer(TSDC_UserLocalTimeResult *result) {
-  struct tm timeinfo{};
+  struct tm timeinfo;
+  memset(&timeinfo, 0, sizeof(timeinfo));
 
   Serial.print(F("Current local time: "));
   Serial.print(getYear());

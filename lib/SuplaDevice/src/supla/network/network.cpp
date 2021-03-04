@@ -14,7 +14,6 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 #include <Arduino.h>
-#include <string.h>
 
 #include "SuplaDevice.h"
 #include "supla-common/log.h"
@@ -148,6 +147,7 @@ void message_received(void *_srpc,
 
 Network::Network(unsigned char *ip) {
   lastSentMs = 0;
+  srpc = NULL;
   lastPingTimeMs = 0;
   serverActivityTimeoutS = 30;
   lastResponseMs = 0;
@@ -162,10 +162,6 @@ Network::Network(unsigned char *ip) {
   }
 }
 
-Network::~Network() {
-  netIntf = nullptr;
-}
-
 bool Network::iterate() {
   return false;
 }
@@ -178,7 +174,11 @@ void Network::updateLastResponse() {
   lastResponseMs = millis();
 }
 
-bool Network::ping(void *srpc) {
+void Network::setSrpc(void *_srpc) {
+  srpc = _srpc;
+}
+
+bool Network::ping() {
   _supla_int64_t _millis = millis();
   // If time from last response is longer than "server_activity_timeout + 10 s",
   // then inform about failure in communication

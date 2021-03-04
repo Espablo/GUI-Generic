@@ -5,7 +5,7 @@
 
 #ifdef SUPLA_OLED
 #include <pgmspace.h>
-#include <supla/action_handler.h>
+#include <supla/triggerable.h>
 #include <supla/element.h>
 #include <Wire.h>         // Only needed for Arduino 1.6.5 and earlier
 #include <SSD1306Wire.h>  //OLED 0,96" or 0.66" WEMOS OLED shield

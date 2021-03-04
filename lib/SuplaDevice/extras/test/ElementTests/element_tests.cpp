@@ -24,20 +24,6 @@
 using ::testing::Return;
 using ::testing::ElementsAreArray;
 
-class ElementTests : public ::testing::Test {
-  protected:
-    virtual void SetUp() {
-      Supla::Channel::lastCommunicationTimeMs = 0;
-      memset(&(Supla::Channel::reg_dev), 0, sizeof(Supla::Channel::reg_dev));
-    }
-    virtual void TearDown() {
-      Supla::Channel::lastCommunicationTimeMs = 0;
-      memset(&(Supla::Channel::reg_dev), 0, sizeof(Supla::Channel::reg_dev));
-    }
-
-};
-
-
 class ElementWithChannel : public Supla::Element {
   public:
     Supla::Channel *getChannel() {
@@ -46,7 +32,7 @@ class ElementWithChannel : public Supla::Element {
     Supla::Channel channel;
 };
 
-TEST_F(ElementTests, ElementEmptyListTests) {
+TEST(ElementTests, ElementEmptyListTests) {
   EXPECT_EQ(Supla::Element::begin(), nullptr);
   EXPECT_EQ(Supla::Element::last(), nullptr);
   EXPECT_EQ(Supla::Element::getElementByChannelNumber(0), nullptr);
@@ -54,7 +40,7 @@ TEST_F(ElementTests, ElementEmptyListTests) {
   EXPECT_EQ(Supla::Element::getElementByChannelNumber(10), nullptr);
 }
 
-TEST_F(ElementTests, ElementListAdding) {
+TEST(ElementTests, ElementListAdding) {
   auto el1 = new Supla::Element;
 
   EXPECT_EQ(Supla::Element::begin(), el1);
@@ -107,7 +93,7 @@ TEST_F(ElementTests, ElementListAdding) {
 
 }
 
-TEST_F(ElementTests, NoChannelElementMethods) {
+TEST(ElementTests, NoChannelElementMethods) {
   Supla::Element el1;
 
   // those methods are empty, so just call to make sure that they do nothing and don't crash
@@ -133,7 +119,7 @@ TEST_F(ElementTests, NoChannelElementMethods) {
   EXPECT_EQ(el1.handleCalcfgFromServer(nullptr), SUPLA_CALCFG_RESULT_NOT_SUPPORTED);
 }
 
-TEST_F(ElementTests, ChannelElementMethods) {
+TEST(ElementTests, ChannelElementMethods) {
   ElementWithChannel el1;
   TimeInterfaceMock time;
   SrpcMock srpc;
@@ -177,8 +163,8 @@ TEST_F(ElementTests, ChannelElementMethods) {
   char array0[SUPLA_CHANNELVALUE_SIZE] = {};
   char array1[SUPLA_CHANNELVALUE_SIZE] = {};
   array1[0] = 1;
-  EXPECT_CALL(srpc, valueChanged(nullptr, 0, ElementsAreArray(array1), 0, 0)); // value at #2
-  EXPECT_CALL(srpc, valueChanged(nullptr, 0, ElementsAreArray(array0), 0, 0)); // value at #5
+  EXPECT_CALL(srpc, valueChanged(nullptr, 0, ElementsAreArray(array1))); // value at #2
+  EXPECT_CALL(srpc, valueChanged(nullptr, 0, ElementsAreArray(array0))); // value at #5
 
 
   EXPECT_EQ(el1.iterateConnected(nullptr), true);  // #1
