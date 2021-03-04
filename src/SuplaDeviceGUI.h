@@ -22,6 +22,7 @@
 #include <DoubleResetDetector.h>
 #include <SPI.h>
 
+#include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
 
 #include "SuplaConfigESP.h"
