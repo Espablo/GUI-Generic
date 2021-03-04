@@ -7,7 +7,7 @@ uint8_t* chanelSensor;
 
 String getTempString(double temperature) {
   if (temperature == -275) {
-    return F("error");
+    return S_ERROR;
   }
   else {
     return String(temperature, 1);
@@ -16,7 +16,7 @@ String getTempString(double temperature) {
 
 String getHumidityString(double humidity) {
   if (humidity == -1) {
-    return F("error");
+    return S_ERROR;
   }
   else {
     return String(humidity, 1);
@@ -25,7 +25,7 @@ String getHumidityString(double humidity) {
 
 String getPressureString(double pressure) {
   if (pressure == -1) {
-    return F("error");
+    return S_ERROR;
   }
   else {
     return String(pressure, 0);
@@ -124,8 +124,8 @@ void displayConfigMode(OLEDDisplay* display) {
   display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setColor(WHITE);
-  display->drawString(0, 15, F("Tryb konfiguracyjny"));
-  display->drawString(0, 28, F("AP name:"));
+  display->drawString(0, 15, S_CONFIGURATION_MODE);
+  display->drawString(0, 28, S_AP_NAME);
   display->drawString(0, 41, ConfigESP->getConfigNameAP());
   display->drawString(0, 54, F("IP: 192.168.4.1"));
   display->display();
