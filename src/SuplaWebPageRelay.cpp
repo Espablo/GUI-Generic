@@ -236,7 +236,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 
 void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
   String path, readUrl, nr_relay, massage;
-  uint8_t place, selected;
+  uint8_t gpio, place, selected;
 
   path.reserve(10);
   readUrl.reserve(11);
@@ -260,13 +260,15 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
     webContentBuffer += SuplaJavaScript(String(PATH_RELAY_SET + nr_relay));
   }
 
+  gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
+
   addForm(webContentBuffer, F("post"), PATH_SAVE_RELAY_SET + nr_relay);
   addFormHeader(webContentBuffer, S_RELAY_NR_SETTINGS + nr_relay);
 
-  selected = ConfigESP->getLevel(nr_relay.toInt(), FUNCTION_RELAY);
+  selected = ConfigESP->getLevel(gpio);
   addListBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
-  selected = ConfigESP->getMemory(nr_relay.toInt(), FUNCTION_RELAY);
+  selected = ConfigESP->getMemory(gpio);
   addListBox(webContentBuffer, INPUT_RELAY_MEMORY + nr_relay, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
   addFormHeaderEnd(webContentBuffer);
 
@@ -275,7 +277,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
 
   addListGPIOBox(webContentBuffer, INPUT_LED + nr_relay, S_LED, FUNCTION_LED, nr_relay.toInt());
 
-  selected = ConfigESP->getInversed(nr_relay.toInt(), FUNCTION_LED);
+  selected = ConfigESP->getInversed(ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED));
   addListBox(webContentBuffer, INPUT_LEVEL_LED + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
   addFormHeaderEnd(webContentBuffer);
@@ -337,9 +339,11 @@ void SuplaWebPageRelay::handleRelaySetMCP23017() {
 }
 
 void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
-  uint8_t selected;
+  uint8_t gpio, selected;
   String massage, name, input;
   input.reserve(9);
+
+  gpio = ConfigESP->getGpio(1, FUNCTION_RELAY);
 
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
@@ -348,11 +352,11 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
   addForm(webContentBuffer, F("post"), PATH_SAVE_RELAY_SET);
   addFormHeader(webContentBuffer, S_SETTINGS_FOR_RELAYS);
 
-  selected = ConfigESP->getLevel(1, FUNCTION_RELAY);
+  selected = ConfigESP->getLevel(gpio);
   input = INPUT_RELAY_LEVEL;
   addListBox(webContentBuffer, input, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
-  selected = ConfigESP->getMemory(1, FUNCTION_RELAY);
+  selected = ConfigESP->getMemory(gpio);
   input = INPUT_RELAY_MEMORY;
   addListBox(webContentBuffer, input, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
   addFormHeaderEnd(webContentBuffer);

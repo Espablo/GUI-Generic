@@ -230,7 +230,7 @@ void handleImpulseCounterSaveSet() {
 
 void supla_impulse_counter_set(int save) {
   String readUrl, nr;
-  uint8_t place, selected, suported;
+  uint8_t gpio, place, selected, suported;
 
   String path = PATH_START;
   path += PATH_IMPULSE_COUNTER_SET;
@@ -239,18 +239,19 @@ void supla_impulse_counter_set(int save) {
   place = readUrl.indexOf(path);
   nr = readUrl.substring(place + path.length(), place + path.length() + 3);
 
+  gpio = ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
+
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_OTHER);
 
-  if (nr.toInt() <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() &&
-      ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
+  if (nr.toInt() <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() && gpio != OFF_GPIO) {
     addForm(webContentBuffer, F("post"), PATH_SAVE_IMPULSE_COUNTER_SET + nr);
     addFormHeader(webContentBuffer, S_IMPULSE_COUNTER_SETTINGS_NR + nr);
 
-    selected = ConfigESP->getMemory(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
+    selected = ConfigESP->getMemory(gpio);
     addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_PULL_UP + nr, S_IMPULSE_COUNTER_PULL_UP, selected);
 
-    selected = ConfigESP->getLevel(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
+    selected = ConfigESP->getLevel(gpio);
     addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_RAISING_EDGE + nr, S_IMPULSE_COUNTER_RAISING_EDGE, selected);
 
     addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT);
