@@ -14,30 +14,19 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _maxThermocouple_k_h
-#define _maxThermocouple_k_h
+#include <supla/timer.h>
+#include <gmock/gmock.h>
 
-#include <Arduino.h>
-#include <supla/sensor/thermometer.h>
-
-namespace Supla {
-namespace Sensor {
-class MAXThermocouple : public Thermometer {
- public:
-  MAXThermocouple(uint8_t pin_CLK, uint8_t pin_CS, uint8_t pin_DO);
-  double getValue();
-
- private:
-  void onInit();
-  uint32_t spiRead(void);
-
- protected:
-  int8_t pin_CLK;
-  int8_t pin_CS;
-  int8_t pin_DO;
+class TimerInterface {
+  public:
+    TimerInterface();
+    virtual ~TimerInterface();
+    virtual void initTimers() = 0;
 };
 
-};  // namespace Sensor
-};  // namespace Supla
+class TimerMock : public TimerInterface {
+  public:
+    MOCK_METHOD((void), initTimers, (), (override));
+};
 
-#endif
+
