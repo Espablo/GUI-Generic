@@ -1,6 +1,8 @@
 #ifndef _LANGUAGE_ES_S_H_
 #define _LANGUAGE_ES_S_H_
 
+#define S_LANG "es"
+
 // Translated by EñE Partycja Gajek-Nowrot
 // Checked by elmaya
 
@@ -99,6 +101,16 @@
 #define S_REACTION_ON_CHANGE  "AL CAMBIAR DE ESTADO"
 #define S_CFG_10_PRESSES      "AL PRESIONAR 10 VECES"
 #define S_5SEK_HOLD           "AL MANTENER PRESIONADO 5 SEGUNDOS"
+#define S_NORMAL "NORMAL"
+#define S_SLOW "LENTO"
+#define S_MANUALLY "A MANO"
+#define S_ON_CH_VAL_OFF_HEATING "ON < valor del cana l> OFF - calefacción"
+#define S_ON_CH_VAL_OFF_COOLING "ON > valor del canal < OFF - refrigeración"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < valor del segundo canal > OFF - humidificación"
+#define S_ON_2CH_VAL_OFF_DRYING "ON > valor del segundo canal < OFF - secado"
+
+//#### SuplaWebServer.cpp ####
+#define S_LIMIT_SWITCHES "FINALES DE CARRERA"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"
@@ -110,6 +122,11 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Cambia el valor"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Configuración contador de impulsos no."
+#define S_CONTROL                          "Control"
+#define S_OLED_BUTTON                      "Botón OLED"
+#define S_SCREEN                           "Pantalla"
+#define S_BACKLIGHT_S                      "Luz de fondo [s]"
+#define S_ADDRESS_BMPE280                  "Dirección BME280"
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generar GUID & AUTHKEY"
@@ -117,5 +134,36 @@
 
 //#### SuplaWebPageControl.cpp ####
 #define S_SETTINGS_FOR_BUTTONS "Configuración de botones"
+#define S_REVERSE_LOGIC "Lógica inversa"
+#define S_INTERNAL_PULL_UP "Pull-up interno"
+
+//#### SuplaWebPageOther.cpp ####
+#define S_CALIBRATION "Calibración"
+#define S_CALIBRATION_SETTINGS "Configuraciones de calibracion"
+#define S_BULB_POWER_W "Potencia de la bombilla [W]"
+#define S_VOLTAGE_V "Voltaje [V]"
+#define S_DEPTH_CM "Profundidad [cm]"
+#define S_SENSOR_READING_DISTANCE "distancia de lectura del sensor"
+
+//#### SuplaWebPageRelay.cpp ####
+#define S_RELAY_ACTIVATION_STATUS "Estado de activación del relé"
+#define S_STATE "Expresar"
+#define S_MESSAGE "Mensaje"
+#define S_DIRECT_LINKS "Enlaces directos"
+#define S_CONDITIONING "Acondicionamiento"
+#define S_SENSOR "Sensor"
+#define S_CONDITION "Condición"
+#define S_SWITCH_ON_VALUE "valor de encendido"
+#define S_SWITCH_OFF_VALUE "valor de desconexión"
+#define S_SETTINGS_FOR_RELAYS "Configuraciones para relés"
+
+//#### SuplaHTTPUpdateServer.cpp ####
+#define S_FLASH_MEMORY_SIZE "Tamaño de la memoria flash"
+#define S_SKETCH_LOADED_SIZE "Tamaño de boceto cargado"
+#define S_SKETCH_UPLOAD_MAX_SIZE "Tamaño máx de carga de bocetos"
+#define S_UPDATE_FIRMWARE "Actualice el firmware"
+#define S_UPDATE_SUCCESS_REBOOTING "¡Actualización exitosa! Reiniciando ..."
+#define S_WARNING "ADVERTENCIA"
+#define S_ONLY_2_STEP_OTA "solo use la actualización OTA de 2 pasos. Usar"
 
 #endif  // _LANGUAGE_ES_S_H_

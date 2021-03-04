@@ -161,9 +161,9 @@ const char SH1106[] PROGMEM = "SH1106 - 1,3''";
 const char SSD1306_WEMOS_SHIELD[] PROGMEM = "SSD1306 - 0,66'' WEMOS OLED shield";
 const char* const OLED_P[] PROGMEM = {OFF, SSD1306, SH1106, SSD1306_WEMOS_SHIELD};
 
-const char CONTROLL_NORMAL[] PROGMEM = "NORMALNE";
-const char CONTROLL_SLOW[] PROGMEM = "WOLNE";
-const char CONTROLL_MANUAL[] PROGMEM = "RĘCZNE";
+const char CONTROLL_NORMAL[] PROGMEM = S_NORMAL;
+const char CONTROLL_SLOW[] PROGMEM = S_SLOW;
+const char CONTROLL_MANUAL[] PROGMEM = S_MANUALLY;
 const char* const OLED_CONTROLL_P[] PROGMEM = {CONTROLL_NORMAL, CONTROLL_SLOW, CONTROLL_MANUAL};
 #endif
 
@@ -179,10 +179,10 @@ enum conditioningType
 const char CONDITIONING__COOLING[] PROGMEM = "Temperatura - chłodzenie";
 const char CONDITIONING__MOISTURIZING[] PROGMEM = "Wilgotność - nawilżanie";
 const char CONDITIONING__DRAINGE[] PROGMEM = "Wilgotność - osuszanie";*/
-const char CONDITIONING__HEATING[] PROGMEM = "ON < wartość kanału > OFF - ogrzewanie";
-const char CONDITIONING__COOLING[] PROGMEM = "ON > wartość kanału < OFF - chłodzenie";
-const char CONDITIONING__MOISTURIZING[] PROGMEM = "ON < 2 wartość kanału > OFF - nawilżanie";
-const char CONDITIONING__DRAINGE[] PROGMEM = "ON > 2 wartość kanału < OFF - osuszanie";
+const char CONDITIONING__HEATING[] PROGMEM = S_ON_CH_VAL_OFF_HEATING;
+const char CONDITIONING__COOLING[] PROGMEM = S_ON_CH_VAL_OFF_COOLING;
+const char CONDITIONING__MOISTURIZING[] PROGMEM = S_ON_2CH_VAL_OFF_HUMIDIFICATION;
+const char CONDITIONING__DRAINGE[] PROGMEM = S_ON_2CH_VAL_OFF_DRYING;
 const char* const CONDITIONS_TYPE_P[] PROGMEM = {CONDITIONING__HEATING, CONDITIONING__COOLING, CONDITIONING__MOISTURIZING, CONDITIONING__DRAINGE};
 
 enum sensorList
@@ -199,15 +199,15 @@ enum sensorList
   COUNT_SENSOR_LIST
 };
 
-const char NAME_DS18B20[] PROGMEM = "DS18B20";
-const char NAME_DHT11[] PROGMEM = "DHT11";
-const char NAME_DHT22[] PROGMEM = "DHT22";
-const char NAME_SI7021_SONOFF[] PROGMEM = "SI7021 SONOFF";
-const char NAME_HC_SR04[] PROGMEM = "HC-SR04 [m]";
-const char NAME_BME280[] PROGMEM = "BME280";
-const char NAME_SHT3x[] PROGMEM = "SHT3x";
-const char NAME_SI7021[] PROGMEM = "SI7021";
-const char NAME_MAX6675[] PROGMEM = "MAX6675";
+const char NAME_DS18B20[] PROGMEM = S_DS18B20;
+const char NAME_DHT11[] PROGMEM = S_DHT11;
+const char NAME_DHT22[] PROGMEM = S_DHT22;
+const char NAME_SI7021_SONOFF[] PROGMEM = S_SI7021_SONOFF;
+const char NAME_HC_SR04[] PROGMEM = S_HC_SR04;
+const char NAME_BME280[] PROGMEM = S_BME280;
+const char NAME_SHT3x[] PROGMEM = S_SHT3X;
+const char NAME_SI7021[] PROGMEM = S_SI702;
+const char NAME_MAX6675[] PROGMEM = S_MAX6675;
 
 const char* const SENSOR_LIST_P[] PROGMEM = {OFF,          NAME_DS18B20, NAME_DHT11, NAME_DHT22,  NAME_SI7021_SONOFF,
                                              NAME_HC_SR04, NAME_BME280,  NAME_SHT3x, NAME_SI7021, NAME_MAX6675};

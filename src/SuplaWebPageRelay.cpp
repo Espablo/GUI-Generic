@@ -273,9 +273,9 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
   addFormHeaderEnd(webContentBuffer);
 
 #if defined(SUPLA_LED)
-  addFormHeader(webContentBuffer, F("Status załączenia przekaźnika"));
+  addFormHeader(webContentBuffer, S_RELAY_ACTIVATION_STATUS);
 
-  addListGPIOBox(webContentBuffer, INPUT_LED + nr_relay, F("LED"), FUNCTION_LED, nr_relay.toInt());
+  addListGPIOBox(webContentBuffer, INPUT_LED + nr_relay, S_LED, FUNCTION_LED, nr_relay.toInt());
 
   selected = ConfigESP->getInversed(ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED));
   addListBox(webContentBuffer, INPUT_LEVEL_LED + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
@@ -285,41 +285,41 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
 
 #if defined(SUPLA_PUSHOVER)
   if (nr_relay.toInt() < MAX_PUSHOVER_MESSAGE) {
-    addFormHeader(webContentBuffer, F("Pushover"));
+    addFormHeader(webContentBuffer, S_PUSHOVER);
 
     selected = ConfigManager->get(KEY_PUSHOVER)->getElement(nr_relay.toInt() - 1).toInt();
-    addListBox(webContentBuffer, INPUT_PUSHOVER, F("Stan"), STATE_P, 2, selected);
+    addListBox(webContentBuffer, INPUT_PUSHOVER, S_STATE, STATE_P, 2, selected);
 
     massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr_relay.toInt() - 1).c_str();
-    addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, F("Wiadomość"), massage, 0, 16, false);
+    addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, S_MESSAGE, massage, 0, 16, false);
     addFormHeaderEnd(webContentBuffer);
   }
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
   if (nr_relay.toInt() <= MAX_DIRECT_LINK) {
-    addFormHeader(webContentBuffer, F("Linki bezpośrednie"));
+    addFormHeader(webContentBuffer, S_DIRECT_LINKS);
     massage = ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr_relay.toInt() - 1).c_str();
-    addTextBox(webContentBuffer, INPUT_DIRECT_LINK_ON, F("ON"), massage, F("xx/xxxxxxxxx/turn-on"), 0, MAX_DIRECT_LINKS_SIZE, false);
+    addTextBox(webContentBuffer, INPUT_DIRECT_LINK_ON, S_ON, massage, F("xx/xxxxxxxxx/turn-on"), 0, MAX_DIRECT_LINKS_SIZE, false);
 
     massage = ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(nr_relay.toInt() - 1).c_str();
-    addTextBox(webContentBuffer, INPUT_DIRECT_LINK_OFF, F("OFF"), massage, F("xx/xxxxxxxxx/turn-off"), 0, MAX_DIRECT_LINKS_SIZE, false);
+    addTextBox(webContentBuffer, INPUT_DIRECT_LINK_OFF, S_OFF, massage, F("xx/xxxxxxxxx/turn-off"), 0, MAX_DIRECT_LINKS_SIZE, false);
 
     addFormHeaderEnd(webContentBuffer);
   }
 #endif
 
-  addFormHeader(webContentBuffer, F("Warunkowanie"));
+  addFormHeader(webContentBuffer, S_CONDITIONING);
   selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-  addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, F("Sensor"), SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
+  addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_SENSOR, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
 
   selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-  addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, F("Warunek"), CONDITIONS_TYPE_P, 4, selected);
+  addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, 4, selected);
 
   String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr_relay.toInt() - 1);
-  addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, F("ON"), F("wartość włączenia"), false, value);
+  addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
   value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr_relay.toInt() - 1);
-  addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, F("OFF"), F("wartość wyłączenia"), false, value);
+  addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
   addFormHeaderEnd(webContentBuffer);
 
   addButtonSubmit(webContentBuffer, S_SAVE);
@@ -350,7 +350,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
   webContentBuffer += SuplaJavaScript(PATH_RELAY_SET);
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_RELAY_SET);
-  addFormHeader(webContentBuffer, F("Ustawienia dla przekaźników"));
+  addFormHeader(webContentBuffer, S_SETTINGS_FOR_RELAYS);
 
   selected = ConfigESP->getLevel(gpio);
   input = INPUT_RELAY_LEVEL;
@@ -362,17 +362,19 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
   addFormHeaderEnd(webContentBuffer);
 
 #if defined(SUPLA_PUSHOVER)
-  addFormHeader(webContentBuffer, F("Pushover"));
+  addFormHeader(webContentBuffer, S_PUSHOVER);
   for (uint8_t i = 0; i < MAX_PUSHOVER_MESSAGE; i++) {
     selected = ConfigManager->get(KEY_PUSHOVER)->getElement(i).toInt();
-    name = F("Stan ");
+    name = S_STATE;
+    name =+ S_SPACE;
     name += i + 1;
     input = INPUT_PUSHOVER;
     input += i;
     addListBox(webContentBuffer, input, name, STATE_P, 2, selected);
 
     massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(i).c_str();
-    name = F("Wiadomość ");
+    name = S_MESSAGE;
+    name += S_SPACE;
     name += i + 1;
     input = INPUT_PUSHOVER_MESSAGE;
     input += i;

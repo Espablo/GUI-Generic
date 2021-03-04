@@ -14,24 +14,25 @@
 
 static const char serverIndex[] PROGMEM =
     R"(<!DOCTYPE html>
-     <html lang='en'>
+     <html lang='{l}'>
      <head>
          <meta charset='utf-8'>
          <meta name='viewport' content='width=device-width,initial-scale=1'/>
      </head>
      <body>
-     <div>Flash Size: {f}kB</div>
-     <div>Sketch Max Size: {s}kB</div>
+     <div>{F}: {f}kB</div>
+     <div>{U}: {u}kB</div>
+     <div>{S}: {s}kB</div>
      <form method='POST' action='' enctype='multipart/form-data'>
          <input type='file' accept='.bin,.bin.gz' name='firmware'>
          </br>
-         <input type='submit' value='Update Firmware'>
+         <input type='submit' value='{b}'>
      </form>
      </body>
      </html>)";
-static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='10'>Update Success! Rebooting...";
+static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='10'>{m}";
 static const char twoStepResponse[] PROGMEM =
-    "<META http-equiv='refresh' content='5'><b>WARNING</b> only use 2-step OTA update. Use GUI-GenericUpdater.bin";
+    "<META http-equiv='refresh' content='5'><b>{w}</b> {o} GUI-GenericUpdater.bin";
 
 ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
@@ -53,8 +54,14 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
       return _server->requestAuthentication();
 
     String index = FPSTR(serverIndex);
+    index.replace("{l}", S_LANG);
     index.replace("{f}", String(ESP.getFlashChipRealSize() / 1024));
     index.replace("{s}", String(ESP.getFreeSketchSpace() / 1024));
+    index.replace("{u}", String(ESP.getSketchSize() / 1024));
+    index.replace("{F}", S_FLASH_MEMORY_SIZE);
+    index.replace("{S}", S_SKETCH_UPLOAD_MAX_SIZE);
+    index.replace("{U}", S_SKETCH_LOADED_SIZE);
+    index.replace("{b}", S_UPDATE_FIRMWARE);
     _server->send(200, PSTR("text/html"), index);
   });
 
@@ -68,8 +75,10 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
           _server->send(200, F("text/html"), String(F("Update error: ")) + _updaterError);
         }
         else {
+          String succes = FPSTR(successResponse);
+          succes.replace("{m}", S_UPDATE_SUCCESS_REBOOTING);
           _server->client().setNoDelay(true);
-          _server->send_P(200, PSTR("text/html"), successResponse);
+          _server->send_P(200, PSTR("text/html"), succes.c_str());
           delay(100);
           _server->client().stop();
           ESP.restart();
@@ -114,7 +123,10 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
           if (_serial_output)
             Serial.printf(".");
           if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
-            _server->send_P(200, PSTR("text/html"), twoStepResponse);
+        	String twoStep = FPSTR(twoStepResponse);
+        	twoStep.replace("{w}", S_WARNING);
+        	twoStep.replace("{o}", S_ONLY_2_STEP_OTA);
+            _server->send_P(200, PSTR("text/html"), twoStep.c_str());
 
             _setUpdaterError();
           }
