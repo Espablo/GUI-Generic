@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <FunctionalInterrupt.h>
-#include "MCP_23017.h"
+#include "S_MCP23017.h"
 
 static const uint8_t MCP23017_BASEADDRESS = 0x20;
 
@@ -43,21 +43,19 @@ void MCP23017::init(bool fast) {
 
 bool MCP23017::begin(uint8_t address) {
   _address = MCP23017_BASEADDRESS | (address & 0x07);
-  return (writeReg16(MCP23017_IOCONA, 0x4242) && writeReg16(MCP23017_IODIRA, 0xFFFF));  // INT MIRROR & INT POL HIGH, ALL INPUTS
+  return (writeReg16(MCP23017_IOCONA, 0x4242) && writeReg16(MCP23017_IODIRA, 0xFFFF)); // INT MIRROR & INT POL HIGH, ALL INPUTS
 }
 
 void MCP23017::pinMode(uint8_t pin, uint8_t mode) {
   if (pin < 16) {
     if (mode == OUTPUT) {
       updateReg(pin < 8 ? MCP23017_IODIRA : MCP23017_IODIRB, ~(uint8_t)(1 << (pin % 8)), 0x00);
-    }
-    else if ((mode == INPUT) || (mode == INPUT_PULLUP)) {
+    } else if ((mode == INPUT) || (mode == INPUT_PULLUP)) {
       updateReg(pin < 8 ? MCP23017_IODIRA : MCP23017_IODIRB, 0xFF, 1 << (pin % 8));
       if (mode == INPUT_PULLUP) {
         updateReg(pin < 8 ? MCP23017_GPPUA : MCP23017_GPPUB, 0xFF, 1 << (pin % 8));
         updateReg(pin < 8 ? MCP23017_IPOLA : MCP23017_IPOLB, 0xFF, 1 << (pin % 8));
-      }
-      else {
+      } else {
         updateReg(pin < 8 ? MCP23017_GPPUA : MCP23017_GPPUB, ~(uint8_t)(1 << (pin % 8)), 0x00);
         updateReg(pin < 8 ? MCP23017_IPOLA : MCP23017_IPOLB, ~(uint8_t)(1 << (pin % 8)), 0x00);
       }
@@ -80,9 +78,9 @@ void MCP23017::setPullup(uint8_t pin, bool pullup, bool inverse) {
 
 bool MCP23017::digitalRead(uint8_t pin) {
   unsigned long now = millis();
-  if (now > get_ba) {
+  if (now > get_ba){
     ba = readReg16(MCP23017_GPIOA);  // --------- reads "readReg16" only once every 20 ms  ----
-    get_ba = now + 20;
+    get_ba = now + 20;  
   }
   if (pin < 16) {
     return ((ba >> (pin % 16)) & 0x01);
@@ -152,7 +150,7 @@ uint8_t MCP23017::readReg(uint8_t reg) {
   Wire.beginTransmission(_address);
   Wire.write(reg);
   if (Wire.endTransmission() != 0)
-    return 0;  // Error!
+    return 0; // Error!
   Wire.requestFrom(_address, (uint8_t)1);
   return Wire.read();
 }
@@ -161,7 +159,7 @@ uint16_t MCP23017::readReg16(uint8_t reg) {
   Wire.beginTransmission(_address);
   Wire.write(reg);
   if (Wire.endTransmission() != 0)
-    return 0;  // Error!
+    return 0; // Error!
   Wire.requestFrom(_address, (uint8_t)2);
   uint8_t a = Wire.read();
   return ((Wire.read() << 8) | a);
@@ -171,7 +169,7 @@ bool MCP23017::updateReg(uint8_t reg, uint8_t andMask, uint8_t orMask) {
   Wire.beginTransmission(_address);
   Wire.write(reg);
   if (Wire.endTransmission() != 0)
-    return false;  // Error!
+    return false; // Error!
   Wire.requestFrom(_address, (uint8_t)1);
   uint8_t a = (Wire.read() & andMask) | orMask;
   Wire.beginTransmission(_address);
@@ -184,7 +182,7 @@ bool MCP23017::updateReg16(uint8_t reg, uint16_t andMask, uint16_t orMask) {
   Wire.beginTransmission(_address);
   Wire.write(reg);
   if (Wire.endTransmission() != 0)
-    return false;  // Error!
+    return false; // Error!
   Wire.requestFrom(_address, (uint8_t)2);
   uint16_t ab = Wire.read();
   ab |= (Wire.read() << 8);
@@ -205,91 +203,3 @@ void IRAM_ATTR MCP23017::_interrupt() {
   if (_callback)
     _callback(pins, values);
 }
-
-namespace Supla {
-namespace Control {
-MCP_23017::MCP_23017() {
-  mcp1 = new MCP23017();
-  mcp2 = new MCP23017();
-  mcp3 = new MCP23017();
-  mcp4 = new MCP23017();
-
-  if (!mcp1->begin(0)) {
-    Serial.println(F("MCP23017 1 not found!"));  // begin(uint8_t address)  "Pin 100 - 115"
-    delete mcp1;
-    mcp1 = nullptr;
-  }
-  if (!mcp2->begin(1)) {
-    Serial.println(F("MCP23017 2 not found!"));  // begin(uint8_t address)  "Pin 116 - 131"
-    delete mcp2;
-    mcp2 = nullptr;
-  }
-  if (!mcp3->begin(2)) {
-    Serial.println(F("MCP23017 3 not found!"));  // begin(uint8_t address)  "Pin 132 - 147"
-    delete mcp3;
-    mcp3 = nullptr;
-  }
-  if (!mcp4->begin(3)) {
-    Serial.println(F("MCP23017 4 not found!"));  // begin(uint8_t address)  "Pin 148 - 163"
-    delete mcp4;
-    mcp4 = nullptr;
-  }
-}
-
-void MCP_23017::customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val) {
-  if (pin < 100) {
-    return ::digitalWrite(pin, val);
-  }
-  if ((pin > 99) && (pin < 116)) {
-    mcp1->digitalWrite(pin - 100, val);
-    return;
-  }
-  if ((pin > 115) && (pin < 132)) {
-    mcp2->digitalWrite(pin - 116, val);
-  }
-  if ((pin > 131) && (pin < 148)) {
-    mcp3->digitalWrite(pin - 132, val);
-    return;
-  }
-  if ((pin > 147) && (pin < 164)) {
-    mcp4->digitalWrite(pin - 148, val);
-    return;
-  }
-}
-int MCP_23017::customDigitalRead(int channelNumber, uint8_t pin) {
-  if (pin < 100) {
-    return ::digitalRead(pin);
-  }
-  if ((pin > 99) && (pin < 116)) {
-    return mcp1->digitalRead(pin - 100);
-  }
-  if ((pin > 115) && (pin < 132)) {
-    return mcp2->digitalRead(pin - 116);
-  }
-  if ((pin > 131) && (pin < 148)) {
-    return mcp3->digitalRead(pin - 132);
-  }
-  if ((pin > 147) && (pin < 164)) {
-    return mcp4->digitalRead(pin - 148);
-  }
-}
-void MCP_23017::customPinMode(int channelNumber, uint8_t pin, uint8_t mode) {
-  (void)(channelNumber);
-  if (pin < 100) {
-    return ::pinMode(pin, mode);
-  }
-  if ((pin > 99) && (pin < 116)) {
-    mcp1->pinMode(pin - 100, mode);
-  }
-  if ((pin > 115) && (pin < 132)) {
-    mcp2->pinMode(pin - 116, mode);
-  }
-  if ((pin > 131) && (pin < 148)) {
-    mcp3->pinMode(pin - 132, mode);
-  }
-  if ((pin > 147) && (pin < 164)) {
-    mcp4->pinMode(pin - 148, mode);
-  }
-}
-}  // namespace Control
-}  // namespace Supla

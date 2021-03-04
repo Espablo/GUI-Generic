@@ -29,10 +29,6 @@ set(SRCS
   supla/conditions/on_between_eq.cpp
   supla/conditions/on_equal.cpp
 
-  SuplaDevice.cpp
-  supla/network/network.cpp
-  supla/clock/clock.cpp
-
 )
 
 add_library(supladevicelib SHARED ${SRCS})

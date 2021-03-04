@@ -1,21 +1,5 @@
-/*
-  Copyright (C) krycha88
-
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
-#ifndef _hlw8012_h
-#define _hlw8012_h
+#ifndef _Hj101_h
+#define _Hj101_h
 
 #include <Arduino.h>
 #include <EEPROM.h>
@@ -25,14 +9,18 @@
 #include <supla/element.h>
 #include <supla/storage/storage.h>
 
-#include <supla/sensor/one_phase_electricity_meter.h>
+#include "one_phase_electricity_meter.h"
 
 namespace Supla {
 namespace Sensor {
 
-class HLW_8012 : public OnePhaseElectricityMeter, public Element {
+class HJ101 : public OnePhaseElectricityMeter, public Element {
  public:
-  HLW_8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL, bool currentWhen = LOW, bool use_interrupts = true);
+  HJ101(int8_t pinCF,
+        int8_t pinCF1,
+        int8_t pinSEL,
+        bool currentWhen = LOW,
+        bool use_interrupts = true);
 
   void onInit();
   void readValuesFromDevice();
@@ -54,7 +42,7 @@ class HLW_8012 : public OnePhaseElectricityMeter, public Element {
   void calibrate(double calibPower, double calibVoltage);
 
  protected:
-  static HLW8012 *sensor;
+  static HLW8012 *hj101;
   int8_t pinCF;
   int8_t pinCF1;
   int8_t pinSEL;
