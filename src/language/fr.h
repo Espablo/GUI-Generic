@@ -86,6 +86,9 @@
 #define S_DEVICE_IS_DISCONNECTED                       "L'appareil est déconnecté"
 #define S_LOCATION_IS_DISABLED                         "L'emplacement est désactivé"
 #define S_DEVICE_LIMIT_EXCEEDED                        "Limite d'appareils dépassée"
+#define S_NETWORK_DISCONNECTED                         "Pas de connexion au réseau"
+#define S_REGISTRATION_DISABLED                        "Inscription désactivée!"
+#define S_MISSING_CREDENTIALS                          "Clé d’authentification inconnue"
 
 // #### SuplaCommonPROGMEM.h ####
 #define S_OFF                 "ÉTEINDRE"

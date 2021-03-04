@@ -85,6 +85,9 @@
 #define S_DEVICE_IS_DISCONNECTED                       "The device is disconnected"
 #define S_LOCATION_IS_DISABLED                         "The location is disabled"
 #define S_DEVICE_LIMIT_EXCEEDED                        "Device limit exceeded"
+#define S_NETWORK_DISCONNECTED                         "No connection to network"
+#define S_REGISTRATION_DISABLED                        "Registration disabled!"
+#define S_MISSING_CREDENTIALS                          "Unknown AuthKey"
 
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                 "OFF"

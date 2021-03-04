@@ -162,62 +162,74 @@ void ledBlinking_func(void *timer_arg) {
 void status_func(int status, const char *msg) {
 #ifndef UI_LANGUAGE
   switch (status) {
-    case 2:
+    case STATUS_ALREADY_INITIALIZED:
       ConfigESP->supla_status.msg = S_ALREADY_INITIATED;
       break;
-    case 3:
+    case STATUS_MISSING_NETWORK_INTERFACE:
       ConfigESP->supla_status.msg = S_NOT_ASSIGNED_CB;
       break;
-    case 4:
+    case STATUS_INVALID_GUID:
       ConfigESP->supla_status.msg = S_INVALID_GUID_OR_DEVICE_REGISTRATION_INACTIVE;
       break;
-    case 5:
+    case STATUS_UNKNOWN_SERVER_ADDRESS:
       ConfigESP->supla_status.msg = S_UNKNOWN_SEVER_ADDRESS;
       break;
-    case 6:
+    case STATUS_UNKNOWN_LOCATION_ID:
       ConfigESP->supla_status.msg = S_UNKNOWN_ID;
       break;
-    case 7:
+    case STATUS_INITIALIZED:
       ConfigESP->supla_status.msg = S_INITIATED;
       break;
-    case 8:
+    case STATUS_CHANNEL_LIMIT_EXCEEDED:
       ConfigESP->supla_status.msg = S_CHANNEL_LIMIT_EXCEEDED;
       break;
-    case 9:
+    case STATUS_SERVER_DISCONNECTED:
       ConfigESP->supla_status.msg = S_DISCONNECTED;
       break;
-    case 10:
+    case STATUS_REGISTER_IN_PROGRESS:
       ConfigESP->supla_status.msg = S_REGISTRATION_IS_PENDING;
       break;
-    case 11:
+    case STATUS_ITERATE_FAIL:
       ConfigESP->supla_status.msg = S_VARIABLE_ERROR;
       break;
-    case 12:
+    case STATUS_PROTOCOL_VERSION_ERROR:
       ConfigESP->supla_status.msg = S_PROTOCOL_VERSION_ERROR;
       break;
-    case 13:
+    case STATUS_BAD_CREDENTIALS:
       ConfigESP->supla_status.msg = S_BAD_CREDENTIALS;
       break;
-    case 14:
+    case STATUS_TEMPORARILY_UNAVAILABLE:
       ConfigESP->supla_status.msg = S_TEMPORARILY_UNAVAILABLE;
       break;
-    case 15:
+    case STATUS_LOCATION_CONFLICT:
       ConfigESP->supla_status.msg = S_LOCATION_CONFLICT;
       break;
-    case 16:
+    case STATUS_CHANNEL_CONFLICT:
       ConfigESP->supla_status.msg = S_CHANNEL_CONFLICT;
       break;
-    case 17:
+    case STATUS_REGISTERED_AND_READY:
       ConfigESP->supla_status.msg = S_REGISTERED_AND_READY;
       break;
-    case 18:
+    case STATUS_DEVICE_IS_DISABLED:
       ConfigESP->supla_status.msg = S_DEVICE_IS_DISCONNECTED;
       break;
-    case 19:
+    case STATUS_LOCATION_IS_DISABLED:
       ConfigESP->supla_status.msg = S_LOCATION_IS_DISABLED;
       break;
-    case 20:
+    case STATUS_DEVICE_LIMIT_EXCEEDED:
       ConfigESP->supla_status.msg = S_DEVICE_LIMIT_EXCEEDED;
+      break;
+    case STATUS_NETWORK_DISCONNECTED:
+      ConfigESP->supla_status.msg = S_NETWORK_DISCONNECTED;
+      break;
+    case STATUS_REGISTRATION_DISABLED:
+      ConfigESP->supla_status.msg = S_REGISTRATION_DISABLED;
+      break;
+    case STATUS_MISSING_CREDENTIALS:
+      ConfigESP->supla_status.msg = S_MISSING_CREDENTIALS;
+      break;
+    default:
+   	  ConfigESP->supla_status.msg = msg;
   }
 #else
   ConfigESP->supla_status.msg = msg;

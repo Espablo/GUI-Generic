@@ -86,6 +86,9 @@
 #define S_DEVICE_IS_DISCONNECTED                       "Urządzenie jest rozłączone"
 #define S_LOCATION_IS_DISABLED                         "Lokalizacja jest wyłączona"
 #define S_DEVICE_LIMIT_EXCEEDED                        "Przekroczono limit urządzeń"
+#define S_NETWORK_DISCONNECTED                         "Brak połączenia z siecią"
+#define S_REGISTRATION_DISABLED                        "Rejestracja wyłączona!"
+#define S_MISSING_CREDENTIALS                          "Nieznany klucz AuthKey"
 
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                 "WYŁĄCZ"

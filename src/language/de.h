@@ -85,6 +85,9 @@
 #define S_DEVICE_IS_DISCONNECTED                       "Gerät ist abgeschalten"
 #define S_LOCATION_IS_DISABLED                         "Die Lokalisierung ist deaktiviert"
 #define S_DEVICE_LIMIT_EXCEEDED                        "Gerätelimit überschritten"
+#define S_NETWORK_DISCONNECTED                         "Keine Verbindung zum Netzwerk"
+#define S_REGISTRATION_DISABLED                        "Registrierung deaktiviert!"
+#define S_MISSING_CREDENTIALS                          "Unbekannter AuthKey"
 
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                 "AUS"
