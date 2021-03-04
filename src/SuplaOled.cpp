@@ -166,7 +166,7 @@ void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16
   display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + temp_width, y + drawStringIcon, getTempString(temp));
   display->setFont(ArialMT_Win1250_Plain_16);
-  display->drawString(x + temp_width + (getTempString(temp).length() * 12), y + drawStringIcon, "ºC");
+  display->drawString(x + temp_width + (getTempString(temp).length() * 12), y + drawStringIcon, "°C");
 }
 
 void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity, const String& name) {
