@@ -216,7 +216,7 @@ void SuplaWebPageControl::handleButtonSaveSet() {
 
 void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
   String path, readUrl, nr_button;
-  uint8_t place, selected;
+  uint8_t gpio, place, selected;
 
   path.reserve(10);
   readUrl.reserve(11);
@@ -238,19 +238,21 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
     webContentBuffer += SuplaJavaScript(String(PATH_BUTTON_SET + nr_button));
   }
 
+  gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
+
   addForm(webContentBuffer, F("post"), PATH_SAVE_BUTTON_SET + nr_button);
   addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
 
-  selected = ConfigESP->getPullUp(nr_button.toInt(), FUNCTION_BUTTON);
+  selected = ConfigESP->getPullUp(gpio);
   addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL + nr_button, S_INTERNAL_PULL_UP, selected);
 
-  selected = ConfigESP->getInversed(nr_button.toInt(), FUNCTION_BUTTON);
+  selected = ConfigESP->getInversed(gpio);
   addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED + nr_button, S_REVERSE_LOGIC, selected);
 
-  selected = ConfigESP->getEvent(nr_button.toInt(), FUNCTION_BUTTON);
+  selected = ConfigESP->getEvent(gpio);
   addListBox(webContentBuffer, INPUT_BUTTON_EVENT + nr_button, S_REACTION_TO, TRIGGER_P, 3, selected);
 
-  selected = ConfigESP->getAction(nr_button.toInt(), FUNCTION_BUTTON);
+  selected = ConfigESP->getAction(gpio);
   addListBox(webContentBuffer, INPUT_BUTTON_ACTION + nr_button, S_ACTION, ACTION_P, 3, selected);
 
   addFormHeaderEnd(webContentBuffer);
@@ -354,9 +356,11 @@ void SuplaWebPageControl::handleButtonSetMCP23017() {
 }
 
 void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
-  uint8_t selected;
+  uint8_t gpio, selected;
 
   WebServer->sendHeaderStart();
+
+  gpio = ConfigESP->getGpio(1, FUNCTION_BUTTON);
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_BUTTON_SET);
@@ -364,16 +368,16 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   addForm(webContentBuffer, F("post"), PATH_SAVE_BUTTON_SET);
   addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);
 
-  selected = ConfigESP->getPullUp(1, FUNCTION_BUTTON);
+  selected = ConfigESP->getPullUp(gpio);
   addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
 
-  selected = ConfigESP->getInversed(1, FUNCTION_BUTTON);
+  selected = ConfigESP->getInversed(gpio);
   addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
 
-  selected = ConfigESP->getEvent(1, FUNCTION_BUTTON);
+  selected = ConfigESP->getEvent(gpio);
   addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
 
-  selected = ConfigESP->getAction(1, FUNCTION_BUTTON);
+  selected = ConfigESP->getAction(gpio);
   addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
 
   addFormHeaderEnd(webContentBuffer);

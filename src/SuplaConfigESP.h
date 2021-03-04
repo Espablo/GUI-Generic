@@ -77,12 +77,15 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   int getGpio(int function) {
     return getGpio(1, function);
   }
-  int getLevel(int nr, int function);
-  int getLevel(int function) {
-    return getLevel(1, function);
-  }
-  int getPullUp(int nr, int function);
-  int getInversed(int nr, int function);
+
+  uint8_t getKeyGpio(uint8_t gpio);
+
+  int getLevel(uint8_t gpio);
+  int getPullUp(uint8_t gpio);
+  int getInversed(uint8_t gpio);
+  int getMemory(uint8_t gpio);
+  int getAction(uint8_t gpio);
+  int getEvent(uint8_t gpio);
 
   bool checkBusyCfg(int gpio);
   int checkBusyGpio(int gpio, int function);
@@ -102,14 +105,6 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   }
 
   void clearGpio(uint8_t gpio, uint8_t function = 0);
-
-  int getMemory(int nr, int function);
-  int getMemory(int function) {
-    return getMemory(1, function);
-  }
-
-  int getAction(int nr, int function);
-  int getEvent(int nr, int function);
   void factoryReset(bool forceReset = false);
   const String getConfigNameAP();
 

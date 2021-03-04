@@ -69,7 +69,7 @@ void addRelayButton(uint8_t nr) {
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
-  highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+  highIsOn = ConfigESP->getLevel(pinRelay);
   levelLed = ConfigManager->get(KEY_LEVEL_LED)->getValueInt();
 
   if (pinRelay != OFF_GPIO) {
@@ -77,7 +77,7 @@ void addRelayButton(uint8_t nr) {
 
     int size = relay.size() - 1;
 
-    switch (ConfigESP->getMemory(nr, FUNCTION_RELAY)) {
+    switch (ConfigESP->getMemory(pinRelay)) {
       case MEMORY_RELAY_OFF:
         relay[size]->setDefaultStateOff();
         break;
@@ -93,9 +93,9 @@ void addRelayButton(uint8_t nr) {
     relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinButton != OFF_GPIO) {
-      auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(nr, FUNCTION_BUTTON), ConfigESP->getInversed(nr, FUNCTION_BUTTON));
+      auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
 
-      button->addAction(ConfigESP->getAction(nr, FUNCTION_BUTTON), *relay[size], ConfigESP->getEvent(nr, FUNCTION_BUTTON));
+      button->addAction(ConfigESP->getAction(pinButton), *relay[size], ConfigESP->getEvent(pinButton));
       button->setSwNoiseFilterDelay(50);
     }
 
@@ -173,18 +173,18 @@ void addRolleShutter(uint8_t nr) {
   pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
 
   pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-  pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
+  pinButtonDown = ConfigESP->getGpio(pinButtonDown);
 
-  pullupButtonUp = ConfigESP->getPullUp(nr, FUNCTION_BUTTON);
-  pullupButtonDown = ConfigESP->getPullUp(nr + 1, FUNCTION_BUTTON);
+  pullupButtonUp = ConfigESP->getPullUp(pinButtonUp);
+  pullupButtonDown = ConfigESP->getPullUp(pinButtonDown);
 
-  inversedButtonUp = ConfigESP->getInversed(nr, FUNCTION_BUTTON);
-  inversedButtonDown = ConfigESP->getInversed(nr + 1, FUNCTION_BUTTON);
+  inversedButtonUp = ConfigESP->getInversed(pinButtonUp);
+  inversedButtonDown = ConfigESP->getInversed(pinButtonDown);
 
   pinLedUP = ConfigESP->getGpio(nr, FUNCTION_LED);
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
 
-  highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+  highIsOn = ConfigESP->getLevel(pinRelayUp);
   levelLed = ConfigManager->get(KEY_LEVEL_LED)->getValueInt();
 
   auto RollerShutterRelay = new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn);
@@ -221,16 +221,16 @@ void addRolleShutterMomentary(uint8_t nr) {
   pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
 
-  pullupButtonUp = ConfigESP->getPullUp(nr, FUNCTION_BUTTON);
-  pullupButtonDown = ConfigESP->getPullUp(nr + 1, FUNCTION_BUTTON);
+  pullupButtonUp = ConfigESP->getPullUp(pinButtonUp);
+  pullupButtonDown = ConfigESP->getPullUp(pinButtonDown);
 
-  inversedButtonUp = ConfigESP->getInversed(nr, FUNCTION_BUTTON);
-  inversedButtonDown = ConfigESP->getInversed(nr + 1, FUNCTION_BUTTON);
+  inversedButtonUp = ConfigESP->getInversed(pinButtonUp);
+  inversedButtonDown = ConfigESP->getInversed(pinButtonDown);
 
   pinLedUP = ConfigESP->getGpio(nr, FUNCTION_LED);
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
 
-  highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+  highIsOn = ConfigESP->getLevel(pinRelayUp);
   levelLed = ConfigManager->get(KEY_LEVEL_LED)->getValueInt();
 
   auto RollerShutterRelay = new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn);
@@ -271,13 +271,16 @@ void addRGBWLeds(uint8_t nr) {
   int greenPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_GREEN);
   int bluePin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BLUE);
   int brightnessPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BRIGHTNESS);
+
   int buttonPin = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+  int pullupButton = ConfigESP->getPullUp(buttonPin);
+  int inversedButton = ConfigESP->getInversed(buttonPin);
 
   if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO && brightnessPin != OFF_GPIO) {
     auto rgbw = new Supla::Control::RGBWLeds(redPin, greenPin, bluePin, brightnessPin);
 
     if (buttonPin != OFF_GPIO) {
-      auto button = new Supla::Control::Button(buttonPin, true, true);
+      auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
       button->setMulticlickTime(200);
       button->setHoldTime(400);
       button->repeatOnHoldEvery(200);
@@ -290,7 +293,7 @@ void addRGBWLeds(uint8_t nr) {
     auto rgbw = new Supla::Control::RGBLeds(redPin, greenPin, bluePin);
 
     if (buttonPin != OFF_GPIO) {
-      auto button = new Supla::Control::Button(buttonPin, true, true);
+      auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
       button->setMulticlickTime(200);
       button->setHoldTime(400);
       button->repeatOnHoldEvery(200);
@@ -303,7 +306,7 @@ void addRGBWLeds(uint8_t nr) {
     auto rgbw = new Supla::Control::DimmerLeds(brightnessPin);
 
     if (buttonPin != OFF_GPIO) {
-      auto button = new Supla::Control::Button(buttonPin, true, true);
+      auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
       button->setMulticlickTime(200);
       button->setHoldTime(400);
       button->repeatOnHoldEvery(200);
