@@ -64,11 +64,10 @@ bool Storage::LoadElementConfig() {
   return false;
 }
 
-bool Storage::PrepareState(bool dryRun) {
+void Storage::PrepareState(bool dryRun) {
   if (Instance()) {
-    return Instance()->prepareState(dryRun);
+    Instance()->prepareState(dryRun);
   }
-  return false;
 }
 
 bool Storage::FinalizeSaveState() {
@@ -112,11 +111,10 @@ Storage::~Storage() {
   instance = nullptr;
 }
 
-bool Storage::prepareState(bool performDryRun) {
+void Storage::prepareState(bool performDryRun) {
   dryRun = performDryRun;
   newSectionSize = 0;
   currentStateOffset = elementStateOffset + sizeof(SectionPreamble);
-  return true;
 }
 
 bool Storage::readState(unsigned char *buf, int size) {

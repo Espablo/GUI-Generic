@@ -327,11 +327,11 @@ std::vector<DS18B20 *> sensorDS;
 #endif
 
 #ifdef SUPLA_HLW8012
-Supla::Sensor::HLW_8012 *counterHLW8012 = nullptr;
+Supla::Sensor::HJ101 *counterHLW8012 = nullptr;
 
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
   if (counterHLW8012 == NULL) {
-    counterHLW8012 = new Supla::Sensor::HLW_8012(pinCF, pinCF1, pinSEL);
+    counterHLW8012 = new Supla::Sensor::HJ101(pinCF, pinCF1, pinSEL);
   }
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
 }
