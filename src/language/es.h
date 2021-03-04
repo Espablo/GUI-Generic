@@ -166,4 +166,9 @@
 #define S_WARNING "ADVERTENCIA"
 #define S_ONLY_2_STEP_OTA "solo use la actualización OTA de 2 pasos. Usar"
 
+//#### SuplaOled.cpp ####
+#define S_CONFIGURATION_MODE "Modo de configuración"
+#define S_AP_NAME "Nombre de AP"
+#define S_ERROR "error"
+
 #endif  // _LANGUAGE_ES_S_H_
