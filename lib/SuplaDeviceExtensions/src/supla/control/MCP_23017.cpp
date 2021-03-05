@@ -216,23 +216,15 @@ MCP_23017::MCP_23017() {
 
   if (!mcp1->begin(0)) {
     Serial.println(F("MCP23017 1 not found!"));  // begin(uint8_t address)  "Pin 100 - 115"
-    delete mcp1;
-    mcp1 = nullptr;
   }
   if (!mcp2->begin(1)) {
     Serial.println(F("MCP23017 2 not found!"));  // begin(uint8_t address)  "Pin 116 - 131"
-    delete mcp2;
-    mcp2 = nullptr;
   }
   if (!mcp3->begin(2)) {
     Serial.println(F("MCP23017 3 not found!"));  // begin(uint8_t address)  "Pin 132 - 147"
-    delete mcp3;
-    mcp3 = nullptr;
   }
   if (!mcp4->begin(3)) {
     Serial.println(F("MCP23017 4 not found!"));  // begin(uint8_t address)  "Pin 148 - 163"
-    delete mcp4;
-    mcp4 = nullptr;
   }
 }
 
