@@ -32,17 +32,13 @@ void SuplaWebPageControl::createWebPageControl() {
   }
   else {
 #if defined(SUPLA_BUTTON)
-    for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); i++) {
-      path = PATH_START;
-      path += PATH_BUTTON_SET;
-      path += i;
-      WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleButtonSet, this));
+    path = PATH_START;
+    path += PATH_BUTTON_SET;
+    WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageControl::handleButtonSet, this));
 
-      path = PATH_START;
-      path += PATH_SAVE_BUTTON_SET;
-      path += i;
-      WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleButtonSaveSet, this));
-    }
+    path = PATH_START;
+    path += PATH_SAVE_BUTTON_SET;
+    WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageControl::handleButtonSaveSet, this));
 #endif
   }
 
@@ -133,7 +129,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
       addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, nr, PATH_BUTTON_SET);
     }
     else {
-      addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, PATH_BUTTON_SET, nr);
+      addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, String(PATH_BUTTON_SET) + "?cmd=", nr);
     }
   }
   addFormHeaderEnd(webContentBuffer);
@@ -155,25 +151,14 @@ void SuplaWebPageControl::handleButtonSet() {
 }
 
 void SuplaWebPageControl::handleButtonSaveSet() {
-  //  Serial.println(F("HTTP_POST - metoda handleRelaySaveSet"));
   if (!WebServer->isLoggedIn()) {
     return;
   }
 
-  String readUrl, nr_button, input, path;
-  uint8_t place, key, gpio;
+  String input, nr_button;
+  uint8_t key, gpio;
 
-  input.reserve(5);
-  readUrl.reserve(16);
-  nr_button.reserve(2);
-  path.reserve(16);
-
-  path = PATH_START;
-  path += PATH_SAVE_BUTTON_SET;
-  readUrl = WebServer->httpServer->uri();
-
-  place = readUrl.indexOf(path);
-  nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
+  nr_button = WebServer->httpServer->arg("cmd");
 
   gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
   key = KEY_GPIO + gpio;
@@ -215,49 +200,44 @@ void SuplaWebPageControl::handleButtonSaveSet() {
 }
 
 void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
-  String path, readUrl, nr_button;
-  uint8_t gpio, place, selected;
-
-  path.reserve(10);
-  readUrl.reserve(11);
-  nr_button.reserve(2);
-
-  WebServer->sendHeaderStart();
+  uint8_t gpio, selected;
+  String nr_button;
 
   if (nr != 0) {
-    webContentBuffer += SuplaJavaScript(PATH_BUTTON_SET + String(nr));
     nr_button = nr;
   }
   else {
-    path = PATH_START;
-    path += PATH_BUTTON_SET;
-    readUrl = WebServer->httpServer->uri();
-
-    place = readUrl.indexOf(path);
-    nr_button = readUrl.substring(place + path.length(), place + path.length() + 3);
-    webContentBuffer += SuplaJavaScript(String(PATH_BUTTON_SET + nr_button));
+    nr_button = WebServer->httpServer->arg("cmd");
   }
 
-  gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
+  Serial.println(nr_button);
+  WebServer->sendHeaderStart();
 
-  addForm(webContentBuffer, F("post"), PATH_SAVE_BUTTON_SET + nr_button);
-  addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
+  if (!nr_button.isEmpty()) {
+    webContentBuffer += SuplaSaveResult(save);
+    webContentBuffer += SuplaJavaScript(String(PATH_BUTTON_SET) + "?cmd=" + nr_button);
 
-  selected = ConfigESP->getPullUp(gpio);
-  addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL + nr_button, S_INTERNAL_PULL_UP, selected);
+    gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
 
-  selected = ConfigESP->getInversed(gpio);
-  addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED + nr_button, S_REVERSE_LOGIC, selected);
+    addForm(webContentBuffer, F("post"), String(PATH_SAVE_BUTTON_SET) + "?cmd=" + nr_button);
+    addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
 
-  selected = ConfigESP->getEvent(gpio);
-  addListBox(webContentBuffer, INPUT_BUTTON_EVENT + nr_button, S_REACTION_TO, TRIGGER_P, 3, selected);
+    selected = ConfigESP->getPullUp(gpio);
+    addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL + nr_button, S_INTERNAL_PULL_UP, selected);
 
-  selected = ConfigESP->getAction(gpio);
-  addListBox(webContentBuffer, INPUT_BUTTON_ACTION + nr_button, S_ACTION, ACTION_P, 3, selected);
+    selected = ConfigESP->getInversed(gpio);
+    addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED + nr_button, S_REVERSE_LOGIC, selected);
 
-  addFormHeaderEnd(webContentBuffer);
-  addButtonSubmit(webContentBuffer, S_SAVE);
-  addFormEnd(webContentBuffer);
+    selected = ConfigESP->getEvent(gpio);
+    addListBox(webContentBuffer, INPUT_BUTTON_EVENT + nr_button, S_REACTION_TO, TRIGGER_P, 3, selected);
+
+    selected = ConfigESP->getAction(gpio);
+    addListBox(webContentBuffer, INPUT_BUTTON_ACTION + nr_button, S_ACTION, ACTION_P, 3, selected);
+
+    addFormHeaderEnd(webContentBuffer);
+    addButtonSubmit(webContentBuffer, S_SAVE);
+    addFormEnd(webContentBuffer);
+  }
   addButton(webContentBuffer, S_RETURN, PATH_CONTROL);
 
   WebServer->sendHeaderEnd();
