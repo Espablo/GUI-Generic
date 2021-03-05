@@ -1,4 +1,4 @@
-#include "DS18B20.h"
+#include "DS_18B20.h"
 
 OneWireBus::OneWireBus(uint8_t pinNumberConfig)
   : oneWire(pinNumberConfig), pin(pinNumberConfig), nextBus(nullptr), lastReadTime(0) {
