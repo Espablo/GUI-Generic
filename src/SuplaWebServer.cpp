@@ -284,7 +284,7 @@ void SuplaWebServer::sendHeaderStart() {
   String summary = FPSTR(HTTP_SUMMARY);
 
   summary.replace(F("{h}"), ConfigManager->get(KEY_HOST_NAME)->getValue());
-  summary.replace(F("{s}"), ConfigESP->getLastStatusSupla());
+  summary.replace(F("{s}"), ConfigESP->getLastStatusMessageSupla());
   summary.replace(F("{v}"), Supla::Channel::reg_dev.SoftVer);
   summary.replace(F("{g}"), ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
   summary.replace(F("{m}"), ConfigESP->getMacAddress(true));

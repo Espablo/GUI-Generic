@@ -375,7 +375,7 @@ SuplaOled::SuplaOled() {
 
 void SuplaOled::iterateAlways() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
-    if (ConfigESP->supla_status.status != STATUS_REGISTERED_AND_READY) {
+    if (ConfigESP->getLastStatusSupla() != STATUS_REGISTERED_AND_READY) {
       displayUiSuplaStatus(display);
       return;
     }

@@ -18,7 +18,7 @@
 #define SuplaConfigESP_h
 
 #include "Arduino.h"
-#include <supla/triggerable.h>
+#include <supla/action_handler.h>
 #include <supla/element.h>
 #include "GUI-Generic_Config.h"
 #include "SuplaConfigManager.h"
@@ -44,7 +44,6 @@ enum _ConfigMode
 typedef struct {
   int status;
   const char *msg;
-  const char *old_msg;
 } _supla_status;
 
 class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
@@ -55,7 +54,8 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void handleAction(int event, int action);
   void rebootESP();
 
-  const char *getLastStatusSupla();
+  const char *getLastStatusMessageSupla();
+  int getLastStatusSupla();
 
   void ledBlinking(int time);
   void ledBlinkingStop(void);
