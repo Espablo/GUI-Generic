@@ -44,7 +44,6 @@ enum _ConfigMode
 typedef struct {
   int status;
   const char *msg;
-  const char *old_msg;
 } _supla_status;
 
 class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
@@ -55,7 +54,8 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void handleAction(int event, int action);
   void rebootESP();
 
-  const char *getLastStatusSupla();
+  const char *getLastStatusMessageSupla();
+  int getLastStatusSupla();
 
   void ledBlinking(int time);
   void ledBlinkingStop(void);
