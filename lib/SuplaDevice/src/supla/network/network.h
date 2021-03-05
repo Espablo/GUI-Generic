@@ -90,14 +90,15 @@ class Network {
     }
   }
 
-  static bool Ping() {
+  static bool Ping(void *srpc) {
     if (Instance() != NULL) {
-      return Instance()->ping();
+      return Instance()->ping(srpc);
     }
     return false;
   }
 
   Network(uint8_t ip[4]);
+  virtual ~Network();
   virtual int read(void *buf, int count) = 0;
   virtual int write(void *buf, int count) = 0;
   virtual int connect(const char *server, int port = -1) = 0;
@@ -108,7 +109,7 @@ class Network {
 
   virtual bool isReady() = 0;
   virtual bool iterate();
-  virtual bool ping();
+  virtual bool ping(void *);
 
   virtual void fillStateData(TDSC_ChannelState &channelState);
 
