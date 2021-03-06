@@ -7,3 +7,7 @@
 .vscode/ipch
 build_output
 src/GUI-Generic.ino.cpp
+##### Eclipse/Sloeber #####
+.project
+.cproject
+.settings
