@@ -28,7 +28,13 @@
 #define S_UPDATE                                               "Actualización"
 #define S_RESTART                                              "Reiniciar"
 #define S_RETURN                                               "Volver"
+#ifdef ARDUINO_ESP8266_GENERIC
+#define S_TEMPLATE_BOARD                                       "Modelos de placas (ESP8266)"
+#elif ARDUINO_ESP8266_ESP01
+#define S_TEMPLATE_BOARD                                       "Modelos de placas (ESP8285)"
+#else
 #define S_TEMPLATE_BOARD                                       "Modelos de placas"
+#endif
 #define S_TYPE                                                 "Tipo"
 #define S_RELAYS                                               "RELÉS"
 #define S_BUTTONS                                              "BOTONES"

@@ -332,7 +332,11 @@ bool SuplaConfigESP::checkBusyCfg(int gpio) {
 }
 
 int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
-  if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11) {
+  if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11
+#ifdef ARDUINO_ESP8266_GENERIC
+		  || gpio == 9 || gpio == 10
+#endif
+  ) {
     return false;
   }
   else {

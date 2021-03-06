@@ -84,8 +84,8 @@ const char GPIO2[] PROGMEM = "GPIO2-D4";
 const char GPIO3[] PROGMEM = "GPIO3-RX";
 const char GPIO4[] PROGMEM = "GPIO4-D2";
 const char GPIO5[] PROGMEM = "GPIO5-D1";
-const char GPIO9[] PROGMEM = "GPIO9-FL ESP8285";
-const char GPIO10[] PROGMEM = "GPIO10-FL ESP8285";
+const char GPIO9[] PROGMEM = "GPIO9-FL (ESP8285)";
+const char GPIO10[] PROGMEM = "GPIO10-FL (ESP8285)";
 const char GPIO12[] PROGMEM = "GPIO12-D6";
 const char GPIO13[] PROGMEM = "GPIO13-D7";
 const char GPIO14[] PROGMEM = "GPIO14-D5";
@@ -95,8 +95,30 @@ const char OFF[] PROGMEM = S_OFF;
 const char ON[] PROGMEM = S_ON;
 const char GPIONULL[] PROGMEM = "";
 
-const char* const GPIO_P[] PROGMEM = {GPIO0, GPIO1,  GPIO2,    GPIO3,  GPIO4,  GPIO5,  GPIONULL, GPIONULL, GPIONULL,
-                                      GPIO9, GPIO10, GPIONULL, GPIO12, GPIO13, GPIO14, GPIO15,   GPIO16,   OFF};
+const char* const GPIO_P[] PROGMEM = {
+GPIO0
+,GPIO1
+,GPIO2
+,GPIO3
+,GPIO4
+,GPIO5
+,GPIONULL
+,GPIONULL
+,GPIONULL
+#ifdef ARDUINO_ESP8266_GENERIC
+,GPIONULL
+,GPIONULL
+#else
+,GPIO9
+,GPIO10
+#endif
+,GPIONULL
+,GPIO12
+,GPIO13
+,GPIO14
+,GPIO15
+,GPIO16
+,OFF};
 
 const char GPIO_A0[] PROGMEM = "A0";
 const char GPIO_A1[] PROGMEM = "A1";
