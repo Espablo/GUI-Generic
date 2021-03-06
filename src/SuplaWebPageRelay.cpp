@@ -288,18 +288,20 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
     }
 #endif
 
-    addFormHeader(webContentBuffer, S_CONDITIONING);
-    selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-    addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_SENSOR, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
+    if(COUNT_SENSOR_LIST > 1) {
+      addFormHeader(webContentBuffer, S_CONDITIONING);
+      selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
+      addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_SENSOR, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
 
-    selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-    addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, 4, selected);
+      selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
+      addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, 4, selected);
 
-    String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr_relay.toInt() - 1);
-    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
-    value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr_relay.toInt() - 1);
-    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
-    addFormHeaderEnd(webContentBuffer);
+      String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr_relay.toInt() - 1);
+      addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
+      value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr_relay.toInt() - 1);
+      addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
+      addFormHeaderEnd(webContentBuffer);
+    }
 
     addButtonSubmit(webContentBuffer, S_SAVE);
     addFormEnd(webContentBuffer);
