@@ -2,37 +2,35 @@
 #include "SuplaDeviceGUI.h"
 
 void createWebTools() {
-  WebServer->httpServer.on(getURL(PATH_TOOLS), handleTools);
+  WebServer->httpServer->on(getURL(PATH_TOOLS), handleTools);
 
-  WebServer->httpServer.on(getURL(PATH_FACTORY_RESET), [&]() {
-    if (ConfigESP->configModeESP == NORMAL_MODE) {
-      if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-        return WebServer->httpServer.requestAuthentication();
+  WebServer->httpServer->on(getURL(PATH_FACTORY_RESET), [&]() {
+    if (!WebServer->isLoggedIn()) {
+      return;
     }
-    WebServer->httpServer.sendHeader("Location", "/");
-    WebServer->httpServer.send(303);
+    WebServer->httpServer->sendHeader("Location", "/");
+    WebServer->httpServer->send(303);
     WebServer->supla_webpage_start(0);
     ConfigESP->factoryReset(true);
   });
 }
 
 void handleTools() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
-  addFormHeader(webContentBuffer, F("Tools"));
+  addFormHeader(webContentBuffer, S_TOOLS);
   //#ifdef SUPLA_BUTTON
-  addButton(webContentBuffer, F("Save config"), PATH_DOWNLOAD);
+  addButton(webContentBuffer, S_SAVE_CONFIGURATION, PATH_DOWNLOAD);
   //#endif
   //#ifdef SUPLA_BUTTON
-  addButton(webContentBuffer, F("Load config"), PATH_UPLOAD);
+  addButton(webContentBuffer, S_LOAD_CONFIGURATION, PATH_UPLOAD);
   //#endif
 #ifdef SUPLA_OTA
   addButton(webContentBuffer, S_UPDATE, PATH_UPDATE_HENDLE);
 #endif
-  addButton(webContentBuffer, F("Factory reset"), PATH_FACTORY_RESET);
+  addButton(webContentBuffer, S_RESTORE_FACTORY_SETTING, PATH_FACTORY_RESET);
   addFormHeaderEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, "");
 

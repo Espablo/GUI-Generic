@@ -34,19 +34,26 @@ void begin() {
   Supla::GUIESPWifi *wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
 
   wifi->enableBuffer(true);
+
+#ifdef SUPLA_ENABLE_SSL
+  wifi->enableSSL(true);
+#else
   wifi->enableSSL(false);
+#endif
 
   String supla_hostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
   supla_hostname.replace(" ", "_");
   wifi->setHostName(supla_hostname.c_str());
 
-  SuplaDevice.setName((char *)ConfigManager->get(KEY_HOST_NAME)->getValue());
+  SuplaDevice.setName(ConfigManager->get(KEY_HOST_NAME)->getValue());
 
+#ifdef BUILD_VERSION
   SuplaDevice.setSwVersion(BUILD_VERSION);
+#endif
 
   SuplaDevice.begin((char *)ConfigManager->get(KEY_SUPLA_GUID)->getValue(),      // Global Unique Identifier
-                    (char *)ConfigManager->get(KEY_SUPLA_SERVER)->getValue(),    // SUPLA server address
-                    (char *)ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),     // Email address used to login to Supla Cloud
+                    ConfigManager->get(KEY_SUPLA_SERVER)->getValue(),            // SUPLA server address
+                    ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),             // Email address used to login to Supla Cloud
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
   ConfigManager->showAllValue();
@@ -54,6 +61,7 @@ void begin() {
 }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+
 void addRelayButton(uint8_t nr) {
   uint8_t pinRelay, pinButton, pinLED;
   bool highIsOn, levelLed;
@@ -61,7 +69,7 @@ void addRelayButton(uint8_t nr) {
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
-  highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+  highIsOn = ConfigESP->getLevel(pinRelay);
   levelLed = ConfigManager->get(KEY_LEVEL_LED)->getValueInt();
 
   if (pinRelay != OFF_GPIO) {
@@ -69,7 +77,7 @@ void addRelayButton(uint8_t nr) {
 
     int size = relay.size() - 1;
 
-    switch (ConfigESP->getMemory(size + 1, FUNCTION_RELAY)) {
+    switch (ConfigESP->getMemory(pinRelay)) {
       case MEMORY_RELAY_OFF:
         relay[size]->setDefaultStateOff();
         break;
@@ -82,18 +90,53 @@ void addRelayButton(uint8_t nr) {
     }
 
     relay[size]->keepTurnOnDuration();
-    eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
+    relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinButton != OFF_GPIO) {
-      button.push_back(new Supla::Control::Button(pinButton, true));
-      button[size]->addAction(ConfigESP->getAction(size + 1, FUNCTION_BUTTON), *relay[size], ConfigESP->getLevel(size + 1, FUNCTION_BUTTON));
-      button[size]->setSwNoiseFilterDelay(50);
+      auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
+
+      button->addAction(ConfigESP->getAction(pinButton), *relay[size], ConfigESP->getEvent(pinButton));
+      button->setSwNoiseFilterDelay(50);
     }
 
     if (pinLED != OFF_GPIO) {
       new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
     }
+
+#if defined(SUPLA_PUSHOVER)
+    if (size <= MAX_PUSHOVER_MESSAGE) {
+      if (ConfigManager->get(KEY_PUSHOVER)->getElement(size).toInt() && strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 &&
+          strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
+        auto pushover =
+            new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
+
+        pushover->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
+        pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(size).c_str());
+
+        relay[size]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
+      }
+    }
+#endif
+
+#if defined(SUPLA_DIRECT_LINKS)
+    if (size <= MAX_DIRECT_LINK) {
+      if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str(), "") != 0 ||
+          strcmp(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str(), "") != 0) {
+        auto directLink = new Supla::Control::DirectLinks(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+
+        if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str(), "") != 0) {
+          directLink->setUrlON(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str());
+          relay[size]->addAction(DirectLinks::SEND_DIRECT_LINKS_ON, directLink, Supla::ON_TURN_ON);
+        }
+        if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str(), "") != 0) {
+          directLink->setUrlOFF(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str());
+          relay[size]->addAction(DirectLinks::SEND_DIRECT_LINKS_OFF, directLink, Supla::ON_TURN_OFF);
+        }
+      }
+    }
+#endif
   }
+  delay(0);
 }
 #endif
 
@@ -108,6 +151,9 @@ void addDS18B20MultiThermometer(int pinNumber) {
   else {
     sensorDS.push_back(new DS18B20(ConfigESP->getGpio(FUNCTION_DS18B20)));
   }
+
+  Supla::GUI::addConditionsTurnON(SENSOR_DS18B20, sensorDS[0]);
+  Supla::GUI::addConditionsTurnOFF(SENSOR_DS18B20, sensorDS[0]);
 }
 #endif
 
@@ -118,38 +164,42 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 #endif
 
 #ifdef SUPLA_ROLLERSHUTTER
-std::vector<Supla::Control::RollerShutter *> RollerShutterRelay;
-std::vector<Supla::Control::Button *> RollerShutterButtonOpen;
-std::vector<Supla::Control::Button *> RollerShutterButtonClose;
-
 void addRolleShutter(uint8_t nr) {
-  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinLedUP, pinLedDown;
+  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pullupButtonUp, pullupButtonDown, inversedButtonUp, inversedButtonDown, pinLedUP,
+      pinLedDown;
   bool highIsOn, levelLed;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
+
   pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-  pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
+  pinButtonDown = ConfigESP->getGpio(pinButtonDown);
+
+  pullupButtonUp = ConfigESP->getPullUp(pinButtonUp);
+  pullupButtonDown = ConfigESP->getPullUp(pinButtonDown);
+
+  inversedButtonUp = ConfigESP->getInversed(pinButtonUp);
+  inversedButtonDown = ConfigESP->getInversed(pinButtonDown);
+
   pinLedUP = ConfigESP->getGpio(nr, FUNCTION_LED);
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
 
-  highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+  highIsOn = ConfigESP->getLevel(pinRelayUp);
   levelLed = ConfigManager->get(KEY_LEVEL_LED)->getValueInt();
 
-  RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
-  if (pinButtonUp != OFF_GPIO)
-    RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
-  if (pinButtonDown != OFF_GPIO)
-    RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
-  int size = RollerShutterRelay.size() - 1;
+  auto RollerShutterRelay = new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn);
+
   if (pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO) {
-    RollerShutterButtonOpen[size]->addAction(Supla::OPEN_OR_STOP, *RollerShutterRelay[size], Supla::ON_PRESS);
-    RollerShutterButtonClose[size]->addAction(Supla::CLOSE_OR_STOP, *RollerShutterRelay[size], Supla::ON_PRESS);
+    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
+    auto RollerShutterButtonClose = new Supla::Control::Button(pinButtonDown, pullupButtonDown, inversedButtonDown);
+    RollerShutterButtonOpen->addAction(Supla::Action::OPEN_OR_STOP, RollerShutterRelay, Supla::Event::ON_PRESS);
+    RollerShutterButtonClose->addAction(Supla::Action::CLOSE_OR_STOP, RollerShutterRelay, Supla::Event::ON_PRESS);
   }
   else if ((pinButtonUp == OFF_GPIO && pinButtonDown != OFF_GPIO) || (pinButtonUp != OFF_GPIO && pinButtonDown == OFF_GPIO)) {
-    RollerShutterButtonOpen[size]->addAction(Supla::STEP_BY_STEP, *RollerShutterRelay[size], Supla::ON_PRESS);
+    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
+    RollerShutterButtonOpen->addAction(Supla::STEP_BY_STEP, RollerShutterRelay, Supla::ON_PRESS);
   }
-  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
+  // eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
   if (pinLedUP != OFF_GPIO) {
     new Supla::Control::PinStatusLed(pinRelayUp, pinLedUP, !levelLed);
@@ -157,36 +207,44 @@ void addRolleShutter(uint8_t nr) {
   if (pinLedDown != OFF_GPIO) {
     new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, !levelLed);
   }
+  delay(0);
 }
 
 void addRolleShutterMomentary(uint8_t nr) {
-  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinLedUP, pinLedDown;
+  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pullupButtonUp, pullupButtonDown, inversedButtonUp, inversedButtonDown, pinLedUP,
+      pinLedDown;
   bool highIsOn, levelLed;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
+
   pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
+
+  pullupButtonUp = ConfigESP->getPullUp(pinButtonUp);
+  pullupButtonDown = ConfigESP->getPullUp(pinButtonDown);
+
+  inversedButtonUp = ConfigESP->getInversed(pinButtonUp);
+  inversedButtonDown = ConfigESP->getInversed(pinButtonDown);
+
   pinLedUP = ConfigESP->getGpio(nr, FUNCTION_LED);
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
 
-  highIsOn = ConfigESP->getLevel(nr, FUNCTION_RELAY);
+  highIsOn = ConfigESP->getLevel(pinRelayUp);
   levelLed = ConfigManager->get(KEY_LEVEL_LED)->getValueInt();
 
-  RollerShutterRelay.push_back(new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn));
-  if (pinButtonUp != OFF_GPIO)
-    RollerShutterButtonOpen.push_back(new Supla::Control::Button(pinButtonUp, true, true));
-  if (pinButtonDown != OFF_GPIO)
-    RollerShutterButtonClose.push_back(new Supla::Control::Button(pinButtonDown, true, true));
-  int size = RollerShutterRelay.size() - 1;
-  if (pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO) {
-    RollerShutterButtonOpen[size]->addAction(Supla::OPEN, *RollerShutterRelay[size], Supla::ON_PRESS);
-    RollerShutterButtonOpen[size]->addAction(Supla::STOP, *RollerShutterRelay[size], Supla::ON_RELEASE);
+  auto RollerShutterRelay = new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn);
 
-    RollerShutterButtonClose[size]->addAction(Supla::CLOSE, *RollerShutterRelay[size], Supla::ON_PRESS);
-    RollerShutterButtonClose[size]->addAction(Supla::STOP, *RollerShutterRelay[size], Supla::ON_RELEASE);
+  if (pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO) {
+    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
+    auto RollerShutterButtonClose = new Supla::Control::Button(pinButtonDown, pullupButtonDown, inversedButtonDown);
+    RollerShutterButtonOpen->addAction(Supla::Action::OPEN, RollerShutterRelay, Supla::Event::ON_PRESS);
+    RollerShutterButtonOpen->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
+
+    RollerShutterButtonClose->addAction(Supla::Action::CLOSE, RollerShutterRelay, Supla::Event::ON_PRESS);
+    RollerShutterButtonClose->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
   }
-  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
+  // eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_SEK * 1000);
 
   if (pinLedUP != OFF_GPIO) {
     new Supla::Control::PinStatusLed(pinRelayUp, pinLedUP, !levelLed);
@@ -194,6 +252,7 @@ void addRolleShutterMomentary(uint8_t nr) {
   if (pinLedDown != OFF_GPIO) {
     new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, !levelLed);
   }
+  delay(0);
 }
 #endif
 
@@ -206,9 +265,61 @@ void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int d
 }
 #endif
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+#ifdef SUPLA_RGBW
+void addRGBWLeds(uint8_t nr) {
+  int redPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_RED);
+  int greenPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_GREEN);
+  int bluePin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BLUE);
+  int brightnessPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BRIGHTNESS);
+
+  int buttonPin = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+  int pullupButton = ConfigESP->getPullUp(buttonPin);
+  int inversedButton = ConfigESP->getInversed(buttonPin);
+
+  if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO && brightnessPin != OFF_GPIO) {
+    auto rgbw = new Supla::Control::RGBWLeds(redPin, greenPin, bluePin, brightnessPin);
+
+    if (buttonPin != OFF_GPIO) {
+      auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
+      button->setMulticlickTime(200);
+      button->setHoldTime(400);
+      button->repeatOnHoldEvery(200);
+
+      button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
+      button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
+    }
+  }
+  else if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO) {
+    auto rgbw = new Supla::Control::RGBLeds(redPin, greenPin, bluePin);
+
+    if (buttonPin != OFF_GPIO) {
+      auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
+      button->setMulticlickTime(200);
+      button->setHoldTime(400);
+      button->repeatOnHoldEvery(200);
+
+      button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
+      button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
+    }
+  }
+  else if (brightnessPin != OFF_GPIO) {
+    auto rgbw = new Supla::Control::DimmerLeds(brightnessPin);
+
+    if (buttonPin != OFF_GPIO) {
+      auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
+      button->setMulticlickTime(200);
+      button->setHoldTime(400);
+      button->repeatOnHoldEvery(200);
+
+      button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
+      button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
+    }
+  }
+}
+#endif
+
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER)
 std::vector<Supla::Control::Relay *> relay;
-std::vector<Supla::Control::Button *> button;
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -216,13 +327,80 @@ std::vector<DS18B20 *> sensorDS;
 #endif
 
 #ifdef SUPLA_HLW8012
-Supla::Sensor::HJ101 *counterHLW8012;
+Supla::Sensor::HLW_8012 *counterHLW8012 = nullptr;
 
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
-  counterHLW8012 = new Supla::Sensor::HJ101(pinCF, pinCF1, pinSEL);
+  if (counterHLW8012 == NULL) {
+    counterHLW8012 = new Supla::Sensor::HLW_8012(pinCF, pinCF1, pinSEL);
+  }
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
 }
 #endif
+
+void addConditionsTurnON(int function, Supla::ChannelElement *client) {
+#if defined(SUPLA_RELAY)
+  if (Supla::GUI::relay.size() == 0)
+    return;
+
+  for (uint8_t nr = 0; nr <= OFF_GPIO; nr++) {
+    if (ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt() == function &&
+        strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0) {
+      double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
+
+      switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
+        case HEATING:
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold));
+          break;
+
+        case COOLING:
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold));
+          break;
+
+        case MOISTURIZING:
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, true));
+          break;
+
+        case DRAINGE:
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, true));
+          break;
+      }
+    }
+  }
+#endif
+}
+
+void addConditionsTurnOFF(int function, Supla::ChannelElement *client) {
+#if defined(SUPLA_RELAY)
+  if (Supla::GUI::relay.size() == 0)
+    return;
+
+  for (uint8_t nr = 0; nr <= OFF_GPIO; nr++) {
+    if (ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt() == function &&
+        strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0) {
+      double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
+
+      switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
+        case HEATING:
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold));
+          break;
+
+        case COOLING:
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold));
+          break;
+
+        case MOISTURIZING:
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, true));
+          break;
+
+        case DRAINGE:
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, true));
+          break;
+      }
+    }
+  }
+#endif
+}
+
 }  // namespace GUI
 }  // namespace Supla
 

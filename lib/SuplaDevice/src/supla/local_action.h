@@ -22,6 +22,8 @@
 
 namespace Supla {
 
+class ActionHandlerClient;
+
 class LocalAction {
  public:
   virtual ~LocalAction();
@@ -30,6 +32,7 @@ class LocalAction {
 
   virtual void runAction(int event);
 
+  static ActionHandlerClient *getClientListPtr();
 };
 
 };  // namespace Supla

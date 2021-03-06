@@ -26,12 +26,6 @@
 
 #include "SuplaConfigManager.h"
 
-#define GUI_BLUE  "#005c96"
-#define GUI_GREEN "#00D151"
-
-#define DEFAULT_LOGIN    "admin"
-#define DEFAULT_PASSWORD "password"
-
 #define PATH_START            "/"
 #define PATH_SAVE_LOGIN       "savelogin"
 #define PATH_REBOT            "rbt"
@@ -50,44 +44,27 @@
 #define INPUT_ROLLERSHUTTER "irsr"
 #define INPUT_BOARD         "board"
 
-
 extern String webContentBuffer;
-
-//https://www.esp8266.com/viewtopic.php?p=84249#p84249
-class MyWebServer : public ESP8266WebServer {
-  public:
-  virtual ~MyWebServer() {
-    if (this->_currentArgs) {
-      delete[] this->_currentArgs;
-      this->_currentArgs = nullptr;
-    }
-
-    if (this->_postArgs) {
-      delete[] this->_postArgs;
-      this->_postArgs = nullptr;
-    }
-  }
-};
 
 class SuplaWebServer : public Supla::Element {
  public:
   SuplaWebServer();
   void begin();
-
-  char www_username[MAX_MLOGIN];
-  char www_password[MAX_MPASSWORD];
-
   void supla_webpage_start(int save);
 
-  //void sendContent(const String& content);
+  bool chunkedSendHeader = false;
+  void sendHeaderStart();
+  void sendHeader();
+  void sendHeaderEnd();
+
   void sendContent();
 
-  MyWebServer httpServer;
+  ESP8266WebServer* httpServer;
 
 #ifdef SUPLA_OTA
-  ESP8266HTTPUpdateServer httpUpdater;
+  ESP8266HTTPUpdateServer* httpUpdater;
 #endif
-
+  bool isLoggedIn();
   bool saveGPIO(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
   bool saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
 
@@ -107,4 +84,16 @@ class SuplaWebServer : public Supla::Element {
 
   void handleNotFound();
 };
+
+#if defined(ESP8266)
+#include <md5.h>
+#endif
+#if defined(ESP8266)
+
+struct tcp_pcb;
+extern struct tcp_pcb* tcp_tw_pcbs;
+extern "C" void tcp_abort(struct tcp_pcb* pcb);
+
+void tcpCleanup();
+#endif
 #endif  // SuplaWebServer_h

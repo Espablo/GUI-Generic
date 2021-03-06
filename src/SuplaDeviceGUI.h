@@ -22,6 +22,7 @@
 #include <DoubleResetDetector.h>
 #include <SPI.h>
 
+#include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
 
 #include "SuplaConfigESP.h"
@@ -44,7 +45,7 @@
 #include <supla/control/relay.h>
 #include <supla/control/roller_shutter.h>
 
-#include "SuplaSensorDS18B20.h"
+#include <supla/sensor/DS_18B20.h>
 #include <supla/sensor/DHT.h>
 #include <supla/sensor/HC_SR04.h>
 #include <supla/sensor/binary.h>
@@ -65,7 +66,7 @@
 #include <supla/sensor/Si7021.h>
 #endif
 #ifdef SUPLA_MAX6675
-#include <supla/sensor/MAX6675_K.h>
+#include <supla/sensor/MAXThermocouple.h>
 #endif
 #ifdef SUPLA_IMPULSE_COUNTER
 #include <supla/sensor/impulse_counter.h>
@@ -74,10 +75,23 @@
 #include <supla/sensor/esp_free_heap.h>
 #endif
 
-#include <supla/sensor/HJ101.h>
+#include <supla/sensor/HLW_8012.h>
 #include <supla/control/pin_status_led.h>
 
+#ifdef SUPLA_RGBW
+#include <supla/control/rgbw_leds.h>
+#include <supla/control/rgb_leds.h>
+#include <supla/control/dimmer_leds.h>
+#endif
+
 #include <Wire.h>
+
+#include <supla/control/pushover.h>
+#include <supla/control/direct_links.h>
+
+#ifdef SUPLA_MCP23017
+#include <supla/control/MCP_23017.h>
+#endif
 
 namespace Supla {
 namespace GUI {
@@ -88,7 +102,6 @@ void begin();
 void addRelayButton(uint8_t nr);
 
 extern std::vector<Supla::Control::Relay *> relay;
-extern std::vector<Supla::Control::Button *> button;
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -104,10 +117,6 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 #ifdef SUPLA_ROLLERSHUTTER
 void addRolleShutter(uint8_t nr);
 void addRolleShutterMomentary(uint8_t nr);
-
-extern std::vector<Supla::Control::RollerShutter *> RollerShutterRelay;
-extern std::vector<Supla::Control::Button *> RollerShutterButtonOpen;
-extern std::vector<Supla::Control::Button *> RollerShutterButtonClose;
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
@@ -115,10 +124,17 @@ extern std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
 void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay);
 #endif
 
+#ifdef SUPLA_RGBW
+void addRGBWLeds(uint8_t nr);
+#endif
+
 #ifdef SUPLA_HLW8012
-extern Supla::Sensor::HJ101 *counterHLW8012;
+extern Supla::Sensor::HLW_8012 *counterHLW8012;
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 #endif
+
+void addConditionsTurnON(int function, Supla::ChannelElement *client);
+void addConditionsTurnOFF(int function, Supla::ChannelElement *client);
 
 };  // namespace GUI
 };  // namespace Supla

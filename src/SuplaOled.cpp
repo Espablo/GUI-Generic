@@ -7,7 +7,7 @@ uint8_t* chanelSensor;
 
 String getTempString(double temperature) {
   if (temperature == -275) {
-    return F("error");
+    return S_ERROR;
   }
   else {
     return String(temperature, 1);
@@ -16,7 +16,7 @@ String getTempString(double temperature) {
 
 String getHumidityString(double humidity) {
   if (humidity == -1) {
-    return F("error");
+    return S_ERROR;
   }
   else {
     return String(humidity, 1);
@@ -25,7 +25,7 @@ String getHumidityString(double humidity) {
 
 String getPressureString(double pressure) {
   if (pressure == -1) {
-    return F("error");
+    return S_ERROR;
   }
   else {
     return String(pressure, 0);
@@ -52,7 +52,7 @@ void displayUiSignal(OLEDDisplay* display) {
   display->fillRect(x, y, x + 46, 16);
   display->setColor(WHITE);
   if (value == -1) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + 1, y, "x");
   }
   else {
@@ -70,11 +70,12 @@ void displayUiSignal(OLEDDisplay* display) {
   }
 }
 
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void displayUiRelayState(OLEDDisplay* display) {
   int y = 0;
   int x = 0;
 
-  display->setFont(ArialMT_Plain_10);
+  display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   for (int i = 0; i < Supla::GUI::relay.size(); i++) {
     if (Supla::GUI::relay[i]->isOn()) {
@@ -92,12 +93,16 @@ void displayUiRelayState(OLEDDisplay* display) {
   display->setColor(WHITE);
   display->drawHorizontalLine(0, 14, display->getWidth());
 }
+#endif
 
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state) {
   displayUiSignal(display);
+
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   if (Supla::GUI::relay.size()) {
     displayUiRelayState(display);
   }
+#endif
 }
 
 void displayUiSuplaStatus(OLEDDisplay* display) {
@@ -107,7 +112,7 @@ void displayUiSuplaStatus(OLEDDisplay* display) {
 
   displayUiSignal(display);
 
-  display->setFont(ArialMT_Plain_10);
+  display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setColor(WHITE);
   display->drawStringMaxWidth(x, y, display->getWidth(), ConfigESP->supla_status.msg);
@@ -116,11 +121,11 @@ void displayUiSuplaStatus(OLEDDisplay* display) {
 
 void displayConfigMode(OLEDDisplay* display) {
   display->clear();
-  display->setFont(ArialMT_Plain_10);
+  display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setColor(WHITE);
-  display->drawString(0, 15, F("Tryb konfiguracyjny"));
-  display->drawString(0, 28, F("AP name:"));
+  display->drawString(0, 15, S_CONFIGURATION_MODE);
+  display->drawString(0, 28, S_AP_NAME);
   display->drawString(0, 41, ConfigESP->getConfigNameAP());
   display->drawString(0, 54, F("IP: 192.168.4.1"));
   display->display();
@@ -129,7 +134,7 @@ void displayConfigMode(OLEDDisplay* display) {
 void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
   // display->drawXbm(10, 17, supla_logo_width, supla_logo_height, supla_logo_bits);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(10, display->getHeight() / 2, F("SUPLA"));
 }
 
@@ -154,14 +159,14 @@ void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16
   }
 
   if (name != NULL) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
-  display->setFont(ArialMT_Plain_24);
+  display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + temp_width, y + drawStringIcon, getTempString(temp));
-  display->setFont(ArialMT_Plain_16);
-  display->drawString(x + temp_width + (getTempString(temp).length() * 12), y + drawStringIcon, "ºC");
+  display->setFont(ArialMT_Win1250_Plain_16);
+  display->drawString(x + temp_width + (getTempString(temp).length() * 12), y + drawStringIcon, "°C");
 }
 
 void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity, const String& name) {
@@ -184,13 +189,13 @@ void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x
   }
 
   if (name != NULL) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
-  display->setFont(ArialMT_Plain_24);
+  display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + humidity_width, y + drawStringIcon, getHumidityString(humidity));
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(x + humidity_width + (getHumidityString(humidity).length() * 12), y + drawStringIcon, "%");
 }
 
@@ -214,13 +219,13 @@ void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t 
   }
 
   if (name != NULL) {
-    display->setFont(ArialMT_Plain_10);
+    display->setFont(ArialMT_Win1250_Plain_10);
     display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
-  display->setFont(ArialMT_Plain_24);
+  display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + pressure_width, y + drawStringIcon, getPressureString(pressure));
-  display->setFont(ArialMT_Plain_16);
+  display->setFont(ArialMT_Win1250_Plain_16);
   display->drawString(x + pressure_width + (getPressureString(pressure).length() * 14), y + drawStringIcon, "hPa");
 }
 
@@ -278,15 +283,15 @@ void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x,
 
 SuplaOled::SuplaOled() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
-    switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_OLED).toInt()) {
+    switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       case OLED_SSD1306_0_96:
-        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
+        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64, I2C_ONE, -1);
         break;
       case OLED_SH1106_1_3:
-        display = new SH1106Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
+        display = new SH1106Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64, I2C_ONE, -1);
         break;
       case OLED_SSD1306_0_66:
-        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_64_48);
+        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_64_48, I2C_ONE, -1);
         break;
     }
 
@@ -352,22 +357,25 @@ SuplaOled::SuplaOled() {
           ui->setTimePerTransition(250);
           break;
       }
-      /*ui->setTargetFPS(30);
+      ui->setTargetFPS(30);
       ui->setIndicatorPosition(BOTTOM);
       ui->setIndicatorDirection(LEFT_RIGHT);
-      ui->setFrameAnimation(SLIDE_LEFT);*/
+      ui->setFrameAnimation(SLIDE_LEFT);
     }
 
     ui->setFrames(frames, frameCount);
     ui->setOverlays(overlays, overlaysCount);
     ui->init();
+
+    display->setBrightness(255);
     display->flipScreenVertically();
+    display->setFontTableLookupFunction(&utf8win1250);
   }
 }
 
 void SuplaOled::iterateAlways() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
-    if (ConfigESP->supla_status.status != STATUS_REGISTERED_AND_READY) {
+    if (ConfigESP->getLastStatusSupla() != STATUS_REGISTERED_AND_READY) {
       displayUiSuplaStatus(display);
       return;
     }
@@ -395,18 +403,18 @@ void SuplaOled::addButtonOled(int pin) {
   if (pin != OFF_GPIO) {
     Supla::Control::Button* button = new Supla::Control::Button(pin, true, true);
 
-    if (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
-      button->addAction(TURN_ON_OLED, this, Supla::ON_PRESS);
+    if (ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() == OLED_CONTROLL_MANUAL && frameCount > 1) {
+      button->addAction(NEXT_FRAME, this, Supla::ON_PRESS);
     }
 
-    if (ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() == OLED_CONTROLL_MANUAL) {
-      button->addAction(NEXT_FRAME, this, Supla::ON_PRESS);
+    if (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
+      button->addAction(TURN_ON_OLED, this, Supla::ON_PRESS);
     }
   }
 }
 
 void SuplaOled::handleAction(int event, int action) {
-  if (action == NEXT_FRAME) {
+  if (action == NEXT_FRAME && oledON == true) {
     ui->nextFrame();
   }
 
@@ -416,4 +424,91 @@ void SuplaOled::handleAction(int event, int action) {
     oledON = true;
   }
 }
+
+// In ESP8266 Arduino core v2.3.0 missing bsearch: https://github.com/esp8266/Arduino/issues/2314
+// Part of GNU C Library
+void* gnu_c_bsearch(const void* key, const void* base, size_t nmemb, size_t size, int (*compar)(const void*, const void*)) {
+  size_t l, u, idx;
+  const void* p;
+  int comparison;
+
+  l = 0;
+  u = nmemb;
+  while (l < u) {
+    idx = (l + u) / 2;
+
+    p = (void*)(((const char*)base) + (idx * size));
+    comparison = (*compar)(key, p);
+    if (comparison < 0)
+      u = idx;
+    else if (comparison > 0)
+      l = idx + 1;
+    else
+      return (void*)p;
+  }
+
+  return NULL;
+}
+
+// compare function for bsearch
+int charset_table_cmp(const void* p_key, const void* p_item) {
+  const uint16_t key = *(uint16_t*)p_key;
+  const uint16_t item = (*((char*)p_item)) << 8 | *(((char*)p_item) + 1);
+
+  if (key < item)
+    return -1;
+  else if (key == item)
+    return 0;
+  else
+    return 1;
+}
+
+// convert utf-8 character to windows-1250
+// if utf-8 char continue with next byte, returns 0, otherwise windows-1250 char
+// for unconvertable char returns 0
+char utf8win1250(const uint8_t ch) {
+  static uint16_t uChar;
+  static uint8_t len;
+  char* found;
+
+  if ((ch & 0x80) == 0x00) {
+    uChar = len = 0;
+    return ch;
+  }
+  else if ((ch & 0xE0) == 0xC0) {
+    uChar = ch & 0x1F;
+    len = 1;
+    return 0;
+  }
+  else if ((ch & 0xF0) == 0xE0) {
+    uChar = ch & 0x0F;
+    len = 2;
+    return 0;
+  }
+  else if ((ch & 0xF8) == 0xF0) {
+    uChar = ch & 0x07;
+    len = 3;
+    return 0;
+  }
+  else if ((ch & 0xC0) == 0x80 && len > 0) {
+    uChar = (uChar << 6) | (ch & 0x7F);
+    len--;
+    if (len > 0)
+      return 0;
+  }
+  else {
+    uChar = len = 0;
+    return 0;
+  }
+
+  found = (char*)gnu_c_bsearch(&uChar, utf8_win1250_table + 1, utf8_win1250_table[0], 3 * sizeof(char), charset_table_cmp);
+
+  if (found != NULL) {
+    uChar = len = 0;
+    return *(found + 2);  // return win1250 char at 3rd position;
+  }
+
+  return 0;
+}
+
 #endif
