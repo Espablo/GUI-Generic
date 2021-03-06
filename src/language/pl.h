@@ -21,6 +21,7 @@
 #define S_TOOLS                                                "Narzędzia"
 #define S_SAVE_CONFIGURATION                                   "Zapisz konfigurację"
 #define S_LOAD_CONFIGURATION                                   "Wczytaj konfigurację"
+#define S_RESET_CONFIGURATION                                  "Resetuj ustawienia urządzenia"
 #define S_RESTORE_FACTORY_SETTING                              "Przywróć ustawienia fabryczne"
 #define S_UPDATE                                               "Aktualizacja"
 #define S_RESTART                                              "Restart"

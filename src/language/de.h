@@ -20,6 +20,7 @@
 #define S_TOOLS                                                "Werkzeuge"
 #define S_SAVE_CONFIGURATION                                   "Konfiguration speichern"
 #define S_LOAD_CONFIGURATION                                   "Konfiguration laden"
+#define S_RESET_CONFIGURATION                                  "Geräteeinstellungen zurücksetzen"
 #define S_RESTORE_FACTORY_SETTING                              "Stellen Sie die Werkseinstellungen wieder her"
 #define S_UPDATE                                               "Aktualisierung"
 #define S_RESTART                                              "Neustart"

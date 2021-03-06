@@ -20,6 +20,7 @@
 #define S_TOOLS                                                "Tools"
 #define S_SAVE_CONFIGURATION                                   "Save configuration"
 #define S_LOAD_CONFIGURATION                                   "Load configuration"
+#define S_RESET_CONFIGURATION                                  "Reset device settings"
 #define S_RESTORE_FACTORY_SETTING                              "Restore factory settings"
 #define S_UPDATE                                               "Update"
 #define S_RESTART                                              "Restart"

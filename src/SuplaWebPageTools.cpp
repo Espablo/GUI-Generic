@@ -13,6 +13,15 @@ void createWebTools() {
     WebServer->supla_webpage_start(0);
     ConfigESP->factoryReset(true);
   });
+  WebServer->httpServer->on(getURL(PATH_RESET), [&]() {
+    if (!WebServer->isLoggedIn()) {
+      return;
+    }
+    WebServer->httpServer->sendHeader("Location", "/");
+    WebServer->httpServer->send(303);
+    WebServer->supla_webpage_start(0);
+    ConfigESP->reset(true);
+  });
 }
 
 void handleTools() {
@@ -26,6 +35,9 @@ void handleTools() {
   //#endif
   //#ifdef SUPLA_BUTTON
   addButton(webContentBuffer, S_LOAD_CONFIGURATION, PATH_UPLOAD);
+  //#endif
+  //#ifdef SUPLA_BUTTON
+  addButton(webContentBuffer, S_RESET_CONFIGURATION, PATH_RESET);
   //#endif
 #ifdef SUPLA_OTA
   addButton(webContentBuffer, S_UPDATE, PATH_UPDATE_HENDLE);

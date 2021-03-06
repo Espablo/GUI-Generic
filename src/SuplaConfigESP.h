@@ -105,6 +105,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   }
 
   void clearGpio(uint8_t gpio, uint8_t function = 0);
+  void reset(bool forceReset = false);
   void factoryReset(bool forceReset = false);
   const String getConfigNameAP();
 
@@ -120,10 +121,18 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
  private:
   void configModeInit();
   void iterateAlways();
+  void clearEEPROM();
   int pinNumberConfig;
   int pinLedConfig;
   int modeConfigButton;
   bool ledHighIsOn;
+  const char *prevKeyWifiSsid;
+  const char *prevKeyWifiPass;
+  const char *prevKeySuplaServer;
+  const char *prevKeySuplaEmail;
+  const char *prevKeyHostName;
+  const char *prevKeyLogin;
+  const char *prevKeyLoginPass;
 
   ETSTimer led_timer;
 };
