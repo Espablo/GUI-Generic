@@ -20,9 +20,9 @@
 #include <Arduino.h>
 #include <stdint.h>
 
+#include "../action_handler.h"
 #include "../actions.h"
 #include "../channel_element.h"
-#include "../action_handler.h"
 
 namespace Supla {
 namespace Control {
@@ -30,14 +30,18 @@ class RGBWBase : public ChannelElement, public ActionHandler {
  public:
   RGBWBase();
 
-  virtual void setRGBWValueOnDevice(uint8_t red,
-                                    uint8_t green,
-                                    uint8_t blue,
-                                    uint8_t colorBrightness,
-                                    uint8_t brightness) = 0;
+  virtual void setRGBWValueOnDevice(uint32_t red,
+                                    uint32_t green,
+                                    uint32_t blue,
+                                    uint32_t colorBrightness,
+                                    uint32_t brightness) = 0;
 
-  virtual void setRGBW(
-      int red, int green, int blue, int colorBrightness, int brightness);
+  virtual void setRGBW(int red,
+                       int green,
+                       int blue,
+                       int colorBrightness,
+                       int brightness,
+                       bool toggle = false);
 
   int handleNewValueFromServer(TSD_SuplaChannelNewValue *newValue);
   virtual void turnOn();
@@ -47,17 +51,20 @@ class RGBWBase : public ChannelElement, public ActionHandler {
   void setStep(int step);
   void setDefaultDimmedBrightness(int dimmedBrightness);
   void setFadeEffectTime(int timeMs);
-  void onTimer();
 
-  void onInit() {
-    // Send to Supla server new values
-    channel.setNewValue(
-        curRed, curGreen, curBlue, curColorBrightness, curBrightness);
-  }
+  void onInit();
+  void iterateAlways();
+  void onTimer();
+  void onLoadState();
+  void onSaveState();
+
+  virtual RGBWBase &setDefaultStateOn();
+  virtual RGBWBase &setDefaultStateOff();
+  virtual RGBWBase &setDefaultStateRestore();
 
  protected:
   uint8_t addWithLimit(int value, int addition, int limit = 255);
-  void iterateDimmerRGBW(int rgbStep, int wStep);
+  virtual void iterateDimmerRGBW(int rgbStep, int wStep);
 
   uint8_t buttonStep;               // 10
   uint8_t curRed;                   // 0 - 255
@@ -77,6 +84,8 @@ class RGBWBase : public ChannelElement, public ActionHandler {
   int hwColorBrightness;  // 0 - 100
   int hwBrightness;       // 0 - 100
   unsigned long lastTick;
+  unsigned long lastMsgReceivedMs;
+  int8_t stateOnInit;
 };
 
 };  // namespace Control

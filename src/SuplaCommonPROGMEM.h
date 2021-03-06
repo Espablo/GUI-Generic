@@ -32,7 +32,8 @@ const char HTTP_STYLE[] PROGMEM =
     "12px;color:#00d151;font-size:13px;position:relative;line-height:18px}i input,select{width:calc(100% - "
     "10px);font-size:16px;line-height:28px;padding:0 5px;border-bottom:solid 1px "
     "#00d151}select{width:100%;float:none;margin:0}}iframe{margin:auto;display:block;}.formcenter{color:#000;width:50%;margin: 25px auto 25px "
-    "auto;}</style> ";
+    "auto;} input[type='checkbox' i]{appearance: auto; margin-top: 10px; height: 20px;} @media (max-width: 900px)input[type='checkbox' i]{width: auto;}</style>";
+
 const char HTTP_LOGO[] PROGMEM =
     "<div class='s'><a href='/'><svg version='1.1' id='l' x='0' y='0' viewBox='0 0 200 200' xml:space='preserve'><path "
     "d='M59.3,2.5c18.1,0.6,31.8,8,40.2,23.5c3.1,5.7,4.3,11.9,4.1,18.3c-0.1,3.6-0.7,7.1-1.9,10.6c-0.2,0.7-0.1,1.1,0.6,1.5c12.8,7.7,25.5,15.4,38.3,"
@@ -49,24 +50,33 @@ const char HTTP_LOGO[] PROGMEM =
     "M102.1,188.6c0.6,0.1,1.5-0.1,2.4-0.2c9.5-1.4,15.3-10.9,11.6-19.2c-2.6-5.9-9.4-9.6-16.8-8.6c-8.3,1.2-14.1,8.9-12.4,16.6C88.2,183.9,94.4,188.6,"
     "102.1,188.6z "
     "M167.7,88.5c-1,0-2.1,0.1-3.1,0.3c-9,1.7-14.2,10.6-10.8,18.6c2.9,6.8,11.4,10.3,19,7.8c7.1-2.3,11.1-9.1,9.6-15.9C180.9,93,174.8,88.5,167.7,88.5z'/"
-    "></a></svg>";
-const char HTTP_SUMMARY[] PROGMEM = "<h1>{h}</h1><span>LAST STATE: {s}<br>Firmware: SuplaDevice {v}<br>GUID: {g}<br>MAC: {m}<br>Free Mem: {f}KB</span>\n";
+    "></svg></a>";
+const char HTTP_SUMMARY[] PROGMEM =
+    "<h1>{h}</h1><span>LAST STATE: {s}<br>Firmware: SuplaDevice {v}<br>GUID: {g}<br>MAC: {m}<br>Free Mem: {f}KB</span>\n";
 const char HTTP_COPYRIGHT[] PROGMEM =
     "<a target='_blank' rel='noopener noreferrer' href='https://forum.supla.org/viewtopic.php?f=11&t=7133'><span style='color: #ffffff "
     "!important;'>https://forum.supla.org/</span></a>\n";
 
-const char HTTP_FAVICON[] PROGMEM = "<link rel='icon' href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAB3RJTUUH5AUUCCQbIwTFfgAAAAlwSFlzAAALEgAACxIB0t1+/AAAAARnQU1BAACxjwv8YQUAAAAwUExURf7nNZuNIOvWMci2KWRbFJGEHnRpFy8rCdrGLSAdBgwLAod6G7inJkI8DVJLEKeYIg6cTsoAAAGUSURBVHjaY2CAAFUGNLCF4QAyl4mhmP8BB4LPcWtdAe+BEBiX9QD77Kzl24GKHCAC/OVZH5hkVyUCFQlCRJhnKjAwLVlVb8lQDOY/ZFrG8FDVQbVqbU8BWODc3BX8dbMMGJhfrUyAaOla+/dAP8jyncsbgJTKgVP/b+pOAUudegAkGMsrGZhE1EFyDGwLwNaucmZyl1TgKTdg4JvAwMBzn3txeKWrMwP7wQcMWiAtf2c9YDjUfYBJapsDw66bm4AiUesOnJty0/O9iwLDPI5EhhCD6/q3Chk4dgCleJYpAEOmfCkDB+sbsK1886YBRfgWMTBwbi896wR04YZuAyAH6OmzDCbr3RgYsj6A1HEBPXCfgWHONgaG6eUBII0LFTiA7jn+iIF/MbMTyEu3lphtAJtpvl4BTLPNWgVSySA+y28aWIDdyGtVBgNH5psshVawwHGGO+arLr7MYFoJjZr/zBPYj85a1sC4ulwAIsIdcJzh2qt1WReYBWBR48gxgd1ziQIi6hTYEsxR45pZwRU9+oWgNAB1F3c/H6bYqgAAAABJRU5ErkJggg==' type='image/x-png' />\n";
+const char HTTP_FAVICON[] PROGMEM =
+    "<link rel='icon' "
+    "href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAB3RJTUUH5AUUCCQbIwTFfgAAAAlwSFlzAAALEgAACxIB0t1+/"
+    "AAAAARnQU1BAACxjwv8YQUAAAAwUExURf7nNZuNIOvWMci2KWRbFJGEHnRpFy8rCdrGLSAdBgwLAod6G7inJkI8DVJLEKeYIg6cTsoAAAGUSURBVHjaY2CAAFUGNLCF4QAyl4mhmP8BB4LPc"
+    "WtdAe+BEBiX9QD77Kzl24GKHCAC/OVZH5hkVyUCFQlCRJhnKjAwLVlVb8lQDOY/ZFrG8FDVQbVqbU8BWODc3BX8dbMMGJhfrUyAaOla+/dAP8jyncsbgJTKgVP/"
+    "b+pOAUudegAkGMsrGZhE1EFyDGwLwNaucmZyl1TgKTdg4JvAwMBzn3txeKWrMwP7wQcMWiAtf2c9YDjUfYBJapsDw66bm4AiUesOnJty0/O9iwLDPI5EhhCD6/"
+    "q3Chk4dgCleJYpAEOmfCkDB+sbsK1886YBRfgWMTBwbi896wR04YZuAyAH6OmzDCbr3RgYsj6A1HEBPXCfgWHONgaG6eUBII0LFTiA7jn+iIF/"
+    "MbMTyEu3lphtAJtpvl4BTLPNWgVSySA+y28aWIDdyGtVBgNH5psshVawwHGGO+arLr7MYFoJjZr/"
+    "zBPYj85a1sC4ulwAIsIdcJzh2qt1WReYBWBR48gxgd1ziQIi6hTYEsxR45pZwRU9+oWgNAB1F3c/H6bYqgAAAABJRU5ErkJggg==' type='image/x-png' />\n";
 
 const char HTTP_RBT[] PROGMEM = "<form method='post' action='rbt'><button type='submit'>Restart</button></form>";
 
-const char ICON_EDIT[] PROGMEM = 
+/*const char ICON_EDIT[] PROGMEM =
       "<img "
       "src='data:image/"
       "png;base64,"
       "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
       "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
       "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
-      "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>";
+      "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>";*/
 
 const char GPIO0[] PROGMEM = "GPIO0-D3";
 const char GPIO1[] PROGMEM = "GPIO1-TX";
@@ -74,8 +84,8 @@ const char GPIO2[] PROGMEM = "GPIO2-D4";
 const char GPIO3[] PROGMEM = "GPIO3-RX";
 const char GPIO4[] PROGMEM = "GPIO4-D2";
 const char GPIO5[] PROGMEM = "GPIO5-D1";
-const char GPIO9[] PROGMEM = "GPIO9-D11";
-const char GPIO10[] PROGMEM = "GPIO10-D12";
+const char GPIO9[] PROGMEM = "GPIO9-FL ESP8285";
+const char GPIO10[] PROGMEM = "GPIO10-FL ESP8285";
 const char GPIO12[] PROGMEM = "GPIO12-D6";
 const char GPIO13[] PROGMEM = "GPIO13-D7";
 const char GPIO14[] PROGMEM = "GPIO14-D5";
@@ -122,7 +132,7 @@ const char ADR20[] PROGMEM = "0x20";
 const char ADR21[] PROGMEM = "0x21";
 const char ADR22[] PROGMEM = "0x22";
 const char ADR23[] PROGMEM = "0x23";
-const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, OFF};
+const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, ADR22, ADR23, OFF};
 
 const char* const STATE_P[] PROGMEM = {OFF, ON};
 
@@ -151,10 +161,55 @@ const char SH1106[] PROGMEM = "SH1106 - 1,3''";
 const char SSD1306_WEMOS_SHIELD[] PROGMEM = "SSD1306 - 0,66'' WEMOS OLED shield";
 const char* const OLED_P[] PROGMEM = {OFF, SSD1306, SH1106, SSD1306_WEMOS_SHIELD};
 
-const char CONTROLL_NORMAL[] PROGMEM = "NORMALNE";
-const char CONTROLL_SLOW[] PROGMEM = "WOLNE";
-const char CONTROLL_MANUAL[] PROGMEM = "RĘCZNE";
+const char CONTROLL_NORMAL[] PROGMEM = S_NORMAL;
+const char CONTROLL_SLOW[] PROGMEM = S_SLOW;
+const char CONTROLL_MANUAL[] PROGMEM = S_MANUALLY;
 const char* const OLED_CONTROLL_P[] PROGMEM = {CONTROLL_NORMAL, CONTROLL_SLOW, CONTROLL_MANUAL};
 #endif
+
+enum conditioningType
+{
+  HEATING,
+  COOLING,
+  MOISTURIZING,
+  DRAINGE
+};
+
+/*const char CONDITIONING__HEATING[] PROGMEM = "Temperatura - ogrzewanie";
+const char CONDITIONING__COOLING[] PROGMEM = "Temperatura - chłodzenie";
+const char CONDITIONING__MOISTURIZING[] PROGMEM = "Wilgotność - nawilżanie";
+const char CONDITIONING__DRAINGE[] PROGMEM = "Wilgotność - osuszanie";*/
+const char CONDITIONING__HEATING[] PROGMEM = S_ON_CH_VAL_OFF_HEATING;
+const char CONDITIONING__COOLING[] PROGMEM = S_ON_CH_VAL_OFF_COOLING;
+const char CONDITIONING__MOISTURIZING[] PROGMEM = S_ON_2CH_VAL_OFF_HUMIDIFICATION;
+const char CONDITIONING__DRAINGE[] PROGMEM = S_ON_2CH_VAL_OFF_DRYING;
+const char* const CONDITIONS_TYPE_P[] PROGMEM = {CONDITIONING__HEATING, CONDITIONING__COOLING, CONDITIONING__MOISTURIZING, CONDITIONING__DRAINGE};
+
+enum sensorList
+{
+  SENSOR_DS18B20 = 1,
+  SENSOR_DHT11,
+  SENSOR_DHT22,
+  SENSOR_SI7021_SONOFF,
+  SENSOR_HC_SR04,
+  SENSOR_BME280,
+  SENSOR_SHT3x,
+  SENSOR_SI7021,
+  SENSOR_MAX6675,
+  COUNT_SENSOR_LIST
+};
+
+const char NAME_DS18B20[] PROGMEM = S_DS18B20;
+const char NAME_DHT11[] PROGMEM = S_DHT11;
+const char NAME_DHT22[] PROGMEM = S_DHT22;
+const char NAME_SI7021_SONOFF[] PROGMEM = S_SI7021_SONOFF;
+const char NAME_HC_SR04[] PROGMEM = S_HC_SR04;
+const char NAME_BME280[] PROGMEM = S_BME280;
+const char NAME_SHT3x[] PROGMEM = S_SHT3X;
+const char NAME_SI7021[] PROGMEM = S_SI702;
+const char NAME_MAX6675[] PROGMEM = S_MAX6675;
+
+const char* const SENSOR_LIST_P[] PROGMEM = {OFF,          NAME_DS18B20, NAME_DHT11, NAME_DHT22,  NAME_SI7021_SONOFF,
+                                             NAME_HC_SR04, NAME_BME280,  NAME_SHT3x, NAME_SI7021, NAME_MAX6675};
 
 #endif  // SuplaCommonPROGMEM_h

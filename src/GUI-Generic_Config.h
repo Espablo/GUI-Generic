@@ -1,9 +1,7 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
-#define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
-
-//#define USE_CUSTOM
+// #define USE_CUSTOM
 
 // User configuration
 #ifdef USE_CUSTOM
@@ -24,6 +22,7 @@
 #define SUPLA_LIMIT_SWITCH
 #define SUPLA_ROLLERSHUTTER
 #define SUPLA_CONFIG
+#define SUPLA_LED
 
 // ##### 1Wire #####
 #define SUPLA_DS18B20
@@ -36,7 +35,7 @@
 #define SUPLA_SHT3x
 #define SUPLA_SI7021
 #define SUPLA_OLED
-//#define SUPLA_MCP23017
+#define SUPLA_MCP23017
 // #define SUPLA_HTU21D    // 0x40 NOT SUPPORTED
 // #define SUPLA_SHT71     // 0x44 AND 0x45 NOT SUPPORTED
 // #define SUPLA_BH1750    // 0x23 AND 0x5C NOT SUPPORTED
@@ -49,6 +48,26 @@
 #define SUPLA_HC_SR04
 #define SUPLA_IMPULSE_COUNTER
 #define SUPLA_HLW8012
+#define SUPLA_RGBW
+#define SUPLA_PUSHOVER
+#define SUPLA_DIRECT_LINKS
 
+#endif  // USE_CUSTOM
+
+#ifndef DEBUG_MODE
+#define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
 #endif
+
+#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_OLED) || defined(SUPLA_RGBW)
+#if !defined(SUPLA_BUTTON)
+#define SUPLA_BUTTON
+#endif
+#endif
+
+#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS) || defined(SUPLA_LED)
+#if !defined(SUPLA_RELAY)
+#define SUPLA_RELAY
+#endif
+#endif
+
 #endif  // GUI-Generic_Config_h

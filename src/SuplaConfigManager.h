@@ -31,7 +31,7 @@
 #define MAX_AUTHKEY             SUPLA_GUID_SIZE
 #define MAX_SSID                32
 #define MAX_PASSWORD            64
-#define MIN_PASSWORD            8
+#define MIN_PASSWORD            4
 #define MAX_MLOGIN              32
 #define MAX_MPASSWORD           64
 #define MAX_HOSTNAME            32
@@ -44,8 +44,10 @@
 #define MAX_MONOSTABLE_TRIGGER  1
 #define MAX_FUNCTION            1
 
-#define MAX_DS18B20 20
-#define MAX_GPIO    17
+#define MAX_DS18B20          20
+#define MAX_GPIO             17
+#define MAX_PUSHOVER_MESSAGE 2
+#define MAX_DIRECT_LINK      2
 
 enum _key
 {
@@ -76,9 +78,19 @@ enum _key
   KEY_GPIO,
   KEY_LEVEL_LED = KEY_GPIO + MAX_GPIO + 1,
   KEY_OLED_ANIMATION,
-  KEY_OLED_BACK_LIGHT_TIME
-  // KEY_DS = KEY_GPIO + MAX_GPIO + MAX_DS18B20,
-  // KEY_DS_NAME = KEY_DS + MAX_DS18B20
+  KEY_OLED_BACK_LIGHT_TIME,
+  KEY_MAX_RGBW,
+  KEY_PUSHOVER,
+  KEY_PUSHOVER_TOKEN,
+  KEY_PUSHOVER_USER,
+  KEY_PUSHOVER_MASSAGE,
+  KEY_CONDITIONS_SENSOR_TYPE,
+  KEY_CONDITIONS_TYPE,
+  KEY_CONDITIONS_MIN,
+  KEY_CONDITIONS_MAX,
+  KEY_HC_SR04_MAX_SENSOR_READ,
+  KEY_DIRECT_LINKS_ON,
+  KEY_DIRECT_LINKS_OFF,
 };
 
 //#define GPIO      "GPIO"
@@ -88,10 +100,12 @@ enum _settings
 {
   NR,
   FUNCTION,
-  LEVEL,
+  LEVEL_RELAY,
+  PULL_UP_BUTTON,
   MEMORY,
+  ACTION_BUTTON,
+  EVENT_BUTTON,
   CFG,
-  ACTION,
   MCP23017_NR_1,
   MCP23017_FUNCTION_1,
   MCP23017_NR_2,
@@ -100,7 +114,7 @@ enum _settings
   MCP23017_FUNCTION_3,
   MCP23017_NR_4,
   MCP23017_FUNCTION_4,
-  SETTINGSCOUNT
+  INVERSED_BUTTON
 };
 
 enum _function
@@ -126,7 +140,11 @@ enum _function
   FUNCTION_CF,
   FUNCTION_CF1,
   FUNCTION_SEL,
-  FUNCTION_LED
+  FUNCTION_LED,
+  FUNCTION_RGBW_RED,
+  FUNCTION_RGBW_GREEN,
+  FUNCTION_RGBW_BLUE,
+  FUNCTION_RGBW_BRIGHTNESS
 };
 
 enum _e_onfig
@@ -153,7 +171,7 @@ class ConfigOption {
   int getLength();
   void setValue(const char *value);
   const String getElement(int index);
-  uint8_t getElement(int index, size_t size);
+  // uint8_t getElement(int index, size_t size);
   const String replaceElement(int index, int value);
   const String replaceElement(int index, const char *newvalue);
 
@@ -174,8 +192,10 @@ class SuplaConfigManager {
   uint8_t loadItem(uint8_t key);
   uint8_t save();
   void showAllValue();
+  void deleteAllValues();
 
   ConfigOption *get(uint8_t key);
+  bool set(uint8_t key, int value);
   bool set(uint8_t key, const char *value);
   bool setElement(uint8_t key, int index, int newvalue);
   bool setElement(uint8_t key, int index, const char *newvalue);

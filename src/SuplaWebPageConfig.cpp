@@ -14,24 +14,22 @@ void SuplaWebPageConfig::createWebPageConfig() {
   String path;
   path = PATH_START;
   path += PATH_CONFIG;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageConfig::handleConfig, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageConfig::handleConfig, this));
   path = PATH_START;
   path += PATH_SAVE_CONFIG;
-  WebServer->httpServer.on(path, std::bind(&SuplaWebPageConfig::handleConfigSave, this));
+  WebServer->httpServer->on(path, std::bind(&SuplaWebPageConfig::handleConfigSave, this));
 }
 
 void SuplaWebPageConfig::handleConfig() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
   supla_webpage_config(0);
 }
 
 void SuplaWebPageConfig::handleConfigSave() {
-  if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!WebServer->httpServer.authenticate(WebServer->www_username, WebServer->www_password))
-      return WebServer->httpServer.requestAuthentication();
+  if (!WebServer->isLoggedIn()) {
+    return;
   }
 
   if (!WebServer->saveGPIO(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED)) {
@@ -41,15 +39,15 @@ void SuplaWebPageConfig::handleConfigSave() {
 
   uint8_t key = KEY_GPIO + ConfigESP->getGpio(FUNCTION_CFG_LED);
   String input = INPUT_CFG_LED_LEVEL;
-  ConfigManager->setElement(key, LEVEL, WebServer->httpServer.arg(input).toInt());
+  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer->arg(input).toInt());
 
   if (!WebServer->saveGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON)) {
     supla_webpage_config(6);
     return;
   }
 
-  if (strcmp(WebServer->httpServer.arg(INPUT_CFG_MODE).c_str(), "") != 0) {
-    ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer.arg(INPUT_CFG_MODE).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_CFG_MODE).c_str(), "") != 0) {
+    ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer->arg(INPUT_CFG_MODE).c_str());
   }
 
   switch (ConfigManager->save()) {
@@ -67,15 +65,16 @@ void SuplaWebPageConfig::handleConfigSave() {
 void SuplaWebPageConfig::supla_webpage_config(int save) {
   uint8_t selected, suported;
 
+  WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_CONFIG);
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_CONFIG);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_CONFIG);
   addListGPIOBox(webContentBuffer, INPUT_CFG_LED_GPIO, F("LED"), FUNCTION_CFG_LED);
-
-  selected = ConfigESP->getLevel(FUNCTION_CFG_LED);
+  selected = ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED));
   addListBox(webContentBuffer, INPUT_CFG_LED_LEVEL, S_STATE_CONTROL, LEVEL_P, 2, selected);
+
   addListGPIOBox(webContentBuffer, INPUT_CFG_BTN_GPIO, S_BUTTON, FUNCTION_CFG_BUTTON);
 
   selected = ConfigManager->get(KEY_CFG_MODE)->getValueInt();
@@ -86,5 +85,5 @@ void SuplaWebPageConfig::supla_webpage_config(int save) {
   addFormEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }

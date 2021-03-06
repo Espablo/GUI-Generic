@@ -18,9 +18,10 @@
 #define SuplaConfigESP_h
 
 #include "Arduino.h"
-#include <supla/triggerable.h>
+#include <supla/action_handler.h>
 #include <supla/element.h>
 #include "GUI-Generic_Config.h"
+#include "SuplaConfigManager.h"
 
 #include <cont.h>
 #include <user_interface.h>
@@ -37,13 +38,12 @@ enum _ConfigMode
   FACTORYRESET
 };
 
-#define OFF_GPIO 17
-#define OFF_MCP23017 2
+#define OFF_GPIO     17
+#define OFF_MCP23017 4
 
 typedef struct {
   int status;
   const char *msg;
-  const char *old_msg;
 } _supla_status;
 
 class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
@@ -54,7 +54,8 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void handleAction(int event, int action);
   void rebootESP();
 
-  const char *getLastStatusSupla();
+  const char *getLastStatusMessageSupla();
+  int getLastStatusSupla();
 
   void ledBlinking(int time);
   void ledBlinkingStop(void);
@@ -76,32 +77,41 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   int getGpio(int function) {
     return getGpio(1, function);
   }
-  int getLevel(int nr, int function);
-  int getLevel(int function) {
-    return getLevel(1, function);
-  }
+
+  uint8_t getKeyGpio(uint8_t gpio);
+
+  int getLevel(uint8_t gpio);
+  int getPullUp(uint8_t gpio);
+  int getInversed(uint8_t gpio);
+  int getMemory(uint8_t gpio);
+  int getAction(uint8_t gpio);
+  int getEvent(uint8_t gpio);
+
   bool checkBusyCfg(int gpio);
   int checkBusyGpio(int gpio, int function);
   uint8_t countFreeGpio(uint8_t exception = 0);
-  void setGpio(uint8_t gpio, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory = 0);
-  void setGpio(uint8_t gpio, uint8_t function, uint8_t level = 0) {
-    setGpio(gpio, 1, function, level);
+
+  void setLevel(uint8_t gpio, int level);
+  void setMemory(uint8_t gpio, int memory);
+
+  void setPullUp(uint8_t gpio, int pullup);
+  void setInversed(uint8_t gpio, int inversed);
+  void setAction(uint8_t gpio, int action);
+  void setEvent(uint8_t gpio, int event);
+
+  void setGpio(uint8_t gpio, uint8_t nr, uint8_t function);
+  void setGpio(uint8_t gpio, uint8_t function) {
+    setGpio(gpio, 1, function);
   }
+
   void clearGpio(uint8_t gpio, uint8_t function = 0);
-
-  int getMemory(int nr, int function);
-  int getMemory(int function) {
-    return getMemory(1, function);
-  }
-
-  int getAction(int nr, int function);
   void factoryReset(bool forceReset = false);
   const String getConfigNameAP();
 
-  bool checkBusyGpioMCP23017(uint8_t gpio, uint8_t function);
+  bool checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function);
   uint8_t getGpioMCP23017(uint8_t nr, uint8_t function);
   uint8_t getAdressMCP23017(uint8_t nr, uint8_t function);
-  void setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, uint8_t function, uint8_t level, uint8_t memory);
+  void setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, uint8_t function);
   void clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function);
   void clearFunctionGpio(uint8_t function);
   uint8_t getFunctionMCP23017(uint8_t adress);
