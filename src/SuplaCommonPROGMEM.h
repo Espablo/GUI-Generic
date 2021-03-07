@@ -32,7 +32,8 @@ const char HTTP_STYLE[] PROGMEM =
     "12px;color:#00d151;font-size:13px;position:relative;line-height:18px}i input,select{width:calc(100% - "
     "10px);font-size:16px;line-height:28px;padding:0 5px;border-bottom:solid 1px "
     "#00d151}select{width:100%;float:none;margin:0}}iframe{margin:auto;display:block;}.formcenter{color:#000;width:50%;margin: 25px auto 25px "
-    "auto;} input[type='checkbox' i]{appearance: auto; margin-top: 10px; height: 20px;} @media (max-width: 900px)input[type='checkbox' i]{width: auto;}</style>";
+    "auto;} input[type='checkbox' i]{appearance: auto; margin-top: 10px; height: 20px;} @media (max-width: 900px)input[type='checkbox' i]{width: "
+    "auto;}</style>";
 
 const char HTTP_LOGO[] PROGMEM =
     "<div class='s'><a href='/'><svg version='1.1' id='l' x='0' y='0' viewBox='0 0 200 200' xml:space='preserve'><path "
@@ -69,14 +70,14 @@ const char HTTP_FAVICON[] PROGMEM =
 
 const char HTTP_RBT[] PROGMEM = "<form method='post' action='rbt'><button type='submit'>Restart</button></form>";
 
-/*const char ICON_EDIT[] PROGMEM =
-      "<img "
-      "src='data:image/"
-      "png;base64,"
-      "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
-      "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
-      "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
-      "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>";*/
+const char ICON_EDIT[] PROGMEM =
+    "<img "
+    "src='data:image/"
+    "png;base64,"
+    "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAQAAAD8fJRsAAAAB3RJTUUH5AYHChEfgNCVHgAAAAlwSFlzAAAuIwAALiMB"
+    "eKU/dgAAAARnQU1BAACxjwv8YQUAAABBSURBVHjaY1BiwA4xhWqU/"
+    "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
+    "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>";
 
 const char GPIO0[] PROGMEM = "GPIO0-D3";
 const char GPIO1[] PROGMEM = "GPIO1-TX";
@@ -95,30 +96,32 @@ const char OFF[] PROGMEM = S_OFF;
 const char ON[] PROGMEM = S_ON;
 const char GPIONULL[] PROGMEM = "";
 
-const char* const GPIO_P[] PROGMEM = {
-GPIO0
-,GPIO1
-,GPIO2
-,GPIO3
-,GPIO4
-,GPIO5
-,GPIONULL
-,GPIONULL
-,GPIONULL
+const char* const GPIO_P[] PROGMEM = {GPIO0,
+                                      GPIO1,
+                                      GPIO2,
+                                      GPIO3,
+                                      GPIO4,
+                                      GPIO5,
+                                      GPIONULL,
+                                      GPIONULL,
+                                      GPIONULL
 #ifdef ARDUINO_ESP8266_GENERIC
-,GPIONULL
-,GPIONULL
+                                      ,
+                                      GPIONULL,
+                                      GPIONULL
 #else
-,GPIO9
-,GPIO10
+                                      ,
+                                      GPIO9,
+                                      GPIO10
 #endif
-,GPIONULL
-,GPIO12
-,GPIO13
-,GPIO14
-,GPIO15
-,GPIO16
-,OFF};
+                                      ,
+                                      GPIONULL,
+                                      GPIO12,
+                                      GPIO13,
+                                      GPIO14,
+                                      GPIO15,
+                                      GPIO16,
+                                      OFF};
 
 const char GPIO_A0[] PROGMEM = "A0";
 const char GPIO_A1[] PROGMEM = "A1";
@@ -208,35 +211,46 @@ const char CONDITIONING__DRAINGE[] PROGMEM = S_ON_2CH_VAL_OFF_DRYING;
 const char* const CONDITIONS_TYPE_P[] PROGMEM = {CONDITIONING__HEATING, CONDITIONING__COOLING, CONDITIONING__MOISTURIZING, CONDITIONING__DRAINGE};
 
 enum sensorList
-{NO_SENSORS = 0
+{
+  NO_SENSORS = 0
 #ifdef SUPLA_DS18B20
-,SENSOR_DS18B20
+  ,
+  SENSOR_DS18B20
 #endif
 #ifdef SUPLA_DHT11
-,SENSOR_DHT11
+  ,
+  SENSOR_DHT11
 #endif
 #ifdef SUPLA_DHT22
-,SENSOR_DHT22
+  ,
+  SENSOR_DHT22
 #endif
 #ifdef SUPLA_SI7021_SONOFF
-,SENSOR_SI7021_SONOFF
+  ,
+  SENSOR_SI7021_SONOFF
 #endif
 #ifdef SUPLA_HC_SR04
-,SENSOR_HC_SR04
+  ,
+  SENSOR_HC_SR04
 #endif
 #ifdef SUPLA_BME280
-,SENSOR_BME280
+  ,
+  SENSOR_BME280
 #endif
 #ifdef SUPLA_SHT3x
-,SENSOR_SHT3x
+  ,
+  SENSOR_SHT3x
 #endif
 #ifdef SUPLA_SI7021
-,SENSOR_SI7021
+  ,
+  SENSOR_SI7021
 #endif
 #ifdef SUPLA_MAX6675
-,SENSOR_MAX6675
+  ,
+  SENSOR_MAX6675
 #endif
-,COUNT_SENSOR_LIST
+  ,
+  COUNT_SENSOR_LIST
 };
 
 #ifdef SUPLA_DS18B20
@@ -269,31 +283,40 @@ const char NAME_MAX6675[] PROGMEM = S_MAX6675;
 
 const char* const SENSOR_LIST_P[] PROGMEM = {OFF
 #ifdef SUPLA_DS18B20
-,NAME_DS18B20
+                                             ,
+                                             NAME_DS18B20
 #endif
 #ifdef SUPLA_DHT11
-,NAME_DHT11
+                                             ,
+                                             NAME_DHT11
 #endif
 #ifdef SUPLA_DHT22
-,NAME_DHT22
+                                             ,
+                                             NAME_DHT22
 #endif
 #ifdef SUPLA_SI7021_SONOFF
-,NAME_SI7021_SONOFF
+                                             ,
+                                             NAME_SI7021_SONOFF
 #endif
 #ifdef SUPLA_HC_SR04
-,NAME_HC_SR04
+                                             ,
+                                             NAME_HC_SR04
 #endif
 #ifdef SUPLA_BME280
-,NAME_BME280
+                                             ,
+                                             NAME_BME280
 #endif
 #ifdef SUPLA_SHT3x
-,NAME_SHT3x
+                                             ,
+                                             NAME_SHT3x
 #endif
 #ifdef SUPLA_SI7021
-,NAME_SI7021
+                                             ,
+                                             NAME_SI7021
 #endif
 #ifdef SUPLA_MAX6675
-,NAME_MAX6675
+                                             ,
+                                             NAME_MAX6675
 #endif
 };
 

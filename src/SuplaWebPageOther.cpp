@@ -124,8 +124,8 @@ void suplaWebPageOther(int save) {
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_IMPULSE_COUNTER);
   addNumberBox(webContentBuffer, INPUT_MAX_IMPULSE_COUNTER, S_QUANTITY, KEY_MAX_IMPULSE_COUNTER, ConfigESP->countFreeGpio(FUNCTION_IMPULSE_COUNTER));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
-    addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), FUNCTION_IMPULSE_COUNTER,
-                       String(PATH_IMPULSE_COUNTER_SET) + "?cmd=", nr);
+    addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), String(PATH_IMPULSE_COUNTER_SET) + F("?number="),
+                       FUNCTION_IMPULSE_COUNTER, nr);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -182,7 +182,7 @@ void handleImpulseCounterSaveSet() {
 
   String nr, input;
 
-  nr = WebServer->httpServer->arg("cmd");
+  nr = WebServer->httpServer->arg(F("number"));
   uint8_t key = KEY_GPIO + ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
 
   input = INPUT_IMPULSE_COUNTER_PULL_UP;
@@ -225,7 +225,7 @@ void supla_impulse_counter_set(int save) {
   String nr;
   uint8_t gpio, selected;
 
-  nr = WebServer->httpServer->arg("cmd");
+  nr = WebServer->httpServer->arg(F("number"));
 
   gpio = ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
 
@@ -233,7 +233,7 @@ void supla_impulse_counter_set(int save) {
   webContentBuffer += SuplaJavaScript(PATH_OTHER);
 
   if (nr.toInt() <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() && gpio != OFF_GPIO) {
-    addForm(webContentBuffer, F("post"), String(PATH_SAVE_IMPULSE_COUNTER_SET) + "?cmd=" + nr);
+    addForm(webContentBuffer, F("post"), String(PATH_SAVE_IMPULSE_COUNTER_SET) + F("?number=") + nr);
     addFormHeader(webContentBuffer, S_IMPULSE_COUNTER_SETTINGS_NR + nr);
 
     selected = ConfigESP->getMemory(gpio);

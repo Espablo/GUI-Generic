@@ -332,7 +332,7 @@ void SuplaWebPageSensor::supla_webpage_1wire(int save) {
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_MULTI_DS18B20);
   addNumberBox(webContentBuffer, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, MAX_DS18B20);
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
-    addListGPIOLinkBox(webContentBuffer, INPUT_MULTI_DS_GPIO, S_MULTI_DS18B20, FUNCTION_DS18B20, PATH_MULTI_DS);
+    addListGPIOLinkBox(webContentBuffer, INPUT_MULTI_DS_GPIO, S_MULTI_DS18B20, PATH_MULTI_DS, FUNCTION_DS18B20);
   }
   else {
     addListGPIOBox(webContentBuffer, INPUT_MULTI_DS_GPIO, S_MULTI_DS18B20, FUNCTION_DS18B20);

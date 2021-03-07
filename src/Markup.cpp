@@ -171,7 +171,12 @@ void addLinkBox(String& html, const String& name, const String& url) {
   WebServer->sendHeader();
 }
 
-void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, bool underline) {
+void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, bool underline, const String& url) {
+  uint8_t gpio;
+
+  if (nr == 0)
+    gpio = ConfigESP->getGpio(1, function);
+
   if (underline) {
     html += F("<i><label>");
   }
@@ -179,15 +184,66 @@ void addListGPIOBox(String& html, const String& input_id, const String& name, ui
     html += F("<i style='border-bottom:none !important;'><label>");
   }
 
-  if (nr > 0) {
-    html += nr;
-    html += F(".");
+  if (!url.isEmpty() && gpio != OFF_GPIO) {
+    html += F("<a href='");
+    html += PATH_START;
+    html += url;
+    if (nr > 0) {
+      html += nr;
+    }
+    html += F("'>");
+
+    if (nr > 0) {
+      html += nr;
+      html += F(".");
+    }
+
+    html += F(" ");
+    html += name;
+    html += FPSTR(ICON_EDIT);
+    html += F("</a>");
+    WebServer->sendHeader();
   }
-  html += F(" ");
-  html += name;
+  else {
+    if (nr > 0) {
+      html += nr;
+      html += F(".");
+    }
+
+    html += F(" ");
+    html += name;
+  }
+
   html += F("</label>");
-  addListGPIOSelect(html, input_id, function, nr);
+
+  html += F("<select name='");
+  html += input_id;
+  if (nr != 0) {
+    html += nr;
+  }
+  html += F("'>");
+
+  for (uint8_t suported = 0; suported < 18; suported++) {
+    if (ConfigESP->checkBusyGpio(suported, function) || gpio == suported) {
+      html += F("<option value='");
+      html += suported;
+      if (gpio == suported) {
+        html += F("' selected>");
+      }
+      else {
+        html += F("'>");
+      }
+      html += FPSTR(GPIO_P[suported]);
+    }
+  }
+  WebServer->sendHeader();
+  html += F("</select>");
+
   html += F("</i>");
+}
+
+void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr) {
+  addListGPIOBox(html, input_id, name, function, nr, true, url);
 }
 
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
@@ -213,39 +269,6 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
   html += name;
   html += F("</label>");
   addListMCP23017GPIO(html, input_id, function, nr);
-  html += F("</i>");
-}
-
-void addListGPIOLinkBox(String& html, const String& input_id, const String& name, uint8_t function, const String& url, uint8_t nr) {
-  uint8_t _nr;
-  if (nr == 0) {
-    _nr = 1;
-  }
-  else {
-    _nr = nr;
-  }
-  html += F("<i>");
-  html += F("<label>");
-  if (ConfigESP->getGpio(_nr, function) != OFF_GPIO) {
-    html += F("<a href='");
-    html += PATH_START;
-    html += url;
-    if (nr > 0) {
-      html += nr;
-    }
-    html += F("'>");
-  }
-  if (nr > 0) {
-    html += nr;
-    html += F(". ");
-  }
-  html += name;
-  if (ConfigESP->getGpio(_nr, function) != OFF_GPIO) {
-    // html += FPSTR(ICON_EDIT);
-    html += F("</a>");
-  }
-  html += F("</label>");
-  addListGPIOSelect(html, input_id, function, nr);
   html += F("</i>");
 }
 
@@ -335,36 +358,6 @@ void addButtonSubmit(String& html, const String& name) {
   html += F("</button>");
   html += F("<br><br>");
   WebServer->sendHeader();
-}
-
-void addListGPIOSelect(String& html, const String& input_id, uint8_t function, uint8_t nr) {
-  html += F("<select name='");
-  html += input_id;
-  if (nr != 0) {
-    html += nr;
-  }
-  else {
-    nr = 1;
-  }
-  html += F("'>");
-
-  uint8_t selected = ConfigESP->getGpio(nr, function);
-
-  for (uint8_t suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, function) || selected == suported) {
-      html += F("<option value='");
-      html += suported;
-      if (selected == suported) {
-        html += F("' selected>");
-      }
-      else {
-        html += F("'>");
-      }
-      html += FPSTR(GPIO_P[suported]);
-    }
-  }
-  WebServer->sendHeader();
-  html += F("</select>");
 }
 
 void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function, uint8_t nr) {

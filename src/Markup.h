@@ -49,15 +49,16 @@ void addCheckBox(String& html, const String& input_id, const String& name, bool 
 
 void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, int max = -1);
 
-void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value = "\n");
+void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value = "");
 
 void addLinkBox(String& html, const String& name, const String& url);
 
-void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0, bool underline = true);
+void addListGPIOBox(
+    String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0, bool underline = true, const String& url = "");
 
-void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0, const String& url = "\n");
+void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr = 0);
 
-void addListGPIOLinkBox(String& html, const String& input_id, const String& name, uint8_t function, const String& url, uint8_t nr = 0);
+void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0, const String& url = "");
 
 void addListBox(String& html, const String& input_id, const String& name, const char* const* list_P, uint8_t size, uint8_t selected, uint8_t nr = 0);
 
@@ -73,8 +74,6 @@ void addListLinkBox(String& html,
 void addButton(String& html, const String& name, const String& url);
 
 void addButtonSubmit(String& html, const String& name);
-
-void addListGPIOSelect(String& html, const String& input_id, uint8_t function, uint8_t nr = 0);
 
 void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function, uint8_t nr);
 

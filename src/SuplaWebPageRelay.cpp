@@ -59,10 +59,9 @@ void SuplaWebPageRelay::handleRelaySave() {
     return;
   }
 
-  uint8_t nr, last_value;
+  uint8_t nr;
 
-  last_value = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
-  for (nr = 1; nr <= last_value; nr++) {
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
       if (!WebServer->saveGpioMCP23017(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr, INPUT_MAX_RELAY)) {
         supla_webpage_relay(6);
@@ -83,13 +82,7 @@ void SuplaWebPageRelay::handleRelaySave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      if (last_value >= ConfigManager->get(KEY_MAX_RELAY)->getValueInt()) {
-        supla_webpage_relay(1);
-      }
-      else {
-        supla_webpage_relay(2);
-        ConfigESP->rebootESP();
-      }
+      supla_webpage_relay(1);
       break;
     case E_CONFIG_FILE_OPEN:
       supla_webpage_relay(2);
@@ -122,7 +115,7 @@ void SuplaWebPageRelay::supla_webpage_relay(int save) {
       addListMCP23017GPIOBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, nr, PATH_RELAY_SET);
     }
     else {
-      addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, String(PATH_RELAY_SET) + "?cmd=", nr);
+      addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, String(PATH_RELAY_SET) + F("?number="), FUNCTION_RELAY, nr);
     }
   }
   addFormHeaderEnd(webContentBuffer);
@@ -151,7 +144,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
   String input, nr_relay;
   uint8_t key, gpio;
 
-  nr_relay = WebServer->httpServer->arg("cmd");
+  nr_relay = WebServer->httpServer->arg(F("number"));
 
   gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
   key = KEY_GPIO + gpio;
@@ -230,18 +223,18 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
     nr_relay = nr;
   }
   else {
-    nr_relay = WebServer->httpServer->arg("cmd");
+    nr_relay = WebServer->httpServer->arg(F("number"));
   }
 
   WebServer->sendHeaderStart();
 
   if (!nr_relay.isEmpty()) {
     webContentBuffer += SuplaSaveResult(save);
-    webContentBuffer += SuplaJavaScript(String(PATH_RELAY_SET) + "?cmd=" + nr_relay);
+    webContentBuffer += SuplaJavaScript(String(PATH_RELAY_SET) + F("?number=") + nr_relay);
 
     gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
 
-    addForm(webContentBuffer, F("post"), String(PATH_SAVE_RELAY_SET) + "?cmd=" + nr_relay);
+    addForm(webContentBuffer, F("post"), String(PATH_SAVE_RELAY_SET) + F("?number=") + nr_relay);
     addFormHeader(webContentBuffer, S_RELAY_NR_SETTINGS + nr_relay);
 
     selected = ConfigESP->getLevel(gpio);
@@ -288,7 +281,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
     }
 #endif
 
-    if(COUNT_SENSOR_LIST > 1) {
+    if (COUNT_SENSOR_LIST > 1) {
       addFormHeader(webContentBuffer, S_CONDITIONING);
       selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
       addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_SENSOR, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
