@@ -173,7 +173,7 @@ void addRolleShutter(uint8_t nr) {
   pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
 
   pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-  pinButtonDown = ConfigESP->getGpio(pinButtonDown);
+  pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
 
   pullupButtonUp = ConfigESP->getPullUp(pinButtonUp);
   pullupButtonDown = ConfigESP->getPullUp(pinButtonDown);
