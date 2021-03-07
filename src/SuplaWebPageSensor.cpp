@@ -301,9 +301,7 @@ void SuplaWebPageSensor::supla_webpage_1wire(int save) {
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_1WIRE);
-  webContentBuffer += F("<form method='post' action='");
-  webContentBuffer += PATH_SAVE_1WIRE;
-  webContentBuffer += F("'>");
+  addForm(webContentBuffer, F("post"), PATH_SAVE_1WIRE);
 #ifdef SUPLA_DHT11
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_DHT11);
   addNumberBox(webContentBuffer, INPUT_MAX_DHT11, S_QUANTITY, KEY_MAX_DHT11, ConfigESP->countFreeGpio(FUNCTION_DHT11));
@@ -340,16 +338,9 @@ void SuplaWebPageSensor::supla_webpage_1wire(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
-  webContentBuffer += F("<button type='submit'>");
-  webContentBuffer += S_SAVE;
-  webContentBuffer += F("</button></form>");
-  webContentBuffer += F("<br>");
-  webContentBuffer += F("<a href='");
-  webContentBuffer += PATH_START;
-  webContentBuffer += PATH_DEVICE_SETTINGS;
-  webContentBuffer += F("'><button>");
-  webContentBuffer += S_RETURN;
-  webContentBuffer += F("</button></a><br><br>");
+  addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
+  addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
 
   WebServer->sendHeaderEnd();
 }
@@ -594,9 +585,7 @@ void SuplaWebPageSensor::supla_webpage_spi(int save) {
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_SPI);
-  webContentBuffer += F("<form method='post' action='");
-  webContentBuffer += PATH_SAVE_SPI;
-  webContentBuffer += F("'>");
+  addForm(webContentBuffer, F("post"), PATH_SAVE_SPI);
 
 #if defined(SUPLA_MAX6675)
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_SPI);
@@ -610,16 +599,9 @@ void SuplaWebPageSensor::supla_webpage_spi(int save) {
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
-  webContentBuffer += F("<button type='submit'>");
-  webContentBuffer += S_SAVE;
-  webContentBuffer += F("</button></form>");
-  webContentBuffer += F("<br>");
-  webContentBuffer += F("<a href='");
-  webContentBuffer += PATH_START;
-  webContentBuffer += PATH_DEVICE_SETTINGS;
-  webContentBuffer += F("'><button>");
-  webContentBuffer += S_RETURN;
-  webContentBuffer += F("</button></a><br><br>");
+addButtonSubmit(webContentBuffer, S_SAVE);
+  addFormEnd(webContentBuffer);
+  addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
   WebServer->sendHeaderEnd();
 }
 #endif
