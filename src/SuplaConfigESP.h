@@ -126,13 +126,6 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   int pinLedConfig;
   int modeConfigButton;
   bool ledHighIsOn;
-  const char *prevKeyWifiSsid;
-  const char *prevKeyWifiPass;
-  const char *prevKeySuplaServer;
-  const char *prevKeySuplaEmail;
-  const char *prevKeyHostName;
-  const char *prevKeyLogin;
-  const char *prevKeyLoginPass;
 
   ETSTimer led_timer;
 };

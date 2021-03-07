@@ -622,25 +622,9 @@ void SuplaConfigESP::reset(bool forceReset) {
   if (digitalRead(0) != HIGH || forceReset) {
     Serial.println(F("DEVICES CONFIGURATION RESET!"));
 
-    prevKeyWifiSsid = strdup(ConfigManager->get(KEY_WIFI_SSID)->getValue());
-    prevKeyWifiPass = strdup(ConfigManager->get(KEY_WIFI_PASS)->getValue());
-    prevKeySuplaServer = strdup(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-    prevKeySuplaEmail = strdup(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue());
-    prevKeyHostName = strdup(ConfigManager->get(KEY_HOST_NAME)->getValue());
-    prevKeyLogin = strdup(ConfigManager->get(KEY_LOGIN)->getValue());
-    prevKeyLoginPass = strdup(ConfigManager->get(KEY_LOGIN_PASS)->getValue());
-
     clearEEPROM();
 
-    ConfigManager->deleteAllValues();
-
-    ConfigManager->set(KEY_WIFI_SSID, prevKeyWifiSsid);
-    ConfigManager->set(KEY_WIFI_PASS, prevKeyWifiPass);
-    ConfigManager->set(KEY_SUPLA_SERVER, prevKeySuplaServer);
-    ConfigManager->set(KEY_SUPLA_EMAIL, prevKeySuplaEmail);
-    ConfigManager->set(KEY_HOST_NAME, prevKeyHostName);
-    ConfigManager->set(KEY_LOGIN, prevKeyLogin);
-    ConfigManager->set(KEY_LOGIN_PASS, prevKeyLoginPass);
+    ConfigManager->deleteDeviceValues();
 
     ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
