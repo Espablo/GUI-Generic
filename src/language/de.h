@@ -20,11 +20,18 @@
 #define S_TOOLS                                                "Werkzeuge"
 #define S_SAVE_CONFIGURATION                                   "Konfiguration speichern"
 #define S_LOAD_CONFIGURATION                                   "Konfiguration laden"
+#define S_RESET_CONFIGURATION                                  "Geräteeinstellungen zurücksetzen"
 #define S_RESTORE_FACTORY_SETTING                              "Stellen Sie die Werkseinstellungen wieder her"
 #define S_UPDATE                                               "Aktualisierung"
 #define S_RESTART                                              "Neustart"
 #define S_RETURN                                               "Zurück"
+#ifdef ARDUINO_ESP8266_GENERIC
+#define S_TEMPLATE_BOARD                                       "Modul Vorlage (ESP8266)"
+#elif ARDUINO_ESP8266_ESP01
+#define S_TEMPLATE_BOARD                                       "Modul Vorlage (ESP8285)"
+#else
 #define S_TEMPLATE_BOARD                                       "Modul Vorlage"
+#endif
 #define S_TYPE                                                 "Typ"
 #define S_RELAYS                                               "RELAIS"
 #define S_BUTTONS                                              "TASTEN"

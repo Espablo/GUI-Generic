@@ -105,6 +105,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   }
 
   void clearGpio(uint8_t gpio, uint8_t function = 0);
+  void reset(bool forceReset = false);
   void factoryReset(bool forceReset = false);
   const String getConfigNameAP();
 
@@ -120,6 +121,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
  private:
   void configModeInit();
   void iterateAlways();
+  void clearEEPROM();
   int pinNumberConfig;
   int pinLedConfig;
   int modeConfigButton;

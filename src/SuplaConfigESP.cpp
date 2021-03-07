@@ -332,7 +332,11 @@ bool SuplaConfigESP::checkBusyCfg(int gpio) {
 }
 
 int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
-  if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11) {
+  if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11
+#ifdef ARDUINO_ESP8266_GENERIC
+		  || gpio == 9 || gpio == 10
+#endif
+  ) {
     return false;
   }
   else {
@@ -594,12 +598,7 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
   if (digitalRead(0) != HIGH || forceReset) {
     Serial.println(F("FACTORY RESET!!!"));
 
-    EEPROM.begin(1024);
-    delay(15);
-    for (int i = 1; i < 1024; ++i) {
-      EEPROM.write(i, 0);
-    }
-    EEPROM.end();
+    clearEEPROM();
 
     ConfigManager->deleteAllValues();
 
@@ -617,3 +616,33 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     }
   }
 }
+void SuplaConfigESP::reset(bool forceReset) {
+  delay(2000);
+  pinMode(0, INPUT_PULLUP);
+  if (digitalRead(0) != HIGH || forceReset) {
+    Serial.println(F("DEVICES CONFIGURATION RESET!"));
+
+    clearEEPROM();
+
+    ConfigManager->deleteDeviceValues();
+
+    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+
+    ConfigManager->save();
+
+    if (!forceReset) {
+      rebootESP();
+    }
+  }
+}
+
+void SuplaConfigESP::clearEEPROM()
+{
+    EEPROM.begin(1024);
+    delay(15);
+    for (int i = 1; i < 1024; ++i) {
+      EEPROM.write(i, 0);
+    }
+    EEPROM.end();
+}
+
