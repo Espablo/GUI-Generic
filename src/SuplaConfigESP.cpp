@@ -219,6 +219,18 @@ void status_func(int status, const char *msg) {
     case STATUS_REGISTRATION_DISABLED:
       ConfigESP->supla_status.msg = S_STATUS_REGISTRATION_DISABLED;
       break;
+    case STATUS_MISSING_CREDENTIALS:
+      ConfigESP->supla_status.msg = S_STATUS_MISSING_CREDENTIALS;
+      break;
+    case STATUS_INVALID_AUTHKEY:
+      ConfigESP->supla_status.msg = S_STATUS_INVALID_AUTHKEY;
+      break;
+    case STATUS_NO_LOCATION_AVAILABLE:
+      ConfigESP->supla_status.msg = S_STATUS_NO_LOCATION_AVAILABLE;
+      break;
+    case STATUS_UNKNOWN_ERROR:
+      ConfigESP->supla_status.msg = S_STATUS_UNKNOWN_ERROR;
+      break;
     default:
       ConfigESP->supla_status.msg = msg;
   }
