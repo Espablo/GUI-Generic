@@ -176,6 +176,8 @@ void addListGPIOBox(String& html, const String& input_id, const String& name, ui
 
   if (nr == 0)
     gpio = ConfigESP->getGpio(1, function);
+  else
+    gpio = ConfigESP->getGpio(nr, function);
 
   if (underline) {
     html += F("<i><label>");
