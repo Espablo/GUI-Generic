@@ -395,8 +395,8 @@ String getURL(const String& url, uint8_t nr) {
   return String(PATH_START) + url + nr;
 }
 
-String getParameterRequest(const String& url, const String& param) {
-  return url + String(F("?")) + String(REQ_PARM_URL) + String(F("=")) + param;
+String getParameterRequest(const String& url, const String& param, const String& value) {
+  return url + String(F("?")) + param + String(F("=")) + value;
 }
 
 const String SuplaJavaScript(const String& java_return) {

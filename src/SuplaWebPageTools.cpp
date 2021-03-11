@@ -7,7 +7,7 @@ void createWebTools() {
       return;
     }
 
-    String sCommand = WebServer->httpServer->arg(REQ_PARM_URL);
+    String sCommand = WebServer->httpServer->arg(ARG_PARM_URL);
 
     if (strcasecmp_P(sCommand.c_str(), PATH_DOWNLOAD) == 0) {
       handleDownload();
@@ -35,19 +35,13 @@ void createWebTools() {
 
 void handleTools() {
   addFormHeader(webContentBuffer, S_TOOLS);
-  //#ifdef SUPLA_BUTTON
-  addButton(webContentBuffer, S_SAVE_CONFIGURATION, getParameterRequest(PATH_TOOLS, PATH_DOWNLOAD));
-  //#endif
-  //#ifdef SUPLA_BUTTON
-  addButton(webContentBuffer, S_LOAD_CONFIGURATION, getParameterRequest(PATH_TOOLS, PATH_UPLOAD));
-  //#endif
-  //#ifdef SUPLA_BUTTON
-  addButton(webContentBuffer, S_RESET_CONFIGURATION, getParameterRequest(PATH_TOOLS, PATH_RESET));
-  //#endif
+  addButton(webContentBuffer, S_SAVE_CONFIGURATION, getParameterRequest(PATH_TOOLS, ARG_PARM_URL, PATH_DOWNLOAD));
+  addButton(webContentBuffer, S_LOAD_CONFIGURATION, getParameterRequest(PATH_TOOLS, ARG_PARM_URL, PATH_UPLOAD));
 #ifdef SUPLA_OTA
   addButton(webContentBuffer, S_UPDATE, PATH_UPDATE_HENDLE);
 #endif
-  addButton(webContentBuffer, S_RESTORE_FACTORY_SETTING, getParameterRequest(PATH_TOOLS, PATH_FACTORY_RESET));
+  addButton(webContentBuffer, S_RESET_CONFIGURATION, getParameterRequest(PATH_TOOLS, ARG_PARM_URL, PATH_RESET));
+  addButton(webContentBuffer, S_RESTORE_FACTORY_SETTING, getParameterRequest(PATH_TOOLS, ARG_PARM_URL, PATH_FACTORY_RESET));
   addFormHeaderEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, "");
 

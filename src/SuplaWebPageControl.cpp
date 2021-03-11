@@ -122,7 +122,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
       addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, nr, PATH_BUTTON_SET);
     }
     else {
-      addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, String(PATH_BUTTON_SET) + F("?number="), FUNCTION_BUTTON, nr);
+      addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER), FUNCTION_BUTTON, nr);
     }
   }
   addFormHeaderEnd(webContentBuffer);
@@ -151,7 +151,7 @@ void SuplaWebPageControl::handleButtonSaveSet() {
   String input, nr_button;
   uint8_t key, gpio;
 
-  nr_button = WebServer->httpServer->arg(F("number"));
+  nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
   key = KEY_GPIO + gpio;
@@ -200,7 +200,7 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
     nr_button = nr;
   }
   else {
-    nr_button = WebServer->httpServer->arg(F("number"));
+    nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
   }
 
   Serial.println(nr_button);
@@ -208,11 +208,11 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
 
   if (!nr_button.isEmpty()) {
     webContentBuffer += SuplaSaveResult(save);
-    webContentBuffer += SuplaJavaScript(String(PATH_BUTTON_SET) + F("?number=") + nr_button);
+    webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
 
     gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
 
-    addForm(webContentBuffer, F("post"), String(PATH_SAVE_BUTTON_SET) + F("?number=") + nr_button);
+    addForm(webContentBuffer, F("post"), getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
     addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
 
     selected = ConfigESP->getPullUp(gpio);

@@ -115,7 +115,8 @@ void SuplaWebPageRelay::supla_webpage_relay(int save) {
       addListMCP23017GPIOBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, nr, PATH_RELAY_SET);
     }
     else {
-      addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, String(PATH_RELAY_SET) + F("?number="), FUNCTION_RELAY, nr);
+      addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER),
+                         FUNCTION_RELAY, nr);
     }
   }
   addFormHeaderEnd(webContentBuffer);
@@ -144,7 +145,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
   String input, nr_relay;
   uint8_t key, gpio;
 
-  nr_relay = WebServer->httpServer->arg(F("number"));
+  nr_relay = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
   key = KEY_GPIO + gpio;
@@ -223,18 +224,18 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
     nr_relay = nr;
   }
   else {
-    nr_relay = WebServer->httpServer->arg(F("number"));
+    nr_relay = WebServer->httpServer->arg(ARG_PARM_NUMBER);
   }
 
   WebServer->sendHeaderStart();
 
   if (!nr_relay.isEmpty()) {
     webContentBuffer += SuplaSaveResult(save);
-    webContentBuffer += SuplaJavaScript(String(PATH_RELAY_SET) + F("?number=") + nr_relay);
+    webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER, nr_relay));
 
     gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
 
-    addForm(webContentBuffer, F("post"), String(PATH_SAVE_RELAY_SET) + F("?number=") + nr_relay);
+    addForm(webContentBuffer, F("post"), getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER, nr_relay));
     addFormHeader(webContentBuffer, S_RELAY_NR_SETTINGS + nr_relay);
 
     selected = ConfigESP->getLevel(gpio);
