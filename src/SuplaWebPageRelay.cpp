@@ -195,7 +195,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
-  if (nr_relay.toInt() <= MAX_DIRECT_LINKS_SIZE) {
+  if (nr_relay.toInt() <= MAX_DIRECT_LINK) {
     input = INPUT_DIRECT_LINK_ON;
     ConfigManager->setElement(KEY_DIRECT_LINKS_ON, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
     input = INPUT_DIRECT_LINK_OFF;
@@ -256,7 +256,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-    if (nr_relay.toInt() < MAX_PUSHOVER_MESSAGE) {
+    if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
       addFormHeader(webContentBuffer, S_PUSHOVER);
 
       selected = ConfigManager->get(KEY_PUSHOVER)->getElement(nr_relay.toInt() - 1).toInt();
