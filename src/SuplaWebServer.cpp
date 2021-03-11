@@ -74,7 +74,6 @@ void SuplaWebServer::createWebServer() {
   httpUpdater->setup(httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());
 #endif
 
-  createWebDownload();
   createWebUpload();
   createWebTools();
   createWebPageOther();

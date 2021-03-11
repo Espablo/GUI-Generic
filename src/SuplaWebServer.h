@@ -26,6 +26,7 @@
 
 #include "SuplaConfigManager.h"
 
+#define REQ_PARM_URL "url"
 #define PATH_START            "/"
 #define PATH_SAVE_LOGIN       "savelogin"
 #define PATH_REBOT            "rbt"

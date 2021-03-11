@@ -388,11 +388,15 @@ void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function,
 }
 
 String getURL(const String& url) {
-  return String(F(PATH_START)) + url;
+  return String(PATH_START) + url;
 }
 
 String getURL(const String& url, uint8_t nr) {
-  return String(F(PATH_START)) + url + nr;
+  return String(PATH_START) + url + nr;
+}
+
+String getParameterRequest(const String& url, const String& param) {
+  return url + String(F("?")) + String(REQ_PARM_URL) + String(F("=")) + param;
 }
 
 const String SuplaJavaScript(const String& java_return) {
