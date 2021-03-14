@@ -81,9 +81,10 @@ void handleOtherSave() {
     return;
   }
   else {
-    Serial.println(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).toInt());
-    Supla::GUI::counterHLW8012->setCounter((_supla_int64_t)WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).toInt());
-    Supla::Storage::ScheduleSave(2000);
+    if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).c_str(), "") != 0) {
+      Supla::GUI::counterHLW8012->setCounter((_supla_int64_t)WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).toInt());
+      Supla::Storage::ScheduleSave(2000);
+    }
   }
 #endif
 
@@ -136,8 +137,8 @@ void suplaWebPageOther(int save) {
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_IMPULSE_COUNTER);
   addNumberBox(webContentBuffer, INPUT_MAX_IMPULSE_COUNTER, S_QUANTITY, KEY_MAX_IMPULSE_COUNTER, ConfigESP->countFreeGpio(FUNCTION_IMPULSE_COUNTER));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
-    addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER),
-                       FUNCTION_IMPULSE_COUNTER, nr);
+    addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"),
+                       getParameterRequest(PATH_IMPULSE_COUNTER_SET, ARG_PARM_NUMBER), FUNCTION_IMPULSE_COUNTER, nr);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -253,7 +254,7 @@ void supla_impulse_counter_set(int save) {
   webContentBuffer += SuplaJavaScript(PATH_OTHER);
 
   if (nr.toInt() <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() && gpio != OFF_GPIO) {
-    addForm(webContentBuffer, F("post"), String(PATH_SAVE_IMPULSE_COUNTER_SET) + F("?number=") + nr);
+    addForm(webContentBuffer, F("post"), getParameterRequest(PATH_SAVE_IMPULSE_COUNTER_SET, ARG_PARM_NUMBER, nr));
     addFormHeader(webContentBuffer, S_IMPULSE_COUNTER_SETTINGS_NR + nr);
 
     selected = ConfigESP->getMemory(gpio);
