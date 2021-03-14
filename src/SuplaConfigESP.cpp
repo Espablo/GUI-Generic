@@ -418,8 +418,8 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
 
   if (function == FUNCTION_BUTTON) {
-    setPullUp(gpio, true);
-    setInversed(gpio, false);
+    setPullUp(gpio, false);
+    setInversed(gpio, true);
     setAction(gpio, Supla::Action::TOGGLE);
     setEvent(gpio, Supla::Event::ON_CHANGE);
   }
