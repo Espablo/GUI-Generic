@@ -137,8 +137,8 @@ void suplaWebPageOther(int save) {
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_IMPULSE_COUNTER);
   addNumberBox(webContentBuffer, INPUT_MAX_IMPULSE_COUNTER, S_QUANTITY, KEY_MAX_IMPULSE_COUNTER, ConfigESP->countFreeGpio(FUNCTION_IMPULSE_COUNTER));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
-    addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"),
-                       getParameterRequest(PATH_IMPULSE_COUNTER_SET, ARG_PARM_NUMBER), FUNCTION_IMPULSE_COUNTER, nr);
+    addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), getParameterRequest(PATH_IMPULSE_COUNTER_SET, ARG_PARM_NUMBER),
+                       FUNCTION_IMPULSE_COUNTER, nr);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
