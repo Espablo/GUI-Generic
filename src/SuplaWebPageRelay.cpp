@@ -172,7 +172,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-  if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
+  if (nr_relay.toInt() - 1 <= MAX_PUSHOVER_MESSAGE) {
     input = INPUT_PUSHOVER;
     ConfigManager->setElement(KEY_PUSHOVER, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
     input = INPUT_PUSHOVER_MESSAGE;
@@ -181,7 +181,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
-  if (nr_relay.toInt() <= MAX_DIRECT_LINK) {
+  if (nr_relay.toInt() - 1 <= MAX_DIRECT_LINK) {
     input = INPUT_DIRECT_LINK_ON;
     ConfigManager->setElement(KEY_DIRECT_LINKS_ON, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
     input = INPUT_DIRECT_LINK_OFF;
@@ -242,7 +242,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-    if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
+    if (nr_relay.toInt() - 1 <= MAX_PUSHOVER_MESSAGE) {
       addFormHeader(webContentBuffer, S_PUSHOVER);
 
       selected = ConfigManager->get(KEY_PUSHOVER)->getElement(nr_relay.toInt() - 1).toInt();
@@ -255,7 +255,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
-    if (nr_relay.toInt() <= MAX_DIRECT_LINK) {
+    if (nr_relay.toInt() - 1 <= MAX_DIRECT_LINK) {
       addFormHeader(webContentBuffer, S_DIRECT_LINKS);
       massage = ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr_relay.toInt() - 1).c_str();
       addTextBox(webContentBuffer, INPUT_DIRECT_LINK_ON, S_ON, massage, F("xx/xxxxxxxxx/turn-on"), 0, MAX_DIRECT_LINKS_SIZE, false);
@@ -328,7 +328,7 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
 
 #if defined(SUPLA_PUSHOVER)
   addFormHeader(webContentBuffer, S_PUSHOVER);
-  for (uint8_t i = 0; i < MAX_PUSHOVER_MESSAGE; i++) {
+  for (uint8_t i = 0; i <= MAX_PUSHOVER_MESSAGE; i++) {
     selected = ConfigManager->get(KEY_PUSHOVER)->getElement(i).toInt();
     name = S_STATE;
     name = +S_SPACE;
@@ -378,7 +378,7 @@ void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {
   }
 
 #if defined(SUPLA_PUSHOVER)
-  for (uint8_t i = 0; i < MAX_PUSHOVER_MESSAGE; i++) {
+  for (uint8_t i = 0; i <= MAX_PUSHOVER_MESSAGE; i++) {
     input = INPUT_PUSHOVER;
     input += i;
     ConfigManager->setElement(KEY_PUSHOVER, i, WebServer->httpServer->arg(input).toInt());
