@@ -92,6 +92,13 @@ void handleOtherSave() {
   }
 #endif
 
+#ifdef SUPLA_NTC_10K
+  if (!WebServer->saveGPIO(INPUT_NTC_10K, FUNCTION_NTC_10K)) {
+    suplaWebPageOther(6);
+    return;
+  }
+#endif
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       suplaWebPageOther(1);
@@ -157,6 +164,12 @@ void suplaWebPageOther(int save) {
   addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_PUSHOVER);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_TOKEN, F("Token"), KEY_PUSHOVER_TOKEN, 0, MAX_TOKEN_SIZE, false);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_USER, F("Users"), KEY_PUSHOVER_USER, 0, MAX_USER_SIZE, false);
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
+#ifdef SUPLA_NTC_10K
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("NTC 10K"));
+  addListGPIOBox(webContentBuffer, INPUT_NTC_10K, F("ADC Pin"), FUNCTION_NTC_10K);
   addFormHeaderEnd(webContentBuffer);
 #endif
 

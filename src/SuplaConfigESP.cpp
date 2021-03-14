@@ -332,9 +332,9 @@ bool SuplaConfigESP::checkBusyCfg(int gpio) {
 }
 
 int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
-  if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11
+  if (gpio == 6 || gpio == 7 || gpio == 8
 #ifdef ARDUINO_ESP8266_GENERIC
-		  || gpio == 9 || gpio == 10
+      || gpio == 9 || gpio == 10
 #endif
   ) {
     return false;
@@ -636,13 +636,11 @@ void SuplaConfigESP::reset(bool forceReset) {
   }
 }
 
-void SuplaConfigESP::clearEEPROM()
-{
-    EEPROM.begin(1024);
-    delay(15);
-    for (int i = 1; i < 1024; ++i) {
-      EEPROM.write(i, 0);
-    }
-    EEPROM.end();
+void SuplaConfigESP::clearEEPROM() {
+  EEPROM.begin(1024);
+  delay(15);
+  for (int i = 1; i < 1024; ++i) {
+    EEPROM.write(i, 0);
+  }
+  EEPROM.end();
 }
-

@@ -4,8 +4,8 @@
 #include "SuplaDeviceGUI.h"
 #include "SuplaWebServer.h"
 
-#define PATH_OTHER                    "other"
-#define PATH_SAVE_OTHER               "saveother"
+#define PATH_OTHER      "other"
+#define PATH_SAVE_OTHER "saveother"
 
 void createWebPageOther();
 
@@ -66,6 +66,10 @@ void suplaWebpageHLW8012Calibrate(uint8_t save);
 #ifdef SUPLA_IMPULSE_COUNTER
 #define PATH_IMPULSE_COUNTER_SET      "setcounter"
 #define PATH_SAVE_IMPULSE_COUNTER_SET "savesetcounter"
+#endif
+
+#ifdef SUPLA_NTC_10K
+#define INPUT_NTC_10K "in10k"
 #endif
 
 #endif  // SuplaWebPageOther_h

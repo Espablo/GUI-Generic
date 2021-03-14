@@ -51,6 +51,7 @@
 #define SUPLA_RGBW
 #define SUPLA_PUSHOVER
 #define SUPLA_DIRECT_LINKS
+#define SUPLA_NTC_10K
 
 #endif  // USE_CUSTOM
 

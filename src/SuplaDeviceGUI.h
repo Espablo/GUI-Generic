@@ -93,6 +93,10 @@
 #include <supla/control/MCP_23017.h>
 #endif
 
+#ifdef SUPLA_NTC_10K
+#include <supla/sensor/NTC_10K.h>
+#endif
+
 namespace Supla {
 namespace GUI {
 

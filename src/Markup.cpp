@@ -225,23 +225,29 @@ void addListGPIOBox(String& html, const String& input_id, const String& name, ui
   }
   html += F("'>");
 
-  for (uint8_t suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpio(suported, function) || gpio == suported) {
-      html += F("<option value='");
-      html += suported;
-      if (gpio == suported) {
-        html += F("' selected>");
-      }
-      else {
-        html += F("'>");
-      }
-      html += FPSTR(GPIO_P[suported]);
-    }
-  }
+  if (ConfigESP->checkBusyGpio(GPIO_ANALOG_A0, function) || gpio == GPIO_ANALOG_A0)
+    addGPIOOptionValue(html, GPIO_ANALOG_A0, gpio, F("ANALOG PIN-A0"));
+
+  for (uint8_t suported = 0; suported < 18; suported++)
+    if ((ConfigESP->checkBusyGpio(suported, function) || suported == gpio) && suported != GPIO_ANALOG_A0)
+      addGPIOOptionValue(html, suported, gpio, FPSTR(GPIO_P[suported]));
+
   WebServer->sendHeader();
   html += F("</select>");
 
   html += F("</i>");
+}
+
+void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const String& name) {
+  html += F("<option value='");
+  html += gpio;
+  if (gpio == selectedGpio) {
+    html += F("' selected>");
+  }
+  else {
+    html += F("'>");
+  }
+  html += name;
 }
 
 void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr) {
