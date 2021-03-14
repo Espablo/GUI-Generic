@@ -32,6 +32,8 @@ void supla_impulse_counter_set(int save);
 #define INPUT_CF1 "cf1"
 #define INPUT_SEL "sel"
 
+#define INPUT_COUNTER_CHANGE_VALUE_HLW8012 "iccvh"
+
 #define PATH_HLW8012_CALIBRATE      "calibrate"
 #define PATH_SAVE_HLW8012_CALIBRATE "savecalibrate"
 

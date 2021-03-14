@@ -47,7 +47,7 @@ class HLW_8012 : public OnePhaseElectricityMeter, public Element {
   void setCurrentMultiplier(double current_multiplier);
   void setVoltageMultiplier(double voltage_multiplier);
   void setPowerMultiplier(double power_multiplier);
-  void setCounter(_supla_int64_t energy);
+  void setCounter(_supla_int64_t new_energy);
 
   static void ICACHE_RAM_ATTR hjl01_cf1_interrupt();
   static void ICACHE_RAM_ATTR hjl01_cf_interrupt();
