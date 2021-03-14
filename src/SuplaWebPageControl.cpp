@@ -8,47 +8,23 @@ SuplaWebPageControl *WebPageControl = new SuplaWebPageControl();
 
 #if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
 void SuplaWebPageControl::createWebPageControl() {
-  String path;
-
 #if defined(SUPLA_BUTTON) || defined(SUPLA_MCP23017)
-  path += PATH_START;
-  path += PATH_CONTROL;
-  WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleControl, this));
-  path = PATH_START;
-  path += PATH_SAVE_CONTROL;
-  WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleControlSave, this));
+  WebServer->httpServer->on(getURL(PATH_CONTROL), std::bind(&SuplaWebPageControl::handleControl, this));
 #endif
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
 #ifdef SUPLA_MCP23017
-    path = PATH_START;
-    path += PATH_BUTTON_SET;
-    WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageControl::handleButtonSetMCP23017, this));
-
-    path = PATH_START;
-    path += PATH_SAVE_BUTTON_SET;
-    WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageControl::handleButtonSaveSetMCP23017, this));
+    WebServer->httpServer->on(getURL(PATH_BUTTON_SET_MCP23017), std::bind(&SuplaWebPageControl::handleButtonSetMCP23017, this));
 #endif
   }
   else {
 #if defined(SUPLA_BUTTON)
-    path = PATH_START;
-    path += PATH_BUTTON_SET;
-    WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageControl::handleButtonSet, this));
-
-    path = PATH_START;
-    path += PATH_SAVE_BUTTON_SET;
-    WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageControl::handleButtonSaveSet, this));
+    WebServer->httpServer->on(getURL(PATH_BUTTON_SET), std::bind(&SuplaWebPageControl::handleButtonSet, this));
 #endif
   }
 
 #ifdef SUPLA_LIMIT_SWITCH
-  path = PATH_START;
-  path += PATH_SWITCH;
-  WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleLimitSwitch, this));
-  path = PATH_START;
-  path += PATH_SAVE_SWITCH;
-  WebServer->httpServer->on(path, std::bind(&SuplaWebPageControl::handleLimitSwitchSave, this));
+  WebServer->httpServer->on(getURL(PATH_SWITCH), std::bind(&SuplaWebPageControl::handleLimitSwitch, this));
 #endif
 }
 #endif
@@ -58,7 +34,11 @@ void SuplaWebPageControl::handleControl() {
   if (!WebServer->isLoggedIn()) {
     return;
   }
-  supla_webpage_control(0);
+
+  if (WebServer->httpServer->method() == HTTP_GET)
+    supla_webpage_control(0);
+  else
+    handleControlSave();
 }
 
 void SuplaWebPageControl::handleControlSave() {
@@ -104,7 +84,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_CONTROL);
-  addForm(webContentBuffer, F("post"), PATH_SAVE_CONTROL);
+  addForm(webContentBuffer, F("post"), PATH_CONTROL);
 
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_BUTTONS);
 
@@ -119,7 +99,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
-      addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, nr, PATH_BUTTON_SET);
+      addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, nr, PATH_BUTTON_SET_MCP23017);
     }
     else {
       addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER), FUNCTION_BUTTON, nr);
@@ -140,7 +120,10 @@ void SuplaWebPageControl::handleButtonSet() {
   if (!WebServer->isLoggedIn()) {
     return;
   }
-  supla_webpage_button_set(0);
+  if (WebServer->httpServer->method() == HTTP_GET)
+    supla_webpage_button_set(0);
+  else
+    handleButtonSaveSet();
 }
 
 void SuplaWebPageControl::handleButtonSaveSet() {
@@ -242,7 +225,10 @@ void SuplaWebPageControl::handleLimitSwitch() {
   if (!WebServer->isLoggedIn()) {
     return;
   }
-  suplaWebpageLimitSwitch(0);
+  if (WebServer->httpServer->method() == HTTP_GET)
+    suplaWebpageLimitSwitch(0);
+  else
+    handleLimitSwitchSave();
 }
 
 void SuplaWebPageControl::handleLimitSwitchSave() {
@@ -289,7 +275,7 @@ void SuplaWebPageControl::suplaWebpageLimitSwitch(int save) {
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_SWITCH);
-  addForm(webContentBuffer, F("post"), PATH_SAVE_SWITCH);
+  addForm(webContentBuffer, F("post"), PATH_SWITCH);
 
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_LIMIT_SWITCH);
 
@@ -325,7 +311,10 @@ void SuplaWebPageControl::handleButtonSetMCP23017() {
   if (!WebServer->isLoggedIn()) {
     return;
   }
-  supla_webpage_button_set_MCP23017(0);
+  if (WebServer->httpServer->method() == HTTP_GET)
+    supla_webpage_button_set_MCP23017(0);
+  else
+    handleButtonSaveSetMCP23017();
 }
 
 void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
@@ -336,9 +325,9 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   gpio = ConfigESP->getGpio(1, FUNCTION_BUTTON);
 
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_BUTTON_SET);
+  webContentBuffer += SuplaJavaScript(PATH_BUTTON_SET_MCP23017);
 
-  addForm(webContentBuffer, F("post"), PATH_SAVE_BUTTON_SET);
+  addForm(webContentBuffer, F("post"), PATH_BUTTON_SET_MCP23017);
   addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);
 
   selected = ConfigESP->getPullUp(gpio);
