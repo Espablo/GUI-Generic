@@ -46,8 +46,8 @@
 
 #define MAX_DS18B20          20
 #define MAX_GPIO             17
-#define MAX_PUSHOVER_MESSAGE 2
-#define MAX_DIRECT_LINK      2
+#define MAX_PUSHOVER_MESSAGE 5
+#define MAX_DIRECT_LINK      5
 
 enum _key
 {
