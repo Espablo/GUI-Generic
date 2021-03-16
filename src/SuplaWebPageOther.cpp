@@ -82,7 +82,9 @@ void handleOtherSave() {
   }
   else {
     if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).c_str(), "") != 0) {
-      Supla::GUI::counterHLW8012->setCounter((_supla_int64_t)WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).toInt());
+      Serial.println(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).toFloat() * 100 * 1000);
+      
+      Supla::GUI::counterHLW8012->setCounter(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).toFloat() * 100 * 1000);
       Supla::Storage::ScheduleSave(2000);
     }
   }
@@ -149,8 +151,9 @@ void suplaWebPageOther(int save) {
   addListGPIOBox(webContentBuffer, INPUT_CF1, F("CF1"), FUNCTION_CF1);
   addListGPIOBox(webContentBuffer, INPUT_SEL, F("SELi"), FUNCTION_SEL);
   if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
-    uint32_t count = Supla::GUI::counterHLW8012->getCounter();
-    addNumberBox(webContentBuffer, INPUT_COUNTER_CHANGE_VALUE_HLW8012, S_IMPULSE_COUNTER_CHANGE_VALUE, F(""), false, String(count));
+    float count = Supla::GUI::counterHLW8012->getCounter();
+    addNumberBox(webContentBuffer, INPUT_COUNTER_CHANGE_VALUE_HLW8012, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
+                 String(count / 100 / 1000));
     addLinkBox(webContentBuffer, S_CALIBRATION, PATH_HLW8012_CALIBRATE);
   }
   addFormHeaderEnd(webContentBuffer);
