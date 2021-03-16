@@ -89,6 +89,10 @@
 #define S_STATUS_LOCATION_IS_DISABLED    "The location is disabled"
 #define S_STATUS_DEVICE_LIMIT_EXCEEDED   "Device limit exceeded"
 #define S_STATUS_REGISTRATION_DISABLED   "Device registration INACTIVE"
+#define S_STATUS_MISSING_CREDENTIALS     "Missing email address"
+#define S_STATUS_INVALID_AUTHKEY         "Missing AuthKey"
+#define S_STATUS_NO_LOCATION_AVAILABLE   "No location available!"
+#define S_STATUS_UNKNOWN_ERROR           "Unknown registration error"
 
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                           "OFF"

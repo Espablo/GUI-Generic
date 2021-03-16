@@ -89,6 +89,10 @@
 #define S_STATUS_LOCATION_IS_DISABLED    "Die Lokalisierung ist deaktiviert"
 #define S_STATUS_DEVICE_LIMIT_EXCEEDED   "Gerätelimit überschritten"
 #define S_STATUS_REGISTRATION_DISABLED   "INAKTIVE Geräte Registrierung"
+#define S_STATUS_MISSING_CREDENTIALS     "Fehlende E-Mail-Adresse"
+#define S_STATUS_INVALID_AUTHKEY         "Fehlender AuthKey"
+#define S_STATUS_NO_LOCATION_AVAILABLE   "Kein Standort verfügbar!"
+#define S_STATUS_UNKNOWN_ERROR           "Unbekannter Registrierungsfehler"
 
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                           "AUS"

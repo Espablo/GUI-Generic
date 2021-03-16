@@ -90,6 +90,10 @@
 #define S_STATUS_LOCATION_IS_DISABLED    "L'emplacement est désactivé"
 #define S_STATUS_DEVICE_LIMIT_EXCEEDED   "Limite d'appareils dépassée"
 #define S_STATUS_REGISTRATION_DISABLED   "Enregistrement de l'appareil INACTIF"
+#define S_STATUS_MISSING_CREDENTIALS     "Adresse e-mail manquante"
+#define S_STATUS_INVALID_AUTHKEY         "AuthKey manquant"
+#define S_STATUS_NO_LOCATION_AVAILABLE   "Aucun emplacement disponible!"
+#define S_STATUS_UNKNOWN_ERROR           "Erreur d'enregistrement inconnue "
 
 // #### SuplaCommonPROGMEM.h ####
 #define S_OFF                           "ÉTEINDRE"

@@ -90,6 +90,10 @@
 #define S_STATUS_LOCATION_IS_DISABLED    "Lokalizacja jest wyłączona"
 #define S_STATUS_DEVICE_LIMIT_EXCEEDED   "Przekroczono limit urządzeń"
 #define S_STATUS_REGISTRATION_DISABLED   "Rejestracja urządzeń NIEAKTYWNA"
+#define S_STATUS_MISSING_CREDENTIALS     "Brak adresu e-mail"
+#define S_STATUS_INVALID_AUTHKEY         "Brak klucza AuthKey"
+#define S_STATUS_NO_LOCATION_AVAILABLE   "Brak dostępnej lokalizacji!"
+#define S_STATUS_UNKNOWN_ERROR           "Nieznany błąd rejestracji"
 
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                           "WYŁĄCZ"
