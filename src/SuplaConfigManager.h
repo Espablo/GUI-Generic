@@ -46,8 +46,9 @@
 
 #define MAX_DS18B20          20
 #define MAX_GPIO             17
-#define MAX_PUSHOVER_MESSAGE 2
-#define MAX_DIRECT_LINK      2
+#define MAX_PUSHOVER_MESSAGE 5
+#define MAX_DIRECT_LINK      5
+#define GPIO_ANALOG_A0       11
 
 enum _key
 {
@@ -144,7 +145,8 @@ enum _function
   FUNCTION_RGBW_RED,
   FUNCTION_RGBW_GREEN,
   FUNCTION_RGBW_BLUE,
-  FUNCTION_RGBW_BRIGHTNESS
+  FUNCTION_RGBW_BRIGHTNESS,
+  FUNCTION_NTC_10K
 };
 
 enum _e_onfig
@@ -193,6 +195,8 @@ class SuplaConfigManager {
   uint8_t save();
   void showAllValue();
   void deleteAllValues();
+  void deleteDeviceValues();
+  void deleteWifiSuplaAdminValues();
 
   ConfigOption *get(uint8_t key);
   bool set(uint8_t key, int value);

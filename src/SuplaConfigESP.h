@@ -80,12 +80,12 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   uint8_t getKeyGpio(uint8_t gpio);
 
-  int getLevel(uint8_t gpio);
-  int getPullUp(uint8_t gpio);
-  int getInversed(uint8_t gpio);
-  int getMemory(uint8_t gpio);
-  int getAction(uint8_t gpio);
-  int getEvent(uint8_t gpio);
+  bool getLevel(uint8_t gpio);
+  bool getPullUp(uint8_t gpio);
+  bool getInversed(uint8_t gpio);
+  bool getMemory(uint8_t gpio);
+  bool getAction(uint8_t gpio);
+  bool getEvent(uint8_t gpio);
 
   bool checkBusyCfg(int gpio);
   int checkBusyGpio(int gpio, int function);
@@ -105,6 +105,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   }
 
   void clearGpio(uint8_t gpio, uint8_t function = 0);
+  void reset(bool forceReset = false);
   void factoryReset(bool forceReset = false);
   const String getConfigNameAP();
 
@@ -120,6 +121,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
  private:
   void configModeInit();
   void iterateAlways();
+  void clearEEPROM();
   int pinNumberConfig;
   int pinLedConfig;
   int modeConfigButton;

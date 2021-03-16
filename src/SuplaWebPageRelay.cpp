@@ -13,40 +13,16 @@ SuplaWebPageRelay::SuplaWebPageRelay() {
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
 void SuplaWebPageRelay::createWebPageRelay() {
-  String path;
-  path.reserve(11);
-
-  path += PATH_START;
-  path += PATH_RELAY;
-  WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelay, this));
-  path = PATH_START;
-  path += PATH_SAVE_RELAY;
-  WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySave, this));
+  WebServer->httpServer->on(getURL(PATH_RELAY), std::bind(&SuplaWebPageRelay::handleRelay, this));
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
 #ifdef SUPLA_MCP23017
-    path = PATH_START;
-    path += PATH_RELAY_SET;
-    WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelaySetMCP23017, this));
-
-    path = PATH_START;
-    path += PATH_SAVE_RELAY_SET;
-    WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSetMCP23017, this));
+    WebServer->httpServer->on(getURL(PATH_RELAY_SET_MCP23017), std::bind(&SuplaWebPageRelay::handleRelaySetMCP23017, this));
 #endif
   }
   else {
 #if defined(SUPLA_RELAY)
-    for (uint8_t i = 1; i <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); i++) {
-      path = PATH_START;
-      path += PATH_RELAY_SET;
-      path += i;
-      WebServer->httpServer->on(path, HTTP_GET, std::bind(&SuplaWebPageRelay::handleRelaySet, this));
-
-      path = PATH_START;
-      path += PATH_SAVE_RELAY_SET;
-      path += i;
-      WebServer->httpServer->on(path, HTTP_POST, std::bind(&SuplaWebPageRelay::handleRelaySaveSet, this));
-    }
+    WebServer->httpServer->on(getURL(PATH_RELAY_SET), std::bind(&SuplaWebPageRelay::handleRelaySet, this));
 #endif
   }
 }
@@ -55,7 +31,10 @@ void SuplaWebPageRelay::handleRelay() {
   if (!WebServer->isLoggedIn()) {
     return;
   }
-  supla_webpage_relay(0);
+  if (WebServer->httpServer->method() == HTTP_GET)
+    supla_webpage_relay(0);
+  else
+    handleRelaySave();
 }
 
 void SuplaWebPageRelay::handleRelaySave() {
@@ -63,10 +42,9 @@ void SuplaWebPageRelay::handleRelaySave() {
     return;
   }
 
-  uint8_t nr, last_value;
+  uint8_t nr;
 
-  last_value = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
-  for (nr = 1; nr <= last_value; nr++) {
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
       if (!WebServer->saveGpioMCP23017(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr, INPUT_MAX_RELAY)) {
         supla_webpage_relay(6);
@@ -87,13 +65,7 @@ void SuplaWebPageRelay::handleRelaySave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      if (last_value >= ConfigManager->get(KEY_MAX_RELAY)->getValueInt()) {
-        supla_webpage_relay(1);
-      }
-      else {
-        supla_webpage_relay(2);
-        ConfigESP->rebootESP();
-      }
+      supla_webpage_relay(1);
       break;
     case E_CONFIG_FILE_OPEN:
       supla_webpage_relay(2);
@@ -109,7 +81,7 @@ void SuplaWebPageRelay::supla_webpage_relay(int save) {
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_RELAY);
 
-  addForm(webContentBuffer, F("post"), PATH_SAVE_RELAY);
+  addForm(webContentBuffer, F("post"), PATH_RELAY);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_RELAYS);
 
   if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
@@ -123,10 +95,10 @@ void SuplaWebPageRelay::supla_webpage_relay(int save) {
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
-      addListMCP23017GPIOBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, nr, PATH_RELAY_SET);
+      addListMCP23017GPIOBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, nr, PATH_RELAY_SET_MCP23017);
     }
     else {
-      addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, PATH_RELAY_SET, nr);
+      addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER), FUNCTION_RELAY, nr);
     }
   }
   addFormHeaderEnd(webContentBuffer);
@@ -144,7 +116,10 @@ void SuplaWebPageRelay::handleRelaySet() {
   if (!WebServer->isLoggedIn()) {
     return;
   }
-  supla_webpage_relay_set(0);
+  if (WebServer->httpServer->method() == HTTP_GET)
+    supla_webpage_relay_set(0);
+  else
+    handleRelaySaveSet();
 }
 
 void SuplaWebPageRelay::handleRelaySaveSet() {
@@ -152,20 +127,10 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
     return;
   }
 
-  String readUrl, nr_relay, input, path;
-  uint8_t place, key, gpio;
+  String input, nr_relay;
+  uint8_t key, gpio;
 
-  input.reserve(6);
-  readUrl.reserve(11);
-  nr_relay.reserve(2);
-  path.reserve(15);
-
-  path = PATH_START;
-  path += PATH_SAVE_RELAY_SET;
-  readUrl = WebServer->httpServer->uri();
-
-  place = readUrl.indexOf(path);
-  nr_relay = readUrl.substring(place + path.length(), place + path.length() + 3);
+  nr_relay = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
   key = KEY_GPIO + gpio;
@@ -207,7 +172,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-  if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
+  if (nr_relay.toInt() - 1 <= MAX_PUSHOVER_MESSAGE) {
     input = INPUT_PUSHOVER;
     ConfigManager->setElement(KEY_PUSHOVER, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
     input = INPUT_PUSHOVER_MESSAGE;
@@ -216,7 +181,7 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
-  if (nr_relay.toInt() <= MAX_DIRECT_LINKS_SIZE) {
+  if (nr_relay.toInt() - 1 <= MAX_DIRECT_LINK) {
     input = INPUT_DIRECT_LINK_ON;
     ConfigManager->setElement(KEY_DIRECT_LINKS_ON, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
     input = INPUT_DIRECT_LINK_OFF;
@@ -235,95 +200,91 @@ void SuplaWebPageRelay::handleRelaySaveSet() {
 }
 
 void SuplaWebPageRelay::supla_webpage_relay_set(int save, int nr) {
-  String path, readUrl, nr_relay, massage;
-  uint8_t gpio, place, selected;
+  uint8_t gpio, selected;
+  String nr_relay, massage;
 
-  path.reserve(10);
-  readUrl.reserve(11);
-  nr_relay.reserve(2);
   massage.reserve(MAX_DIRECT_LINKS_SIZE);
 
-  WebServer->sendHeaderStart();
-  webContentBuffer += SuplaSaveResult(save);
-
   if (nr != 0) {
-    webContentBuffer += SuplaJavaScript(PATH_RELAY_SET + String(nr));
     nr_relay = nr;
   }
   else {
-    path = PATH_START;
-    path += PATH_RELAY_SET;
-    readUrl = WebServer->httpServer->uri();
-
-    place = readUrl.indexOf(path);
-    nr_relay = readUrl.substring(place + path.length(), place + path.length() + 3);
-    webContentBuffer += SuplaJavaScript(String(PATH_RELAY_SET + nr_relay));
+    nr_relay = WebServer->httpServer->arg(ARG_PARM_NUMBER);
   }
 
-  gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
+  WebServer->sendHeaderStart();
 
-  addForm(webContentBuffer, F("post"), PATH_SAVE_RELAY_SET + nr_relay);
-  addFormHeader(webContentBuffer, S_RELAY_NR_SETTINGS + nr_relay);
+  if (!nr_relay.isEmpty()) {
+    webContentBuffer += SuplaSaveResult(save);
+    webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER, nr_relay));
 
-  selected = ConfigESP->getLevel(gpio);
-  addListBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
+    gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
 
-  selected = ConfigESP->getMemory(gpio);
-  addListBox(webContentBuffer, INPUT_RELAY_MEMORY + nr_relay, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
-  addFormHeaderEnd(webContentBuffer);
+    addForm(webContentBuffer, F("post"), getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER, nr_relay));
+    addFormHeader(webContentBuffer, S_RELAY_NR_SETTINGS + nr_relay);
+
+    selected = ConfigESP->getLevel(gpio);
+    addListBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
+
+    selected = ConfigESP->getMemory(gpio);
+    addListBox(webContentBuffer, INPUT_RELAY_MEMORY + nr_relay, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
+    addFormHeaderEnd(webContentBuffer);
 
 #if defined(SUPLA_LED)
-  addFormHeader(webContentBuffer, S_RELAY_ACTIVATION_STATUS);
+    addFormHeader(webContentBuffer, S_RELAY_ACTIVATION_STATUS);
 
-  addListGPIOBox(webContentBuffer, INPUT_LED + nr_relay, S_LED, FUNCTION_LED, nr_relay.toInt());
+    addListGPIOBox(webContentBuffer, INPUT_LED + nr_relay, S_LED, FUNCTION_LED, nr_relay.toInt());
 
-  selected = ConfigESP->getInversed(ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED));
-  addListBox(webContentBuffer, INPUT_LEVEL_LED + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
+    selected = ConfigESP->getInversed(ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED));
+    addListBox(webContentBuffer, INPUT_LEVEL_LED + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
-  addFormHeaderEnd(webContentBuffer);
+    addFormHeaderEnd(webContentBuffer);
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-  if (nr_relay.toInt() < MAX_PUSHOVER_MESSAGE) {
-    addFormHeader(webContentBuffer, S_PUSHOVER);
+    if (nr_relay.toInt() - 1 <= MAX_PUSHOVER_MESSAGE) {
+      addFormHeader(webContentBuffer, S_PUSHOVER);
 
-    selected = ConfigManager->get(KEY_PUSHOVER)->getElement(nr_relay.toInt() - 1).toInt();
-    addListBox(webContentBuffer, INPUT_PUSHOVER, S_STATE, STATE_P, 2, selected);
+      selected = ConfigManager->get(KEY_PUSHOVER)->getElement(nr_relay.toInt() - 1).toInt();
+      addListBox(webContentBuffer, INPUT_PUSHOVER, S_STATE, STATE_P, 2, selected);
 
-    massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr_relay.toInt() - 1).c_str();
-    addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, S_MESSAGE, massage, 0, 16, false);
-    addFormHeaderEnd(webContentBuffer);
-  }
+      massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr_relay.toInt() - 1).c_str();
+      addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, S_MESSAGE, massage, 0, 16, false);
+      addFormHeaderEnd(webContentBuffer);
+    }
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
-  if (nr_relay.toInt() <= MAX_DIRECT_LINK) {
-    addFormHeader(webContentBuffer, S_DIRECT_LINKS);
-    massage = ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr_relay.toInt() - 1).c_str();
-    addTextBox(webContentBuffer, INPUT_DIRECT_LINK_ON, S_ON, massage, F("xx/xxxxxxxxx/turn-on"), 0, MAX_DIRECT_LINKS_SIZE, false);
+    if (nr_relay.toInt() - 1 <= MAX_DIRECT_LINK) {
+      addFormHeader(webContentBuffer, S_DIRECT_LINKS);
+      massage = ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr_relay.toInt() - 1).c_str();
+      addTextBox(webContentBuffer, INPUT_DIRECT_LINK_ON, S_ON, massage, F("xx/xxxxxxxxx/turn-on"), 0, MAX_DIRECT_LINKS_SIZE, false);
 
-    massage = ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(nr_relay.toInt() - 1).c_str();
-    addTextBox(webContentBuffer, INPUT_DIRECT_LINK_OFF, S_OFF, massage, F("xx/xxxxxxxxx/turn-off"), 0, MAX_DIRECT_LINKS_SIZE, false);
+      massage = ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(nr_relay.toInt() - 1).c_str();
+      addTextBox(webContentBuffer, INPUT_DIRECT_LINK_OFF, S_OFF, massage, F("xx/xxxxxxxxx/turn-off"), 0, MAX_DIRECT_LINKS_SIZE, false);
 
-    addFormHeaderEnd(webContentBuffer);
-  }
+      addFormHeaderEnd(webContentBuffer);
+    }
 #endif
 
-  addFormHeader(webContentBuffer, S_CONDITIONING);
-  selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-  addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_SENSOR, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
+    if (COUNT_SENSOR_LIST > 1) {
+      addFormHeader(webContentBuffer, S_CONDITIONING);
+      selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
+      addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_SENSOR, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
 
-  selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-  addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, 4, selected);
+      selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
+      addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, 4, selected);
 
-  String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr_relay.toInt() - 1);
-  addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
-  value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr_relay.toInt() - 1);
-  addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
-  addFormHeaderEnd(webContentBuffer);
+      String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr_relay.toInt() - 1);
+      addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
+      value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr_relay.toInt() - 1);
+      addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
+      addFormHeaderEnd(webContentBuffer);
+    }
 
-  addButtonSubmit(webContentBuffer, S_SAVE);
-  addFormEnd(webContentBuffer);
+    addButtonSubmit(webContentBuffer, S_SAVE);
+    addFormEnd(webContentBuffer);
+  }
   addButton(webContentBuffer, S_RETURN, PATH_RELAY);
 
   WebServer->sendHeaderEnd();
@@ -335,7 +296,11 @@ void SuplaWebPageRelay::handleRelaySetMCP23017() {
   if (!WebServer->isLoggedIn()) {
     return;
   }
-  supla_webpage_relay_set_MCP23017(0);
+
+  if (WebServer->httpServer->method() == HTTP_GET)
+    supla_webpage_relay_set_MCP23017(0);
+  else
+    handleRelaySaveSetMCP23017();
 }
 
 void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
@@ -347,9 +312,9 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
 
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_RELAY_SET);
+  webContentBuffer += SuplaJavaScript(PATH_RELAY_SET_MCP23017);
 
-  addForm(webContentBuffer, F("post"), PATH_SAVE_RELAY_SET);
+  addForm(webContentBuffer, F("post"), PATH_RELAY_SET_MCP23017);
   addFormHeader(webContentBuffer, S_SETTINGS_FOR_RELAYS);
 
   selected = ConfigESP->getLevel(gpio);
@@ -363,10 +328,10 @@ void SuplaWebPageRelay::supla_webpage_relay_set_MCP23017(int save) {
 
 #if defined(SUPLA_PUSHOVER)
   addFormHeader(webContentBuffer, S_PUSHOVER);
-  for (uint8_t i = 0; i < MAX_PUSHOVER_MESSAGE; i++) {
+  for (uint8_t i = 0; i <= MAX_PUSHOVER_MESSAGE; i++) {
     selected = ConfigManager->get(KEY_PUSHOVER)->getElement(i).toInt();
     name = S_STATE;
-    name =+ S_SPACE;
+    name = +S_SPACE;
     name += i + 1;
     input = INPUT_PUSHOVER;
     input += i;
@@ -413,7 +378,7 @@ void SuplaWebPageRelay::handleRelaySaveSetMCP23017() {
   }
 
 #if defined(SUPLA_PUSHOVER)
-  for (uint8_t i = 0; i < MAX_PUSHOVER_MESSAGE; i++) {
+  for (uint8_t i = 0; i <= MAX_PUSHOVER_MESSAGE; i++) {
     input = INPUT_PUSHOVER;
     input += i;
     ConfigManager->setElement(KEY_PUSHOVER, i, WebServer->httpServer->arg(input).toInt());

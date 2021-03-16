@@ -45,7 +45,7 @@
 #include <supla/control/relay.h>
 #include <supla/control/roller_shutter.h>
 
-#include <supla/sensor/DS18B20.h>
+#include <supla/sensor/DS_18B20.h>
 #include <supla/sensor/DHT.h>
 #include <supla/sensor/HC_SR04.h>
 #include <supla/sensor/binary.h>
@@ -93,6 +93,9 @@
 #include <supla/control/MCP_23017.h>
 #endif
 
+#ifdef SUPLA_NTC_10K
+#include <supla/sensor/NTC_10K.h>
+#endif
 
 namespace Supla {
 namespace GUI {

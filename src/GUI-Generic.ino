@@ -235,6 +235,11 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_NTC_10K
+  if (ConfigESP->getGpio(FUNCTION_NTC_10K) != OFF_GPIO)
+    new Supla::Sensor::NTC10K(A0);
+#endif
+
   Supla::GUI::begin();
 }
 

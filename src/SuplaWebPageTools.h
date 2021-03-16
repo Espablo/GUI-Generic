@@ -4,6 +4,7 @@
 
 #define PATH_TOOLS "tools"
 #define PATH_FACTORY_RESET "factoryreset"
+#define PATH_RESET "reset"
 
 void createWebTools();
 void handleTools();
