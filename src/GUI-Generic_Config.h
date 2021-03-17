@@ -52,6 +52,7 @@
 #define SUPLA_PUSHOVER
 #define SUPLA_DIRECT_LINKS
 #define SUPLA_NTC_10K
+#define SUPLA_PZEM_V_3
 
 #endif  // USE_CUSTOM
 

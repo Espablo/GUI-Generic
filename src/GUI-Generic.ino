@@ -15,6 +15,10 @@
 */
 #include "SuplaDeviceGUI.h"
 
+#ifdef SUPLA_PZEM_V_3
+#include <supla/sensor/PzemV3.h>
+#endif
+
 #define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 #define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
 DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
@@ -157,6 +161,12 @@ void setup() {
 #ifdef SUPLA_HLW8012
   if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
     Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
+  }
+#endif
+
+#ifdef SUPLA_PZEM_V_3
+  if (ConfigESP->getGpio(FUNCTION_PZEM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_PZEM_TX) != OFF_GPIO) {
+    new Supla::Sensor::PZEMv3(ConfigESP->getGpio(FUNCTION_PZEM_RX), ConfigESP->getGpio(FUNCTION_PZEM_TX));
   }
 #endif
 

@@ -9,7 +9,7 @@
 
 void createWebPageOther();
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER) || defined(SUPLA_NTC_10K)
 void suplaWebPageOther(int save);
 void handleOther();
 void handleOtherSave();
@@ -43,6 +43,11 @@ void supla_impulse_counter_set(int save);
 void handleHLW8012Calibrate();
 void handleHLW8012CalibrateSave();
 void suplaWebpageHLW8012Calibrate(uint8_t save);
+#endif
+
+#ifdef SUPLA_PZEM_V_3
+#define INPUT_PZEM_RX "iprx"
+#define INPUT_PZEM_TX "iptx"
 #endif
 
 #ifdef SUPLA_RGBW
