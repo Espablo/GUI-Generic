@@ -2,10 +2,6 @@
 #include "SuplaDeviceGUI.h"
 #include "FS.h"
 
-void createWebDownload() {
-  WebServer->httpServer->on(getURL(PATH_DOWNLOAD), handleDownload);
-}
-
 void handleDownload() {
   if (!WebServer->isLoggedIn()) {
     return;

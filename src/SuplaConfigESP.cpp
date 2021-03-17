@@ -311,27 +311,27 @@ uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
     return KEY_GPIO + gpio - 148;
 }
 
-int SuplaConfigESP::getLevel(uint8_t gpio) {
+uint8_t SuplaConfigESP::getLevel(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(LEVEL_RELAY).toInt();
 }
 
-int SuplaConfigESP::getPullUp(uint8_t gpio) {
+uint8_t SuplaConfigESP::getPullUp(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(PULL_UP_BUTTON).toInt();
 }
 
-int SuplaConfigESP::getInversed(uint8_t gpio) {
+uint8_t SuplaConfigESP::getInversed(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(INVERSED_BUTTON).toInt();
 }
 
-int SuplaConfigESP::getMemory(uint8_t gpio) {
+uint8_t SuplaConfigESP::getMemory(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(MEMORY).toInt();
 }
 
-int SuplaConfigESP::getAction(uint8_t gpio) {
+uint8_t SuplaConfigESP::getAction(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(ACTION_BUTTON).toInt();
 }
 
-int SuplaConfigESP::getEvent(uint8_t gpio) {
+uint8_t SuplaConfigESP::getEvent(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(EVENT_BUTTON).toInt();
 }
 
@@ -344,7 +344,11 @@ bool SuplaConfigESP::checkBusyCfg(int gpio) {
 }
 
 int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
-  if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11) {
+  if (gpio == 6 || gpio == 7 || gpio == 8
+#ifdef ARDUINO_ESP8266_GENERIC
+      || gpio == 9 || gpio == 10
+#endif
+  ) {
     return false;
   }
   else {
@@ -606,12 +610,7 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
   if (digitalRead(0) != HIGH || forceReset) {
     Serial.println(F("FACTORY RESET!!!"));
 
-    EEPROM.begin(1024);
-    delay(15);
-    for (int i = 1; i < 1024; ++i) {
-      EEPROM.write(i, 0);
-    }
-    EEPROM.end();
+    clearEEPROM();
 
     ConfigManager->deleteAllValues();
 
@@ -628,4 +627,32 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
       rebootESP();
     }
   }
+}
+void SuplaConfigESP::reset(bool forceReset) {
+  delay(2000);
+  pinMode(0, INPUT_PULLUP);
+  if (digitalRead(0) != HIGH || forceReset) {
+    Serial.println(F("DEVICES CONFIGURATION RESET!"));
+
+    clearEEPROM();
+
+    ConfigManager->deleteDeviceValues();
+
+    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+
+    ConfigManager->save();
+
+    if (!forceReset) {
+      rebootESP();
+    }
+  }
+}
+
+void SuplaConfigESP::clearEEPROM() {
+  EEPROM.begin(1024);
+  delay(15);
+  for (int i = 1; i < 1024; ++i) {
+    EEPROM.write(i, 0);
+  }
+  EEPROM.end();
 }

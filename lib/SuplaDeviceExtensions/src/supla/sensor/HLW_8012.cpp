@@ -19,8 +19,16 @@
 namespace Supla {
 namespace Sensor {
 
-HLW_8012::HLW_8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL, bool currentWhen, bool use_interrupts)
-    : pinCF(pinCF), pinCF1(pinCF1), pinSEL(pinSEL), currentWhen(currentWhen), use_interrupts(use_interrupts) {
+HLW_8012::HLW_8012(int8_t pinCF,
+                   int8_t pinCF1,
+                   int8_t pinSEL,
+                   bool currentWhen,
+                   bool use_interrupts)
+    : pinCF(pinCF),
+      pinCF1(pinCF1),
+      pinSEL(pinSEL),
+      currentWhen(currentWhen),
+      use_interrupts(use_interrupts) {
   sensor = new HLW8012();
   sensor->begin(pinCF, pinCF1, pinSEL, currentWhen, use_interrupts);
 
@@ -34,12 +42,14 @@ void HLW_8012::onInit() {
 }
 
 void HLW_8012::readValuesFromDevice() {
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+  for (auto element = Supla::Element::begin(); element != nullptr;
+       element = element->next()) {
     if (element->getChannel()) {
       auto channel = element->getChannel();
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_RELAY) {
         if (channel->getValueBool()) {
-          energy = _energy + (sensor->getEnergy() / 36);  // current energy value = value at start
+          energy = _energy + (sensor->getEnergy() /
+                              36);  // current energy value = value at start
         }
       }
     }
@@ -53,8 +63,7 @@ void HLW_8012::readValuesFromDevice() {
   unsigned int _apparent = _voltage * _current;
   if (_apparent > _active) {
     _reactive = sqrt(_apparent * _apparent - _active * _active);
-  }
-  else {
+  } else {
     _reactive = 0;
   }
   if (_active > _apparent) {
@@ -62,8 +71,7 @@ void HLW_8012::readValuesFromDevice() {
   }
   if (_apparent == 0) {
     _pf = 0;
-  }
-  else {
+  } else {
     _pf = (double)_active / _apparent;
   }
   setVoltage(0, _voltage * 100);            // voltage in 0.01 V
@@ -81,9 +89,12 @@ void HLW_8012::onSaveState() {
   double power_multiplier = getPowerMultiplier();
 
   Supla::Storage::WriteState((unsigned char *)&energy, sizeof(energy));
-  Supla::Storage::WriteState((unsigned char *)&current_multiplier, sizeof(current_multiplier));
-  Supla::Storage::WriteState((unsigned char *)&voltage_multiplier, sizeof(voltage_multiplier));
-  Supla::Storage::WriteState((unsigned char *)&power_multiplier, sizeof(power_multiplier));
+  Supla::Storage::WriteState((unsigned char *)&current_multiplier,
+                             sizeof(current_multiplier));
+  Supla::Storage::WriteState((unsigned char *)&voltage_multiplier,
+                             sizeof(voltage_multiplier));
+  Supla::Storage::WriteState((unsigned char *)&power_multiplier,
+                             sizeof(power_multiplier));
 }
 
 void HLW_8012::onLoadState() {
@@ -95,24 +106,24 @@ void HLW_8012::onLoadState() {
     setCounter(energy);
   }
 
-  if (Supla::Storage::ReadState((unsigned char *)&current_multiplier, sizeof(current_multiplier))) {
+  if (Supla::Storage::ReadState((unsigned char *)&current_multiplier,
+                                sizeof(current_multiplier))) {
     setCurrentMultiplier(current_multiplier);
-  }
-  else {
+  } else {
     setCurrentMultiplier(18388);
   }
 
-  if (Supla::Storage::ReadState((unsigned char *)&voltage_multiplier, sizeof(voltage_multiplier))) {
+  if (Supla::Storage::ReadState((unsigned char *)&voltage_multiplier,
+                                sizeof(voltage_multiplier))) {
     setVoltageMultiplier(voltage_multiplier);
-  }
-  else {
+  } else {
     setVoltageMultiplier(247704);
   }
 
-  if (Supla::Storage::ReadState((unsigned char *)&power_multiplier, sizeof(power_multiplier))) {
+  if (Supla::Storage::ReadState((unsigned char *)&power_multiplier,
+                                sizeof(power_multiplier))) {
     setPowerMultiplier(power_multiplier);
-  }
-  else {
+  } else {
     setPowerMultiplier(2586583);
   }
 }
@@ -143,9 +154,10 @@ void HLW_8012::setPowerMultiplier(double power_multiplier) {
   sensor->setPowerMultiplier(power_multiplier);
 };
 
-void HLW_8012::setCounter(_supla_int64_t energy) {
-  _energy = energy;  // ------- energy value read from memory at startup
-  setFwdActEnergy(0, energy);
+void HLW_8012::setCounter(_supla_int64_t new_energy) {
+  _energy = new_energy;  // ------- energy value read from memory at startup
+  energy = new_energy;
+  setFwdActEnergy(0, new_energy);
 }
 
 // When using interrupts we have to call the library entry point

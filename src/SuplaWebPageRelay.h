@@ -6,10 +6,11 @@
 #define INPUT_ADRESS_MCP23017 "iam"
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
-#define PATH_RELAY           "relay"
-#define PATH_SAVE_RELAY      "saverelay"
-#define PATH_RELAY_SET       "setrelay"
-#define PATH_SAVE_RELAY_SET  "savesetrelay"
+#define PATH_RELAY              "relay"
+
+#define PATH_RELAY_SET          "setrelay"
+#define PATH_RELAY_SET_MCP23017 "setrelaymcp"
+
 #define INPUT_MAX_RELAY      "mrl"
 #define INPUT_RELAY_GPIO     "rlg"
 #define INPUT_RELAY_LEVEL    "irl"

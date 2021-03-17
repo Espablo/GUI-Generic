@@ -5,12 +5,12 @@
 #include "SuplaDeviceGUI.h"
 
 #if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
-#define PATH_CONTROL            "control"
-#define PATH_SWITCH             "switch"
-#define PATH_SAVE_SWITCH        "saveswitch"
-#define PATH_SAVE_CONTROL       "savecontrol"
-#define PATH_BUTTON_SET         "setbutton"
-#define PATH_SAVE_BUTTON_SET    "savesetbutton"
+#define PATH_CONTROL "control"
+#define PATH_SWITCH  "switch"
+
+#define PATH_BUTTON_SET          "setbutton"
+#define PATH_BUTTON_SET_MCP23017 "setbuttonmcp"
+
 #define INPUT_TRIGGER           "trs"
 #define INPUT_BUTTON_SET        "bts"
 #define INPUT_BUTTON_GPIO       "btg"

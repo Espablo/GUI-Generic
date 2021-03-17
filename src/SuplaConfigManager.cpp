@@ -381,7 +381,18 @@ void SuplaConfigManager::showAllValue() {
 }
 
 void SuplaConfigManager::deleteAllValues() {
-  for (int i = 2; i < _optionCount; i++) {
+	deleteWifiSuplaAdminValues();
+	deleteDeviceValues();
+}
+
+void SuplaConfigManager::deleteDeviceValues() {
+  for (int i = KEY_MAX_RELAY; i < _optionCount; i++) {
+    _options[i]->setValue("");
+  }
+}
+
+void SuplaConfigManager::deleteWifiSuplaAdminValues() {
+  for (int i = KEY_WIFI_SSID; i <= KEY_SUPLA_EMAIL; i++) {
     _options[i]->setValue("");
   }
 }
