@@ -311,27 +311,27 @@ uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
     return KEY_GPIO + gpio - 148;
 }
 
-bool SuplaConfigESP::getLevel(uint8_t gpio) {
+uint8_t SuplaConfigESP::getLevel(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(LEVEL_RELAY).toInt();
 }
 
-bool SuplaConfigESP::getPullUp(uint8_t gpio) {
+uint8_t SuplaConfigESP::getPullUp(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(PULL_UP_BUTTON).toInt();
 }
 
-bool SuplaConfigESP::getInversed(uint8_t gpio) {
+uint8_t SuplaConfigESP::getInversed(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(INVERSED_BUTTON).toInt();
 }
 
-bool SuplaConfigESP::getMemory(uint8_t gpio) {
+uint8_t SuplaConfigESP::getMemory(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(MEMORY).toInt();
 }
 
-bool SuplaConfigESP::getAction(uint8_t gpio) {
+uint8_t SuplaConfigESP::getAction(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(ACTION_BUTTON).toInt();
 }
 
-bool SuplaConfigESP::getEvent(uint8_t gpio) {
+uint8_t SuplaConfigESP::getEvent(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(EVENT_BUTTON).toInt();
 }
 
