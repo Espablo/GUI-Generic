@@ -66,9 +66,11 @@ void handleOtherSave() {
 #endif
 
 #ifdef SUPLA_PZEM_V_3
-  if (!WebServer->saveGPIO(INPUT_PZEM_RX, FUNCTION_PZEM_RX) || !WebServer->saveGPIO(INPUT_PZEM_TX, FUNCTION_PZEM_TX)) {
-    suplaWebPageOther(6);
-    return;
+  for (nr = 1; nr <= 3; nr++) {
+    if (!WebServer->saveGPIO(INPUT_PZEM_RX, FUNCTION_PZEM_RX, nr) || !WebServer->saveGPIO(INPUT_PZEM_TX, FUNCTION_PZEM_TX, nr)) {
+      suplaWebPageOther(6);
+      return;
+    }
   }
 #endif
 
@@ -154,9 +156,15 @@ void suplaWebPageOther(int save) {
 #endif
 
 #ifdef SUPLA_PZEM_V_3
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("PZEM-004T V3"));
-  addListGPIOBox(webContentBuffer, INPUT_PZEM_RX, F("RX"), FUNCTION_PZEM_RX);
-  addListGPIOBox(webContentBuffer, INPUT_PZEM_TX, F("TX"), FUNCTION_PZEM_TX);
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("PZEM-004T V3") + S_SPACE + S_ELECTRIC_PHASE);
+  for (nr = 1; nr <= 3; nr++) {
+    if (nr >= 2)
+      addListGPIOBox(webContentBuffer, INPUT_PZEM_RX, String(F("L")) + nr + F(" - RX") + S_OPTIONAL, FUNCTION_PZEM_RX, nr, true, "", true);
+    else
+      addListGPIOBox(webContentBuffer, INPUT_PZEM_RX, String(F("L")) + nr + F(" - RX"), FUNCTION_PZEM_RX, nr, true, "", true);
+
+    addListGPIOBox(webContentBuffer, INPUT_PZEM_TX, String(F("L")) + nr + F(" - TX"), FUNCTION_PZEM_TX, nr, true, "", true);
+  }
   addFormHeaderEnd(webContentBuffer);
 #endif
 

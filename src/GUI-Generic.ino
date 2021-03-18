@@ -17,6 +17,7 @@
 
 #ifdef SUPLA_PZEM_V_3
 #include <supla/sensor/PzemV3.h>
+#include <supla/sensor/three_phase_PzemV3.h>
 #endif
 
 #define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
@@ -165,8 +166,21 @@ void setup() {
 #endif
 
 #ifdef SUPLA_PZEM_V_3
-  if (ConfigESP->getGpio(FUNCTION_PZEM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_PZEM_TX) != OFF_GPIO) {
-    new Supla::Sensor::PZEMv3(ConfigESP->getGpio(FUNCTION_PZEM_RX), ConfigESP->getGpio(FUNCTION_PZEM_TX));
+  int8_t pinRX1 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 1);
+  int8_t pinTX1 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 1);
+  int8_t pinRX2 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 2);
+  int8_t pinTX2 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 2);
+  int8_t pinRX3 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 3);
+  int8_t pinTX3 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 3);
+
+  if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinRX2 != OFF_GPIO && pinTX2 != OFF_GPIO && pinRX3 != OFF_GPIO && pinTX3 != OFF_GPIO) {
+    new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX2, pinTX2, pinRX3, pinTX3);
+  }
+  else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinTX2 != OFF_GPIO && pinTX3 != OFF_GPIO) {
+    new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX1, pinTX2, pinRX1, pinTX3);
+  }
+  else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO) {
+    new Supla::Sensor::PZEMv3(pinRX1, pinTX1);
   }
 #endif
 

@@ -152,6 +152,8 @@
 #define S_VOLTAGE_V               "Voltaje [V]"
 #define S_DEPTH_CM                "Profundidad [cm]"
 #define S_SENSOR_READING_DISTANCE "distancia de lectura del sensor"
+#define S_ELECTRIC_PHASE          "1/3etapas"
+#define S_OPTIONAL                "(Opcional)"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "Estado de activación del relé"
