@@ -166,12 +166,12 @@ void setup() {
 #endif
 
 #ifdef SUPLA_PZEM_V_3
-  int8_t pinRX1 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 1);
-  int8_t pinTX1 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 1);
-  int8_t pinRX2 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 2);
-  int8_t pinTX2 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 2);
-  int8_t pinRX3 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 3);
-  int8_t pinTX3 = ConfigESP->getGpio(FUNCTION_PZEM_RX, 3);
+  int8_t pinRX1 = ConfigESP->getGpio(1, FUNCTION_PZEM_RX);
+  int8_t pinTX1 = ConfigESP->getGpio(1, FUNCTION_PZEM_TX);
+  int8_t pinRX2 = ConfigESP->getGpio(2, FUNCTION_PZEM_RX);
+  int8_t pinTX2 = ConfigESP->getGpio(2, FUNCTION_PZEM_TX);
+  int8_t pinRX3 = ConfigESP->getGpio(3, FUNCTION_PZEM_RX);
+  int8_t pinTX3 = ConfigESP->getGpio(3, FUNCTION_PZEM_TX);
 
   if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinRX2 != OFF_GPIO && pinTX2 != OFF_GPIO && pinRX3 != OFF_GPIO && pinTX3 != OFF_GPIO) {
     new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX2, pinTX2, pinRX3, pinTX3);
