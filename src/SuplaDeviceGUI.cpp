@@ -41,9 +41,9 @@ void begin() {
   wifi->enableSSL(false);
 #endif
 
-  String supla_hostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
-  supla_hostname.replace(" ", "_");
-  wifi->setHostName(supla_hostname.c_str());
+  String suplaHostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
+  suplaHostname.replace(" ", "_");
+  wifi->setHostName(suplaHostname.c_str());
 
   SuplaDevice.setName(ConfigManager->get(KEY_HOST_NAME)->getValue());
 
@@ -51,8 +51,12 @@ void begin() {
   SuplaDevice.setSwVersion(BUILD_VERSION);
 #endif
 
+  String server = ConfigManager->get(KEY_SUPLA_SERVER)->getValue();
+  auto npos = server.indexOf(":");
+  String suplaServer = server.substring(0, npos);
+
   SuplaDevice.begin((char *)ConfigManager->get(KEY_SUPLA_GUID)->getValue(),      // Global Unique Identifier
-                    ConfigManager->get(KEY_SUPLA_SERVER)->getValue(),            // SUPLA server address
+                    suplaServer.c_str(),                                         // SUPLA server address
                     ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),             // Email address used to login to Supla Cloud
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
