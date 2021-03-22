@@ -146,6 +146,20 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_NTC_10K
+  if (ConfigESP->getGpio(FUNCTION_NTC_10K) != OFF_GPIO) {
+    auto ntc10k = new Supla::Sensor::NTC10K(A0);
+    Supla::GUI::addConditionsTurnON(SENSOR_NTC_10K, ntc10k);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_NTC_10K, ntc10k);
+  }
+#endif
+
+#ifdef SUPLA_RGBW
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
+    Supla::GUI::addRGBWLeds(nr);
+  }
+#endif
+
 #ifdef SUPLA_IMPULSE_COUNTER
   if (ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() > 0) {
     for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
@@ -251,17 +265,6 @@ void setup() {
     }
 #endif
   }
-#endif
-
-#ifdef SUPLA_RGBW
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
-    Supla::GUI::addRGBWLeds(nr);
-  }
-#endif
-
-#ifdef SUPLA_NTC_10K
-  if (ConfigESP->getGpio(FUNCTION_NTC_10K) != OFF_GPIO)
-    new Supla::Sensor::NTC10K(A0);
 #endif
 
   Supla::GUI::begin();

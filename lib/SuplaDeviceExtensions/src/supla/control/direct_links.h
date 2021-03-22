@@ -19,7 +19,6 @@
 
 #include <Arduino.h>
 #include <WiFiClientSecure.h>
-
 #include <supla/action_handler.h>
 #include <supla/actions.h>
 #include <supla/channel_element.h>
@@ -43,6 +42,7 @@ class DirectLinks : public Element, public ActionHandler {
   ~DirectLinks();
 
   void setHost(const char *host);
+  void setPort(uint16_t port);
   void setUrlON(const char *url);
   void setUrlOFF(const char *url);
   void enableSSL(bool isSecured);
@@ -67,6 +67,7 @@ class DirectLinks : public Element, public ActionHandler {
   char _urlON[MAX_DIRECT_LINKS_SIZE];
   char _urlOFF[MAX_DIRECT_LINKS_SIZE];
   char _host[MAX_HOST_SIZE];
+  uint16_t _port;
 };
 
 };  // namespace Control

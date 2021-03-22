@@ -249,6 +249,10 @@ enum sensorList
   ,
   SENSOR_MAX6675
 #endif
+#ifdef SUPLA_NTC_10K
+  ,
+  SENSOR_NTC_10K
+#endif
   ,
   COUNT_SENSOR_LIST
 };
@@ -279,6 +283,9 @@ const char NAME_SI7021[] PROGMEM = S_SI702;
 #endif
 #ifdef SUPLA_MAX6675
 const char NAME_MAX6675[] PROGMEM = S_MAX6675;
+#endif
+#ifdef SUPLA_NTC_10K
+const char NAME_NTC_10K[] PROGMEM = S_NTC_10K;
 #endif
 
 const char* const SENSOR_LIST_P[] PROGMEM = {OFF
@@ -317,6 +324,10 @@ const char* const SENSOR_LIST_P[] PROGMEM = {OFF
 #ifdef SUPLA_MAX6675
                                              ,
                                              NAME_MAX6675
+#endif
+#ifdef SUPLA_NTC_10K
+                                             ,
+                                             NAME_NTC_10K
 #endif
 };
 

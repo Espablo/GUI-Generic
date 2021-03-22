@@ -1,8 +1,7 @@
 #include "SuplaWebPageOther.h"
 
 void createWebPageOther() {
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || \
-    defined(SUPLA_PUSHOVER) || defined(SUPLA_NTC_10K)
+#ifdef SUPLA_OTHER
   WebServer->httpServer->on(getURL(PATH_OTHER), handleOther);
   WebServer->httpServer->on(getURL(PATH_SAVE_OTHER), handleOtherSave);
 
@@ -20,8 +19,7 @@ void createWebPageOther() {
 #endif
 }
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || \
-    defined(SUPLA_PUSHOVER) || defined(SUPLA_NTC_10K)
+#ifdef SUPLA_OTHER
 void handleOther() {
   if (!WebServer->isLoggedIn()) {
     return;
@@ -197,7 +195,7 @@ void suplaWebPageOther(int save) {
 #endif
 
 #ifdef SUPLA_NTC_10K
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("NTC 10K"));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_NTC_10K);
   addListGPIOBox(webContentBuffer, INPUT_NTC_10K, F("ADC Pin"), FUNCTION_NTC_10K);
   addFormHeaderEnd(webContentBuffer);
 #endif
