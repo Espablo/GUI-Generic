@@ -6,7 +6,7 @@
 
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || \
     defined(SUPLA_PUSHOVER) || defined(SUPLA_NTC_10K)
-#define SUPLA_OTHER
+#define GUI_OTHER
 #endif
 
 #define PATH_OTHER      "other"
@@ -14,7 +14,7 @@
 
 void createWebPageOther();
 
-#ifdef SUPLA_OTHER
+#ifdef GUI_OTHER
 void suplaWebPageOther(int save);
 void handleOther();
 void handleOtherSave();

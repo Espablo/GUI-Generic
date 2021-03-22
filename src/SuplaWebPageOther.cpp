@@ -1,7 +1,7 @@
 #include "SuplaWebPageOther.h"
 
 void createWebPageOther() {
-#ifdef SUPLA_OTHER
+#ifdef GUI_OTHER
   WebServer->httpServer->on(getURL(PATH_OTHER), handleOther);
   WebServer->httpServer->on(getURL(PATH_SAVE_OTHER), handleOtherSave);
 
@@ -19,7 +19,7 @@ void createWebPageOther() {
 #endif
 }
 
-#ifdef SUPLA_OTHER
+#ifdef GUI_OTHER
 void handleOther() {
   if (!WebServer->isLoggedIn()) {
     return;
