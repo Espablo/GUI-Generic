@@ -62,6 +62,10 @@ void begin() {
 
   ConfigManager->showAllValue();
   WebServer->begin();
+  
+#ifdef DEBUG_MODE
+  checkRAM();
+#endif
 }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)

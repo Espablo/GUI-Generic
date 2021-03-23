@@ -1,5 +1,4 @@
 #include "SuplaOled.h"
-#include "SuplaDeviceGUI.h"
 
 #ifdef SUPLA_OLED
 

@@ -19,24 +19,33 @@
 
 #include "GUI-Generic_Config.h"
 
+#include "SuplaWebServer.h"
+#include "SuplaConfigESP.h"
+#include "SuplaConfigManager.h"
+
 #include <DoubleResetDetector.h>
 #include <SPI.h>
 
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
+#include <supla/events.h>
+#include <supla/action_handler.h>
+#include <supla/element.h>
 
-#include "SuplaConfigESP.h"
-#include "SuplaConfigManager.h"
-#include "SuplaWebServer.h"
-#include "SuplaWebPageRelay.h"
-#include "SuplaWebPageSensor.h"
-
-#include "SuplaWebPageDownload.h"
-#include "SuplaWebPageUpload.h"
-#include "SuplaWebPageTools.h"
 #include "GUIGenericCommon.h"
 #include "SuplaCommonPROGMEM.h"
 #include "Markup.h"
+#include "SuplaTemplateBoard.h"
+
+#include "SuplaWebPageConfig.h"
+#include "SuplaWebPageControl.h"
+#include "SuplaWebPageRelay.h"
+#include "SuplaWebPageSensor.h"
+#include "SuplaWebPageDownload.h"
+#include "SuplaWebPageUpload.h"
+#include "SuplaWebPageTools.h"
+#include "SuplaWebPageOther.h"
+
 #include "SuplaOled.h"
 
 #include <vector>

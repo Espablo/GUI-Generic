@@ -1,7 +1,7 @@
 #ifndef SuplaWebPageRelay_h
 #define SuplaWebPageRelay_h
 
-#include "SuplaWebServer.h"
+#include "SuplaDeviceGUI.h"
 
 #define INPUT_ADRESS_MCP23017 "iam"
 

@@ -2,7 +2,6 @@
 #define SuplaCommonPROGMEM_h
 #include <pgmspace.h>
 #include "SuplaDeviceGUI.h"
-#include "GUIGenericCommon.h"
 
 #define PGMT(pgm_ptr) (reinterpret_cast<const __FlashStringHelper*>(pgm_ptr))
 
