@@ -1,4 +1,5 @@
 #include "SuplaTemplateBoard.h"
+#include "SuplaWebPageRelay.h"
 
 void addButton(uint8_t gpio, uint8_t event) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();

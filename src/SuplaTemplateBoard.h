@@ -1,7 +1,10 @@
 #ifndef SuplaTemplateBoard_h
 #define SuplaTemplateBoard_h
 
-#include "SuplaDeviceGUI.h"
+#include <pgmspace.h>
+#include "SuplaWebPageRelay.h"
+#include "GUIGenericCommon.h"
+#include <supla/events.h>
 
 void addButton(uint8_t gpio, uint8_t event = Supla::Event::ON_RELEASE);
 void addRelay(uint8_t gpio, uint8_t level = HIGH);

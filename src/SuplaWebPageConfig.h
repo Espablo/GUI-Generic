@@ -1,6 +1,7 @@
 #ifndef SuplaWebPageConfig_h
 #define SuplaWebPageConfig_h
 
+#include "SuplaWebServer.h"
 #include "SuplaDeviceGUI.h"
 
 #define  PATH_CONFIG            "config"

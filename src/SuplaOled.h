@@ -1,7 +1,7 @@
 #ifndef SuplaOled_H
 #define SuplaOled_H
 
-#include "SuplaDeviceGUI.h"
+#include "GUI-Generic_Config.h"
 
 #ifdef SUPLA_OLED
 #include <pgmspace.h>

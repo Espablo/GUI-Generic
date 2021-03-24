@@ -1,5 +1,11 @@
 #include "SuplaWebPageSensor.h"
 
+#include "SuplaDeviceGUI.h"
+#include "SuplaWebServer.h"
+#include "SuplaCommonPROGMEM.h"
+#include "GUIGenericCommon.h"
+#include "Markup.h"
+
 SuplaWebPageSensor *WebPageSensor = new SuplaWebPageSensor();
 
 SuplaWebPageSensor::SuplaWebPageSensor() {

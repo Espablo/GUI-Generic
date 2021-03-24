@@ -1,4 +1,10 @@
 #include "SuplaWebPageRelay.h"
+#include "SuplaDeviceGUI.h"
+#include "SuplaWebServer.h"
+#include "SuplaCommonPROGMEM.h"
+#include "GUIGenericCommon.h"
+#include "Markup.h"
+#include "SuplaWebPageSensor.h"
 
 SuplaWebPageRelay *WebPageRelay = new SuplaWebPageRelay();
 

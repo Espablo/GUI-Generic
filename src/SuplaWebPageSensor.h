@@ -2,6 +2,8 @@
 #define SuplaWebPageSensor_h
 
 #include "SuplaDeviceGUI.h"
+#include "SuplaWebServer.h"
+#include "SuplaWebPageControl.h"
 
 #define PATH_MULTI_DS                 "multids"
 #define PATH_SAVE_MULTI_DS            "savemultids"

@@ -16,6 +16,14 @@
 
 #include "SuplaWebServer.h"
 #include "SuplaDeviceGUI.h"
+#include "SuplaWebPageConfig.h"
+#include "SuplaWebPageControl.h"
+#include "SuplaWebPageRelay.h"
+#include "SuplaWebPageSensor.h"
+#include "SuplaCommonPROGMEM.h"
+#include "SuplaTemplateBoard.h"
+#include "Markup.h"
+#include "SuplaWebPageOther.h"
 
 String webContentBuffer;
 
