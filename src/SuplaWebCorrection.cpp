@@ -61,23 +61,23 @@ void handleCorrectionSave() {
     return;
   }
 
-  double correction;
+  String correction;
 
   for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
     if (element->getChannel()) {
       auto channel = element->getChannel();
 
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
-        correction = WebServer->httpServer->arg(getInput(INPUT_CORRECTION_TEMP, channel->getChannelNumber())).toDouble();
-        ConfigManager->setElement(KEY_CORRECTION_TEMP, channel->getChannelNumber(), correction);
+        correction = WebServer->httpServer->arg(getInput(INPUT_CORRECTION_TEMP, channel->getChannelNumber()));
+        ConfigManager->setElement(KEY_CORRECTION_TEMP, channel->getChannelNumber(), correction.c_str());
       }
 
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
-        correction = WebServer->httpServer->arg(getInput(INPUT_CORRECTION_TEMP, channel->getChannelNumber())).toDouble();
-        ConfigManager->setElement(KEY_CORRECTION_TEMP, channel->getChannelNumber(), correction);
+        correction = WebServer->httpServer->arg(getInput(INPUT_CORRECTION_TEMP, channel->getChannelNumber()));
+        ConfigManager->setElement(KEY_CORRECTION_TEMP, channel->getChannelNumber(), correction.c_str());
 
-        correction = WebServer->httpServer->arg(getInput(INPUT_CORRECTION_HUMIDITY, channel->getChannelNumber())).toDouble();
-        ConfigManager->setElement(KEY_CORRECTION_HUMIDITY, channel->getChannelNumber(), correction);
+        correction = WebServer->httpServer->arg(getInput(INPUT_CORRECTION_HUMIDITY, channel->getChannelNumber()));
+        ConfigManager->setElement(KEY_CORRECTION_HUMIDITY, channel->getChannelNumber(), correction.c_str());
       }
     }
   }
