@@ -224,7 +224,7 @@ void SuplaWebServer::deviceSettings(int save) {
   addButton(webContentBuffer, S_SENSORS_SPI, PATH_SPI);
 #endif
 
-#ifdef SUPLA_OTHER
+#ifdef GUI_OTHER
   addButton(webContentBuffer, S_SENSORS_OTHER, PATH_OTHER);
 #endif
 

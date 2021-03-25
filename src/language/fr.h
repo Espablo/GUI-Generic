@@ -150,6 +150,8 @@
 #define S_VOLTAGE_V               "Tension [V]"
 #define S_DEPTH_CM                "Profondeur [cm]"
 #define S_SENSOR_READING_DISTANCE "distance de lecture du capteur"
+#define S_ELECTRIC_PHASE          "1/3phases"
+#define S_OPTIONAL                "(Optionnel)"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "État d'activation du relais"
