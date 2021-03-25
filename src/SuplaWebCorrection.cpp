@@ -24,7 +24,7 @@ void handleCorrection(int save) {
 
   addForm(webContentBuffer, F("post"), PATH_CORRECTION);
 
-  addFormHeader(webContentBuffer, F("Korekta dla kanałów"));
+  addFormHeader(webContentBuffer, S_CORRECTION_FOR_CH);
   for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
     if (element->getChannel()) {
       auto channel = element->getChannel();
@@ -33,17 +33,17 @@ void handleCorrection(int save) {
         correction = ConfigManager->get(KEY_CORRECTION_TEMP)->getElement(channel->getChannelNumber());
 
         addNumberBox(webContentBuffer, getInput(INPUT_CORRECTION_TEMP, channel->getChannelNumber()),
-                     String(F("Temperatura: ")) + channel->getChannelNumber(), F("wartość korekty"), false, correction);
+                     String(S_CH_CORRECTION) + S_SPACE + channel->getChannelNumber(), emptyString, false, correction);
       }
 
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
         correction = ConfigManager->get(KEY_CORRECTION_TEMP)->getElement(channel->getChannelNumber()).toDouble();
         addNumberBox(webContentBuffer, getInput(INPUT_CORRECTION_TEMP, channel->getChannelNumber()),
-                     String(F("Temperatura: ")) + channel->getChannelNumber(), F("wartość korekty"), false, correction);
+                     String(S_CH_CORRECTION) + S_SPACE + channel->getChannelNumber() + S_SPACE + ("[1]"), emptyString, false, correction);
 
         correction = ConfigManager->get(KEY_CORRECTION_HUMIDITY)->getElement(channel->getChannelNumber()).toDouble();
         addNumberBox(webContentBuffer, getInput(INPUT_CORRECTION_HUMIDITY, channel->getChannelNumber()),
-                     String(F("Wilgotność: ")) + channel->getChannelNumber(), F("wartość korekty"), false, correction);
+                     String(S_CH_CORRECTION) + S_SPACE + channel->getChannelNumber() + S_SPACE + F("[2]"), emptyString, false, correction);
       }
     }
   }
@@ -84,7 +84,8 @@ void handleCorrectionSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      handleCorrection(1);
+      handleCorrection(5);
+      ConfigESP->rebootESP();
       break;
     case E_CONFIG_FILE_OPEN:
       handleCorrection(2);

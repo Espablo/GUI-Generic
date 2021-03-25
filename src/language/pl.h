@@ -180,4 +180,8 @@
 #define S_AP_NAME            "Nazwa AP"
 #define S_ERROR              "błąd"
 
+//#### SuplaWebCorrection.cpp ####
+#define S_CORRECTION_FOR_CH "Korekta dla kanałów"
+#define S_CH_CORRECTION     "Korekta kanału:"
+
 #endif  // _LANGUAGE_PL_S_H_
