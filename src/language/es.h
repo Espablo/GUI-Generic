@@ -119,6 +119,7 @@
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "FINALES DE CARRERA"
+#define S_CORRECTION     "CORRECCIÓN PARA SENSORES"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"

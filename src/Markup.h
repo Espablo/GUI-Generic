@@ -89,6 +89,8 @@ String getURL(const String& url);
 
 String getURL(const String& url, uint8_t nr);
 
+String getInput(const String& input, uint8_t nr);
+
 String getParameterRequest(const String& url, const String& param, const String& value = emptyString);
 
 const String SuplaJavaScript(const String& java_return = PATH_START);

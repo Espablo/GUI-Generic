@@ -117,6 +117,7 @@
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "KRAŃCÓWKI"
+#define S_CORRECTION     "KOREKTA DLA SENSORÓW"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"

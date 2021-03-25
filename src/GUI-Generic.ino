@@ -268,6 +268,8 @@ void setup() {
 #endif
 
   Supla::GUI::begin();
+
+  Supla::GUI::addCorrectionSensor();
 }
 
 void loop() {

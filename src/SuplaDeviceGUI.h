@@ -34,6 +34,8 @@
 #include "SuplaWebPageDownload.h"
 #include "SuplaWebPageUpload.h"
 #include "SuplaWebPageTools.h"
+#include "SuplaWebCorrection.h"
+
 #include "GUIGenericCommon.h"
 #include "SuplaCommonPROGMEM.h"
 #include "Markup.h"
@@ -97,6 +99,8 @@
 #include <supla/sensor/NTC_10K.h>
 #endif
 
+#include <supla/correction.h>
+
 namespace Supla {
 namespace GUI {
 
@@ -139,6 +143,7 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 
 void addConditionsTurnON(int function, Supla::ChannelElement *client);
 void addConditionsTurnOFF(int function, Supla::ChannelElement *client);
+void addCorrectionSensor();
 
 };  // namespace GUI
 };  // namespace Supla
