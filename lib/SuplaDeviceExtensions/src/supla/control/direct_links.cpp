@@ -23,7 +23,19 @@ namespace Control {
 
 DirectLinks::DirectLinks(const char *host, bool isSecured)
     : _lastStateON(false), _lastStateOFF(false) {
-  setHost(host);
+  String server(host);
+  auto npos = server.indexOf(":");
+
+  String suplaServer = server.substring(0, npos);
+  setHost(suplaServer.c_str());
+
+  if (npos > 0) {
+    String portServer = server.substring(npos + 1);
+    setPort(portServer.toInt());
+  } else {
+    setPort(isSecured ? 443 : 80);
+  }
+
   enableSSL(isSecured);
 }
 
@@ -35,6 +47,10 @@ void DirectLinks::setHost(const char *host) {
   if (host) {
     strncpy(_host, host, MAX_HOST_SIZE);
   }
+}
+
+void DirectLinks::setPort(uint16_t port) {
+  _port = port;
 }
 
 void DirectLinks::setUrlON(const char *url) {
@@ -54,7 +70,7 @@ void DirectLinks::enableSSL(bool isSecured) {
 }
 
 bool DirectLinks::openConnection() {
-  if (!client->connect(_host, _isSecured ? 443 : 80)) {
+  if (!client->connect(_host, _port)) {
     return false;
   }
   return true;

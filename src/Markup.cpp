@@ -171,7 +171,8 @@ void addLinkBox(String& html, const String& name, const String& url) {
   WebServer->sendHeader();
 }
 
-void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, bool underline, const String& url) {
+void addListGPIOBox(
+    String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, bool underline, const String& url, bool no_number) {
   uint8_t gpio;
 
   if (nr == 0)
@@ -195,7 +196,7 @@ void addListGPIOBox(String& html, const String& input_id, const String& name, ui
     }
     html += F("'>");
 
-    if (nr > 0) {
+    if (nr > 0 && !no_number) {
       html += nr;
       html += F(".");
     }
@@ -207,7 +208,7 @@ void addListGPIOBox(String& html, const String& input_id, const String& name, ui
     WebServer->sendHeader();
   }
   else {
-    if (nr > 0) {
+    if (nr > 0 && !no_number) {
       html += nr;
       html += F(".");
     }

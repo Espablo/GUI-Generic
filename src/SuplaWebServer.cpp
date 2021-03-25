@@ -224,7 +224,7 @@ void SuplaWebServer::deviceSettings(int save) {
   addButton(webContentBuffer, S_SENSORS_SPI, PATH_SPI);
 #endif
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PUSHOVER) || defined(SUPLA_RGBW)
+#ifdef GUI_OTHER
   addButton(webContentBuffer, S_SENSORS_OTHER, PATH_OTHER);
 #endif
 

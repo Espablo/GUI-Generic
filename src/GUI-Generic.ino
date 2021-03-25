@@ -15,6 +15,11 @@
 */
 #include "SuplaDeviceGUI.h"
 
+#ifdef SUPLA_PZEM_V_3
+#include <supla/sensor/PzemV3.h>
+#include <supla/sensor/three_phase_PzemV3.h>
+#endif
+
 #define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 #define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
 DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
@@ -141,6 +146,20 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_NTC_10K
+  if (ConfigESP->getGpio(FUNCTION_NTC_10K) != OFF_GPIO) {
+    auto ntc10k = new Supla::Sensor::NTC10K(A0);
+    Supla::GUI::addConditionsTurnON(SENSOR_NTC_10K, ntc10k);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_NTC_10K, ntc10k);
+  }
+#endif
+
+#ifdef SUPLA_RGBW
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
+    Supla::GUI::addRGBWLeds(nr);
+  }
+#endif
+
 #ifdef SUPLA_IMPULSE_COUNTER
   if (ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() > 0) {
     for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
@@ -157,6 +176,25 @@ void setup() {
 #ifdef SUPLA_HLW8012
   if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
     Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
+  }
+#endif
+
+#ifdef SUPLA_PZEM_V_3
+  int8_t pinRX1 = ConfigESP->getGpio(1, FUNCTION_PZEM_RX);
+  int8_t pinTX1 = ConfigESP->getGpio(1, FUNCTION_PZEM_TX);
+  int8_t pinRX2 = ConfigESP->getGpio(2, FUNCTION_PZEM_RX);
+  int8_t pinTX2 = ConfigESP->getGpio(2, FUNCTION_PZEM_TX);
+  int8_t pinRX3 = ConfigESP->getGpio(3, FUNCTION_PZEM_RX);
+  int8_t pinTX3 = ConfigESP->getGpio(3, FUNCTION_PZEM_TX);
+
+  if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinRX2 != OFF_GPIO && pinTX2 != OFF_GPIO && pinRX3 != OFF_GPIO && pinTX3 != OFF_GPIO) {
+    new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX2, pinTX2, pinRX3, pinTX3);
+  }
+  else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinTX2 != OFF_GPIO && pinTX3 != OFF_GPIO) {
+    new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX1, pinTX2, pinRX1, pinTX3);
+  }
+  else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO) {
+    new Supla::Sensor::PZEMv3(pinRX1, pinTX1);
   }
 #endif
 
@@ -227,17 +265,6 @@ void setup() {
     }
 #endif
   }
-#endif
-
-#ifdef SUPLA_RGBW
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
-    Supla::GUI::addRGBWLeds(nr);
-  }
-#endif
-
-#ifdef SUPLA_NTC_10K
-  if (ConfigESP->getGpio(FUNCTION_NTC_10K) != OFF_GPIO)
-    new Supla::Sensor::NTC10K(A0);
 #endif
 
   Supla::GUI::begin();
