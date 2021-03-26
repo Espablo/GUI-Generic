@@ -21,6 +21,7 @@
 #include <srpc_mock.h>
 #include <supla/events.h>
 #include <supla/actions.h>
+#include <supla/correction.h>
 
 
 class ActionHandlerMock : public Supla::ActionHandler {
@@ -131,7 +132,7 @@ TEST(ChannelTests, SetNewValue) {
   EXPECT_TRUE(channel.isUpdateReady());
   channel.clearUpdateReady();
   
-  _supla_int64_t value64 = 124346;
+  unsigned _supla_int64_t value64 = 124346;
   ASSERT_EQ(sizeof(value64), 8);
   channel.setNewValue(value64);
   EXPECT_TRUE(0 == memcmp(Supla::Channel::reg_dev.channels[number].value, &value64, sizeof(value64)));
@@ -255,7 +256,7 @@ TEST(ChannelTests, ChannelValueGetters) {
   channel.setNewValue(valueInt);
   EXPECT_EQ(channel.getValueInt32(), valueInt);
 
-  _supla_int64_t valueInt64 = 202013012021000;
+  unsigned _supla_int64_t valueInt64 = 202013012021000;
   channel.setNewValue(valueInt64);
   EXPECT_EQ(channel.getValueInt64(), valueInt64);
 
@@ -380,7 +381,7 @@ TEST(ChannelTests, Int64ChannelWithLocalActions) {
 
   ch1.addAction(action1, mock1, Supla::ON_CHANGE);
 
-  _supla_int64_t value = 15;
+  unsigned _supla_int64_t value = 15;
 
   ch1.setNewValue(value);
   ch1.setNewValue(value);
@@ -480,4 +481,33 @@ TEST(ChannelTests, RgbwChannelWithLocalActions) {
   ch1.setNewValue(10, 21, 30, 90, 80);
   ch1.setNewValue(10, 20, 30, 90, 81);
   ch1.setNewValue(10, 20, 30, 90, 81);
+}
+
+TEST(ChannelTests, SetNewValueWithCorrection) {
+  Supla::Channel channel1;
+  Supla::Channel channel2;
+
+  EXPECT_DOUBLE_EQ(channel1.getValueDouble(), 0);
+
+  double pi = 3.1415;
+  channel1.setNewValue(pi);
+  EXPECT_DOUBLE_EQ(channel1.getValueDouble(), pi);
+
+  Supla::Correction::add(0, 3);
+  EXPECT_DOUBLE_EQ(channel1.getValueDouble(), pi);
+
+  // Now correction should be applied
+  channel1.setNewValue(pi);
+  EXPECT_DOUBLE_EQ(channel1.getValueDouble(), pi + 3);
+
+
+  double e = 2.71828;
+
+  Supla::Correction::add(1, 2, true);
+
+  channel2.setNewValue(pi, e);
+  EXPECT_NEAR(channel2.getValueDoubleFirst(), pi, 0.001);
+  EXPECT_NEAR(channel2.getValueDoubleSecond(), e + 2, 0.001); // value with correction
+
+  Supla::Correction::clear(); // cleanup
 }

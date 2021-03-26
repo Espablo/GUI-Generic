@@ -77,6 +77,7 @@ void SuplaWebServer::createWebServer() {
   createWebUpload();
   createWebTools();
   createWebPageOther();
+  createWebCorrection();
 }
 
 void SuplaWebServer::handle() {
@@ -227,6 +228,8 @@ void SuplaWebServer::deviceSettings(int save) {
 #ifdef GUI_OTHER
   addButton(webContentBuffer, S_SENSORS_OTHER, PATH_OTHER);
 #endif
+
+addButton(webContentBuffer, S_CORRECTION, PATH_CORRECTION);
 
 #ifdef SUPLA_CONFIG
   addButton(webContentBuffer, S_LED_BUTTON_CFG, PATH_CONFIG);

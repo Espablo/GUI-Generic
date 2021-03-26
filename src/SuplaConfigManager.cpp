@@ -197,6 +197,10 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_DIRECT_LINKS_ON, "", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
   this->addKey(KEY_DIRECT_LINKS_OFF, "", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
 
+  this->addKey(KEY_CORRECTION_TEMP, "", 6 * MAX_DS18B20);
+  this->addKey(KEY_CORRECTION_HUMIDITY, "", 6 * MAX_DS18B20);
+
+
   this->load();
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
@@ -381,8 +385,8 @@ void SuplaConfigManager::showAllValue() {
 }
 
 void SuplaConfigManager::deleteAllValues() {
-	deleteWifiSuplaAdminValues();
-	deleteDeviceValues();
+  deleteWifiSuplaAdminValues();
+  deleteDeviceValues();
 }
 
 void SuplaConfigManager::deleteDeviceValues() {

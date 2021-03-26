@@ -405,6 +405,29 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client) {
 #endif
 }
 
+void addCorrectionSensor() {
+  double correction;
+
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
+        correction = ConfigManager->get(KEY_CORRECTION_TEMP)->getElement(channel->getChannelNumber()).toDouble();
+        Supla::Correction::add(channel->getChannelNumber(), correction);
+      }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
+        correction = ConfigManager->get(KEY_CORRECTION_TEMP)->getElement(channel->getChannelNumber()).toDouble();
+        Supla::Correction::add(channel->getChannelNumber(), correction);
+
+        correction = ConfigManager->get(KEY_CORRECTION_HUMIDITY)->getElement(channel->getChannelNumber()).toDouble();
+        Supla::Correction::add(channel->getChannelNumber(), correction, true);
+      }
+    }
+  }
+}
+
 }  // namespace GUI
 }  // namespace Supla
 

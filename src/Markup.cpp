@@ -402,6 +402,10 @@ String getURL(const String& url, uint8_t nr) {
   return String(PATH_START) + url + nr;
 }
 
+String getInput(const String& input, uint8_t nr) {
+  return input + nr;
+}
+
 String getParameterRequest(const String& url, const String& param, const String& value) {
   return url + String(F("?")) + param + String(F("=")) + value;
 }

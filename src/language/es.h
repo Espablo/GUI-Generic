@@ -119,6 +119,7 @@
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "FINALES DE CARRERA"
+#define S_CORRECTION     "CORRECCIÓN PARA SENSORES"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"
@@ -180,5 +181,9 @@
 #define S_CONFIGURATION_MODE "Modo de configuración"
 #define S_AP_NAME            "Nombre de AP"
 #define S_ERROR              "error"
+
+//#### SuplaWebCorrection.cpp ####
+#define S_CORRECTION_FOR_CH "Corrección de canales"
+#define S_CH_CORRECTION     "Corrección de canal:"
 
 #endif  // _LANGUAGE_ES_S_H_
