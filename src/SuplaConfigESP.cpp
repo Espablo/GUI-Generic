@@ -19,7 +19,6 @@
 #include "SuplaConfigESP.h"
 #include "SuplaDeviceGUI.h"
 #include "GUIGenericCommon.h"
-#include "SuplaWebPageSensor.h"
 
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;

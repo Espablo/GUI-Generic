@@ -9,6 +9,9 @@ void addFormEnd(String& html);
 void addFormHeader(String& html, const String& name = "\n");
 void addFormHeaderEnd(String& html);
 
+void addBr(String& html);
+void addLabel(String& html, const String& name);
+
 void addTextBox(String& html,
                 const String& input_id,
                 const String& name,
@@ -18,7 +21,8 @@ void addTextBox(String& html,
                 int maxlength,
                 bool required,
                 bool readonly = false,
-                bool password = false);
+                bool password = false,
+                bool underline = true);
 
 void addTextBox(String& html,
                 const String& input_id,

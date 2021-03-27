@@ -22,6 +22,16 @@ void addFormHeaderEnd(String& html) {
   html += F("</div>");
 }
 
+void addBr(String& html) {
+  html += F("<br>");
+}
+
+void addLabel(String& html, const String& name) {
+  html += F("<i><label>");
+  html += name;
+  html += F("</label></i>");
+}
+
 void addTextBox(String& html,
                 const String& input_id,
                 const String& name,
@@ -31,8 +41,16 @@ void addTextBox(String& html,
                 int maxlength,
                 bool required,
                 bool readonly,
-                bool password) {
-  html += F("<i><input name='");
+                bool password,
+                bool underline) {
+  if (underline) {
+    html += F("<i>");
+  }
+  else {
+    html += F("<i style='border-bottom:none !important;'>");
+  }
+
+  html += F("<input name='");
   html += input_id;
   if (password) {
     if (ConfigESP->configModeESP != NORMAL_MODE) {

@@ -19,7 +19,7 @@
 #include "SuplaWebPageConfig.h"
 #include "SuplaWebPageControl.h"
 #include "SuplaWebPageRelay.h"
-#include "SuplaWebPageSensor.h"
+#include "SuplaWebPageSensors.h"
 #include "SuplaCommonPROGMEM.h"
 #include "SuplaTemplateBoard.h"
 #include "Markup.h"
@@ -66,7 +66,6 @@ void SuplaWebServer::createWebServer() {
 #if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
   WebPageControl->createWebPageControl();
 #endif
-  WebPageSensor->createWebPageSensor();
 #ifdef SUPLA_CONFIG
   WebPageConfig->createWebPageConfig();
 #endif
@@ -77,7 +76,8 @@ void SuplaWebServer::createWebServer() {
   createWebUpload();
   createWebTools();
   createWebPageOther();
-  createWebCorrection();
+  
+  createWebPageSensors();
 }
 
 void SuplaWebServer::handle() {
@@ -217,11 +217,11 @@ void SuplaWebServer::deviceSettings(int save) {
   addButton(webContentBuffer, S_SENSORS_1WIRE, PATH_1WIRE);
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
+#ifdef GUI_SENSOR_I2C
   addButton(webContentBuffer, S_SENSORS_I2C, PATH_I2C);
 #endif
 
-#if defined(SUPLA_MAX6675)
+#ifdef GUI_SENSOR_SPI
   addButton(webContentBuffer, S_SENSORS_SPI, PATH_SPI);
 #endif
 
@@ -229,7 +229,7 @@ void SuplaWebServer::deviceSettings(int save) {
   addButton(webContentBuffer, S_SENSORS_OTHER, PATH_OTHER);
 #endif
 
-addButton(webContentBuffer, S_CORRECTION, PATH_CORRECTION);
+  addButton(webContentBuffer, S_CORRECTION, PATH_CORRECTION);
 
 #ifdef SUPLA_CONFIG
   addButton(webContentBuffer, S_LED_BUTTON_CFG, PATH_CONFIG);
