@@ -1,5 +1,4 @@
 #include "SuplaWebPageSensorSpi.h"
-#include "SuplaDeviceGUI.h"
 
 #ifdef GUI_SENSOR_SPI
 void createWebPageSensorSpi() {

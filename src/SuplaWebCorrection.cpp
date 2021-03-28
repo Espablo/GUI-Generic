@@ -1,5 +1,4 @@
 #include "SuplaWebCorrection.h"
-#include "SuplaDeviceGUI.h"
 
 void createWebCorrection() {
   WebServer->httpServer->on(getURL(PATH_CORRECTION), [&]() {

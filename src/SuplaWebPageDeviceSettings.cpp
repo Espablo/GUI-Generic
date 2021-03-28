@@ -1,5 +1,4 @@
 #include "SuplaWebPageDeviceSettings.h"
-#include "SuplaDeviceGUI.h"
 
 void createWebPageDeviceSettings() {
   WebServer->httpServer->on(getURL(PATH_DEVICE_SETTINGS), [&]() {

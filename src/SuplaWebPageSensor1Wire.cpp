@@ -1,5 +1,4 @@
 #include "SuplaWebPageSensor1Wire.h"
-#include "SuplaDeviceGUI.h"
 
 #ifdef GUI_SENSOR_1WIRE
 void createWebPageSensor1Wire() {

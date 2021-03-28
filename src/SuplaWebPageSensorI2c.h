@@ -2,6 +2,8 @@
 #ifndef SuplaWebPageSensorI2c_h
 #define SuplaWebPageSensorI2c_h
 
+#include "SuplaDeviceGUI.h"
+
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
 #define GUI_SENSOR_I2C
 #endif

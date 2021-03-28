@@ -1,5 +1,4 @@
 #include "SuplaWebPageControl.h"
-#include "SuplaDeviceGUI.h"
 
 SuplaWebPageControl *WebPageControl = new SuplaWebPageControl();
 

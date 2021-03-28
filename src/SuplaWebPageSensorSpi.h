@@ -2,6 +2,8 @@
 #ifndef SuplaWebPageSensorSpi_h
 #define SuplaWebPageSensorSpi_h
 
+#include "SuplaDeviceGUI.h"
+
 #if defined(SUPLA_MAX6675)
 #define GUI_SENSOR_SPI
 #endif

@@ -1,5 +1,4 @@
 #include "SuplaWebPageSensorI2c.h"
-#include "SuplaDeviceGUI.h"
 
 #ifdef GUI_SENSOR_I2C
 void createWebPageSensorI2c() {

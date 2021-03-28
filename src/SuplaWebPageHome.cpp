@@ -1,5 +1,4 @@
 #include "SuplaWebPageHome.h"
-#include "SuplaDeviceGUI.h"
 
 void createWebPageHome() {
   WebServer->httpServer->on(PATH_START, [&]() {

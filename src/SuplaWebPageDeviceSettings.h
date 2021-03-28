@@ -2,6 +2,8 @@
 #ifndef SuplaWebDeviceSettings_h
 #define SuplaWebDeviceSettings_h
 
+#include "SuplaDeviceGUI.h"
+
 #define PATH_DEVICE_SETTINGS  "devicesettings"
 #define PATH_DEFAULT_SETTINGS "defaultsettings"
 #define PATH_LOGIN_SETTINGS   "loginsettings"

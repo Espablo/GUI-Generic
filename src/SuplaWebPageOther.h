@@ -2,7 +2,6 @@
 #define SuplaWebPageOther_h
 
 #include "SuplaDeviceGUI.h"
-#include "SuplaWebServer.h"
 
 #if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || \
     defined(SUPLA_PUSHOVER) || defined(SUPLA_NTC_10K)

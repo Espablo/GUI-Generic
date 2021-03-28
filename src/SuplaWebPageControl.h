@@ -1,6 +1,8 @@
 #ifndef SuplaWebPageControl_h
 #define SuplaWebPageControl_h
 
+#include "SuplaDeviceGUI.h"
+
 #if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
 #define GUI_CONTROL
 #endif

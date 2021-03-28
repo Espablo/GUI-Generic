@@ -1,6 +1,8 @@
 #ifndef SuplaWebPageRelay_h
 #define SuplaWebPageRelay_h
 
+#include "SuplaDeviceGUI.h"
+
 #if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
 #define GUI_RELAY
 #endif

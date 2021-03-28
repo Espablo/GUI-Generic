@@ -2,6 +2,8 @@
 #ifndef SuplaWebPageHome_h
 #define SuplaWebPageHome_h
 
+#include "SuplaDeviceGUI.h"
+
 #define PATH_REBOT "rbt"
 
 #define INPUT_WIFI_SSID     "sid"

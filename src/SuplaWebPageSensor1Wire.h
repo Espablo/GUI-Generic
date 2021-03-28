@@ -2,6 +2,8 @@
 #ifndef SuplaWebPageSensor1Wire_h
 #define SuplaWebPageSensor1Wire_h
 
+#include "SuplaDeviceGUI.h"
+
 #if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
 #define GUI_SENSOR_1WIRE
 #endif

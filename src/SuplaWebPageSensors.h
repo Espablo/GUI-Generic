@@ -1,6 +1,8 @@
 #ifndef SuplaWebPageSensors_h
 #define SuplaWebPageSensors_h
 
+#include "SuplaDeviceGUI.h"
+
 enum _sensorI2C
 {
   SENSOR_I2C_BME280,

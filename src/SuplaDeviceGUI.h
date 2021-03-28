@@ -27,9 +27,9 @@
 
 #include "SuplaConfigESP.h"
 #include "SuplaConfigManager.h"
-#include "SuplaWebServer.h"
 #include "SuplaWebPageRelay.h"
 #include "SuplaWebPageControl.h"
+#include "SuplaWebServer.h"
 #include "SuplaWebPageConfig.h"
 #include "SuplaTemplateBoard.h"
 

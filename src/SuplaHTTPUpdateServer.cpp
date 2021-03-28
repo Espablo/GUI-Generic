@@ -6,11 +6,9 @@
 #include <flash_hal.h>
 #include <FS.h>
 #include "StreamString.h"
-#include "SuplaHTTPUpdateServer.h"
 
-#include "SuplaWebServer.h"
+#include "SuplaHTTPUpdateServer.h"
 #include "SuplaDeviceGUI.h"
-#include "GUIGenericCommon.h"
 
 static const char serverIndex[] PROGMEM =
     R"(<!DOCTYPE html>
