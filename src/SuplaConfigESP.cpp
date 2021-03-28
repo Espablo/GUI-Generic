@@ -552,7 +552,7 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
   }
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, false);
-    setMemory(gpio, 2);
+    setMemory(gpio, 0);
   }
 }
 
