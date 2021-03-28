@@ -1,12 +1,9 @@
 #include "SuplaWebPageControl.h"
 #include "SuplaDeviceGUI.h"
-#include "SuplaWebServer.h"
-#include "GUIGenericCommon.h"
-#include "Markup.h"
 
 SuplaWebPageControl *WebPageControl = new SuplaWebPageControl();
 
-#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
+#ifdef GUI_CONTROL
 void SuplaWebPageControl::createWebPageControl() {
 #if defined(SUPLA_BUTTON) || defined(SUPLA_MCP23017)
   WebServer->httpServer->on(getURL(PATH_CONTROL), std::bind(&SuplaWebPageControl::handleControl, this));

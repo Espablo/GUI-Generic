@@ -1,10 +1,11 @@
 #ifndef SuplaWebPageControl_h
 #define SuplaWebPageControl_h
 
-#include "SuplaWebServer.h"
-#include "SuplaDeviceGUI.h"
-
 #if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
+#define GUI_CONTROL
+#endif
+
+#ifdef GUI_CONTROL
 #define PATH_CONTROL "control"
 #define PATH_SWITCH  "switch"
 
@@ -25,7 +26,7 @@
 
 class SuplaWebPageControl {
  public:
-#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
+#ifdef GUI_CONTROL
   void createWebPageControl();
 #endif
 

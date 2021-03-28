@@ -1,16 +1,12 @@
 #include "SuplaWebPageRelay.h"
 #include "SuplaDeviceGUI.h"
-#include "SuplaWebServer.h"
-#include "SuplaCommonPROGMEM.h"
-#include "GUIGenericCommon.h"
-#include "Markup.h"
 
 SuplaWebPageRelay *WebPageRelay = new SuplaWebPageRelay();
 
 SuplaWebPageRelay::SuplaWebPageRelay() {
 }
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
+#ifdef GUI_RELAY
 void SuplaWebPageRelay::createWebPageRelay() {
   WebServer->httpServer->on(getURL(PATH_RELAY), std::bind(&SuplaWebPageRelay::handleRelay, this));
 

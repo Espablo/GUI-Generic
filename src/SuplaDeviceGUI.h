@@ -30,11 +30,17 @@
 #include "SuplaWebServer.h"
 #include "SuplaWebPageRelay.h"
 #include "SuplaWebPageControl.h"
+#include "SuplaWebPageConfig.h"
+#include "SuplaTemplateBoard.h"
+
+#include "SuplaWebPageDeviceSettings.h"
+#include "SuplaWebPageHome.h"
 
 #include "SuplaWebPageSensors.h"
 #include "SuplaWebPageSensorSpi.h"
 #include "SuplaWebPageSensorI2c.h"
 #include "SuplaWebPageSensor1Wire.h"
+#include "SuplaWebPageOther.h"
 
 #include "SuplaWebPageDownload.h"
 #include "SuplaWebPageUpload.h"

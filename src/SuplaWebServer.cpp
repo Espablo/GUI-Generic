@@ -16,14 +16,6 @@
 
 #include "SuplaWebServer.h"
 #include "SuplaDeviceGUI.h"
-#include "SuplaWebPageConfig.h"
-#include "SuplaWebPageControl.h"
-#include "SuplaWebPageRelay.h"
-#include "SuplaWebPageSensors.h"
-#include "SuplaCommonPROGMEM.h"
-#include "SuplaTemplateBoard.h"
-#include "Markup.h"
-#include "SuplaWebPageOther.h"
 
 String webContentBuffer;
 
@@ -36,7 +28,6 @@ SuplaWebServer::SuplaWebServer() {
 
 void SuplaWebServer::begin() {
   this->createWebServer();
-
   httpServer->onNotFound(std::bind(&SuplaWebServer::handleNotFound, this));
   httpServer->begin();
 }
@@ -46,24 +37,13 @@ void SuplaWebServer::iterateAlways() {
 }
 
 void SuplaWebServer::createWebServer() {
-  String path = PATH_START;
-  httpServer->on(path, HTTP_GET, std::bind(&SuplaWebServer::handle, this));
-  path = PATH_START;
-  httpServer->on(path, std::bind(&SuplaWebServer::handleSave, this));
-  path = PATH_START;
-  path += PATH_REBOT;
-  httpServer->on(path, std::bind(&SuplaWebServer::supla_webpage_reboot, this));
-  path = PATH_START;
-  path += PATH_DEVICE_SETTINGS;
-  httpServer->on(path, std::bind(&SuplaWebServer::handleDeviceSettings, this));
-  path = PATH_START;
-  path += PATH_SAVE_BOARD;
-  httpServer->on(path, std::bind(&SuplaWebServer::handleBoardSave, this));
+  createWebPageHome();
+  createWebPageDeviceSettings();
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
+#ifdef GUI_RELAY
   WebPageRelay->createWebPageRelay();
 #endif
-#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
+#ifdef GUI_CONTROL
   WebPageControl->createWebPageControl();
 #endif
 #ifdef SUPLA_CONFIG
@@ -76,197 +56,7 @@ void SuplaWebServer::createWebServer() {
   createWebUpload();
   createWebTools();
   createWebPageOther();
-  
   createWebPageSensors();
-}
-
-void SuplaWebServer::handle() {
-  if (!isLoggedIn()) {
-    return;
-  }
-  supla_webpage_start(0);
-}
-
-void SuplaWebServer::handleSave() {
-  if (!isLoggedIn()) {
-    return;
-  }
-
-  if (strcmp(httpServer->arg(PATH_REBOT).c_str(), "1") == 0) {
-    ConfigESP->rebootESP();
-    return;
-  }
-
-  ConfigManager->set(KEY_WIFI_SSID, httpServer->arg(INPUT_WIFI_SSID).c_str());
-  ConfigManager->set(KEY_WIFI_PASS, httpServer->arg(INPUT_WIFI_PASS).c_str());
-  ConfigManager->set(KEY_SUPLA_SERVER, httpServer->arg(INPUT_SERVER).c_str());
-  ConfigManager->set(KEY_SUPLA_EMAIL, httpServer->arg(INPUT_EMAIL).c_str());
-  ConfigManager->set(KEY_HOST_NAME, httpServer->arg(INPUT_HOSTNAME).c_str());
-  ConfigManager->set(KEY_LOGIN, httpServer->arg(INPUT_MODUL_LOGIN).c_str());
-  ConfigManager->set(KEY_LOGIN_PASS, httpServer->arg(INPUT_MODUL_PASS).c_str());
-
-#ifdef SUPLA_ROLLERSHUTTER
-  if (strcmp(WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, httpServer->arg(INPUT_ROLLERSHUTTER).c_str());
-  }
-#endif
-
-  switch (ConfigManager->save()) {
-    case E_CONFIG_OK:
-      //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
-      if (ConfigESP->configModeESP == NORMAL_MODE) {
-        supla_webpage_start(1);
-        ConfigESP->rebootESP();
-      }
-      else {
-        supla_webpage_start(7);
-      }
-      break;
-
-    case E_CONFIG_FILE_OPEN:
-      //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      supla_webpage_start(4);
-      break;
-  }
-}
-
-void SuplaWebServer::handleDeviceSettings() {
-  if (!isLoggedIn()) {
-    return;
-  }
-  deviceSettings(0);
-}
-
-void SuplaWebServer::supla_webpage_start(int save) {
-  WebServer->sendHeaderStart();
-
-  webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript();
-
-  addForm(webContentBuffer, F("post"));
-  addFormHeader(webContentBuffer, S_SETTING_WIFI_SSID);
-  addTextBox(webContentBuffer, INPUT_WIFI_SSID, S_WIFI_SSID, KEY_WIFI_SSID, 0, MAX_SSID, true);
-  addTextBoxPassword(webContentBuffer, INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
-  addTextBox(webContentBuffer, INPUT_HOSTNAME, S_HOST_NAME, KEY_HOST_NAME, 0, MAX_HOSTNAME, true);
-  addFormHeaderEnd(webContentBuffer);
-
-  addFormHeader(webContentBuffer, S_SETTING_SUPLA);
-  addTextBox(webContentBuffer, INPUT_SERVER, S_SUPLA_SERVER, KEY_SUPLA_SERVER, DEFAULT_SERVER, 0, MAX_SUPLA_SERVER, true);
-  addTextBox(webContentBuffer, INPUT_EMAIL, S_SUPLA_EMAIL, KEY_SUPLA_EMAIL, DEFAULT_EMAIL, 0, MAX_EMAIL, true);
-  addFormHeaderEnd(webContentBuffer);
-
-  addFormHeader(webContentBuffer, S_SETTING_ADMIN);
-  addTextBox(webContentBuffer, INPUT_MODUL_LOGIN, S_LOGIN, KEY_LOGIN, 0, MAX_MLOGIN, true);
-  addTextBoxPassword(webContentBuffer, INPUT_MODUL_PASS, S_LOGIN_PASS, KEY_LOGIN_PASS, MIN_PASSWORD, MAX_MPASSWORD, true);
-  addFormHeaderEnd(webContentBuffer);
-
-#ifdef SUPLA_ROLLERSHUTTER
-  uint8_t maxrollershutter = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
-  if (maxrollershutter >= 2) {
-    addFormHeader(webContentBuffer, S_ROLLERSHUTTERS);
-    addNumberBox(webContentBuffer, INPUT_ROLLERSHUTTER, S_QUANTITY, KEY_MAX_ROLLERSHUTTER, (maxrollershutter / 2));
-    addFormHeaderEnd(webContentBuffer);
-  }
-#endif
-
-  addButtonSubmit(webContentBuffer, S_SAVE);
-  addFormEnd(webContentBuffer);
-
-  addButton(webContentBuffer, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
-  addButton(webContentBuffer, S_TOOLS, PATH_TOOLS);
-
-  WebServer->sendHeaderEnd();
-}
-
-void SuplaWebServer::supla_webpage_reboot() {
-  if (!isLoggedIn()) {
-    return;
-  }
-  supla_webpage_start(2);
-  ConfigESP->rebootESP();
-}
-
-void SuplaWebServer::deviceSettings(int save) {
-  WebServer->sendHeaderStart();
-
-  webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_DEVICE_SETTINGS);
-
-  addForm(webContentBuffer, F("post"), PATH_SAVE_BOARD);
-  addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
-  uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
-  addListBox(webContentBuffer, INPUT_BOARD, S_TYPE, BOARD_P, MAX_MODULE, selected);
-  addFormHeaderEnd(webContentBuffer);
-  addButtonSubmit(webContentBuffer, S_SAVE);
-  addFormEnd(webContentBuffer);
-
-  addFormHeader(webContentBuffer, S_DEVICE_SETTINGS);
-#if defined(SUPLA_RELAY)
-  addButton(webContentBuffer, S_RELAYS, PATH_RELAY);
-#endif
-
-#ifdef SUPLA_BUTTON
-  addButton(webContentBuffer, S_BUTTONS, PATH_CONTROL);
-#endif
-
-#ifdef SUPLA_LIMIT_SWITCH
-  addButton(webContentBuffer, S_LIMIT_SWITCHES, PATH_SWITCH);
-#endif
-
-#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
-  addButton(webContentBuffer, S_SENSORS_1WIRE, PATH_1WIRE);
-#endif
-
-#ifdef GUI_SENSOR_I2C
-  addButton(webContentBuffer, S_SENSORS_I2C, PATH_I2C);
-#endif
-
-#ifdef GUI_SENSOR_SPI
-  addButton(webContentBuffer, S_SENSORS_SPI, PATH_SPI);
-#endif
-
-#ifdef GUI_OTHER
-  addButton(webContentBuffer, S_SENSORS_OTHER, PATH_OTHER);
-#endif
-
-  addButton(webContentBuffer, S_CORRECTION, PATH_CORRECTION);
-
-#ifdef SUPLA_CONFIG
-  addButton(webContentBuffer, S_LED_BUTTON_CFG, PATH_CONFIG);
-#endif
-  addFormHeaderEnd(webContentBuffer);
-  addButton(webContentBuffer, S_RETURN, "");
-
-  WebServer->sendHeaderEnd();
-}
-
-void SuplaWebServer::handleBoardSave() {
-  if (!isLoggedIn()) {
-    return;
-  }
-  String input = INPUT_BOARD;
-
-  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    ConfigManager->set(KEY_BOARD, httpServer->arg(input).c_str());
-
-    int nr;
-    uint8_t key;
-    for (nr = 0; nr <= 17; nr++) {
-      key = KEY_GPIO + nr;
-      ConfigManager->set(key, "");
-    }
-
-    chooseTemplateBoard(WebServer->httpServer->arg(input).toInt());
-  }
-
-  switch (ConfigManager->save()) {
-    case E_CONFIG_OK:
-      deviceSettings(1);
-      break;
-    case E_CONFIG_FILE_OPEN:
-      deviceSettings(2);
-      break;
-  }
 }
 
 void SuplaWebServer::sendHeaderStart() {
@@ -338,9 +128,9 @@ void SuplaWebServer::sendContent() {
 }
 
 void SuplaWebServer::handleNotFound() {
-  httpServer->sendHeader("Location", "/", true);
-
-  supla_webpage_reboot();
+  httpServer->sendHeader("Location", PATH_START, true);
+  handlePageHome(2);
+  ConfigESP->rebootESP();
 }
 
 bool SuplaWebServer::isLoggedIn() {
