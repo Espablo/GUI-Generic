@@ -100,7 +100,7 @@ void addRelayButton(uint8_t nr) {
       auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
 
       button->addAction(ConfigESP->getAction(pinButton), *relay[size], ConfigESP->getEvent(pinButton));
-      button->setSwNoiseFilterDelay(50);
+      button->setSwNoiseFilterDelay(100);
     }
 
     if (pinLED != OFF_GPIO) {
