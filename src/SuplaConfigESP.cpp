@@ -546,7 +546,7 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
 
   if (function == FUNCTION_BUTTON) {
     setPullUp(gpio, true);
-    setInversed(gpio, false);
+    setInversed(gpio, true);
     setAction(gpio, Supla::Action::TOGGLE);
     setEvent(gpio, Supla::Event::ON_CHANGE);
   }
