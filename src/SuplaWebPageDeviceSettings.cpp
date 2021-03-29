@@ -19,7 +19,7 @@ void handleDeviceSettings(int save) {
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_DEVICE_SETTINGS);
 
-  addForm(webContentBuffer, F("post"), PATH_SAVE_BOARD);
+  addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
   addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
   uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
   addListBox(webContentBuffer, INPUT_BOARD, S_TYPE, BOARD_P, MAX_MODULE, selected);
