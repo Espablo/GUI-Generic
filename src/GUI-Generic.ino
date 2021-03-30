@@ -42,7 +42,7 @@ void setup() {
 
     for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
       gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-      mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), ConfigESP->getInversed(gpio));
+      mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), !ConfigESP->getInversed(gpio));
     }
   }
 #endif
