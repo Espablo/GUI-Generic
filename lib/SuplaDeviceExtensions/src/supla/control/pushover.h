@@ -27,7 +27,7 @@
 #define MAX_TOKEN_SIZE   32
 #define MAX_USER_SIZE    32
 #define MAX_TITLE_SIZE   32
-#define MAX_MESSAGE_SIZE 64
+#define MAX_MESSAGE_SIZE 16
 
 namespace Supla {
 enum Pushover { SEND_NOTIF_1 };

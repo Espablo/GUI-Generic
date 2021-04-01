@@ -87,8 +87,6 @@ void addButton(String& html, const String& name, const String& url);
 
 void addButtonSubmit(String& html, const String& name);
 
-void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function, uint8_t nr);
-
 String getURL(const String& url);
 
 String getURL(const String& url, uint8_t nr);

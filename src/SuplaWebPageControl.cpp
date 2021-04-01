@@ -182,7 +182,6 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
     nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
   }
 
-  Serial.println(nr_button);
   WebServer->sendHeaderStart();
 
   if (!nr_button.isEmpty()) {
@@ -315,15 +314,22 @@ void SuplaWebPageControl::handleButtonSetMCP23017() {
 
 void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   uint8_t gpio, selected;
+  String nr_button;
+
+  nr_button.reserve(2);
 
   WebServer->sendHeaderStart();
+  nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
-  gpio = ConfigESP->getGpio(1, FUNCTION_BUTTON);
+  if (!nr_button.isEmpty())
+    gpio = nr_button.toInt() - 1;
+  else
+    gpio = ConfigESP->getGpioMCP23017(1, FUNCTION_BUTTON);
 
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_BUTTON_SET_MCP23017);
+  webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_BUTTON_SET_MCP23017, ARG_PARM_NUMBER, nr_button));
 
-  addForm(webContentBuffer, F("post"), PATH_BUTTON_SET_MCP23017);
+  addForm(webContentBuffer, F("post"), getParameterRequest(PATH_BUTTON_SET_MCP23017, ARG_PARM_NUMBER, nr_button));
   addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);
 
   selected = ConfigESP->getPullUp(gpio);
@@ -351,10 +357,11 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
     return;
   }
 
-  String input;
-  uint8_t key, gpio, pullup, inversed, event, action, address;
+  String input, nr_button;
+  uint8_t key, gpio, pullup, inversed, event, action;
 
   input.reserve(10);
+  nr_button.reserve(2);
 
   input = INPUT_BUTTON_EVENT;
   event = WebServer->httpServer->arg(input).toInt();
@@ -378,12 +385,24 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   input = INPUT_BUTTON_ACTION;
   action = WebServer->httpServer->arg(input).toInt();
 
-  for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
-    key = KEY_GPIO + gpio;
+  nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
+
+  if (!nr_button.isEmpty()) {
+    key = KEY_GPIO + nr_button.toInt() - 1;
+
     ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);
     ConfigManager->setElement(key, INVERSED_BUTTON, inversed);
     ConfigManager->setElement(key, EVENT_BUTTON, event);
     ConfigManager->setElement(key, ACTION_BUTTON, action);
+  }
+  else {
+    for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
+      key = KEY_GPIO + gpio;
+      ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);
+      ConfigManager->setElement(key, INVERSED_BUTTON, inversed);
+      ConfigManager->setElement(key, EVENT_BUTTON, event);
+      ConfigManager->setElement(key, ACTION_BUTTON, action);
+    }
   }
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
