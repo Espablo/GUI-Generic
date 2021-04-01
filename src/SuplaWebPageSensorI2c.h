@@ -4,19 +4,23 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017) || defined(SUPLA_BMP280)
 #define GUI_SENSOR_I2C
 #endif
 
 #ifdef GUI_SENSOR_I2C
 
-#ifdef SUPLA_BME280
+#if defined(SUPLA_BME280) || defined(SUPLA_BMP280)
 enum _bmeAdress
 {
-  BME280_ADDRESS_0X76 = 1,
-  BME280_ADDRESS_0X77,
-  BME280_ADDRESS_0X76_AND_0X77
+  BMx280_ADDRESS_0X76 = 1,
+  BMx280_ADDRESS_0X77,
+  BMx280_ADDRESS_0X76_AND_0X77
 };
+
+#define INPUT_BME280          "bme280"
+#define INPUT_BMP280          "bmp280"
+#define INPUT_ALTITUDE_BMx280 "abme280"
 #endif
 
 #ifdef SUPLA_SHT3x
@@ -32,8 +36,6 @@ enum _shtAdress
 
 #define INPUT_SDA_GPIO        "sdag"
 #define INPUT_SCL_GPIO        "sclg"
-#define INPUT_BME280          "bme280"
-#define INPUT_ALTITUDE_BME280 "abme280"
 #define INPUT_SHT3x           "sht30"
 #define INPUT_SI7021          "si7021"
 #define INPUT_OLED            "oled"

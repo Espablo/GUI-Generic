@@ -219,19 +219,39 @@ void setup() {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt()) {
       Supla::Sensor::BME280 *bme280;
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt()) {
-        case BME280_ADDRESS_0X76:
-          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        case BMx280_ADDRESS_0X76:
+          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           break;
-        case BME280_ADDRESS_0X77:
-          bme280 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        case BMx280_ADDRESS_0X77:
+          bme280 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           break;
-        case BME280_ADDRESS_0X76_AND_0X77:
-          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-          new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        case BMx280_ADDRESS_0X76_AND_0X77:
+          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           break;
       }
       Supla::GUI::addConditionsTurnON(SENSOR_BME280, bme280);
       Supla::GUI::addConditionsTurnOFF(SENSOR_BME280, bme280);
+    }
+#endif
+
+#ifdef SUPLA_BMP280
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt()) {
+      Supla::Sensor::BMP280 *bmp280;
+      switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt()) {
+        case BMx280_ADDRESS_0X76:
+          bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          break;
+        case BMx280_ADDRESS_0X77:
+          bmp280 = new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          break;
+        case BMx280_ADDRESS_0X76_AND_0X77:
+          bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          break;
+      }
+      Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280);
     }
 #endif
 

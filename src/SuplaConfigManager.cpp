@@ -162,7 +162,7 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_MAX_DHT11, "1", 2);
   this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
   this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
-  this->addKey(KEY_ALTITUDE_BME280, "0", 4);
+  this->addKey(KEY_ALTITUDE_BMX280, "0", 4);
   this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
   this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
   this->addKey(KEY_ACTIVE_SENSOR, "", 16);
@@ -199,7 +199,6 @@ SuplaConfigManager::SuplaConfigManager() {
 
   this->addKey(KEY_CORRECTION_TEMP, "", 6 * MAX_DS18B20);
   this->addKey(KEY_CORRECTION_HUMIDITY, "", 6 * MAX_DS18B20);
-
 
   this->load();
   //  switch (this->load()) {

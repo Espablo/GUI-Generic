@@ -32,6 +32,7 @@
 
 // ##### i2c #####
 #define SUPLA_BME280
+#define SUPLA_BMP280
 #define SUPLA_SHT3x
 #define SUPLA_SI7021
 #define SUPLA_OLED

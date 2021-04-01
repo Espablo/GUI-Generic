@@ -67,11 +67,11 @@
 #ifdef SUPLA_BME280
 #include <supla/sensor/BME280.h>
 #endif
+#ifdef SUPLA_BMP280
+#include <supla/sensor/BMP280.h>
+#endif
 #ifdef SUPLA_SI7021_SONOFF
 #include <supla/sensor/Si7021_sonoff.h>
-#endif
-#ifdef SUPLA_BME280
-#include <supla/sensor/BME280.h>
 #endif
 #ifdef SUPLA_SHT3x
 #include <supla/sensor/SHT3x.h>

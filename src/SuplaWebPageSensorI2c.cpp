@@ -31,8 +31,18 @@ void handleSensorI2c(int save) {
 #ifdef SUPLA_BME280
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt();
     addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_BME280, S_ADDRESS_BMPE280, BME280_P, 4, selected);
-    addNumberBox(webContentBuffer, INPUT_ALTITUDE_BME280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BME280, 1500);
+    addListBox(webContentBuffer, INPUT_BME280, S_ADDRESS_BMxE280, BMx280_P, 4, selected);
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt())
+      addNumberBox(webContentBuffer, INPUT_ALTITUDE_BMx280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BMX280, 1500);
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
+#ifdef SUPLA_BMP280
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt();
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_BMP280, S_ADDRESS_BMxE280, BMx280_P, 4, selected);
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt())
+      addNumberBox(webContentBuffer, INPUT_ALTITUDE_BMx280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BMX280, 1500);
     addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -111,9 +121,23 @@ void handleSensorI2cSave() {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_BME280, WebServer->httpServer->arg(input).toInt());
   }
 
-  key = KEY_ALTITUDE_BME280;
-  input = INPUT_ALTITUDE_BME280;
-  if (strcmp(WebServer->httpServer->arg(INPUT_ALTITUDE_BME280).c_str(), "") != 0) {
+  key = KEY_ALTITUDE_BMX280;
+  input = INPUT_ALTITUDE_BMx280;
+  if (strcmp(WebServer->httpServer->arg(INPUT_ALTITUDE_BMx280).c_str(), "") != 0) {
+    ConfigManager->set(key, WebServer->httpServer->arg(input).c_str());
+  }
+#endif
+
+#ifdef SUPLA_BMP280
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_BMP280;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_BMP280, WebServer->httpServer->arg(input).toInt());
+  }
+
+  key = KEY_ALTITUDE_BMX280;
+  input = INPUT_ALTITUDE_BMx280;
+  if (strcmp(WebServer->httpServer->arg(INPUT_ALTITUDE_BMx280).c_str(), "") != 0) {
     ConfigManager->set(key, WebServer->httpServer->arg(input).c_str());
   }
 #endif
