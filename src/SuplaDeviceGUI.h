@@ -29,6 +29,7 @@
 #include "SuplaConfigManager.h"
 #include "SuplaWebPageRelay.h"
 #include "SuplaWebPageControl.h"
+#include "SuplaWebPageLimitSwitch.h"
 #include "SuplaWebServer.h"
 #include "SuplaWebPageConfig.h"
 #include "SuplaTemplateBoard.h"

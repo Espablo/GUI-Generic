@@ -46,6 +46,9 @@ void SuplaWebServer::createWebServer() {
 #ifdef GUI_CONTROL
   WebPageControl->createWebPageControl();
 #endif
+#ifdef GUI_SENSOR_SPI
+  createWebPageLimitSwitch();
+#endif
 #ifdef SUPLA_CONFIG
   WebPageConfig->createWebPageConfig();
 #endif

@@ -9,7 +9,6 @@
 
 #ifdef GUI_CONTROL
 #define PATH_CONTROL "control"
-#define PATH_SWITCH  "switch"
 
 #define PATH_BUTTON_SET          "setbutton"
 #define PATH_BUTTON_SET_MCP23017 "setbuttonmcp"
@@ -21,9 +20,7 @@
 #define INPUT_BUTTON_INVERSED   "ibi"
 #define INPUT_BUTTON_EVENT      "icl"
 #define INPUT_BUTTON_ACTION     "bta"
-#define INPUT_LIMIT_SWITCH_GPIO "lsg"
 #define INPUT_MAX_BUTTON        "mbt"
-#define INPUT_MAX_LIMIT_SWITCH  "mls"
 #endif
 
 class SuplaWebPageControl {
@@ -36,12 +33,6 @@ class SuplaWebPageControl {
   void handleControl();
   void handleControlSave();
   void supla_webpage_control(int save);
-#endif
-
-#ifdef SUPLA_LIMIT_SWITCH
-  void handleLimitSwitch();
-  void handleLimitSwitchSave();
-  void suplaWebpageLimitSwitch(int save);
 #endif
 
 #if defined(SUPLA_BUTTON)
