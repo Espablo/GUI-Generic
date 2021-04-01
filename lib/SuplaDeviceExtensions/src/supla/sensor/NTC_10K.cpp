@@ -21,7 +21,7 @@ NTC10K::NTC10K(int8_t pin, uint32_t rs, double vcc)
     : pin(pin), rs(rs), vcc(vcc) {
 }
 
-double NTC10K::getTemp() {
+double NTC10K::getValue() {
   int val = 0;
   for (int i = 0; i < 10; i++) {
     val += analogRead(pin);
@@ -35,20 +35,13 @@ double NTC10K::getTemp() {
   R_NTC = log(R_NTC);
   double t = 1 / (0.001129148 +
                   (0.000234125 + (0.0000000876741 * R_NTC * R_NTC)) * R_NTC);
-                  
-  t = t - 276.15; //convert Kelvin to Celcius
+
+  t = t - 276.15;  // convert Kelvin to Celcius
   return t;
 }
 
-void NTC10K::iterateAlways() {
-  if (lastReadTime + 10000 < millis()) {
-    lastReadTime = millis();
-    channel.setNewValue(getTemp());
-  }
-}
-
 void NTC10K::onInit() {
-  channel.setNewValue(getTemp());
+  channel.setNewValue(getValue());
 }
 }  // namespace Sensor
 }  // namespace Supla
