@@ -13,7 +13,7 @@ class BMP280 : public ThermPressMeter {
   BMP280(int8_t address = 0x77, float altitude = NAN) : address(address), sensorStatus(false), altitude(altitude) {
   }
 
-  double getTemp() {
+  double getValue() {
     float value = TEMPERATURE_NOT_AVAILABLE;
     bool retryDone = false;
     do {
@@ -52,7 +52,7 @@ class BMP280 : public ThermPressMeter {
     sensorStatus = bmp.begin(address);
 
     pressureChannel.setNewValue(getPressure());
-    channel.setNewValue(getTemp());
+    channel.setNewValue(getValue());
   }
 
   void setAltitude(float newAltitude) {
