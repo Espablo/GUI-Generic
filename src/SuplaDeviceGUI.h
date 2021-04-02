@@ -27,9 +27,21 @@
 
 #include "SuplaConfigESP.h"
 #include "SuplaConfigManager.h"
-#include "SuplaWebServer.h"
 #include "SuplaWebPageRelay.h"
-#include "SuplaWebPageSensor.h"
+#include "SuplaWebPageControl.h"
+#include "SuplaWebPageLimitSwitch.h"
+#include "SuplaWebServer.h"
+#include "SuplaWebPageConfig.h"
+#include "SuplaTemplateBoard.h"
+
+#include "SuplaWebPageDeviceSettings.h"
+#include "SuplaWebPageHome.h"
+
+#include "SuplaWebPageSensors.h"
+#include "SuplaWebPageSensorSpi.h"
+#include "SuplaWebPageSensorI2c.h"
+#include "SuplaWebPageSensor1Wire.h"
+#include "SuplaWebPageOther.h"
 
 #include "SuplaWebPageDownload.h"
 #include "SuplaWebPageUpload.h"
@@ -55,11 +67,11 @@
 #ifdef SUPLA_BME280
 #include <supla/sensor/BME280.h>
 #endif
+#ifdef SUPLA_BMP280
+#include <supla/sensor/BMP280.h>
+#endif
 #ifdef SUPLA_SI7021_SONOFF
 #include <supla/sensor/Si7021_sonoff.h>
-#endif
-#ifdef SUPLA_BME280
-#include <supla/sensor/BME280.h>
 #endif
 #ifdef SUPLA_SHT3x
 #include <supla/sensor/SHT3x.h>

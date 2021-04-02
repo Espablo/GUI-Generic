@@ -68,7 +68,7 @@ const char HTTP_FAVICON[] PROGMEM =
     "MbMTyEu3lphtAJtpvl4BTLPNWgVSySA+y28aWIDdyGtVBgNH5psshVawwHGGO+arLr7MYFoJjZr/"
     "zBPYj85a1sC4ulwAIsIdcJzh2qt1WReYBWBR48gxgd1ziQIi6hTYEsxR45pZwRU9+oWgNAB1F3c/H6bYqgAAAABJRU5ErkJggg==' type='image/x-png' />\n";
 
-const char HTTP_RBT[] PROGMEM = "<form method='post' action='rbt'><button type='submit'>Restart</button></form>";
+const char HTTP_RBT[] PROGMEM = "<a href='/?rbt=1'><button>Restart</button></a>";
 
 const char ICON_EDIT[] PROGMEM =
     "<img "
@@ -150,7 +150,7 @@ const char ADR76[] PROGMEM = "0x76";
 const char ADR77[] PROGMEM = "0x77";
 const char ADR76_ADR77[] PROGMEM = "0x76 & 0x77";
 
-const char* const BME280_P[] PROGMEM = {OFF, ADR76, ADR77, ADR76_ADR77};
+const char* const BMx280_P[] PROGMEM = {OFF, ADR76, ADR77, ADR76_ADR77};
 const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
 
 const char ADR20[] PROGMEM = "0x20";
@@ -253,6 +253,10 @@ enum sensorList
   ,
   SENSOR_NTC_10K
 #endif
+#ifdef SUPLA_BMP280
+  ,
+  SENSOR_BMP280
+#endif
   ,
   COUNT_SENSOR_LIST
 };
@@ -286,6 +290,9 @@ const char NAME_MAX6675[] PROGMEM = S_MAX6675;
 #endif
 #ifdef SUPLA_NTC_10K
 const char NAME_NTC_10K[] PROGMEM = S_NTC_10K;
+#endif
+#ifdef SUPLA_BMP280
+const char NAME_BMP280[] PROGMEM = S_BMP280;
 #endif
 
 const char* const SENSOR_LIST_P[] PROGMEM = {OFF
@@ -328,6 +335,10 @@ const char* const SENSOR_LIST_P[] PROGMEM = {OFF
 #ifdef SUPLA_NTC_10K
                                              ,
                                              NAME_NTC_10K
+#endif
+#ifdef SUPLA_BMP280
+                                             ,
+                                             NAME_BMP280
 #endif
 };
 

@@ -2,6 +2,8 @@
 #ifndef SuplaWebCorrection_h
 #define SuplaWebCorrection_h
 
+#include "SuplaDeviceGUI.h"
+
 #define PATH_CORRECTION           "correction"
 #define INPUT_CORRECTION_TEMP     "ict"
 #define INPUT_CORRECTION_HUMIDITY "ich"

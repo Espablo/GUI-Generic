@@ -1,12 +1,14 @@
 #ifndef SuplaWebPageControl_h
 #define SuplaWebPageControl_h
 
-#include "SuplaWebServer.h"
 #include "SuplaDeviceGUI.h"
 
 #if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
+#define GUI_CONTROL
+#endif
+
+#ifdef GUI_CONTROL
 #define PATH_CONTROL "control"
-#define PATH_SWITCH  "switch"
 
 #define PATH_BUTTON_SET          "setbutton"
 #define PATH_BUTTON_SET_MCP23017 "setbuttonmcp"
@@ -18,14 +20,12 @@
 #define INPUT_BUTTON_INVERSED   "ibi"
 #define INPUT_BUTTON_EVENT      "icl"
 #define INPUT_BUTTON_ACTION     "bta"
-#define INPUT_LIMIT_SWITCH_GPIO "lsg"
 #define INPUT_MAX_BUTTON        "mbt"
-#define INPUT_MAX_LIMIT_SWITCH  "mls"
 #endif
 
 class SuplaWebPageControl {
  public:
-#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
+#ifdef GUI_CONTROL
   void createWebPageControl();
 #endif
 
@@ -33,12 +33,6 @@ class SuplaWebPageControl {
   void handleControl();
   void handleControlSave();
   void supla_webpage_control(int save);
-#endif
-
-#ifdef SUPLA_LIMIT_SWITCH
-  void handleLimitSwitch();
-  void handleLimitSwitchSave();
-  void suplaWebpageLimitSwitch(int save);
 #endif
 
 #if defined(SUPLA_BUTTON)

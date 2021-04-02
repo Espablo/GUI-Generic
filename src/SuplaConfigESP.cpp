@@ -19,7 +19,6 @@
 #include "SuplaConfigESP.h"
 #include "SuplaDeviceGUI.h"
 #include "GUIGenericCommon.h"
-#include "SuplaWebPageSensor.h"
 
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
@@ -547,13 +546,13 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
 
   if (function == FUNCTION_BUTTON) {
     setPullUp(gpio, true);
-    setInversed(gpio, true);
+    setInversed(gpio, false);
     setAction(gpio, Supla::Action::TOGGLE);
     setEvent(gpio, Supla::Event::ON_CHANGE);
   }
   if (function == FUNCTION_RELAY) {
-    setLevel(gpio, false);
-    setMemory(gpio, 2);
+    setLevel(gpio, true);
+    setMemory(gpio, 0);
   }
 }
 

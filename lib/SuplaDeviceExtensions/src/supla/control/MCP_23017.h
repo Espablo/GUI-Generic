@@ -60,6 +60,7 @@ class MCP_23017 : public Supla::Io {
   void customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val);
   int customDigitalRead(int channelNumber, uint8_t pin);
   void customPinMode(int channelNumber, uint8_t pin, uint8_t mode);
+  void setPullup(uint8_t pin, bool pullup, bool inverse);
 
   MCP23017 *mcp1;
   MCP23017 *mcp2;

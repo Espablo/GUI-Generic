@@ -1,12 +1,16 @@
 #ifndef SuplaWebPageRelay_h
 #define SuplaWebPageRelay_h
 
-#include "SuplaWebServer.h"
+#include "SuplaDeviceGUI.h"
+
+#if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
+#define GUI_RELAY
+#endif
 
 #define INPUT_ADRESS_MCP23017 "iam"
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
-#define PATH_RELAY              "relay"
+#ifdef GUI_RELAY
+#define PATH_RELAY "relay"
 
 #define PATH_RELAY_SET          "setrelay"
 #define PATH_RELAY_SET_MCP23017 "setrelaymcp"
@@ -53,7 +57,7 @@ class SuplaWebPageRelay {
  public:
   SuplaWebPageRelay();
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
+#ifdef GUI_RELAY
   void createWebPageRelay();
   void handleRelay();
   void handleRelaySave();

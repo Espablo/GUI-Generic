@@ -2,6 +2,8 @@
 #ifndef SuplaWebPageUpload_h
 #define SuplaWebPageUpload_h
 
+#include "SuplaDeviceGUI.h"
+
 #define PATH_UPLOAD "upload"
 
 void createWebUpload();

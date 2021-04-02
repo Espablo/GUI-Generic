@@ -34,6 +34,19 @@ void setup() {
 
   uint8_t nr, gpio;
 
+#ifdef SUPLA_MCP23017
+  if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO &&
+      ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
+    Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
+    Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
+
+    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+      gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+      mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), !ConfigESP->getInversed(gpio));
+    }
+  }
+#endif
+
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
@@ -198,8 +211,7 @@ void setup() {
   }
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || \
-    defined(SUPLA_BH1750) || defined(SUPLA_MAX44009) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
+#ifdef GUI_SENSOR_I2C
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
 
@@ -207,19 +219,39 @@ void setup() {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt()) {
       Supla::Sensor::BME280 *bme280;
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt()) {
-        case BME280_ADDRESS_0X76:
-          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        case BMx280_ADDRESS_0X76:
+          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           break;
-        case BME280_ADDRESS_0X77:
-          bme280 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        case BMx280_ADDRESS_0X77:
+          bme280 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           break;
-        case BME280_ADDRESS_0X76_AND_0X77:
-          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-          new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        case BMx280_ADDRESS_0X76_AND_0X77:
+          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           break;
       }
       Supla::GUI::addConditionsTurnON(SENSOR_BME280, bme280);
       Supla::GUI::addConditionsTurnOFF(SENSOR_BME280, bme280);
+    }
+#endif
+
+#ifdef SUPLA_BMP280
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt()) {
+      Supla::Sensor::BMP280 *bmp280;
+      switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt()) {
+        case BMx280_ADDRESS_0X76:
+          bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          break;
+        case BMx280_ADDRESS_0X77:
+          bmp280 = new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          break;
+        case BMx280_ADDRESS_0X76_AND_0X77:
+          bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          break;
+      }
+      Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280);
     }
 #endif
 
@@ -249,12 +281,6 @@ void setup() {
       auto si7021 = new Supla::Sensor::Si7021();
       Supla::GUI::addConditionsTurnON(SENSOR_SI7021, si7021);
       Supla::GUI::addConditionsTurnOFF(SENSOR_SI7021, si7021);
-    }
-#endif
-
-#ifdef SUPLA_MCP23017
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-      new Supla::Control::MCP_23017();
     }
 #endif
 

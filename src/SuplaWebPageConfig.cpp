@@ -1,9 +1,4 @@
 #include "SuplaWebPageConfig.h"
-#include "SuplaDeviceGUI.h"
-#include "SuplaWebServer.h"
-#include "SuplaCommonPROGMEM.h"
-#include "GUIGenericCommon.h"
-#include "Markup.h"
 
 SuplaWebPageConfig *WebPageConfig = new SuplaWebPageConfig();
 

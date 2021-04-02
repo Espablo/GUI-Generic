@@ -15,7 +15,7 @@
 */
 #include "SuplaDeviceGUI.h"
 #include "SuplaConfigManager.h"
-#include "SuplaGuiWiFi.h"
+#include <supla/network/SuplaGuiWiFi.h>
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
 #define TIME_SAVE_PERIOD_SEK                 30   // the time is given in seconds
@@ -100,7 +100,7 @@ void addRelayButton(uint8_t nr) {
       auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
 
       button->addAction(ConfigESP->getAction(pinButton), *relay[size], ConfigESP->getEvent(pinButton));
-      button->setSwNoiseFilterDelay(50);
+      button->setSwNoiseFilterDelay(100);
     }
 
     if (pinLED != OFF_GPIO) {
@@ -351,6 +351,8 @@ void addConditionsTurnON(int function, Supla::ChannelElement *client) {
         strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0) {
       double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
 
+      client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
+
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
         case HEATING:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold));
@@ -382,6 +384,8 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client) {
     if (ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt() == function &&
         strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0) {
       double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
+
+      client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
         case HEATING:
