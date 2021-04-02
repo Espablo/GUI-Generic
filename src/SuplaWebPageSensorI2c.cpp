@@ -31,7 +31,7 @@ void handleSensorI2c(int save) {
 #ifdef SUPLA_BME280
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt();
     addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_BME280, S_ADDRESS_BMxE280, BMx280_P, 4, selected);
+    addListBox(webContentBuffer, INPUT_BME280, String(S_ADDRESS) + S_SPACE + S_BME280, BMx280_P, 4, selected);
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt())
       addNumberBox(webContentBuffer, INPUT_ALTITUDE_BMx280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BMX280, 1500);
     addFormHeaderEnd(webContentBuffer);
@@ -40,7 +40,7 @@ void handleSensorI2c(int save) {
 #ifdef SUPLA_BMP280
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt();
     addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_BMP280, S_ADDRESS_BMxE280, BMx280_P, 4, selected);
+    addListBox(webContentBuffer, INPUT_BMP280, String(S_ADDRESS) + S_SPACE + S_BMP280, BMx280_P, 4, selected);
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt())
       addNumberBox(webContentBuffer, INPUT_ALTITUDE_BMx280, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_BMX280, 1500);
     addFormHeaderEnd(webContentBuffer);
