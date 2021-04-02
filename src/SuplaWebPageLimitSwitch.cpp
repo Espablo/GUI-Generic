@@ -1,6 +1,6 @@
 #include "SuplaWebPageLimitSwitch.h"
 
-#ifdef GUI_SENSOR_SPI
+#ifdef SUPLA_LIMIT_SWITCH
 void createWebPageLimitSwitch() {
   WebServer->httpServer->on(getURL(PATH_SWITCH), [&]() {
     if (!WebServer->isLoggedIn()) {
