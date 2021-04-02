@@ -133,7 +133,7 @@
 #define S_OLED_BUTTON                      "Bouton OLED"
 #define S_SCREEN                           "Écran"
 #define S_BACKLIGHT_S                      "Rétroéclairage [s]"
-#define S_ADDRESS_BMxE280                  "Adresse BME280"
+#define S_ADDRESS                          "Adresse"
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Produire GUID & AUTHKEY"

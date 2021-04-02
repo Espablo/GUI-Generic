@@ -40,7 +40,7 @@ void handleDeviceSettings(int save) {
   addButton(webContentBuffer, S_LIMIT_SWITCHES, PATH_SWITCH);
 #endif
 
-#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF)
+#ifdef GUI_SENSOR_1WIRE
   addButton(webContentBuffer, S_SENSORS_1WIRE, PATH_1WIRE);
 #endif
 
