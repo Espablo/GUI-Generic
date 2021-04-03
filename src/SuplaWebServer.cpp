@@ -41,16 +41,16 @@ void SuplaWebServer::createWebServer() {
   createWebPageDeviceSettings();
 
 #ifdef GUI_RELAY
-  WebPageRelay->createWebPageRelay();
+  createWebPageRelay();
 #endif
 #ifdef GUI_CONTROL
-  WebPageControl->createWebPageControl();
+  createWebPageControl();
 #endif
 #ifdef SUPLA_LIMIT_SWITCH
   createWebPageLimitSwitch();
 #endif
 #ifdef SUPLA_CONFIG
-  WebPageConfig->createWebPageConfig();
+  createWebPageConfig();
 #endif
 #ifdef SUPLA_OTA
   httpUpdater->setup(httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());

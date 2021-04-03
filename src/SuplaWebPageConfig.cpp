@@ -1,34 +1,22 @@
 #include "SuplaWebPageConfig.h"
 
-SuplaWebPageConfig *WebPageConfig = new SuplaWebPageConfig();
+#ifdef SUPLA_CONFIG
+void createWebPageConfig() {
+    WebServer->httpServer->on(getURL(PATH_CONFIG), [&]() {
+    if (!WebServer->isLoggedIn()) {
+      return;
+    }
 
-SuplaWebPageConfig::SuplaWebPageConfig() {
+    if (WebServer->httpServer->method() == HTTP_GET)
+      handleConfig();
+    else
+      handleConfigSave();
+  });
 }
 
-void SuplaWebPageConfig::createWebPageConfig() {
-  String path;
-  path = PATH_START;
-  path += PATH_CONFIG;
-  WebServer->httpServer->on(path, std::bind(&SuplaWebPageConfig::handleConfig, this));
-  path = PATH_START;
-  path += PATH_SAVE_CONFIG;
-  WebServer->httpServer->on(path, std::bind(&SuplaWebPageConfig::handleConfigSave, this));
-}
-
-void SuplaWebPageConfig::handleConfig() {
-  if (!WebServer->isLoggedIn()) {
-    return;
-  }
-  supla_webpage_config(0);
-}
-
-void SuplaWebPageConfig::handleConfigSave() {
-  if (!WebServer->isLoggedIn()) {
-    return;
-  }
-
+void handleConfigSave() {
   if (!WebServer->saveGPIO(INPUT_CFG_LED_GPIO, FUNCTION_CFG_LED)) {
-    supla_webpage_config(6);
+    handleConfig(6);
     return;
   }
 
@@ -37,7 +25,7 @@ void SuplaWebPageConfig::handleConfigSave() {
   ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer->arg(input).toInt());
 
   if (!WebServer->saveGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON)) {
-    supla_webpage_config(6);
+    handleConfig(6);
     return;
   }
 
@@ -47,24 +35,22 @@ void SuplaWebPageConfig::handleConfigSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      //      Serial.println(F("E_CONFIG_OK: Config save"));
-      supla_webpage_config(1);
+      handleConfig(1);
       break;
     case E_CONFIG_FILE_OPEN:
-      //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      supla_webpage_config(2);
+      handleConfig(2);
       break;
   }
 }
 
-void SuplaWebPageConfig::supla_webpage_config(int save) {
+void handleConfig(int save) {
   uint8_t selected, suported;
 
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_CONFIG);
 
-  addForm(webContentBuffer, F("post"), PATH_SAVE_CONFIG);
+  addForm(webContentBuffer, F("post"), PATH_CONFIG);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_CONFIG);
   addListGPIOBox(webContentBuffer, INPUT_CFG_LED_GPIO, F("LED"), FUNCTION_CFG_LED);
   selected = ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED));
@@ -82,3 +68,4 @@ void SuplaWebPageConfig::supla_webpage_config(int save) {
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
   WebServer->sendHeaderEnd();
 }
+#endif

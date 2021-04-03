@@ -3,23 +3,17 @@
 
 #include "SuplaDeviceGUI.h"
 
-#define  PATH_CONFIG            "config"
-#define  PATH_SAVE_CONFIG       "saveconfig"
-#define  INPUT_CFG_LED_GPIO     "cfgl"
-#define  INPUT_CFG_BTN_GPIO     "cfgb"
-#define  INPUT_CFG_LED_LEVEL    "icll"
-#define  INPUT_CFG_MODE         "cfgm"
+#ifdef SUPLA_CONFIG
+#define PATH_CONFIG "config"
 
-class SuplaWebPageConfig {
- public:
-  SuplaWebPageConfig();
-  void createWebPageConfig();
-  void handleConfig();
-  void handleConfigSave();
+#define INPUT_CFG_LED_GPIO  "cfgl"
+#define INPUT_CFG_BTN_GPIO  "cfgb"
+#define INPUT_CFG_LED_LEVEL "icll"
+#define INPUT_CFG_MODE      "cfgm"
 
- private:
-  void supla_webpage_config(int save);
-};
+void createWebPageConfig();
+void handleConfig(int save = 0);
+void handleConfigSave();
+#endif
 
-extern SuplaWebPageConfig *WebPageConfig;
 #endif  // SuplaWebPageConfig_h

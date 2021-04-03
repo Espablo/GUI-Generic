@@ -1,55 +1,57 @@
 #include "SuplaWebPageControl.h"
 
-SuplaWebPageControl *WebPageControl = new SuplaWebPageControl();
+#ifdef GUI_CONTROL
+void createWebPageControl() {
+  WebServer->httpServer->on(getURL(PATH_CONTROL), [&]() {
+    if (!WebServer->isLoggedIn()) {
+      return;
+    }
+
+    if (WebServer->httpServer->method() == HTTP_GET)
+      handleRelay();
+    else
+      handleRelaySave();
+  });
+
+  WebServer->httpServer->on(getURL(PATH_BUTTON_SET), [&]() {
+    if (!WebServer->isLoggedIn()) {
+      return;
+    }
+
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+#ifdef SUPLA_MCP23017
+      if (WebServer->httpServer->method() == HTTP_GET)
+        handleButtonSetMCP23017();
+      else
+        handleButtonSaveSetMCP23017();
+#endif
+    }
+    else {
+#ifdef SUPLA_RELAY
+      if (WebServer->httpServer->method() == HTTP_GET)
+        handleButtonSet();
+      else
+        handleButtonSaveSet();
+#endif
+    }
+  });
+}
+#endif
 
 #ifdef GUI_CONTROL
-void SuplaWebPageControl::createWebPageControl() {
-#if defined(SUPLA_BUTTON) || defined(SUPLA_MCP23017)
-  WebServer->httpServer->on(getURL(PATH_CONTROL), std::bind(&SuplaWebPageControl::handleControl, this));
-#endif
-
-  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
-#ifdef SUPLA_MCP23017
-    WebServer->httpServer->on(getURL(PATH_BUTTON_SET_MCP23017), std::bind(&SuplaWebPageControl::handleButtonSetMCP23017, this));
-#endif
-  }
-  else {
-#if defined(SUPLA_BUTTON)
-    WebServer->httpServer->on(getURL(PATH_BUTTON_SET), std::bind(&SuplaWebPageControl::handleButtonSet, this));
-#endif
-  }
-}
-#endif
-
-#if defined(SUPLA_BUTTON) || defined(SUPLA_MCP23017)
-void SuplaWebPageControl::handleControl() {
-  if (!WebServer->isLoggedIn()) {
-    return;
-  }
-
-  if (WebServer->httpServer->method() == HTTP_GET)
-    supla_webpage_control(0);
-  else
-    handleControlSave();
-}
-
-void SuplaWebPageControl::handleControlSave() {
-  if (!WebServer->isLoggedIn()) {
-    return;
-  }
-
+void handleControlSave() {
   uint8_t nr;
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
       if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
-        supla_webpage_control(6);
+        handleControl(6);
         return;
       }
     }
     else {
       if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
-        supla_webpage_control(6);
+        handleControl(6);
         return;
       }
     }
@@ -61,19 +63,18 @@ void SuplaWebPageControl::handleControlSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      supla_webpage_control(1);
+      handleControl(1);
       break;
     case E_CONFIG_FILE_OPEN:
-      supla_webpage_control(2);
+      handleControl(2);
       break;
   }
 }
 
-void SuplaWebPageControl::supla_webpage_control(int save) {
+void handleControl(int save) {
   uint8_t nr, countFreeGpio;
 
   WebServer->sendHeaderStart();
-
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_CONTROL);
   addForm(webContentBuffer, F("post"), PATH_CONTROL);
@@ -91,7 +92,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
-      addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, nr, PATH_BUTTON_SET_MCP23017);
+      addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, nr, PATH_BUTTON_SET);
     }
     else {
       addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER), FUNCTION_BUTTON, nr);
@@ -108,21 +109,7 @@ void SuplaWebPageControl::supla_webpage_control(int save) {
 #endif
 
 #if defined(SUPLA_BUTTON)
-void SuplaWebPageControl::handleButtonSet() {
-  if (!WebServer->isLoggedIn()) {
-    return;
-  }
-  if (WebServer->httpServer->method() == HTTP_GET)
-    supla_webpage_button_set(0);
-  else
-    handleButtonSaveSet();
-}
-
-void SuplaWebPageControl::handleButtonSaveSet() {
-  if (!WebServer->isLoggedIn()) {
-    return;
-  }
-
+void handleButtonSaveSet() {
   String input, nr_button;
   uint8_t key, gpio;
 
@@ -159,24 +146,19 @@ void SuplaWebPageControl::handleButtonSaveSet() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      supla_webpage_button_set(1, nr_button.toInt());
+      handleButtonSet(1);
       break;
     case E_CONFIG_FILE_OPEN:
-      supla_webpage_button_set(2, nr_button.toInt());
+      handleButtonSet(2);
       break;
   }
 }
 
-void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
+void handleButtonSet(int save) {
   uint8_t gpio, selected;
   String nr_button;
 
-  if (nr != 0) {
-    nr_button = nr;
-  }
-  else {
-    nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
-  }
+  nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   WebServer->sendHeaderStart();
 
@@ -212,17 +194,7 @@ void SuplaWebPageControl::supla_webpage_button_set(int save, int nr) {
 #endif
 
 #ifdef SUPLA_MCP23017
-void SuplaWebPageControl::handleButtonSetMCP23017() {
-  if (!WebServer->isLoggedIn()) {
-    return;
-  }
-  if (WebServer->httpServer->method() == HTTP_GET)
-    supla_webpage_button_set_MCP23017(0);
-  else
-    handleButtonSaveSetMCP23017();
-}
-
-void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
+void handleButtonSetMCP23017(int save) {
   uint8_t gpio, selected;
   String nr_button;
 
@@ -237,9 +209,9 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
     gpio = ConfigESP->getGpioMCP23017(1, FUNCTION_BUTTON);
 
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_BUTTON_SET_MCP23017, ARG_PARM_NUMBER, nr_button));
+  webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
 
-  addForm(webContentBuffer, F("post"), getParameterRequest(PATH_BUTTON_SET_MCP23017, ARG_PARM_NUMBER, nr_button));
+  addForm(webContentBuffer, F("post"), getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
   addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);
 
   selected = ConfigESP->getPullUp(gpio);
@@ -262,7 +234,7 @@ void SuplaWebPageControl::supla_webpage_button_set_MCP23017(int save) {
   WebServer->sendHeaderEnd();
 }
 
-void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
+void handleButtonSaveSetMCP23017() {
   if (!WebServer->isLoggedIn()) {
     return;
   }
@@ -316,10 +288,10 @@ void SuplaWebPageControl::handleButtonSaveSetMCP23017() {
   }
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      supla_webpage_button_set_MCP23017(1);
+      handleButtonSetMCP23017(1);
       break;
     case E_CONFIG_FILE_OPEN:
-      supla_webpage_button_set_MCP23017(2);
+      handleButtonSetMCP23017(2);
       break;
   }
 }

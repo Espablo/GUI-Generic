@@ -8,12 +8,11 @@
 #endif
 
 #define INPUT_ADRESS_MCP23017 "iam"
+#define PATH_RELAY_SET        "setrelay"
 
 #ifdef GUI_RELAY
-#define PATH_RELAY "relay"
-
-#define PATH_RELAY_SET          "setrelay"
-#define PATH_RELAY_SET_MCP23017 "setrelaymcp"
+#define PATH_RELAY     "relay"
+#define PATH_RELAY_SET "setrelay"
 
 #define INPUT_MAX_RELAY      "mrl"
 #define INPUT_RELAY_GPIO     "rlg"
@@ -27,6 +26,9 @@
 #define INPUT_CONDITIONS_MIN         "cmi"
 #define INPUT_CONDITIONS_MAX         "cma"
 
+void createWebPageRelay();
+void handleRelay(int save = 0);
+void handleRelaySave();
 #endif
 
 enum _memory_relay
@@ -43,47 +45,31 @@ enum _conditions
   CONDITIONS_DHT_HUMI,
 };
 
-#if defined(SUPLA_PUSHOVER)
+#ifdef SUPLA_RELAY
+void handleRelaySet(int save = 0);
+void handleRelaySaveSet();
+#endif
+
+#ifdef SUPLA_MCP23017
+void handleRelaySetMCP23017(int save = 0);
+void handleRelaySaveSetMCP23017();
+#endif
+
+#ifdef SUPLA_PUSHOVER
 #define INPUT_PUSHOVER         "po"
 #define INPUT_PUSHOVER_MESSAGE "pm"
 #endif
 
-#if defined(SUPLA_DIRECT_LINKS)
+#ifdef SUPLA_DIRECT_LINKS
 #define INPUT_DIRECT_LINK_ON  "dlo"
 #define INPUT_DIRECT_LINK_OFF "dlof"
 #endif
 
-class SuplaWebPageRelay {
- public:
-  SuplaWebPageRelay();
-
-#ifdef GUI_RELAY
-  void createWebPageRelay();
-  void handleRelay();
-  void handleRelaySave();
-  void supla_webpage_relay(int save);
-#endif
-
-#if defined(SUPLA_RELAY)
-  void handleRelaySet();
-  void handleRelaySaveSet();
-
-  void supla_webpage_relay_set(int save, int nr = 0);
-#endif
-
-#ifdef SUPLA_MCP23017
-  void supla_webpage_relay_set_MCP23017(int save);
-  void handleRelaySaveSetMCP23017();
-  void handleRelaySetMCP23017();
-#endif
-
-#if defined(SUPLA_LED)
+#ifdef SUPLA_LED
 #define PATH_LED        "led"
 #define PATH_SAVE_LED   "saveled"
 #define INPUT_LED       "led"
 #define INPUT_LEVEL_LED "ill"
 #endif
-};
 
-extern SuplaWebPageRelay* WebPageRelay;
 #endif  // SuplaWebPageRelay_h

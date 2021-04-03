@@ -11,42 +11,28 @@
 #define PATH_CONTROL "control"
 
 #define PATH_BUTTON_SET          "setbutton"
-#define PATH_BUTTON_SET_MCP23017 "setbuttonmcp"
 
-#define INPUT_TRIGGER           "trs"
-#define INPUT_BUTTON_SET        "bts"
-#define INPUT_BUTTON_GPIO       "btg"
-#define INPUT_BUTTON_LEVEL      "ibl"
-#define INPUT_BUTTON_INVERSED   "ibi"
-#define INPUT_BUTTON_EVENT      "icl"
-#define INPUT_BUTTON_ACTION     "bta"
-#define INPUT_MAX_BUTTON        "mbt"
-#endif
+#define INPUT_TRIGGER         "trs"
+#define INPUT_BUTTON_SET      "bts"
+#define INPUT_BUTTON_GPIO     "btg"
+#define INPUT_BUTTON_LEVEL    "ibl"
+#define INPUT_BUTTON_INVERSED "ibi"
+#define INPUT_BUTTON_EVENT    "icl"
+#define INPUT_BUTTON_ACTION   "bta"
+#define INPUT_MAX_BUTTON      "mbt"
 
-class SuplaWebPageControl {
- public:
-#ifdef GUI_CONTROL
-  void createWebPageControl();
-#endif
-
-#if defined(SUPLA_BUTTON) || defined(SUPLA_MCP23017)
-  void handleControl();
-  void handleControlSave();
-  void supla_webpage_control(int save);
+void createWebPageControl();
+void handleControl(int save = 0);
+void handleControlSave();
 #endif
 
 #if defined(SUPLA_BUTTON)
-  void handleButtonSet();
-  void handleButtonSaveSet();
-  void supla_webpage_button_set(int save, int nr = 0);
+void handleButtonSet(int save = 0);
+void handleButtonSaveSet();
 #endif
 
 #ifdef SUPLA_MCP23017
-  void handleButtonSetMCP23017();
-  void handleButtonSaveSetMCP23017();
-  void supla_webpage_button_set_MCP23017(int save);
+void handleButtonSetMCP23017(int save = 0);
+void handleButtonSaveSetMCP23017();
 #endif
-};
-
-extern SuplaWebPageControl* WebPageControl;
 #endif  // SuplaWebPageControl_h
