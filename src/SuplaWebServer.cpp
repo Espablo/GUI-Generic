@@ -214,6 +214,9 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
   gpio = ConfigESP->getGpioMCP23017(nr, function);
   _gpio = WebServer->httpServer->arg(input).toInt();
 
+  if ((nr == 1 || nr == 17) && _gpio == OFF_GPIO && _address != OFF_MCP23017)
+    return false;
+
   key = KEY_GPIO + _gpio;
   _function = ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(_address)).toInt();
   _nr = ConfigManager->get(key)->getElement(ConfigESP->getNrMCP23017(_address)).toInt();
