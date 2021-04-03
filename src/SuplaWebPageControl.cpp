@@ -8,9 +8,9 @@ void createWebPageControl() {
     }
 
     if (WebServer->httpServer->method() == HTTP_GET)
-      handleRelay();
+      handleControl();
     else
-      handleRelaySave();
+      handleControlSave();
   });
 
   WebServer->httpServer->on(getURL(PATH_BUTTON_SET), [&]() {
