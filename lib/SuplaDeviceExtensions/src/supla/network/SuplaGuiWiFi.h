@@ -8,7 +8,8 @@
 namespace Supla {
 class GUIESPWifi : public Supla::ESPWifi {
  public:
-  GUIESPWifi(const char *wifiSsid = nullptr, const char *wifiPassword = nullptr) : ESPWifi(wifiSsid, wifiPassword) {
+  GUIESPWifi(const char *wifiSsid = nullptr, const char *wifiPassword = nullptr)
+      : ESPWifi(wifiSsid, wifiPassword) {
   }
 
   int connect(const char *server, int port = -1) {
@@ -24,8 +25,7 @@ class GUIESPWifi : public Supla::ESPWifi {
 #else
           message += " - NOT SUPPORTED ON ESP32 implmentation";
 #endif
-        }
-        else {
+        } else {
           message += " without certificate matching";
 #ifdef ARDUINO_ARCH_ESP8266
           ((WiFiClientSecure *)client)->setInsecure();
@@ -33,8 +33,7 @@ class GUIESPWifi : public Supla::ESPWifi {
           message += " - NOT SUPPORTED ON ESP32 implmentation";
 #endif
         }
-      }
-      else {
+      } else {
         message = "unsecured connection";
         client = new WiFiClient();
       }
@@ -49,7 +48,11 @@ class GUIESPWifi : public Supla::ESPWifi {
       connectionPort = port;
     }
 
-    supla_log(LOG_DEBUG, "Establishing %s with: %s (port: %d)", message.c_str(), server, connectionPort);
+    supla_log(LOG_DEBUG,
+              "Establishing %s with: %s (port: %d)",
+              message.c_str(),
+              server,
+              connectionPort);
 
     bool result = client->connect(server, connectionPort);
 
@@ -68,23 +71,25 @@ class GUIESPWifi : public Supla::ESPWifi {
     if (!wifiConfigured) {
       wifiConfigured = true;
 #ifdef ARDUINO_ARCH_ESP8266
-      gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
-        (void)(event);
-        Serial.print(F("local IP: "));
-        Serial.println(WiFi.localIP());
-        Serial.print(F("subnetMask: "));
-        Serial.println(WiFi.subnetMask());
-        Serial.print(F("gatewayIP: "));
-        Serial.println(WiFi.gatewayIP());
-        long rssi = WiFi.RSSI();
-        Serial.print(F("Signal strength (RSSI): "));
-        Serial.print(rssi);
-        Serial.println(F(" dBm"));
-      });
-      disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
-        (void)(event);
-        Serial.println(F("WiFi station disconnected"));
-      });
+      gotIpEventHandler =
+          WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
+            (void)(event);
+            Serial.print(F("local IP: "));
+            Serial.println(WiFi.localIP());
+            Serial.print(F("subnetMask: "));
+            Serial.println(WiFi.subnetMask());
+            Serial.print(F("gatewayIP: "));
+            Serial.println(WiFi.gatewayIP());
+            long rssi = WiFi.RSSI();
+            Serial.print(F("Signal strength (RSSI): "));
+            Serial.print(rssi);
+            Serial.println(F(" dBm"));
+          });
+      disconnectedEventHandler = WiFi.onStationModeDisconnected(
+          [](const WiFiEventStationModeDisconnected &event) {
+            (void)(event);
+            Serial.println(F("WiFi station disconnected"));
+          });
 #else
       WiFiEventId_t event_gotIP = WiFi.onEvent(
           [](WiFiEvent_t event, WiFiEventInfo_t info) {
@@ -101,8 +106,11 @@ class GUIESPWifi : public Supla::ESPWifi {
           },
           WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
 
-      WiFiEventId_t event_disconnected = WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) { Serial.println(F("wifi Station disconnected")); },
-                                                      WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
+      WiFiEventId_t event_disconnected = WiFi.onEvent(
+          [](WiFiEvent_t event, WiFiEventInfo_t info) {
+            Serial.println(F("wifi Station disconnected"));
+          },
+          WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
 #endif
       Serial.print(F("WiFi: establishing connection with SSID: \""));
       Serial.print(ssid);
@@ -114,8 +122,7 @@ class GUIESPWifi : public Supla::ESPWifi {
       WiFi.setAutoConnect(false);
       WiFi.mode(WIFI_STA);
       WiFi.begin(ssid, password);
-    }
-    else if (ConfigESP->configModeESP == NORMAL_MODE) {
+    } else if (ConfigESP->configModeESP == NORMAL_MODE) {
       Serial.println(F("WiFi: resetting WiFi connection"));
       if (client) {
         delete client;
@@ -124,7 +131,7 @@ class GUIESPWifi : public Supla::ESPWifi {
       WiFi.reconnect();
     }
 
-    yield();
+    delay(0);
   }
 
   void enableBuffer(bool value) {
@@ -135,6 +142,10 @@ class GUIESPWifi : public Supla::ESPWifi {
     if (wifiHostname) {
       strncpy(hostname, wifiHostname, MAX_HOSTNAME);
     }
+  }
+
+  void enableSSL(bool value) {
+    isSecured = value;
   }
 
  protected:

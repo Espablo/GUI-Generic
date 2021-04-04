@@ -24,6 +24,9 @@
 #include <supla/storage/eeprom.h>
 Supla::Eeprom eeprom(STORAGE_OFFSET);
 #endif
+
+Supla::GUIESPWifi *wifi;
+
 namespace Supla {
 namespace GUI {
 void begin() {
@@ -31,15 +34,19 @@ void begin() {
   new Supla::Sensor::EspFreeHeap();
 #endif
 
-  Supla::GUIESPWifi *wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
-
+  wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
   wifi->enableBuffer(true);
 
 #ifdef SUPLA_ENABLE_SSL
-  wifi->enableSSL(true);
+  enableSSL(true);
 #else
-  wifi->enableSSL(false);
+  enableSSL(false);
 #endif
+
+  if (ConfigESP->checkSSLBasic())
+    enableSSL(true);
+  else
+    enableSSL(false);
 
   String suplaHostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
   suplaHostname.replace(" ", "_");
@@ -61,11 +68,14 @@ void begin() {
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
   ConfigManager->showAllValue();
-  WebServer->begin();
+}
+
+void enableSSL(bool value) {
+  if (wifi)
+    wifi->enableSSL(value);
 }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-
 void addRelayButton(uint8_t nr) {
   uint8_t pinRelay, pinButton, pinLED;
   bool highIsOn, levelLed;
@@ -435,6 +445,6 @@ void addCorrectionSensor() {
 }  // namespace GUI
 }  // namespace Supla
 
-SuplaConfigManager *ConfigManager = new SuplaConfigManager();
-SuplaConfigESP *ConfigESP = new SuplaConfigESP();
-SuplaWebServer *WebServer = new SuplaWebServer();
+SuplaConfigManager *ConfigManager = nullptr;
+SuplaConfigESP *ConfigESP = nullptr;
+SuplaWebServer *WebServer = nullptr;

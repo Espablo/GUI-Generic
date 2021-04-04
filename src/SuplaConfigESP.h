@@ -54,6 +54,8 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void handleAction(int event, int action);
   void rebootESP();
 
+  bool checkSSLBasic();
+
   const char *getLastStatusMessageSupla();
   int getLastStatusSupla();
 
@@ -122,10 +124,12 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void configModeInit();
   void iterateAlways();
   void clearEEPROM();
+
   int pinNumberConfig;
   int pinLedConfig;
   int modeConfigButton;
   bool ledHighIsOn;
+  bool sslBasic;
 
   ETSTimer led_timer;
 };

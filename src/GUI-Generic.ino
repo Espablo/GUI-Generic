@@ -26,13 +26,20 @@ DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 void setup() {
   Serial.begin(74880);
+  uint8_t nr, gpio;
+
+  ConfigManager = new SuplaConfigManager();
+  ConfigESP = new SuplaConfigESP();
+
+  if (!ConfigESP->checkSSLBasic()) {
+    WebServer = new SuplaWebServer();
+    WebServer->begin();
+  }
 
   if (drd.detectDoubleReset()) {
     drd.stop();
     ConfigESP->factoryReset();
   }
-
-  uint8_t nr, gpio;
 
 #ifdef SUPLA_MCP23017
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO &&

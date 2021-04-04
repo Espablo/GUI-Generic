@@ -23,6 +23,12 @@
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
 
+#ifdef SUPLA_ENABLE_SSL_BASIC
+  sslBasic = true;
+#else
+  sslBasic = false;
+#endif
+
   if (ConfigManager->isDeviceConfigured()) {
     if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0) {
       ConfigManager->setGUIDandAUTHKEY();
@@ -103,12 +109,28 @@ void SuplaConfigESP::rebootESP() {
 }
 
 void SuplaConfigESP::configModeInit() {
-  configModeESP = CONFIG_MODE;
   ledBlinking(100);
 
-  WiFi.softAPdisconnect(true);
-  WiFi.disconnect(true);
+  if (!WebServer && sslBasic) {
+    Supla::GUI::enableSSL(false);
+    Supla::Network::Setup();
+
+    WebServer = new SuplaWebServer();
+    WebServer->begin();
+  }
+
+ // WiFi.softAPdisconnect(true);
+ // WiFi.disconnect(true);
   WiFi.mode(WIFI_AP_STA);
+
+  configModeESP = CONFIG_MODE;
+}
+
+bool SuplaConfigESP::checkSSLBasic() {
+  if (configModeESP == NORMAL_MODE && sslBasic)
+    return true;
+  else
+    return false;
 }
 
 void SuplaConfigESP::iterateAlways() {
