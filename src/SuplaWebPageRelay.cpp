@@ -278,7 +278,7 @@ void handleRelaySetMCP23017(int save) {
   nr_relay = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   if (!nr_relay.isEmpty())
-    gpio = nr_relay.toInt() - 1;
+    gpio = ConfigESP->getGpioMCP23017(nr_relay.toInt(), FUNCTION_RELAY);
   else
     gpio = ConfigESP->getGpioMCP23017(1, FUNCTION_RELAY);
 
@@ -363,7 +363,8 @@ void handleRelaySaveSetMCP23017() {
   nr_relay = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   if (!nr_relay.isEmpty()) {
-    key = KEY_GPIO + nr_relay.toInt() - 1;
+    gpio = ConfigESP->getGpioMCP23017(nr_relay.toInt(), FUNCTION_RELAY);
+    key = KEY_GPIO + gpio;
 
     ConfigManager->setElement(key, MEMORY, memory);
     ConfigManager->setElement(key, LEVEL_RELAY, level);

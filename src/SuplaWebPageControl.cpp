@@ -204,7 +204,7 @@ void handleButtonSetMCP23017(int save) {
   nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   if (!nr_button.isEmpty())
-    gpio = nr_button.toInt() - 1;
+    gpio = ConfigESP->getGpioMCP23017(nr_button.toInt(), FUNCTION_BUTTON);
   else
     gpio = ConfigESP->getGpioMCP23017(1, FUNCTION_BUTTON);
 
@@ -212,7 +212,13 @@ void handleButtonSetMCP23017(int save) {
   webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
 
   addForm(webContentBuffer, F("post"), getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
-  addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);
+
+  if (!nr_button.isEmpty()) {
+    addFormHeader(webContentBuffer, String(S_BUTTON_NR_SETTINGS) + nr_button.toInt());
+  }
+  else {
+    addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);
+  }
 
   selected = ConfigESP->getPullUp(gpio);
   addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
@@ -270,7 +276,8 @@ void handleButtonSaveSetMCP23017() {
   nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   if (!nr_button.isEmpty()) {
-    key = KEY_GPIO + nr_button.toInt() - 1;
+    gpio = ConfigESP->getGpioMCP23017(nr_button.toInt(), FUNCTION_BUTTON);
+    key = KEY_GPIO + gpio;
 
     ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);
     ConfigManager->setElement(key, INVERSED_BUTTON, inversed);
