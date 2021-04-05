@@ -45,18 +45,10 @@ SuplaConfigESP::SuplaConfigESP() {
       ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
     }
     if (strcmp(ConfigManager->get(KEY_ENABLE_GUI)->getValue(), "") == 0) {
-#ifdef SUPLA_ENABLE_GUI
-      ConfigManager->set(KEY_ENABLE_GUI, true);
-#else
-      ConfigManager->set(KEY_ENABLE_GUI, false);
-#endif
+      ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
     }
     if (strcmp(ConfigManager->get(KEY_ENABLE_SSL)->getValue(), "") == 0) {
-#ifdef SUPLA_ENABLE_SSL
-      ConfigManager->set(KEY_ENABLE_SSL, true);
-#else
-      ConfigManager->set(KEY_ENABLE_SSL, false);
-#endif
+      ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
     }
 
     ConfigManager->save();
@@ -65,6 +57,21 @@ SuplaConfigESP::SuplaConfigESP() {
   }
 
   SuplaDevice.setStatusFuncImpl(&status_func);
+}
+
+bool SuplaConfigESP::getDefaultEnableSSL() {
+#ifdef SUPLA_ENABLE_SSL
+  return true;
+#else
+  return false;
+#endif
+}
+bool SuplaConfigESP::getDefaultEnableGUI() {
+#ifdef SUPLA_ENABLE_GUI
+  return true;
+#else
+  return false;
+#endif
 }
 
 void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _ledHighIsOn) {
@@ -649,6 +656,8 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
     ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
     ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
+    ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
+    ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
     ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
     ConfigManager->save();

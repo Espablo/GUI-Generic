@@ -53,6 +53,9 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void handleAction(int event, int action);
   void rebootESP();
 
+  bool getDefaultEnableSSL();
+  bool getDefaultEnableGUI();
+
   bool checkSSL();
   bool checkAvailableGUI();
 
