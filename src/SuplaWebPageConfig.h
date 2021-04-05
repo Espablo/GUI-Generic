@@ -6,10 +6,12 @@
 #ifdef SUPLA_CONFIG
 #define PATH_CONFIG "config"
 
-#define INPUT_CFG_LED_GPIO  "cfgl"
-#define INPUT_CFG_BTN_GPIO  "cfgb"
-#define INPUT_CFG_LED_LEVEL "icll"
-#define INPUT_CFG_MODE      "cfgm"
+#define INPUT_CFG_LED_GPIO      "cfgl"
+#define INPUT_CFG_BTN_GPIO      "cfgb"
+#define INPUT_CFG_LED_LEVEL     "icll"
+#define INPUT_CFG_MODE          "cfgm"
+#define INPUT_CFG_SSL           "ics"
+#define INPUT_CFG_AVAILABLE_GUI "icag"
 
 void createWebPageConfig();
 void handleConfig(int save = 0);

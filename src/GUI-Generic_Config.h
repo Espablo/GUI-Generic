@@ -14,6 +14,9 @@
 //#define DEBUG_MODE
 #define SUPLA_OTA
 
+#define SUPLA_ENABLE_GUI
+//#define -D SUPLA_ENABLE_SSL
+
 // Language en - english, pl - polish (default if not defined UI_LANGUAGE), es- spanish, fr - french, de - german,
 //#define UI_LANGUAGE de
 

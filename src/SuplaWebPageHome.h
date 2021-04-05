@@ -4,7 +4,8 @@
 
 #include "SuplaDeviceGUI.h"
 
-#define PATH_REBOT "rbt"
+#define PATH_REBOT         "reboot"
+#define PATH_REBOT_CREATOR "rbt"
 
 #define INPUT_WIFI_SSID     "sid"
 #define INPUT_WIFI_PASS     "wpw"

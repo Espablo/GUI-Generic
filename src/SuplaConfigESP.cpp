@@ -18,16 +18,9 @@
 
 #include "SuplaConfigESP.h"
 #include "SuplaDeviceGUI.h"
-#include "GUIGenericCommon.h"
 
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
-
-#ifdef SUPLA_ENABLE_SSL_BASIC
-  sslBasic = true;
-#else
-  sslBasic = false;
-#endif
 
   if (ConfigManager->isDeviceConfigured()) {
     if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0) {
@@ -51,6 +44,21 @@ SuplaConfigESP::SuplaConfigESP() {
     if (strcmp(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(), "") == 0) {
       ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
     }
+    if (strcmp(ConfigManager->get(KEY_ENABLE_GUI)->getValue(), "") == 0) {
+#ifdef SUPLA_ENABLE_GUI
+      ConfigManager->set(KEY_ENABLE_GUI, true);
+#else
+      ConfigManager->set(KEY_ENABLE_GUI, false);
+#endif
+    }
+    if (strcmp(ConfigManager->get(KEY_ENABLE_SSL)->getValue(), "") == 0) {
+#ifdef SUPLA_ENABLE_SSL
+      ConfigManager->set(KEY_ENABLE_SSL, true);
+#else
+      ConfigManager->set(KEY_ENABLE_SSL, false);
+#endif
+    }
+
     ConfigManager->save();
 
     configModeInit();
@@ -111,26 +119,24 @@ void SuplaConfigESP::rebootESP() {
 void SuplaConfigESP::configModeInit() {
   ledBlinking(100);
 
-  if (!WebServer && sslBasic) {
-    Supla::GUI::enableSSL(false);
+  if (checkSSL()) {
+    Supla::GUI::enableWifiSSL(false);
     Supla::Network::Setup();
+  }
 
+  if (!WebServer) {
     WebServer = new SuplaWebServer();
     WebServer->begin();
   }
-
- // WiFi.softAPdisconnect(true);
- // WiFi.disconnect(true);
+  // WiFi.softAPdisconnect(true);
+  // WiFi.disconnect(true);
   WiFi.mode(WIFI_AP_STA);
 
   configModeESP = CONFIG_MODE;
 }
 
-bool SuplaConfigESP::checkSSLBasic() {
-  if (configModeESP == NORMAL_MODE && sslBasic)
-    return true;
-  else
-    return false;
+bool SuplaConfigESP::checkSSL() {
+  return ConfigManager->get(KEY_ENABLE_SSL)->getValueInt();
 }
 
 void SuplaConfigESP::iterateAlways() {
@@ -275,6 +281,9 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     if (function == FUNCTION_CFG_BUTTON) {
       if (checkBusyCfg(gpio)) {
         return gpio;
+      }
+      else {
+        return OFF_GPIO;
       }
     }
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {

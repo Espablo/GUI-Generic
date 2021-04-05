@@ -20,7 +20,6 @@
 #include "Arduino.h"
 #include <supla/action_handler.h>
 #include <supla/element.h>
-#include "GUI-Generic_Config.h"
 #include "SuplaConfigManager.h"
 
 #include <cont.h>
@@ -54,7 +53,8 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void handleAction(int event, int action);
   void rebootESP();
 
-  bool checkSSLBasic();
+  bool checkSSL();
+  bool checkAvailableGUI();
 
   const char *getLastStatusMessageSupla();
   int getLastStatusSupla();
@@ -119,9 +119,9 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void clearFunctionGpio(uint8_t function);
   uint8_t getFunctionMCP23017(uint8_t adress);
   uint8_t getNrMCP23017(uint8_t adress);
+  void configModeInit();
 
  private:
-  void configModeInit();
   void iterateAlways();
   void clearEEPROM();
 
@@ -129,7 +129,6 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   int pinLedConfig;
   int modeConfigButton;
   bool ledHighIsOn;
-  bool sslBasic;
 
   ETSTimer led_timer;
 };

@@ -117,7 +117,8 @@ namespace Supla {
 namespace GUI {
 
 void begin();
-void enableSSL(bool value);
+void setupWifi();
+void enableWifiSSL(bool value);
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void addRelayButton(uint8_t nr);

@@ -31,7 +31,7 @@ void setup() {
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
 
-  if (!ConfigESP->checkSSLBasic()) {
+  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt()) {
     WebServer = new SuplaWebServer();
     WebServer->begin();
   }
@@ -96,8 +96,8 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONFIG
-  gpio = ConfigESP->getGpio(FUNCTION_CFG_LED);
-  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), gpio, ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(gpio));
+  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED),
+                           ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(gpio));
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -298,6 +298,10 @@ void setup() {
     }
 #endif
   }
+#endif
+
+#ifdef DEBUG_MODE
+  new Supla::Sensor::EspFreeHeap();
 #endif
 
   Supla::GUI::begin();

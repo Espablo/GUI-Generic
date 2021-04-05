@@ -25,32 +25,12 @@
 Supla::Eeprom eeprom(STORAGE_OFFSET);
 #endif
 
-Supla::GUIESPWifi *wifi;
+Supla::GUIESPWifi *wifi = nullptr;
 
 namespace Supla {
 namespace GUI {
 void begin() {
-#ifdef DEBUG_MODE
-  new Supla::Sensor::EspFreeHeap();
-#endif
-
-  wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
-  wifi->enableBuffer(true);
-
-#ifdef SUPLA_ENABLE_SSL
-  enableSSL(true);
-#else
-  enableSSL(false);
-#endif
-
-  if (ConfigESP->checkSSLBasic())
-    enableSSL(true);
-  else
-    enableSSL(false);
-
-  String suplaHostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
-  suplaHostname.replace(" ", "_");
-  wifi->setHostName(suplaHostname.c_str());
+  setupWifi();
 
   SuplaDevice.setName(ConfigManager->get(KEY_HOST_NAME)->getValue());
 
@@ -70,7 +50,22 @@ void begin() {
   ConfigManager->showAllValue();
 }
 
-void enableSSL(bool value) {
+void setupWifi() {
+  if (wifi) {
+    delete wifi;
+    wifi = nullptr;
+  }
+
+  wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
+  wifi->enableBuffer(true);
+  enableWifiSSL(ConfigESP->checkSSL());
+
+  String suplaHostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
+  suplaHostname.replace(" ", "_");
+  wifi->setHostName(suplaHostname.c_str());
+}
+
+void enableWifiSSL(bool value) {
   if (wifi)
     wifi->enableSSL(value);
 }

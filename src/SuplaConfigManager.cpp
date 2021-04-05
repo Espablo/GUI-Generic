@@ -200,6 +200,9 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_CORRECTION_TEMP, "", 6 * MAX_DS18B20);
   this->addKey(KEY_CORRECTION_HUMIDITY, "", 6 * MAX_DS18B20);
 
+  this->addKey(KEY_ENABLE_GUI, sizeof(bool));
+  this->addKey(KEY_ENABLE_SSL, sizeof(bool));
+
   this->load();
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
@@ -403,7 +406,8 @@ void SuplaConfigManager::deleteWifiSuplaAdminValues() {
 bool SuplaConfigManager::isDeviceConfigured() {
   return strcmp(this->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(this->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0 ||
          strcmp(this->get(KEY_WIFI_SSID)->getValue(), "") == 0 || strcmp(this->get(KEY_WIFI_PASS)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_LOGIN)->getValue(), "") == 0;
+         strcmp(this->get(KEY_LOGIN)->getValue(), "") == 0 || strcmp(this->get(KEY_ENABLE_SSL)->getValue(), "") == 0 ||
+         strcmp(this->get(KEY_ENABLE_GUI)->getValue(), "") == 0 || ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO;
 }
 
 ConfigOption *SuplaConfigManager::get(uint8_t key) {
