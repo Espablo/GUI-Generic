@@ -31,6 +31,7 @@ namespace Supla {
 namespace GUI {
 void begin() {
   setupWifi();
+  enableWifiSSL(ConfigESP->checkSSL());
 
   SuplaDevice.setName(ConfigManager->get(KEY_HOST_NAME)->getValue());
 
@@ -48,6 +49,10 @@ void begin() {
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
   ConfigManager->showAllValue();
+
+  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt()) {
+    crateWebServer();
+  }
 }
 
 void setupWifi() {
@@ -58,7 +63,6 @@ void setupWifi() {
 
   wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
   wifi->enableBuffer(true);
-  enableWifiSSL(ConfigESP->checkSSL());
 
   String suplaHostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
   suplaHostname.replace(" ", "_");
@@ -66,8 +70,21 @@ void setupWifi() {
 }
 
 void enableWifiSSL(bool value) {
-  if (wifi)
-    wifi->enableSSL(value);
+  if (wifi) {
+    if (ConfigESP->configModeESP == CONFIG_MODE) {
+      wifi->enableSSL(false);
+    }
+    else {
+      wifi->enableSSL(value);
+    }
+  }
+}
+
+void crateWebServer() {
+  if (WebServer == NULL) {
+    WebServer = new SuplaWebServer();
+    WebServer->begin();
+  }
 }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)

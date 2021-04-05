@@ -31,11 +31,6 @@ void setup() {
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
 
-  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt()) {
-    WebServer = new SuplaWebServer();
-    WebServer->begin();
-  }
-
   if (drd.detectDoubleReset()) {
     drd.stop();
     ConfigESP->factoryReset();

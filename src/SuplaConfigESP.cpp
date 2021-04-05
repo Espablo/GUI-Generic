@@ -124,22 +124,16 @@ void SuplaConfigESP::rebootESP() {
 }
 
 void SuplaConfigESP::configModeInit() {
+  configModeESP = CONFIG_MODE;
+
   ledBlinking(100);
 
-  if (checkSSL()) {
-    Supla::GUI::enableWifiSSL(false);
-    Supla::Network::Setup();
-  }
+  Supla::GUI::enableWifiSSL(false);
 
-  if (!WebServer) {
-    WebServer = new SuplaWebServer();
-    WebServer->begin();
-  }
+  Supla::GUI::crateWebServer();
   // WiFi.softAPdisconnect(true);
   // WiFi.disconnect(true);
   WiFi.mode(WIFI_AP_STA);
-
-  configModeESP = CONFIG_MODE;
 }
 
 bool SuplaConfigESP::checkSSL() {

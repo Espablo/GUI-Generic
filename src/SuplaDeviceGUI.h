@@ -119,6 +119,7 @@ namespace GUI {
 void begin();
 void setupWifi();
 void enableWifiSSL(bool value);
+void crateWebServer();
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void addRelayButton(uint8_t nr);
