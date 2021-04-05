@@ -23,33 +23,35 @@ SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
 
   if (ConfigManager->isDeviceConfigured()) {
-    if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0) {
+    if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0)
       ConfigManager->setGUIDandAUTHKEY();
-    }
-    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
-    }
-    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
-    }
-    if (strcmp(ConfigManager->get(KEY_LOGIN_PASS)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_LOGIN_PASS)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
-    }
-    if (strcmp(ConfigManager->get(KEY_HOST_NAME)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_HOST_NAME)->getValue(), "") == 0)
       ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
-    }
-    if (strcmp(ConfigManager->get(KEY_SUPLA_SERVER)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_SUPLA_SERVER)->getValue(), "") == 0)
       ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);
-    }
-    if (strcmp(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(), "") == 0)
       ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
-    }
-    if (strcmp(ConfigManager->get(KEY_ENABLE_GUI)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_ENABLE_GUI)->getValue(), "") == 0)
       ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
-    }
-    if (strcmp(ConfigManager->get(KEY_ENABLE_SSL)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_ENABLE_SSL)->getValue(), "") == 0)
       ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
-    }
+
+    if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
+      ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
     ConfigManager->save();
 
