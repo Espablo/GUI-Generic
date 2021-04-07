@@ -25,6 +25,7 @@
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
 
+#include "SuplaTemplateBoard.h"
 #include "SuplaConfigESP.h"
 #include "SuplaConfigManager.h"
 #include "SuplaWebPageRelay.h"
@@ -32,7 +33,6 @@
 #include "SuplaWebPageLimitSwitch.h"
 #include "SuplaWebServer.h"
 #include "SuplaWebPageConfig.h"
-#include "SuplaTemplateBoard.h"
 
 #include "SuplaWebPageDeviceSettings.h"
 #include "SuplaWebPageHome.h"

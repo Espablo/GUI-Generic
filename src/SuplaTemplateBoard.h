@@ -6,6 +6,51 @@
 #include "GUIGenericCommon.h"
 #include <supla/events.h>
 
+#define BOARD_OFF              0
+#define BOARD_ELECTRODRAGON    1
+#define BOARD_INCAN3           2
+#define BOARD_INCAN4           3
+#define BOARD_MELINK           4
+#define BOARD_NEO_COOLCAM      5
+#define BOARD_SHELLY1          6
+#define BOARD_SHELLY2          7
+#define BOARD_SONOFF_BASIC     8
+#define BOARD_SONOFF_DUAL_R2   9
+#define BOARD_SONOFF_S2X       10
+#define BOARD_SONOFF_SV        11
+#define BOARD_SONOFF_TH        12
+#define BOARD_SONOFF_TOUCH     13
+#define BOARD_SONOFF_TOUCH_2CH 14
+#define BOARD_SONOFF_TOUCH_3CH 15
+#define BOARD_SONOFF_4CH       16
+#define BOARD_YUNSHAN          17
+#define BOARD_YUNTONG_SMART    18
+#define BOARD_GOSUND_SP111     19
+#define BOARD_DIMMER_LUKASZH   20
+#define BOARD_H801             21
+#define MAX_MODULE             22
+
+
+#if (DEFAULT_TEMPLATE_BOARD != BOARD_OFF)
+
+#define SUPLA_RELAY
+#define SUPLA_BUTTON
+#define SUPLA_LIMIT_SWITCH
+#define SUPLA_ROLLERSHUTTER
+#define SUPLA_CONFIG
+
+#if (DEFAULT_TEMPLATE_BOARD == BOARD_GOSUND_SP111)
+#define SUPLA_HLW8012
+#define SUPLA_LED
+#elif (DEFAULT_TEMPLATE_BOARD == BOARD_DIMMER_LUKASZH)
+#define SUPLA_RGBW
+#elif (DEFAULT_TEMPLATE_BOARD == BOARD_H801)
+#undef SUPLA_RELAY
+#define SUPLA_RGBW
+#endif
+
+#endif
+
 void addButton(uint8_t gpio, uint8_t event = Supla::Event::ON_RELEASE);
 void addRelay(uint8_t gpio, uint8_t level = HIGH);
 void addLimitSwitch(uint8_t gpio);
@@ -15,33 +60,7 @@ void addButtonCFG(uint8_t gpio);
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t brightnessPin);
 void addDimmer(int8_t brightnessPin);
-void saveChooseTemplateBoard(int8_t board) ;
-
-enum _board
-{
-  BOARD_ELECTRODRAGON = 1,
-  BOARD_INCAN3,
-  BOARD_INCAN4,
-  BOARD_MELINK,
-  BOARD_NEO_COOLCAM,
-  BOARD_SHELLY1,
-  BOARD_SHELLY2,
-  BOARD_SONOFF_BASIC,
-  BOARD_SONOFF_DUAL_R2,
-  BOARD_SONOFF_S2X,
-  BOARD_SONOFF_SV,
-  BOARD_SONOFF_TH,
-  BOARD_SONOFF_TOUCH,
-  BOARD_SONOFF_TOUCH_2CH,
-  BOARD_SONOFF_TOUCH_3CH,
-  BOARD_SONOFF_4CH,
-  BOARD_YUNSHAN,
-  BOARD_YUNTONG_SMART,
-  BOARD_GOSUND_SP111,
-  BOARD_DIMMER_LUKASZH,
-  BOARD_H801,
-  MAX_MODULE
-};
+void saveChooseTemplateBoard(int8_t board);
 
 const char BOARD_NULL[] PROGMEM = S_ABSENT;
 const char ELECTRODRAGON[] PROGMEM = "ElectroDragon";
