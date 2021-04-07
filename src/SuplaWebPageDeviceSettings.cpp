@@ -71,16 +71,7 @@ void handleDeviceSettingsSave() {
   String input = INPUT_BOARD;
 
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    ConfigManager->set(KEY_BOARD, WebServer->httpServer->arg(input).c_str());
-
-    int nr;
-    uint8_t key;
-    for (nr = 0; nr <= 17; nr++) {
-      key = KEY_GPIO + nr;
-      ConfigManager->set(key, "");
-    }
-
-    chooseTemplateBoard(WebServer->httpServer->arg(input).toInt());
+    saveChooseTemplateBoard(WebServer->httpServer->arg(input).toInt());
   }
 
   switch (ConfigManager->save()) {

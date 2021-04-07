@@ -50,8 +50,8 @@ SuplaConfigESP::SuplaConfigESP() {
     if (strcmp(ConfigManager->get(KEY_ENABLE_SSL)->getValue(), "") == 0)
       ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
 
-    if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
-      ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+    if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0)
+      saveChooseTemplateBoard(getDefaultTamplateBoard());
 
     ConfigManager->save();
 
@@ -68,11 +68,20 @@ bool SuplaConfigESP::getDefaultEnableSSL() {
   return false;
 #endif
 }
+
 bool SuplaConfigESP::getDefaultEnableGUI() {
 #ifdef SUPLA_ENABLE_GUI
   return true;
 #else
   return false;
+#endif
+}
+
+uint8_t SuplaConfigESP::getDefaultTamplateBoard() {
+#ifdef DEFAULT_TEMPLATE_BOARD
+  return DEFAULT_TEMPLATE_BOARD;
+#else
+  return 0;
 #endif
 }
 
@@ -654,7 +663,7 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
     ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
     ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
-    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+    saveChooseTemplateBoard(getDefaultTamplateBoard());
 
     ConfigManager->save();
 
@@ -672,8 +681,6 @@ void SuplaConfigESP::reset(bool forceReset) {
     clearEEPROM();
 
     ConfigManager->deleteDeviceValues();
-
-    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
     ConfigManager->save();
 

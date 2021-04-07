@@ -12,8 +12,9 @@
 #define BUILD_VERSION "User GUI 1.0.1"
 
 //#define DEBUG_MODE
-#define SUPLA_OTA
 
+#define DEFAULT_TEMPLATE_BOARD = 0
+#define SUPLA_OTA
 #define SUPLA_ENABLE_GUI
 //#define -D SUPLA_ENABLE_SSL
 

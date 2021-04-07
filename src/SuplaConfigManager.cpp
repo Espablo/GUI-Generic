@@ -166,7 +166,7 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
   this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
   this->addKey(KEY_ACTIVE_SENSOR, "", 16);
-  this->addKey(KEY_BOARD, "0", 2);
+  this->addKey(KEY_BOARD, 2);
   this->addKey(KEY_CFG_MODE, "0", 2);
   this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20);
   this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20);
@@ -407,7 +407,9 @@ bool SuplaConfigManager::isDeviceConfigured() {
   return strcmp(this->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(this->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0 ||
          strcmp(this->get(KEY_WIFI_SSID)->getValue(), "") == 0 || strcmp(this->get(KEY_WIFI_PASS)->getValue(), "") == 0 ||
          strcmp(this->get(KEY_LOGIN)->getValue(), "") == 0 || strcmp(this->get(KEY_ENABLE_SSL)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_ENABLE_GUI)->getValue(), "") == 0 || ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO;
+         strcmp(this->get(KEY_ENABLE_GUI)->getValue(), "") == 0 || strcmp(this->get(KEY_BOARD)->getValue(), "") == 0 ||
+         strcmp(this->get(KEY_SUPLA_SERVER)->getValue(), DEFAULT_SERVER) == 0 || strcmp(this->get(KEY_SUPLA_EMAIL)->getValue(), DEFAULT_EMAIL) == 0 ||
+         ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO;
 }
 
 ConfigOption *SuplaConfigManager::get(uint8_t key) {

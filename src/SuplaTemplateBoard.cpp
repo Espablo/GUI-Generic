@@ -64,6 +64,11 @@ void addDimmer(int8_t brightnessPin) {
   addRGBW(OFF_GPIO, OFF_GPIO, OFF_GPIO, brightnessPin);
 }
 
+void saveChooseTemplateBoard(int8_t board) {
+  ConfigManager->set(KEY_BOARD, board);
+  chooseTemplateBoard(board);
+}
+
 void chooseTemplateBoard(uint8_t board) {
   int8_t nr, key;
   for (nr = 0; nr <= OFF_GPIO; nr++) {

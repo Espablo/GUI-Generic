@@ -55,6 +55,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   bool getDefaultEnableSSL();
   bool getDefaultEnableGUI();
+  uint8_t getDefaultTamplateBoard();
 
   bool checkSSL();
   bool checkAvailableGUI();
