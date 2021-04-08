@@ -1,9 +1,9 @@
 #ifndef SuplaTemplateBoard_h
 #define SuplaTemplateBoard_h
 
+#include "SuplaDeviceGUI.h"
+
 #include <pgmspace.h>
-#include "SuplaWebPageRelay.h"
-#include "GUIGenericCommon.h"
 #include <supla/events.h>
 
 #define BOARD_OFF              0
@@ -38,6 +38,8 @@
 #define SUPLA_LIMIT_SWITCH
 #define SUPLA_ROLLERSHUTTER
 #define SUPLA_CONFIG
+#define SUPLA_ENABLE_GUI
+//#define SUPLA_ENABLE_SSL
 
 #if (DEFAULT_TEMPLATE_BOARD == BOARD_GOSUND_SP111)
 #define SUPLA_HLW8012

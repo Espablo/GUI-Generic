@@ -25,7 +25,9 @@
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
 
+#include "GUIGenericCommon.h"
 #include "SuplaTemplateBoard.h"
+
 #include "SuplaConfigESP.h"
 #include "SuplaConfigManager.h"
 #include "SuplaWebPageRelay.h"
@@ -48,7 +50,6 @@
 #include "SuplaWebPageTools.h"
 #include "SuplaWebCorrection.h"
 
-#include "GUIGenericCommon.h"
 #include "SuplaCommonPROGMEM.h"
 #include "Markup.h"
 #include "SuplaOled.h"
