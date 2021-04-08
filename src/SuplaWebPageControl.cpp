@@ -27,7 +27,7 @@ void createWebPageControl() {
 #endif
     }
     else {
-#ifdef SUPLA_RELAY
+#ifdef SUPLA_BUTTON
       if (WebServer->httpServer->method() == HTTP_GET)
         handleButtonSet();
       else
