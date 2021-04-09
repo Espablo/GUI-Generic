@@ -294,9 +294,6 @@ int SuplaConfigESP::getGpio(int nr, int function) {
       if (checkBusyCfg(gpio)) {
         return gpio;
       }
-      else {
-        return OFF_GPIO;
-      }
     }
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
       if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
@@ -452,12 +449,13 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
   ConfigManager->setElement(key, NR, nr);
   ConfigManager->setElement(key, FUNCTION, function);
 
-  setLevel(gpio, ConfigESP->getLevel(gpio));
-  setMemory(gpio, ConfigESP->getMemory(gpio));
-  setPullUp(gpio, ConfigESP->getPullUp(gpio));
-  setInversed(gpio, ConfigESP->getInversed(gpio));
-  setAction(gpio, ConfigESP->getAction(gpio));
-  setEvent(gpio, ConfigESP->getEvent(gpio));
+  /*setLevel(gpio, ConfigESP->getLevel(gpio));
+   setMemory(gpio, ConfigESP->getMemory(gpio));
+   setPullUp(gpio, ConfigESP->getPullUp(gpio));
+   setInversed(gpio, ConfigESP->getInversed(gpio));
+   setAction(gpio, ConfigESP->getAction(gpio));
+   setEvent(gpio, ConfigESP->getEvent(gpio));
+   */
 }
 
 void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
