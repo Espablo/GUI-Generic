@@ -77,7 +77,7 @@ const char SONOFF_4CH[] PROGMEM = "SONOFF 4CH";
 const char YUNSHAN[] PROGMEM = "Yunshan";
 const char YUNTONG_SMART[] PROGMEM = "YUNTONG Smart";
 const char GOSUNG_SP111[] PROGMEM = "Gosund SP111";
-const char DRIMMER_LUKASZH[] PROGMEM = "Dimmer by @LukaszH";
+const char DIMMER_LUKASZH[] PROGMEM = "Dimmer by @LukaszH";
 const char H801[] PROGMEM = "H801 RGBW";
 const char SHELLY_PLUG_S[] PROGMEM = "Shelly Plug S";
 const char SONOFF_MINI[] PROGMEM = "SONOFF Mini";
@@ -86,9 +86,9 @@ const char MINITIGER_2CH[] PROGMEM = "Minitiger 2 Gang Switch";
 const char MINITIGER_3CH[] PROGMEM = "Minitiger 3 Gang Switch";
 
 const char* const BOARD_P[MAX_MODULE] PROGMEM = {
-    BOARD_NULL,     ELECTRODRAGON, INCAN3,          INCAN4,    MELINK,        NEO_COOLCAM,      SHELLY1,          SHELLY2,       SONOFF_BASIC,
-    SONOFF_DUAL_R2, SONOFF_S2X,    SONOFF_SV,       SONOFF_TH, SONOFF_TOUCH,  SONOFF_TOUCH_2CH, SONOFF_TOUCH_3CH, SONOFF_4CH,    YUNSHAN,
-    YUNTONG_SMART,  GOSUNG_SP111,  DRIMMER_LUKASZH, H801,      SHELLY_PLUG_S, SONOFF_MINI,      MINITIGER_1CH,    MINITIGER_2CH, MINITIGER_3CH};
+    BOARD_NULL,     ELECTRODRAGON, INCAN3,         INCAN4,    MELINK,        NEO_COOLCAM,      SHELLY1,          SHELLY2,       SONOFF_BASIC,
+    SONOFF_DUAL_R2, SONOFF_S2X,    SONOFF_SV,      SONOFF_TH, SONOFF_TOUCH,  SONOFF_TOUCH_2CH, SONOFF_TOUCH_3CH, SONOFF_4CH,    YUNSHAN,
+    YUNTONG_SMART,  GOSUNG_SP111,  DIMMER_LUKASZH, H801,      SHELLY_PLUG_S, SONOFF_MINI,      MINITIGER_1CH,    MINITIGER_2CH, MINITIGER_3CH};
 
 void addButton(
     uint8_t gpio, uint8_t event = Supla::Event::ON_RELEASE, uint8_t action = Supla::Action::TOGGLE, bool pullUp = false, bool invertLogic = true);
