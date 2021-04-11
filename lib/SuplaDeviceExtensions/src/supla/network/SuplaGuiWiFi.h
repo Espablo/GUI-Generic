@@ -146,6 +146,7 @@ class GUIESPWifi : public Supla::ESPWifi {
 
   void enableSSL(bool value) {
     isSecured = value;
+    wifiConfigured = false;
     if (client) {
       delete client;
       client = nullptr;
