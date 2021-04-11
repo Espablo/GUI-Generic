@@ -25,8 +25,8 @@
 #include <supla/actions.h>
 
 #include "GUIGenericCommon.h"
-#include "SuplaTemplateBoard.h"
 #include "GUI-Generic_Config.h"
+#include "SuplaTemplateBoard.h"
 
 #include "SuplaConfigESP.h"
 #include "SuplaConfigManager.h"
