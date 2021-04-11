@@ -16,16 +16,17 @@
 
 #ifndef SuplaDeviceGUI_h
 #define SuplaDeviceGUI_h
-
-#include "GUIGenericCommon.h"
-#include "SuplaTemplateBoard.h"
-#include "GUI-Generic_Config.h"
-
 #include <DoubleResetDetector.h>
 #include <SPI.h>
 
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
+#include <supla/events.h>
+#include <supla/actions.h>
+
+#include "GUIGenericCommon.h"
+#include "SuplaTemplateBoard.h"
+#include "GUI-Generic_Config.h"
 
 #include "SuplaConfigESP.h"
 #include "SuplaConfigManager.h"

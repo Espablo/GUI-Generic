@@ -4,8 +4,6 @@
 #include "SuplaDeviceGUI.h"
 
 #include <pgmspace.h>
-#include <supla/events.h>
-#include <supla/actions.h>
 
 #define BOARD_OFF              0
 #define BOARD_ELECTRODRAGON    1

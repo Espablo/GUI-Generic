@@ -2,6 +2,8 @@
 #define GUI_GENERIC_COMMON_H
 
 #include "language/common.h"
+#include "Arduino.h"
+
 #ifndef UI_LANGUAGE
 #define UI_LANGUAGE pl
 #endif
