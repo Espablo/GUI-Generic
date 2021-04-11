@@ -1,6 +1,8 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
+#include "SuplaDeviceGUI.h"
+
 // #define USE_CUSTOM
 
 // User configuration
