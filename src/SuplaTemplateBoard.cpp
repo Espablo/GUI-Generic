@@ -250,5 +250,19 @@ void chooseTemplateBoard(uint8_t board) {
       addButtonCFG(0);
       addRGBW(15, 13, 12, 4);
       break;
+    case BOARD_SHELLY_PLUG_S:
+      addLedCFG(2, LOW);
+      addButtonCFG(13);
+      addButton(13);
+      addRelay(15);
+      addLed(0);
+#ifdef SUPLA_HLW8012
+      addHLW8012(5, 14, 12);
+      Supla::GUI::counterHLW8012->setCurrentMultiplier(18388);
+      Supla::GUI::counterHLW8012->setVoltageMultiplier(247704);
+      Supla::GUI::counterHLW8012->setPowerMultiplier(2586583);
+      Supla::Storage::ScheduleSave(2000);
+#endif
+      break;
   }
 }
