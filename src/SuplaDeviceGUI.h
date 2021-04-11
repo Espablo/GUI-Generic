@@ -21,8 +21,6 @@
 
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
-#include <supla/events.h>
-#include <supla/actions.h>
 
 #include "GUIGenericCommon.h"
 #include "GUI-Generic_Config.h"

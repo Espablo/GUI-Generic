@@ -1,7 +1,9 @@
 #ifndef SuplaTemplateBoard_h
 #define SuplaTemplateBoard_h
 
-#include "SuplaDeviceGUI.h"
+#include "Arduino.h"
+#include <supla/events.h>
+#include <supla/actions.h>
 #include <pgmspace.h>
 
 #define BOARD_OFF              0
@@ -33,7 +35,7 @@
 #define BOARD_MINITIGER_3CH    15  // BOARD_SONOFF_TOUCH_3CH
 #define MAX_MODULE             27
 
-const char BOARD_NULL[] PROGMEM = S_ABSENT;
+const char BOARD_NULL[] PROGMEM = "";
 const char ELECTRODRAGON[] PROGMEM = "ElectroDragon";
 const char INCAN3[] PROGMEM = "inCan3";
 const char INCAN4[] PROGMEM = "inCan4";
