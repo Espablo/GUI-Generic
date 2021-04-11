@@ -204,6 +204,16 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_ENABLE_SSL, sizeof(bool));
 
   this->load();
+  switch (this->load()) {
+    case E_CONFIG_OK:
+      this->showAllValue();
+      return;
+      break;
+    default:
+      delay(5000);
+      ESP.restart();
+      break;
+  }
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
   //      Serial.println(F("Config read"));
