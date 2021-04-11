@@ -33,6 +33,7 @@
 #else
 #define S_TEMPLATE_BOARD "Szablony płytek"
 #endif
+#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
 #define S_TYPE                                                 "Rodzaj"
 #define S_RELAYS                                               "PRZEKAŹNIKI"
 #define S_BUTTONS                                              "PRZYCISKI"

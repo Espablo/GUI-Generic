@@ -19,6 +19,7 @@ void handleDeviceSettings(int save) {
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_DEVICE_SETTINGS);
 
+#if (DEFAULT_TEMPLATE_BOARD == BOARD_OFF)
   addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
   addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
   uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
@@ -26,6 +27,11 @@ void handleDeviceSettings(int save) {
   addFormHeaderEnd(webContentBuffer);
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
+#else
+  addFormHeader(webContentBuffer, S_DEFAULT_TEMPLATE_BOARD);
+  addLabel(webContentBuffer, FPSTR(BOARD_P[DEFAULT_TEMPLATE_BOARD]));
+  addFormHeaderEnd(webContentBuffer);
+#endif
 
   addFormHeader(webContentBuffer, S_DEVICE_SETTINGS);
 #if defined(SUPLA_RELAY)

@@ -1,12 +1,14 @@
 #include "SuplaTemplateBoard.h"
 
-void addButton(uint8_t gpio, uint8_t event) {
+void addButton(uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   nr++;
-  ConfigESP->setPullUp(gpio, false);
-  ConfigESP->setInversed(gpio, true);
-  ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
+
   ConfigESP->setEvent(gpio, event);
+  ConfigESP->setAction(gpio, action);
+  ConfigESP->setPullUp(gpio, pullUp);
+  ConfigESP->setInversed(gpio, invertLogic);
+
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
   ConfigManager->set(KEY_MAX_BUTTON, nr++);
 }
@@ -123,14 +125,14 @@ void chooseTemplateBoard(uint8_t board) {
       break;
     case BOARD_SHELLY1:
       addButtonCFG(5);
-      addButton(5);
+      addButton(5, false, true);
       addRelay(4);
       break;
     case BOARD_SHELLY2:
       addLedCFG(16);
       addButtonCFG(12);
-      addButton(12);
-      addButton(14);
+      addButton(12, false, true);
+      addButton(14, false, true);
       addRelay(4);
       addRelay(5);
       break;

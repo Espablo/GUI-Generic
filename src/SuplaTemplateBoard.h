@@ -5,6 +5,7 @@
 
 #include <pgmspace.h>
 #include <supla/events.h>
+#include <supla/actions.h>
 
 #define BOARD_OFF              0
 #define BOARD_ELECTRODRAGON    1
@@ -30,7 +31,6 @@
 #define BOARD_H801             21
 #define MAX_MODULE             22
 
-
 #if (DEFAULT_TEMPLATE_BOARD != BOARD_OFF)
 
 #define SUPLA_RELAY
@@ -50,19 +50,7 @@
 #undef SUPLA_RELAY
 #define SUPLA_RGBW
 #endif
-
 #endif
-
-void addButton(uint8_t gpio, uint8_t event = Supla::Event::ON_RELEASE);
-void addRelay(uint8_t gpio, uint8_t level = HIGH);
-void addLimitSwitch(uint8_t gpio);
-void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
-void addLed(uint8_t gpio);
-void addButtonCFG(uint8_t gpio);
-void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
-void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t brightnessPin);
-void addDimmer(int8_t brightnessPin);
-void saveChooseTemplateBoard(int8_t board);
 
 const char BOARD_NULL[] PROGMEM = S_ABSENT;
 const char ELECTRODRAGON[] PROGMEM = "ElectroDragon";
@@ -93,6 +81,17 @@ const char* const BOARD_P[MAX_MODULE] PROGMEM = {
     SONOFF_BASIC, SONOFF_DUAL_R2, SONOFF_S2X,    SONOFF_SV,    SONOFF_TH,       SONOFF_TOUCH, SONOFF_TOUCH_2CH, SONOFF_TOUCH_3CH,
     SONOFF_4CH,   YUNSHAN,        YUNTONG_SMART, GOSUNG_SP111, DRIMMER_LUKASZH, H801};
 
+void addButton(
+    uint8_t gpio, uint8_t event = Supla::Event::ON_RELEASE, uint8_t action = Supla::Action::TOGGLE, bool pullUp = false, bool invertLogic = true);
+void addRelay(uint8_t gpio, uint8_t level = HIGH);
+void addLimitSwitch(uint8_t gpio);
+void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
+void addLed(uint8_t gpio);
+void addButtonCFG(uint8_t gpio);
+void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
+void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t brightnessPin);
+void addDimmer(int8_t brightnessPin);
+void saveChooseTemplateBoard(int8_t board);
 void chooseTemplateBoard(uint8_t board);
 
 #endif  // SuplaTemplateBoard_h

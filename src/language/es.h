@@ -35,6 +35,7 @@
 #else
 #define S_TEMPLATE_BOARD "Modelos de placas"
 #endif
+#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
 #define S_TYPE                                                 "Tipo"
 #define S_RELAYS                                               "RELÉS"
 #define S_BUTTONS                                              "BOTONES"

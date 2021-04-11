@@ -33,6 +33,7 @@
 #else
 #define S_TEMPLATE_BOARD "Modèle de la planches"
 #endif
+#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
 #define S_TYPE                                                 "Genre"
 #define S_RELAYS                                               "LES RELAIS"
 #define S_BUTTONS                                              "LES BOUTONS"

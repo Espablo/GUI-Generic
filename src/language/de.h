@@ -32,6 +32,7 @@
 #else
 #define S_TEMPLATE_BOARD "Modul Vorlage"
 #endif
+#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
 #define S_TYPE                                                 "Typ"
 #define S_RELAYS                                               "RELAIS"
 #define S_BUTTONS                                              "TASTEN"
