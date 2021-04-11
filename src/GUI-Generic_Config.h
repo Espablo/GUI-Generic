@@ -1,8 +1,6 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
-#include "SuplaDeviceGUI.h"
-
 // #define USE_CUSTOM
 
 // User configuration
@@ -15,7 +13,7 @@
 
 //#define DEBUG_MODE
 
-//#define DEFAULT_TEMPLATE_BOARD = BOARD_SHELLY2
+//#define DEFAULT_TEMPLATE_BOARD BOARD_SHELLY2
 #define SUPLA_OTA
 #define SUPLA_ENABLE_GUI
 //#define -D SUPLA_ENABLE_SSL

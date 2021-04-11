@@ -10,8 +10,6 @@
 #define INCLUDE_FILE(x) QUOTE(language/x.h)
 #include INCLUDE_FILE(UI_LANGUAGE)
 
-#include "SuplaDeviceGUI.h"
-
 uint8_t *HexToBytes(String _value);
 int getCountSensorChannels();
 
