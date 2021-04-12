@@ -14,8 +14,9 @@ void createWebPageHome() {
     }
 
     if (strcmp(WebServer->httpServer->arg(PATH_REBOT_CREATOR).c_str(), "1") == 0) {
-      //WebServer->httpServer->sendHeader("Location", PATH_START, true);
+      // WebServer->httpServer->sendHeader("Location", PATH_START, true);
       handlePageHome(2);
+      ConfigESP->rebootESP();
       return;
     }
 
