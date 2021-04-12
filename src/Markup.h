@@ -9,6 +9,9 @@ void addFormEnd(String& html);
 void addFormHeader(String& html, const String& name = "\n");
 void addFormHeaderEnd(String& html);
 
+void addBr(String& html);
+void addLabel(String& html, const String& name);
+
 void addTextBox(String& html,
                 const String& input_id,
                 const String& name,
@@ -18,7 +21,8 @@ void addTextBox(String& html,
                 int maxlength,
                 bool required,
                 bool readonly = false,
-                bool password = false);
+                bool password = false,
+                bool underline = true);
 
 void addTextBox(String& html,
                 const String& input_id,
@@ -83,11 +87,11 @@ void addButton(String& html, const String& name, const String& url);
 
 void addButtonSubmit(String& html, const String& name);
 
-void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function, uint8_t nr);
-
 String getURL(const String& url);
 
 String getURL(const String& url, uint8_t nr);
+
+String getInput(const String& input, uint8_t nr);
 
 String getParameterRequest(const String& url, const String& param, const String& value = emptyString);
 

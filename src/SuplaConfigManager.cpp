@@ -162,7 +162,7 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_MAX_DHT11, "1", 2);
   this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
   this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
-  this->addKey(KEY_ALTITUDE_BME280, "0", 4);
+  this->addKey(KEY_ALTITUDE_BMX280, "0", 4);
   this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
   this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
   this->addKey(KEY_ACTIVE_SENSOR, "", 16);
@@ -185,7 +185,7 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_PUSHOVER, "", MAX_GPIO * 2);
   this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
   this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
-  this->addKey(KEY_PUSHOVER_MASSAGE, "", 16 * MAX_PUSHOVER_MESSAGE);
+  this->addKey(KEY_PUSHOVER_MASSAGE, "", MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);
 
   this->addKey(KEY_CONDITIONS_SENSOR_TYPE, "", MAX_GPIO * 2);
   this->addKey(KEY_CONDITIONS_TYPE, "", MAX_GPIO * 1);
@@ -196,6 +196,9 @@ SuplaConfigManager::SuplaConfigManager() {
 
   this->addKey(KEY_DIRECT_LINKS_ON, "", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
   this->addKey(KEY_DIRECT_LINKS_OFF, "", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
+
+  this->addKey(KEY_CORRECTION_TEMP, "", 6 * MAX_DS18B20);
+  this->addKey(KEY_CORRECTION_HUMIDITY, "", 6 * MAX_DS18B20);
 
   this->load();
   //  switch (this->load()) {
@@ -381,8 +384,8 @@ void SuplaConfigManager::showAllValue() {
 }
 
 void SuplaConfigManager::deleteAllValues() {
-	deleteWifiSuplaAdminValues();
-	deleteDeviceValues();
+  deleteWifiSuplaAdminValues();
+  deleteDeviceValues();
 }
 
 void SuplaConfigManager::deleteDeviceValues() {

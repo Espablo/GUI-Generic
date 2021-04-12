@@ -21,6 +21,7 @@
 #include "supla-common/srpc.h"
 #include "tools.h"
 #include "events.h"
+#include "correction.h"
 
 namespace Supla {
 
@@ -47,6 +48,9 @@ Channel::~Channel() {
 }
 
 void Channel::setNewValue(double dbl) {
+  // Apply channel value correction
+  dbl += Correction::get(getChannelNumber());
+
   char newValue[SUPLA_CHANNELVALUE_SIZE];
   if (sizeof(double) == 8) {
     memcpy(newValue, &dbl, 8);
@@ -61,6 +65,10 @@ void Channel::setNewValue(double dbl) {
 }
 
 void Channel::setNewValue(double temp, double humi) {
+  // Apply channel value corrections
+  temp += Correction::get(getChannelNumber());
+  humi += Correction::get(getChannelNumber(), true);
+
   char newValue[SUPLA_CHANNELVALUE_SIZE];
   _supla_int_t t = temp * 1000.00;
   _supla_int_t h = humi * 1000.00;
@@ -79,12 +87,12 @@ void Channel::setNewValue(double temp, double humi) {
   }
 }
 
-void Channel::setNewValue(_supla_int64_t value) {
+void Channel::setNewValue(unsigned _supla_int64_t value) {
   char newValue[SUPLA_CHANNELVALUE_SIZE];
 
   memset(newValue, 0, SUPLA_CHANNELVALUE_SIZE);
 
-  memcpy(newValue, &value, sizeof(_supla_int64_t));
+  memcpy(newValue, &value, sizeof(value));
   if (setNewValue(newValue)) {
     runAction(ON_CHANGE);
     runAction(ON_SECONDARY_CHANNEL_CHANGE);
@@ -297,8 +305,8 @@ _supla_int_t Channel::getValueInt32() {
   return value;
 }
  
-_supla_int64_t Channel::getValueInt64() {
-  _supla_int64_t value;
+unsigned _supla_int64_t Channel::getValueInt64() {
+  unsigned _supla_int64_t value;
   memcpy(&value, reg_dev.channels[channelNumber].value, sizeof(value));
   return value;
 }
@@ -330,6 +338,10 @@ uint8_t Channel::getValueBrightness() {
 void Channel::setValidityTimeSec(unsigned _supla_int_t timeSec) {
   validityTimeSec = timeSec;
   if (validityTimeSec > 0) unsetFlag(SUPLA_CHANNEL_FLAG_CHANNELSTATE);
+}
+
+void Channel::setCorrection(double correction, bool forSecondaryValue) {
+  Correction::add(getChannelNumber(), correction, forSecondaryValue);
 }
 
 };  // namespace Supla

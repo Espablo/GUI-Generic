@@ -1,5 +1,4 @@
 #include "SuplaWebPageTools.h"
-#include "SuplaDeviceGUI.h"
 
 void createWebTools() {
   WebServer->httpServer->on(getURL(PATH_TOOLS), HTTP_GET, [&]() {
@@ -16,15 +15,15 @@ void createWebTools() {
       handleUpload();
     }
     else if (strcasecmp_P(sCommand.c_str(), PATH_RESET) == 0) {
-      WebServer->httpServer->sendHeader("Location", "/");
-      WebServer->httpServer->send(303);
-      WebServer->supla_webpage_start(0);
+      WebServer->httpServer->sendHeader(F("Location"), PATH_START);
+      // WebServer->httpServer->send(303);
+      handlePageHome(2);
       ConfigESP->reset(true);
     }
     else if (strcasecmp_P(sCommand.c_str(), PATH_FACTORY_RESET) == 0) {
-      WebServer->httpServer->sendHeader("Location", "/");
-      WebServer->httpServer->send(303);
-      WebServer->supla_webpage_start(0);
+      WebServer->httpServer->sendHeader(F("Location"), PATH_START);
+      // WebServer->httpServer->send(303);
+      handlePageHome(2);
       ConfigESP->factoryReset(true);
     }
     else {

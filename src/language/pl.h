@@ -117,6 +117,7 @@
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "KRAŃCÓWKI"
+#define S_CORRECTION     "KOREKTA DLA SENSORÓW"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"
@@ -132,7 +133,7 @@
 #define S_OLED_BUTTON                      "Przycisk OLED"
 #define S_SCREEN                           "Ekran"
 #define S_BACKLIGHT_S                      "Podświetlenie [s]"
-#define S_ADDRESS_BMPE280                  "Adres BME280"
+#define S_ADDRESS                          "Adres"
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generuj GUID & AUTHKEY"
@@ -178,5 +179,9 @@
 #define S_CONFIGURATION_MODE "Tryb konfiguracji"
 #define S_AP_NAME            "Nazwa AP"
 #define S_ERROR              "błąd"
+
+//#### SuplaWebCorrection.cpp ####
+#define S_CORRECTION_FOR_CH "Korekta dla kanałów"
+#define S_CH_CORRECTION     "Korekta kanału:"
 
 #endif  // _LANGUAGE_PL_S_H_

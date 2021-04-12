@@ -24,10 +24,9 @@ namespace Sensor {
 class NTC10K : public Thermometer {
  public:
   NTC10K(int8_t pin, uint32_t rs = 100000, double vcc = 3.3);
-  double getTemp();
+  double getValue();
 
  private:
-  void iterateAlways();
   void onInit();
 
  protected:

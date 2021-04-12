@@ -1,5 +1,4 @@
 #include "SuplaWebPageUpload.h"
-#include "SuplaDeviceGUI.h"
 #include "FS.h"
 
 static const char uploadIndex[] PROGMEM =

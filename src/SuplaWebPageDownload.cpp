@@ -1,5 +1,4 @@
 #include "SuplaWebPageDownload.h"
-#include "SuplaDeviceGUI.h"
 #include "FS.h"
 
 void handleDownload() {

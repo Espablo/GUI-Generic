@@ -22,6 +22,16 @@ void addFormHeaderEnd(String& html) {
   html += F("</div>");
 }
 
+void addBr(String& html) {
+  html += F("<br>");
+}
+
+void addLabel(String& html, const String& name) {
+  html += F("<i><label>");
+  html += name;
+  html += F("</label></i>");
+}
+
 void addTextBox(String& html,
                 const String& input_id,
                 const String& name,
@@ -31,8 +41,16 @@ void addTextBox(String& html,
                 int maxlength,
                 bool required,
                 bool readonly,
-                bool password) {
-  html += F("<i><input name='");
+                bool password,
+                bool underline) {
+  if (underline) {
+    html += F("<i>");
+  }
+  else {
+    html += F("<i style='border-bottom:none !important;'>");
+  }
+
+  html += F("<input name='");
   html += input_id;
   if (password) {
     if (ConfigESP->configModeESP != NORMAL_MODE) {
@@ -257,6 +275,7 @@ void addListGPIOLinkBox(String& html, const String& input_id, const String& name
 
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
   uint8_t address;
+
   if (nr == 1) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
@@ -266,18 +285,65 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
   }
   if (nr == 17) {
     address = ConfigESP->getAdressMCP23017(nr, function);
-    addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 2"), MCP23017_P, 5, address);
+    if (url != "")
+      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 2"), MCP23017_P, 5, address, url);
+    else
+      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 2"), MCP23017_P, 5, address);
   }
 
   html += F("<i><label>");
-  if (nr > 0) {
-    html += nr;
-    html += F(".");
+
+  if (!url.isEmpty()) {
+    html += F("<a href='");
+    html += getParameterRequest(url, ARG_PARM_NUMBER);
+    if (nr > 0) {
+      html += nr;
+    }
+    html += F("'>");
+
+    if (nr > 0) {
+      html += nr;
+      html += F(".");
+    }
+
+    html += F(" ");
+    html += name;
+    html += FPSTR(ICON_EDIT);
+    html += F("</a>");
+    WebServer->sendHeader();
   }
-  html += F(" ");
-  html += name;
+  else {
+    if (nr > 0) {
+      html += nr;
+      html += F(".");
+    }
+    html += F(" ");
+    html += name;
+  }
   html += F("</label>");
-  addListMCP23017GPIO(html, input_id, function, nr);
+
+  html += F("<select name='");
+  html += input_id;
+  html += nr;
+  html += F("'>");
+
+  uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
+
+  for (uint8_t suported = 0; suported < 18; suported++) {
+    if (ConfigESP->checkBusyGpioMCP23017(suported, nr, function) || selected == suported) {
+      html += F("<option value='");
+      html += suported;
+      if (selected == suported) {
+        html += F("' selected>");
+      }
+      else {
+        html += F("'>");
+      }
+      html += FPSTR(GPIO_MCP23017_P[suported]);
+    }
+    WebServer->sendHeader();
+  }
+  html += F("</select>");
   html += F("</i>");
 }
 
@@ -305,8 +371,8 @@ void addListBox(String& html, const String& input_id, const String& name, const 
       html += F("'>");
     }
     html += FPSTR(array_P[suported]);
+    WebServer->sendHeader();
   }
-  WebServer->sendHeader();
   html += F("</select></i>");
 }
 
@@ -369,37 +435,16 @@ void addButtonSubmit(String& html, const String& name) {
   WebServer->sendHeader();
 }
 
-void addListMCP23017GPIO(String& html, const String& input_id, uint8_t function, uint8_t nr) {
-  html += F("<select name='");
-  html += input_id;
-  html += nr;
-  html += F("'>");
-
-  uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
-
-  for (uint8_t suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpioMCP23017(suported, nr, function) || selected == suported) {
-      html += F("<option value='");
-      html += suported;
-      if (selected == suported) {
-        html += F("' selected>");
-      }
-      else {
-        html += F("'>");
-      }
-      html += FPSTR(GPIO_MCP23017_P[suported]);
-    }
-  }
-  WebServer->sendHeader();
-  html += F("</select>");
-}
-
 String getURL(const String& url) {
   return String(PATH_START) + url;
 }
 
 String getURL(const String& url, uint8_t nr) {
   return String(PATH_START) + url + nr;
+}
+
+String getInput(const String& input, uint8_t nr) {
+  return input + nr;
 }
 
 String getParameterRequest(const String& url, const String& param, const String& value) {

@@ -6,34 +6,34 @@
 // Translated by EñE Partycja Gajek-Nowrot
 // Checked by elmaya
 
-#define S_SETTING_FOR                                          "Configuraciones para"
-#define S_SETTING_WIFI_SSID                                    "Configuración de WIFI"
-#define S_WIFI_SSID                                            "Nombre WIFI"
-#define S_WIFI_PASS                                            "Contraseña"
-#define S_HOST_NAME                                            "Nombre de módulo"
-#define S_SETTING_SUPLA                                        "Configuración SUPLA"
-#define S_SUPLA_SERVER                                         "Dirección de servidor"
-#define S_SUPLA_EMAIL                                          "Correo electrónico"
-#define S_SETTING_ADMIN                                        "Datos de administrador"
-#define S_LOGIN                                                "Login"
-#define S_LOGIN_PASS                                           "Contraseña"
-#define S_ROLLERSHUTTERS                                       "Persianas"
-#define S_SAVE                                                 "Guardar"
-#define S_DEVICE_SETTINGS                                      "Configuración de dispositivo"
-#define S_TOOLS                                                "Instrumentos"
-#define S_SAVE_CONFIGURATION                                   "Guardar configuración"
-#define S_LOAD_CONFIGURATION                                   "Cargar configuración"
-#define S_RESET_CONFIGURATION                                  "Restablecer la configuración del dispositivo"
-#define S_RESTORE_FACTORY_SETTING                              "Restaurar la configuración de fábrica"
-#define S_UPDATE                                               "Actualización"
-#define S_RESTART                                              "Reiniciar"
-#define S_RETURN                                               "Volver"
+#define S_SETTING_FOR             "Configuraciones para"
+#define S_SETTING_WIFI_SSID       "Configuración de WIFI"
+#define S_WIFI_SSID               "Nombre WIFI"
+#define S_WIFI_PASS               "Contraseña"
+#define S_HOST_NAME               "Nombre de módulo"
+#define S_SETTING_SUPLA           "Configuración SUPLA"
+#define S_SUPLA_SERVER            "Dirección de servidor"
+#define S_SUPLA_EMAIL             "Correo electrónico"
+#define S_SETTING_ADMIN           "Datos de administrador"
+#define S_LOGIN                   "Login"
+#define S_LOGIN_PASS              "Contraseña"
+#define S_ROLLERSHUTTERS          "Persianas"
+#define S_SAVE                    "Guardar"
+#define S_DEVICE_SETTINGS         "Configuración de dispositivo"
+#define S_TOOLS                   "Instrumentos"
+#define S_SAVE_CONFIGURATION      "Guardar configuración"
+#define S_LOAD_CONFIGURATION      "Cargar configuración"
+#define S_RESET_CONFIGURATION     "Restablecer la configuración del dispositivo"
+#define S_RESTORE_FACTORY_SETTING "Restaurar la configuración de fábrica"
+#define S_UPDATE                  "Actualización"
+#define S_RESTART                 "Reiniciar"
+#define S_RETURN                  "Volver"
 #ifdef ARDUINO_ESP8266_GENERIC
-#define S_TEMPLATE_BOARD                                       "Modelos de placas (ESP8266)"
+#define S_TEMPLATE_BOARD "Modelos de placas (ESP8266)"
 #elif ARDUINO_ESP8266_ESP01
-#define S_TEMPLATE_BOARD                                       "Modelos de placas (ESP8285)"
+#define S_TEMPLATE_BOARD "Modelos de placas (ESP8285)"
 #else
-#define S_TEMPLATE_BOARD                                       "Modelos de placas"
+#define S_TEMPLATE_BOARD "Modelos de placas"
 #endif
 #define S_TYPE                                                 "Tipo"
 #define S_RELAYS                                               "RELÉS"
@@ -119,6 +119,7 @@
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "FINALES DE CARRERA"
+#define S_CORRECTION     "CORRECCIÓN PARA SENSORES"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"
@@ -134,7 +135,7 @@
 #define S_OLED_BUTTON                      "Botón OLED"
 #define S_SCREEN                           "Pantalla"
 #define S_BACKLIGHT_S                      "Luz de fondo [s]"
-#define S_ADDRESS_BMPE280                  "Dirección BME280"
+#define S_ADDRESS                          "Dirección"
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generar GUID & AUTHKEY"
@@ -180,5 +181,9 @@
 #define S_CONFIGURATION_MODE "Modo de configuración"
 #define S_AP_NAME            "Nombre de AP"
 #define S_ERROR              "error"
+
+//#### SuplaWebCorrection.cpp ####
+#define S_CORRECTION_FOR_CH "Corrección de canales"
+#define S_CH_CORRECTION     "Corrección de canal:"
 
 #endif  // _LANGUAGE_ES_S_H_
