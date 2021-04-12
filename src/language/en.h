@@ -3,35 +3,36 @@
 
 #define S_LANG "en"
 
-#define S_SETTING_FOR                                          "Setting for"
-#define S_SETTING_WIFI_SSID                                    "Setting WIFI"
-#define S_WIFI_SSID                                            "Name WIFI"
-#define S_WIFI_PASS                                            "Password"
-#define S_HOST_NAME                                            "Module name"
-#define S_SETTING_SUPLA                                        "Setting SUPLA"
-#define S_SUPLA_SERVER                                         "Server address"
-#define S_SUPLA_EMAIL                                          "Email"
-#define S_SETTING_ADMIN                                        "Administrator settings"
-#define S_LOGIN                                                "Login"
-#define S_LOGIN_PASS                                           "Password"
-#define S_ROLLERSHUTTERS                                       "Roller shuter"
-#define S_SAVE                                                 "Save"
-#define S_DEVICE_SETTINGS                                      "Device settings"
-#define S_TOOLS                                                "Tools"
-#define S_SAVE_CONFIGURATION                                   "Save configuration"
-#define S_LOAD_CONFIGURATION                                   "Load configuration"
-#define S_RESET_CONFIGURATION                                  "Reset device settings"
-#define S_RESTORE_FACTORY_SETTING                              "Restore factory settings"
-#define S_UPDATE                                               "Update"
-#define S_RESTART                                              "Restart"
-#define S_RETURN                                               "Return"
+#define S_SETTING_FOR             "Setting for"
+#define S_SETTING_WIFI_SSID       "Setting WIFI"
+#define S_WIFI_SSID               "Name WIFI"
+#define S_WIFI_PASS               "Password"
+#define S_HOST_NAME               "Module name"
+#define S_SETTING_SUPLA           "Setting SUPLA"
+#define S_SUPLA_SERVER            "Server address"
+#define S_SUPLA_EMAIL             "Email"
+#define S_SETTING_ADMIN           "Administrator settings"
+#define S_LOGIN                   "Login"
+#define S_LOGIN_PASS              "Password"
+#define S_ROLLERSHUTTERS          "Roller shuter"
+#define S_SAVE                    "Save"
+#define S_DEVICE_SETTINGS         "Device settings"
+#define S_TOOLS                   "Tools"
+#define S_SAVE_CONFIGURATION      "Save configuration"
+#define S_LOAD_CONFIGURATION      "Load configuration"
+#define S_RESET_CONFIGURATION     "Reset device settings"
+#define S_RESTORE_FACTORY_SETTING "Restore factory settings"
+#define S_UPDATE                  "Update"
+#define S_RESTART                 "Restart"
+#define S_RETURN                  "Return"
 #ifdef ARDUINO_ESP8266_GENERIC
-#define S_TEMPLATE_BOARD                                       "Template board (ESP8266)"
+#define S_TEMPLATE_BOARD "Template board (ESP8266)"
 #elif ARDUINO_ESP8266_ESP01
-#define S_TEMPLATE_BOARD                                       "Template board (ESP8285)"
+#define S_TEMPLATE_BOARD "Template board (ESP8285)"
 #else
-#define S_TEMPLATE_BOARD                                       "Template board"
+#define S_TEMPLATE_BOARD "Template board"
 #endif
+#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
 #define S_TYPE                                                 "Type"
 #define S_RELAYS                                               "RELAYS"
 #define S_BUTTONS                                              "BUTTONS"
@@ -89,6 +90,10 @@
 #define S_STATUS_LOCATION_IS_DISABLED    "The location is disabled"
 #define S_STATUS_DEVICE_LIMIT_EXCEEDED   "Device limit exceeded"
 #define S_STATUS_REGISTRATION_DISABLED   "Device registration INACTIVE"
+#define S_STATUS_MISSING_CREDENTIALS     "Missing email address"
+#define S_STATUS_INVALID_AUTHKEY         "Missing AuthKey"
+#define S_STATUS_NO_LOCATION_AVAILABLE   "No location available!"
+#define S_STATUS_UNKNOWN_ERROR           "Unknown registration error"
 
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                           "OFF"
@@ -112,6 +117,7 @@
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "LIMIT SWITCHES"
+#define S_CORRECTION     "CORRECTION FOR SENSORS"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "ABSENT"
@@ -127,7 +133,7 @@
 #define S_OLED_BUTTON                      "OLED button"
 #define S_SCREEN                           "Screen"
 #define S_BACKLIGHT_S                      "Backlight [s]"
-#define S_ADDRESS_BMPE280                  "Address BME280"
+#define S_ADDRESS                          "Address"
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generate GUID & AUTHKEY"
@@ -145,6 +151,8 @@
 #define S_VOLTAGE_V               "Voltage [V]"
 #define S_DEPTH_CM                "Depth [cm]"
 #define S_SENSOR_READING_DISTANCE "sensor reading distance"
+#define S_ELECTRIC_PHASE          "1/3phases"
+#define S_OPTIONAL                "(Optional)"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "Relay activation status"
@@ -171,5 +179,9 @@
 #define S_CONFIGURATION_MODE "Configuration mode"
 #define S_AP_NAME            "AP name"
 #define S_ERROR              "error"
+
+//#### SuplaWebCorrection.cpp ####
+#define S_CORRECTION_FOR_CH "Correction for channels"
+#define S_CH_CORRECTION     "Channel correction:"
 
 #endif  // _LANGUAGE_EN_S_H_

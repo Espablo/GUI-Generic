@@ -15,7 +15,7 @@
 */
 #include "SuplaDeviceGUI.h"
 #include "SuplaConfigManager.h"
-#include "SuplaGuiWiFi.h"
+#include <supla/network/SuplaGuiWiFi.h>
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
 #define TIME_SAVE_PERIOD_SEK                 30   // the time is given in seconds
@@ -24,26 +24,14 @@
 #include <supla/storage/eeprom.h>
 Supla::Eeprom eeprom(STORAGE_OFFSET);
 #endif
+
+Supla::GUIESPWifi *wifi = nullptr;
+
 namespace Supla {
 namespace GUI {
 void begin() {
-#ifdef DEBUG_MODE
-  new Supla::Sensor::EspFreeHeap();
-#endif
-
-  Supla::GUIESPWifi *wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
-
-  wifi->enableBuffer(true);
-
-#ifdef SUPLA_ENABLE_SSL
-  wifi->enableSSL(true);
-#else
-  wifi->enableSSL(false);
-#endif
-
-  String supla_hostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
-  supla_hostname.replace(" ", "_");
-  wifi->setHostName(supla_hostname.c_str());
+  setupWifi();
+  enableWifiSSL(ConfigESP->checkSSL());
 
   SuplaDevice.setName(ConfigManager->get(KEY_HOST_NAME)->getValue());
 
@@ -51,17 +39,53 @@ void begin() {
   SuplaDevice.setSwVersion(BUILD_VERSION);
 #endif
 
+  String server = ConfigManager->get(KEY_SUPLA_SERVER)->getValue();
+  auto npos = server.indexOf(":");
+  String suplaServer = server.substring(0, npos);
+
   SuplaDevice.begin((char *)ConfigManager->get(KEY_SUPLA_GUID)->getValue(),      // Global Unique Identifier
-                    ConfigManager->get(KEY_SUPLA_SERVER)->getValue(),            // SUPLA server address
+                    suplaServer.c_str(),                                         // SUPLA server address
                     ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),             // Email address used to login to Supla Cloud
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
-  ConfigManager->showAllValue();
-  WebServer->begin();
+  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt()) {
+    crateWebServer();
+  }
+}
+
+void setupWifi() {
+  if (wifi) {
+    delete wifi;
+    wifi = nullptr;
+  }
+
+  wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
+  wifi->enableBuffer(true);
+
+  String suplaHostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
+  suplaHostname.replace(" ", "_");
+  wifi->setHostName(suplaHostname.c_str());
+}
+
+void enableWifiSSL(bool value) {
+  if (wifi) {
+    if (ConfigESP->configModeESP == CONFIG_MODE) {
+      wifi->enableSSL(false);
+    }
+    else {
+      wifi->enableSSL(value);
+    }
+  }
+}
+
+void crateWebServer() {
+  if (WebServer == NULL) {
+    WebServer = new SuplaWebServer();
+    WebServer->begin();
+  }
 }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-
 void addRelayButton(uint8_t nr) {
   uint8_t pinRelay, pinButton, pinLED;
   bool highIsOn, levelLed;
@@ -96,7 +120,7 @@ void addRelayButton(uint8_t nr) {
       auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
 
       button->addAction(ConfigESP->getAction(pinButton), *relay[size], ConfigESP->getEvent(pinButton));
-      button->setSwNoiseFilterDelay(50);
+      button->setSwNoiseFilterDelay(100);
     }
 
     if (pinLED != OFF_GPIO) {
@@ -173,7 +197,7 @@ void addRolleShutter(uint8_t nr) {
   pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
 
   pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-  pinButtonDown = ConfigESP->getGpio(pinButtonDown);
+  pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
 
   pullupButtonUp = ConfigESP->getPullUp(pinButtonUp);
   pullupButtonDown = ConfigESP->getPullUp(pinButtonDown);
@@ -347,6 +371,8 @@ void addConditionsTurnON(int function, Supla::ChannelElement *client) {
         strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0) {
       double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
 
+      client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
+
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
         case HEATING:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold));
@@ -379,6 +405,8 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client) {
         strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0) {
       double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
 
+      client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
+
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
         case HEATING:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold));
@@ -401,9 +429,32 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client) {
 #endif
 }
 
+void addCorrectionSensor() {
+  double correction;
+
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
+        correction = ConfigManager->get(KEY_CORRECTION_TEMP)->getElement(channel->getChannelNumber()).toDouble();
+        Supla::Correction::add(channel->getChannelNumber(), correction);
+      }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
+        correction = ConfigManager->get(KEY_CORRECTION_TEMP)->getElement(channel->getChannelNumber()).toDouble();
+        Supla::Correction::add(channel->getChannelNumber(), correction);
+
+        correction = ConfigManager->get(KEY_CORRECTION_HUMIDITY)->getElement(channel->getChannelNumber()).toDouble();
+        Supla::Correction::add(channel->getChannelNumber(), correction, true);
+      }
+    }
+  }
+}
+
 }  // namespace GUI
 }  // namespace Supla
 
-SuplaConfigManager *ConfigManager = new SuplaConfigManager();
-SuplaConfigESP *ConfigESP = new SuplaConfigESP();
-SuplaWebServer *WebServer = new SuplaWebServer();
+SuplaConfigManager *ConfigManager = nullptr;
+SuplaConfigESP *ConfigESP = nullptr;
+SuplaWebServer *WebServer = nullptr;

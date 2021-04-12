@@ -1,5 +1,4 @@
 #include "SuplaWebPageUpload.h"
-#include "SuplaDeviceGUI.h"
 #include "FS.h"
 
 static const char uploadIndex[] PROGMEM =
@@ -12,9 +11,6 @@ static const char uploadIndex[] PROGMEM =
 File dataFile;
 
 void createWebUpload() {
-  // WebServer->httpServer->on(F("/upload"), HTTP_GET, handleUpload);
-  WebServer->httpServer->on(getURL(PATH_UPLOAD), HTTP_GET, []() { handleUpload(); });
-  // WebServer->httpServer->on(F("/upload"), HTTP_POST, handleFileUpload);
   WebServer->httpServer->on(
       getURL(PATH_UPLOAD), HTTP_POST,
       []() {

@@ -4,35 +4,36 @@
 
 #define S_LANG "pl"
 
-#define S_SETTING_FOR                                          "Ustawienia dla"
-#define S_SETTING_WIFI_SSID                                    "Ustawienia WIFI"
-#define S_WIFI_SSID                                            "Nazwa sieci"
-#define S_WIFI_PASS                                            "Hasło"
-#define S_HOST_NAME                                            "Nazwa modułu"
-#define S_SETTING_SUPLA                                        "Ustawienia SUPLA"
-#define S_SUPLA_SERVER                                         "Adres serwera"
-#define S_SUPLA_EMAIL                                          "Email"
-#define S_SETTING_ADMIN                                        "Ustawienia administratora"
-#define S_LOGIN                                                "Login"
-#define S_LOGIN_PASS                                           "Hasło"
-#define S_ROLLERSHUTTERS                                       "Rolety"
-#define S_SAVE                                                 "Zapisz"
-#define S_DEVICE_SETTINGS                                      "Ustawienia urządzenia"
-#define S_TOOLS                                                "Narzędzia"
-#define S_SAVE_CONFIGURATION                                   "Zapisz konfigurację"
-#define S_LOAD_CONFIGURATION                                   "Wczytaj konfigurację"
-#define S_RESET_CONFIGURATION                                  "Resetuj ustawienia urządzenia"
-#define S_RESTORE_FACTORY_SETTING                              "Przywróć ustawienia fabryczne"
-#define S_UPDATE                                               "Aktualizacja"
-#define S_RESTART                                              "Restart"
-#define S_RETURN                                               "Powrót"
+#define S_SETTING_FOR             "Ustawienia dla"
+#define S_SETTING_WIFI_SSID       "Ustawienia WIFI"
+#define S_WIFI_SSID               "Nazwa sieci"
+#define S_WIFI_PASS               "Hasło"
+#define S_HOST_NAME               "Nazwa modułu"
+#define S_SETTING_SUPLA           "Ustawienia SUPLA"
+#define S_SUPLA_SERVER            "Adres serwera"
+#define S_SUPLA_EMAIL             "Email"
+#define S_SETTING_ADMIN           "Ustawienia administratora"
+#define S_LOGIN                   "Login"
+#define S_LOGIN_PASS              "Hasło"
+#define S_ROLLERSHUTTERS          "Rolety"
+#define S_SAVE                    "Zapisz"
+#define S_DEVICE_SETTINGS         "Ustawienia urządzenia"
+#define S_TOOLS                   "Narzędzia"
+#define S_SAVE_CONFIGURATION      "Zapisz konfigurację"
+#define S_LOAD_CONFIGURATION      "Wczytaj konfigurację"
+#define S_RESET_CONFIGURATION     "Resetuj ustawienia urządzenia"
+#define S_RESTORE_FACTORY_SETTING "Przywróć ustawienia fabryczne"
+#define S_UPDATE                  "Aktualizacja"
+#define S_RESTART                 "Restart"
+#define S_RETURN                  "Powrót"
 #ifdef ARDUINO_ESP8266_GENERIC
-#define S_TEMPLATE_BOARD                                       "Szablony płytek (ESP8266)"
+#define S_TEMPLATE_BOARD "Szablony płytek (ESP8266)"
 #elif ARDUINO_ESP8266_ESP01
-#define S_TEMPLATE_BOARD                                       "Szablony płytek (ESP8285)"
+#define S_TEMPLATE_BOARD "Szablony płytek (ESP8285)"
 #else
-#define S_TEMPLATE_BOARD                                       "Szablony płytek"
+#define S_TEMPLATE_BOARD "Szablony płytek"
 #endif
+#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
 #define S_TYPE                                                 "Rodzaj"
 #define S_RELAYS                                               "PRZEKAŹNIKI"
 #define S_BUTTONS                                              "PRZYCISKI"
@@ -90,6 +91,10 @@
 #define S_STATUS_LOCATION_IS_DISABLED    "Lokalizacja jest wyłączona"
 #define S_STATUS_DEVICE_LIMIT_EXCEEDED   "Przekroczono limit urządzeń"
 #define S_STATUS_REGISTRATION_DISABLED   "Rejestracja urządzeń NIEAKTYWNA"
+#define S_STATUS_MISSING_CREDENTIALS     "Brak adresu e-mail"
+#define S_STATUS_INVALID_AUTHKEY         "Brak klucza AuthKey"
+#define S_STATUS_NO_LOCATION_AVAILABLE   "Brak dostępnej lokalizacji!"
+#define S_STATUS_UNKNOWN_ERROR           "Nieznany błąd rejestracji"
 
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                           "WYŁĄCZ"
@@ -113,6 +118,7 @@
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "KRAŃCÓWKI"
+#define S_CORRECTION     "KOREKTA DLA SENSORÓW"
 
 //#### SuplaTemplateBoard.h ####
 #define S_ABSENT "BRAK"
@@ -128,7 +134,7 @@
 #define S_OLED_BUTTON                      "Przycisk OLED"
 #define S_SCREEN                           "Ekran"
 #define S_BACKLIGHT_S                      "Podświetlenie [s]"
-#define S_ADDRESS_BMPE280                  "Adres BME280"
+#define S_ADDRESS                          "Adres"
 
 //#### SuplaWebPageUpload.cpp ####
 #define S_GENERATE_GUID_AND_KEY "Generuj GUID & AUTHKEY"
@@ -146,6 +152,8 @@
 #define S_VOLTAGE_V               "Napięcie [V]"
 #define S_DEPTH_CM                "Głębokość [cm]"
 #define S_SENSOR_READING_DISTANCE "maksymalna odległość odczytu czujnika"
+#define S_ELECTRIC_PHASE          "1/3fazy"
+#define S_OPTIONAL                "(Opcjonalny)"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "Status załączenia przekaźnika"
@@ -172,5 +180,9 @@
 #define S_CONFIGURATION_MODE "Tryb konfiguracji"
 #define S_AP_NAME            "Nazwa AP"
 #define S_ERROR              "błąd"
+
+//#### SuplaWebCorrection.cpp ####
+#define S_CORRECTION_FOR_CH "Korekta dla kanałów"
+#define S_CH_CORRECTION     "Korekta kanału:"
 
 #endif  // _LANGUAGE_PL_S_H_

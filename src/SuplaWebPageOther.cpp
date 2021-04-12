@@ -1,7 +1,7 @@
 #include "SuplaWebPageOther.h"
 
 void createWebPageOther() {
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER)
+#ifdef GUI_OTHER
   WebServer->httpServer->on(getURL(PATH_OTHER), handleOther);
   WebServer->httpServer->on(getURL(PATH_SAVE_OTHER), handleOtherSave);
 
@@ -19,7 +19,7 @@ void createWebPageOther() {
 #endif
 }
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER)
+#ifdef GUI_OTHER
 void handleOther() {
   if (!WebServer->isLoggedIn()) {
     return;
@@ -33,18 +33,6 @@ void handleOtherSave() {
   }
 
   uint8_t nr, last_value;
-
-#ifdef SUPLA_HC_SR04
-  if (!WebServer->saveGPIO(INPUT_TRIG_GPIO, FUNCTION_TRIG)) {
-    suplaWebPageOther(6);
-    return;
-  }
-  if (!WebServer->saveGPIO(INPUT_ECHO_GPIO, FUNCTION_ECHO)) {
-    suplaWebPageOther(6);
-    return;
-  }
-  ConfigManager->set(KEY_HC_SR04_MAX_SENSOR_READ, WebServer->httpServer->arg(INPUT_HC_SR04_MAX_SENSOR_READ).c_str());
-#endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
   // Supla::GUI::impulseCounter[0]->setCounter((unsigned long long)WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
@@ -62,6 +50,36 @@ void handleOtherSave() {
   }
 #endif
 
+#ifdef SUPLA_HLW8012
+  if (!WebServer->saveGPIO(INPUT_CF, FUNCTION_CF) || !WebServer->saveGPIO(INPUT_CF1, FUNCTION_CF1) || !WebServer->saveGPIO(INPUT_SEL, FUNCTION_SEL)) {
+    suplaWebPageOther(6);
+    return;
+  }
+  else {
+    if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).c_str(), "") != 0) {
+      Supla::GUI::counterHLW8012->setCounter(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).toFloat() * 100 * 1000);
+      Supla::Storage::ScheduleSave(2000);
+    }
+  }
+#endif
+
+#ifdef SUPLA_PZEM_V_3
+  for (nr = 1; nr <= 3; nr++) {
+    if (!WebServer->saveGPIO(INPUT_PZEM_RX, FUNCTION_PZEM_RX, nr) || !WebServer->saveGPIO(INPUT_PZEM_TX, FUNCTION_PZEM_TX, nr)) {
+      suplaWebPageOther(6);
+      return;
+    }
+  }
+#endif
+
+#ifdef SUPLA_HC_SR04
+  if (!WebServer->saveGPIO(INPUT_TRIG_GPIO, FUNCTION_TRIG) || !WebServer->saveGPIO(INPUT_ECHO_GPIO, FUNCTION_ECHO)) {
+    suplaWebPageOther(6);
+    return;
+  }
+  ConfigManager->set(KEY_HC_SR04_MAX_SENSOR_READ, WebServer->httpServer->arg(INPUT_HC_SR04_MAX_SENSOR_READ).c_str());
+#endif
+
 #ifdef SUPLA_RGBW
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     if (!WebServer->saveGPIO(INPUT_RGBW_RED, FUNCTION_RGBW_RED, nr, INPUT_RGBW_MAX) ||
@@ -75,13 +93,6 @@ void handleOtherSave() {
   ConfigManager->set(KEY_MAX_RGBW, WebServer->httpServer->arg(INPUT_RGBW_MAX).c_str());
 #endif
 
-#ifdef SUPLA_HLW8012
-  if (!WebServer->saveGPIO(INPUT_CF, FUNCTION_CF) || !WebServer->saveGPIO(INPUT_CF1, FUNCTION_CF1) || !WebServer->saveGPIO(INPUT_SEL, FUNCTION_SEL)) {
-    suplaWebPageOther(6);
-    return;
-  }
-#endif
-
 #if defined(SUPLA_PUSHOVER)
   if (strcmp(WebServer->httpServer->arg(INPUT_PUSHOVER_TOKEN).c_str(), "") != 0) {
     ConfigManager->set(KEY_PUSHOVER_TOKEN, WebServer->httpServer->arg(INPUT_PUSHOVER_TOKEN).c_str());
@@ -89,6 +100,13 @@ void handleOtherSave() {
 
   if (strcmp(WebServer->httpServer->arg(INPUT_PUSHOVER_USER).c_str(), "") != 0) {
     ConfigManager->set(KEY_PUSHOVER_USER, WebServer->httpServer->arg(INPUT_PUSHOVER_USER).c_str());
+  }
+#endif
+
+#ifdef SUPLA_NTC_10K
+  if (!WebServer->saveGPIO(INPUT_NTC_10K, FUNCTION_NTC_10K)) {
+    suplaWebPageOther(6);
+    return;
   }
 #endif
 
@@ -111,21 +129,12 @@ void suplaWebPageOther(int save) {
   webContentBuffer += SuplaJavaScript(PATH_OTHER);
 
   addForm(webContentBuffer, F("post"), PATH_SAVE_OTHER);
-#ifdef SUPLA_HC_SR04
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_HC_SR04);
-  addListGPIOBox(webContentBuffer, INPUT_TRIG_GPIO, F("TRIG"), FUNCTION_TRIG);
-  addListGPIOBox(webContentBuffer, INPUT_ECHO_GPIO, F("ECHO"), FUNCTION_ECHO);
-  addNumberBox(webContentBuffer, INPUT_HC_SR04_MAX_SENSOR_READ, S_DEPTH_CM, S_SENSOR_READING_DISTANCE, false,
-               ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValue());
-  addFormHeaderEnd(webContentBuffer);
-#endif
-
 #ifdef SUPLA_IMPULSE_COUNTER
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_IMPULSE_COUNTER);
   addNumberBox(webContentBuffer, INPUT_MAX_IMPULSE_COUNTER, S_QUANTITY, KEY_MAX_IMPULSE_COUNTER, ConfigESP->countFreeGpio(FUNCTION_IMPULSE_COUNTER));
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
-    addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), FUNCTION_IMPULSE_COUNTER,
-                       String(PATH_IMPULSE_COUNTER_SET) + "?cmd=", nr);
+    addListGPIOLinkBox(webContentBuffer, INPUT_IMPULSE_COUNTER_GPIO, F("IC GPIO"), getParameterRequest(PATH_IMPULSE_COUNTER_SET, ARG_PARM_NUMBER),
+                       FUNCTION_IMPULSE_COUNTER, nr);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -136,8 +145,33 @@ void suplaWebPageOther(int save) {
   addListGPIOBox(webContentBuffer, INPUT_CF1, F("CF1"), FUNCTION_CF1);
   addListGPIOBox(webContentBuffer, INPUT_SEL, F("SELi"), FUNCTION_SEL);
   if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
+    float count = Supla::GUI::counterHLW8012->getCounter();
+    addNumberBox(webContentBuffer, INPUT_COUNTER_CHANGE_VALUE_HLW8012, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
+                 String(count / 100 / 1000));
     addLinkBox(webContentBuffer, S_CALIBRATION, PATH_HLW8012_CALIBRATE);
   }
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
+#ifdef SUPLA_PZEM_V_3
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("PZEM-004T V3") + S_SPACE + S_ELECTRIC_PHASE);
+  for (nr = 1; nr <= 3; nr++) {
+    if (nr >= 2)
+      addListGPIOBox(webContentBuffer, INPUT_PZEM_RX, String(F("L")) + nr + F(" - RX") + S_OPTIONAL, FUNCTION_PZEM_RX, nr, true, "", true);
+    else
+      addListGPIOBox(webContentBuffer, INPUT_PZEM_RX, String(F("L")) + nr + F(" - RX"), FUNCTION_PZEM_RX, nr, true, "", true);
+
+    addListGPIOBox(webContentBuffer, INPUT_PZEM_TX, String(F("L")) + nr + F(" - TX"), FUNCTION_PZEM_TX, nr, true, "", true);
+  }
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
+#ifdef SUPLA_HC_SR04
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_HC_SR04);
+  addListGPIOBox(webContentBuffer, INPUT_TRIG_GPIO, F("TRIG"), FUNCTION_TRIG);
+  addListGPIOBox(webContentBuffer, INPUT_ECHO_GPIO, F("ECHO"), FUNCTION_ECHO);
+  addNumberBox(webContentBuffer, INPUT_HC_SR04_MAX_SENSOR_READ, S_DEPTH_CM, S_SENSOR_READING_DISTANCE, false,
+               ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValue());
   addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -157,6 +191,12 @@ void suplaWebPageOther(int save) {
   addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_PUSHOVER);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_TOKEN, F("Token"), KEY_PUSHOVER_TOKEN, 0, MAX_TOKEN_SIZE, false);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_USER, F("Users"), KEY_PUSHOVER_USER, 0, MAX_USER_SIZE, false);
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
+#ifdef SUPLA_NTC_10K
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_NTC_10K);
+  addListGPIOBox(webContentBuffer, INPUT_NTC_10K, F("ADC Pin"), FUNCTION_NTC_10K);
   addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -182,7 +222,7 @@ void handleImpulseCounterSaveSet() {
 
   String nr, input;
 
-  nr = WebServer->httpServer->arg("cmd");
+  nr = WebServer->httpServer->arg(ARG_PARM_NUMBER);
   uint8_t key = KEY_GPIO + ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
 
   input = INPUT_IMPULSE_COUNTER_PULL_UP;
@@ -225,7 +265,7 @@ void supla_impulse_counter_set(int save) {
   String nr;
   uint8_t gpio, selected;
 
-  nr = WebServer->httpServer->arg("cmd");
+  nr = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   gpio = ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
 
@@ -233,7 +273,7 @@ void supla_impulse_counter_set(int save) {
   webContentBuffer += SuplaJavaScript(PATH_OTHER);
 
   if (nr.toInt() <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() && gpio != OFF_GPIO) {
-    addForm(webContentBuffer, F("post"), String(PATH_SAVE_IMPULSE_COUNTER_SET) + "?cmd=" + nr);
+    addForm(webContentBuffer, F("post"), getParameterRequest(PATH_SAVE_IMPULSE_COUNTER_SET, ARG_PARM_NUMBER, nr));
     addFormHeader(webContentBuffer, S_IMPULSE_COUNTER_SETTINGS_NR + nr);
 
     selected = ConfigESP->getMemory(gpio);

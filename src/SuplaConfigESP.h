@@ -20,7 +20,6 @@
 #include "Arduino.h"
 #include <supla/action_handler.h>
 #include <supla/element.h>
-#include "GUI-Generic_Config.h"
 #include "SuplaConfigManager.h"
 
 #include <cont.h>
@@ -54,6 +53,13 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void handleAction(int event, int action);
   void rebootESP();
 
+  bool getDefaultEnableSSL();
+  bool getDefaultEnableGUI();
+  uint8_t getDefaultTamplateBoard();
+
+  bool checkSSL();
+  bool checkAvailableGUI();
+
   const char *getLastStatusMessageSupla();
   int getLastStatusSupla();
 
@@ -80,12 +86,12 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   uint8_t getKeyGpio(uint8_t gpio);
 
-  int getLevel(uint8_t gpio);
-  int getPullUp(uint8_t gpio);
-  int getInversed(uint8_t gpio);
-  int getMemory(uint8_t gpio);
-  int getAction(uint8_t gpio);
-  int getEvent(uint8_t gpio);
+  uint8_t getLevel(uint8_t gpio);
+  uint8_t getPullUp(uint8_t gpio);
+  uint8_t getInversed(uint8_t gpio);
+  uint8_t getMemory(uint8_t gpio);
+  uint8_t getAction(uint8_t gpio);
+  uint8_t getEvent(uint8_t gpio);
 
   bool checkBusyCfg(int gpio);
   int checkBusyGpio(int gpio, int function);
@@ -117,11 +123,12 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void clearFunctionGpio(uint8_t function);
   uint8_t getFunctionMCP23017(uint8_t adress);
   uint8_t getNrMCP23017(uint8_t adress);
+  void configModeInit();
 
  private:
-  void configModeInit();
   void iterateAlways();
   void clearEEPROM();
+
   int pinNumberConfig;
   int pinLedConfig;
   int modeConfigButton;

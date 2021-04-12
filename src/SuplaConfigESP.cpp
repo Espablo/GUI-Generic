@@ -18,40 +18,71 @@
 
 #include "SuplaConfigESP.h"
 #include "SuplaDeviceGUI.h"
-#include "GUIGenericCommon.h"
-#include "SuplaWebPageSensor.h"
 
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
 
   if (ConfigManager->isDeviceConfigured()) {
-    if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0) {
+    if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0)
       ConfigManager->setGUIDandAUTHKEY();
-    }
-    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
-    }
-    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
-    }
-    if (strcmp(ConfigManager->get(KEY_LOGIN_PASS)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_LOGIN_PASS)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
-    }
-    if (strcmp(ConfigManager->get(KEY_HOST_NAME)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_HOST_NAME)->getValue(), "") == 0)
       ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
-    }
-    if (strcmp(ConfigManager->get(KEY_SUPLA_SERVER)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_SUPLA_SERVER)->getValue(), "") == 0)
       ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);
-    }
-    if (strcmp(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(), "") == 0)
       ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
-    }
+
+    if (strcmp(ConfigManager->get(KEY_ENABLE_GUI)->getValue(), "") == 0)
+      ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
+
+    if (strcmp(ConfigManager->get(KEY_ENABLE_SSL)->getValue(), "") == 0)
+      ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
+
+    if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0)
+      saveChooseTemplateBoard(getDefaultTamplateBoard());
+
     ConfigManager->save();
 
     configModeInit();
   }
 
   SuplaDevice.setStatusFuncImpl(&status_func);
+}
+
+bool SuplaConfigESP::getDefaultEnableSSL() {
+#ifdef SUPLA_ENABLE_SSL
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool SuplaConfigESP::getDefaultEnableGUI() {
+#ifdef SUPLA_ENABLE_GUI
+  return true;
+#else
+  return false;
+#endif
+}
+
+uint8_t SuplaConfigESP::getDefaultTamplateBoard() {
+#ifdef DEFAULT_TEMPLATE_BOARD
+  return DEFAULT_TEMPLATE_BOARD;
+#else
+  return 0;
+#endif
 }
 
 void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _ledHighIsOn) {
@@ -105,11 +136,19 @@ void SuplaConfigESP::rebootESP() {
 
 void SuplaConfigESP::configModeInit() {
   configModeESP = CONFIG_MODE;
+
   ledBlinking(100);
 
-  WiFi.softAPdisconnect(true);
-  WiFi.disconnect(true);
+  Supla::GUI::enableWifiSSL(false);
+
+  Supla::GUI::crateWebServer();
+  // WiFi.softAPdisconnect(true);
+  // WiFi.disconnect(true);
   WiFi.mode(WIFI_AP_STA);
+}
+
+bool SuplaConfigESP::checkSSL() {
+  return ConfigManager->get(KEY_ENABLE_SSL)->getValueInt();
 }
 
 void SuplaConfigESP::iterateAlways() {
@@ -219,6 +258,18 @@ void status_func(int status, const char *msg) {
     case STATUS_REGISTRATION_DISABLED:
       ConfigESP->supla_status.msg = S_STATUS_REGISTRATION_DISABLED;
       break;
+    case STATUS_MISSING_CREDENTIALS:
+      ConfigESP->supla_status.msg = S_STATUS_MISSING_CREDENTIALS;
+      break;
+    case STATUS_INVALID_AUTHKEY:
+      ConfigESP->supla_status.msg = S_STATUS_INVALID_AUTHKEY;
+      break;
+    case STATUS_NO_LOCATION_AVAILABLE:
+      ConfigESP->supla_status.msg = S_STATUS_NO_LOCATION_AVAILABLE;
+      break;
+    case STATUS_UNKNOWN_ERROR:
+      ConfigESP->supla_status.msg = S_STATUS_UNKNOWN_ERROR;
+      break;
     default:
       ConfigESP->supla_status.msg = msg;
   }
@@ -299,27 +350,27 @@ uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
     return KEY_GPIO + gpio - 148;
 }
 
-int SuplaConfigESP::getLevel(uint8_t gpio) {
+uint8_t SuplaConfigESP::getLevel(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(LEVEL_RELAY).toInt();
 }
 
-int SuplaConfigESP::getPullUp(uint8_t gpio) {
+uint8_t SuplaConfigESP::getPullUp(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(PULL_UP_BUTTON).toInt();
 }
 
-int SuplaConfigESP::getInversed(uint8_t gpio) {
+uint8_t SuplaConfigESP::getInversed(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(INVERSED_BUTTON).toInt();
 }
 
-int SuplaConfigESP::getMemory(uint8_t gpio) {
+uint8_t SuplaConfigESP::getMemory(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(MEMORY).toInt();
 }
 
-int SuplaConfigESP::getAction(uint8_t gpio) {
+uint8_t SuplaConfigESP::getAction(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(ACTION_BUTTON).toInt();
 }
 
-int SuplaConfigESP::getEvent(uint8_t gpio) {
+uint8_t SuplaConfigESP::getEvent(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(EVENT_BUTTON).toInt();
 }
 
@@ -332,9 +383,9 @@ bool SuplaConfigESP::checkBusyCfg(int gpio) {
 }
 
 int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
-  if (gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11
+  if (gpio == 6 || gpio == 7 || gpio == 8
 #ifdef ARDUINO_ESP8266_GENERIC
-		  || gpio == 9 || gpio == 10
+      || gpio == 9 || gpio == 10
 #endif
   ) {
     return false;
@@ -398,12 +449,13 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
   ConfigManager->setElement(key, NR, nr);
   ConfigManager->setElement(key, FUNCTION, function);
 
-  setLevel(gpio, ConfigESP->getLevel(gpio));
-  setMemory(gpio, ConfigESP->getMemory(gpio));
-  setPullUp(gpio, ConfigESP->getPullUp(gpio));
-  setInversed(gpio, ConfigESP->getInversed(gpio));
-  setAction(gpio, ConfigESP->getAction(gpio));
-  setEvent(gpio, ConfigESP->getEvent(gpio));
+  /*setLevel(gpio, ConfigESP->getLevel(gpio));
+   setMemory(gpio, ConfigESP->getMemory(gpio));
+   setPullUp(gpio, ConfigESP->getPullUp(gpio));
+   setInversed(gpio, ConfigESP->getInversed(gpio));
+   setAction(gpio, ConfigESP->getAction(gpio));
+   setEvent(gpio, ConfigESP->getEvent(gpio));
+   */
 }
 
 void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
@@ -535,13 +587,13 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
 
   if (function == FUNCTION_BUTTON) {
     setPullUp(gpio, true);
-    setInversed(gpio, true);
+    setInversed(gpio, false);
     setAction(gpio, Supla::Action::TOGGLE);
     setEvent(gpio, Supla::Event::ON_CHANGE);
   }
   if (function == FUNCTION_RELAY) {
-    setLevel(gpio, false);
-    setMemory(gpio, 2);
+    setLevel(gpio, true);
+    setMemory(gpio, 0);
   }
 }
 
@@ -607,7 +659,9 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
     ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
     ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
-    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+    ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
+    ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
+    saveChooseTemplateBoard(getDefaultTamplateBoard());
 
     ConfigManager->save();
 
@@ -626,8 +680,6 @@ void SuplaConfigESP::reset(bool forceReset) {
 
     ConfigManager->deleteDeviceValues();
 
-    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
-
     ConfigManager->save();
 
     if (!forceReset) {
@@ -636,13 +688,11 @@ void SuplaConfigESP::reset(bool forceReset) {
   }
 }
 
-void SuplaConfigESP::clearEEPROM()
-{
-    EEPROM.begin(1024);
-    delay(15);
-    for (int i = 1; i < 1024; ++i) {
-      EEPROM.write(i, 0);
-    }
-    EEPROM.end();
+void SuplaConfigESP::clearEEPROM() {
+  EEPROM.begin(1024);
+  delay(15);
+  for (int i = 1; i < 1024; ++i) {
+    EEPROM.write(i, 0);
+  }
+  EEPROM.end();
 }
-

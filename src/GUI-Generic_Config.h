@@ -1,6 +1,8 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
+#include "SuplaTemplateBoard.h"
+
 // #define USE_CUSTOM
 
 // User configuration
@@ -12,7 +14,11 @@
 #define BUILD_VERSION "User GUI 1.0.1"
 
 //#define DEBUG_MODE
+
+//#define DEFAULT_TEMPLATE_BOARD BOARD_SHELLY2
 #define SUPLA_OTA
+#define SUPLA_ENABLE_GUI
+//#define -D SUPLA_ENABLE_SSL
 
 // Language en - english, pl - polish (default if not defined UI_LANGUAGE), es- spanish, fr - french, de - german,
 //#define UI_LANGUAGE de
@@ -32,6 +38,7 @@
 
 // ##### i2c #####
 #define SUPLA_BME280
+#define SUPLA_BMP280
 #define SUPLA_SHT3x
 #define SUPLA_SI7021
 #define SUPLA_OLED
@@ -51,11 +58,38 @@
 #define SUPLA_RGBW
 #define SUPLA_PUSHOVER
 #define SUPLA_DIRECT_LINKS
+#define SUPLA_NTC_10K
+#define SUPLA_PZEM_V_3
 
 #endif  // USE_CUSTOM
 
 #ifndef DEBUG_MODE
 #define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
+#endif
+
+#if (DEFAULT_TEMPLATE_BOARD != BOARD_OFF)
+#define SUPLA_RELAY
+#define SUPLA_BUTTON
+#define SUPLA_LIMIT_SWITCH
+#define SUPLA_ROLLERSHUTTER
+#define SUPLA_CONFIG
+#define SUPLA_ENABLE_GUI
+//#define SUPLA_ENABLE_SSL
+
+#if (DEFAULT_TEMPLATE_BOARD == BOARD_GOSUND_SP111) || (DEFAULT_TEMPLATE_BOARD == BOARD_SHELLY_PLUG_S)
+#define SUPLA_HLW8012
+#define SUPLA_LED
+#undef SUPLA_LIMIT_SWITCH
+
+#elif (DEFAULT_TEMPLATE_BOARD == BOARD_DIMMER_LUKASZH)
+#define SUPLA_RGBW
+
+#elif (DEFAULT_TEMPLATE_BOARD == BOARD_H801)
+#define SUPLA_RGBW
+#undef SUPLA_LIMIT_SWITCH
+#undef SUPLA_RELAY
+
+#endif
 #endif
 
 #if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_OLED) || defined(SUPLA_RGBW)

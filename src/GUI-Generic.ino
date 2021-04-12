@@ -15,19 +15,39 @@
 */
 #include "SuplaDeviceGUI.h"
 
+#ifdef SUPLA_PZEM_V_3
+#include <supla/sensor/PzemV3.h>
+#include <supla/sensor/three_phase_PzemV3.h>
+#endif
+
 #define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 #define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
 DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 void setup() {
   Serial.begin(74880);
+  uint8_t nr, gpio;
+
+  ConfigManager = new SuplaConfigManager();
+  ConfigESP = new SuplaConfigESP();
 
   if (drd.detectDoubleReset()) {
     drd.stop();
     ConfigESP->factoryReset();
   }
 
-  uint8_t nr, gpio;
+#ifdef SUPLA_MCP23017
+  if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO &&
+      ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
+    Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
+    Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
+
+    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+      gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+      mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), ConfigESP->getInversed(gpio));
+    }
+  }
+#endif
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
@@ -71,8 +91,8 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONFIG
-  gpio = ConfigESP->getGpio(FUNCTION_CFG_LED);
-  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), gpio, ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(gpio));
+  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED),
+                           ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(gpio));
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -141,6 +161,20 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_NTC_10K
+  if (ConfigESP->getGpio(FUNCTION_NTC_10K) != OFF_GPIO) {
+    auto ntc10k = new Supla::Sensor::NTC10K(A0);
+    Supla::GUI::addConditionsTurnON(SENSOR_NTC_10K, ntc10k);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_NTC_10K, ntc10k);
+  }
+#endif
+
+#ifdef SUPLA_RGBW
+  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
+    Supla::GUI::addRGBWLeds(nr);
+  }
+#endif
+
 #ifdef SUPLA_IMPULSE_COUNTER
   if (ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() > 0) {
     for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
@@ -160,8 +194,26 @@ void setup() {
   }
 #endif
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SI7021) || defined(SUPLA_SHT3x) || defined(SUPLA_HTU21D) || defined(SUPLA_SHT71) || \
-    defined(SUPLA_BH1750) || defined(SUPLA_MAX44009) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017)
+#ifdef SUPLA_PZEM_V_3
+  int8_t pinRX1 = ConfigESP->getGpio(1, FUNCTION_PZEM_RX);
+  int8_t pinTX1 = ConfigESP->getGpio(1, FUNCTION_PZEM_TX);
+  int8_t pinRX2 = ConfigESP->getGpio(2, FUNCTION_PZEM_RX);
+  int8_t pinTX2 = ConfigESP->getGpio(2, FUNCTION_PZEM_TX);
+  int8_t pinRX3 = ConfigESP->getGpio(3, FUNCTION_PZEM_RX);
+  int8_t pinTX3 = ConfigESP->getGpio(3, FUNCTION_PZEM_TX);
+
+  if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinRX2 != OFF_GPIO && pinTX2 != OFF_GPIO && pinRX3 != OFF_GPIO && pinTX3 != OFF_GPIO) {
+    new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX2, pinTX2, pinRX3, pinTX3);
+  }
+  else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinTX2 != OFF_GPIO && pinTX3 != OFF_GPIO) {
+    new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX1, pinTX2, pinRX1, pinTX3);
+  }
+  else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO) {
+    new Supla::Sensor::PZEMv3(pinRX1, pinTX1);
+  }
+#endif
+
+#ifdef GUI_SENSOR_I2C
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
 
@@ -169,19 +221,39 @@ void setup() {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt()) {
       Supla::Sensor::BME280 *bme280;
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt()) {
-        case BME280_ADDRESS_0X76:
-          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        case BMx280_ADDRESS_0X76:
+          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           break;
-        case BME280_ADDRESS_0X77:
-          bme280 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        case BMx280_ADDRESS_0X77:
+          bme280 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           break;
-        case BME280_ADDRESS_0X76_AND_0X77:
-          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
-          new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BME280)->getValueInt());
+        case BMx280_ADDRESS_0X76_AND_0X77:
+          bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           break;
       }
       Supla::GUI::addConditionsTurnON(SENSOR_BME280, bme280);
       Supla::GUI::addConditionsTurnOFF(SENSOR_BME280, bme280);
+    }
+#endif
+
+#ifdef SUPLA_BMP280
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt()) {
+      Supla::Sensor::BMP280 *bmp280;
+      switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt()) {
+        case BMx280_ADDRESS_0X76:
+          bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          break;
+        case BMx280_ADDRESS_0X77:
+          bmp280 = new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          break;
+        case BMx280_ADDRESS_0X76_AND_0X77:
+          bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          break;
+      }
+      Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280);
     }
 #endif
 
@@ -214,12 +286,6 @@ void setup() {
     }
 #endif
 
-#ifdef SUPLA_MCP23017
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-      new Supla::Control::MCP_23017();
-    }
-#endif
-
 #ifdef SUPLA_OLED
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       SuplaOled *oled = new SuplaOled();
@@ -229,13 +295,13 @@ void setup() {
   }
 #endif
 
-#ifdef SUPLA_RGBW
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
-    Supla::GUI::addRGBWLeds(nr);
-  }
+#ifdef DEBUG_MODE
+  new Supla::Sensor::EspFreeHeap();
 #endif
 
   Supla::GUI::begin();
+
+  Supla::GUI::addCorrectionSensor();
 }
 
 void loop() {
