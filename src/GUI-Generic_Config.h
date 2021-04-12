@@ -1,8 +1,6 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
-#include "SuplaTemplateBoard.h"
-
 // #define USE_CUSTOM
 
 // User configuration
@@ -65,43 +63,6 @@
 
 #ifndef DEBUG_MODE
 #define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
-#endif
-
-#if (DEFAULT_TEMPLATE_BOARD != BOARD_OFF)
-#define SUPLA_RELAY
-#define SUPLA_BUTTON
-#define SUPLA_LIMIT_SWITCH
-#define SUPLA_ROLLERSHUTTER
-#define SUPLA_CONFIG
-#define SUPLA_ENABLE_GUI
-//#define SUPLA_ENABLE_SSL
-
-#if (DEFAULT_TEMPLATE_BOARD == BOARD_GOSUND_SP111) || (DEFAULT_TEMPLATE_BOARD == BOARD_SHELLY_PLUG_S)
-#define SUPLA_HLW8012
-#define SUPLA_LED
-#undef SUPLA_LIMIT_SWITCH
-
-#elif (DEFAULT_TEMPLATE_BOARD == BOARD_DIMMER_LUKASZH)
-#define SUPLA_RGBW
-
-#elif (DEFAULT_TEMPLATE_BOARD == BOARD_H801)
-#define SUPLA_RGBW
-#undef SUPLA_LIMIT_SWITCH
-#undef SUPLA_RELAY
-
-#endif
-#endif
-
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_OLED) || defined(SUPLA_RGBW)
-#if !defined(SUPLA_BUTTON)
-#define SUPLA_BUTTON
-#endif
-#endif
-
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS) || defined(SUPLA_LED)
-#if !defined(SUPLA_RELAY)
-#define SUPLA_RELAY
-#endif
 #endif
 
 #endif  // GUI-Generic_Config_h
