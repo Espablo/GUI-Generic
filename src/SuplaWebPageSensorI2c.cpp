@@ -178,7 +178,7 @@ void handleSensorI2cSave() {
   for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
     input = INPUT_OLED_NAME;
     input += i;
-    if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    if (strcmp(WebServer->httpServer->arg(input).c_str(), ConfigManager->get(KEY_NAME_SENSOR)->getElement(i).c_str()) != 0) {
       ConfigManager->setElement(KEY_NAME_SENSOR, i, WebServer->httpServer->arg(input).c_str());
     }
   }
