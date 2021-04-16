@@ -143,6 +143,13 @@ void chooseTemplateBoard(uint8_t board) {
       addButton(0);
       addRelay(12);
       break;
+    case BOARD_SONOFF_MINI:
+      addLedCFG(13);
+      addButtonCFG(0);
+      addButton(0);
+      addButton(4, false, true);
+      addRelay(12);
+      break;
     case BOARD_SONOFF_DUAL_R2:
       addLedCFG(13);
       addButtonCFG(0);
