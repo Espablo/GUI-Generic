@@ -203,6 +203,9 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_ENABLE_GUI, sizeof(bool));
   this->addKey(KEY_ENABLE_SSL, sizeof(bool));
 
+  this->addKey(KEY_OLED_BACK_LIGHT, 2 * 4);
+
+
   switch (this->load()) {
     case E_CONFIG_OK:
       Serial.println(F("Config read"));

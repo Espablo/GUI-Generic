@@ -134,6 +134,8 @@
 #define S_OLED_BUTTON                      "Przycisk OLED"
 #define S_SCREEN                           "Ekran"
 #define S_BACKLIGHT_S                      "Podświetlenie [s]"
+#define S_BACKLIGHT_ON                     "Jasność dla wł. [%]"
+#define S_BACKLIGHT_OFF                    "Jasność dla wył. [%]"
 #define S_ADDRESS                          "Adres"
 
 //#### SuplaWebPageUpload.cpp ####

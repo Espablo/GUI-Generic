@@ -41,6 +41,8 @@ enum _shtAdress
 #define INPUT_OLED            "oled"
 #define INPUT_OLED_ANIMATION  "oleda"
 #define INPUT_OLED_BRIGHTNESS "oledb"
+#define INPUT_OLED_BRIGHTNESS_ON "oledc"
+#define INPUT_OLED_BRIGHTNESS_OFF "oledd"
 #define INPUT_OLED_NAME       "ion"
 #define INPUT_MCP23017        "mcp"
 

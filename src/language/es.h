@@ -136,6 +136,8 @@
 #define S_OLED_BUTTON                      "Botón OLED"
 #define S_SCREEN                           "Pantalla"
 #define S_BACKLIGHT_S                      "Luz de fondo [s]"
+#define S_BACKLIGHT_ON                     "Brillo para el [%]"
+#define S_BACKLIGHT_OFF                    "Brillo para apagado [%]"
 #define S_ADDRESS                          "Dirección"
 
 //#### SuplaWebPageUpload.cpp ####
