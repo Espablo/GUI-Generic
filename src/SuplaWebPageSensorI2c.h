@@ -38,11 +38,18 @@ enum _shtAdress
 #define INPUT_SCL_GPIO        "sclg"
 #define INPUT_SHT3x           "sht30"
 #define INPUT_SI7021          "si7021"
+
+#ifdef SUPLA_OLED
 #define INPUT_OLED            "oled"
 #define INPUT_OLED_ANIMATION  "oleda"
 #define INPUT_OLED_BRIGHTNESS_TIME "oledb"
 #define INPUT_OLED_BRIGHTNESS_LVL "oledc"
 #define INPUT_OLED_NAME       "ion"
+#ifndef INPUT_BUTTON_GPIO
+#define INPUT_BUTTON_GPIO     "btg"
+#endif
+#endif // SUPLA_OLED
+
 #define INPUT_MCP23017        "mcp"
 
 void createWebPageSensorI2c();
