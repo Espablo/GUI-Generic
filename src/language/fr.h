@@ -134,8 +134,7 @@
 #define S_OLED_BUTTON                      "Bouton OLED"
 #define S_SCREEN                           "Écran"
 #define S_BACKLIGHT_S                      "Rétroéclairage [s]"
-#define S_BACKLIGHT_ON                     "Luminosité pour on [%]"
-#define S_BACKLIGHT_OFF                    "Luminosité pour off [%]"
+#define S_BACKLIGHT_PERCENT                "Luminosité [%]"
 #define S_ADDRESS                          "Adresse"
 
 //#### SuplaWebPageUpload.cpp ####

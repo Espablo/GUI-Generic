@@ -53,8 +53,6 @@ void addCheckBox(String& html, const String& input_id, const String& name, bool 
 
 void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, int max = -1);
 
-void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, uint8_t value_key, int index, int max = -1);
-
 void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value = "");
 
 void addLinkBox(String& html, const String& name, const String& url);

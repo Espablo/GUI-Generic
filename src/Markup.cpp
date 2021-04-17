@@ -152,31 +152,6 @@ void addNumberBox(String& html, const String& input_id, const String& name, uint
   WebServer->sendHeader();
 }
 
-void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, uint8_t value_key, int index, int max) {
-  html += F("<i><label>");
-  html += name;
-  html += F("</label><input name='");
-  html += input_id;
-  html += F("' type='number'");
-  if (placeholder != "") {
-    html += F(" placeholder='");
-    html += placeholder;
-    html += F("'");
-  }
-  html += F(" step='1' min='0'");
-
-  if (max >= 0) {
-    html += F(" max='");
-    html += String(max);
-    html += F("'");
-  }
-
-  html += F(" value='");
-  html += String(ConfigManager->get(value_key)->getElement(index));
-  html += F("'></i>");
-  WebServer->sendHeader();
-}
-
 void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value) {
   html += F("<i><label>");
   html += name;

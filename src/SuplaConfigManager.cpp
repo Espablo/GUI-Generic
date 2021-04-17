@@ -203,7 +203,7 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_ENABLE_GUI, sizeof(bool));
   this->addKey(KEY_ENABLE_SSL, sizeof(bool));
 
-  this->addKey(KEY_OLED_BACK_LIGHT, 2 * 4);
+  this->addKey(KEY_OLED_BACK_LIGHT, "20", 2);
 
 
   switch (this->load()) {

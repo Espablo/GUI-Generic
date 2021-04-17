@@ -133,8 +133,7 @@
 #define S_OLED_BUTTON                      "OLED-Taste"
 #define S_SCREEN                           "Bildschirm"
 #define S_BACKLIGHT_S                      "Hintergrundbeleuchtung [s]"
-#define S_BACKLIGHT_ON                     "Helligkeit für ein [%]"
-#define S_BACKLIGHT_OFF                    "Helligkeit für aus [%]"
+#define S_BACKLIGHT_PERCENT                "Helligkeit [%]"
 #define S_ADDRESS                          "Adresse"
 
 //#### SuplaWebPageUpload.cpp ####

@@ -72,9 +72,8 @@ void handleSensorI2c(int save) {
       addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_CFG_BUTTON);
       selected = ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt();
       addListBox(webContentBuffer, INPUT_OLED_ANIMATION, S_CONTROL, OLED_CONTROLL_P, 3, selected);
-      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
-      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_ON, S_BACKLIGHT_ON, F("100"), KEY_OLED_BACK_LIGHT, 0, 100);
-      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_OFF, S_BACKLIGHT_OFF, F("20"), KEY_OLED_BACK_LIGHT, 1, 75);
+      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_TIME, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
+      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_LVL, S_BACKLIGHT_PERCENT, KEY_OLED_BACK_LIGHT, 100);
 
       for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
         sensorName = String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
@@ -174,13 +173,11 @@ void handleSensorI2cSave() {
 
   input = INPUT_OLED_ANIMATION;
   ConfigManager->set(KEY_OLED_ANIMATION, WebServer->httpServer->arg(input).c_str());
-  input = INPUT_OLED_BRIGHTNESS;
+  input = INPUT_OLED_BRIGHTNESS_TIME;
   ConfigManager->set(KEY_OLED_BACK_LIGHT_TIME, WebServer->httpServer->arg(input).c_str());
 
-  input = INPUT_OLED_BRIGHTNESS_ON;
-  ConfigManager->setElement(KEY_OLED_BACK_LIGHT, 0, WebServer->httpServer->arg(input).c_str());
-  input = INPUT_OLED_BRIGHTNESS_OFF;
-  ConfigManager->setElement(KEY_OLED_BACK_LIGHT, 1, WebServer->httpServer->arg(input).c_str());
+  input = INPUT_OLED_BRIGHTNESS_LVL;
+  ConfigManager->set(KEY_OLED_BACK_LIGHT, WebServer->httpServer->arg(input).c_str());
 
   for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
     input = INPUT_OLED_NAME;
