@@ -73,8 +73,8 @@ void handleSensorI2c(int save) {
       selected = ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt();
       addListBox(webContentBuffer, INPUT_OLED_ANIMATION, S_CONTROL, OLED_CONTROLL_P, 3, selected);
       addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
-      addNumberBox2(webContentBuffer, INPUT_OLED_BRIGHTNESS_ON, S_BACKLIGHT_ON, KEY_OLED_BACK_LIGHT, 0, 100);
-      addNumberBox2(webContentBuffer, INPUT_OLED_BRIGHTNESS_OFF, S_BACKLIGHT_OFF, KEY_OLED_BACK_LIGHT, 1, 75);
+      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_ON, S_BACKLIGHT_ON, F("100"), KEY_OLED_BACK_LIGHT, 0, 100);
+      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_OFF, S_BACKLIGHT_OFF, F("20"), KEY_OLED_BACK_LIGHT, 1, 75);
 
       for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
         sensorName = String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));

@@ -367,7 +367,12 @@ SuplaOled::SuplaOled() {
     ui->setOverlays(overlays, overlaysCount);
     ui->init();
 
-    display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getElement(0).toInt()/100.0) * 255);
+    if(strcmp(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getElement(0).c_str(), "") != 0) {
+    	display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getElement(0).toInt()/100.0) * 255);
+    }
+    else {
+    	display->setBrightness(255);
+    }
     display->flipScreenVertically();
     display->setFontTableLookupFunction(&utf8win1250);
   }
@@ -382,7 +387,12 @@ void SuplaOled::iterateAlways() {
 
     if (millis() - timeLastChangeOled > (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() * 1000) && oledON &&
         ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
-      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getElement(1).toInt()/100.0) * 255);
+      if(strcmp(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getElement(1).c_str(), "") != 0) {
+     	display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getElement(1).toInt()/100.0) * 255);
+      }
+      else {
+      	display->setBrightness(50);
+      }
       oledON = false;
       // display.displayOff();
     }
@@ -419,7 +429,12 @@ void SuplaOled::handleAction(int event, int action) {
   }
 
   if (action == TURN_ON_OLED) {
-    display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getElement(0).toInt()/100.0) * 255);
+    if(strcmp(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getElement(0).c_str(), "") != 0) {
+      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getElement(0).toInt()/100.0) * 255);
+    }
+    else {
+      display->setBrightness(255);
+    }
     timeLastChangeOled = millis();
     oledON = true;
   }
