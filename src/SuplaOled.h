@@ -25,13 +25,6 @@ enum _OLED
   OLED_SSD1306_0_66
 };
 
-enum
-{
-  OLED_CONTROLL_NORMAL,
-  OLED_CONTROLL_SLOW,
-  OLED_CONTROLL_MANUAL
-};
-
 String getTempString(double temperature);
 String getHumidityString(double humidity);
 String getPressureString(double pressure);
@@ -63,6 +56,7 @@ class SuplaOled : public Supla::ActionHandler, public Supla::Element {
  private:
   void iterateAlways();
   void handleAction(int event, int action);
+  void setupAnimate();
 
   OLEDDisplay* display;
   OLEDDisplayUi* ui;

@@ -300,8 +300,9 @@ SuplaOled::SuplaOled() {
     overlays[0] = {msOverlay};
     int maxFrame = getCountSensorChannels();
 
-    if (maxFrame == 0)
+    if (maxFrame == 0) {
       maxFrame = 1;
+    }
 
     frames = new FrameCallback[maxFrame];
     chanelSensor = new uint8_t[maxFrame];
@@ -340,28 +341,12 @@ SuplaOled::SuplaOled() {
       frameCount += 1;
     }
 
-    if (frameCount == 1) {
-      ui->disableAllIndicators();
-      ui->disableAutoTransition();
-    }
-    else {
-      switch (ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt()) {
-        case OLED_CONTROLL_NORMAL:
-          ui->setTimePerFrame(5000);
-          break;
-        case OLED_CONTROLL_SLOW:
-          ui->setTimePerFrame(10000);
-          break;
-        case OLED_CONTROLL_MANUAL:
-          ui->disableAutoTransition();
-          ui->setTimePerTransition(250);
-          break;
-      }
-      ui->setTargetFPS(30);
-      ui->setIndicatorPosition(BOTTOM);
-      ui->setIndicatorDirection(LEFT_RIGHT);
-      ui->setFrameAnimation(SLIDE_LEFT);
-    }
+    setupAnimate();
+
+    ui->setTargetFPS(30);
+    ui->setIndicatorPosition(BOTTOM);
+    ui->setIndicatorDirection(LEFT_RIGHT);
+    ui->setFrameAnimation(SLIDE_LEFT);
 
     ui->setFrames(frames, frameCount);
     ui->setOverlays(overlays, overlaysCount);
@@ -379,6 +364,23 @@ SuplaOled::SuplaOled() {
   }
 }
 
+void SuplaOled::setupAnimate() {
+  if (frameCount == 1) {
+    ui->disableAllIndicators();
+    ui->disableAutoTransition();
+  }
+  else {
+    if(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() > 0) {
+        ui->enableAutoTransition();
+        ui->setTimePerFrame(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() * 1000);
+    }
+    else {
+        ui->disableAutoTransition();
+        ui->setTimePerTransition(250);
+    }
+  }
+}
+
 void SuplaOled::iterateAlways() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     if (ConfigESP->getLastStatusSupla() != STATUS_REGISTERED_AND_READY) {
@@ -386,10 +388,15 @@ void SuplaOled::iterateAlways() {
       return;
     }
 
+    setupAnimate();
+
     if (millis() - timeLastChangeOled > (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() * 1000) && oledON &&
         ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
       if(strcmp(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValue(), "") != 0) {
-     	display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
+        display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
+        if(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() == 0 && frameCount > 1) {
+          ui->disableAutoTransition();
+        }
       }
       else {
       	display->setBrightness(50);
@@ -414,7 +421,7 @@ void SuplaOled::addButtonOled(int pin) {
   if (pin != OFF_GPIO) {
     Supla::Control::Button* button = new Supla::Control::Button(pin, true, true);
 
-    if (ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() == OLED_CONTROLL_MANUAL && frameCount > 1) {
+    if (frameCount > 1) {
       button->addAction(NEXT_FRAME, this, Supla::ON_PRESS);
     }
 
@@ -423,7 +430,7 @@ void SuplaOled::addButtonOled(int pin) {
 }
 
 void SuplaOled::handleAction(int event, int action) {
-  if (action == NEXT_FRAME && oledON == true) {
+  if (action == NEXT_FRAME && oledON == true && ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() == 0) {
     ui->nextFrame();
   }
 
@@ -437,6 +444,10 @@ void SuplaOled::handleAction(int event, int action) {
     }
     timeLastChangeOled = millis();
     oledON = true;
+    if(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() > 0 && frameCount > 1) {
+      ui->enableAutoTransition();
+    }
+
   }
 }
 

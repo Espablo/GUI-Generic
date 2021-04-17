@@ -130,7 +130,7 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Podciąganie do VCC"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Zmień wartość"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Ustawienia IC nr. "
-#define S_CONTROL                          "Sterowanie"
+#define S_SCREEN_TIME                      "Ekran [s]"
 #define S_OLED_BUTTON                      "Przycisk OLED"
 #define S_SCREEN                           "Ekran"
 #define S_BACKLIGHT_S                      "Podświetlenie [s]"

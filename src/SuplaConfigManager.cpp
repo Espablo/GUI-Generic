@@ -178,7 +178,7 @@ SuplaConfigManager::SuplaConfigManager() {
   }
 
   this->addKey(KEY_LEVEL_LED, "0", 1);
-  this->addKey(KEY_OLED_ANIMATION, "0", 1);
+  this->addKey(KEY_OLED_ANIMATION, "5", 1);
   this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
   this->addKey(KEY_MAX_RGBW, "0", 2);
 

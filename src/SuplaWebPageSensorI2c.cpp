@@ -70,8 +70,7 @@ void handleSensorI2c(int save) {
       String name, sensorName, input;
 
       addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_CFG_BUTTON);
-      selected = ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt();
-      addListBox(webContentBuffer, INPUT_OLED_ANIMATION, S_CONTROL, OLED_CONTROLL_P, 3, selected);
+      addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 9);
       addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_TIME, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
       addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_LVL, S_BACKLIGHT_PERCENT, KEY_OLED_BACK_LIGHT, 100);
 
