@@ -404,6 +404,14 @@ void SuplaOled::iterateAlways() {
       oledON = false;
       // display.displayOff();
     }
+    else if(ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() == 0) {
+      if(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() > 0) {
+        display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
+      }
+      else {
+       	display->setBrightness(255);
+      }
+    }
 
     if (ConfigESP->configModeESP == NORMAL_MODE) {
       int remainingTimeBudget = ui->update();
