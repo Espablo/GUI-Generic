@@ -75,14 +75,14 @@
 #define S_WRITE_ERROR_BAD_DATA                                 "Error de escritura: datos incorrectos."
 
 //#### SuplaConfigESP.cpp ####
-#define S_ALEREADY_INITIATED             "Ya iniciado"
+#define S_STATUS_ALREADY_INITIALIZED     "Ya iniciado"
 #define S_STATUS_INVALID_GUID            "Identificador GUID incorrecto"
 #define S_STATUS_UNKNOWN_SERVER_ADDRESS  "Dirección de servidor desconocida"
 #define S_STATUS_UNKNOWN_LOCATION_ID     "ID desconocido"
 #define S_STATUS_INITIALIZED             "Iniciado"
 #define S_STATUS_CHANNEL_LIMIT_EXCEEDED  "Límite de canal superado"
 #define S_STATUS_SERVER_DISCONNECTED     "Desconectado"
-#define S_REGISRATION_IS_PENDING         "Registro pendiente"
+#define S_STATUS_REGISTER_IN_PROGRESS    "Registro pendiente"
 #define S_STATUS_PROTOCOL_VERSION_ERROR  "Error de versión de protocolo"
 #define S_STATUS_BAD_CREDENTIALS         "Credenciales incorrectas"
 #define S_STATUS_TEMPORARILY_UNAVAILABLE "Temporalmente no disponible"

@@ -3,8 +3,12 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || \
-    defined(SUPLA_PUSHOVER) || defined(SUPLA_NTC_10K)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_NTC_10K)
+#define GUI_SENSOR_OTHER
+#endif
+
+#if defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER) || \
+    defined(GUI_SENSOR_OTHER)
 #define GUI_OTHER
 #endif
 
