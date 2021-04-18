@@ -12,7 +12,11 @@
 #define BUILD_VERSION "User GUI 1.0.1"
 
 //#define DEBUG_MODE
+
+//#define DEFAULT_TEMPLATE_BOARD BOARD_SHELLY2
 #define SUPLA_OTA
+#define SUPLA_ENABLE_GUI
+//#define -D SUPLA_ENABLE_SSL
 
 // Language en - english, pl - polish (default if not defined UI_LANGUAGE), es- spanish, fr - french, de - german,
 //#define UI_LANGUAGE de
@@ -59,18 +63,6 @@
 
 #ifndef DEBUG_MODE
 #define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
-#endif
-
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_OLED) || defined(SUPLA_RGBW)
-#if !defined(SUPLA_BUTTON)
-#define SUPLA_BUTTON
-#endif
-#endif
-
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS) || defined(SUPLA_LED)
-#if !defined(SUPLA_RELAY)
-#define SUPLA_RELAY
-#endif
 #endif
 
 #endif  // GUI-Generic_Config_h

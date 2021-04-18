@@ -13,6 +13,13 @@ void createWebPageHome() {
       return;
     }
 
+    if (strcmp(WebServer->httpServer->arg(PATH_REBOT_CREATOR).c_str(), "1") == 0) {
+      WebServer->httpServer->sendHeader("Location", PATH_START, true);
+      handlePageHome(2);
+      ConfigESP->rebootESP();
+      return;
+    }
+
     if (WebServer->httpServer->method() == HTTP_GET)
       handlePageHome();
     else
@@ -62,18 +69,22 @@ void handlePageHome(int save) {
 }
 
 void handlePageHomeSave() {
-  ConfigManager->set(KEY_WIFI_SSID, WebServer->httpServer->arg(INPUT_WIFI_SSID).c_str());
-  ConfigManager->set(KEY_WIFI_PASS, WebServer->httpServer->arg(INPUT_WIFI_PASS).c_str());
-  ConfigManager->set(KEY_SUPLA_SERVER, WebServer->httpServer->arg(INPUT_SERVER).c_str());
-  ConfigManager->set(KEY_SUPLA_EMAIL, WebServer->httpServer->arg(INPUT_EMAIL).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_WIFI_SSID).c_str(), "") != 0)
+    ConfigManager->set(KEY_WIFI_SSID, WebServer->httpServer->arg(INPUT_WIFI_SSID).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_WIFI_PASS).c_str(), "") != 0)
+    ConfigManager->set(KEY_WIFI_PASS, WebServer->httpServer->arg(INPUT_WIFI_PASS).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_SERVER).c_str(), "") != 0)
+    ConfigManager->set(KEY_SUPLA_SERVER, WebServer->httpServer->arg(INPUT_SERVER).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_EMAIL).c_str(), "") != 0)
+    ConfigManager->set(KEY_SUPLA_EMAIL, WebServer->httpServer->arg(INPUT_EMAIL).c_str());
   ConfigManager->set(KEY_HOST_NAME, WebServer->httpServer->arg(INPUT_HOSTNAME).c_str());
-  ConfigManager->set(KEY_LOGIN, WebServer->httpServer->arg(INPUT_MODUL_LOGIN).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_MODUL_LOGIN).c_str(), "") != 0)
+    ConfigManager->set(KEY_LOGIN, WebServer->httpServer->arg(INPUT_MODUL_LOGIN).c_str());
   ConfigManager->set(KEY_LOGIN_PASS, WebServer->httpServer->arg(INPUT_MODUL_PASS).c_str());
 
 #ifdef SUPLA_ROLLERSHUTTER
-  if (strcmp(WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).c_str(), "") != 0) {
+  if (strcmp(WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).c_str(), "") != 0)
     ConfigManager->set(KEY_MAX_ROLLERSHUTTER, WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).c_str());
-  }
 #endif
 
   switch (ConfigManager->save()) {

@@ -159,10 +159,11 @@ void addNumberBox(String& html, const String& input_id, const String& name, cons
   html += input_id;
   html += F("' type='number'");
   if (placeholder != "") {
-    html += F("' placeholder='");
+    html += F(" placeholder='");
     html += placeholder;
+    html += F("'");
   }
-  html += F("' step='0.01' value='");
+  html += F(" step='0.01' value='");
   html += value;
   html += F("'");
 

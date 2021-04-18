@@ -33,6 +33,7 @@
 #else
 #define S_TEMPLATE_BOARD "Szablony płytek"
 #endif
+#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
 #define S_TYPE                                                 "Rodzaj"
 #define S_RELAYS                                               "PRZEKAŹNIKI"
 #define S_BUTTONS                                              "PRZYCISKI"
@@ -129,10 +130,11 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Podciąganie do VCC"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Zmień wartość"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Ustawienia IC nr. "
-#define S_CONTROL                          "Sterowanie"
+#define S_SCREEN_TIME                      "Ekran [s]"
 #define S_OLED_BUTTON                      "Przycisk OLED"
 #define S_SCREEN                           "Ekran"
 #define S_BACKLIGHT_S                      "Podświetlenie [s]"
+#define S_BACKLIGHT_PERCENT                "Jasność [%]"
 #define S_ADDRESS                          "Adres"
 
 //#### SuplaWebPageUpload.cpp ####

@@ -18,39 +18,71 @@
 
 #include "SuplaConfigESP.h"
 #include "SuplaDeviceGUI.h"
-#include "GUIGenericCommon.h"
 
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
 
   if (ConfigManager->isDeviceConfigured()) {
-    if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0) {
+    if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0)
       ConfigManager->setGUIDandAUTHKEY();
-    }
-    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
-    }
-    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
-    }
-    if (strcmp(ConfigManager->get(KEY_LOGIN_PASS)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_LOGIN_PASS)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
-    }
-    if (strcmp(ConfigManager->get(KEY_HOST_NAME)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_HOST_NAME)->getValue(), "") == 0)
       ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
-    }
-    if (strcmp(ConfigManager->get(KEY_SUPLA_SERVER)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_SUPLA_SERVER)->getValue(), "") == 0)
       ConfigManager->set(KEY_SUPLA_SERVER, DEFAULT_SERVER);
-    }
-    if (strcmp(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(), "") == 0) {
+
+    if (strcmp(ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(), "") == 0)
       ConfigManager->set(KEY_SUPLA_EMAIL, DEFAULT_EMAIL);
-    }
+
+    if (strcmp(ConfigManager->get(KEY_ENABLE_GUI)->getValue(), "") == 0)
+      ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
+
+    if (strcmp(ConfigManager->get(KEY_ENABLE_SSL)->getValue(), "") == 0)
+      ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
+
+    if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0)
+      saveChooseTemplateBoard(getDefaultTamplateBoard());
+
     ConfigManager->save();
 
     configModeInit();
   }
 
   SuplaDevice.setStatusFuncImpl(&status_func);
+}
+
+bool SuplaConfigESP::getDefaultEnableSSL() {
+#ifdef SUPLA_ENABLE_SSL
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool SuplaConfigESP::getDefaultEnableGUI() {
+#ifdef SUPLA_ENABLE_GUI
+  return true;
+#else
+  return false;
+#endif
+}
+
+uint8_t SuplaConfigESP::getDefaultTamplateBoard() {
+#ifdef DEFAULT_TEMPLATE_BOARD
+  return DEFAULT_TEMPLATE_BOARD;
+#else
+  return 0;
+#endif
 }
 
 void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _ledHighIsOn) {
@@ -104,11 +136,19 @@ void SuplaConfigESP::rebootESP() {
 
 void SuplaConfigESP::configModeInit() {
   configModeESP = CONFIG_MODE;
+
   ledBlinking(100);
 
-  WiFi.softAPdisconnect(true);
-  WiFi.disconnect(true);
+  Supla::GUI::enableWifiSSL(false);
+
+  Supla::GUI::crateWebServer();
+  // WiFi.softAPdisconnect(true);
+  // WiFi.disconnect(true);
   WiFi.mode(WIFI_AP_STA);
+}
+
+bool SuplaConfigESP::checkSSL() {
+  return ConfigManager->get(KEY_ENABLE_SSL)->getValueInt();
 }
 
 void SuplaConfigESP::iterateAlways() {
@@ -409,12 +449,13 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
   ConfigManager->setElement(key, NR, nr);
   ConfigManager->setElement(key, FUNCTION, function);
 
-  setLevel(gpio, ConfigESP->getLevel(gpio));
-  setMemory(gpio, ConfigESP->getMemory(gpio));
-  setPullUp(gpio, ConfigESP->getPullUp(gpio));
-  setInversed(gpio, ConfigESP->getInversed(gpio));
-  setAction(gpio, ConfigESP->getAction(gpio));
-  setEvent(gpio, ConfigESP->getEvent(gpio));
+  /*setLevel(gpio, ConfigESP->getLevel(gpio));
+   setMemory(gpio, ConfigESP->getMemory(gpio));
+   setPullUp(gpio, ConfigESP->getPullUp(gpio));
+   setInversed(gpio, ConfigESP->getInversed(gpio));
+   setAction(gpio, ConfigESP->getAction(gpio));
+   setEvent(gpio, ConfigESP->getEvent(gpio));
+   */
 }
 
 void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
@@ -618,7 +659,9 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_HOST_NAME, DEFAULT_HOSTNAME);
     ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
     ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
-    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+    ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
+    ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
+    saveChooseTemplateBoard(getDefaultTamplateBoard());
 
     ConfigManager->save();
 
@@ -636,8 +679,6 @@ void SuplaConfigESP::reset(bool forceReset) {
     clearEEPROM();
 
     ConfigManager->deleteDeviceValues();
-
-    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
     ConfigManager->save();
 

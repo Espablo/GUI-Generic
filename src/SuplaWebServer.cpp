@@ -99,11 +99,6 @@ void SuplaWebServer::sendHeader() {
     webContentBuffer = String();
     delay(0);
   }
-
-#ifdef DEBUG_MODE
-  Serial.printf_P(PSTR("Content size=%d\n"), webContentBuffer.length());
-  Serial.printf_P(PSTR("Sent INDEX...Free mem=%d\n"), ESP.getFreeHeap());
-#endif
 }
 
 void SuplaWebServer::sendHeaderEnd() {
