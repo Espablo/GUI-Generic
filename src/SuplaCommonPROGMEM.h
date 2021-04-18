@@ -68,7 +68,7 @@ const char HTTP_FAVICON[] PROGMEM =
     "MbMTyEu3lphtAJtpvl4BTLPNWgVSySA+y28aWIDdyGtVBgNH5psshVawwHGGO+arLr7MYFoJjZr/"
     "zBPYj85a1sC4ulwAIsIdcJzh2qt1WReYBWBR48gxgd1ziQIi6hTYEsxR45pZwRU9+oWgNAB1F3c/H6bYqgAAAABJRU5ErkJggg==' type='image/x-png' />\n";
 
-const char HTTP_RBT[] PROGMEM = "<a href='/?rbt=1'><button>Restart</button></a>";
+const char HTTP_RBT[] PROGMEM = "<a href='/?reboot=1'><button>Restart</button></a>";
 
 const char ICON_EDIT[] PROGMEM =
     "<img "

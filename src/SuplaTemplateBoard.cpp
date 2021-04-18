@@ -1,13 +1,15 @@
 #include "SuplaTemplateBoard.h"
-#include "SuplaWebPageRelay.h"
+#include "SuplaDeviceGUI.h"
 
-void addButton(uint8_t gpio, uint8_t event) {
+void addButton(uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
   nr++;
-  ConfigESP->setPullUp(gpio, false);
-  ConfigESP->setInversed(gpio, true);
-  ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
+
   ConfigESP->setEvent(gpio, event);
+  ConfigESP->setAction(gpio, action);
+  ConfigESP->setPullUp(gpio, pullUp);
+  ConfigESP->setInversed(gpio, invertLogic);
+
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
   ConfigManager->set(KEY_MAX_BUTTON, nr++);
 }
@@ -62,6 +64,11 @@ void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t brightnessPi
 
 void addDimmer(int8_t brightnessPin) {
   addRGBW(OFF_GPIO, OFF_GPIO, OFF_GPIO, brightnessPin);
+}
+
+void saveChooseTemplateBoard(int8_t board) {
+  ConfigManager->set(KEY_BOARD, board);
+  chooseTemplateBoard(board);
 }
 
 void chooseTemplateBoard(uint8_t board) {
@@ -119,14 +126,14 @@ void chooseTemplateBoard(uint8_t board) {
       break;
     case BOARD_SHELLY1:
       addButtonCFG(5);
-      addButton(5);
+      addButton(5, false, true);
       addRelay(4);
       break;
     case BOARD_SHELLY2:
       addLedCFG(16);
       addButtonCFG(12);
-      addButton(12);
-      addButton(14);
+      addButton(12, false, true);
+      addButton(14, false, true);
       addRelay(4);
       addRelay(5);
       break;
@@ -134,6 +141,13 @@ void chooseTemplateBoard(uint8_t board) {
       addLedCFG(13);
       addButtonCFG(0);
       addButton(0);
+      addRelay(12);
+      break;
+    case BOARD_SONOFF_MINI:
+      addLedCFG(13);
+      addButtonCFG(0);
+      addButton(0);
+      addButton(4, false, true);
       addRelay(12);
       break;
     case BOARD_SONOFF_DUAL_R2:
@@ -243,6 +257,20 @@ void chooseTemplateBoard(uint8_t board) {
       addLedCFG(1);
       addButtonCFG(0);
       addRGBW(15, 13, 12, 4);
+      break;
+    case BOARD_SHELLY_PLUG_S:
+      addLedCFG(2, LOW);
+      addButtonCFG(13);
+      addButton(13);
+      addRelay(15);
+      addLed(0);
+#ifdef SUPLA_HLW8012
+      addHLW8012(5, 14, 12);
+      Supla::GUI::counterHLW8012->setCurrentMultiplier(18388);
+      Supla::GUI::counterHLW8012->setVoltageMultiplier(247704);
+      Supla::GUI::counterHLW8012->setPowerMultiplier(2586583);
+      Supla::Storage::ScheduleSave(2000);
+#endif
       break;
   }
 }

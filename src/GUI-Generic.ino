@@ -26,13 +26,15 @@ DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 void setup() {
   Serial.begin(74880);
+  uint8_t nr, gpio;
+
+  ConfigManager = new SuplaConfigManager();
+  ConfigESP = new SuplaConfigESP();
 
   if (drd.detectDoubleReset()) {
     drd.stop();
     ConfigESP->factoryReset();
   }
-
-  uint8_t nr, gpio;
 
 #ifdef SUPLA_MCP23017
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO &&
@@ -89,8 +91,8 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONFIG
-  gpio = ConfigESP->getGpio(FUNCTION_CFG_LED);
-  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), gpio, ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(gpio));
+  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED),
+                           ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(FUNCTION_CFG_LED));
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -291,6 +293,10 @@ void setup() {
     }
 #endif
   }
+#endif
+
+#ifdef DEBUG_MODE
+  new Supla::Sensor::EspFreeHeap();
 #endif
 
   Supla::GUI::begin();

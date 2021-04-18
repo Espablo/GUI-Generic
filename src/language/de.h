@@ -32,6 +32,7 @@
 #else
 #define S_TEMPLATE_BOARD "Modul Vorlage"
 #endif
+#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
 #define S_TYPE                                                 "Typ"
 #define S_RELAYS                                               "RELAIS"
 #define S_BUTTONS                                              "TASTEN"
@@ -128,10 +129,11 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Wertänderung"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Einstellung Impulszähler Nr. "
-#define S_CONTROL                          "Steuerung"
+#define S_SCREEN_TIME                      "Bildschirm [s]"
 #define S_OLED_BUTTON                      "OLED-Taste"
 #define S_SCREEN                           "Bildschirm"
 #define S_BACKLIGHT_S                      "Hintergrundbeleuchtung [s]"
+#define S_BACKLIGHT_PERCENT                "Helligkeit [%]"
 #define S_ADDRESS                          "Adresse"
 
 //#### SuplaWebPageUpload.cpp ####

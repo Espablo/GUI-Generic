@@ -18,6 +18,7 @@
 #define SuplaWebServer_h
 
 #include "GUI-Generic_Config.h"
+#include "SuplaTemplateBoard.h"
 
 #ifdef SUPLA_OTA
 #include "SuplaHTTPUpdateServer.h"

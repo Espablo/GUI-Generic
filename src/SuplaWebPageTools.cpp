@@ -23,7 +23,7 @@ void createWebTools() {
     else if (strcasecmp_P(sCommand.c_str(), PATH_FACTORY_RESET) == 0) {
       WebServer->httpServer->sendHeader(F("Location"), PATH_START);
       // WebServer->httpServer->send(303);
-      handlePageHome(2);
+      handlePageHome(1);
       ConfigESP->factoryReset(true);
     }
     else {

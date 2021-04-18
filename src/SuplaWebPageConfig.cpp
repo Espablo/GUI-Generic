@@ -2,7 +2,7 @@
 
 #ifdef SUPLA_CONFIG
 void createWebPageConfig() {
-    WebServer->httpServer->on(getURL(PATH_CONFIG), [&]() {
+  WebServer->httpServer->on(getURL(PATH_CONFIG), [&]() {
     if (!WebServer->isLoggedIn()) {
       return;
     }
@@ -29,9 +29,9 @@ void handleConfigSave() {
     return;
   }
 
-  if (strcmp(WebServer->httpServer->arg(INPUT_CFG_MODE).c_str(), "") != 0) {
-    ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer->arg(INPUT_CFG_MODE).c_str());
-  }
+  ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer->arg(INPUT_CFG_MODE).c_str());
+  ConfigManager->set(KEY_ENABLE_SSL, WebServer->httpServer->arg(INPUT_CFG_SSL).c_str());
+  ConfigManager->set(KEY_ENABLE_GUI, WebServer->httpServer->arg(INPUT_CFG_AVAILABLE_GUI).c_str());
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -53,6 +53,7 @@ void handleConfig(int save) {
   addForm(webContentBuffer, F("post"), PATH_CONFIG);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_CONFIG);
   addListGPIOBox(webContentBuffer, INPUT_CFG_LED_GPIO, F("LED"), FUNCTION_CFG_LED);
+
   selected = ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED));
   addListBox(webContentBuffer, INPUT_CFG_LED_LEVEL, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
@@ -62,6 +63,17 @@ void handleConfig(int save) {
   addListBox(webContentBuffer, INPUT_CFG_MODE, S_CFG_MODE, CFG_MODE_P, 2, selected);
 
   addFormHeaderEnd(webContentBuffer);
+
+  addFormHeader(webContentBuffer, F("Połączenie SSL"));
+  selected = ConfigManager->get(KEY_ENABLE_SSL)->getValueInt();
+  addListBox(webContentBuffer, INPUT_CFG_SSL, F("SSL"), STATE_P, 2, selected);
+  addFormHeaderEnd(webContentBuffer);
+
+  addFormHeader(webContentBuffer, F("GUI podczas normalnej pracy"));
+  selected = ConfigManager->get(KEY_ENABLE_GUI)->getValueInt();
+  addListBox(webContentBuffer, INPUT_CFG_AVAILABLE_GUI, F("GUI"), STATE_P, 2, selected);
+  addFormHeaderEnd(webContentBuffer);
+
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
 

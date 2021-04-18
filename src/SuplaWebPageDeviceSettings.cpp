@@ -19,6 +19,7 @@ void handleDeviceSettings(int save) {
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_DEVICE_SETTINGS);
 
+#if (DEFAULT_TEMPLATE_BOARD == BOARD_OFF)
   addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
   addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
   uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
@@ -26,6 +27,11 @@ void handleDeviceSettings(int save) {
   addFormHeaderEnd(webContentBuffer);
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
+#else
+  addFormHeader(webContentBuffer, S_DEFAULT_TEMPLATE_BOARD);
+  addLabel(webContentBuffer, FPSTR(BOARD_P[DEFAULT_TEMPLATE_BOARD]));
+  addFormHeaderEnd(webContentBuffer);
+#endif
 
   addFormHeader(webContentBuffer, S_DEVICE_SETTINGS);
 #if defined(SUPLA_RELAY)
@@ -56,7 +62,9 @@ void handleDeviceSettings(int save) {
   addButton(webContentBuffer, S_SENSORS_OTHER, PATH_OTHER);
 #endif
 
+#if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
   addButton(webContentBuffer, S_CORRECTION, PATH_CORRECTION);
+#endif
 
 #ifdef SUPLA_CONFIG
   addButton(webContentBuffer, S_LED_BUTTON_CFG, PATH_CONFIG);
@@ -71,16 +79,7 @@ void handleDeviceSettingsSave() {
   String input = INPUT_BOARD;
 
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    ConfigManager->set(KEY_BOARD, WebServer->httpServer->arg(input).c_str());
-
-    int nr;
-    uint8_t key;
-    for (nr = 0; nr <= 17; nr++) {
-      key = KEY_GPIO + nr;
-      ConfigManager->set(key, "");
-    }
-
-    chooseTemplateBoard(WebServer->httpServer->arg(input).toInt());
+    saveChooseTemplateBoard(WebServer->httpServer->arg(input).toInt());
   }
 
   switch (ConfigManager->save()) {

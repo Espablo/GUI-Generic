@@ -16,14 +16,15 @@
 
 #ifndef SuplaDeviceGUI_h
 #define SuplaDeviceGUI_h
-
-#include "GUI-Generic_Config.h"
-
 #include <DoubleResetDetector.h>
 #include <SPI.h>
 
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
+
+#include "GUIGenericCommon.h"
+#include "GUI-Generic_Config.h"
+#include "SuplaTemplateBoard.h"
 
 #include "SuplaConfigESP.h"
 #include "SuplaConfigManager.h"
@@ -32,7 +33,6 @@
 #include "SuplaWebPageLimitSwitch.h"
 #include "SuplaWebServer.h"
 #include "SuplaWebPageConfig.h"
-#include "SuplaTemplateBoard.h"
 
 #include "SuplaWebPageDeviceSettings.h"
 #include "SuplaWebPageHome.h"
@@ -48,7 +48,6 @@
 #include "SuplaWebPageTools.h"
 #include "SuplaWebCorrection.h"
 
-#include "GUIGenericCommon.h"
 #include "SuplaCommonPROGMEM.h"
 #include "Markup.h"
 #include "SuplaOled.h"
@@ -117,6 +116,9 @@ namespace Supla {
 namespace GUI {
 
 void begin();
+void setupWifi();
+void enableWifiSSL(bool value);
+void crateWebServer();
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
 void addRelayButton(uint8_t nr);
