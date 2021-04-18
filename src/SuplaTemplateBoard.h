@@ -5,6 +5,7 @@
 #include <supla/events.h>
 #include <supla/actions.h>
 #include <pgmspace.h>
+#include "GUIGenericCommon.h"
 
 #define BOARD_OFF              0
 #define BOARD_ELECTRODRAGON    1
