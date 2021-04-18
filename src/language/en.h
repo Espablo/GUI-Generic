@@ -129,10 +129,11 @@
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Change value"
 #define S_IMPULSE_COUNTER_SETTINGS_NR      "Settings IC nr. "
-#define S_CONTROL                          "Control"
+#define S_SCREEN_TIME                      "Screen [s]"
 #define S_OLED_BUTTON                      "OLED button"
 #define S_SCREEN                           "Screen"
 #define S_BACKLIGHT_S                      "Backlight [s]"
+#define S_BACKLIGHT_PERCENT                "Brightness [%]"
 #define S_ADDRESS                          "Address"
 
 //#### SuplaWebPageUpload.cpp ####
