@@ -5,6 +5,7 @@
 #include <supla/events.h>
 #include <supla/actions.h>
 #include <pgmspace.h>
+#include "GUIGenericCommon.h"
 
 #define BOARD_OFF              0
 #define BOARD_ELECTRODRAGON    1
@@ -101,7 +102,7 @@ const char MINITIGER_2CH[] PROGMEM = "Minitiger 2 Gang Switch";
 const char MINITIGER_3CH[] PROGMEM = "Minitiger 3 Gang Switch";
 
 const char* const BOARD_P[MAX_MODULE] PROGMEM = {
-    BOARD_NULL,     ELECTRODRAGON, INCAN3,         INCAN4,    MELINK,        NEO_COOLCAM,      SHELLY1,          SHELLY2,       SONOFF_BASIC,
+    S_ABSENT,       ELECTRODRAGON, INCAN3,         INCAN4,    MELINK,        NEO_COOLCAM,      SHELLY1,          SHELLY2,       SONOFF_BASIC,
     SONOFF_DUAL_R2, SONOFF_S2X,    SONOFF_SV,      SONOFF_TH, SONOFF_TOUCH,  SONOFF_TOUCH_2CH, SONOFF_TOUCH_3CH, SONOFF_4CH,    YUNSHAN,
     YUNTONG_SMART,  GOSUNG_SP111,  DIMMER_LUKASZH, H801,      SHELLY_PLUG_S, SONOFF_MINI,      MINITIGER_1CH,    MINITIGER_2CH, MINITIGER_3CH};
 
