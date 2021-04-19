@@ -409,32 +409,26 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
 }
 
 void SuplaConfigESP::setLevel(uint8_t gpio, int level) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, LEVEL_RELAY, level);
+  ConfigManager->setElement(getKeyGpio(gpio), LEVEL_RELAY, level);
 }
 void SuplaConfigESP::setMemory(uint8_t gpio, int memory) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, MEMORY, memory);
+  ConfigManager->setElement(getKeyGpio(gpio), MEMORY, memory);
 }
 
 void SuplaConfigESP::setPullUp(uint8_t gpio, int pullup) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);
+  ConfigManager->setElement(getKeyGpio(gpio), PULL_UP_BUTTON, pullup);
 }
 
 void SuplaConfigESP::setInversed(uint8_t gpio, int inversed) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, INVERSED_BUTTON, inversed);
+  ConfigManager->setElement(getKeyGpio(gpio), INVERSED_BUTTON, inversed);
 }
 
 void SuplaConfigESP::setAction(uint8_t gpio, int action) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, ACTION_BUTTON, action);
+  ConfigManager->setElement(getKeyGpio(gpio), ACTION_BUTTON, action);
 }
 
 void SuplaConfigESP::setEvent(uint8_t gpio, int event) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, EVENT_BUTTON, event);
+  ConfigManager->setElement(getKeyGpio(gpio), EVENT_BUTTON, event);
 }
 
 void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
@@ -470,7 +464,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
 
   if (function == FUNCTION_BUTTON) {
-    setPullUp(gpio, false);
+    setPullUp(gpio, true);
     setInversed(gpio, true);
     setAction(gpio, Supla::Action::TOGGLE);
     setEvent(gpio, Supla::Event::ON_CHANGE);
@@ -587,7 +581,7 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
 
   if (function == FUNCTION_BUTTON) {
     setPullUp(gpio, true);
-    setInversed(gpio, false);
+    setInversed(gpio, true);
     setAction(gpio, Supla::Action::TOGGLE);
     setEvent(gpio, Supla::Event::ON_CHANGE);
   }

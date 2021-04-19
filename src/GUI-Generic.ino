@@ -28,6 +28,8 @@ void setup() {
   Serial.begin(74880);
   uint8_t nr, gpio;
 
+  ESP.wdtDisable();
+
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
 
@@ -53,31 +55,19 @@ void setup() {
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-    gpio = ConfigESP->getGpio(nr, FUNCTION_RELAY);
-    if (gpio != OFF_GPIO) {
-#ifdef SUPLA_ROLLERSHUTTER
+    if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
       if (rollershutters > 0) {
-#ifdef SUPLA_BUTTON
-        uint8_t pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-        uint8_t pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
-        if (ConfigESP->getEvent(pinButtonUp) == Supla::Event::ON_CHANGE && ConfigESP->getEvent(pinButtonDown) == Supla::Event::ON_CHANGE) {
-          Supla::GUI::addRolleShutterMomentary(nr);
-        }
-        else {
-#endif
-          Supla::GUI::addRolleShutter(nr);
-#ifdef SUPLA_BUTTON
-        }
+#ifdef SUPLA_ROLLERSHUTTER
+        Supla::GUI::addRolleShutter(nr);
 #endif
         rollershutters--;
         nr++;
       }
       else {
-#endif
+#ifdef SUPLA_RELAY
         Supla::GUI::addRelayButton(nr);
-#ifdef SUPLA_ROLLERSHUTTER
-      }
 #endif
+      }
     }
   }
 #endif
@@ -92,7 +82,7 @@ void setup() {
 
 #ifdef SUPLA_CONFIG
   Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED),
-                           ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(FUNCTION_CFG_LED));
+                           ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)));
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -302,6 +292,8 @@ void setup() {
   Supla::GUI::begin();
 
   Supla::GUI::addCorrectionSensor();
+
+  ESP.wdtEnable(100);
 }
 
 void loop() {

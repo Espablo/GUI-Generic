@@ -343,7 +343,7 @@ SuplaOled::SuplaOled() {
 
     setupAnimate();
 
-    ui->setTargetFPS(30);
+    ui->setTargetFPS(60);
     ui->setIndicatorPosition(BOTTOM);
     ui->setIndicatorDirection(LEFT_RIGHT);
     ui->setFrameAnimation(SLIDE_LEFT);
