@@ -138,7 +138,6 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 
 #ifdef SUPLA_ROLLERSHUTTER
 void addRolleShutter(uint8_t nr);
-void addRolleShutterMomentary(uint8_t nr);
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER

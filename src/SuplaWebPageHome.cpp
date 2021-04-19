@@ -83,8 +83,39 @@ void handlePageHomeSave() {
   ConfigManager->set(KEY_LOGIN_PASS, WebServer->httpServer->arg(INPUT_MODUL_PASS).c_str());
 
 #ifdef SUPLA_ROLLERSHUTTER
-  if (strcmp(WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).c_str(), "") != 0)
-    ConfigManager->set(KEY_MAX_ROLLERSHUTTER, WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).c_str(), "") != 0) {
+    uint8_t rollershutters = WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).toInt();
+
+    if (rollershutters != ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt()) {
+      ConfigManager->set(KEY_MAX_ROLLERSHUTTER, rollershutters);
+
+      for (uint8_t nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+        uint8_t pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+        uint8_t pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
+
+        if (rollershutters > 0) {
+          if (pinButtonUp != OFF_GPIO) {
+            ConfigESP->setEvent(pinButtonUp, Supla::Event::ON_PRESS);
+            ConfigESP->setAction(pinButtonUp, Supla::Action::OPEN_OR_STOP);
+          }
+          if (pinButtonDown != OFF_GPIO) {
+            ConfigESP->setEvent(pinButtonDown, Supla::Event::ON_PRESS);
+            ConfigESP->setAction(pinButtonDown, Supla::Action::CLOSE_OR_STOP);
+          }
+
+          rollershutters--;
+          nr++;
+        }
+        else {
+          if (pinButtonUp != OFF_GPIO)
+            ConfigESP->setAction(pinButtonUp, Supla::Action::TOGGLE);
+          if (pinButtonDown != OFF_GPIO)
+            ConfigESP->setAction(pinButtonDown, Supla::Action::TOGGLE);
+        }
+      }
+    }
+  }
+
 #endif
 
   switch (ConfigManager->save()) {

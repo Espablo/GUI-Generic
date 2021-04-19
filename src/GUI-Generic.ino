@@ -53,31 +53,19 @@ void setup() {
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-    gpio = ConfigESP->getGpio(nr, FUNCTION_RELAY);
-    if (gpio != OFF_GPIO) {
-#ifdef SUPLA_ROLLERSHUTTER
+    if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
       if (rollershutters > 0) {
-#ifdef SUPLA_BUTTON
-        uint8_t pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-        uint8_t pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
-        if (ConfigESP->getEvent(pinButtonUp) == Supla::Event::ON_CHANGE && ConfigESP->getEvent(pinButtonDown) == Supla::Event::ON_CHANGE) {
-          Supla::GUI::addRolleShutterMomentary(nr);
-        }
-        else {
-#endif
-          Supla::GUI::addRolleShutter(nr);
-#ifdef SUPLA_BUTTON
-        }
+#ifdef SUPLA_ROLLERSHUTTER
+        Supla::GUI::addRolleShutter(nr);
 #endif
         rollershutters--;
         nr++;
       }
       else {
-#endif
+#ifdef SUPLA_RELAY
         Supla::GUI::addRelayButton(nr);
-#ifdef SUPLA_ROLLERSHUTTER
-      }
 #endif
+      }
     }
   }
 #endif
