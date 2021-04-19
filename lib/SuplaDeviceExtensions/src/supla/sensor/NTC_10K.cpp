@@ -29,14 +29,14 @@ double NTC10K::getValue() {
   }
   val = val / 10;
 
-  double V_NTC = (double)val / 1023;
+  double V_NTC = (double)val / 1024;
   double R_NTC = (rs * V_NTC) / (vcc - V_NTC);
 
   R_NTC = log(R_NTC);
   double t = 1 / (0.001129148 +
                   (0.000234125 + (0.0000000876741 * R_NTC * R_NTC)) * R_NTC);
 
-  t = t - 276.15;  // convert Kelvin to Celcius
+  t = t - 273.15;  // convert Kelvin to Celcius
   return t;
 }
 
