@@ -28,6 +28,8 @@ void setup() {
   Serial.begin(74880);
   uint8_t nr, gpio;
 
+  ESP.wdtDisable();
+
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
 
@@ -290,6 +292,8 @@ void setup() {
   Supla::GUI::begin();
 
   Supla::GUI::addCorrectionSensor();
+
+  ESP.wdtEnable(100);
 }
 
 void loop() {
