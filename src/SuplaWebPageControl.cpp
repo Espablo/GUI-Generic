@@ -167,20 +167,26 @@ void handleButtonSet(int save) {
     addForm(webContentBuffer, F("post"), getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
     addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
 
-    selected = ConfigESP->getPullUp(gpio);
-    addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
-
-    selected = ConfigESP->getInversed(gpio);
-    addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
-
-    selected = ConfigESP->getEvent(gpio);
-    addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
-
-    selected = ConfigESP->getAction(gpio);
     if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr_button.toInt()) {
-      addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 17, selected);
+      if (nr_button.toInt() % 2 == 1) {
+        selected = ConfigESP->getPullUp(gpio);
+        addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
+        selected = ConfigESP->getInversed(gpio);
+        addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
+        selected = ConfigESP->getEvent(gpio);
+        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+        selected = ConfigESP->getAction(gpio);
+        addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
+      }
     }
     else {
+      selected = ConfigESP->getPullUp(gpio);
+      addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
+      selected = ConfigESP->getInversed(gpio);
+      addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
+      selected = ConfigESP->getEvent(gpio);
+      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+      selected = ConfigESP->getAction(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
     }
 
@@ -221,20 +227,26 @@ void handleButtonSetMCP23017(int save) {
     addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);
   }
 
-  selected = ConfigESP->getPullUp(gpio);
-  addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
-
-  selected = ConfigESP->getInversed(gpio);
-  addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
-
-  selected = ConfigESP->getEvent(gpio);
-  addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
-
-  selected = ConfigESP->getAction(gpio);
   if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr_button.toInt()) {
-    addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 17, selected);
+    if (nr_button.toInt() % 2 == 1) {
+      selected = ConfigESP->getPullUp(gpio);
+      addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
+      selected = ConfigESP->getInversed(gpio);
+      addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
+      selected = ConfigESP->getEvent(gpio);
+      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+      selected = ConfigESP->getAction(gpio);
+      addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
+    }
   }
   else {
+    selected = ConfigESP->getPullUp(gpio);
+    addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
+    selected = ConfigESP->getInversed(gpio);
+    addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
+    selected = ConfigESP->getEvent(gpio);
+    addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+    selected = ConfigESP->getAction(gpio);
     addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
   }
 

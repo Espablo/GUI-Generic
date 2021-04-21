@@ -189,8 +189,8 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, b
 
 #ifdef SUPLA_ROLLERSHUTTER
 void addRolleShutter(uint8_t nr) {
-  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pullupButtonUp, pullupButtonDown, inversedButtonUp, inversedButtonDown, pinLedUp,
-      pinLedDown, actionButtonUp, actionButtonDown, eventButtonUp, eventButtonDown;
+  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pullupButtonUp, inversedButtonUp, pinLedUp, pinLedDown, actionButtonUp, actionButtonDown,
+      eventButtonUp;
   bool highIsOn, levelLedUp, levelLedDown;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
@@ -200,16 +200,9 @@ void addRolleShutter(uint8_t nr) {
   pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
 
   pullupButtonUp = ConfigESP->getPullUp(pinButtonUp);
-  pullupButtonDown = ConfigESP->getPullUp(pinButtonDown);
-
   inversedButtonUp = ConfigESP->getInversed(pinButtonUp);
-  inversedButtonDown = ConfigESP->getInversed(pinButtonDown);
-
   actionButtonUp = ConfigESP->getAction(pinButtonUp);
-  actionButtonDown = ConfigESP->getAction(pinButtonDown);
-
   eventButtonUp = ConfigESP->getEvent(pinButtonUp);
-  eventButtonDown = ConfigESP->getEvent(pinButtonDown);
 
   pinLedUp = ConfigESP->getGpio(nr, FUNCTION_LED);
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
@@ -219,30 +212,46 @@ void addRolleShutter(uint8_t nr) {
 
   highIsOn = ConfigESP->getLevel(pinRelayUp);
 
-  auto RollerShutterRelay = new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn);
-
-  if (pinButtonUp != OFF_GPIO) {
-    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
-    RollerShutterButtonOpen->addAction(actionButtonUp, RollerShutterRelay, eventButtonUp);
-
-    if (eventButtonUp == Supla::Event::ON_CHANGE) {
-      if (actionButtonUp == Supla::Action::OPEN || actionButtonUp == Supla::Action::CLOSE || actionButtonUp == Supla::Action::MOVE_UP ||
-          actionButtonUp == Supla::Action::MOVE_DOWN) {
-        RollerShutterButtonOpen->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
-      }
-    }
+  switch (actionButtonUp) {
+    case Supla::GUI::ActionRolleShutter::OPEN_OR_CLOSE:
+      actionButtonUp = Supla::Action::OPEN_OR_STOP;
+      actionButtonDown = Supla::Action::CLOSE_OR_STOP;
+      break;
+    case Supla::GUI::ActionRolleShutter::MOVE_UP_OR_MOVE_DOWN:
+      actionButtonUp = Supla::Action::MOVE_UP_OR_STOP;
+      actionButtonDown = Supla::Action::MOVE_DOWN_OR_STOP;
+      break;
+    case Supla::GUI::ActionRolleShutter::STEP_BY_STEP:
+      actionButtonUp = Supla::Action::STEP_BY_STEP;
+      break;
   }
 
-  if (pinButtonDown != OFF_GPIO) {
-    auto RollerShutterButtonClose = new Supla::Control::Button(pinButtonDown, pullupButtonDown, inversedButtonDown);
+  auto RollerShutterRelay = new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn);
 
-    RollerShutterButtonClose->addAction(actionButtonDown, RollerShutterRelay, eventButtonDown);
+  if (actionButtonUp == Supla::Action::STEP_BY_STEP) {
+    if (pinButtonUp == OFF_GPIO)
+      return;
 
-    if (eventButtonDown == Supla::Event::ON_CHANGE) {
-      if (actionButtonDown == Supla::Action::OPEN || actionButtonDown == Supla::Action::CLOSE || actionButtonDown == Supla::Action::MOVE_UP ||
-          actionButtonDown == Supla::Action::MOVE_DOWN) {
-        RollerShutterButtonClose->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
-      }
+    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
+    RollerShutterButtonOpen->addAction(actionButtonUp, RollerShutterRelay, eventButtonUp);
+  }
+  else {
+    if (pinButtonUp == OFF_GPIO && pinButtonDown == OFF_GPIO)
+      return;
+
+    auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
+    auto RollerShutterButtonClose = new Supla::Control::Button(pinButtonDown, pullupButtonUp, inversedButtonUp);
+
+    if (eventButtonUp == Supla::Event::ON_CHANGE) {
+      RollerShutterButtonOpen->addAction(actionButtonUp, RollerShutterRelay, Supla::Event::ON_PRESS);
+      RollerShutterButtonOpen->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
+
+      RollerShutterButtonClose->addAction(actionButtonDown, RollerShutterRelay, Supla::Event::ON_PRESS);
+      RollerShutterButtonClose->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
+    }
+    else {
+      RollerShutterButtonOpen->addAction(actionButtonUp, RollerShutterRelay, eventButtonUp);
+      RollerShutterButtonClose->addAction(actionButtonDown, RollerShutterRelay, eventButtonUp);
     }
   }
 
