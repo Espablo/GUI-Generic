@@ -228,7 +228,7 @@ void addRolleShutter(uint8_t nr) {
 
   auto RollerShutterRelay = new Supla::Control::RollerShutter(pinRelayUp, pinRelayDown, highIsOn);
 
-  if (actionButtonUp == Supla::Action::STEP_BY_STEP) {
+  if ((pinButtonUp != OFF_GPIO && pinButtonDown == OFF_GPIO) || actionButtonUp == Supla::Action::STEP_BY_STEP) {
     if (pinButtonUp == OFF_GPIO)
       return;
 
