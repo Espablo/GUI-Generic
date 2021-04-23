@@ -203,6 +203,12 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_CSE7766
+  if (ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
+    new Supla::Sensor::CSE_7766(ConfigESP->getGpio(FUNCTION_CSE7766_RX));
+  }
+#endif
+
 #ifdef GUI_SENSOR_I2C
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));

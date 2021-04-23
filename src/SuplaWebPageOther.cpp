@@ -63,6 +63,13 @@ void handleOtherSave() {
   }
 #endif
 
+#ifdef SUPLA_CSE7766
+  if (!WebServer->saveGPIO(INPUT_CSE7766_RX, FUNCTION_CSE7766_RX)) {
+    suplaWebPageOther(6);
+    return;
+  }
+#endif
+
 #ifdef SUPLA_PZEM_V_3
   for (nr = 1; nr <= 3; nr++) {
     if (!WebServer->saveGPIO(INPUT_PZEM_RX, FUNCTION_PZEM_RX, nr) || !WebServer->saveGPIO(INPUT_PZEM_TX, FUNCTION_PZEM_TX, nr)) {
@@ -150,6 +157,12 @@ void suplaWebPageOther(int save) {
                  String(count / 100 / 1000));
     addLinkBox(webContentBuffer, S_CALIBRATION, PATH_HLW8012_CALIBRATE);
   }
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
+#ifdef SUPLA_CSE7766
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("CSE7766"));
+  addListGPIOBox(webContentBuffer, INPUT_CSE7766_RX, F("RX"), FUNCTION_CSE7766_RX);
   addFormHeaderEnd(webContentBuffer);
 #endif
 
