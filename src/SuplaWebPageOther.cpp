@@ -1,4 +1,4 @@
-#include "suplaWebPageOther.h"
+#include "SuplaWebPageOther.h"
 
 void createWebPageOther() {
 #ifdef GUI_OTHER
