@@ -58,7 +58,10 @@ void SuplaWebServer::createWebServer() {
 
   createWebUpload();
   createWebTools();
+
+#ifdef GUI_OTHER
   createWebPageOther();
+#endif
   createWebPageSensors();
 }
 

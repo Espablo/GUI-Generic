@@ -18,6 +18,7 @@
 #define SuplaConfigESP_h
 
 #include "Arduino.h"
+#include "EEPROM.h"
 #include <supla/action_handler.h>
 #include <supla/element.h>
 #include "SuplaConfigManager.h"

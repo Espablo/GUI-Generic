@@ -168,6 +168,7 @@ void handleButtonSet(int save) {
     addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
 
     if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr_button.toInt()) {
+#ifdef SUPLA_ROLLERSHUTTER
       if (nr_button.toInt() % 2 == 1) {
         selected = ConfigESP->getPullUp(gpio);
         addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
@@ -178,6 +179,7 @@ void handleButtonSet(int save) {
         selected = ConfigESP->getAction(gpio);
         addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
       }
+#endif
     }
     else {
       selected = ConfigESP->getPullUp(gpio);
@@ -228,6 +230,7 @@ void handleButtonSetMCP23017(int save) {
   }
 
   if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr_button.toInt()) {
+#ifdef SUPLA_ROLLERSHUTTER
     if (nr_button.toInt() % 2 == 1) {
       selected = ConfigESP->getPullUp(gpio);
       addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
@@ -238,6 +241,7 @@ void handleButtonSetMCP23017(int save) {
       selected = ConfigESP->getAction(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
     }
+#endif
   }
   else {
     selected = ConfigESP->getPullUp(gpio);
