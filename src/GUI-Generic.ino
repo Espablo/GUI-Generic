@@ -38,19 +38,6 @@ void setup() {
     ConfigESP->factoryReset();
   }
 
-#ifdef SUPLA_MCP23017
-  if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO &&
-      ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-    Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
-    Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
-
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-      gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-      mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), ConfigESP->getInversed(gpio));
-    }
-  }
-#endif
-
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
@@ -286,6 +273,19 @@ void setup() {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       SuplaOled *oled = new SuplaOled();
       oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
+    }
+#endif
+
+#ifdef SUPLA_MCP23017
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
+      Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
+
+      for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+        gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+        mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), ConfigESP->getInversed(gpio));
+      }
+
+      Wire.setClock(400000);
     }
 #endif
   }
