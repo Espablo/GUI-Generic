@@ -352,13 +352,14 @@ SuplaOled::SuplaOled() {
     ui->setOverlays(overlays, overlaysCount);
     ui->init();
 
-    if(strcmp(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValue(), "") != 0
-      && ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() == 0) {
-      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
+    if (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
+      display->setBrightness(255);
+      timeLastChangeOled = millis();
     }
     else {
-      display->setBrightness(255);
+      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() / 100.0) * 255);
     }
+
     display->flipScreenVertically();
     display->setFontTableLookupFunction(&utf8win1250);
   }
@@ -370,13 +371,13 @@ void SuplaOled::setupAnimate() {
     ui->disableAutoTransition();
   }
   else {
-    if(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() > 0) {
-        ui->enableAutoTransition();
-        ui->setTimePerFrame(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() * 1000);
+    if (ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() > 0) {
+      ui->enableAutoTransition();
+      ui->setTimePerFrame(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() * 1000);
     }
     else {
-        ui->disableAutoTransition();
-        ui->setTimePerTransition(250);
+      ui->disableAutoTransition();
+      ui->setTimePerTransition(250);
     }
   }
 }
@@ -392,25 +393,8 @@ void SuplaOled::iterateAlways() {
 
     if (millis() - timeLastChangeOled > (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() * 1000) && oledON &&
         ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
-      if(strcmp(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValue(), "") != 0) {
-        display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
-        if(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() == 0 && frameCount > 1) {
-          ui->disableAutoTransition();
-        }
-      }
-      else {
-      	display->setBrightness(50);
-      }
+      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() / 100.0) * 255);
       oledON = false;
-      // display.displayOff();
-    }
-    else if(ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() == 0) {
-      if(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() > 0) {
-        display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
-      }
-      else {
-       	display->setBrightness(255);
-      }
     }
 
     if (ConfigESP->configModeESP == NORMAL_MODE) {
@@ -438,24 +422,16 @@ void SuplaOled::addButtonOled(int pin) {
 }
 
 void SuplaOled::handleAction(int event, int action) {
-  if (action == NEXT_FRAME && oledON == true && ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() == 0) {
+  if (action == NEXT_FRAME && oledON) {
     ui->nextFrame();
   }
 
-  if (action == TURN_ON_OLED) {
-    if(strcmp(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValue(), "") != 0
-      && ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() == 0) {
-      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
-    }
-    else {
+  if (action == TURN_ON_OLED && oledON == false) {
+    if (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
       display->setBrightness(255);
+      timeLastChangeOled = millis();
     }
-    timeLastChangeOled = millis();
     oledON = true;
-    if(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() > 0 && frameCount > 1) {
-      ui->enableAutoTransition();
-    }
-
   }
 }
 
