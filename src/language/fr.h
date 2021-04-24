@@ -95,6 +95,7 @@
 #define S_STATUS_INVALID_AUTHKEY         "AuthKey manquant"
 #define S_STATUS_NO_LOCATION_AVAILABLE   "Aucun emplacement disponible!"
 #define S_STATUS_UNKNOWN_ERROR           "Erreur d'enregistrement inconnue "
+#define S_STATUS_NETWORK_DISCONNECTED    "Pas de connexion au réseau"
 
 // #### SuplaCommonPROGMEM.h ####
 #define S_OFF                           "ÉTEINDRE"

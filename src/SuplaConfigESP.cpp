@@ -270,10 +270,13 @@ void status_func(int status, const char *msg) {
     case STATUS_UNKNOWN_ERROR:
       ConfigESP->supla_status.msg = S_STATUS_UNKNOWN_ERROR;
       break;
+    case STATUS_NETWORK_DISCONNECTED:
+      ConfigESP->supla_status.msg = S_STATUS_NETWORK_DISCONNECTED;
+      break;
     default:
       ConfigESP->supla_status.msg = msg;
+      break;
   }
-
   ConfigESP->supla_status.status = status;
 
   static int lock;
