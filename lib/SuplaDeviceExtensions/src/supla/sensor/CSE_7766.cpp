@@ -21,7 +21,6 @@ namespace Sensor {
 
 CSE_7766::CSE_7766(int8_t pinRX) : pinRX(pinRX) {
   sensor = new CSE7766();
-
   sensor->setRX(pinRX);
   sensor->begin();
 }
