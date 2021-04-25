@@ -346,6 +346,17 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
 }
 #endif
 
+#ifdef SUPLA_CSE7766
+Supla::Sensor::CSE_7766 *counterCSE7766 = nullptr;
+
+void addCSE7766(int8_t pinRX) {
+  if (counterCSE7766 == NULL) {
+    counterCSE7766 = new Supla::Sensor::CSE_7766(pinRX);
+  }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
+
 void addConditionsTurnON(int function, Supla::ChannelElement *client) {
 #if defined(SUPLA_RELAY)
   if (Supla::GUI::relay.size() == 0)

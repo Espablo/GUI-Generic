@@ -38,16 +38,23 @@ void handleImpulseCounterSaveSet();
 #define INPUT_SEL "sel"
 
 #define INPUT_COUNTER_CHANGE_VALUE_HLW8012 "iccvh"
-#define PATH_HLW8012_CALIBRATE "calhlw"
-#define INPUT_CALIB_POWER   "power"
-#define INPUT_CALIB_VOLTAGE "voltage"
-
-void handleHLW8012Calibrate(int save = 0);
-void handleHLW8012CalibrateSave();
+#define PATH_HLW8012                       "hlw8012"
 #endif
 
 #ifdef SUPLA_CSE7766
 #define INPUT_CSE7766_RX "isrx"
+
+#define INPUT_COUNTER_CHANGE_VALUE_CSE7766 "iccvc"
+#define PATH_CSE7766                       "cse7766"
+#endif
+
+#if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)
+#define PATH_CALIBRATE      "calibrate"
+#define INPUT_CALIB_POWER   "power"
+#define INPUT_CALIB_VOLTAGE "voltage"
+
+void handleCounterCalibrate(int save = 0);
+void handleCounterCalibrateSave();
 #endif
 
 #ifdef SUPLA_PZEM_V_3

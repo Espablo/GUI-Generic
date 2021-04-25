@@ -26,17 +26,18 @@ void createWebPageOther() {
   });
 #endif
 
-#if defined(SUPLA_HLW8012)
-  if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) {
-    WebServer->httpServer->on(getURL(PATH_HLW8012_CALIBRATE), [&]() {
+#if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)
+  if ((ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) ||
+      ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
+    WebServer->httpServer->on(getURL(PATH_CALIBRATE), [&]() {
       if (!WebServer->isLoggedIn()) {
         return;
       }
 
       if (WebServer->httpServer->method() == HTTP_GET)
-        handleHLW8012Calibrate();
+        handleCounterCalibrate();
       else
-        handleHLW8012CalibrateSave();
+        handleCounterCalibrateSave();
     });
   }
 #endif
@@ -71,7 +72,7 @@ void handleOther(int save) {
     float count = Supla::GUI::counterHLW8012->getCounter();
     addNumberBox(webContentBuffer, INPUT_COUNTER_CHANGE_VALUE_HLW8012, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
                  String(count / 100 / 1000));
-    addLinkBox(webContentBuffer, S_CALIBRATION, PATH_HLW8012_CALIBRATE);
+    addLinkBox(webContentBuffer, S_CALIBRATION, getParameterRequest(PATH_CALIBRATE, ARG_PARM_URL) + PATH_HLW8012);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -79,6 +80,12 @@ void handleOther(int save) {
 #ifdef SUPLA_CSE7766
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("CSE7766"));
   addListGPIOBox(webContentBuffer, INPUT_CSE7766_RX, F("RX"), FUNCTION_CSE7766_RX);
+  if (ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
+    float count = Supla::GUI::counterCSE7766->getCounter();
+    addNumberBox(webContentBuffer, INPUT_COUNTER_CHANGE_VALUE_CSE7766, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
+                 String(count / 100 / 1000));
+    addLinkBox(webContentBuffer, S_CALIBRATION, getParameterRequest(PATH_CALIBRATE, ARG_PARM_URL) + PATH_CSE7766);
+  }
   addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -160,9 +167,10 @@ void handleOtherSave() {
     return;
   }
   else {
+    Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
     if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).c_str(), "") != 0) {
       Supla::GUI::counterHLW8012->setCounter(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_HLW8012).toFloat() * 100 * 1000);
-      Supla::Storage::ScheduleSave(2000);
+      Supla::Storage::ScheduleSave(1000);
     }
   }
 #endif
@@ -171,6 +179,13 @@ void handleOtherSave() {
   if (!WebServer->saveGPIO(INPUT_CSE7766_RX, FUNCTION_CSE7766_RX)) {
     handleOther(6);
     return;
+  }
+  else {
+    Supla::GUI::addCSE7766(ConfigESP->getGpio(FUNCTION_CSE7766_RX));
+    if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7766).c_str(), "") != 0) {
+      Supla::GUI::counterCSE7766->setCounter(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7766).toFloat() * 100 * 1000);
+      Supla::Storage::ScheduleSave(1000);
+    }
   }
 #endif
 
@@ -295,7 +310,7 @@ void handleImpulseCounterSaveSet() {
 
   ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
   Supla::GUI::impulseCounter[nr.toInt() - 1]->setCounter((unsigned long long)WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
-  Supla::Storage::ScheduleSave(2000);
+  Supla::Storage::ScheduleSave(1000);
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -311,22 +326,38 @@ void handleImpulseCounterSaveSet() {
 }
 #endif
 
-#if defined(SUPLA_HLW8012)
-void handleHLW8012Calibrate(int save) {
+#if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)
+void handleCounterCalibrate(int save) {
+  String couter;
+  double curent = 0, voltage = 0, power = 0;
+
+  couter = WebServer->httpServer->arg(ARG_PARM_URL);
+
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_HLW8012_CALIBRATE);
+  webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_CALIBRATE, ARG_PARM_URL, couter));
+
+  if (couter == PATH_HLW8012) {
+    curent = Supla::GUI::counterHLW8012->getCurrentMultiplier();
+    voltage = Supla::GUI::counterHLW8012->getVoltageMultiplier();
+    power = Supla::GUI::counterHLW8012->getPowerMultiplier();
+  }
+  else if (couter == PATH_CSE7766) {
+    curent = Supla::GUI::counterCSE7766->getCurrentMultiplier();
+    voltage = Supla::GUI::counterCSE7766->getVoltageMultiplier();
+    power = Supla::GUI::counterCSE7766->getPowerMultiplier();
+  }
 
   addFormHeader(webContentBuffer);
   webContentBuffer += F("<p style='color:#000;'>Current Multi: ");
-  webContentBuffer += Supla::GUI::counterHLW8012->getCurrentMultiplier();
+  webContentBuffer += curent;
   webContentBuffer += F("<br>Voltage Multi: ");
-  webContentBuffer += Supla::GUI::counterHLW8012->getVoltageMultiplier();
+  webContentBuffer += voltage;
   webContentBuffer += F("<br>Power Multi: ");
-  webContentBuffer += Supla::GUI::counterHLW8012->getPowerMultiplier();
+  webContentBuffer += power;
   webContentBuffer += F("</p>");
   addFormHeaderEnd(webContentBuffer);
 
-  addForm(webContentBuffer, F("post"), PATH_HLW8012_CALIBRATE);
+  addForm(webContentBuffer, F("post"), getParameterRequest(PATH_CALIBRATE, ARG_PARM_URL, couter));
   addFormHeader(webContentBuffer, S_CALIBRATION_SETTINGS);
   addNumberBox(webContentBuffer, INPUT_CALIB_POWER, S_BULB_POWER_W, F("25"), true);
   addNumberBox(webContentBuffer, INPUT_CALIB_VOLTAGE, S_VOLTAGE_V, F("230"), true);
@@ -339,8 +370,10 @@ void handleHLW8012Calibrate(int save) {
   WebServer->sendContent();
 }
 
-void handleHLW8012CalibrateSave() {
+void handleCounterCalibrateSave() {
   double calibPower, calibVoltage = 0;
+  String couter = WebServer->httpServer->arg(ARG_PARM_URL);
+
   String input = INPUT_CALIB_POWER;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     calibPower = WebServer->httpServer->arg(input).toDouble();
@@ -357,11 +390,16 @@ void handleHLW8012CalibrateSave() {
       Supla::GUI::relay[i]->turnOn();
     }
 #endif
-    Supla::GUI::counterHLW8012->calibrate(calibPower, calibVoltage);
-    handleHLW8012Calibrate(1);
+    if (couter == PATH_HLW8012) {
+      Supla::GUI::counterHLW8012->calibrate(calibPower, calibVoltage);
+    }
+    else if (couter == PATH_CSE7766) {
+      Supla::GUI::counterCSE7766->calibrate(calibPower, calibVoltage);
+    }
+    handleCounterCalibrate(1);
   }
   else {
-    handleHLW8012Calibrate(6);
+    handleCounterCalibrate(6);
   }
 }
 #endif

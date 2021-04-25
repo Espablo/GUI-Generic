@@ -61,8 +61,8 @@ class HLW_8012 : public OnePhaseElectricityMeter, public Element {
   bool currentWhen;
   bool use_interrupts;
 
-  unsigned _supla_int64_t energy;
-  unsigned _supla_int64_t _energy;  // energy value read from memory at startup
+  unsigned _supla_int64_t energy = 0;
+  unsigned _supla_int64_t _energy = 0;  // energy value read from memory at startup
 };
 
 };  // namespace Sensor

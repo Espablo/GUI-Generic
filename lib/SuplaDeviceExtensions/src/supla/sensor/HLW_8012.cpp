@@ -30,6 +30,11 @@ HLW_8012::HLW_8012(int8_t pinCF,
       currentWhen(currentWhen),
       use_interrupts(use_interrupts) {
   sensor = new HLW8012();
+
+  setCurrentMultiplier(18388);
+  setVoltageMultiplier(247704);
+  setPowerMultiplier(2586583);
+
   sensor->begin(pinCF, pinCF1, pinSEL, currentWhen, use_interrupts);
 
   attachInterrupt(pinCF, hjl01_cf_interrupt, FALLING);

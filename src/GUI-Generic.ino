@@ -192,7 +192,7 @@ void setup() {
 
 #ifdef SUPLA_CSE7766
   if (ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
-    new Supla::Sensor::CSE_7766(ConfigESP->getGpio(FUNCTION_CSE7766_RX));
+    Supla::GUI::addCSE7766(ConfigESP->getGpio(FUNCTION_CSE7766_RX));
   }
 #endif
 

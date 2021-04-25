@@ -21,6 +21,11 @@ namespace Sensor {
 
 CSE_7766::CSE_7766(int8_t pinRX) : pinRX(pinRX) {
   sensor = new CSE7766();
+
+  setCurrentMultiplier(CSE7766_CURRENT_RATIO);
+  setVoltageMultiplier(CSE7766_VOLTAGE_RATIO);
+  setPowerMultiplier(CSE7766_POWER_RATIO);
+  
   sensor->setRX(pinRX);
   sensor->begin();
 }

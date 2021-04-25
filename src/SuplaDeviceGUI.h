@@ -158,6 +158,11 @@ extern Supla::Sensor::HLW_8012 *counterHLW8012;
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 #endif
 
+#ifdef SUPLA_CSE7766
+extern Supla::Sensor::CSE_7766 *counterCSE7766;
+void addCSE7766(int8_t pinRX);
+#endif
+
 void addConditionsTurnON(int function, Supla::ChannelElement *client);
 void addConditionsTurnOFF(int function, Supla::ChannelElement *client);
 void addCorrectionSensor();
