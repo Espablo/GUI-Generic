@@ -17,7 +17,7 @@
 #include "SuplaConfigManager.h"
 #include <supla/network/SuplaGuiWiFi.h>
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012)
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)
 #define TIME_SAVE_PERIOD_SEK                 30   // the time is given in seconds
 #define TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK 600  // 10min
 #define STORAGE_OFFSET                       0
