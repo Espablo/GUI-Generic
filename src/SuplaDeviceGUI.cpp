@@ -129,14 +129,13 @@ void addRelayButton(uint8_t nr) {
 
 #if defined(SUPLA_PUSHOVER)
     if (size <= MAX_PUSHOVER_MESSAGE) {
-      if (ConfigManager->get(KEY_PUSHOVER)->getElement(size).toInt() && strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 &&
-          strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
+      if (strcmp(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(size).c_str(), "") != 0 &&
+          strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 && strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
         auto pushover =
             new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
 
         pushover->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
         pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(size).c_str());
-
         relay[size]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
       }
     }

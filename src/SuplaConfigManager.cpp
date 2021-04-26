@@ -182,7 +182,7 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
   this->addKey(KEY_MAX_RGBW, "0", 2);
 
-  this->addKey(KEY_PUSHOVER, MAX_GPIO * 2);
+  this->addKey(KEY_FREE_TO_USE, MAX_GPIO * 2);
   this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
   this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
   this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);

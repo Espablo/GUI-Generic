@@ -40,19 +40,19 @@ void Pushover::setToken(const char *token) {
 
 void Pushover::setUser(const char *user) {
   if (user) {
-    strncpy(_user, user, MAX_TOKEN_SIZE);
+    strncpy(_user, user, MAX_USER_SIZE);
   }
 }
 
 void Pushover::setTitle(const char *title) {
   if (title) {
-    strncpy(_title, title, MAX_TOKEN_SIZE);
+    strncpy(_title, title, MAX_TITLE_SIZE);
   }
 }
 
 void Pushover::setMessage(const char *message) {
   if (message) {
-    strncpy(_message, message, MAX_TOKEN_SIZE);
+    strncpy(_message, message, MAX_MESSAGE_SIZE);
   }
 }
 
