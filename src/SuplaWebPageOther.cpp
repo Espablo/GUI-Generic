@@ -395,12 +395,16 @@ void handleCounterCalibrateSave() {
       Supla::GUI::relay[i]->turnOn();
     }
 #endif
-    if (couter == PATH_HLW8012) {
+
+#ifdef SUPLA_HLW8012
+    if (couter == PATH_HLW8012)
       Supla::GUI::counterHLW8012->calibrate(calibPower, calibVoltage);
-    }
-    else if (couter == PATH_CSE7766) {
+#endif
+
+#ifdef SUPLA_CSE7766
+    if (couter == PATH_CSE7766)
       Supla::GUI::counterCSE7766->calibrate(calibPower, calibVoltage);
-    }
+#endif
     handleCounterCalibrate(1);
   }
   else {
