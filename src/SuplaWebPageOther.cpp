@@ -336,16 +336,21 @@ void handleCounterCalibrate(int save) {
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_CALIBRATE, ARG_PARM_URL, couter));
 
+#ifdef SUPLA_HLW8012
   if (couter == PATH_HLW8012) {
     curent = Supla::GUI::counterHLW8012->getCurrentMultiplier();
     voltage = Supla::GUI::counterHLW8012->getVoltageMultiplier();
     power = Supla::GUI::counterHLW8012->getPowerMultiplier();
   }
-  else if (couter == PATH_CSE7766) {
+#endif
+
+#ifdef SUPLA_CSE7766
+  if (couter == PATH_CSE7766) {
     curent = Supla::GUI::counterCSE7766->getCurrentMultiplier();
     voltage = Supla::GUI::counterCSE7766->getVoltageMultiplier();
     power = Supla::GUI::counterCSE7766->getPowerMultiplier();
   }
+#endif
 
   addFormHeader(webContentBuffer);
   webContentBuffer += F("<p style='color:#000;'>Current Multi: ");
