@@ -409,9 +409,16 @@ void SuplaOled::iterateAlways() {
   }
 }
 
-void SuplaOled::addButtonOled(int pin) {
+void SuplaOled::addButtonOled(uint8_t pin) {
   if (pin != OFF_GPIO) {
-    Supla::Control::Button* button = new Supla::Control::Button(pin, true, true);
+    bool pullUp = true, invertLogic = true;
+
+    if (ConfigESP->getGpio(FUNCTION_BUTTON) != OFF_GPIO) {
+      pullUp = ConfigESP->getPullUp(ConfigESP->getGpio(FUNCTION_BUTTON));
+      invertLogic = ConfigESP->getInversed(ConfigESP->getGpio(FUNCTION_BUTTON));
+    }
+
+    Supla::Control::Button* button = new Supla::Control::Button(pin, pullUp, invertLogic);
 
     if (frameCount > 1) {
       button->addAction(NEXT_FRAME, this, Supla::ON_PRESS);

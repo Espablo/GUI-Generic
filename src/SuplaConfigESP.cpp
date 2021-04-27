@@ -85,19 +85,25 @@ uint8_t SuplaConfigESP::getDefaultTamplateBoard() {
 #endif
 }
 
-void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _ledHighIsOn) {
-  pinNumberConfig = _pinNumberConfig;
-  pinLedConfig = _pinLedConfig;
-  modeConfigButton = _modeConfigButton;
-  ledHighIsOn = _ledHighIsOn;
+void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig) {
+  uint8_t pinNumberConfig = _pinNumberConfig;
+  uint8_t pinLedConfig = _pinLedConfig;
+  uint8_t modeConfigButton = ConfigManager->get(KEY_CFG_MODE)->getValueInt();
 
   if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO) {
     pinMode(pinLedConfig, OUTPUT);
     digitalWrite(pinLedConfig, pinOffValue());
   }
 
-  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) != OFF_GPIO) {
-    Supla::Control::Button *buttonConfig = new Supla::Control::Button(pinNumberConfig, true, true);
+  if (pinNumberConfig != OFF_GPIO) {
+    bool pullUp = true, invertLogic = true;
+
+    if (ConfigESP->getGpio(FUNCTION_BUTTON) != OFF_GPIO) {
+      pullUp = ConfigESP->getPullUp(ConfigESP->getGpio(FUNCTION_BUTTON));
+      invertLogic = ConfigESP->getInversed(ConfigESP->getGpio(FUNCTION_BUTTON));
+    }
+
+    Supla::Control::Button *buttonConfig = new Supla::Control::Button(pinNumberConfig, pullUp, invertLogic);
     buttonConfig->setMulticlickTime(1000);
     buttonConfig->addAction(Supla::TURN_ON, *ConfigESP, Supla::ON_CLICK_1);
 
@@ -177,11 +183,17 @@ void SuplaConfigESP::ledBlinking(int time) {
 
 void SuplaConfigESP::ledBlinkingStop(void) {
   os_timer_disarm(&led_timer);
-  digitalWrite(pinLedConfig, pinOffValue());
+  digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), pinOffValue());
 }
 
-int SuplaConfigESP::getPinLedConfig() {
-  return pinLedConfig;
+uint8_t SuplaConfigESP::pinOnValue() {
+  uint8_t gpio = ConfigESP->getGpio(FUNCTION_CFG_LED);
+  return ConfigESP->getLevel(gpio) ? HIGH : LOW;
+}
+
+uint8_t SuplaConfigESP::pinOffValue() {
+  uint8_t gpio = ConfigESP->getGpio(FUNCTION_CFG_LED);
+  return ConfigESP->getLevel(gpio) ? LOW : HIGH;
 }
 
 String SuplaConfigESP::getMacAddress(bool formating) {
@@ -198,8 +210,8 @@ String SuplaConfigESP::getMacAddress(bool formating) {
 }
 
 void ledBlinking_func(void *timer_arg) {
-  int val = digitalRead(ConfigESP->getPinLedConfig());
-  digitalWrite(ConfigESP->getPinLedConfig(), val == HIGH ? 0 : 1);
+  int val = digitalRead(ConfigESP->getGpio(FUNCTION_CFG_LED));
+  digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), val == HIGH ? 0 : 1);
 }
 
 void status_func(int status, const char *msg) {
@@ -353,15 +365,15 @@ uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
     return KEY_GPIO + gpio - 148;
 }
 
-uint8_t SuplaConfigESP::getLevel(uint8_t gpio) {
+bool SuplaConfigESP::getLevel(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(LEVEL_RELAY).toInt();
 }
 
-uint8_t SuplaConfigESP::getPullUp(uint8_t gpio) {
+bool SuplaConfigESP::getPullUp(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(PULL_UP_BUTTON).toInt();
 }
 
-uint8_t SuplaConfigESP::getInversed(uint8_t gpio) {
+bool SuplaConfigESP::getInversed(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(INVERSED_BUTTON).toInt();
 }
 

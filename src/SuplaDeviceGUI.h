@@ -137,7 +137,7 @@ extern std::vector<DS18B20 *> sensorDS;
 #endif
 
 #ifdef SUPLA_CONFIG
-void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, bool highIsOn);
+void addConfigESP(int pinNumberConfig, int pinLedConfig);
 #endif
 
 #ifdef SUPLA_ROLLERSHUTTER

@@ -68,8 +68,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONFIG
-  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED),
-                           ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)));
+  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED));
 #endif
 
 #ifdef SUPLA_DS18B20

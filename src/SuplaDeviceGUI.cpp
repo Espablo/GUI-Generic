@@ -181,8 +181,8 @@ void addDS18B20MultiThermometer(int pinNumber) {
 #endif
 
 #ifdef SUPLA_CONFIG
-void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, bool highIsOn) {
-  ConfigESP->addConfigESP(pinNumberConfig, pinLedConfig, modeConfigButton, highIsOn);
+void addConfigESP(int pinNumberConfig, int pinLedConfig) {
+  ConfigESP->addConfigESP(pinNumberConfig, pinLedConfig);
 }
 #endif
 
