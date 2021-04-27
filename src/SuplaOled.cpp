@@ -285,13 +285,13 @@ SuplaOled::SuplaOled() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       case OLED_SSD1306_0_96:
-        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64, I2C_ONE, -1);
+        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64);
         break;
       case OLED_SH1106_1_3:
-        display = new SH1106Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64, I2C_ONE, -1);
+        display = new SH1106Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64);
         break;
       case OLED_SSD1306_0_66:
-        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_64_48, I2C_ONE, -1);
+        display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_64_48);
         break;
     }
 
@@ -352,13 +352,14 @@ SuplaOled::SuplaOled() {
     ui->setOverlays(overlays, overlaysCount);
     ui->init();
 
-    if(strcmp(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValue(), "") != 0
-      && ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() == 0) {
-      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
+    if (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
+      display->setBrightness(255);
+      timeLastChangeOled = millis();
     }
     else {
-      display->setBrightness(255);
+      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() / 100.0) * 255);
     }
+
     display->flipScreenVertically();
     display->setFontTableLookupFunction(&utf8win1250);
   }
@@ -370,13 +371,13 @@ void SuplaOled::setupAnimate() {
     ui->disableAutoTransition();
   }
   else {
-    if(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() > 0) {
-        ui->enableAutoTransition();
-        ui->setTimePerFrame(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() * 1000);
+    if (ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() > 0) {
+      ui->enableAutoTransition();
+      ui->setTimePerFrame(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() * 1000);
     }
     else {
-        ui->disableAutoTransition();
-        ui->setTimePerTransition(250);
+      ui->disableAutoTransition();
+      ui->setTimePerTransition(250);
     }
   }
 }
@@ -392,25 +393,8 @@ void SuplaOled::iterateAlways() {
 
     if (millis() - timeLastChangeOled > (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() * 1000) && oledON &&
         ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
-      if(strcmp(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValue(), "") != 0) {
-        display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
-        if(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() == 0 && frameCount > 1) {
-          ui->disableAutoTransition();
-        }
-      }
-      else {
-      	display->setBrightness(50);
-      }
+      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() / 100.0) * 255);
       oledON = false;
-      // display.displayOff();
-    }
-    else if(ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() == 0) {
-      if(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() > 0) {
-        display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
-      }
-      else {
-       	display->setBrightness(255);
-      }
     }
 
     if (ConfigESP->configModeESP == NORMAL_MODE) {
@@ -425,9 +409,16 @@ void SuplaOled::iterateAlways() {
   }
 }
 
-void SuplaOled::addButtonOled(int pin) {
+void SuplaOled::addButtonOled(uint8_t pin) {
   if (pin != OFF_GPIO) {
-    Supla::Control::Button* button = new Supla::Control::Button(pin, true, true);
+    bool pullUp = true, invertLogic = true;
+
+    if (ConfigESP->getGpio(FUNCTION_BUTTON) != OFF_GPIO) {
+      pullUp = ConfigESP->getPullUp(ConfigESP->getGpio(FUNCTION_BUTTON));
+      invertLogic = ConfigESP->getInversed(ConfigESP->getGpio(FUNCTION_BUTTON));
+    }
+
+    Supla::Control::Button* button = new Supla::Control::Button(pin, pullUp, invertLogic);
 
     if (frameCount > 1) {
       button->addAction(NEXT_FRAME, this, Supla::ON_PRESS);
@@ -438,24 +429,16 @@ void SuplaOled::addButtonOled(int pin) {
 }
 
 void SuplaOled::handleAction(int event, int action) {
-  if (action == NEXT_FRAME && oledON == true && ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() == 0) {
+  if (action == NEXT_FRAME && oledON) {
     ui->nextFrame();
   }
 
-  if (action == TURN_ON_OLED) {
-    if(strcmp(ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValue(), "") != 0
-      && ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() == 0) {
-      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt()/100.0) * 255);
-    }
-    else {
+  if (action == TURN_ON_OLED && oledON == false) {
+    if (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
       display->setBrightness(255);
+      timeLastChangeOled = millis();
     }
-    timeLastChangeOled = millis();
     oledON = true;
-    if(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() > 0 && frameCount > 1) {
-      ui->enableAutoTransition();
-    }
-
   }
 }
 

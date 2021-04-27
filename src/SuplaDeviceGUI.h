@@ -87,8 +87,12 @@
 #ifdef DEBUG_MODE
 #include <supla/sensor/esp_free_heap.h>
 #endif
-
+#ifdef SUPLA_HLW8012
 #include <supla/sensor/HLW_8012.h>
+#endif
+#ifdef SUPLA_CSE7766
+#include <supla/sensor/CSE_7766.h>
+#endif
 #include <supla/control/pin_status_led.h>
 
 #ifdef SUPLA_RGBW
@@ -133,12 +137,11 @@ extern std::vector<DS18B20 *> sensorDS;
 #endif
 
 #ifdef SUPLA_CONFIG
-void addConfigESP(int pinNumberConfig, int pinLedConfig, int modeConfigButton, bool highIsOn);
+void addConfigESP(int pinNumberConfig, int pinLedConfig);
 #endif
 
 #ifdef SUPLA_ROLLERSHUTTER
 void addRolleShutter(uint8_t nr);
-void addRolleShutterMomentary(uint8_t nr);
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
@@ -153,6 +156,11 @@ void addRGBWLeds(uint8_t nr);
 #ifdef SUPLA_HLW8012
 extern Supla::Sensor::HLW_8012 *counterHLW8012;
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
+#endif
+
+#ifdef SUPLA_CSE7766
+extern Supla::Sensor::CSE_7766 *counterCSE7766;
+void addCSE7766(int8_t pinRX);
 #endif
 
 void addConditionsTurnON(int function, Supla::ChannelElement *client);

@@ -363,16 +363,18 @@ void addListBox(String& html, const String& input_id, const String& name, const 
   html += F("'>");
 
   for (uint8_t suported = 0; suported < size; suported++) {
-    html += F("<option value='");
-    html += suported;
-    if (selected == suported) {
-      html += F("' selected>");
+    if (String(FPSTR(array_P[suported])) != "") {
+      html += F("<option value='");
+      html += suported;
+      if (selected == suported) {
+        html += F("' selected>");
+      }
+      else {
+        html += F("'>");
+      }
+      html += FPSTR(array_P[suported]);
+      WebServer->sendHeader();
     }
-    else {
-      html += F("'>");
-    }
-    html += FPSTR(array_P[suported]);
-    WebServer->sendHeader();
   }
   html += F("</select></i>");
 }

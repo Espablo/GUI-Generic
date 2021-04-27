@@ -58,7 +58,10 @@ void SuplaWebServer::createWebServer() {
 
   createWebUpload();
   createWebTools();
+
+#ifdef GUI_OTHER
   createWebPageOther();
+#endif
   createWebPageSensors();
 }
 
@@ -126,8 +129,8 @@ void SuplaWebServer::sendContent() {
 }
 
 void SuplaWebServer::handleNotFound() {
-  httpServer->sendHeader("Location", PATH_START, true);
-  handlePageHome(2);
+  //httpServer->sendHeader("Location", PATH_START, true);
+  //handlePageHome(2);
   ConfigESP->rebootESP();
 }
 
@@ -171,6 +174,15 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
       ConfigESP->clearGpio(gpio, function);
       ConfigESP->clearGpio(_gpio, function);
       ConfigESP->setGpio(_gpio, nr, function);
+
+#ifdef SUPLA_ROLLERSHUTTER
+      if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr) {
+        if (nr % 2 == 1) {
+          ConfigESP->setEvent(_gpio, Supla::Event::ON_PRESS);
+          ConfigESP->setAction(_gpio, Supla::GUI::ActionRolleShutter::OPEN_OR_CLOSE);
+        }
+      }
+#endif
     }
     else if (gpio == _gpio && _function == function && _nr == nr) {
       ConfigESP->setGpio(_gpio, nr, function);
@@ -224,6 +236,14 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
       ConfigESP->clearGpioMCP23017(gpio, nr, function);
       ConfigESP->clearGpioMCP23017(_gpio, nr, function);
       ConfigESP->setGpioMCP23017(_gpio, _address, nr, function);
+#ifdef SUPLA_ROLLERSHUTTER
+      if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr) {
+        if (nr % 2 == 1) {
+          ConfigESP->setEvent(_gpio, Supla::Event::ON_PRESS);
+          ConfigESP->setAction(_gpio, Supla::GUI::ActionRolleShutter::OPEN_OR_CLOSE);
+        }
+      }
+#endif
     }
     else if (gpio == _gpio && function == _function && nr == _nr) {
       ConfigESP->setGpioMCP23017(_gpio, _address, nr, function);

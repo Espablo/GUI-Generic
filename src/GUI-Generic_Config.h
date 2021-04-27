@@ -58,6 +58,7 @@
 #define SUPLA_DIRECT_LINKS
 #define SUPLA_NTC_10K
 #define SUPLA_PZEM_V_3
+#define SUPLA_CSE7766
 
 #endif  // USE_CUSTOM
 

@@ -94,7 +94,7 @@ const char GPIO15[] PROGMEM = "GPIO15-D8";
 const char GPIO16[] PROGMEM = "GPIO16-D0";
 const char OFF[] PROGMEM = S_OFF;
 const char ON[] PROGMEM = S_ON;
-const char GPIONULL[] PROGMEM = "";
+const char S_EMPTY[] PROGMEM = "";
 
 const char* const GPIO_P[] PROGMEM = {GPIO0,
                                       GPIO1,
@@ -102,20 +102,20 @@ const char* const GPIO_P[] PROGMEM = {GPIO0,
                                       GPIO3,
                                       GPIO4,
                                       GPIO5,
-                                      GPIONULL,
-                                      GPIONULL,
-                                      GPIONULL
+                                      S_EMPTY,
+                                      S_EMPTY,
+                                      S_EMPTY
 #ifdef ARDUINO_ESP8266_GENERIC
                                       ,
-                                      GPIONULL,
-                                      GPIONULL
+                                      S_EMPTY,
+                                      S_EMPTY
 #else
                                       ,
                                       GPIO9,
                                       GPIO10
 #endif
                                       ,
-                                      GPIONULL,
+                                      S_EMPTY,
                                       GPIO12,
                                       GPIO13,
                                       GPIO14,
@@ -140,8 +140,8 @@ const char GPIO_B5[] PROGMEM = "B5";
 const char GPIO_B6[] PROGMEM = "B6";
 const char GPIO_B7[] PROGMEM = "B7";
 
-const char* const GPIO_MCP23017_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7,  GPIO_B0,
-                                               GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7, GPIONULL, OFF};
+const char* const GPIO_MCP23017_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, GPIO_B0,
+                                               GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7, S_EMPTY, OFF};
 
 const char ADR44[] PROGMEM = "0x44";
 const char ADR45[] PROGMEM = "0x45";
@@ -174,7 +174,22 @@ const char REACTION_ON_CHANGE[] PROGMEM = S_REACTION_ON_CHANGE;
 const char* const TRIGGER_P[] PROGMEM = {REACTION_ON_PRESS, REACTION_ON_RELEASE, REACTION_ON_CHANGE};
 
 const char ACTION_TOGGLE[] PROGMEM = S_TOGGLE;
+
 const char* const ACTION_P[] PROGMEM = {ON, OFF, ACTION_TOGGLE};
+
+#ifdef SUPLA_ROLLERSHUTTER
+namespace Supla {
+namespace GUI {
+enum ActionRolleShutter
+{
+  OPEN_OR_CLOSE,
+  MOVE_UP_OR_MOVE_DOWN,
+  STEP_BY_STEP
+};
+}
+}  // namespace Supla
+const char* const ACTION_ROLLER_SHUTTER_P[] PROGMEM = {"OPEN OR CLOSE", "MOVE UP OR MOVE DOWN", "STEP BY STEP"};
+#endif
 
 const char CFG_10_PRESSES[] PROGMEM = S_CFG_10_PRESSES;
 const char CFG_5SEK_HOLD[] PROGMEM = S_5SEK_HOLD;
