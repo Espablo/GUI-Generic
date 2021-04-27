@@ -22,10 +22,6 @@ namespace Sensor {
 CSE_7766::CSE_7766(int8_t pinRX) : pinRX(pinRX) {
   sensor = new CSE7766();
 
-  setCurrentMultiplier(CSE7766_CURRENT_RATIO);
-  setVoltageMultiplier(CSE7766_VOLTAGE_RATIO);
-  setPowerMultiplier(CSE7766_POWER_RATIO);
-  
   sensor->setRX(pinRX);
   sensor->begin();
 }
@@ -93,36 +89,30 @@ void CSE_7766::onLoadState() {
   if (Supla::Storage::ReadState((unsigned char *)&current_multiplier,
                                 sizeof(current_multiplier))) {
     setCurrentMultiplier(current_multiplier);
-  } else {
-    setCurrentMultiplier(CSE7766_CURRENT_RATIO);
   }
 
   if (Supla::Storage::ReadState((unsigned char *)&voltage_multiplier,
                                 sizeof(voltage_multiplier))) {
     setVoltageMultiplier(voltage_multiplier);
-  } else {
-    setVoltageMultiplier(CSE7766_VOLTAGE_RATIO);
   }
 
   if (Supla::Storage::ReadState((unsigned char *)&power_multiplier,
                                 sizeof(power_multiplier))) {
     setPowerMultiplier(power_multiplier);
-  } else {
-    setPowerMultiplier(CSE7766_POWER_RATIO);
   }
 }
 
 double CSE_7766::getCurrentMultiplier() {
   return sensor->getCurrentRatio();
-};
+}
 
 double CSE_7766::getVoltageMultiplier() {
   return sensor->getVoltageRatio();
-};
+}
 
 double CSE_7766::getPowerMultiplier() {
   return sensor->getPowerRatio();
-};
+}
 
 _supla_int64_t CSE_7766::getCounter() {
   return energy;
@@ -130,13 +120,15 @@ _supla_int64_t CSE_7766::getCounter() {
 
 void CSE_7766::setCurrentMultiplier(double current_multiplier) {
   sensor->setCurrentRatio(current_multiplier);
-};
+}
+
 void CSE_7766::setVoltageMultiplier(double voltage_multiplier) {
   sensor->setVoltageRatio(voltage_multiplier);
-};
+}
+
 void CSE_7766::setPowerMultiplier(double power_multiplier) {
   sensor->setPowerRatio(power_multiplier);
-};
+}
 
 void CSE_7766::setCounter(_supla_int64_t new_energy) {
   _energy = new_energy;  // ------- energy value read from memory at startup

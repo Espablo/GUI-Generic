@@ -26,10 +26,6 @@
 #include <supla/sensor/one_phase_electricity_meter.h>
 #include <supla/storage/storage.h>
 
-#define CSE7766_CURRENT_RATIO 16030
-#define CSE7766_VOLTAGE_RATIO 190770
-#define CSE7766_POWER_RATIO   5195000
-
 namespace Supla {
 namespace Sensor {
 
@@ -59,7 +55,8 @@ class CSE_7766 : public OnePhaseElectricityMeter, public Element {
   int8_t pinRX;
 
   unsigned _supla_int64_t energy = 0;
-  unsigned _supla_int64_t _energy = 0;  // energy value read from memory at startup
+  unsigned _supla_int64_t _energy =
+      0;  // energy value read from memory at startup
 };
 
 };  // namespace Sensor
