@@ -51,6 +51,9 @@ void begin() {
   if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt()) {
     crateWebServer();
   }
+
+  if (getCountChannels() == 0)
+    ConfigESP->configModeInit();
 }
 
 void setupWifi() {

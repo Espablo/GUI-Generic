@@ -22,6 +22,7 @@
 #include <supla/action_handler.h>
 #include <supla/element.h>
 #include "SuplaConfigManager.h"
+#include <ESP8266mDNS.h>
 
 #include <cont.h>
 #include <user_interface.h>
@@ -122,6 +123,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void configModeInit();
 
  private:
+  bool MDNSConfigured = true;
   void iterateAlways();
   void clearEEPROM();
 
