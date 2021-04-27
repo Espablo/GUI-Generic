@@ -171,6 +171,7 @@
 
 //#### SuplaHTTPUpdateServer.cpp ####
 #define S_FLASH_MEMORY_SIZE        "Rozmiar pamięci Flash"
+#define S_SKETCH_MEMORY_SIZE       "Rozmiar pamięci w szkicu"
 #define S_SKETCH_LOADED_SIZE       "Rozmiar wczytanego szkicu"
 #define S_SKETCH_UPLOAD_MAX_SIZE   "Maks. rozmiar przesyłanego szkicu"
 #define S_UPDATE_FIRMWARE          "Aktualizacja oprogramowania"
