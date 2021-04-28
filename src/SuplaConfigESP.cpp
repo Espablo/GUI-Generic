@@ -172,8 +172,8 @@ void SuplaConfigESP::iterateAlways() {
           MDNS.addService("http", "tcp", 80);
         }
       }
+      MDNS.update();
     }
-    MDNS.update();
   }
 }
 
