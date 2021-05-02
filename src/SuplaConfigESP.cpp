@@ -29,9 +29,6 @@ SuplaConfigESP::SuplaConfigESP() {
     if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
 
-    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
-      ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
-
     if (strcmp(ConfigManager->get(KEY_LOGIN_PASS)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
 
