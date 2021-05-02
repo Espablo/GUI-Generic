@@ -90,7 +90,7 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig) {
   uint8_t pinLedConfig = _pinLedConfig;
   uint8_t modeConfigButton = ConfigManager->get(KEY_CFG_MODE)->getValueInt();
 
-  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO) {
+  if (pinLedConfig != OFF_GPIO) {
     pinMode(pinLedConfig, OUTPUT);
     digitalWrite(pinLedConfig, pinOffValue());
   }

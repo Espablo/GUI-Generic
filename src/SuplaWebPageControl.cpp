@@ -179,6 +179,12 @@ void handleButtonSet(int save) {
         selected = ConfigESP->getAction(gpio);
         addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
       }
+      else {
+        selected = ConfigESP->getPullUp(gpio);
+        addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
+        selected = ConfigESP->getInversed(gpio);
+        addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
+      }
 #endif
     }
     else {
