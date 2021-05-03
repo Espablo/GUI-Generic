@@ -159,18 +159,18 @@ void SuplaConfigESP::iterateAlways() {
   if (configModeESP == CONFIG_MODE) {
     WiFi.softAP(getConfigNameAP(), "");
 
-    if (getCountChannels() == 0) {
-      if (WiFi.status() == WL_CONNECTED) {
-        if (!MDNSConfigured) {
-          MDNSConfigured = true;
-          if (MDNS.begin("supla")) {
-            Serial.println(F("MDNS started"));
-          }
-          MDNS.addService("http", "tcp", 80);
+    // if (getCountChannels() == 0) {
+    if (WiFi.status() == WL_CONNECTED) {
+      if (!MDNSConfigured) {
+        MDNSConfigured = true;
+        if (MDNS.begin("supla")) {
+          Serial.println(F("MDNS started"));
         }
+        MDNS.addService("http", "tcp", 80);
       }
       MDNS.update();
     }
+    // }
   }
 }
 
