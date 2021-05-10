@@ -22,12 +22,10 @@ namespace Sensor {
 HLW_8012::HLW_8012(int8_t pinCF,
                    int8_t pinCF1,
                    int8_t pinSEL,
-                   bool currentWhen,
                    bool use_interrupts)
     : pinCF(pinCF),
       pinCF1(pinCF1),
       pinSEL(pinSEL),
-      currentWhen(currentWhen),
       use_interrupts(use_interrupts) {
   sensor = new HLW8012();
 
@@ -35,7 +33,7 @@ HLW_8012::HLW_8012(int8_t pinCF,
   setVoltageMultiplier(247704);
   setPowerMultiplier(2586583);
 
-  sensor->begin(pinCF, pinCF1, pinSEL, currentWhen, use_interrupts);
+  sensor->begin(pinCF, pinCF1, pinSEL, _currentWhen, use_interrupts);
 
   attachInterrupt(pinCF, hjl01_cf_interrupt, FALLING);
   attachInterrupt(pinCF1, hjl01_cf1_interrupt, FALLING);
@@ -100,6 +98,8 @@ void HLW_8012::onSaveState() {
                              sizeof(voltage_multiplier));
   Supla::Storage::WriteState((unsigned char *)&power_multiplier,
                              sizeof(power_multiplier));
+  Supla::Storage::WriteState((unsigned char *)&_currentWhen,
+                             sizeof(_currentWhen));
 }
 
 void HLW_8012::onLoadState() {
@@ -114,22 +114,21 @@ void HLW_8012::onLoadState() {
   if (Supla::Storage::ReadState((unsigned char *)&current_multiplier,
                                 sizeof(current_multiplier))) {
     setCurrentMultiplier(current_multiplier);
-  } else {
-    setCurrentMultiplier(18388);
   }
 
   if (Supla::Storage::ReadState((unsigned char *)&voltage_multiplier,
                                 sizeof(voltage_multiplier))) {
     setVoltageMultiplier(voltage_multiplier);
-  } else {
-    setVoltageMultiplier(247704);
   }
 
   if (Supla::Storage::ReadState((unsigned char *)&power_multiplier,
                                 sizeof(power_multiplier))) {
     setPowerMultiplier(power_multiplier);
-  } else {
-    setPowerMultiplier(2586583);
+  }
+
+  if (Supla::Storage::ReadState((unsigned char *)&_currentWhen,
+                                sizeof(_currentWhen))) {
+    setMode(_currentWhen);
   }
 }
 
@@ -145,19 +144,29 @@ double HLW_8012::getPowerMultiplier() {
   return sensor->getPowerMultiplier();
 };
 
+bool HLW_8012::getMode() {
+  return _currentWhen;
+}
 _supla_int64_t HLW_8012::getCounter() {
   return energy;
 }
 
 void HLW_8012::setCurrentMultiplier(double current_multiplier) {
   sensor->setCurrentMultiplier(current_multiplier);
-};
+}
+
 void HLW_8012::setVoltageMultiplier(double voltage_multiplier) {
   sensor->setVoltageMultiplier(voltage_multiplier);
-};
+}
+
 void HLW_8012::setPowerMultiplier(double power_multiplier) {
   sensor->setPowerMultiplier(power_multiplier);
-};
+}
+
+void HLW_8012::setMode(bool currentWhen) {
+  _currentWhen = currentWhen;
+  sensor->setMode((hlw8012_mode_t)currentWhen);
+}
 
 void HLW_8012::setCounter(_supla_int64_t new_energy) {
   _energy = new_energy;  // ------- energy value read from memory at startup

@@ -18,21 +18,22 @@
 #define _hlw8012_h
 
 #include <Arduino.h>
-#include <EEPROM.h>
 
 // https://github.com/xoseperez/hlw8012
 #include <HLW8012.h>
 #include <supla/element.h>
-#include <supla/storage/storage.h>
-
 #include <supla/sensor/one_phase_electricity_meter.h>
+#include <supla/storage/storage.h>
 
 namespace Supla {
 namespace Sensor {
 
-class HLW_8012 : public OnePhaseElectricityMeter, public Element {
+class HLW_8012 : public OnePhaseElectricityMeter {
  public:
-  HLW_8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL, bool currentWhen = LOW, bool use_interrupts = true);
+  HLW_8012(int8_t pinCF,
+           int8_t pinCF1,
+           int8_t pinSEL,
+           bool use_interrupts = true);
 
   void onInit();
   void readValuesFromDevice();
@@ -42,11 +43,13 @@ class HLW_8012 : public OnePhaseElectricityMeter, public Element {
   double getCurrentMultiplier();
   double getVoltageMultiplier();
   double getPowerMultiplier();
+  bool getMode();
   _supla_int64_t getCounter();
 
   void setCurrentMultiplier(double current_multiplier);
   void setVoltageMultiplier(double voltage_multiplier);
   void setPowerMultiplier(double power_multiplier);
+  void setMode(bool currentWhen);
   void setCounter(_supla_int64_t new_energy);
 
   static void ICACHE_RAM_ATTR hjl01_cf1_interrupt();
@@ -58,11 +61,12 @@ class HLW_8012 : public OnePhaseElectricityMeter, public Element {
   int8_t pinCF;
   int8_t pinCF1;
   int8_t pinSEL;
-  bool currentWhen;
+  bool _currentWhen = LOW;
   bool use_interrupts;
 
   unsigned _supla_int64_t energy = 0;
-  unsigned _supla_int64_t _energy = 0;  // energy value read from memory at startup
+  unsigned _supla_int64_t _energy =
+      0;  // energy value read from memory at startup
 };
 
 };  // namespace Sensor

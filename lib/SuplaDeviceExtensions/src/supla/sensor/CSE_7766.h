@@ -29,7 +29,7 @@
 namespace Supla {
 namespace Sensor {
 
-class CSE_7766 : public OnePhaseElectricityMeter, public Element {
+class CSE_7766 : public OnePhaseElectricityMeter {
  public:
   CSE_7766(int8_t pinRX);
 
