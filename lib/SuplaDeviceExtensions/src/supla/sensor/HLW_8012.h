@@ -21,7 +21,6 @@
 
 // https://github.com/xoseperez/hlw8012
 #include <HLW8012.h>
-#include <supla/element.h>
 #include <supla/sensor/one_phase_electricity_meter.h>
 #include <supla/storage/storage.h>
 

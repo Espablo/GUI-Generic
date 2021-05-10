@@ -18,11 +18,9 @@
 #define _cse7766_h
 
 #include <Arduino.h>
-#include <EEPROM.h>
 
 // https://github.com/ingeniuske/CSE7766
 #include <CSE7766.h>
-#include <supla/element.h>
 #include <supla/sensor/one_phase_electricity_meter.h>
 #include <supla/storage/storage.h>
 
