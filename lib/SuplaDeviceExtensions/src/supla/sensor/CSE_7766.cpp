@@ -32,19 +32,27 @@ void CSE_7766::onInit() {
 }
 
 void CSE_7766::readValuesFromDevice() {
+  bool currentChanelRelay = false;
   sensor->handle();
 
   for (auto element = Supla::Element::begin(); element != nullptr;
        element = element->next()) {
     if (element->getChannel()) {
       auto channel = element->getChannel();
+
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_RELAY) {
+        currentChanelRelay = true;
         if (channel->getValueBool()) {
           energy = _energy + (sensor->getEnergy() /
                               36);  // current energy value = value at start
         }
       }
     }
+  }
+
+  if (!currentChanelRelay) {
+    energy = _energy + (sensor->getEnergy() /
+                        36);  // current energy value = value at start
   }
 
   // voltage in 0.01 V
@@ -64,41 +72,41 @@ void CSE_7766::readValuesFromDevice() {
 }
 
 void CSE_7766::onSaveState() {
-  double current_multiplier = getCurrentMultiplier();
-  double voltage_multiplier = getVoltageMultiplier();
-  double power_multiplier = getPowerMultiplier();
+  double currentMultiplier = getCurrentMultiplier();
+  double voltageMultiplier = getVoltageMultiplier();
+  double powerMultiplier = getPowerMultiplier();
 
   Supla::Storage::WriteState((unsigned char *)&energy, sizeof(energy));
-  Supla::Storage::WriteState((unsigned char *)&current_multiplier,
-                             sizeof(current_multiplier));
-  Supla::Storage::WriteState((unsigned char *)&voltage_multiplier,
-                             sizeof(voltage_multiplier));
-  Supla::Storage::WriteState((unsigned char *)&power_multiplier,
-                             sizeof(power_multiplier));
+  Supla::Storage::WriteState((unsigned char *)&currentMultiplier,
+                             sizeof(currentMultiplier));
+  Supla::Storage::WriteState((unsigned char *)&voltageMultiplier,
+                             sizeof(voltageMultiplier));
+  Supla::Storage::WriteState((unsigned char *)&powerMultiplier,
+                             sizeof(powerMultiplier));
 }
 
 void CSE_7766::onLoadState() {
-  double current_multiplier;
-  double voltage_multiplier;
-  double power_multiplier;
+  double currentMultiplier;
+  double voltageMultiplier;
+  double powerMultiplier;
 
   if (Supla::Storage::ReadState((unsigned char *)&energy, sizeof(energy))) {
     setCounter(energy);
   }
 
-  if (Supla::Storage::ReadState((unsigned char *)&current_multiplier,
-                                sizeof(current_multiplier))) {
-    setCurrentMultiplier(current_multiplier);
+  if (Supla::Storage::ReadState((unsigned char *)&currentMultiplier,
+                                sizeof(currentMultiplier))) {
+    setCurrentMultiplier(currentMultiplier);
   }
 
-  if (Supla::Storage::ReadState((unsigned char *)&voltage_multiplier,
-                                sizeof(voltage_multiplier))) {
-    setVoltageMultiplier(voltage_multiplier);
+  if (Supla::Storage::ReadState((unsigned char *)&voltageMultiplier,
+                                sizeof(voltageMultiplier))) {
+    setVoltageMultiplier(voltageMultiplier);
   }
 
-  if (Supla::Storage::ReadState((unsigned char *)&power_multiplier,
-                                sizeof(power_multiplier))) {
-    setPowerMultiplier(power_multiplier);
+  if (Supla::Storage::ReadState((unsigned char *)&powerMultiplier,
+                                sizeof(powerMultiplier))) {
+    setPowerMultiplier(powerMultiplier);
   }
 }
 
@@ -118,22 +126,22 @@ _supla_int64_t CSE_7766::getCounter() {
   return energy;
 }
 
-void CSE_7766::setCurrentMultiplier(double current_multiplier) {
-  sensor->setCurrentRatio(current_multiplier);
+void CSE_7766::setCurrentMultiplier(double value) {
+  sensor->setCurrentRatio(value);
 }
 
-void CSE_7766::setVoltageMultiplier(double voltage_multiplier) {
-  sensor->setVoltageRatio(voltage_multiplier);
+void CSE_7766::setVoltageMultiplier(double value) {
+  sensor->setVoltageRatio(value);
 }
 
-void CSE_7766::setPowerMultiplier(double power_multiplier) {
-  sensor->setPowerRatio(power_multiplier);
+void CSE_7766::setPowerMultiplier(double value) {
+  sensor->setPowerRatio(value);
 }
 
-void CSE_7766::setCounter(_supla_int64_t new_energy) {
-  _energy = new_energy;  // ------- energy value read from memory at startup
-  energy = new_energy;
-  setFwdActEnergy(0, new_energy);
+void CSE_7766::setCounter(_supla_int64_t value) {
+  _energy = value;  // ------- energy value read from memory at startup
+  energy = value;
+  setFwdActEnergy(0, value);
 }
 
 void CSE_7766::calibrate(double calibPower, double calibVoltage) {

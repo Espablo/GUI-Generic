@@ -18,18 +18,16 @@
 #define _cse7766_h
 
 #include <Arduino.h>
-#include <EEPROM.h>
 
 // https://github.com/ingeniuske/CSE7766
 #include <CSE7766.h>
-#include <supla/element.h>
 #include <supla/sensor/one_phase_electricity_meter.h>
 #include <supla/storage/storage.h>
 
 namespace Supla {
 namespace Sensor {
 
-class CSE_7766 : public OnePhaseElectricityMeter, public Element {
+class CSE_7766 : public OnePhaseElectricityMeter {
  public:
   CSE_7766(int8_t pinRX);
 
@@ -43,10 +41,10 @@ class CSE_7766 : public OnePhaseElectricityMeter, public Element {
   double getPowerMultiplier();
   _supla_int64_t getCounter();
 
-  void setCurrentMultiplier(double current_multiplier);
-  void setVoltageMultiplier(double voltage_multiplier);
-  void setPowerMultiplier(double power_multiplier);
-  void setCounter(_supla_int64_t new_energy);
+  void setCurrentMultiplier(double value);
+  void setVoltageMultiplier(double value);
+  void setPowerMultiplier(double value);
+  void setCounter(_supla_int64_t value);
 
   void calibrate(double calibPower, double calibVoltage);
 

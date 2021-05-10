@@ -37,6 +37,7 @@ void handleImpulseCounterSaveSet();
 #define INPUT_CF1 "cf1"
 #define INPUT_SEL "sel"
 
+#define INPUT_MODE_HLW8012                 "imh"
 #define INPUT_COUNTER_CHANGE_VALUE_HLW8012 "iccvh"
 #define PATH_HLW8012                       "hlw8012"
 #endif
