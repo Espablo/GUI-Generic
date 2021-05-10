@@ -32,7 +32,7 @@ class HLW_8012 : public OnePhaseElectricityMeter {
   HLW_8012(int8_t pinCF,
            int8_t pinCF1,
            int8_t pinSEL,
-           bool use_interrupts = true);
+           bool useInterrupts = true);
 
   void onInit();
   void readValuesFromDevice();
@@ -45,11 +45,11 @@ class HLW_8012 : public OnePhaseElectricityMeter {
   bool getMode();
   _supla_int64_t getCounter();
 
-  void setCurrentMultiplier(double current_multiplier);
-  void setVoltageMultiplier(double voltage_multiplier);
-  void setPowerMultiplier(double power_multiplier);
-  void setMode(bool currentWhen);
-  void setCounter(_supla_int64_t new_energy);
+  void setCurrentMultiplier(double value);
+  void setVoltageMultiplier(double value);
+  void setPowerMultiplier(double value);
+  void setMode(bool value);
+  void setCounter(_supla_int64_t value);
 
   static void ICACHE_RAM_ATTR hjl01_cf1_interrupt();
   static void ICACHE_RAM_ATTR hjl01_cf_interrupt();
@@ -60,8 +60,8 @@ class HLW_8012 : public OnePhaseElectricityMeter {
   int8_t pinCF;
   int8_t pinCF1;
   int8_t pinSEL;
-  bool _currentWhen = LOW;
-  bool use_interrupts;
+  bool currentWhen = LOW;
+  bool useInterrupts;
 
   unsigned _supla_int64_t energy = 0;
   unsigned _supla_int64_t _energy =

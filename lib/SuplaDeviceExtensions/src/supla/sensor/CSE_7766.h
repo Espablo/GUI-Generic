@@ -41,10 +41,10 @@ class CSE_7766 : public OnePhaseElectricityMeter {
   double getPowerMultiplier();
   _supla_int64_t getCounter();
 
-  void setCurrentMultiplier(double current_multiplier);
-  void setVoltageMultiplier(double voltage_multiplier);
-  void setPowerMultiplier(double power_multiplier);
-  void setCounter(_supla_int64_t new_energy);
+  void setCurrentMultiplier(double value);
+  void setVoltageMultiplier(double value);
+  void setPowerMultiplier(double value);
+  void setCounter(_supla_int64_t value);
 
   void calibrate(double calibPower, double calibVoltage);
 
