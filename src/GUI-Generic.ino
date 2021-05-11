@@ -19,6 +19,9 @@
 #include <supla/sensor/PzemV3.h>
 #include <supla/sensor/three_phase_PzemV3.h>
 #endif
+#ifdef SUPLA_DEEP_SLEEP
+#include <supla/control/deepSleep.h>
+#endif
 
 #define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 #define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
@@ -292,6 +295,12 @@ void setup() {
 
 #ifdef DEBUG_MODE
   new Supla::Sensor::EspFreeHeap();
+#endif
+
+#ifdef SUPLA_DEEP_SLEEP
+  if (ConfigManager->get(KEY_DEEP_SLEEP_TIME)->getValueInt() > 0) {
+    new Supla::Control::DeepSleep(ConfigManager->get(KEY_DEEP_SLEEP_TIME)->getValueInt() * 60, 30);
+  }
 #endif
 
   Supla::GUI::begin();
