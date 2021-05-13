@@ -235,7 +235,7 @@ void handleButtonSetMCP23017(int save) {
     addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);
   }
 
-  if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr_button.toInt()) {
+  if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr_button.toInt() && !nr_button.isEmpty()) {
 #ifdef SUPLA_ROLLERSHUTTER
     if (nr_button.toInt() % 2 == 1) {
       selected = ConfigESP->getPullUp(gpio);
@@ -302,7 +302,7 @@ void handleButtonSaveSetMCP23017() {
   }
   else {
     inversed = 0;
-  }
+  }*/
 
   input = INPUT_BUTTON_ACTION;
   action = WebServer->httpServer->arg(input).toInt();
@@ -314,7 +314,7 @@ void handleButtonSaveSetMCP23017() {
     key = KEY_GPIO + gpio;
 
     ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);
-    ConfigManager->setElement(key, INVERSED_BUTTON, inversed);
+    ConfigManager->setElement(key, INVERSED_BUTTON, true);
     ConfigManager->setElement(key, EVENT_BUTTON, event);
     ConfigManager->setElement(key, ACTION_BUTTON, action);
   }
@@ -322,7 +322,7 @@ void handleButtonSaveSetMCP23017() {
     for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
       key = KEY_GPIO + gpio;
       ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);
-      ConfigManager->setElement(key, INVERSED_BUTTON, inversed);
+      ConfigManager->setElement(key, INVERSED_BUTTON, true);
       ConfigManager->setElement(key, EVENT_BUTTON, event);
       ConfigManager->setElement(key, ACTION_BUTTON, action);
     }
