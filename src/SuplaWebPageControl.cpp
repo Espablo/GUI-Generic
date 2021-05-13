@@ -302,7 +302,7 @@ void handleButtonSaveSetMCP23017() {
   }
   else {
     inversed = 0;
-  }
+  }*/
 
   input = INPUT_BUTTON_ACTION;
   action = WebServer->httpServer->arg(input).toInt();
