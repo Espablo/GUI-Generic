@@ -16,7 +16,7 @@
 
 #ifndef SuplaDeviceGUI_h
 #define SuplaDeviceGUI_h
-#include <DoubleResetDetector.h>
+//#include <DoubleResetDetector.h>
 #include <SPI.h>
 
 #include <SuplaDeviceExtensions.h>

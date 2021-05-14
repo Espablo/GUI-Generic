@@ -23,9 +23,9 @@
 #include <supla/control/deepSleep.h>
 #endif
 
-#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
-#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
-DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
+//#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
+//#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
+// DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 void setup() {
   Serial.begin(74880);
@@ -36,10 +36,10 @@ void setup() {
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
 
-  if (drd.detectDoubleReset()) {
-    drd.stop();
-    ConfigESP->factoryReset();
-  }
+  // if (drd.detectDoubleReset()) {
+  //   drd.stop();
+  //   ConfigESP->factoryReset();
+  // }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
@@ -314,5 +314,5 @@ void setup() {
 void loop() {
   SuplaDevice.iterate();
   delay(25);
-  drd.loop();
+  // drd.loop();
 }
