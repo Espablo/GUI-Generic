@@ -18,7 +18,7 @@ void createWebPageControl() {
       return;
     }
 
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+    if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
 #ifdef SUPLA_MCP23017
       if (WebServer->httpServer->method() == HTTP_GET)
         handleButtonSetMCP23017();
@@ -43,7 +43,7 @@ void handleControlSave() {
   uint8_t nr;
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+    if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
       if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
         handleControl(6);
         return;
@@ -81,7 +81,7 @@ void handleControl(int save) {
 
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_BUTTONS);
 
-  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+  if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
     countFreeGpio = 32;
   }
   else {
@@ -91,7 +91,7 @@ void handleControl(int save) {
   addNumberBox(webContentBuffer, INPUT_MAX_BUTTON, S_QUANTITY, KEY_MAX_BUTTON, countFreeGpio);
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+    if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
       addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, nr, PATH_BUTTON_SET);
     }
     else {

@@ -628,6 +628,11 @@ void SuplaConfigESP::clearFunctionGpio(uint8_t function) {
   }
 }
 
+bool SuplaConfigESP::checkActiveMCP23017(uint8_t function) {
+  return ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF &&
+         (ConfigESP->getGpio(function) >= 100 || ConfigESP->getGpio(function) == OFF_GPIO);
+}
+
 uint8_t SuplaConfigESP::getFunctionMCP23017(uint8_t adress) {
   switch (adress) {
     case 0:
