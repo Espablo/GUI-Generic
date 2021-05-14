@@ -32,14 +32,14 @@ HLW_8012::HLW_8012(int8_t pinCF,
   setCurrentMultiplier(18388);
   setVoltageMultiplier(247704);
   setPowerMultiplier(2586583);
+}
 
+void HLW_8012::onInit() {
   sensor->begin(pinCF, pinCF1, pinSEL, currentWhen, useInterrupts);
 
   attachInterrupt(pinCF, hjl01_cf_interrupt, FALLING);
   attachInterrupt(pinCF1, hjl01_cf1_interrupt, FALLING);
-}
 
-void HLW_8012::onInit() {
   readValuesFromDevice();
   updateChannelValues();
 }
