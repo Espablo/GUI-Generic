@@ -28,10 +28,6 @@ HLW_8012::HLW_8012(int8_t pinCF,
       pinSEL(pinSEL),
       useInterrupts(useInterrupts) {
   sensor = new HLW8012();
-
-  setCurrentMultiplier(18388);
-  setVoltageMultiplier(247704);
-  setPowerMultiplier(2586583);
 }
 
 void HLW_8012::onInit() {
@@ -123,21 +119,29 @@ void HLW_8012::onLoadState() {
   if (Supla::Storage::ReadState((unsigned char *)&currentMultiplier,
                                 sizeof(currentMultiplier))) {
     setCurrentMultiplier(currentMultiplier);
+  } else {
+    setCurrentMultiplier(18388);
   }
 
   if (Supla::Storage::ReadState((unsigned char *)&voltageMultiplier,
                                 sizeof(voltageMultiplier))) {
     setVoltageMultiplier(voltageMultiplier);
+  } else {
+    setVoltageMultiplier(247704);
   }
 
   if (Supla::Storage::ReadState((unsigned char *)&powerMultiplier,
                                 sizeof(powerMultiplier))) {
     setPowerMultiplier(powerMultiplier);
+  } else {
+    setPowerMultiplier(2586583);
   }
 
   if (Supla::Storage::ReadState((unsigned char *)&currentWhen,
                                 sizeof(currentWhen))) {
     setMode(currentWhen);
+  } else {
+    setMode(LOW);
   }
 }
 
