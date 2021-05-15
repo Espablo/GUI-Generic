@@ -60,11 +60,6 @@ class HLW_8012 : public OnePhaseElectricityMeter {
   int8_t pinCF;
   int8_t pinCF1;
   int8_t pinSEL;
-
-  double currentMultiplier;
-  double voltageMultiplier;
-  double powerMultiplier;
-
   bool currentWhen = LOW;
   bool useInterrupts;
 
