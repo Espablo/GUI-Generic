@@ -28,9 +28,11 @@ HLW_8012::HLW_8012(int8_t pinCF,
       pinSEL(pinSEL),
       useInterrupts(useInterrupts) {
   sensor = new HLW8012();
+  Serial.println("HLW_8012");
 }
 
 void HLW_8012::onInit() {
+  Serial.println("HLW_8012::onInit");
   sensor->begin(pinCF, pinCF1, pinSEL, currentWhen, useInterrupts);
 
   attachInterrupt(pinCF, hjl01_cf_interrupt, FALLING);
@@ -92,10 +94,6 @@ void HLW_8012::readValuesFromDevice() {
 }
 
 void HLW_8012::onSaveState() {
-  double currentMultiplier = getCurrentMultiplier();
-  double voltageMultiplier = getVoltageMultiplier();
-  double powerMultiplier = getPowerMultiplier();
-
   Supla::Storage::WriteState((unsigned char *)&energy, sizeof(energy));
   Supla::Storage::WriteState((unsigned char *)&currentMultiplier,
                              sizeof(currentMultiplier));
@@ -108,10 +106,6 @@ void HLW_8012::onSaveState() {
 }
 
 void HLW_8012::onLoadState() {
-  double currentMultiplier;
-  double voltageMultiplier;
-  double powerMultiplier;
-
   if (Supla::Storage::ReadState((unsigned char *)&energy, sizeof(energy))) {
     setCounter(energy);
   }
@@ -146,15 +140,15 @@ void HLW_8012::onLoadState() {
 }
 
 double HLW_8012::getCurrentMultiplier() {
-  return sensor->getCurrentMultiplier();
+  return currentMultiplier;
 }
 
 double HLW_8012::getVoltageMultiplier() {
-  return sensor->getVoltageMultiplier();
+  return voltageMultiplier;
 }
 
 double HLW_8012::getPowerMultiplier() {
-  return sensor->getPowerMultiplier();
+  return voltageMultiplier;
 }
 
 bool HLW_8012::getMode() {
@@ -166,14 +160,17 @@ _supla_int64_t HLW_8012::getCounter() {
 }
 
 void HLW_8012::setCurrentMultiplier(double value) {
+  powerMultiplier = value;
   sensor->setCurrentMultiplier(value);
 }
 
 void HLW_8012::setVoltageMultiplier(double value) {
+  voltageMultiplier = value;
   sensor->setVoltageMultiplier(value);
 }
 
 void HLW_8012::setPowerMultiplier(double value) {
+  powerMultiplier = value;
   sensor->setPowerMultiplier(value);
 }
 
@@ -220,16 +217,16 @@ void HLW_8012::calibrate(double calibPower, double calibVoltage) {
     delay(10);
   }
 
-  double current_multi = getCurrentMultiplier();
-  double voltage_multi = getVoltageMultiplier();
-  double power_multi = getPowerMultiplier();
+  currentMultiplier = sensor->getCurrentMultiplier();
+  voltageMultiplier = sensor->getVoltageMultiplier();
+  powerMultiplier = sensor->getPowerMultiplier();
 
   Serial.print(F("[HLW] New current multiplier : "));
-  Serial.println(current_multi);
+  Serial.println(currentMultiplier);
   Serial.print(F("[HLW] New voltage multiplier : "));
-  Serial.println(voltage_multi);
+  Serial.println(voltageMultiplier);
   Serial.print(F("[HLW] New power multiplier   : "));
-  Serial.println(power_multi);
+  Serial.println(powerMultiplier);
   Supla::Storage::ScheduleSave(2000);
   delay(0);
 }

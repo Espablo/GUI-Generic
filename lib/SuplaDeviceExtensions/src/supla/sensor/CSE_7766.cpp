@@ -72,10 +72,6 @@ void CSE_7766::readValuesFromDevice() {
 }
 
 void CSE_7766::onSaveState() {
-  double currentMultiplier = getCurrentMultiplier();
-  double voltageMultiplier = getVoltageMultiplier();
-  double powerMultiplier = getPowerMultiplier();
-
   Supla::Storage::WriteState((unsigned char *)&energy, sizeof(energy));
   Supla::Storage::WriteState((unsigned char *)&currentMultiplier,
                              sizeof(currentMultiplier));
@@ -86,10 +82,6 @@ void CSE_7766::onSaveState() {
 }
 
 void CSE_7766::onLoadState() {
-  double currentMultiplier;
-  double voltageMultiplier;
-  double powerMultiplier;
-
   if (Supla::Storage::ReadState((unsigned char *)&energy, sizeof(energy))) {
     setCounter(energy);
   }
@@ -111,15 +103,15 @@ void CSE_7766::onLoadState() {
 }
 
 double CSE_7766::getCurrentMultiplier() {
-  return sensor->getCurrentRatio();
+  return currentMultiplier;
 }
 
 double CSE_7766::getVoltageMultiplier() {
-  return sensor->getVoltageRatio();
+  return voltageMultiplier;
 }
 
 double CSE_7766::getPowerMultiplier() {
-  return sensor->getPowerRatio();
+  return powerMultiplier;
 }
 
 _supla_int64_t CSE_7766::getCounter() {
@@ -127,14 +119,17 @@ _supla_int64_t CSE_7766::getCounter() {
 }
 
 void CSE_7766::setCurrentMultiplier(double value) {
+  currentMultiplier = value;
   sensor->setCurrentRatio(value);
 }
 
 void CSE_7766::setVoltageMultiplier(double value) {
+  voltageMultiplier = value;
   sensor->setVoltageRatio(value);
 }
 
 void CSE_7766::setPowerMultiplier(double value) {
+  powerMultiplier = value;
   sensor->setPowerRatio(value);
 }
 
@@ -168,16 +163,16 @@ void CSE_7766::calibrate(double calibPower, double calibVoltage) {
     delay(10);
   }
 
-  double current_multi = getCurrentMultiplier();
-  double voltage_multi = getVoltageMultiplier();
-  double power_multi = getPowerMultiplier();
+  currentMultiplier = sensor->getCurrentRatio();
+  voltageMultiplier = sensor->getVoltageRatio();
+  powerMultiplier = sensor->getPowerRatio();
 
   Serial.print(F("New current multiplier : "));
-  Serial.println(current_multi);
+  Serial.println(currentMultiplier);
   Serial.print(F("New voltage multiplier : "));
-  Serial.println(voltage_multi);
+  Serial.println(voltageMultiplier);
   Serial.print(F("New power multiplier   : "));
-  Serial.println(power_multi);
+  Serial.println(powerMultiplier);
   Supla::Storage::ScheduleSave(2000);
   delay(0);
 }
