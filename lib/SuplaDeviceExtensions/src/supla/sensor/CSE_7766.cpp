@@ -21,12 +21,16 @@ namespace Sensor {
 
 CSE_7766::CSE_7766(int8_t pinRX) : pinRX(pinRX) {
   sensor = new CSE7766();
-
-  sensor->setRX(pinRX);
-  sensor->begin();
 }
 
 void CSE_7766::onInit() {
+  sensor->setRX(pinRX);
+  sensor->begin();
+
+  sensor->setCurrentRatio(currentMultiplier);
+  sensor->setVoltageRatio(voltageMultiplier);
+  sensor->setPowerRatio(powerMultiplier);
+
   readValuesFromDevice();
   updateChannelValues();
 }
@@ -86,20 +90,14 @@ void CSE_7766::onLoadState() {
     setCounter(energy);
   }
 
-  if (Supla::Storage::ReadState((unsigned char *)&currentMultiplier,
-                                sizeof(currentMultiplier))) {
-    setCurrentMultiplier(currentMultiplier);
-  }
+  Supla::Storage::ReadState((unsigned char *)&currentMultiplier,
+                            sizeof(currentMultiplier));
 
-  if (Supla::Storage::ReadState((unsigned char *)&voltageMultiplier,
-                                sizeof(voltageMultiplier))) {
-    setVoltageMultiplier(voltageMultiplier);
-  }
+  Supla::Storage::ReadState((unsigned char *)&voltageMultiplier,
+                            sizeof(voltageMultiplier));
 
-  if (Supla::Storage::ReadState((unsigned char *)&powerMultiplier,
-                                sizeof(powerMultiplier))) {
-    setPowerMultiplier(powerMultiplier);
-  }
+  Supla::Storage::ReadState((unsigned char *)&powerMultiplier,
+                            sizeof(powerMultiplier));
 }
 
 double CSE_7766::getCurrentMultiplier() {

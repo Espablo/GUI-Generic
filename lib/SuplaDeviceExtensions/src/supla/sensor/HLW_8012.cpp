@@ -28,12 +28,13 @@ HLW_8012::HLW_8012(int8_t pinCF,
       pinSEL(pinSEL),
       useInterrupts(useInterrupts) {
   sensor = new HLW8012();
-  Serial.println("HLW_8012");
 }
 
 void HLW_8012::onInit() {
-  Serial.println("HLW_8012::onInit");
   sensor->begin(pinCF, pinCF1, pinSEL, currentWhen, useInterrupts);
+  sensor->setCurrentMultiplier(currentMultiplier);
+  sensor->setVoltageMultiplier(voltageMultiplier);
+  sensor->setPowerMultiplier(powerMultiplier);
 
   attachInterrupt(pinCF, hjl01_cf_interrupt, FALLING);
   attachInterrupt(pinCF1, hjl01_cf1_interrupt, FALLING);
@@ -109,34 +110,13 @@ void HLW_8012::onLoadState() {
   if (Supla::Storage::ReadState((unsigned char *)&energy, sizeof(energy))) {
     setCounter(energy);
   }
-
-  if (Supla::Storage::ReadState((unsigned char *)&currentMultiplier,
-                                sizeof(currentMultiplier))) {
-    setCurrentMultiplier(currentMultiplier);
-  } else {
-    setCurrentMultiplier(18388);
-  }
-
-  if (Supla::Storage::ReadState((unsigned char *)&voltageMultiplier,
-                                sizeof(voltageMultiplier))) {
-    setVoltageMultiplier(voltageMultiplier);
-  } else {
-    setVoltageMultiplier(247704);
-  }
-
-  if (Supla::Storage::ReadState((unsigned char *)&powerMultiplier,
-                                sizeof(powerMultiplier))) {
-    setPowerMultiplier(powerMultiplier);
-  } else {
-    setPowerMultiplier(2586583);
-  }
-
-  if (Supla::Storage::ReadState((unsigned char *)&currentWhen,
-                                sizeof(currentWhen))) {
-    setMode(currentWhen);
-  } else {
-    setMode(LOW);
-  }
+  Supla::Storage::ReadState((unsigned char *)&currentMultiplier,
+                            sizeof(currentMultiplier));
+  Supla::Storage::ReadState((unsigned char *)&voltageMultiplier,
+                            sizeof(voltageMultiplier));
+  Supla::Storage::ReadState((unsigned char *)&powerMultiplier,
+                            sizeof(powerMultiplier));
+  Supla::Storage::ReadState((unsigned char *)&currentWhen, sizeof(currentWhen));
 }
 
 double HLW_8012::getCurrentMultiplier() {
