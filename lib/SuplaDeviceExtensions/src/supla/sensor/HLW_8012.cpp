@@ -26,7 +26,11 @@ HLW_8012::HLW_8012(int8_t pinCF,
     : pinCF(pinCF),
       pinCF1(pinCF1),
       pinSEL(pinSEL),
-      useInterrupts(useInterrupts) {
+      useInterrupts(useInterrupts),
+      currentMultiplier(18388),
+      voltageMultiplier(247704),
+      powerMultiplier(2586583),
+      currentWhen(LOW) {
   sensor = new HLW8012();
 }
 

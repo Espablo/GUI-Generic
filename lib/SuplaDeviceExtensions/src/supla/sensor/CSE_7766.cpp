@@ -19,7 +19,12 @@
 namespace Supla {
 namespace Sensor {
 
-CSE_7766::CSE_7766(int8_t pinRX) : pinRX(pinRX) {
+CSE_7766::CSE_7766(int8_t pinRX)
+    : pinRX(pinRX),
+      currentMultiplier(0.92),
+      voltageMultiplier(1),
+      powerMultiplier(0.92)
+{
   sensor = new CSE7766();
 }
 

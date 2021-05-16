@@ -65,7 +65,7 @@ class HLW_8012 : public OnePhaseElectricityMeter {
   double voltageMultiplier;
   double powerMultiplier;
 
-  bool currentWhen = LOW;
+  bool currentWhen;
   bool useInterrupts;
 
   unsigned _supla_int64_t energy = 0;
