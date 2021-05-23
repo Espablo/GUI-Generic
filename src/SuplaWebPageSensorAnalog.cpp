@@ -48,7 +48,7 @@ void handleSensorAnalog(int save) {
   addListGPIOBox(webContentBuffer, INPUT_MPX_5XXX, F("ADC Pin"), FUNCTION_MPX_5XXX);
   if (ConfigESP->getGpio(FUNCTION_MPX_5XXX) != OFF_GPIO) {
     int16_t thankHeight = Supla::GUI::mpx->getThankHeight();
-    addNumberBox(webContentBuffer, INPUT_THANK_HEIGHT, String(F("Głębokość zbiornika")) + S_SPACE + F("[cm]"), F("cm"), false, String(thankHeight));
+    addNumberBox(webContentBuffer, INPUT_THANK_HEIGHT, String(F("Głębokość zbiornika")) + F("[cm]"), F("cm"), false, String(thankHeight));
     int16_t thankEmpty = Supla::GUI::mpx->getEmptyValue();
     addNumberBox(webContentBuffer, INPUT_THANK_EMPTY, F("Pusty zbiornik"), F("wartość kalibracji"), false, String(thankEmpty));
     int16_t thankFull = Supla::GUI::mpx->getFullValue();
