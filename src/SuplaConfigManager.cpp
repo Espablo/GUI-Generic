@@ -182,7 +182,7 @@ SuplaConfigManager::SuplaConfigManager() {
   this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
   this->addKey(KEY_MAX_RGBW, "0", 2);
 
-  this->addKey(KEY_PUSHOVER, MAX_GPIO * 2);
+  this->addKey(KEY_FREE_TO_USE, MAX_GPIO * 2);
   this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
   this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
   this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);
@@ -205,6 +205,7 @@ SuplaConfigManager::SuplaConfigManager() {
 
   this->addKey(KEY_OLED_BACK_LIGHT, "20", 2);
 
+  this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3);
 
   switch (this->load()) {
     case E_CONFIG_OK:
@@ -296,6 +297,7 @@ uint8_t SuplaConfigManager::load() {
         for (i = 0; i < _optionCount; i++) {
           _options[i]->setValue((const char *)(content + offset));
           offset += _options[i]->getLength();
+          delay(0);
         }
 
         configFile.close();
@@ -337,6 +339,7 @@ uint8_t SuplaConfigManager::loadItem(uint8_t key) {
         for (i = 0; i < _optionCount; i++) {
           if (_options[i]->getKey() == key) {
             _options[i]->setValue((const char *)(content + offset));
+            delay(0);
           }
           offset += _options[i]->getLength();
         }
@@ -378,6 +381,7 @@ uint8_t SuplaConfigManager::save() {
         Serial.printf_P(PSTR(" value=%s\n"), _options[i]->getValue());
         memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
         offset += _options[i]->getLength();
+        delay(0);
       }
 
       configFile.write(content, length);

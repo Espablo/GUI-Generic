@@ -118,10 +118,14 @@ class GUIESPWifi : public Supla::ESPWifi {
       if (hostname) {
         WiFi.hostname(hostname);
       }
-      WiFi.softAPdisconnect(true);
-      WiFi.setAutoConnect(false);
-      WiFi.mode(WIFI_STA);
-      WiFi.begin(ssid, password);
+
+      if (ConfigESP->configModeESP == NORMAL_MODE) {
+        WiFi.softAPdisconnect(true);
+        WiFi.setAutoConnect(false);
+        WiFi.mode(WIFI_STA);
+        WiFi.begin(ssid, password);
+      }
+
     } else if (ConfigESP->configModeESP == NORMAL_MODE) {
       Serial.println(F("WiFi: resetting WiFi connection"));
       if (client) {

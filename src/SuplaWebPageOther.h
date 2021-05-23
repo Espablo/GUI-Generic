@@ -3,23 +3,20 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_NTC_10K)
+#if defined(SUPLA_HC_SR04)
 #define GUI_SENSOR_OTHER
 #endif
 
 #if defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER) || \
-    defined(GUI_SENSOR_OTHER)
+    defined(GUI_SENSOR_OTHER) || defined(SUPLA_CSE7766)
 #define GUI_OTHER
 #endif
 
-#define PATH_OTHER      "other"
-#define PATH_SAVE_OTHER "saveother"
+#ifdef GUI_OTHER
+#define PATH_OTHER "other"
 
 void createWebPageOther();
-
-#ifdef GUI_OTHER
-void suplaWebPageOther(int save);
-void handleOther();
+void handleOther(int save = 0);
 void handleOtherSave();
 #endif
 
@@ -30,27 +27,35 @@ void handleOtherSave();
 #define INPUT_IMPULSE_COUNTER_RAISING_EDGE     "icre"
 #define INPUT_IMPULSE_COUNTER_CHANGE_VALUE     "iccv"
 #define INPUT_MAX_IMPULSE_COUNTER              "imic"
-void handleImpulseCounterSet();
+
+void handleImpulseCounterSet(int save = 0);
 void handleImpulseCounterSaveSet();
-void supla_impulse_counter_set(int save);
 #endif
 
-#if defined(SUPLA_HLW8012)
+#ifdef SUPLA_HLW8012
 #define INPUT_CF  "cf"
 #define INPUT_CF1 "cf1"
 #define INPUT_SEL "sel"
 
+#define INPUT_MODE_HLW8012                 "imh"
 #define INPUT_COUNTER_CHANGE_VALUE_HLW8012 "iccvh"
+#define PATH_HLW8012                       "hlw8012"
+#endif
 
-#define PATH_HLW8012_CALIBRATE      "calibrate"
-#define PATH_SAVE_HLW8012_CALIBRATE "savecalibrate"
+#ifdef SUPLA_CSE7766
+#define INPUT_CSE7766_RX "isrx"
 
+#define INPUT_COUNTER_CHANGE_VALUE_CSE7766 "iccvc"
+#define PATH_CSE7766                       "cse7766"
+#endif
+
+#if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)
+#define PATH_CALIBRATE      "calibrate"
 #define INPUT_CALIB_POWER   "power"
 #define INPUT_CALIB_VOLTAGE "voltage"
 
-void handleHLW8012Calibrate();
-void handleHLW8012CalibrateSave();
-void suplaWebpageHLW8012Calibrate(uint8_t save);
+void handleCounterCalibrate(int save = 0);
+void handleCounterCalibrateSave();
 #endif
 
 #ifdef SUPLA_PZEM_V_3
@@ -79,12 +84,7 @@ void suplaWebpageHLW8012Calibrate(uint8_t save);
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-#define PATH_IMPULSE_COUNTER_SET      "setcounter"
-#define PATH_SAVE_IMPULSE_COUNTER_SET "savesetcounter"
-#endif
-
-#ifdef SUPLA_NTC_10K
-#define INPUT_NTC_10K "in10k"
+#define PATH_IMPULSE_COUNTER_SET "setcounter"
 #endif
 
 #endif  // SuplaWebPageOther_h

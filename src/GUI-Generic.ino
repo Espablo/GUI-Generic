@@ -19,65 +19,45 @@
 #include <supla/sensor/PzemV3.h>
 #include <supla/sensor/three_phase_PzemV3.h>
 #endif
+#ifdef SUPLA_DEEP_SLEEP
+#include <supla/control/deepSleep.h>
+#endif
 
-#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
-#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
-DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
+//#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
+//#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
+// DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 void setup() {
   Serial.begin(74880);
   uint8_t nr, gpio;
 
+  ESP.wdtDisable();
+
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
 
-  if (drd.detectDoubleReset()) {
-    drd.stop();
-    ConfigESP->factoryReset();
-  }
-
-#ifdef SUPLA_MCP23017
-  if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO &&
-      ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-    Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
-    Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
-
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-      gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-      mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), ConfigESP->getInversed(gpio));
-    }
-  }
-#endif
+  // if (drd.detectDoubleReset()) {
+  //   drd.stop();
+  //   ConfigESP->factoryReset();
+  // }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-    gpio = ConfigESP->getGpio(nr, FUNCTION_RELAY);
-    if (gpio != OFF_GPIO) {
-#ifdef SUPLA_ROLLERSHUTTER
+    if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
       if (rollershutters > 0) {
-#ifdef SUPLA_BUTTON
-        uint8_t pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-        uint8_t pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
-        if (ConfigESP->getEvent(pinButtonUp) == Supla::Event::ON_CHANGE && ConfigESP->getEvent(pinButtonDown) == Supla::Event::ON_CHANGE) {
-          Supla::GUI::addRolleShutterMomentary(nr);
-        }
-        else {
-#endif
-          Supla::GUI::addRolleShutter(nr);
-#ifdef SUPLA_BUTTON
-        }
+#ifdef SUPLA_ROLLERSHUTTER
+        Supla::GUI::addRolleShutter(nr);
 #endif
         rollershutters--;
         nr++;
       }
       else {
-#endif
+#ifdef SUPLA_RELAY
         Supla::GUI::addRelayButton(nr);
-#ifdef SUPLA_ROLLERSHUTTER
-      }
 #endif
+      }
     }
   }
 #endif
@@ -91,8 +71,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONFIG
-  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED),
-                           ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)));
+  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED));
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -169,6 +148,14 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_MPX_5XXX
+  if (ConfigESP->getGpio(FUNCTION_MPX_5XXX) != OFF_GPIO) {
+    Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(A0);
+    Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX, Supla::GUI::mpx);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX, Supla::GUI::mpx);
+  }
+#endif
+
 #ifdef SUPLA_RGBW
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     Supla::GUI::addRGBWLeds(nr);
@@ -210,6 +197,12 @@ void setup() {
   }
   else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO) {
     new Supla::Sensor::PZEMv3(pinRX1, pinTX1);
+  }
+#endif
+
+#ifdef SUPLA_CSE7766
+  if (ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
+    Supla::GUI::addCSE7766(ConfigESP->getGpio(FUNCTION_CSE7766_RX));
   }
 #endif
 
@@ -292,6 +285,20 @@ void setup() {
       oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
     }
 #endif
+
+#ifdef SUPLA_MCP23017
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
+      Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
+
+      for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+        gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+        if (gpio != OFF_GPIO)
+          mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), false);
+      }
+
+      Wire.setClock(400000);
+    }
+#endif
   }
 #endif
 
@@ -299,13 +306,21 @@ void setup() {
   new Supla::Sensor::EspFreeHeap();
 #endif
 
+#ifdef SUPLA_DEEP_SLEEP
+  if (ConfigManager->get(KEY_DEEP_SLEEP_TIME)->getValueInt() > 0) {
+    new Supla::Control::DeepSleep(ConfigManager->get(KEY_DEEP_SLEEP_TIME)->getValueInt() * 60, 30);
+  }
+#endif
+
   Supla::GUI::begin();
 
   Supla::GUI::addCorrectionSensor();
+
+  ESP.wdtEnable(100);
 }
 
 void loop() {
   SuplaDevice.iterate();
   delay(25);
-  drd.loop();
+  // drd.loop();
 }

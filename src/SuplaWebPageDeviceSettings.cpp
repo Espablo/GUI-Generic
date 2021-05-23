@@ -58,6 +58,10 @@ void handleDeviceSettings(int save) {
   addButton(webContentBuffer, S_SENSORS_SPI, PATH_SPI);
 #endif
 
+#ifdef GUI_SENSOR_ANALOG
+  addButton(webContentBuffer, F("ANALOG"), PATH_ANALOG);
+#endif
+
 #ifdef GUI_OTHER
   addButton(webContentBuffer, S_SENSORS_OTHER, PATH_OTHER);
 #endif

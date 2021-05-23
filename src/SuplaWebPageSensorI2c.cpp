@@ -72,7 +72,7 @@ void handleSensorI2c(int save) {
       addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_CFG_BUTTON);
       addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 9);
       addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_TIME, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
-      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_LVL, S_BACKLIGHT_PERCENT, KEY_OLED_BACK_LIGHT, 100);
+      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_LVL, S_BACKLIGHT_PERCENT, KEY_OLED_BACK_LIGHT, 99);
 
       for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
         sensorName = String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
@@ -193,10 +193,10 @@ void handleSensorI2cSave() {
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, WebServer->httpServer->arg(input).toInt());
 
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-      ConfigESP->clearFunctionGpio(FUNCTION_RELAY);
-      ConfigESP->clearFunctionGpio(FUNCTION_BUTTON);
-    }
+    // if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
+    //   ConfigESP->clearFunctionGpio(FUNCTION_RELAY);
+    //   ConfigESP->clearFunctionGpio(FUNCTION_BUTTON);
+    // }
   }
 #endif
 

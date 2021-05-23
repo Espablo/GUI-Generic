@@ -28,6 +28,7 @@
 #define S_MAX6675_MAX31855 "MAX6675/MAX31855"
 #define S_NTC_10K          "NTC 10K 3.3v"
 #define S_PUSHOVER         "Pushover"
+#define S_MPX_5XXX         "MPX 5XXX"
 //### PIN codes not translated ###
 #define S_D0  "D0"
 #define S_SDA "SDA"

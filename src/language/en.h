@@ -94,6 +94,7 @@
 #define S_STATUS_INVALID_AUTHKEY         "Missing AuthKey"
 #define S_STATUS_NO_LOCATION_AVAILABLE   "No location available!"
 #define S_STATUS_UNKNOWN_ERROR           "Unknown registration error"
+#define S_STATUS_NETWORK_DISCONNECTED    "No connection to network"
 
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                           "OFF"

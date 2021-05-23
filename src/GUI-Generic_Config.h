@@ -56,8 +56,13 @@
 #define SUPLA_RGBW
 #define SUPLA_PUSHOVER
 #define SUPLA_DIRECT_LINKS
-#define SUPLA_NTC_10K
 #define SUPLA_PZEM_V_3
+#define SUPLA_CSE7766
+#define SUPLA_DEEP_SLEEP
+
+// ##### Analog #####
+#define SUPLA_NTC_10K
+#define SUPLA_MPX_5XXX
 
 #endif  // USE_CUSTOM
 

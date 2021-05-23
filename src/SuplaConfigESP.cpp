@@ -29,9 +29,6 @@ SuplaConfigESP::SuplaConfigESP() {
     if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
 
-    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
-      ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
-
     if (strcmp(ConfigManager->get(KEY_LOGIN_PASS)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
 
@@ -85,19 +82,25 @@ uint8_t SuplaConfigESP::getDefaultTamplateBoard() {
 #endif
 }
 
-void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _ledHighIsOn) {
-  pinNumberConfig = _pinNumberConfig;
-  pinLedConfig = _pinLedConfig;
-  modeConfigButton = _modeConfigButton;
-  ledHighIsOn = _ledHighIsOn;
+void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig) {
+  uint8_t pinNumberConfig = _pinNumberConfig;
+  uint8_t pinLedConfig = _pinLedConfig;
+  uint8_t modeConfigButton = ConfigManager->get(KEY_CFG_MODE)->getValueInt();
 
-  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO) {
+  if (pinLedConfig != OFF_GPIO) {
     pinMode(pinLedConfig, OUTPUT);
     digitalWrite(pinLedConfig, pinOffValue());
   }
 
-  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) != OFF_GPIO) {
-    Supla::Control::Button *buttonConfig = new Supla::Control::Button(pinNumberConfig, true, true);
+  if (pinNumberConfig != OFF_GPIO) {
+    bool pullUp = true, invertLogic = true;
+
+    if (ConfigESP->getGpio(FUNCTION_BUTTON) != OFF_GPIO) {
+      pullUp = ConfigESP->getPullUp(ConfigESP->getGpio(FUNCTION_BUTTON));
+      invertLogic = ConfigESP->getInversed(ConfigESP->getGpio(FUNCTION_BUTTON));
+    }
+
+    Supla::Control::Button *buttonConfig = new Supla::Control::Button(pinNumberConfig, pullUp, invertLogic);
     buttonConfig->setMulticlickTime(1000);
     buttonConfig->addAction(Supla::TURN_ON, *ConfigESP, Supla::ON_CLICK_1);
 
@@ -136,15 +139,21 @@ void SuplaConfigESP::rebootESP() {
 
 void SuplaConfigESP::configModeInit() {
   configModeESP = CONFIG_MODE;
+  MDNSConfigured = false;
 
   ledBlinking(100);
 
   Supla::GUI::enableWifiSSL(false);
 
   Supla::GUI::crateWebServer();
-  // WiFi.softAPdisconnect(true);
-  // WiFi.disconnect(true);
+
+  WiFi.setAutoConnect(false);
+  WiFi.setAutoReconnect(false);
+
   WiFi.mode(WIFI_AP_STA);
+  WiFi.softAP(getConfigNameAP(), "");
+  WiFi.begin(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
+  Serial.println(F("Config Mode started"));
 }
 
 bool SuplaConfigESP::checkSSL() {
@@ -153,7 +162,17 @@ bool SuplaConfigESP::checkSSL() {
 
 void SuplaConfigESP::iterateAlways() {
   if (configModeESP == CONFIG_MODE) {
-    WiFi.softAP(getConfigNameAP(), "");
+    if (WiFi.status() == WL_CONNECTED) {
+      if (!MDNSConfigured) {
+        MDNSConfigured = true;
+        if (MDNS.begin("supla", WiFi.localIP())) {
+          Serial.print(F("MDNS started IP: "));
+          Serial.println(WiFi.localIP());
+        }
+        MDNS.addService("http", "tcp", 80);
+      }
+      MDNS.update();
+    }
   }
 }
 
@@ -177,11 +196,17 @@ void SuplaConfigESP::ledBlinking(int time) {
 
 void SuplaConfigESP::ledBlinkingStop(void) {
   os_timer_disarm(&led_timer);
-  digitalWrite(pinLedConfig, pinOffValue());
+  digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), pinOffValue());
 }
 
-int SuplaConfigESP::getPinLedConfig() {
-  return pinLedConfig;
+uint8_t SuplaConfigESP::pinOnValue() {
+  uint8_t gpio = ConfigESP->getGpio(FUNCTION_CFG_LED);
+  return ConfigESP->getLevel(gpio) ? HIGH : LOW;
+}
+
+uint8_t SuplaConfigESP::pinOffValue() {
+  uint8_t gpio = ConfigESP->getGpio(FUNCTION_CFG_LED);
+  return ConfigESP->getLevel(gpio) ? LOW : HIGH;
 }
 
 String SuplaConfigESP::getMacAddress(bool formating) {
@@ -198,8 +223,8 @@ String SuplaConfigESP::getMacAddress(bool formating) {
 }
 
 void ledBlinking_func(void *timer_arg) {
-  int val = digitalRead(ConfigESP->getPinLedConfig());
-  digitalWrite(ConfigESP->getPinLedConfig(), val == HIGH ? 0 : 1);
+  int val = digitalRead(ConfigESP->getGpio(FUNCTION_CFG_LED));
+  digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), val == HIGH ? 0 : 1);
 }
 
 void status_func(int status, const char *msg) {
@@ -270,10 +295,13 @@ void status_func(int status, const char *msg) {
     case STATUS_UNKNOWN_ERROR:
       ConfigESP->supla_status.msg = S_STATUS_UNKNOWN_ERROR;
       break;
+    case STATUS_NETWORK_DISCONNECTED:
+      ConfigESP->supla_status.msg = S_STATUS_NETWORK_DISCONNECTED;
+      break;
     default:
       ConfigESP->supla_status.msg = msg;
+      break;
   }
-
   ConfigESP->supla_status.status = status;
 
   static int lock;
@@ -350,15 +378,15 @@ uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
     return KEY_GPIO + gpio - 148;
 }
 
-uint8_t SuplaConfigESP::getLevel(uint8_t gpio) {
+bool SuplaConfigESP::getLevel(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(LEVEL_RELAY).toInt();
 }
 
-uint8_t SuplaConfigESP::getPullUp(uint8_t gpio) {
+bool SuplaConfigESP::getPullUp(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(PULL_UP_BUTTON).toInt();
 }
 
-uint8_t SuplaConfigESP::getInversed(uint8_t gpio) {
+bool SuplaConfigESP::getInversed(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(INVERSED_BUTTON).toInt();
 }
 
@@ -409,32 +437,26 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
 }
 
 void SuplaConfigESP::setLevel(uint8_t gpio, int level) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, LEVEL_RELAY, level);
+  ConfigManager->setElement(getKeyGpio(gpio), LEVEL_RELAY, level);
 }
 void SuplaConfigESP::setMemory(uint8_t gpio, int memory) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, MEMORY, memory);
+  ConfigManager->setElement(getKeyGpio(gpio), MEMORY, memory);
 }
 
 void SuplaConfigESP::setPullUp(uint8_t gpio, int pullup) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);
+  ConfigManager->setElement(getKeyGpio(gpio), PULL_UP_BUTTON, pullup);
 }
 
 void SuplaConfigESP::setInversed(uint8_t gpio, int inversed) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, INVERSED_BUTTON, inversed);
+  ConfigManager->setElement(getKeyGpio(gpio), INVERSED_BUTTON, inversed);
 }
 
 void SuplaConfigESP::setAction(uint8_t gpio, int action) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, ACTION_BUTTON, action);
+  ConfigManager->setElement(getKeyGpio(gpio), ACTION_BUTTON, action);
 }
 
 void SuplaConfigESP::setEvent(uint8_t gpio, int event) {
-  uint8_t key = KEY_GPIO + gpio;
-  ConfigManager->setElement(key, EVENT_BUTTON, event);
+  ConfigManager->setElement(getKeyGpio(gpio), EVENT_BUTTON, event);
 }
 
 void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
@@ -470,7 +492,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
 
   if (function == FUNCTION_BUTTON) {
-    setPullUp(gpio, false);
+    setPullUp(gpio, true);
     setInversed(gpio, true);
     setAction(gpio, Supla::Action::TOGGLE);
     setEvent(gpio, Supla::Event::ON_CHANGE);
@@ -587,7 +609,7 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
 
   if (function == FUNCTION_BUTTON) {
     setPullUp(gpio, true);
-    setInversed(gpio, false);
+    setInversed(gpio, true);
     setAction(gpio, Supla::Action::TOGGLE);
     setEvent(gpio, Supla::Event::ON_CHANGE);
   }
@@ -606,6 +628,11 @@ void SuplaConfigESP::clearFunctionGpio(uint8_t function) {
       ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
     }
   }
+}
+
+bool SuplaConfigESP::checkActiveMCP23017(uint8_t function) {
+  return ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF &&
+         (ConfigESP->getGpio(function) >= 100 || ConfigESP->getGpio(function) == OFF_GPIO);
 }
 
 uint8_t SuplaConfigESP::getFunctionMCP23017(uint8_t adress) {

@@ -239,6 +239,7 @@ void chooseTemplateBoard(uint8_t board) {
       Supla::GUI::counterHLW8012->setCurrentMultiplier(18388);
       Supla::GUI::counterHLW8012->setVoltageMultiplier(247704);
       Supla::GUI::counterHLW8012->setPowerMultiplier(2586583);
+      Supla::GUI::counterHLW8012->setMode(LOW);
       Supla::Storage::ScheduleSave(2000);
 #endif
       break;
