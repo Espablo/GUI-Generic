@@ -272,6 +272,10 @@ enum sensorList
   ,
   SENSOR_BMP280
 #endif
+#ifdef SUPLA_MPX_5XXX
+  ,
+  SENSOR_MPX_5XXX
+#endif
   ,
   COUNT_SENSOR_LIST
 };
@@ -308,6 +312,9 @@ const char NAME_NTC_10K[] PROGMEM = S_NTC_10K;
 #endif
 #ifdef SUPLA_BMP280
 const char NAME_BMP280[] PROGMEM = S_BMP280;
+#endif
+#ifdef SUPLA_MPX_5XXX
+const char NAME_SENSOR_MPX_5XXX[] PROGMEM = S_MPX_5XXX;
 #endif
 
 const char* const SENSOR_LIST_P[] PROGMEM = {OFF
@@ -354,6 +361,10 @@ const char* const SENSOR_LIST_P[] PROGMEM = {OFF
 #ifdef SUPLA_BMP280
                                              ,
                                              NAME_BMP280
+#endif
+#ifdef SUPLA_MPX_5XXX
+                                             ,
+                                             NAME_SENSOR_MPX_5XXX
 #endif
 };
 

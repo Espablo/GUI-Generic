@@ -3,7 +3,7 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_NTC_10K)
+#if defined(SUPLA_HC_SR04)
 #define GUI_SENSOR_OTHER
 #endif
 
@@ -85,10 +85,6 @@ void handleCounterCalibrateSave();
 
 #ifdef SUPLA_IMPULSE_COUNTER
 #define PATH_IMPULSE_COUNTER_SET "setcounter"
-#endif
-
-#ifdef SUPLA_NTC_10K
-#define INPUT_NTC_10K "in10k"
 #endif
 
 #endif  // SuplaWebPageOther_h

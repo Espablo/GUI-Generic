@@ -148,6 +148,14 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_MPX_5XXX
+  if (ConfigESP->getGpio(FUNCTION_MPX_5XXX) != OFF_GPIO) {
+    Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(A0);
+    Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX, Supla::GUI::mpx);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX, Supla::GUI::mpx);
+  }
+#endif
+
 #ifdef SUPLA_RGBW
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     Supla::GUI::addRGBWLeds(nr);
