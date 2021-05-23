@@ -94,6 +94,7 @@
 #define S_STATUS_INVALID_AUTHKEY         "Fehlender AuthKey"
 #define S_STATUS_NO_LOCATION_AVAILABLE   "Kein Standort verfügbar!"
 #define S_STATUS_UNKNOWN_ERROR           "Unbekannter Registrierungsfehler"
+#define S_STATUS_NETWORK_DISCONNECTED    "Keine Verbindung zum Netzwerk"
 
 //#### SuplaCommonPROGMEM.h ####
 #define S_OFF                           "AUS"
@@ -169,6 +170,7 @@
 
 //#### SuplaHTTPUpdateServer.cpp ####
 #define S_FLASH_MEMORY_SIZE        "Flash-Speichergröße"
+#define S_SKETCH_MEMORY_SIZE       "Speichergröße skizzieren"
 #define S_SKETCH_LOADED_SIZE       "Skizze geladene Größe"
 #define S_SKETCH_UPLOAD_MAX_SIZE   "Skizze Hochladen Max Größe"
 #define S_UPDATE_FIRMWARE          "Firmware aktualisieren"

@@ -95,6 +95,7 @@
 #define S_STATUS_INVALID_AUTHKEY         "AuthKey manquant"
 #define S_STATUS_NO_LOCATION_AVAILABLE   "Aucun emplacement disponible!"
 #define S_STATUS_UNKNOWN_ERROR           "Erreur d'enregistrement inconnue "
+#define S_STATUS_NETWORK_DISCONNECTED    "Pas de connexion au réseau"
 
 // #### SuplaCommonPROGMEM.h ####
 #define S_OFF                           "ÉTEINDRE"
@@ -170,6 +171,7 @@
 
 //#### SuplaHTTPUpdateServer.cpp ####
 #define S_FLASH_MEMORY_SIZE        "Taille de la mémoire flash"
+#define S_SKETCH_MEMORY_SIZE       "Taille de la mémoire de l'esquisse"
 #define S_SKETCH_LOADED_SIZE       "Taille chargée de l'esquisse"
 #define S_SKETCH_UPLOAD_MAX_SIZE   "Taille max. du téléchargement de l'esquisse"
 #define S_UPDATE_FIRMWARE          "Mise à jour du firmware"

@@ -51,7 +51,7 @@ void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x,
 class SuplaOled : public Supla::ActionHandler, public Supla::Element {
  public:
   SuplaOled();
-  void addButtonOled(int pin);
+  void addButtonOled(uint8_t pin);
 
  private:
   void iterateAlways();

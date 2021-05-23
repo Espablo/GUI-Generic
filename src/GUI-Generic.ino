@@ -38,19 +38,6 @@ void setup() {
     ConfigESP->factoryReset();
   }
 
-#ifdef SUPLA_MCP23017
-  if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO &&
-      ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-    Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
-    Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
-
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-      gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-      mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), ConfigESP->getInversed(gpio));
-    }
-  }
-#endif
-
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
@@ -81,8 +68,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONFIG
-  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED),
-                           ConfigManager->get(KEY_CFG_MODE)->getValueInt(), ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)));
+  Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED));
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -203,6 +189,12 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_CSE7766
+  if (ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
+    Supla::GUI::addCSE7766(ConfigESP->getGpio(FUNCTION_CSE7766_RX));
+  }
+#endif
+
 #ifdef GUI_SENSOR_I2C
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
@@ -280,6 +272,19 @@ void setup() {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       SuplaOled *oled = new SuplaOled();
       oled->addButtonOled(ConfigESP->getGpio(FUNCTION_CFG_BUTTON));
+    }
+#endif
+
+#ifdef SUPLA_MCP23017
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
+      Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
+
+      for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+        gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+        mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), ConfigESP->getInversed(gpio));
+      }
+
+      Wire.setClock(400000);
     }
 #endif
   }

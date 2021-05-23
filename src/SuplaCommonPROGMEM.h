@@ -175,23 +175,21 @@ const char* const TRIGGER_P[] PROGMEM = {REACTION_ON_PRESS, REACTION_ON_RELEASE,
 
 const char ACTION_TOGGLE[] PROGMEM = S_TOGGLE;
 
-const char* const ACTION_P[] PROGMEM = {ON,
-                                        OFF,
-                                        ACTION_TOGGLE,
-                                        S_EMPTY,
-                                        S_EMPTY,
-                                        "OPEN",
-                                        "CLOSE",
-                                        S_EMPTY,
-                                        "OPEN OR STOP",
-                                        "CLOSE OR STOP",
-                                        S_EMPTY,
-                                        S_EMPTY,
-                                        "STEP BY STEP",
-                                        "MOVE UP",
-                                        "MOVE DOWN",
-                                        "MOVE UP OR STOP",
-                                        "MOVE DOWN OR STOP"};
+const char* const ACTION_P[] PROGMEM = {ON, OFF, ACTION_TOGGLE};
+
+#ifdef SUPLA_ROLLERSHUTTER
+namespace Supla {
+namespace GUI {
+enum ActionRolleShutter
+{
+  OPEN_OR_CLOSE,
+  MOVE_UP_OR_MOVE_DOWN,
+  STEP_BY_STEP
+};
+}
+}  // namespace Supla
+const char* const ACTION_ROLLER_SHUTTER_P[] PROGMEM = {"OPEN OR CLOSE", "MOVE UP OR MOVE DOWN", "STEP BY STEP"};
+#endif
 
 const char CFG_10_PRESSES[] PROGMEM = S_CFG_10_PRESSES;
 const char CFG_5SEK_HOLD[] PROGMEM = S_5SEK_HOLD;

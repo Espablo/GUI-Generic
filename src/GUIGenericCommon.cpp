@@ -37,6 +37,15 @@ int getCountSensorChannels() {
   return maxFrame;
 }
 
+int getCountChannels() {
+  int count = 0;
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel())
+      count++;
+  }
+  return count;
+}
+
 uint32_t lowestRAM = 0;
 uint32_t lowestFreeStack = 0;
 

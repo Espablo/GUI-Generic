@@ -56,7 +56,6 @@ void handleRelaySaveSetMCP23017();
 #endif
 
 #ifdef SUPLA_PUSHOVER
-#define INPUT_PUSHOVER         "po"
 #define INPUT_PUSHOVER_MESSAGE "pm"
 #endif
 

@@ -14,38 +14,26 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "HLW_8012.h"
+#include "CSE_7766.h"
 
 namespace Supla {
 namespace Sensor {
 
-HLW_8012::HLW_8012(int8_t pinCF,
-                   int8_t pinCF1,
-                   int8_t pinSEL,
-                   bool useInterrupts)
-    : pinCF(pinCF),
-      pinCF1(pinCF1),
-      pinSEL(pinSEL),
-      useInterrupts(useInterrupts) {
-  sensor = new HLW8012();
+CSE_7766::CSE_7766(int8_t pinRX) : pinRX(pinRX) {
+  sensor = new CSE7766();
 
-  setCurrentMultiplier(18388);
-  setVoltageMultiplier(247704);
-  setPowerMultiplier(2586583);
-
-  sensor->begin(pinCF, pinCF1, pinSEL, currentWhen, useInterrupts);
-
-  attachInterrupt(pinCF, hjl01_cf_interrupt, FALLING);
-  attachInterrupt(pinCF1, hjl01_cf1_interrupt, FALLING);
+  sensor->setRX(pinRX);
+  sensor->begin();
 }
 
-void HLW_8012::onInit() {
+void CSE_7766::onInit() {
   readValuesFromDevice();
   updateChannelValues();
 }
 
-void HLW_8012::readValuesFromDevice() {
+void CSE_7766::readValuesFromDevice() {
   bool currentChanelRelay = false;
+  sensor->handle();
 
   for (auto element = Supla::Element::begin(); element != nullptr;
        element = element->next()) {
@@ -67,35 +55,23 @@ void HLW_8012::readValuesFromDevice() {
                         36);  // current energy value = value at start
   }
 
-  unsigned int _reactive = 0;
-  double _pf = 0;
-  double _current = sensor->getCurrent();
-  unsigned int _voltage = sensor->getVoltage();
-  unsigned int _active = sensor->getActivePower();
-  unsigned int _apparent = _voltage * _current;
-  if (_apparent > _active) {
-    _reactive = sqrt(_apparent * _apparent - _active * _active);
-  } else {
-    _reactive = 0;
-  }
-  if (_active > _apparent) {
-    _pf = 1;
-  }
-  if (_apparent == 0) {
-    _pf = 0;
-  } else {
-    _pf = (double)_active / _apparent;
-  }
-  setVoltage(0, _voltage * 100);            // voltage in 0.01 V
-  setCurrent(0, _current * 1000);           // current in 0.001 A
-  setPowerActive(0, _active * 100000);      // power in 0.00001 kW
-  setFwdActEnergy(0, energy);               // energy in 0.00001 kWh
-  setPowerApparent(0, _apparent * 100000);  // power in 0.00001 kVA
-  setPowerReactive(0, _reactive * 100000);  // power in 0.00001 kvar
-  setPowerFactor(0, _pf * 1000);            // power in 0.001
+  // voltage in 0.01 V
+  setVoltage(0, sensor->getVoltage() * 100);
+  // current in 0.001 A
+  setCurrent(0, sensor->getCurrent() * 1000);
+  // power in 0.00001 kW
+  setPowerActive(0, sensor->getActivePower() * 100000);
+  // energy in 0.00001 kWh
+  setFwdActEnergy(0, energy);
+  // power in 0.00001 kVA
+  setPowerApparent(0, sensor->getApparentPower() * 100000);
+  // power in 0.00001 kvar
+  setPowerReactive(0, sensor->getReactivePower() * 100000);
+  // power in 0.001
+  setPowerFactor(0, sensor->getPowerFactor() * 1000);
 }
 
-void HLW_8012::onSaveState() {
+void CSE_7766::onSaveState() {
   double currentMultiplier = getCurrentMultiplier();
   double voltageMultiplier = getVoltageMultiplier();
   double powerMultiplier = getPowerMultiplier();
@@ -107,11 +83,9 @@ void HLW_8012::onSaveState() {
                              sizeof(voltageMultiplier));
   Supla::Storage::WriteState((unsigned char *)&powerMultiplier,
                              sizeof(powerMultiplier));
-  Supla::Storage::WriteState((unsigned char *)&currentWhen,
-                             sizeof(currentWhen));
 }
 
-void HLW_8012::onLoadState() {
+void CSE_7766::onLoadState() {
   double currentMultiplier;
   double voltageMultiplier;
   double powerMultiplier;
@@ -134,80 +108,58 @@ void HLW_8012::onLoadState() {
                                 sizeof(powerMultiplier))) {
     setPowerMultiplier(powerMultiplier);
   }
-
-  if (Supla::Storage::ReadState((unsigned char *)&currentWhen,
-                                sizeof(currentWhen))) {
-    setMode(currentWhen);
-  }
 }
 
-double HLW_8012::getCurrentMultiplier() {
-  return sensor->getCurrentMultiplier();
+double CSE_7766::getCurrentMultiplier() {
+  return sensor->getCurrentRatio();
 }
 
-double HLW_8012::getVoltageMultiplier() {
-  return sensor->getVoltageMultiplier();
+double CSE_7766::getVoltageMultiplier() {
+  return sensor->getVoltageRatio();
 }
 
-double HLW_8012::getPowerMultiplier() {
-  return sensor->getPowerMultiplier();
+double CSE_7766::getPowerMultiplier() {
+  return sensor->getPowerRatio();
 }
 
-bool HLW_8012::getMode() {
-  return currentWhen;
-}
-
-_supla_int64_t HLW_8012::getCounter() {
+_supla_int64_t CSE_7766::getCounter() {
   return energy;
 }
 
-void HLW_8012::setCurrentMultiplier(double value) {
-  sensor->setCurrentMultiplier(value);
+void CSE_7766::setCurrentMultiplier(double value) {
+  sensor->setCurrentRatio(value);
 }
 
-void HLW_8012::setVoltageMultiplier(double value) {
-  sensor->setVoltageMultiplier(value);
+void CSE_7766::setVoltageMultiplier(double value) {
+  sensor->setVoltageRatio(value);
 }
 
-void HLW_8012::setPowerMultiplier(double value) {
-  sensor->setPowerMultiplier(value);
+void CSE_7766::setPowerMultiplier(double value) {
+  sensor->setPowerRatio(value);
 }
 
-void HLW_8012::setMode(bool value) {
-  currentWhen = value;
-  sensor->setMode((hlw8012_mode_t)value);
+void CSE_7766::setCounter(_supla_int64_t value) {
+  _energy = value;  // ------- energy value read from memory at startup
+  energy = value;
+  setFwdActEnergy(0, value);
 }
 
-void HLW_8012::setCounter(_supla_int64_t newEnergy) {
-  _energy = newEnergy;  // ------- energy value read from memory at startup
-  energy = newEnergy;
-  setFwdActEnergy(0, newEnergy);
-}
-
-// When using interrupts we have to call the library entry point
-// whenever an interrupt is triggered
-void ICACHE_RAM_ATTR HLW_8012::hjl01_cf1_interrupt() {
-  sensor->cf1_interrupt();
-}
-
-void ICACHE_RAM_ATTR HLW_8012::hjl01_cf_interrupt() {
-  sensor->cf_interrupt();
-}
-
-void HLW_8012::calibrate(double calibPower, double calibVoltage) {
+void CSE_7766::calibrate(double calibPower, double calibVoltage) {
+  sensor->handle();
   unsigned long timeout1 = millis();
   while ((millis() - timeout1) < 10000) {
     delay(10);
   }
 
-  Serial.print(F("[HLW] Active Power (W)    : "));
+  Serial.print(F("Active Power (W)    : "));
   Serial.println(sensor->getActivePower());
-  Serial.print(F("[HLW] Voltage (V)         : "));
+  Serial.print(F("Voltage (V)         : "));
   Serial.println(sensor->getVoltage());
-  Serial.print(F("[HLW] Current (A)         : "));
+  Serial.print(F("Current (A)         : "));
   Serial.println(sensor->getCurrent());
 
-  sensor->expectedActivePower(calibPower);
+  sensor->handle();
+  sensor->expectedPower(calibPower);
   sensor->expectedVoltage(calibVoltage);
   sensor->expectedCurrent(calibPower / calibVoltage);
 
@@ -220,16 +172,16 @@ void HLW_8012::calibrate(double calibPower, double calibVoltage) {
   double voltage_multi = getVoltageMultiplier();
   double power_multi = getPowerMultiplier();
 
-  Serial.print(F("[HLW] New current multiplier : "));
+  Serial.print(F("New current multiplier : "));
   Serial.println(current_multi);
-  Serial.print(F("[HLW] New voltage multiplier : "));
+  Serial.print(F("New voltage multiplier : "));
   Serial.println(voltage_multi);
-  Serial.print(F("[HLW] New power multiplier   : "));
+  Serial.print(F("New power multiplier   : "));
   Serial.println(power_multi);
   Supla::Storage::ScheduleSave(2000);
   delay(0);
 }
 
-HLW8012 *HLW_8012::sensor = nullptr;
+CSE7766 *CSE_7766::sensor = nullptr;
 };  // namespace Sensor
 };  // namespace Supla

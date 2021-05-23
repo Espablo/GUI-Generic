@@ -18,9 +18,11 @@
 #define SuplaConfigESP_h
 
 #include "Arduino.h"
+#include "EEPROM.h"
 #include <supla/action_handler.h>
 #include <supla/element.h>
 #include "SuplaConfigManager.h"
+#include <ESP8266mDNS.h>
 
 #include <cont.h>
 #include <user_interface.h>
@@ -49,7 +51,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
  public:
   SuplaConfigESP();
 
-  void addConfigESP(int _pinNumberConfig, int _pinLedConfig, int _modeConfigButton, bool _highIsOn = true);
+  void addConfigESP(int _pinNumberConfig, int _pinLedConfig);
   void handleAction(int event, int action);
   void rebootESP();
 
@@ -65,14 +67,9 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   void ledBlinking(int time);
   void ledBlinkingStop(void);
-  int getPinLedConfig();
-  virtual uint8_t pinOnValue() {
-    return ledHighIsOn ? HIGH : LOW;
-  }
 
-  virtual uint8_t pinOffValue() {
-    return ledHighIsOn ? LOW : HIGH;
-  }
+  uint8_t pinOnValue();
+  uint8_t pinOffValue();
 
   String getMacAddress(bool formating);
 
@@ -86,9 +83,9 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   uint8_t getKeyGpio(uint8_t gpio);
 
-  uint8_t getLevel(uint8_t gpio);
-  uint8_t getPullUp(uint8_t gpio);
-  uint8_t getInversed(uint8_t gpio);
+  bool getLevel(uint8_t gpio);
+  bool getPullUp(uint8_t gpio);
+  bool getInversed(uint8_t gpio);
   uint8_t getMemory(uint8_t gpio);
   uint8_t getAction(uint8_t gpio);
   uint8_t getEvent(uint8_t gpio);
@@ -126,13 +123,9 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void configModeInit();
 
  private:
+  bool MDNSConfigured = true;
   void iterateAlways();
   void clearEEPROM();
-
-  int pinNumberConfig;
-  int pinLedConfig;
-  int modeConfigButton;
-  bool ledHighIsOn;
 
   ETSTimer led_timer;
 };

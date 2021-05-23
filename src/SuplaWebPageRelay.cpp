@@ -154,8 +154,6 @@ void handleRelaySaveSet() {
 
 #if defined(SUPLA_PUSHOVER)
   if (nr_relay.toInt() - 1 <= MAX_PUSHOVER_MESSAGE) {
-    input = INPUT_PUSHOVER;
-    ConfigManager->setElement(KEY_PUSHOVER, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
     input = INPUT_PUSHOVER_MESSAGE;
     ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
   }
@@ -219,9 +217,6 @@ void handleRelaySet(int save) {
 #if defined(SUPLA_PUSHOVER)
     if (nr_relay.toInt() - 1 <= MAX_PUSHOVER_MESSAGE) {
       addFormHeader(webContentBuffer, S_PUSHOVER);
-
-      selected = ConfigManager->get(KEY_PUSHOVER)->getElement(nr_relay.toInt() - 1).toInt();
-      addListBox(webContentBuffer, INPUT_PUSHOVER, S_STATE, STATE_P, 2, selected);
 
       massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr_relay.toInt() - 1).c_str();
       addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, S_MESSAGE, massage, 0, MAX_MESSAGE_SIZE, false);
@@ -309,9 +304,6 @@ void handleRelaySetMCP23017(int save) {
     if (nr_relay.toInt() - 1 <= MAX_PUSHOVER_MESSAGE) {
       addFormHeader(webContentBuffer, S_PUSHOVER);
 
-      selected = ConfigManager->get(KEY_PUSHOVER)->getElement(nr_relay.toInt() - 1).toInt();
-      addListBox(webContentBuffer, INPUT_PUSHOVER, S_STATE, STATE_P, 2, selected);
-
       massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr_relay.toInt() - 1).c_str();
       addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, S_MESSAGE, massage, 0, MAX_MESSAGE_SIZE, false);
       addFormHeaderEnd(webContentBuffer);
@@ -371,8 +363,6 @@ void handleRelaySaveSetMCP23017() {
 
 #if defined(SUPLA_PUSHOVER)
     if (nr_relay.toInt() - 1 <= MAX_PUSHOVER_MESSAGE) {
-      input = INPUT_PUSHOVER;
-      ConfigManager->setElement(KEY_PUSHOVER, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
       input = INPUT_PUSHOVER_MESSAGE;
       ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
     }
@@ -396,9 +386,6 @@ void handleRelaySaveSetMCP23017() {
 
 #if defined(SUPLA_PUSHOVER)
     for (uint8_t i = 0; i <= MAX_PUSHOVER_MESSAGE; i++) {
-      input = INPUT_PUSHOVER;
-      input += i;
-      ConfigManager->setElement(KEY_PUSHOVER, i, WebServer->httpServer->arg(input).toInt());
       input = INPUT_PUSHOVER_MESSAGE;
       input += i;
       ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, i, WebServer->httpServer->arg(input).c_str());

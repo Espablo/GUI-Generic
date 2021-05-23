@@ -14,25 +14,22 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _hlw8012_h
-#define _hlw8012_h
+#ifndef _cse7766_h
+#define _cse7766_h
 
 #include <Arduino.h>
 
-// https://github.com/xoseperez/hlw8012
-#include <HLW8012.h>
+// https://github.com/ingeniuske/CSE7766
+#include <CSE7766.h>
 #include <supla/sensor/one_phase_electricity_meter.h>
 #include <supla/storage/storage.h>
 
 namespace Supla {
 namespace Sensor {
 
-class HLW_8012 : public OnePhaseElectricityMeter {
+class CSE_7766 : public OnePhaseElectricityMeter {
  public:
-  HLW_8012(int8_t pinCF,
-           int8_t pinCF1,
-           int8_t pinSEL,
-           bool useInterrupts = true);
+  CSE_7766(int8_t pinRX);
 
   void onInit();
   void readValuesFromDevice();
@@ -42,26 +39,18 @@ class HLW_8012 : public OnePhaseElectricityMeter {
   double getCurrentMultiplier();
   double getVoltageMultiplier();
   double getPowerMultiplier();
-  bool getMode();
   _supla_int64_t getCounter();
 
   void setCurrentMultiplier(double value);
   void setVoltageMultiplier(double value);
   void setPowerMultiplier(double value);
-  void setMode(bool value);
   void setCounter(_supla_int64_t value);
 
-  static void ICACHE_RAM_ATTR hjl01_cf1_interrupt();
-  static void ICACHE_RAM_ATTR hjl01_cf_interrupt();
   void calibrate(double calibPower, double calibVoltage);
 
  protected:
-  static HLW8012 *sensor;
-  int8_t pinCF;
-  int8_t pinCF1;
-  int8_t pinSEL;
-  bool currentWhen = LOW;
-  bool useInterrupts;
+  static CSE7766 *sensor;
+  int8_t pinRX;
 
   unsigned _supla_int64_t energy = 0;
   unsigned _supla_int64_t _energy =
