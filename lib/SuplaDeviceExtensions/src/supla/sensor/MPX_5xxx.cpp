@@ -5,8 +5,7 @@ namespace Sensor {
 
 MPX_5XXX::MPX_5XXX(uint8_t pin)
     : _pin(pin),
-      readouts{},
-      index(0),
+      sensorValue(0),
       _emptyValue(0),
       _fullValue(0),
       _thankHeight(0) {
@@ -14,23 +13,35 @@ MPX_5XXX::MPX_5XXX(uint8_t pin)
 
 void MPX_5XXX::onInit() {
   channel.setNewValue(getValue());
+  humidityChannel.setNewValue(getHumi());
 }
 
 double MPX_5XXX::getValue() {
   if (_thankHeight == 0) return DISTANCE_NOT_AVAILABLE;
 
-  long value =
-      map(readValuesFromDevice(), _emptyValue, _fullValue, _thankHeight, 0);
-
+  long value = map(sensorValue, _emptyValue, _fullValue, 0, _thankHeight);
   value = constrain(value, 0, _thankHeight);
 
   return static_cast<double>(value) / 100.00;
 }
 
+double MPX_5XXX::getHumi() {
+  if (_thankHeight == 0) return DISTANCE_NOT_AVAILABLE;
+
+  long value = map(sensorValue, _emptyValue, _fullValue, 0, 100);
+  value = constrain(value, 0, 100);
+
+  return static_cast<double>(value);
+}
+
 void MPX_5XXX::iterateAlways() {
-  if (lastReadTime + 1000 < millis()) {
+  if (millis() - lastReadTime > 1000) {
     lastReadTime = millis();
+
+    sensorValue = readValuesFromDevice();
+
     channel.setNewValue(getValue());
+    humidityChannel.setNewValue(0, getHumi());
   }
 }
 
@@ -92,38 +103,30 @@ int16_t MPX_5XXX::getThankHeight() {
 }
 
 int16_t MPX_5XXX::readValuesFromDevice() {
-  int16_t value;
+  static uint8_t samples = 10;
+  static int readings[20];
+  static uint8_t cur = 0;
+  static uint8_t allValid = 0;
+  int16_t average = 0;
 
-  index++;
-  if (index > 4) index = 0;
-  readouts[index] = analogRead(_pin);
+  readings[cur++ % samples] = analogRead(_pin);
 
-  unsigned long min = 0, max = 0, sum = 0;
-  int count = 0;
-  for (int i = 0; i < 5; i++) {
-    if (readouts[i] > 0) {
-      count++;
-      if (min > readouts[i] || min == 0) min = readouts[i];
-      if (max < readouts[i]) max = readouts[i];
-      sum += readouts[i];
+  if (allValid) {
+    for (uint8_t i = 0; i < samples; i++) {
+      average += readings[i];
+    }
+    average /= samples;
+  } else {
+    for (uint8_t i = 0; i < cur; i++) {
+      average += readings[i];
+    }
+    average /= cur;
+    if (cur == samples) {
+      allValid = 1;
     }
   }
 
-  if (count == 5) {
-    if (min > 0) {
-      sum -= min;
-      count--;
-    }
-    if (max > 0) {
-      sum -= max;
-      count--;
-    }
-  }
-  if (count > 0) {
-    value = sum / count;
-  }
-
-  return value;
+  return average;
 }
 
 };  // namespace Sensor

@@ -5,17 +5,18 @@
 #include <Arduino.h>
 #include <supla/storage/storage.h>
 
+#include "distance_hygro_meter.h"
 #include "supla/channel.h"
-#include "supla/sensor/distance.h"
 
 namespace Supla {
 namespace Sensor {
-class MPX_5XXX : public Distance {
+class MPX_5XXX : public DistanceHumidityMeter {
  public:
   MPX_5XXX(uint8_t pin);
 
   void onInit();
   virtual double getValue();
+  virtual double getHumi();
   void iterateAlways();
   void onSaveState();
   void onLoadState();
@@ -37,12 +38,11 @@ class MPX_5XXX : public Distance {
  protected:
   uint8_t _pin;
 
+  double sensorValue;
+  
   int16_t _emptyValue;
   int16_t _fullValue;
   int16_t _thankHeight;  // maximum thank height reading in centimeters
-
-  unsigned long readouts[5];
-  int index;
 };
 
 };  // namespace Sensor
