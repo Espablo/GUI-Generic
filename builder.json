@@ -1,0 +1,800 @@
+{
+	"Opis struktury": {
+		"SEKCJA": {
+			"SUPLA_OPTION": {
+				"name": "Polska nazwa opcji",
+				"desc": "Polski opis opcji",
+				"alertOn": "[opcja] Polski komunikat przy włączeniu opcji",
+				"alertOff": "[opcja] Polski komunikat przy wyłączeniu opcji",
+				"defOn": "[opcja] true - domyślnie włączona, false - domyślnie wyłączona (domyślnie)",
+				"depOn": "[opcja] tablica SUPLA_OPTION, których włączenie automatycznie włącza daną opcję",
+				"depOff": "[opcja] tablica SUPLA_OPTION, których wyłączenie nie pozwala włączyć danej opcji",
+				"new": "[opcja] true - oznacz opcję jako nową, false - nie oznaczaj jako nową (domyślnie)",
+				"test": "[opcja] true - oznacz opcję jako testową, false - nie oznaczaj jako testową (domyślnie)",
+				"en": {
+					"name": "Angielska nazwa opcji",
+					"desc": "Angielski opis opcji",
+					"alertOn": "[opcja] Angielski komunikat przy włączeniu opcji",
+					"alertOff": "[opcja] Angielski komunikat przy wyłączeniu opcji"
+				},
+				"es": {
+					"name": "Hiszpańska nazwa opcji",
+					"desc": "Hiszpański opis opcji",
+					"alertOn": "[opcja] Hiszpański komunikat przy włączeniu opcji",
+					"alertOff": "[opcja] Hiszpański komunikat przy wyłączeniu opcji"
+				},
+				"de": {
+					"name": "Niemiecka nazwa opcji",
+					"desc": "Niemiecki opis opcji",
+					"alertOn": "[opcja] Niemiecki komunikat przy włączeniu opcji",
+					"alertOff": "[opcja] Niemiecki komunikat przy wyłączeniu opcji"
+				},
+				"fr": {
+					"name": "Francuska nazwa opcji",
+					"desc": "Francuski opis opcji",
+					"alertOn": "[opcja] Francuski komunikat przy włączeniu opcji",
+					"alertOff": "[opcja] Francuski komunikat przy wyłączeniu opcji"
+				}
+			}
+		},
+		"dla SEKCJA": "Patrz element SECTIONS, gdzie jest SEKCJA i tłumaczenia jej nazwy",
+		"dla SUPLA_OPTION": "Identyfikatory opcji rozpoczynające się w GUI Generic od SUPLA_"
+	},
+	"BASIC": {
+		"SUPLA_CONFIG": {
+			"name": "Konfiguracja (LED, Config)",
+			"desc": "Ustawienia urządzenia->Konfiguracja. Umożliwia skonfigurowanie LEDa statusowego i przycisku przełączającego moduł w tryb konfiguracji.",
+			"alertOff": "Wyłączenie tej opcji uniemożliwi konfigurację przycisku włączającego tryb konfiguracji modułu (AP: 192.168.4.1) a tym samym brak dostępu do modułu. Nie będzie można także skonfigurować LED systemowego.",
+			"defOn": true,
+			"en": {
+				"name": "Configuration (LED, Config)",
+				"desc": "Device settings->Configuration. It allows you to configure the status LED and the button to switch the module to configuration mode.",
+				"alertOff": "Disabling this option will prevent the configuration of the button enabling the module configuration mode (AP: 192.168.4.1) and thus the lack of access to the module. The system LED will also not be configurable."
+			},
+			"es": {
+				"name": "Configuración (LED, Config)",
+				"desc": "Configuración del dispositivo->Configuración. Le permite configurar el LED de estado y el botón para cambiar el módulo al modo de configuración.",
+				"alertOff": "Desactivar esta opción evitará la configuración del botón que habilita el modo de configuración del módulo (AP: 192.168.4.1) y por tanto la falta de acceso al módulo. El LED del sistema tampoco se podrá configurar."
+			},
+			"de": {
+				"name": "Konfiguration (LED, Konfig)",
+				"desc": "Geräteeinstellungen->Konfiguration. Hier können Sie die Status-LED und die Schaltfläche konfigurieren, um das Modul in den Konfigurationsmodus zu schalten.",
+				"alertOff": "Durch Deaktivieren dieser Option wird die Konfiguration der Schaltfläche verhindert, die den Modulkonfigurationsmodus (AP: 192.168.4.1) aktiviert, und somit der fehlende Zugriff auf das Modul. Die System-LED kann ebenfalls nicht konfiguriert werden."
+			},
+			"fr": {
+				"name": "Configuration (LED, Config)",
+				"desc": "Paramètres de l´appareil->Configuration. Il permet de configurer la LED d´état et le bouton pour faire basculer le module en mode configuration.",
+				"alertOff": "La désactivation de cette option empêchera la configuration du bouton activant le mode de configuration du module (AP: 192.168.4.1) et donc le manque d´accès au module. La LED système ne sera pas non plus configurable."
+			}
+		},
+		"SUPLA_OTA": {
+			"name": "Aktualizacja przez WWW",
+			"desc": "Narzędzia->Aktualizacja. Umożliwia wgrywanie nowszego firmware przez stronę WWW modułu.",
+			"alertOff": "Wyłączenie tej opcji uniemożliwi aktualizację firmware modułu przez przeglądarkę WWW. Konieczna będzie aktualizacja poprzez port szeregowy.",
+			"defOn": true,
+			"en": {
+				"name": "WWW update (OTA)",
+				"desc": "Tools->Update. It allows you to upload newer firmware via the module´s website.",
+				"alertOff": "Disabling this option will prevent updating the module firmware via the web browser. You will need to upgrade via serial port."
+			},
+			"es": {
+				"name": "Actualización de WWW (OTA)",
+				"desc": "Herramientas-> Actualizar. Le permite cargar firmware más reciente a través del sitio web del módulo.",
+				"alertOff": "Deshabilitar esta opción evitará la actualización del firmware del módulo a través del navegador web. Deberá actualizar a través del puerto serie. "
+			},
+			"de": {
+				"name": "WWW-Update (OTA)",
+				"desc": "Extras->Aktualisieren. Ermöglicht das Hochladen neuer Firmware über die Website des Moduls.",
+				"alertOff": "Durch Deaktivieren dieser Option wird verhindert, dass die Modul-Firmware über den Webbrowser aktualisiert wird. Sie müssen ein Upgrade über die serielle Schnittstelle durchführen."
+			},
+			"fr": {
+				"name": "Mise à jour WWW (OTA)",
+				"desc": "Outils->Mettre à jour. Vous permet de télécharger un micrologiciel plus récent via le site Web du module.",
+				"alertOff": "La désactivation de cette option empêchera la mise à jour du micrologiciel du module via le navigateur Web. Vous devrez mettre à niveau via le port série."
+			}
+		},
+		"SUPLA_ENABLE_GUI": {
+			"name": "Dostępne GUI podczas pracy modułu",
+			"desc": "Udostępnia GUI podczas normalnej pracy modułu. Gdy wyłączone, GUI dostępne tylko w trybie CONFIG.",
+			"alertOff": "Wyłączenie tej opcji uniemożliwi konfigurację modułu podczas normalnej pracy. GUI będzie dostępne tylko w trybie CONFIG.",
+			"defOn": true,
+			"en": {
+				"name": "Available GUI while module is running",
+				"desc": "Enables the GUI during normal module operation. When disabled, the GUI is only available in CONFIG mode.",
+				"alertOff": "Disabling this option will prevent module configuration during normal operation. GUI will be available only in CONFIG mode."
+			},
+			"es": {
+				"name": "GUI disponible mientras el módulo se está ejecutando",
+				"desc": "Habilita la GUI durante el funcionamiento normal del módulo. Cuando está deshabilitada, la GUI solo está disponible en el modo CONFIG.",
+				"alertOff": "Desactivar esta opción evitará la configuración del módulo durante el funcionamiento normal. La GUI estará disponible solo en el modo CONFIG."
+			},
+			"de": {
+				"name": "Verfügbare GUI während das Modul läuft",
+				"desc": "Aktiviert die GUI während des normalen Modulbetriebs. Wenn deaktiviert, ist die GUI nur im CONFIG-Modus verfügbar.",
+				"alertOff": "Durch Deaktivieren dieser Option wird die Modulkonfiguration während des normalen Betriebs verhindert. Die GUI ist nur im CONFIG-Modus verfügbar."
+			},
+			"fr": {
+				"name": "GUI disponible pendant l´exécution du module",
+				"desc": "Active l´interface graphique pendant le fonctionnement normal du module. Lorsqu´elle est désactivée, l´interface graphique n´est disponible qu´en mode CONFIG.",
+				"alertOff": "La désactivation de cette option empêchera la configuration du module pendant le fonctionnement normal. L´interface graphique ne sera disponible qu´en mode CONFIG."
+			}
+		},
+		"SUPLA_ENABLE_SSL": {
+			"name": "Szyfrowane połączenie z serwerem (SSL)",
+			"desc": "Wymusza połączenie modułu z serwerem przy użyciu SSL (port 2016). Uwaga, zwiększa zużycie pamięci przez firmware o 10KB.",
+			"alertOn": "Włączenie tej opcji spowoduje zwiększenie zużycia pamięci modułu o 10KB. Przy wielu innych włączonych opcjach może to być przyczyną niestabilnej pracy modułu z powodu niewystarczajacej ilości pamięci.",
+			"defOn": false,
+			"en": {
+				"name": "Encrypted connection to the server (SSL)",
+				"desc": "It forces the module to connect to the server using SSL (port 2016). Note, it increases the memory consumption of the firmware by 10KB.",
+				"alertOn": "Enabling this option will increase the memory consumption of the module by 10 KB. Enabling many other options may make the module unstable due to insufficient memory."
+			},
+			"es": {
+				"name": "Conexión encriptada al servidor (SSL)",
+				"desc": "Obliga al módulo a conectarse al servidor mediante SSL (puerto 2016). Tenga en cuenta que aumenta el consumo de memoria del firmware en 10 KB.",
+				"alertOn": "Habilitar esta opción aumentará el consumo de memoria del módulo en 10 KB. Habilitar muchas otras opciones puede hacer que el módulo sea inestable debido a la memoria insuficiente."
+			},
+			"de": {
+				"name": "Verschlüsselte Verbindung zum Server (SSL)",
+				"desc": "Das Modul wird gezwungen, über SSL eine Verbindung zum Server herzustellen (Port 2016). Beachten Sie, dass der Speicherverbrauch der Firmware um 10 KB erhöht wird.",
+				"alertOn": "Durch Aktivieren dieser Option wird der Speicherverbrauch des Moduls um 10 KB erhöht. Durch Aktivieren vieler anderer Optionen kann das Modul aufgrund unzureichenden Speichers instabil werden."
+			},
+			"fr": {
+				"name": "Connexion cryptée au serveur (SSL)",
+				"desc": "Il force le module à se connecter au serveur en utilisant SSL (port 2016). Notez que cela augmente la consommation de mémoire du micrologiciel de 10 KB.",
+				"alertOn": "L´activation de cette option augmentera la consommation de mémoire du module de 10 KB. L´activation de nombreuses autres options peut rendre le module instable en raison d´une mémoire insuffisante."
+			}
+		},
+		"SUPLA_DEEP_SLEEP": {
+			"name": "Tryb głębokiego uśpienia (Deep Sleep)",
+			"desc": "Tryb głębokiego uśpienia (Deep Sleep) umożliwia dłuższą pracę na baterii poprzez obniżenie zużycia energii kosztem rzadszej komunikacji WiFi.",
+			"defOn": false,
+			"en": {
+				"name": "Deep Sleep mode",
+				"desc": "Deep Sleep enables longer battery life by lowering power consumption at the expense of less WiFi communication."
+			},
+			"es": {
+				"name": "Modo de suspensión profunda (Deep Sleep)",
+				"desc": "Deep Sleep permite una mayor duración de la batería al reducir el consumo de energía a expensas de una menor comunicación WiFi."
+			},
+			"de": {
+				"name": "Tiefschlafmodus",
+				"desc": "Deep Sleep ermöglicht eine längere Akkulaufzeit, indem der Stromverbrauch auf Kosten einer geringeren WLAN-Kommunikation gesenkt wird."
+			},
+			"fr": {
+				"name": "Mode veille profonde (Deep Sleep)",
+				"desc": "La veille prolongée permet une plus longue durée de vie de la batterie en réduisant la consommation d´énergie au détriment de la communication WiFi."
+			}
+		}
+	},
+	"CONTROL": {
+		"SUPLA_RELAY": {
+			"name": "Przekaźniki",
+			"desc": "Ustawienia urządzenia->Przekaźniki. Umożliwia obsługę przekaźników.",
+			"defOn": false,
+			"depOn": [
+				"SUPLA_ROLLERSHUTTER",
+				"SUPLA_PUSHOVER",
+				"SUPLA_DIRECT_LINKS",
+				"SUPLA_LED"
+			],
+			"en": {
+				"name": "Relays",
+				"desc": "Device settings->Relays. It enables the operation of relays."
+			},
+			"es": {
+				"name": "Relés",
+				"desc": "Configuración del dispositivo->Relés. Permite el funcionamiento de relés."
+			},
+			"de": {
+				"name": "Relais",
+				"desc": "Geräteeinstellungen->Relais. Es ermöglicht den Betrieb von Relais."
+			},
+			"fr": {
+				"name": "Relais",
+				"desc": "Paramètres de l´appareil->Relais. Il permet le fonctionnement des relais."
+			}
+		},
+		"SUPLA_BUTTON": {
+			"name": "Przyciski",
+			"desc": "Ustawienia urządzenia->Przyciski. Umożliwia obsługę przycisków wraz z innymi funkcjonalnościami.",
+			"defOn": false,
+			"depOn": [
+				"SUPLA_ROLLERSHUTTER",
+				"SUPLA_RGBW"
+			],
+			"depOff": [
+				"SUPLA_RELAY",
+				"SUPLA_ROLLERSHUTTER",
+				"SUPLA_RGBW"
+			],
+			"en": {
+				"name": "Buttons",
+				"desc": "Device settings->Buttons. It allows the operation of buttons along with other functionalities."
+			},
+			"es": {
+				"name": "Botones",
+				"desc": "Configuración del dispositivo->Botones. Permite el funcionamiento de botones junto con otras funcionalidades."
+			},
+			"de": {
+				"name": "Tasten",
+				"desc": "Geräteeinstellungen->Tasten. Es ermöglicht die Bedienung von Tasten zusammen mit anderen Funktionen."
+			},
+			"fr": {
+				"name": "Boutons",
+				"desc": "Paramètres de l´appareil->Boutons. Il permet l´utilisation de boutons ainsi que d´autres fonctionnalités."
+			}
+		},
+		"SUPLA_ROLLERSHUTTER": {
+			"name": "Rolety",
+			"desc": "Ustawienia urządzenia->Rolety. Umożliwia obsługę rolet. Wymagana włączona obsługa przekaźników i przycisków.",
+			"defOn": false,
+			"en": {
+				"name": "Roller shutters",
+				"desc": "Device settings->Roller shutters. It enables the operation of roller shutters. Relays and buttons enabled."
+			},
+			"es": {
+				"name": "Persiana",
+				"desc": "Configuración del dispositivo->Persiana enrollable. Permite accionar las persianas enrollables con relés y pulsadores habilitados."
+			},
+			"de": {
+				"name": "Rollladen",
+				"desc": "Geräteeinstellungen->Rollladen. Hiermit können Sie Rollladenrelais und Tasten aktivieren."
+			},
+			"fr": {
+				"name": "Volet roulant",
+				"desc": "Paramètres de l´appareil->Volet roulant. Il vous permet de faire fonctionner les relais de volet roulant et les boutons activés."
+			}
+		},
+		"SUPLA_LIMIT_SWITCH": {
+			"name": "Krańcówki",
+			"desc": "Ustawienia urządzenia->Krańcówki. Umożliwia obsługę przełączników krańcowych.",
+			"defOn": false,
+			"en": {
+				"name": "Limit switches",
+				"desc": "Device settings->Limit switches. Enables the operation of limit switches."
+			},
+			"es": {
+				"name": "Finales de carrera",
+				"desc": "Configuración del dispositivo->Interruptores de límite. Habilita el funcionamiento de finales de carrera."
+			},
+			"de": {
+				"name": "Endschalter",
+				"desc": "Aktiviert den Betrieb von Endschaltern."
+			},
+			"fr": {
+				"name": "Interrupteurs de fin de course",
+				"desc": "Paramètres de l´appareil->Interrupteurs de fin de course. Permet le fonctionnement des interrupteurs de fin de course."
+			}
+		},
+		"SUPLA_LED": {
+			"name": "LED załączenia przekaźnika",
+			"desc": "Ustawienia urządzenia->LED. Umożliwia zmianę poziomu sygnału sterującego LED sygnalizującym załączenie przekaźnika.",
+			"defOn": false,
+			"en": {
+				"name": "LED for switching on the relay",
+				"desc": "Device settings->LED. It enables to change the level of the signal which controls the LED lighting which signals the relay activation."
+			},
+			"es": {
+				"name": "LED para encender el relé",
+				"desc": "Configuración del dispositivo->LED. Permite cambiar el nivel de la señal que controla la iluminación LED que señala la activación del relé."
+			},
+			"de": {
+				"name": "LED zum Einschalten des Relais",
+				"desc": "Geräteeinstellungen->LED. Es ermöglicht die Änderung des Signalpegels, der die LED-Beleuchtung steuert, die die Relaisaktivierung signalisiert."
+			},
+			"fr": {
+				"name": "LED pour allumer le relais",
+				"desc": "Paramètres de l´appareil->LED. Il permet de changer le niveau du signal qui commande l´éclairage LED qui signale l´activation du relais."
+			}
+		},
+		"SUPLA_PUSHOVER": {
+			"name": "Pushover",
+			"desc": "Umożliwia obsługę powiadomień przez Pushover.",
+			"defOn": false,
+			"en": {
+				"name": "Pushover",
+				"desc": "Enables pushover notification handling."
+			},
+			"es": {
+				"name": "Pushover",
+				"desc": "Habilita el manejo de notificaciones de fácil acceso."
+			},
+			"de": {
+				"name": "Pushover",
+				"desc": "Aktiviert die Pushover-Benachrichtigungsbehandlung."
+			},
+			"fr": {
+				"name": "Pushover",
+				"desc": "Active la gestion des notifications pushover."
+			}
+		},
+		"SUPLA_DIRECT_LINKS": {
+			"name": "Linki bezpośrednie",
+			"desc": "Umożliwia obsługę linków bezpośrednich.",
+			"defOn": false,
+			"en": {
+				"name": "Direct links",
+				"desc": "Enables support for direct links."
+			},
+			"es": {
+				"name": "Enlaces directos",
+				"desc": "Habilita el soporte para enlaces directos."
+			},
+			"de": {
+				"name": "Direkte Links",
+				"desc": "Geräteeinstellungen->Andere. Aktiviert die Unterstützung für direkte Links."
+			},
+			"fr": {
+				"name": "Liens directs",
+				"desc": "Active la prise en charge des liens directs."
+			}
+		}
+	},
+	"1WIRE": {
+		"SUPLA_DS18B20": {
+			"name": "Sensor DS18B20",
+			"desc": "Ustawienia urządzenia->1Wire. Umożliwia obsługę sensorów DS18B20.",
+			"defOn": false,
+			"en": {
+				"name": "DS18B20 sensor",
+				"desc": "Device settings->1Wire. It enables the support of DS18B20 sensors."
+			},
+			"es": {
+				"name": "Sensor DS18B20",
+				"desc": "Configuración del dispositivo->1Wire. Permite el soporte de sensores DS18B20."
+			},
+			"de": {
+				"name": "DS18B20 Sensor",
+				"desc": "Geräteeinstellungen->1Wire. Es ermöglicht die Unterstützung von DS18B20-Sensoren."
+			},
+			"fr": {
+				"name": "Capteur DS18B20",
+				"desc": "Paramètres de l´appareil->1Wire. Il permet la prise en charge des capteurs DS18B20."
+			}
+		},
+		"SUPLA_DHT11": {
+			"name": "Sensor DHT11",
+			"desc": "Ustawienia urządzenia->1Wire. Umożliwia obsługę sensorów DHT11.",
+			"defOn": false,
+			"en": {
+				"name": "DHT11 sensor",
+				"desc": "Device settings->1Wire. It enables the operation of DHT11 sensors."
+			},
+			"es": {
+				"name": "Sensor DHT11",
+				"desc": "Configuración del dispositivo->1Wire. Permite el funcionamiento de sensores DHT11."
+			},
+			"de": {
+				"name": "DHT11 Sensor",
+				"desc": "Geräteeinstellungen->1Wire. Es ermöglicht den Betrieb von DHT11-Sensoren."
+			},
+			"fr": {
+				"name": "Capteur DHT11",
+				"desc": "Paramètres de l´appareil->1Wire. Il permet le fonctionnement des capteurs DHT11."
+			}
+		},
+		"SUPLA_DHT22": {
+			"name": "Sensor DHT22",
+			"desc": "Ustawienia urządzenia->1Wire. Umożliwia obsługę sensorów DHT22.",
+			"defOn": false,
+			"en": {
+				"name": "DHT22 sensor",
+				"desc": "Device settings->1Wire. It enables the operation of DHT22 sensors."
+			},
+			"es": {
+				"name": "Sensor DHT22",
+				"desc": "Configuración del dispositivo->1Wire. Permite el funcionamiento de sensores DHT22."
+			},
+			"de": {
+				"name": "DHT22 Sensor",
+				"desc": "Geräteeinstellungen->1Wire. Es ermöglicht den Betrieb von DHT22-Sensoren."
+			},
+			"fr": {
+				"name": "Capteur DHT22",
+				"desc": "Paramètres de l´appareil->1Wire. Il permet le fonctionnement des capteurs DHT22."
+			}
+		},
+		"SUPLA_SI7021_SONOFF": {
+			"name": "Sensor Si7021 Sonoff",
+			"desc": "Ustawienia urządzenia->1Wire. Umożliwia obsługę sensorów Si7021 na płytkach SonOff.",
+			"defOn": false,
+			"en": {
+				"name": "Si7021 Sonoff sensor",
+				"desc": "Device settings->1Wire. Allows you to support Si7021 sensors on SonOff boards."
+			},
+			"es": {
+				"name": "Sensor Sonoff Si7021",
+				"desc": "Configuración del dispositivo->1Wire. Le permite admitir sensores Si7021 en placas SonOff."
+			},
+			"de": {
+				"name": "Si7021 Sonoff-Sensor",
+				"desc": "Geräteeinstellungen->1Wire. Ermöglicht die Unterstützung von Si7021-Sensoren auf SonOff-Karten."
+			},
+			"fr": {
+				"name": "Capteur Sonoff Si7021",
+				"desc": "Paramètres de l´appareil->1Wire. Vous permet de prendre en charge les capteurs Si7021 sur les cartes SonOff."
+			}
+		}
+	},
+	"I2C": {
+		"SUPLA_BME280": {
+			"name": "Sensor BME280",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę sensorów BME280.",
+			"defOn": false,
+			"en": {
+				"name": "BME280 sensor",
+				"desc": "Device settings->I2C. It enables the support of BME280 sensors."
+			},
+			"es": {
+				"name": "Sensor BME280",
+				"desc": "Configuración del dispositivo->I2C. Habilita el soporte de sensores BME280."
+			},
+			"de": {
+				"name": "BME280 Sensor",
+				"desc": "Geräteeinstellungen->I2C. Es ermöglicht die Unterstützung von BME280-Sensoren."
+			},
+			"fr": {
+				"name": "Capteur BME280",
+				"desc": "Paramètres de l´appareil->I2C. Il permet la prise en charge des capteurs BME280."
+			}
+		},
+		"SUPLA_BMP280": {
+			"name": "Sensor BMP280",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę sensorów BMP280.",
+			"defOn": false,
+			"en": {
+				"name": "BMP280 sensor",
+				"desc": "Device settings->I2C. It enables the support of BMP280 sensors."
+			},
+			"es": {
+				"name": "Sensor BMP280",
+				"desc": "Configuración del dispositivo->I2C. Habilita el soporte de sensores BMP280."
+			},
+			"de": {
+				"name": "BMP280 Sensor",
+				"desc": "Geräteeinstellungen->I2C. Es ermöglicht die Unterstützung von BMP280-Sensoren."
+			},
+			"fr": {
+				"name": "Capteur BMP280",
+				"desc": "Paramètres de l´appareil->I2C. Il permet la prise en charge des capteurs BMP280."
+			}
+		},
+		"SUPLA_SHT3x": {
+			"name": "Sensor SHT3x",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę sensorów serii SHT3x.",
+			"defOn": false,
+			"en": {
+				"name": "SHT3x sensor",
+				"desc": "Device settings->I2C. Supports SHT3x series sensors."
+			},
+			"es": {
+				"name": "Sensor SHT3x",
+				"desc": "Configuración del dispositivo->I2C. Admite sensores de la serie SHT3x."
+			},
+			"de": {
+				"name": "SHT3x Sensor",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt Sensoren der SHT3x-Serie."
+			},
+			"fr": {
+				"name": "Capteur SHT3x",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge les capteurs de la série SHT3x."
+			}
+		},
+		"SUPLA_SI7021": {
+			"name": "Sensor Si7021",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę sensorów Si7021.",
+			"defOn": false,
+			"en": {
+				"name": "Si7021 sensor",
+				"desc": "Device settings->I2C. Supports Si7021 sensors."
+			},
+			"es": {
+				"name": "Sensor Si7021",
+				"desc": "Configuración del dispositivo->I2C. Admite sensores Si7021."
+			},
+			"de": {
+				"name": "Si7021 Sensor",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt Si7021-Sensoren."
+			},
+			"fr": {
+				"name": "Capteur Si7021",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge les capteurs Si7021."
+			}
+		},
+		"SUPLA_OLED": {
+			"name": "Wyświetlacz OLED",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwoa obsługę wyświetlacza OLED.",
+			"defOn": false,
+			"en": {
+				"name": "OLED display",
+				"desc": "Device settings->I2C. It enables the operation of an OLED display."
+			},
+			"es": {
+				"name": "Pantalla OLED",
+				"desc": "Configuración del dispositivo->I2C. Permite el funcionamiento de una pantalla OLED."
+			},
+			"de": {
+				"name": "OLED-Anzeige",
+				"desc": "Geräteeinstellungen->I2C. Es ermöglicht den Betrieb eines OLED-Displays."
+			},
+			"fr": {
+				"name": "Écran OLED",
+				"desc": "Paramètres de l´appareil->I2C. Il permet le fonctionnement d´un écran OLED."
+			}
+		},
+		"SUPLA_MCP23017": {
+			"name": "Ekspander portów x16 MCP23017",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x16 MCP2317.",
+			"defOn": false,
+			"en": {
+				"name": "MCP23017 x16 port expander",
+				"desc": "Device settings->I2C. Supports MCP2317 x16 port expansion."
+			},
+			"es": {
+				"name": "Expansor de puerto MCP23017 x16",
+				"desc": "Configuración del dispositivo->I2C. Admite expansión de puertos MCP2317 x16."
+			},
+			"de": {
+				"name": "MCP23017 x16 Port Expander",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des MCP2317 x16-Ports."
+			},
+			"fr": {
+				"name": "Extension de port x16 MCP23017",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port MCP2317 x16."
+			}
+		}
+	},
+	"SPI": {
+		"SUPLA_MAX6675": {
+			"name": "Termopara MAX6675",
+			"desc": "Ustawienia urządzenia->SPI. Umożliwoa obsługę termopary MAX6675.",
+			"defOn": false,
+			"en": {
+				"name": "Thermocouple MAX6675",
+				"desc": "Device settings->SPI. Supports MAX6675 thermocouple."
+			},
+			"es": {
+				"name": "Termopar MAX6675",
+				"desc": "Configuración del dispositivo->SPI. Soporta termopar MAX6675."
+			},
+			"de": {
+				"name": "Thermoelement MAX6675",
+				"desc": "Geräteeinstellungen->SPI. Unterstützt das MAX6675-Thermoelement."
+			},
+			"fr": {
+				"name": "Thermocouple MAX6675",
+				"desc": "Paramètres de l´appareil->SPI. Prend en charge le thermocouple MAX6675."
+			}
+		}
+	},
+	"OTHER": {
+		"SUPLA_NTC_10K": {
+			"name": "Termistor NTC 10K",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę termistora NTC 10K.",
+			"defOn": false,
+			"en": {
+				"name": "NTC 10K thermistor",
+				"desc": "Device settings->Other. Supports the NTC 10K thermistor."
+			},
+			"es": {
+				"name": "Termistor NTC 10K",
+				"desc": "Configuración del dispositivo->Otro. Admite el termistor NTC 10K."
+			},
+			"de": {
+				"name": "NTC 10K Thermistor",
+				"desc": "Geräteeinstellungen->Andere. Unterstützt den NTC 10K Thermistor."
+			},
+			"fr": {
+				"name": "Thermistance NTC 10K",
+				"desc": "Paramètres de l´appareil->Autre. Prend en charge la thermistance NTC 10K."
+			}
+		},
+		"SUPLA_RGBW": {
+			"name": "RGBW, RGB, Dimmer",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę urządzeń RGBW, RGB i ściemniaczy.",
+			"defOn": false,
+			"en": {
+				"name": "RGBW, RGB, Dimmer",
+				"desc": "Device settings->Other. Enables support for RGBW, RGB devices and dimmers."
+			},
+			"es": {
+				"name": "RGBW, RGB, atenuador",
+				"desc": "Configuración del dispositivo->Otro. Permite la compatibilidad con reguladores y dispositivos RGBW, RGB."
+			},
+			"de": {
+				"name": "RGBW, RGB, Dimmer",
+				"desc": "Geräteeinstellungen->Andere. Aktiviert die Unterstützung für RGBW, RGB-Geräte und Dimmer."
+			},
+			"fr": {
+				"name": "RGBW, RGB, Gradateur",
+				"desc": "Paramètres de l´appareil->Autre. Active la prise en charge des périphériques RGBW, RGB et des gradateurs."
+			}
+		},
+		"SUPLA_HC_SR04": {
+			"name": "Czujnik odległości HC-SR04",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę czujnika odległości HC-SR04.",
+			"defOn": false,
+			"en": {
+				"name": "HC-SR04 distance sensor",
+				"desc": "Device settings->Other. Enables operation of the HC-SR04 distance sensor."
+			},
+			"es": {
+				"name": "Sensor de distancia HC-SR04",
+				"desc": "Configuración del dispositivo->Otro. Habilita el funcionamiento del sensor de distancia HC-SR04."
+			},
+			"de": {
+				"name": "HC-SR04 Abstandssensor",
+				"desc": "Geräteeinstellungen->Andere. Aktiviert den Betrieb des Abstandssensors HC-SR04."
+			},
+			"fr": {
+				"name": "Capteur de distance HC-SR04",
+				"desc": "Paramètres de l´appareil->Autre. Permet le fonctionnement du capteur de distance HC-SR04."
+			}
+		},
+		"SUPLA_MPX_5XXX": {
+			"name": "Czujnik ciśnienia MPX5xxx",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę czujnika ciśnienia z serii MPX5xxx.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "MPX5xxx pressure sensor",
+				"desc": "Device settings->Other. Enables operation of pressure sensor from MPX5xxx series."
+			},
+			"es": {
+				"name": "Sensor de presión MPX5xxx",
+				"desc": "Configuración del dispositivo-> Otro. Habilita el funcionamiento del sensor de presión de la serie MPX5xxx"
+			},
+			"de": {
+				"name": "MPX5xxx Drucksensor",
+				"desc": "Geräteeinstellungen-> Andere. Aktiviert den Betrieb der Drucksensorserie MPX5xxx."
+			},
+			"fr": {
+				"name": "capteur de pression MPX5xxx",
+				"desc": "Paramètres de l'appareil-> Autre. Permet le fonctionnement du capteur de pression série MPX5xxx."
+			}
+		},
+		"SUPLA_HLW8012": {
+			"name": "Licznik energii HLW8012",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę licznika energii HLW8012.",
+			"defOn": false,
+			"en": {
+				"name": "Energy meter HLW8012",
+				"desc": "Device settings->Other. It enables the operation of the energy meter HLW8012."
+			},
+			"es": {
+				"name": "Contador de energía HLW8012",
+				"desc": "Configuración del dispositivo->Otro. Permite el funcionamiento del contador de energía HLW8012."
+			},
+			"de": {
+				"name": "Energiezähler HLW8012",
+				"desc": "Geräteeinstellungen->Andere. Es ermöglicht den Betrieb des Energiezählers HLW8012."
+			},
+			"fr": {
+				"name": "Compteur d´énergie HLW8012",
+				"desc": "Paramètres de l´appareil->Autre. Il permet le fonctionnement du compteur d´énergie HLW8012."
+			}
+		},
+		"SUPLA_PZEM_V_3": {
+			"name": "Licznik energii PZEM V3",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę licznika energii PZEM V3.",
+			"defOn": false,
+			"en": {
+				"name": "Energy meter PZEM V3",
+				"desc": "Device settings->Other. It enables the operation of the energy meter PZEM V3."
+			},
+			"es": {
+				"name": "Contador de energía PZEM V3",
+				"desc": "Configuración del dispositivo->Otro. Permite el funcionamiento del contador de energía PZEM V3."
+			},
+			"de": {
+				"name": "Energiezähler PZEM V3",
+				"desc": "Geräteeinstellungen->Andere. Es ermöglicht den Betrieb des Energiezählers PZEM V3."
+			},
+			"fr": {
+				"name": "Compteur d´énergie PZEM V3",
+				"desc": "Paramètres de l´appareil->Autre. Il permet le fonctionnement du compteur d´énergie PZEM V3."
+			}
+		},
+		"SUPLA_CSE7766": {
+			"name": "Licznik energii CSE7766",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę licznika energii CSE7766.",
+			"defOn": false,
+			"en": {
+				"name": "Energy meter CSE7766",
+				"desc": "Device settings->Other. It enables the operation of the energy meter CSE7766."
+			},
+			"es": {
+				"name": "Contador de energía CSE7766",
+				"desc": "Configuración del dispositivo->Otro. Permite el funcionamiento del contador de energía CSE7766."
+			},
+			"de": {
+				"name": "Energiezähler CSE7766",
+				"desc": "Geräteeinstellungen->Andere. Es ermöglicht den Betrieb des Energiezählers CSE7766."
+			},
+			"fr": {
+				"name": "Compteur d´énergie CSE7766",
+				"desc": "Paramètres de l´appareil->Autre. Il permet le fonctionnement du compteur d´énergie CSE7766."
+			}
+		},
+		"SUPLA_IMPULSE_COUNTER": {
+			"name": "Licznik impulsów",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę licznika impulsów.",
+			"defOn": false,
+			"en": {
+				"name": "Pulse counter",
+				"desc": "Device settings->Other. It enables the operation of the pulse counter."
+			},
+			"es": {
+				"name": "Contador de pulsos",
+				"desc": "Configuración del dispositivo->Otro. Habilita el funcionamiento del contador de pulsos."
+			},
+			"de": {
+				"name": "Impulszähler",
+				"desc": "Geräteeinstellungen->Andere. Es ermöglicht den Betrieb des Impulszählers."
+			},
+			"fr": {
+				"name": "Compteur d´impulsions",
+				"desc": "Paramètres de l´appareil->Autre. Il permet le fonctionnement du compteur d´impulsions."
+			}
+		}
+	},
+	"SECTIONS": {
+		"BASIC": {
+			"pl": "Podstawowe",
+			"en": "Basic",
+			"es": "Básico",
+			"de": "Basic",
+			"fr": "De base"
+		},
+		"CONTROL": {
+			"pl": "Sterowanie",
+			"en": "Control",
+			"es": "Control",
+			"de": "Steuerung",
+			"fr": "Contrôler"
+		},
+		"1WIRE": {
+			"pl": "1Wire",
+			"en": "1Wire",
+			"es": "1Wire",
+			"de": "1Wire",
+			"fr": "1Wire"
+		},
+		"I2C": {
+			"pl": "I2C",
+			"en": "I2C",
+			"es": "I2C",
+			"de": "I2C",
+			"fr": "I2C"
+		},
+		"SPI": {
+			"pl": "SPI",
+			"en": "SPI",
+			"es": "SPI",
+			"de": "SPI",
+			"fr": "SPI"
+		},
+		"OTHER": {
+			"pl": "Inne",
+			"en": "Other",
+			"es": "Otro",
+			"de": "Andere",
+			"fr": "Autre"
+		},
+		"NEW": {
+			"pl": "Nowe",
+			"en": "New",
+			"es": "Nuevo",
+			"de": "Neu",
+			"fr": "Nouveau"
+		},
+		"TEST": {
+			"pl": "Testowe",
+			"en": "Test",
+			"es": "Prueba",
+			"de": "Prüfung",
+			"fr": "Test"
+		}
+	}
+}
