@@ -78,7 +78,7 @@ void handlePageHomeSave() {
   if (strcmp(WebServer->httpServer->arg(INPUT_EMAIL).c_str(), "") != 0)
     ConfigManager->set(KEY_SUPLA_EMAIL, WebServer->httpServer->arg(INPUT_EMAIL).c_str());
   if (strcmp(WebServer->httpServer->arg(INPUT_HOSTNAME).c_str(), "") != 0)
-    ConfigManager->set(KEY_SUPLA_EMAIL, WebServer->httpServer->arg(INPUT_HOSTNAME).c_str());
+    ConfigManager->set(KEY_HOST_NAME, WebServer->httpServer->arg(INPUT_HOSTNAME).c_str());
   if (strcmp(WebServer->httpServer->arg(INPUT_MODUL_LOGIN).c_str(), "") != 0)
     ConfigManager->set(KEY_LOGIN, WebServer->httpServer->arg(INPUT_MODUL_LOGIN).c_str());
   if (strcmp(WebServer->httpServer->arg(INPUT_MODUL_PASS).c_str(), "") != 0)
