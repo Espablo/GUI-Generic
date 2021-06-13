@@ -66,60 +66,60 @@ void SuplaWebServer::createWebServer() {
 }
 
 void SuplaWebServer::sendHeaderStart() {
-  chunkedSendHeader = true;
-  tcpCleanup();
-  httpServer->sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
-  httpServer->sendHeader(F("Pragma"), F("no-cache"));
-  httpServer->sendHeader(F("Expires"), F("-1"));
-  httpServer->setContentLength(CONTENT_LENGTH_UNKNOWN);
-  httpServer->chunkedResponseModeStart(200, F("text/html"));
+  if (!chunkedSendHeader) {
+    chunkedSendHeader = true;
+    tcpCleanup();
+    httpServer->sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
+    httpServer->sendHeader(F("Pragma"), F("no-cache"));
+    httpServer->sendHeader(F("Expires"), F("-1"));
+    httpServer->setContentLength(CONTENT_LENGTH_UNKNOWN);
+    httpServer->chunkedResponseModeStart(200, F("text/html"));
 
-  httpServer->sendContent_P(HTTP_META);
-  httpServer->sendContent_P(HTTP_FAVICON);
-  httpServer->sendContent_P(HTTP_STYLE);
-  httpServer->sendContent_P(HTTP_LOGO);
+    httpServer->sendContent_P(HTTP_META);
+    httpServer->sendContent_P(HTTP_FAVICON);
+    httpServer->sendContent_P(HTTP_STYLE);
+    httpServer->sendContent_P(HTTP_LOGO);
 
-  String summary = FPSTR(HTTP_SUMMARY);
+    String summary = FPSTR(HTTP_SUMMARY);
 
-  summary.replace(F("{h}"), ConfigManager->get(KEY_HOST_NAME)->getValue());
-  summary.replace(F("{s}"), ConfigESP->getLastStatusMessageSupla());
-  summary.replace(F("{v}"), Supla::Channel::reg_dev.SoftVer);
-  summary.replace(F("{g}"), ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
-  summary.replace(F("{m}"), ConfigESP->getMacAddress(true));
-  summary.replace(F("{f}"), String(ESP.getFreeHeap() / 1024.0));
+    summary.replace(F("{h}"), ConfigManager->get(KEY_HOST_NAME)->getValue());
+    summary.replace(F("{s}"), ConfigESP->getLastStatusMessageSupla());
+    summary.replace(F("{v}"), Supla::Channel::reg_dev.SoftVer);
+    summary.replace(F("{g}"), ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
+    summary.replace(F("{m}"), ConfigESP->getMacAddress(true));
+    summary.replace(F("{f}"), String(ESP.getFreeHeap() / 1024.0));
 
-  httpServer->sendContent(summary);
-  httpServer->sendContent_P(HTTP_COPYRIGHT);
+    httpServer->sendContent(summary);
+    httpServer->sendContent_P(HTTP_COPYRIGHT);
+  }
 }
 
 void SuplaWebServer::sendHeader() {
-  if (!chunkedSendHeader)
-    return;
-
-  if (!webContentBuffer.isEmpty()) {
-    httpServer->sendContent(webContentBuffer);
-    webContentBuffer.clear();
-    webContentBuffer = String();
-    delay(0);
+  if (chunkedSendHeader) {
+    if (!webContentBuffer.isEmpty()) {
+      httpServer->sendContent(webContentBuffer);
+      webContentBuffer.clear();
+      webContentBuffer = String();
+      delay(0);
+    }
   }
 }
 
 void SuplaWebServer::sendHeaderEnd() {
-  if (!chunkedSendHeader)
-    return;
+  if (chunkedSendHeader) {
+    sendHeader();
+    httpServer->sendContent_P(HTTP_RBT);
+    httpServer->chunkedResponseFinalize();
 
-  sendHeader();
-  httpServer->sendContent_P(HTTP_RBT);
-  httpServer->chunkedResponseFinalize();
-
-  tcpCleanup();
-  httpServer->client().flush();
-  httpServer->client().stop();
-  chunkedSendHeader = false;
+    tcpCleanup();
+    httpServer->client().flush();
+    httpServer->client().stop();
+    chunkedSendHeader = false;
 
 #ifdef DEBUG_MODE
-  checkRAM();
+    checkRAM();
 #endif
+  }
 }
 
 void SuplaWebServer::sendContent() {
@@ -129,8 +129,8 @@ void SuplaWebServer::sendContent() {
 }
 
 void SuplaWebServer::handleNotFound() {
-  //httpServer->sendHeader("Location", PATH_START, true);
-  //handlePageHome(2);
+  // httpServer->sendHeader("Location", PATH_START, true);
+  // handlePageHome(2);
   ConfigESP->rebootESP();
 }
 

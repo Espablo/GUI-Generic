@@ -17,13 +17,11 @@
 #include "SuplaConfigManager.h"
 #include <supla/network/SuplaGuiWiFi.h>
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)
 #define TIME_SAVE_PERIOD_SEK                 30   // the time is given in seconds
 #define TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK 600  // 10min
 #define STORAGE_OFFSET                       0
 #include <supla/storage/eeprom.h>
 Supla::Eeprom eeprom(STORAGE_OFFSET);
-#endif
 
 Supla::GUIESPWifi *wifi = nullptr;
 
@@ -328,36 +326,6 @@ void addRGBWLeds(uint8_t nr) {
 }
 #endif
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER)
-std::vector<Supla::Control::Relay *> relay;
-#endif
-
-#ifdef SUPLA_DS18B20
-std::vector<DS18B20 *> sensorDS;
-#endif
-
-#ifdef SUPLA_HLW8012
-Supla::Sensor::HLW_8012 *counterHLW8012 = nullptr;
-
-void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
-  if (counterHLW8012 == NULL && pinCF != OFF_GPIO && pinCF1 != OFF_GPIO && pinSEL != OFF_GPIO) {
-    counterHLW8012 = new Supla::Sensor::HLW_8012(pinCF, pinCF1, pinSEL);
-  }
-  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
-}
-#endif
-
-#ifdef SUPLA_CSE7766
-Supla::Sensor::CSE_7766 *counterCSE7766 = nullptr;
-
-void addCSE7766(int8_t pinRX) {
-  if (counterCSE7766 == NULL && pinRX != OFF_GPIO) {
-    counterCSE7766 = new Supla::Sensor::CSE_7766(pinRX);
-  }
-  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
-}
-#endif
-
 void addConditionsTurnON(int function, Supla::ChannelElement *client) {
 #if defined(SUPLA_RELAY)
   if (Supla::GUI::relay.size() == 0)
@@ -448,6 +416,40 @@ void addCorrectionSensor() {
     }
   }
 }
+
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER)
+std::vector<Supla::Control::Relay *> relay;
+#endif
+
+#ifdef SUPLA_DS18B20
+std::vector<DS18B20 *> sensorDS;
+#endif
+
+#ifdef SUPLA_HLW8012
+Supla::Sensor::HLW_8012 *counterHLW8012 = nullptr;
+
+void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
+  if (counterHLW8012 == NULL && pinCF != OFF_GPIO && pinCF1 != OFF_GPIO && pinSEL != OFF_GPIO) {
+    counterHLW8012 = new Supla::Sensor::HLW_8012(pinCF, pinCF1, pinSEL);
+  }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
+
+#ifdef SUPLA_CSE7766
+Supla::Sensor::CSE_7766 *counterCSE7766 = nullptr;
+
+void addCSE7766(int8_t pinRX) {
+  if (counterCSE7766 == NULL && pinRX != OFF_GPIO) {
+    counterCSE7766 = new Supla::Sensor::CSE_7766(pinRX);
+  }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
+
+#ifdef SUPLA_MPX_5XXX
+Supla::Sensor::MPX_5XXX *mpx = nullptr;
+#endif
 
 }  // namespace GUI
 }  // namespace Supla

@@ -52,6 +52,10 @@ class CSE_7766 : public OnePhaseElectricityMeter {
   static CSE7766 *sensor;
   int8_t pinRX;
 
+  double currentMultiplier;
+  double voltageMultiplier;
+  double powerMultiplier;
+
   unsigned _supla_int64_t energy = 0;
   unsigned _supla_int64_t _energy =
       0;  // energy value read from memory at startup

@@ -17,7 +17,7 @@ void createWebPageRelay() {
     if (!WebServer->isLoggedIn()) {
       return;
     }
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+    if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
 #ifdef SUPLA_MCP23017
       if (WebServer->httpServer->method() == HTTP_GET)
         handleRelaySetMCP23017();
@@ -40,7 +40,7 @@ void handleRelaySave() {
   uint8_t nr;
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+    if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
       if (!WebServer->saveGpioMCP23017(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr, INPUT_MAX_RELAY)) {
         handleRelay(6);
         return;
@@ -79,7 +79,7 @@ void handleRelay(int save) {
   addForm(webContentBuffer, F("post"), PATH_RELAY);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_RELAYS);
 
-  if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+  if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
     countFreeGpio = 32;
   }
   else {
@@ -89,7 +89,7 @@ void handleRelay(int save) {
   addNumberBox(webContentBuffer, INPUT_MAX_RELAY, S_QUANTITY, KEY_MAX_RELAY, countFreeGpio);
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF) {
+    if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
       addListMCP23017GPIOBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, nr, PATH_RELAY_SET);
     }
     else {

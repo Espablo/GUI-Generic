@@ -19,10 +19,13 @@
 #include <supla/sensor/PzemV3.h>
 #include <supla/sensor/three_phase_PzemV3.h>
 #endif
+#ifdef SUPLA_DEEP_SLEEP
+#include <supla/control/deepSleep.h>
+#endif
 
-#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
-#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
-DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
+//#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
+//#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
+// DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 void setup() {
   Serial.begin(74880);
@@ -33,10 +36,10 @@ void setup() {
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
 
-  if (drd.detectDoubleReset()) {
-    drd.stop();
-    ConfigESP->factoryReset();
-  }
+  // if (drd.detectDoubleReset()) {
+  //   drd.stop();
+  //   ConfigESP->factoryReset();
+  // }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
@@ -142,6 +145,14 @@ void setup() {
     auto ntc10k = new Supla::Sensor::NTC10K(A0);
     Supla::GUI::addConditionsTurnON(SENSOR_NTC_10K, ntc10k);
     Supla::GUI::addConditionsTurnOFF(SENSOR_NTC_10K, ntc10k);
+  }
+#endif
+
+#ifdef SUPLA_MPX_5XXX
+  if (ConfigESP->getGpio(FUNCTION_MPX_5XXX) != OFF_GPIO) {
+    Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(A0);
+    Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX, Supla::GUI::mpx);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX, Supla::GUI::mpx);
   }
 #endif
 
@@ -281,7 +292,8 @@ void setup() {
 
       for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
         gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-        mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), ConfigESP->getInversed(gpio));
+        if (gpio != OFF_GPIO)
+          mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), false);
       }
 
       Wire.setClock(400000);
@@ -294,6 +306,12 @@ void setup() {
   new Supla::Sensor::EspFreeHeap();
 #endif
 
+#ifdef SUPLA_DEEP_SLEEP
+  if (ConfigManager->get(KEY_DEEP_SLEEP_TIME)->getValueInt() > 0) {
+    new Supla::Control::DeepSleep(ConfigManager->get(KEY_DEEP_SLEEP_TIME)->getValueInt() * 60, 30);
+  }
+#endif
+
   Supla::GUI::begin();
 
   Supla::GUI::addCorrectionSensor();
@@ -304,5 +322,5 @@ void setup() {
 void loop() {
   SuplaDevice.iterate();
   delay(25);
-  drd.loop();
+  // drd.loop();
 }

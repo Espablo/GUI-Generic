@@ -193,10 +193,10 @@ void handleSensorI2cSave() {
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, WebServer->httpServer->arg(input).toInt());
 
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-      ConfigESP->clearFunctionGpio(FUNCTION_RELAY);
-      ConfigESP->clearFunctionGpio(FUNCTION_BUTTON);
-    }
+    // if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
+    //   ConfigESP->clearFunctionGpio(FUNCTION_RELAY);
+    //   ConfigESP->clearFunctionGpio(FUNCTION_BUTTON);
+    // }
   }
 #endif
 

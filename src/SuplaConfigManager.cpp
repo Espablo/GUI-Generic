@@ -205,6 +205,8 @@ SuplaConfigManager::SuplaConfigManager() {
 
   this->addKey(KEY_OLED_BACK_LIGHT, "20", 2);
 
+  this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3);
+
   switch (this->load()) {
     case E_CONFIG_OK:
       Serial.println(F("Config read"));

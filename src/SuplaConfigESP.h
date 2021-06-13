@@ -118,6 +118,8 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, uint8_t function);
   void clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function);
   void clearFunctionGpio(uint8_t function);
+
+  bool checkActiveMCP23017(uint8_t function);
   uint8_t getFunctionMCP23017(uint8_t adress);
   uint8_t getNrMCP23017(uint8_t adress);
   void configModeInit();

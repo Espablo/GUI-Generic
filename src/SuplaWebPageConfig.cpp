@@ -29,9 +29,18 @@ void handleConfigSave() {
     return;
   }
 
-  ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer->arg(INPUT_CFG_MODE).c_str());
-  ConfigManager->set(KEY_ENABLE_SSL, WebServer->httpServer->arg(INPUT_CFG_SSL).c_str());
-  ConfigManager->set(KEY_ENABLE_GUI, WebServer->httpServer->arg(INPUT_CFG_AVAILABLE_GUI).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_CFG_MODE).c_str(), "") != 0)
+    ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer->arg(INPUT_CFG_MODE).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_CFG_SSL).c_str(), "") != 0)
+    ConfigManager->set(KEY_ENABLE_SSL, WebServer->httpServer->arg(INPUT_CFG_SSL).c_str());
+  if (strcmp(WebServer->httpServer->arg(INPUT_CFG_AVAILABLE_GUI).c_str(), "") != 0)
+    ConfigManager->set(KEY_ENABLE_GUI, WebServer->httpServer->arg(INPUT_CFG_AVAILABLE_GUI).c_str());
+
+#ifdef SUPLA_DEEP_SLEEP
+  if (strcmp(WebServer->httpServer->arg(INPUT_DEEP_SLEEP_TIME).c_str(), "") != 0)
+    ConfigManager->set(KEY_DEEP_SLEEP_TIME, WebServer->httpServer->arg(INPUT_DEEP_SLEEP_TIME).c_str());
+
+#endif
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -73,6 +82,12 @@ void handleConfig(int save) {
   selected = ConfigManager->get(KEY_ENABLE_GUI)->getValueInt();
   addListBox(webContentBuffer, INPUT_CFG_AVAILABLE_GUI, F("GUI"), STATE_P, 2, selected);
   addFormHeaderEnd(webContentBuffer);
+
+#ifdef SUPLA_DEEP_SLEEP
+  addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + "uśpienia");
+  addNumberBox(webContentBuffer, INPUT_DEEP_SLEEP_TIME, F("Czas uśpienia[min]"), KEY_DEEP_SLEEP_TIME, 999);
+  addFormHeaderEnd(webContentBuffer);
+#endif
 
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
