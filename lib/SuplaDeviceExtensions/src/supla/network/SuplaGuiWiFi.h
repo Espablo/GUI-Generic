@@ -12,61 +12,6 @@ class GUIESPWifi : public Supla::ESPWifi {
       : ESPWifi(wifiSsid, wifiPassword) {
   }
 
-  int connect(const char *server, int port = -1) {
-    String message;
-    if (client == NULL) {
-      if (isSecured) {
-        message = "Secured connection";
-        client = new WiFiClientSecure();
-        if (fingerprint.length() > 0) {
-          message += " with certificate matching";
-#ifdef ARDUINO_ARCH_ESP8266
-          ((WiFiClientSecure *)client)->setFingerprint(fingerprint.c_str());
-#else
-          message += " - NOT SUPPORTED ON ESP32 implmentation";
-#endif
-        } else {
-          message += " without certificate matching";
-#ifdef ARDUINO_ARCH_ESP8266
-          ((WiFiClientSecure *)client)->setInsecure();
-#else
-          message += " - NOT SUPPORTED ON ESP32 implmentation";
-#endif
-        }
-      } else {
-        message = "unsecured connection";
-        client = new WiFiClient();
-      }
-
-      if (isBuffer) {
-        ((WiFiClientSecure *)client)->setBufferSizes(256, 256);  // EXPERIMENTAL
-      }
-    }
-
-    int connectionPort = (isSecured ? 2016 : 2015);
-    if (port != -1) {
-      connectionPort = port;
-    }
-
-    supla_log(LOG_DEBUG,
-              "Establishing %s with: %s (port: %d)",
-              message.c_str(),
-              server,
-              connectionPort);
-
-    bool result = client->connect(server, connectionPort);
-
-    if (result && isSecured) {
-      if (!((WiFiClientSecure *)client)->verify(fingerprint.c_str(), server)) {
-        supla_log(LOG_DEBUG, "Provided certificates doesn't match!");
-        client->stop();
-        return false;
-      }
-    };
-
-    return result;
-  }
-
   void setup() {
     if (!wifiConfigured) {
       wifiConfigured = true;
@@ -138,10 +83,6 @@ class GUIESPWifi : public Supla::ESPWifi {
     delay(0);
   }
 
-  void enableBuffer(bool value) {
-    isBuffer = value;
-  }
-
   void setHostName(const char *wifiHostname) {
     if (wifiHostname) {
       strncpy(hostname, wifiHostname, MAX_HOSTNAME);
@@ -158,7 +99,6 @@ class GUIESPWifi : public Supla::ESPWifi {
   }
 
  protected:
-  bool isBuffer;
   char hostname[MAX_HOSTNAME];
 };
 };      // namespace Supla
