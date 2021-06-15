@@ -61,7 +61,6 @@ void setupWifi() {
   }
 
   wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
-  wifi->enableBuffer(true);
 
   String suplaHostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
   suplaHostname.replace(" ", "_");
