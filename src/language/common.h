@@ -29,6 +29,8 @@
 #define S_NTC_10K          "NTC 10K 3.3v"
 #define S_PUSHOVER         "Pushover"
 #define S_MPX_5XXX         "MPX 5XXX"
+#define S_MPX_5XXX_PERCENT "MPX 5XXX - chanel[%]"
+
 //### PIN codes not translated ###
 #define S_D0  "D0"
 #define S_SDA "SDA"

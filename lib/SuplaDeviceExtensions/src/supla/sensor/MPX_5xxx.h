@@ -10,13 +10,12 @@
 
 namespace Supla {
 namespace Sensor {
-class MPX_5XXX : public DistanceHumidityMeter {
+class MPX_5XXX : public Distance {
  public:
   MPX_5XXX(uint8_t pin);
 
   void onInit();
   virtual double getValue();
-  virtual double getHumi();
   void iterateAlways();
   void onSaveState();
   void onLoadState();

@@ -25,6 +25,9 @@ class Percentage : public ChannelElement {
   int16_t getMinValue();
   int16_t getMaxValue();
 
+  double mapDouble(
+      double x, double in_min, double in_max, double out_min, double out_max);
+
  protected:
   unsigned long lastReadTime;
   bool useAlternativeMeasurement;

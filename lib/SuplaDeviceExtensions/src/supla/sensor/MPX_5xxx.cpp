@@ -13,25 +13,23 @@ MPX_5XXX::MPX_5XXX(uint8_t pin)
 
 void MPX_5XXX::onInit() {
   channel.setNewValue(getValue());
-  humidityChannel.setNewValue(getHumi());
 }
 
 double MPX_5XXX::getValue() {
-  if (_thankHeight == 0) return DISTANCE_NOT_AVAILABLE;
+  double value;
 
-  long value = map(sensorValue, _emptyValue, _fullValue, 0, _thankHeight);
-  value = constrain(value, 0, _thankHeight);
+  if (_emptyValue == _fullValue) return DISTANCE_NOT_AVAILABLE;
 
-  return static_cast<double>(value) / 100.00;
-}
+  if (_thankHeight != 0) {
+    value = map(sensorValue, _emptyValue, _fullValue, 0, _thankHeight);
+    value = constrain(value, 0, _thankHeight);
+    value = value * 0.01;
+  } else {
+    value = map(sensorValue, _emptyValue, _fullValue, 0, 100);
+    value = constrain(value, 0, 100);
+  }
 
-double MPX_5XXX::getHumi() {
-  if (_thankHeight == 0) return DISTANCE_NOT_AVAILABLE;
-
-  long value = map(sensorValue, _emptyValue, _fullValue, 0, 100);
-  value = constrain(value, 0, 100);
-
-  return static_cast<double>(value);
+  return value;
 }
 
 void MPX_5XXX::iterateAlways() {
@@ -41,7 +39,6 @@ void MPX_5XXX::iterateAlways() {
     sensorValue = readValuesFromDevice();
 
     channel.setNewValue(getValue());
-    humidityChannel.setNewValue(0, getHumi());
   }
 }
 

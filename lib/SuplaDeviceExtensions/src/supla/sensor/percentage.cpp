@@ -57,12 +57,13 @@ double Percentage::getValue() {
       break;
     default:
       return HUMIDITY_NOT_AVAILABLE;
-
-      double value = map(value, _minValue, _maxValue, 0, 100);
-      value = constrain(value, 0, 100);
-
-      return static_cast<double>(value);
+      break;
   }
+
+  value = mapDouble(value, _minValue, _maxValue, 0, 100);
+  value = constrain(value, 0, 100);
+
+  return value;
 }
 
 void Percentage::setMinValue(int16_t minValue) {
@@ -81,10 +82,15 @@ int16_t Percentage::getMaxValue() {
 }
 
 void Percentage::iterateAlways() {
-  if (millis() - lastReadTime > 10000) {
+  if (millis() - lastReadTime > 1000) {
     lastReadTime = millis();
     channel.setNewValue(0, getValue());
   }
+}
+
+double Percentage::mapDouble(
+    double x, double in_min, double in_max, double out_min, double out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 }  // namespace Sensor
