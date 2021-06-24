@@ -158,6 +158,14 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_ANALOG_READING_MAP
+  if (ConfigESP->getGpio(FUNCTION_ANALOG_READING) != OFF_GPIO) {
+    Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap(A0);
+    Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
+  }
+#endif
+
 #ifdef SUPLA_RGBW
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     Supla::GUI::addRGBWLeds(nr);

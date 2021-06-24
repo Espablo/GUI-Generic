@@ -121,6 +121,10 @@
 
 #include <supla/correction.h>
 
+#ifdef SUPLA_ANALOG_READING_MAP
+#include <supla/sensor/AnalogReadingMap.h>
+#endif
+
 namespace Supla {
 namespace GUI {
 
@@ -174,6 +178,10 @@ void addCSE7766(int8_t pinRX);
 
 #ifdef SUPLA_MPX_5XXX
 extern Supla::Sensor::MPX_5XXX *mpx;
+#endif
+
+#ifdef SUPLA_ANALOG_READING_MAP
+extern Supla::Sensor::AnalogRedingMap *analog;
 #endif
 
 };  // namespace GUI
