@@ -377,8 +377,11 @@ uint8_t SuplaConfigManager::save() {
     if (configFile) {
       uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
       for (i = 0; i < _optionCount; i++) {
-        Serial.printf_P(PSTR("Save key=%d"), _options[i]->getKey());
-        Serial.printf_P(PSTR(" value=%s\n"), _options[i]->getValue());
+        Serial.print(F("Save key: "));
+        Serial.print(_options[i]->getKey());
+        Serial.print(F(" Value: "));
+        Serial.println(_options[i]->getValue());
+
         memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
         offset += _options[i]->getLength();
         delay(0);
@@ -400,9 +403,12 @@ uint8_t SuplaConfigManager::save() {
 
 void SuplaConfigManager::showAllValue() {
   for (int i = 0; i < _optionCount; i++) {
-    // Serial.println("Key: " + String(_options[i]->getKey()) + " Value: " + String(_options[i]->getValue()));
-    Serial.printf_P(PSTR("Key=%d"), _options[i]->getKey());
-    Serial.printf_P(PSTR(" value=%s\n"), _options[i]->getValue());
+    Serial.print(F("Key: "));
+    Serial.print(_options[i]->getKey());
+    Serial.print(F(" Value: "));
+    Serial.println(_options[i]->getValue());
+    // Serial.printf_P(PSTR("Key=%d"), _options[i]->getKey());
+    // Serial.printf_P(PSTR(" value=%s\n"), _options[i]->getValue());
   }
 }
 
