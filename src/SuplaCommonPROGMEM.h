@@ -274,9 +274,14 @@ enum sensorList
 #endif
 #ifdef SUPLA_MPX_5XXX
   ,
-  SENSOR_MPX_5XXX
+  SENSOR_MPX_5XXX,
+  SENSOR_MPX_5XXX_PERCENT,
 #endif
-  ,
+
+#ifdef SUPLA_ANALOG_READING_MAP
+  SENSOR_ANALOG_READING_MAP,
+#endif
+
   COUNT_SENSOR_LIST
 };
 
@@ -315,56 +320,64 @@ const char NAME_BMP280[] PROGMEM = S_BMP280;
 #endif
 #ifdef SUPLA_MPX_5XXX
 const char NAME_SENSOR_MPX_5XXX[] PROGMEM = S_MPX_5XXX;
+const char NAME_SENSOR_MPX_5XXX_PERCENT[] PROGMEM = S_MPX_5XXX_PERCENT;
 #endif
 
-const char* const SENSOR_LIST_P[] PROGMEM = {OFF
+const char* const SENSOR_LIST_P[] PROGMEM = {
+    OFF
 #ifdef SUPLA_DS18B20
-                                             ,
-                                             NAME_DS18B20
+    ,
+    NAME_DS18B20
 #endif
 #ifdef SUPLA_DHT11
-                                             ,
-                                             NAME_DHT11
+    ,
+    NAME_DHT11
 #endif
 #ifdef SUPLA_DHT22
-                                             ,
-                                             NAME_DHT22
+    ,
+    NAME_DHT22
 #endif
 #ifdef SUPLA_SI7021_SONOFF
-                                             ,
-                                             NAME_SI7021_SONOFF
+    ,
+    NAME_SI7021_SONOFF
 #endif
 #ifdef SUPLA_HC_SR04
-                                             ,
-                                             NAME_HC_SR04
+    ,
+    NAME_HC_SR04
 #endif
 #ifdef SUPLA_BME280
-                                             ,
-                                             NAME_BME280
+    ,
+    NAME_BME280
 #endif
 #ifdef SUPLA_SHT3x
-                                             ,
-                                             NAME_SHT3x
+    ,
+    NAME_SHT3x
 #endif
 #ifdef SUPLA_SI7021
-                                             ,
-                                             NAME_SI7021
+    ,
+    NAME_SI7021
 #endif
 #ifdef SUPLA_MAX6675
-                                             ,
-                                             NAME_MAX6675
+    ,
+    NAME_MAX6675
 #endif
 #ifdef SUPLA_NTC_10K
-                                             ,
-                                             NAME_NTC_10K
+    ,
+    NAME_NTC_10K
 #endif
 #ifdef SUPLA_BMP280
-                                             ,
-                                             NAME_BMP280
+    ,
+    NAME_BMP280
 #endif
 #ifdef SUPLA_MPX_5XXX
-                                             ,
-                                             NAME_SENSOR_MPX_5XXX
+    ,
+    NAME_SENSOR_MPX_5XXX,
+    NAME_SENSOR_MPX_5XXX_PERCENT
+#endif
+
+#ifdef SUPLA_ANALOG_READING_MAP
+    ,
+    "ANALOG READING",
 #endif
 };
 

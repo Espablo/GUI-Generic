@@ -157,6 +157,7 @@ enum _function
   FUNCTION_PZEM_TX,
   FUNCTION_CSE7766_RX,
   FUNCTION_MPX_5XXX,
+  FUNCTION_ANALOG_READING
 };
 
 enum _e_onfig

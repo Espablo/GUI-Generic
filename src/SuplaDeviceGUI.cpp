@@ -450,6 +450,10 @@ void addCSE7766(int8_t pinRX) {
 Supla::Sensor::MPX_5XXX *mpx = nullptr;
 #endif
 
+#ifdef SUPLA_ANALOG_READING_MAP
+Supla::Sensor::AnalogRedingMap *analog = nullptr;
+#endif
+
 }  // namespace GUI
 }  // namespace Supla
 

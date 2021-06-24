@@ -30,8 +30,7 @@ static const char serverIndex[] PROGMEM =
      </body>
      </html>)";
 static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='10'>{m}";
-static const char twoStepResponse[] PROGMEM =
-    "<META http-equiv='refresh' content='5'><b>{w}</b> {o} GUI-GenericUpdater.bin";
+static const char twoStepResponse[] PROGMEM = "<META http-equiv='refresh' content='5'><b>{w}</b> {o} GUI-GenericUpdater.bin";
 
 ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
@@ -79,7 +78,7 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
           String succes = FPSTR(successResponse);
           succes.replace("{m}", S_UPDATE_SUCCESS_REBOOTING);
           _server->client().setNoDelay(true);
-          _server->send_P(200, PSTR("text/html"), succes.c_str());
+          _server->send(200, F("text/html"), succes.c_str());
           delay(100);
           _server->client().stop();
           ESP.restart();
@@ -124,10 +123,10 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
           if (_serial_output)
             Serial.printf(".");
           if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
-        	String twoStep = FPSTR(twoStepResponse);
-        	twoStep.replace("{w}", S_WARNING);
-        	twoStep.replace("{o}", S_ONLY_2_STEP_OTA);
-            _server->send_P(200, PSTR("text/html"), twoStep.c_str());
+            String twoStep = FPSTR(twoStepResponse);
+            twoStep.replace("{w}", S_WARNING);
+            twoStep.replace("{o}", S_ONLY_2_STEP_OTA);
+            _server->send(200, F("text/html"), twoStep.c_str());
 
             _setUpdaterError();
           }

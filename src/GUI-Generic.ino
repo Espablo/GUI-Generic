@@ -23,6 +23,8 @@
 #include <supla/control/deepSleep.h>
 #endif
 
+#include <supla/sensor/percentage.h>
+
 //#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 //#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
 // DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
@@ -153,6 +155,14 @@ void setup() {
     Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(A0);
     Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX, Supla::GUI::mpx);
     Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX, Supla::GUI::mpx);
+  }
+#endif
+
+#ifdef SUPLA_ANALOG_READING_MAP
+  if (ConfigESP->getGpio(FUNCTION_ANALOG_READING) != OFF_GPIO) {
+    Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap(A0);
+    Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
   }
 #endif
 
@@ -313,6 +323,22 @@ void setup() {
 #endif
 
   Supla::GUI::begin();
+
+#ifdef SUPLA_MPX_5XXX
+  if (ConfigESP->getGpio(FUNCTION_MPX_5XXX) != OFF_GPIO) {
+    Supla::Sensor::Percentage *mpxPercent;
+
+    if (Supla::GUI::mpx->getThankHeight() != 0) {
+      mpxPercent = new Supla::Sensor::Percentage(Supla::GUI::mpx, 0, Supla::GUI::mpx->getThankHeight() * 0.01);
+    }
+    else {
+      mpxPercent = new Supla::Sensor::Percentage(Supla::GUI::mpx, 0, 100);
+    }
+
+    Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX_PERCENT, mpxPercent);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX_PERCENT, mpxPercent);
+  }
+#endif
 
   Supla::GUI::addCorrectionSensor();
 
