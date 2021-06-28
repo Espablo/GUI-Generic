@@ -163,7 +163,6 @@ void chooseTemplateBoard(uint8_t board) {
       addButtonCFG(0);
       addButton(0);
       addRelay(12);
-      ConfigESP->setGpio(14, FUNCTION_SI7021_SONOFF);
       break;
     case BOARD_SONOFF_SV:
       addLedCFG(13);
