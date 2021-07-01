@@ -16,6 +16,7 @@
 
 #ifndef SuplaDeviceGUI_h
 #define SuplaDeviceGUI_h
+
 //#include <DoubleResetDetector.h>
 #include <SPI.h>
 
@@ -123,6 +124,10 @@
 
 #ifdef SUPLA_ANALOG_READING_MAP
 #include <supla/sensor/AnalogReadingMap.h>
+#endif
+
+#ifdef SUPLA_VL53L0X
+#include <supla/sensor/VL_53L0X.h>
 #endif
 
 namespace Supla {

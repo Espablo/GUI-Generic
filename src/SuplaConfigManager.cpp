@@ -143,83 +143,83 @@ SuplaConfigManager::SuplaConfigManager() {
     //    Serial.println(F("\nSPIFFS mounted"));
     //  } else {
     //    Serial.println(F("\nFailed to mount SPIFFS"));
-  }
-  _optionCount = 0;
+    _optionCount = 0;
 
-  this->addKey(KEY_SUPLA_GUID, MAX_GUID);
-  this->addKey(KEY_SUPLA_AUTHKEY, MAX_AUTHKEY);
-  this->addKey(KEY_WIFI_SSID, MAX_SSID);
-  this->addKey(KEY_WIFI_PASS, MAX_PASSWORD);
-  this->addKey(KEY_LOGIN, MAX_MLOGIN);
-  this->addKey(KEY_LOGIN_PASS, MAX_MPASSWORD);
-  this->addKey(KEY_HOST_NAME, DEFAULT_HOSTNAME, MAX_HOSTNAME);
-  this->addKey(KEY_SUPLA_SERVER, DEFAULT_SERVER, MAX_SUPLA_SERVER);
-  this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL, MAX_EMAIL);
-  this->addKey(KEY_MAX_RELAY, "0", 2);
-  this->addKey(KEY_MAX_BUTTON, "0", 2);
-  this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
-  this->addKey(KEY_MAX_DHT22, "1", 2);
-  this->addKey(KEY_MAX_DHT11, "1", 2);
-  this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
-  this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
-  this->addKey(KEY_ALTITUDE_BMX280, "0", 4);
-  this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
-  this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
-  this->addKey(KEY_ACTIVE_SENSOR, 16);
-  this->addKey(KEY_BOARD, 2);
-  this->addKey(KEY_CFG_MODE, "0", 2);
-  this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20);
-  this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20);
+    this->addKey(KEY_SUPLA_GUID, MAX_GUID);
+    this->addKey(KEY_SUPLA_AUTHKEY, MAX_AUTHKEY);
+    this->addKey(KEY_WIFI_SSID, MAX_SSID);
+    this->addKey(KEY_WIFI_PASS, MAX_PASSWORD);
+    this->addKey(KEY_LOGIN, MAX_MLOGIN);
+    this->addKey(KEY_LOGIN_PASS, MAX_MPASSWORD);
+    this->addKey(KEY_HOST_NAME, DEFAULT_HOSTNAME, MAX_HOSTNAME);
+    this->addKey(KEY_SUPLA_SERVER, DEFAULT_SERVER, MAX_SUPLA_SERVER);
+    this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL, MAX_EMAIL);
+    this->addKey(KEY_MAX_RELAY, "0", 2);
+    this->addKey(KEY_MAX_BUTTON, "0", 2);
+    this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
+    this->addKey(KEY_MAX_DHT22, "1", 2);
+    this->addKey(KEY_MAX_DHT11, "1", 2);
+    this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
+    this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
+    this->addKey(KEY_ALTITUDE_BMX280, "0", 4);
+    this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
+    this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
+    this->addKey(KEY_ACTIVE_SENSOR, 16);
+    this->addKey(KEY_BOARD, 2);
+    this->addKey(KEY_CFG_MODE, "0", 2);
+    this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20);
+    this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20);
 
-  uint8_t nr, key;
-  for (nr = 0; nr <= MAX_GPIO; nr++) {
-    key = KEY_GPIO + nr;
-    this->addKey(key, 16 * 2);
-  }
+    uint8_t nr, key;
+    for (nr = 0; nr <= MAX_GPIO; nr++) {
+      key = KEY_GPIO + nr;
+      this->addKey(key, 16 * 2);
+    }
 
-  this->addKey(KEY_LEVEL_LED, "0", 1);
-  this->addKey(KEY_OLED_ANIMATION, "5", 1);
-  this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
-  this->addKey(KEY_MAX_RGBW, "0", 2);
+    this->addKey(KEY_LEVEL_LED, "0", 1);
+    this->addKey(KEY_OLED_ANIMATION, "5", 1);
+    this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
+    this->addKey(KEY_MAX_RGBW, "0", 2);
 
-  this->addKey(KEY_FREE_TO_USE, MAX_GPIO * 2);
-  this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
-  this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
-  this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);
+    this->addKey(KEY_FREE_TO_USE, MAX_GPIO * 2);
+    this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
+    this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
+    this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);
 
-  this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2);
-  this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1);
-  this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4);
-  this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4);
+    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2);
+    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1);
+    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4);
+    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4);
 
-  this->addKey(KEY_HC_SR04_MAX_SENSOR_READ, 3);
+    this->addKey(KEY_HC_SR04_MAX_SENSOR_READ, 3);
 
-  this->addKey(KEY_DIRECT_LINKS_ON, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
-  this->addKey(KEY_DIRECT_LINKS_OFF, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
+    this->addKey(KEY_DIRECT_LINKS_ON, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
+    this->addKey(KEY_DIRECT_LINKS_OFF, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
 
-  this->addKey(KEY_CORRECTION_TEMP, 6 * MAX_DS18B20);
-  this->addKey(KEY_CORRECTION_HUMIDITY, 6 * MAX_DS18B20);
+    this->addKey(KEY_CORRECTION_TEMP, 6 * MAX_DS18B20);
+    this->addKey(KEY_CORRECTION_HUMIDITY, 6 * MAX_DS18B20);
 
-  this->addKey(KEY_ENABLE_GUI, sizeof(bool));
-  this->addKey(KEY_ENABLE_SSL, sizeof(bool));
+    this->addKey(KEY_ENABLE_GUI, sizeof(bool));
+    this->addKey(KEY_ENABLE_SSL, sizeof(bool));
 
-  this->addKey(KEY_OLED_BACK_LIGHT, "20", 2);
+    this->addKey(KEY_OLED_BACK_LIGHT, "20", 2);
 
-  this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3);
+    this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3);
 
-  switch (this->load()) {
-    case E_CONFIG_OK:
-      Serial.println(F("Config read"));
-      this->showAllValue();
-      return;
-    case E_CONFIG_FILE_NOT_FOUND:
-      Serial.println(F("File not found"));
-      return;
-    default:
-      Serial.println(F("Config read error"));
-      delay(5000);
-      ESP.restart();
-      return;
+    switch (this->load()) {
+      case E_CONFIG_OK:
+        Serial.println(F("Config read"));
+        this->showAllValue();
+        return;
+      case E_CONFIG_FILE_NOT_FOUND:
+        Serial.println(F("File not found"));
+        return;
+      default:
+        Serial.println(F("Config read error"));
+        delay(5000);
+        ESP.restart();
+        return;
+    }
   }
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
