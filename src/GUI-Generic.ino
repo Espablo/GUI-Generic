@@ -289,6 +289,14 @@ void setup() {
     }
 #endif
 
+#ifdef SUPLA_VL53L0X
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_VL53L0X).toInt()) {
+      auto vl53l0x = new Supla::Sensor::VL_53L0X();
+      Supla::GUI::addConditionsTurnON(SENSOR_VL53L0X, vl53l0x);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_VL53L0X, vl53l0x);
+    }
+#endif
+
 #ifdef SUPLA_OLED
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       SuplaOled *oled = new SuplaOled();

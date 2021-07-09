@@ -58,6 +58,9 @@
 #undef SUPLA_LIMIT_SWITCH
 #undef SUPLA_RELAY
 
+#elif (DEFAULT_TEMPLATE_BOARD == BOARD_SONOFF_TH)
+#define SUPLA_SI7021_SONOFF
+
 #endif
 #endif
 

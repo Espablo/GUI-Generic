@@ -60,6 +60,13 @@ void handleSensorI2c(int save) {
     addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_VL53L0X
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_VL53L0X).toInt();
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_VL53L0X, F("VL53L0X"), STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
 #ifdef SUPLA_OLED
     addFormHeader(webContentBuffer);
 
@@ -155,6 +162,14 @@ void handleSensorI2cSave() {
   input = INPUT_SI7021;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_SI7021, WebServer->httpServer->arg(input).toInt());
+  }
+#endif
+
+#ifdef SUPLA_VL53L0X
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_VL53L0X;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_VL53L0X, WebServer->httpServer->arg(input).toInt());
   }
 #endif
 

@@ -62,7 +62,7 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
     index.replace("{S}", S_SKETCH_UPLOAD_MAX_SIZE);
     index.replace("{U}", S_SKETCH_LOADED_SIZE);
     index.replace("{b}", S_UPDATE_FIRMWARE);
-    _server->send(200, PSTR("text/html"), index);
+    _server->send(200, PSTR("text/html"), index.c_str());
   });
 
   // handler for the /update form POST (once file upload finishes)

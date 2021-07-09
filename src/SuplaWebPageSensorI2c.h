@@ -4,7 +4,8 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017) || defined(SUPLA_BMP280)
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017) || \
+    defined(SUPLA_BMP280) || defined(SUPLA_VL53L0X)
 #define GUI_SENSOR_I2C
 #endif
 
@@ -34,27 +35,32 @@ enum _shtAdress
 
 #define PATH_I2C "i2c"
 
-#define INPUT_SDA_GPIO        "sdag"
-#define INPUT_SCL_GPIO        "sclg"
-#define INPUT_SHT3x           "sht30"
-#define INPUT_SI7021          "si7021"
+#define INPUT_SDA_GPIO "sdag"
+#define INPUT_SCL_GPIO "sclg"
+#define INPUT_SHT3x    "sht30"
+#define INPUT_SI7021   "si7021"
 
 #ifdef SUPLA_OLED
-#define INPUT_OLED            "oled"
-#define INPUT_OLED_ANIMATION  "oleda"
+#define INPUT_OLED                 "oled"
+#define INPUT_OLED_ANIMATION       "oleda"
 #define INPUT_OLED_BRIGHTNESS_TIME "oledb"
-#define INPUT_OLED_BRIGHTNESS_LVL "oledc"
-#define INPUT_OLED_NAME       "ion"
+#define INPUT_OLED_BRIGHTNESS_LVL  "oledc"
+#define INPUT_OLED_NAME            "ion"
 #ifndef INPUT_BUTTON_GPIO
-#define INPUT_BUTTON_GPIO     "btg"
+#define INPUT_BUTTON_GPIO "btg"
 #endif
-#endif // SUPLA_OLED
+#endif  // SUPLA_OLED
 
-#define INPUT_MCP23017        "mcp"
+#define INPUT_MCP23017 "mcp"
 
 void createWebPageSensorI2c();
 void handleSensorI2c(int save = 0);
 void handleSensorI2cSave();
+
+#ifdef SUPLA_VL53L0X
+#define INPUT_VL53L0X "ilox"
+#endif
+
 #endif
 
 #endif  // ifndef SuplaWebPageSensorI2c_h

@@ -62,7 +62,7 @@ double Si7021Sonoff::readHumi(uint8_t* data) {
   return humi;
 }
 
-bool Si7021Sonoff::read() {
+void Si7021Sonoff::read() {
   uint8_t data[5] = {0};
 
   yield();
