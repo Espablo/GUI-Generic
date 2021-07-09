@@ -3,7 +3,12 @@
 
 #ifdef SUPLA_OLED
 
-uint8_t* chanelSensor;
+struct oledStruct {
+  uint8_t chanelSensor;
+  bool forSecondaryValue;
+};
+
+oledStruct* oled;
 
 String getTempString(double temperature) {
   if (temperature == -275) {
@@ -229,11 +234,24 @@ void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t 
   display->drawString(x + pressure_width + (getPressureString(pressure).length() * 14), y + drawStringIcon, "hPa");
 }
 
+void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& name) {
+  display->setColor(WHITE);
+  display->setTextAlignment(TEXT_ALIGN_CENTER);
+
+  if (name != NULL) {
+    display->setFont(ArialMT_Win1250_Plain_10);
+    display->drawString(x + ((display->getWidth() - String(name).length()) / 2), y + display->getHeight() / 2 - 15, name);
+  }
+
+  display->setFont(ArialMT_Win1250_Plain_24);
+  display->drawString(x + ((display->getWidth() - String(value).length()) / 2), y + display->getHeight() / 2, String(value));
+}
+
 void displayTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
   for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
     if (element->getChannel()) {
       auto channel = element->getChannel();
-      if (channel->getChannelNumber() == chanelSensor[state->currentFrame]) {
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
         double lastTemperature = channel->getValueDouble();
         String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
         displayUiTemperature(display, state, x, y, lastTemperature, name);
@@ -246,7 +264,7 @@ void displayDoubleTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, i
   for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
     if (element->getChannel()) {
       auto channel = element->getChannel();
-      if (channel->getChannelNumber() == chanelSensor[state->currentFrame]) {
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
         double lastTemperature = channel->getValueDoubleFirst();
         String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
         displayUiTemperature(display, state, x, y, lastTemperature, name);
@@ -259,7 +277,7 @@ void displayDoubleHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int1
   for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
     if (element->getChannel()) {
       auto channel = element->getChannel();
-      if (channel->getChannelNumber() == chanelSensor[state->currentFrame]) {
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
         double lastHumidit = channel->getValueDoubleSecond();
         String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
         displaUiHumidity(display, state, x, y, lastHumidit, name);
@@ -272,10 +290,31 @@ void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x,
   for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
     if (element->getSecondaryChannel()) {
       auto channel = element->getSecondaryChannel();
-      if (channel->getChannelNumber() == chanelSensor[state->currentFrame]) {
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
         double lastPressure = channel->getValueDouble();
         String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
         displayUiPressure(display, state, x, y, lastPressure, name);
+      }
+    }
+  }
+}
+
+void displayGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  double lastValue;
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
+        if (oled[state->currentFrame].forSecondaryValue) {
+          lastValue = channel->getValueDoubleSecond();
+        }
+        else {
+          lastValue = channel->getValueDouble();
+        }
+
+        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+
+        displayUiGeneral(display, state, x, y, lastValue, name);
       }
     }
   }
@@ -305,7 +344,7 @@ SuplaOled::SuplaOled() {
     }
 
     frames = new FrameCallback[maxFrame];
-    chanelSensor = new uint8_t[maxFrame];
+    oled = new oledStruct[maxFrame];
 
     for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
       if (element->getChannel()) {
@@ -313,24 +352,39 @@ SuplaOled::SuplaOled() {
 
         if (channel->getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
           frames[frameCount] = {displayTemperature};
-          chanelSensor[frameCount] = channel->getChannelNumber();
+          oled[frameCount].chanelSensor = channel->getChannelNumber();
           frameCount += 1;
         }
 
         if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
           frames[frameCount] = {displayDoubleTemperature};
-          chanelSensor[frameCount] = channel->getChannelNumber();
+          oled[frameCount].chanelSensor = channel->getChannelNumber();
           frameCount += 1;
           frames[frameCount] = {displayDoubleHumidity};
-          chanelSensor[frameCount] = channel->getChannelNumber();
+          oled[frameCount].chanelSensor = channel->getChannelNumber();
           frameCount += 1;
         }
+
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYSENSOR) {
+          frames[frameCount] = {displayGeneral};
+          oled[frameCount].chanelSensor = channel->getChannelNumber();
+          oled[frameCount].forSecondaryValue = true;
+          frameCount += 1;
+        }
+
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_DISTANCESENSOR) {
+          frames[frameCount] = {displayGeneral};
+          oled[frameCount].chanelSensor = channel->getChannelNumber();
+          oled[frameCount].forSecondaryValue = false;
+          frameCount += 1;
+        }
+        
       }
       if (element->getSecondaryChannel()) {
         auto channel = element->getSecondaryChannel();
         if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
           frames[frameCount] = {displayPressure};
-          chanelSensor[frameCount] = channel->getChannelNumber();
+          oled[frameCount].chanelSensor = channel->getChannelNumber();
           frameCount += 1;
         }
       }

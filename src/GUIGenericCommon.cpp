@@ -24,6 +24,14 @@ int getCountSensorChannels() {
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
         maxFrame += 2;
       }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYSENSOR) {
+        maxFrame += 1;
+      }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_DISTANCESENSOR) {
+        maxFrame += 1;
+      }
     }
 
     if (element->getSecondaryChannel()) {
