@@ -342,7 +342,7 @@ void setup() {
 
   Supla::GUI::addCorrectionSensor();
 
-  ESP.wdtEnable(100);
+  ESP.wdtEnable(WDTO_120MS);
 }
 
 void loop() {

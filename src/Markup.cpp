@@ -309,7 +309,7 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
 
     html += F(" ");
     html += name;
-    html += FPSTR(ICON_EDIT);
+    //html += FPSTR(ICON_EDIT);
     html += F("</a>");
     WebServer->sendHeader();
   }

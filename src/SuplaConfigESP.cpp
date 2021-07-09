@@ -361,6 +361,7 @@ int SuplaConfigESP::getGpio(int nr, int function) {
       }
     }
 #endif
+    delay(0);
   }
   return OFF_GPIO;
 }
@@ -513,6 +514,7 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
         count++;
       }
     }
+    delay(0);
   }
   return count;
 }
@@ -555,6 +557,7 @@ uint8_t SuplaConfigESP::getGpioMCP23017(uint8_t nr, uint8_t function) {
         if (ConfigManager->get(key)->getElement(getNrMCP23017(address)).toInt() == nr)
           return gpio;
     }
+    delay(0);
   }
   return OFF_GPIO;
 }
@@ -578,6 +581,7 @@ uint8_t SuplaConfigESP::getAdressMCP23017(uint8_t nr, uint8_t function) {
     if (ConfigManager->get(key)->getElement(MCP23017_NR_4).toInt() == nr)
       if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_4).toInt() == function)
         return 3;
+    delay(0);
   }
   return OFF_MCP23017;
 }
@@ -627,6 +631,7 @@ void SuplaConfigESP::clearFunctionGpio(uint8_t function) {
       ConfigManager->setElement(key, NR, 0);
       ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
     }
+    delay(0);
   }
 }
 
