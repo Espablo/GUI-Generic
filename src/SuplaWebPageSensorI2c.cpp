@@ -186,12 +186,16 @@ void handleSensorI2cSave() {
   }
 
   input = INPUT_OLED_ANIMATION;
-  ConfigManager->set(KEY_OLED_ANIMATION, WebServer->httpServer->arg(input).c_str());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0)
+    ConfigManager->set(KEY_OLED_ANIMATION, WebServer->httpServer->arg(input).c_str());
+
   input = INPUT_OLED_BRIGHTNESS_TIME;
-  ConfigManager->set(KEY_OLED_BACK_LIGHT_TIME, WebServer->httpServer->arg(input).c_str());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0)
+    ConfigManager->set(KEY_OLED_BACK_LIGHT_TIME, WebServer->httpServer->arg(input).c_str());
 
   input = INPUT_OLED_BRIGHTNESS_LVL;
-  ConfigManager->set(KEY_OLED_BACK_LIGHT, WebServer->httpServer->arg(input).c_str());
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0)
+    ConfigManager->set(KEY_OLED_BACK_LIGHT, WebServer->httpServer->arg(input).c_str());
 
   for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
     input = INPUT_OLED_NAME;
