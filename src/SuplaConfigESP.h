@@ -125,7 +125,8 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void configModeInit();
 
  private:
-  bool MDNSConfigured = true;
+  bool MDNSConfigured = false;
+  bool APConfigured = false;
   void iterateAlways();
   void clearEEPROM();
 

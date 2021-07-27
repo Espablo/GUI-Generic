@@ -134,12 +134,12 @@ void SuplaConfigESP::handleAction(int event, int action) {
 }
 
 void SuplaConfigESP::rebootESP() {
+  WiFi.disconnect(true);
   ESP.restart();
 }
 
 void SuplaConfigESP::configModeInit() {
   configModeESP = CONFIG_MODE;
-  MDNSConfigured = false;
 
   ledBlinking(100);
 
@@ -151,7 +151,7 @@ void SuplaConfigESP::configModeInit() {
   WiFi.setAutoReconnect(false);
 
   WiFi.mode(WIFI_AP_STA);
-  WiFi.softAP(getConfigNameAP(), "");
+  // WiFi.softAP(getConfigNameAP(), "");
   WiFi.begin(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
   Serial.println(F("Config Mode started"));
 }
@@ -163,13 +163,17 @@ bool SuplaConfigESP::checkSSL() {
 void SuplaConfigESP::iterateAlways() {
   if (configModeESP == CONFIG_MODE) {
     if (WiFi.status() == WL_CONNECTED) {
+      if (!APConfigured) {
+        APConfigured = WiFi.softAP(getConfigNameAP(), "");
+      }
+
       if (!MDNSConfigured) {
-        MDNSConfigured = true;
-        if (MDNS.begin("supla", WiFi.localIP())) {
+        MDNSConfigured = MDNS.begin("supla", WiFi.localIP());
+        if (MDNSConfigured) {
           Serial.print(F("MDNS started IP: "));
           Serial.println(WiFi.localIP());
+          MDNS.addService("http", "tcp", 80);
         }
-        MDNS.addService("http", "tcp", 80);
       }
       MDNS.update();
     }
