@@ -162,11 +162,13 @@ bool SuplaConfigESP::checkSSL() {
 
 void SuplaConfigESP::iterateAlways() {
   if (configModeESP == CONFIG_MODE) {
-    if (WiFi.status() == WL_CONNECTED) {
-      if (!APConfigured) {
-        APConfigured = WiFi.softAP(getConfigNameAP(), "");
-      }
+    if (!APConfigured) {
+      APConfigured = WiFi.softAP(getConfigNameAP(), "");
+      Serial.print(F("AP started IP: "));
+      Serial.println(WiFi.softAPIP());
+    }
 
+    if (WiFi.status() == WL_CONNECTED) {
       if (!MDNSConfigured) {
         MDNSConfigured = MDNS.begin("supla", WiFi.localIP());
         if (MDNSConfigured) {
