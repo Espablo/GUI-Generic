@@ -274,6 +274,7 @@ void addListGPIOLinkBox(String& html, const String& input_id, const String& name
   addListGPIOBox(html, input_id, name, function, nr, true, url);
 }
 
+#ifdef SUPLA_MCP23017
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
   uint8_t address;
 
@@ -347,6 +348,7 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
   html += F("</select>");
   html += F("</i>");
 }
+#endif
 
 void addListBox(String& html, const String& input_id, const String& name, const char* const* array_P, uint8_t size, uint8_t selected, uint8_t nr) {
   html += F("<i><label>");

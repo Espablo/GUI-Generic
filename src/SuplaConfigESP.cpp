@@ -167,7 +167,7 @@ void SuplaConfigESP::iterateAlways() {
       Serial.print(F("AP started IP: "));
       Serial.println(WiFi.softAPIP());
     }
-
+    
     if (WiFi.status() == WL_CONNECTED) {
       if (!MDNSConfigured) {
         MDNSConfigured = MDNS.begin("supla", WiFi.localIP());
@@ -523,6 +523,7 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   return count;
 }
 
+#ifdef SUPLA_MCP23017
 bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function) {
   if (gpio == OFF_GPIO) {
     return true;
@@ -676,6 +677,7 @@ uint8_t SuplaConfigESP::getNrMCP23017(uint8_t adress) {
   }
   return OFF_MCP23017;
 }
+#endif
 
 void SuplaConfigESP::factoryReset(bool forceReset) {
   delay(2000);
