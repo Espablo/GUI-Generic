@@ -167,7 +167,8 @@ void SuplaConfigESP::iterateAlways() {
       Serial.print(F("AP started IP: "));
       Serial.println(WiFi.softAPIP());
     }
-    
+
+#ifdef SUPLA_MDNS
     if (WiFi.status() == WL_CONNECTED) {
       if (!MDNSConfigured) {
         MDNSConfigured = MDNS.begin("supla", WiFi.localIP());
@@ -179,6 +180,7 @@ void SuplaConfigESP::iterateAlways() {
       }
       MDNS.update();
     }
+#endif
   }
 }
 

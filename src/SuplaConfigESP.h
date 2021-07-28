@@ -22,8 +22,9 @@
 #include <supla/action_handler.h>
 #include <supla/element.h>
 #include "SuplaConfigManager.h"
+#ifdef SUPLA_MDNS
 #include <ESP8266mDNS.h>
-
+#endif
 
 #include <cont.h>
 #include <user_interface.h>
