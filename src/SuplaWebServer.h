@@ -51,7 +51,9 @@ class SuplaWebServer : public Supla::Element {
 
   bool isLoggedIn();
   bool saveGPIO(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
+  #ifdef SUPLA_MCP23017
   bool saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
+  #endif
 
  private:
   void iterateAlways();

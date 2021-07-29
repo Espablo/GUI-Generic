@@ -19,6 +19,10 @@
 #include "SuplaConfigESP.h"
 #include "SuplaDeviceGUI.h"
 
+#ifdef SUPLA_MDNS
+#include <ESP8266mDNS.h>
+#endif
+
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
 
@@ -134,12 +138,12 @@ void SuplaConfigESP::handleAction(int event, int action) {
 }
 
 void SuplaConfigESP::rebootESP() {
+  WiFi.disconnect(true);
   ESP.restart();
 }
 
 void SuplaConfigESP::configModeInit() {
   configModeESP = CONFIG_MODE;
-  MDNSConfigured = false;
 
   ledBlinking(100);
 
@@ -151,7 +155,7 @@ void SuplaConfigESP::configModeInit() {
   WiFi.setAutoReconnect(false);
 
   WiFi.mode(WIFI_AP_STA);
-  WiFi.softAP(getConfigNameAP(), "");
+  // WiFi.softAP(getConfigNameAP(), "");
   WiFi.begin(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
   Serial.println(F("Config Mode started"));
 }
@@ -162,17 +166,25 @@ bool SuplaConfigESP::checkSSL() {
 
 void SuplaConfigESP::iterateAlways() {
   if (configModeESP == CONFIG_MODE) {
+    if (!APConfigured) {
+      APConfigured = WiFi.softAP(getConfigNameAP(), "");
+      Serial.print(F("AP started IP: "));
+      Serial.println(WiFi.softAPIP());
+    }
+
+#ifdef SUPLA_MDNS
     if (WiFi.status() == WL_CONNECTED) {
       if (!MDNSConfigured) {
-        MDNSConfigured = true;
-        if (MDNS.begin("supla", WiFi.localIP())) {
+        MDNSConfigured = MDNS.begin("supla", WiFi.localIP());
+        if (MDNSConfigured) {
           Serial.print(F("MDNS started IP: "));
           Serial.println(WiFi.localIP());
+          MDNS.addService("http", "tcp", 80);
         }
-        MDNS.addService("http", "tcp", 80);
       }
       MDNS.update();
     }
+#endif
   }
 }
 
@@ -519,6 +531,7 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   return count;
 }
 
+#ifdef SUPLA_MCP23017
 bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function) {
   if (gpio == OFF_GPIO) {
     return true;
@@ -675,6 +688,7 @@ uint8_t SuplaConfigESP::getNrMCP23017(uint8_t adress) {
   }
   return OFF_MCP23017;
 }
+#endif
 
 void SuplaConfigESP::factoryReset(bool forceReset) {
   delay(2000);

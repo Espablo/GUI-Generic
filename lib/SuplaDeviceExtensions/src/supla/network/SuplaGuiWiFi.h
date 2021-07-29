@@ -60,15 +60,16 @@ class GUIESPWifi : public Supla::ESPWifi {
       Serial.print(F("WiFi: establishing connection with SSID: \""));
       Serial.print(ssid);
       Serial.println(F("\""));
-      if (hostname) {
-        WiFi.hostname(hostname);
-      }
 
       if (ConfigESP->configModeESP == NORMAL_MODE) {
         WiFi.softAPdisconnect(true);
         WiFi.setAutoConnect(false);
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid, password);
+      }
+
+      if (hostname) {
+        WiFi.setHostname(hostname);
       }
 
     } else if (ConfigESP->configModeESP == NORMAL_MODE) {

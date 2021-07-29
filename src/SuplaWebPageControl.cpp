@@ -17,14 +17,12 @@ void createWebPageControl() {
     if (!WebServer->isLoggedIn()) {
       return;
     }
-
-    if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
 #ifdef SUPLA_MCP23017
+    if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
       if (WebServer->httpServer->method() == HTTP_GET)
         handleButtonSetMCP23017();
       else
         handleButtonSaveSetMCP23017();
-#endif
     }
     else {
 #ifdef SUPLA_BUTTON
@@ -34,6 +32,14 @@ void createWebPageControl() {
         handleButtonSaveSet();
 #endif
     }
+#else
+#ifdef SUPLA_BUTTON
+      if (WebServer->httpServer->method() == HTTP_GET)
+        handleButtonSet();
+      else
+        handleButtonSaveSet();
+#endif
+#endif
   });
 }
 #endif
@@ -43,6 +49,7 @@ void handleControlSave() {
   uint8_t nr;
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+#ifdef SUPLA_MCP23017
     if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
       if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
         handleControl(6);
@@ -55,6 +62,12 @@ void handleControlSave() {
         return;
       }
     }
+#else
+    if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
+      handleControl(6);
+      return;
+    }
+#endif
   }
 
   if (strcmp(WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str(), "") != 0) {
@@ -81,23 +94,32 @@ void handleControl(int save) {
 
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_BUTTONS);
 
+#ifdef SUPLA_MCP23017
   if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
     countFreeGpio = 32;
   }
   else {
     countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_BUTTON);
   }
+#else
+  countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_BUTTON);
+#endif
 
   addNumberBox(webContentBuffer, INPUT_MAX_BUTTON, S_QUANTITY, KEY_MAX_BUTTON, countFreeGpio);
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+#ifdef SUPLA_MCP23017
     if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
       addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, nr, PATH_BUTTON_SET);
     }
     else {
       addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER), FUNCTION_BUTTON, nr);
     }
+#else
+    addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER), FUNCTION_BUTTON, nr);
+#endif
   }
+
   addFormHeaderEnd(webContentBuffer);
 
   addButtonSubmit(webContentBuffer, S_SAVE);
