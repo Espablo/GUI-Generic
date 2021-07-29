@@ -17,6 +17,8 @@
 #ifndef SuplaConfigESP_h
 #define SuplaConfigESP_h
 
+#include "GUI-Generic_Config.h"
+
 #include "Arduino.h"
 #include "EEPROM.h"
 #include <supla/action_handler.h>
