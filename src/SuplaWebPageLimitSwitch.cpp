@@ -21,26 +21,34 @@ void handleLimitSwitch(int save) {
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_SWITCH);
-  
+
   addForm(webContentBuffer, F("post"), PATH_SWITCH);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_LIMIT_SWITCH);
 
+#ifdef SUPLA_MCP23017
   if (ConfigESP->checkActiveMCP23017(FUNCTION_LIMIT_SWITCH)) {
     countFreeGpio = 32;
   }
   else {
     countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH);
   }
+#else
+  countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH);
+#endif
 
   addNumberBox(webContentBuffer, INPUT_MAX_LIMIT_SWITCH, S_QUANTITY, KEY_MAX_LIMIT_SWITCH, countFreeGpio);
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
+#ifdef SUPLA_MCP23017
     if (ConfigESP->checkActiveMCP23017(FUNCTION_LIMIT_SWITCH)) {
       addListMCP23017GPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
     }
     else {
       addListGPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
     }
+#else
+    addListGPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
+#endif
   }
   addFormHeaderEnd(webContentBuffer);
 
@@ -56,6 +64,7 @@ void handleLimitSwitchSave() {
 
   last_value = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
   for (nr = 1; nr <= last_value; nr++) {
+#ifdef SUPLA_MCP23017
     if (ConfigESP->checkActiveMCP23017(FUNCTION_LIMIT_SWITCH)) {
       if (!WebServer->saveGpioMCP23017(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr, INPUT_MAX_LIMIT_SWITCH)) {
         handleLimitSwitch(6);
@@ -68,6 +77,12 @@ void handleLimitSwitchSave() {
         return;
       }
     }
+#else
+    if (!WebServer->saveGPIO(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr, INPUT_MAX_LIMIT_SWITCH)) {
+      handleLimitSwitch(6);
+      return;
+    }
+#endif
   }
 
   if (strcmp(WebServer->httpServer->arg(INPUT_MAX_LIMIT_SWITCH).c_str(), "") != 0) {

@@ -19,6 +19,10 @@
 #include "SuplaConfigESP.h"
 #include "SuplaDeviceGUI.h"
 
+#ifdef SUPLA_MDNS
+#include <ESP8266mDNS.h>
+#endif
+
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
 
