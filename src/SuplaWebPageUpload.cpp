@@ -11,6 +11,8 @@ static const char uploadIndex[] PROGMEM =
 File dataFile;
 
 void createWebUpload() {
+  WebServer->httpServer->on(getURL(PATH_UPLOAD), HTTP_GET, []() { handleUpload(); });
+
   WebServer->httpServer->on(
       getURL(PATH_UPLOAD), HTTP_POST,
       []() {
@@ -20,7 +22,7 @@ void createWebUpload() {
             ConfigManager->save();
           }
         }
-        WebServer->httpServer->send(200);
+        handleUpload(1);
       },
       handleFileUpload);
 }
@@ -73,7 +75,6 @@ void handleFileUpload() {
         // WebServer->httpServer->sendHeader("Location", "/upload");
         // WebServer->httpServer->send(303);
         ConfigManager->load();
-        handleUpload(1);
       }
       else {
         handleUpload(6);
