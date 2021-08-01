@@ -25,7 +25,7 @@
 #include "SuplaConfigManager.h"
 #include "SuplaDeviceGUI.h"
 
-ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength) {
+ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version) {
   // size_t size = strlen(key) + 1;
   // _key = (char *)malloc(sizeof(char) * size);
   // memcpy(_key, key, size - 1);
@@ -36,10 +36,17 @@ ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength) {
   _key[size - 1] = '\0';
 */
   _key = key;
-  _maxLength = maxLength + 1;
+  _version = version;
 
-  _value = new char[_maxLength];
-  setValue(value);
+  if (maxLength > 0) {
+    _maxLength = maxLength + 1;
+
+    _value = new char[_maxLength];
+    setValue(value);
+  }
+  else {
+    _maxLength = maxLength;
+  }
 }
 
 uint8_t ConfigOption::getKey() {
@@ -74,6 +81,25 @@ int ConfigOption::getValueElement(int element) {
 
 int ConfigOption::getLength() {
   return _maxLength;
+}
+
+void ConfigOption::setLength(int maxLength) {
+  if (maxLength > 0) {
+    char *oldValue = new char[_maxLength];
+    strncpy(oldValue, _value, _maxLength);
+    _value[_maxLength - 1] = '\0';
+
+    _maxLength = maxLength + 1;
+    _value = new char[_maxLength];
+    setValue(oldValue);
+  }
+  else {
+    _maxLength = maxLength;
+  }
+}
+
+uint8_t ConfigOption::getVersion() {
+  return _version;
 }
 
 const String ConfigOption::getElement(int index) {
@@ -181,6 +207,8 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
     this->addKey(KEY_MAX_RGBW, "0", 2);
 
+    this->addKey(KEY_FREE, 0);
+
     this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
     this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
     this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);
@@ -205,10 +233,15 @@ SuplaConfigManager::SuplaConfigManager() {
 
     this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3);
 
+    // this->addKey(KEY_TEST, "0", 3, 2); //dodanie parametru do wersji 2 configa
+
     switch (this->load()) {
       case E_CONFIG_OK:
         Serial.println(F("Config read"));
         this->showAllValue();
+        return;
+      case E_CONFIG_PARSE_ERROR:
+        Serial.println(F("E_CONFIG_PARSE_ERROR: File was not parsable"));
         return;
       case E_CONFIG_FILE_NOT_FOUND:
         Serial.println(F("File not found"));
@@ -239,25 +272,59 @@ SuplaConfigManager::SuplaConfigManager() {
   //  }
 }
 
+bool SuplaConfigManager::migrationConfig() {
+  bool migration = false;
+
+  if (this->sizeFile() == 2681) {  // pierwsza wersja configa
+    uint8_t nr, key;
+    // ustawienie starej długości zmiennej przed wczytaniem starego konfiga
+    for (nr = 0; nr <= MAX_GPIO; nr++) {
+      key = KEY_GPIO + nr;
+      this->get(key)->setLength(16 * 2);
+    }
+    this->get(KEY_FREE)->setLength(MAX_GPIO * 2);
+
+    // ustawienie nowej długości po wczytaniu starego konfiga
+    if (this->load(1) == E_CONFIG_OK) {
+      for (nr = 0; nr <= MAX_GPIO; nr++) {
+        key = KEY_GPIO + nr;
+        this->get(key)->setLength(36);
+      }
+      this->get(KEY_FREE)->setLength(0);
+
+      migration = true;
+    }
+  }
+
+  if (this->sizeFile() == 2718) {  // druga wersja configa
+
+    if (this->load(1) == E_CONFIG_OK) {  // wczytanie kluczy tylko z wersji 1 configa
+      migration = true;
+    }
+  }
+
+  if (migration) {
+    this->save();
+    Serial.println(F("successful Config migration"));
+  }
+  else {
+    Serial.println(F("error Config migration"));
+  }
+
+  return migration;
+}
+
 uint8_t SuplaConfigManager::addKey(uint8_t key, int maxLength) {
   return addKey(key, "", maxLength);
 }
 
-uint8_t SuplaConfigManager::addKey(uint8_t key, const char *value, int maxLength) {
+uint8_t SuplaConfigManager::addKey(uint8_t key, const char *value, int maxLength, uint8_t version) {
   if (_optionCount == CONFIG_MAX_OPTIONS) {
     return E_CONFIG_MAX;
   }
-  _options[_optionCount] = new ConfigOption(key, value, maxLength);
+  _options[_optionCount] = new ConfigOption(key, value, maxLength, version);
   _optionCount += 1;
 
-  return E_CONFIG_OK;
-}
-
-uint8_t SuplaConfigManager::addKeyAndRead(uint8_t key, const char *value, int maxLength) {
-  addKey(key, maxLength);
-  if (this->loadItem(key) != E_CONFIG_OK) {
-    this->set(key, value);
-  }
   return E_CONFIG_OK;
 }
 
@@ -272,7 +339,17 @@ uint8_t SuplaConfigManager::deleteKey(uint8_t key) {
   return E_CONFIG_OK;
 }
 
-uint8_t SuplaConfigManager::load() {
+int SuplaConfigManager::sizeFile() {
+  if (SPIFFS.begin()) {
+    if (SPIFFS.exists(CONFIG_FILE_PATH)) {
+      File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
+      return configFile.size();
+    }
+  }
+  return -1;
+}
+
+uint8_t SuplaConfigManager::load(uint8_t version) {
   if (SPIFFS.begin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
@@ -283,12 +360,20 @@ uint8_t SuplaConfigManager::load() {
         int length = 0;
 
         for (i = 0; i < _optionCount; i++) {
-          length += _options[i]->getLength();
+          if (version >= _options[i]->getVersion() || version == 0) {
+            length += _options[i]->getLength();
+          }
         }
 
-        // if (length != configFile.size()) {
-        //   return E_CONFIG_PARSE_ERROR;
-        // }
+        Serial.print(F("size file: "));
+        Serial.println(configFile.size());
+        Serial.print(F("size conf: "));
+        Serial.println(length);
+
+        if (length != configFile.size()) {
+          if (!this->migrationConfig())
+            return E_CONFIG_PARSE_ERROR;
+        }
 
         uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
         configFile.read(content, length);
@@ -297,50 +382,6 @@ uint8_t SuplaConfigManager::load() {
           _options[i]->setValue((const char *)(content + offset));
           offset += _options[i]->getLength();
           delay(0);
-        }
-
-        configFile.close();
-        free(content);
-
-        return E_CONFIG_OK;
-      }
-      else {
-        configFile.close();
-        return E_CONFIG_FILE_OPEN;
-      }
-    }
-    else {
-      return E_CONFIG_FILE_NOT_FOUND;
-    }
-  }
-  else {
-    return E_CONFIG_FS_ACCESS;
-  }
-}
-
-uint8_t SuplaConfigManager::loadItem(uint8_t key) {
-  if (SPIFFS.begin()) {
-    if (SPIFFS.exists(CONFIG_FILE_PATH)) {
-      File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
-
-      if (configFile) {
-        int i = 0;
-        int offset = 0;
-        int length = 0;
-
-        for (i = 0; i < _optionCount; i++) {
-          length += _options[i]->getLength();
-        }
-
-        uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
-        configFile.read(content, length);
-
-        for (i = 0; i < _optionCount; i++) {
-          if (_options[i]->getKey() == key) {
-            _options[i]->setValue((const char *)(content + offset));
-            delay(0);
-          }
-          offset += _options[i]->getLength();
         }
 
         configFile.close();

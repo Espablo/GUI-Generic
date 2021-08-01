@@ -81,6 +81,7 @@ enum _key
   KEY_OLED_ANIMATION,
   KEY_OLED_BACK_LIGHT_TIME,
   KEY_MAX_RGBW,
+  KEY_FREE,
   KEY_PUSHOVER_TOKEN,
   KEY_PUSHOVER_USER,
   KEY_PUSHOVER_MASSAGE,
@@ -173,7 +174,7 @@ enum _e_onfig
 
 class ConfigOption {
  public:
-  ConfigOption(uint8_t key, const char *value, int maxLength);
+  ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version);
   uint8_t getKey();
   const char *getValue();
   int getValueInt();
@@ -181,9 +182,12 @@ class ConfigOption {
   int getValueElement(int element);
 
   int getLength();
+  void setLength(int maxLength);
+
+  uint8_t getVersion();
+
   void setValue(const char *value);
   const String getElement(int index);
-  // uint8_t getElement(int index, size_t size);
   const String replaceElement(int index, int value);
   const String replaceElement(int index, const char *newvalue);
 
@@ -191,17 +195,18 @@ class ConfigOption {
   uint8_t _key;
   char *_value;
   int _maxLength;
+  uint8_t _version;
 };
 
 class SuplaConfigManager {
  public:
   SuplaConfigManager();
+  bool migrationConfig();
   uint8_t addKey(uint8_t key, int maxLength);
-  uint8_t addKey(uint8_t key, const char *value, int maxLength);
-  uint8_t addKeyAndRead(uint8_t key, const char *value, int maxLength);
+  uint8_t addKey(uint8_t key, const char *value, int maxLength, uint8_t version = 1);
   uint8_t deleteKey(uint8_t key);
-  uint8_t load();
-  uint8_t loadItem(uint8_t key);
+  int sizeFile();
+  uint8_t load(uint8_t version = 0);
   uint8_t save();
   void showAllValue();
   void deleteAllValues();
