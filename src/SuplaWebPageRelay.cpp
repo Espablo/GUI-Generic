@@ -17,13 +17,12 @@ void createWebPageRelay() {
     if (!WebServer->isLoggedIn()) {
       return;
     }
-    if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
 #ifdef SUPLA_MCP23017
+    if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
       if (WebServer->httpServer->method() == HTTP_GET)
         handleRelaySetMCP23017();
       else
         handleRelaySaveSetMCP23017();
-#endif
     }
     else {
 #ifdef SUPLA_RELAY
@@ -33,6 +32,14 @@ void createWebPageRelay() {
         handleRelaySaveSet();
 #endif
     }
+#else
+#ifdef SUPLA_RELAY
+    if (WebServer->httpServer->method() == HTTP_GET)
+      handleRelaySet();
+    else
+      handleRelaySaveSet();
+#endif
+#endif
   });
 }
 
@@ -40,6 +47,7 @@ void handleRelaySave() {
   uint8_t nr;
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
+#ifdef SUPLA_MCP23017
     if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
       if (!WebServer->saveGpioMCP23017(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr, INPUT_MAX_RELAY)) {
         handleRelay(6);
@@ -52,6 +60,12 @@ void handleRelaySave() {
         return;
       }
     }
+#else
+    if (!WebServer->saveGPIO(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr, INPUT_MAX_RELAY)) {
+      handleRelay(6);
+      return;
+    }
+#endif
   }
 
   if (strcmp(WebServer->httpServer->arg(INPUT_MAX_RELAY).c_str(), "") != 0) {
@@ -79,22 +93,30 @@ void handleRelay(int save) {
   addForm(webContentBuffer, F("post"), PATH_RELAY);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_RELAYS);
 
+#ifdef SUPLA_MCP23017
   if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
     countFreeGpio = 32;
   }
   else {
     countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_RELAY);
   }
+#else
+  countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_RELAY);
+#endif
 
   addNumberBox(webContentBuffer, INPUT_MAX_RELAY, S_QUANTITY, KEY_MAX_RELAY, countFreeGpio);
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
+#ifdef SUPLA_MCP23017
     if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
       addListMCP23017GPIOBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, nr, PATH_RELAY_SET);
     }
     else {
       addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER), FUNCTION_RELAY, nr);
     }
+#else
+    addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER), FUNCTION_RELAY, nr);
+#endif
   }
   addFormHeaderEnd(webContentBuffer);
 

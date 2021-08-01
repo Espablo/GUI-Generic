@@ -17,12 +17,13 @@
 #ifndef SuplaConfigESP_h
 #define SuplaConfigESP_h
 
+#include "GUI-Generic_Config.h"
+
 #include "Arduino.h"
 #include "EEPROM.h"
 #include <supla/action_handler.h>
 #include <supla/element.h>
 #include "SuplaConfigManager.h"
-#include <ESP8266mDNS.h>
 
 #include <cont.h>
 #include <user_interface.h>
@@ -112,6 +113,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void factoryReset(bool forceReset = false);
   const String getConfigNameAP();
 
+#ifdef SUPLA_MCP23017
   bool checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function);
   uint8_t getGpioMCP23017(uint8_t nr, uint8_t function);
   uint8_t getAdressMCP23017(uint8_t nr, uint8_t function);
@@ -122,10 +124,12 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   bool checkActiveMCP23017(uint8_t function);
   uint8_t getFunctionMCP23017(uint8_t adress);
   uint8_t getNrMCP23017(uint8_t adress);
+#endif
   void configModeInit();
 
  private:
-  bool MDNSConfigured = true;
+  bool MDNSConfigured = false;
+  bool APConfigured = false;
   void iterateAlways();
   void clearEEPROM();
 
