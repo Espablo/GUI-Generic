@@ -165,6 +165,27 @@
 				"name": "Mode veille profonde (Deep Sleep)",
 				"desc": "La veille prolongée permet une plus longue durée de vie de la batterie en réduisant la consommation d´énergie au détriment de la communication WiFi."
 			}
+		},
+		"SUPLA_MDNS": {
+			"name": "Protokół mDNS",
+			"desc": "Użycie protokołu mDNS pozwala połączyć się z modułem bez początkowej znajomości jego adresu IP, wystarczy podać adres modułu http://supla.local",
+			"defOn": false,
+			"en": {
+				"name": "mDNS protocol",
+				"desc": "Using the mDNS protocol allows you to connect to the module without the initial knowledge of its IP address, just enter the address of the module http: //supla.local"
+			},
+			"es": {
+				"name": "Protocolo mDNS",
+				"desc": "El uso del protocolo mDNS le permite conectarse al módulo sin conocer su dirección IP, solo necesita ingresar la dirección del módulo http: //supla.local"
+			},
+			"de": {
+				"name": "mDNS-Protokoll",
+				"desc": "Mit dem mDNS-Protokoll können Sie sich mit dem Modul verbinden, ohne seine IP-Adresse zu kennen, Sie müssen nur die Adresse des Moduls http eingeben: //supla.local"
+			},
+			"fr": {
+				"name": "Protocole mDNS",
+				"desc": "L'utilisation du protocole mDNS permet de se connecter au module sans connaître son adresse IP, il suffit de saisir l'adresse du module http://supla.local"
+			}
 		}
 	},
 	"CONTROL": {
