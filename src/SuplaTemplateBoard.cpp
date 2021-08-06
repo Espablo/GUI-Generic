@@ -48,7 +48,7 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
   ConfigESP->setGpio(pinCF, FUNCTION_CF);
   ConfigESP->setGpio(pinCF1, FUNCTION_CF1);
   ConfigESP->setGpio(pinSEL, FUNCTION_SEL);
-  Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
+  //Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
 }
 #endif
 
@@ -235,10 +235,10 @@ void chooseTemplateBoard(uint8_t board) {
       addLed(0);
 #ifdef SUPLA_HLW8012
       addHLW8012(5, 4, 12);
-      Supla::GUI::counterHLW8012->setCurrentMultiplier(18388);
-      Supla::GUI::counterHLW8012->setVoltageMultiplier(247704);
-      Supla::GUI::counterHLW8012->setPowerMultiplier(2586583);
-      Supla::GUI::counterHLW8012->setMode(LOW);
+      //Supla::GUI::counterHLW8012->setCurrentMultiplier(18388);
+      //Supla::GUI::counterHLW8012->setVoltageMultiplier(247704);
+      //Supla::GUI::counterHLW8012->setPowerMultiplier(2586583);
+      //Supla::GUI::counterHLW8012->setMode(LOW);
 #endif
       break;
     case BOARD_DIMMER_LUKASZH:
@@ -265,9 +265,9 @@ void chooseTemplateBoard(uint8_t board) {
       addLed(0);
 #ifdef SUPLA_HLW8012
       addHLW8012(5, 14, 12);
-      Supla::GUI::counterHLW8012->setCurrentMultiplier(18388);
-      Supla::GUI::counterHLW8012->setVoltageMultiplier(247704);
-      Supla::GUI::counterHLW8012->setPowerMultiplier(2586583);
+      //Supla::GUI::counterHLW8012->setCurrentMultiplier(18388);
+      //Supla::GUI::counterHLW8012->setVoltageMultiplier(247704);
+      //Supla::GUI::counterHLW8012->setPowerMultiplier(2586583);
 #endif
       break;
   }
