@@ -28,7 +28,8 @@ SuplaConfigESP::SuplaConfigESP() {
 
   if (ConfigManager->isDeviceConfigured()) {
     if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0)
-      ConfigManager->setGUIDandAUTHKEY();
+      clearEEPROM();
+    ConfigManager->setGUIDandAUTHKEY();
 
     if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") == 0)
       ConfigManager->set(KEY_LOGIN, DEFAULT_LOGIN);
