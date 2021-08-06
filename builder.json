@@ -170,6 +170,7 @@
 			"name": "Protokół mDNS",
 			"desc": "Użycie protokołu mDNS pozwala połączyć się z modułem bez początkowej znajomości jego adresu IP, wystarczy podać adres modułu http://supla.local",
 			"defOn": false,
+			"new": true,
 			"en": {
 				"name": "mDNS protocol",
 				"desc": "Using the mDNS protocol allows you to connect to the module without the initial knowledge of its IP address, just enter the address of the module http: //supla.local"
@@ -631,9 +632,7 @@
 				"name": "Mesure analogique (Broche ADC)",
 				"desc": "Paramètres de l'appareil->Analogique. Prend en charge la mesure de tension à l'entrée ADC Pin."
 			}
-		}
-	},
-	"OTHER": {
+		},
 		"SUPLA_NTC_10K": {
 			"name": "Termistor NTC 10K",
 			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę termistora NTC 10K.",
@@ -655,6 +654,29 @@
 				"desc": "Paramètres de l´appareil->Autre. Prend en charge la thermistance NTC 10K."
 			}
 		},
+		"SUPLA_MPX_5XXX": {
+			"name": "Czujnik ciśnienia MPX5xxx",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę czujnika ciśnienia z serii MPX5xxx.",
+			"defOn": false,
+			"en": {
+				"name": "MPX5xxx pressure sensor",
+				"desc": "Device settings->Other. Enables operation of pressure sensor from MPX5xxx series."
+			},
+			"es": {
+				"name": "Sensor de presión MPX5xxx",
+				"desc": "Configuración del dispositivo-> Otro. Habilita el funcionamiento del sensor de presión de la serie MPX5xxx"
+			},
+			"de": {
+				"name": "MPX5xxx Drucksensor",
+				"desc": "Geräteeinstellungen-> Andere. Aktiviert den Betrieb der Drucksensorserie MPX5xxx."
+			},
+			"fr": {
+				"name": "capteur de pression MPX5xxx",
+				"desc": "Paramètres de l'appareil-> Autre. Permet le fonctionnement du capteur de pression série MPX5xxx."
+			}
+		}
+	},
+	"OTHER": {
 		"SUPLA_RGBW": {
 			"name": "RGBW, RGB, Dimmer",
 			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę urządzeń RGBW, RGB i ściemniaczy.",
@@ -695,28 +717,6 @@
 			"fr": {
 				"name": "Capteur de distance HC-SR04",
 				"desc": "Paramètres de l´appareil->Autre. Permet le fonctionnement du capteur de distance HC-SR04."
-			}
-		},
-		"SUPLA_MPX_5XXX": {
-			"name": "Czujnik ciśnienia MPX5xxx",
-			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę czujnika ciśnienia z serii MPX5xxx.",
-			"defOn": false,
-			"new": true,
-			"en": {
-				"name": "MPX5xxx pressure sensor",
-				"desc": "Device settings->Other. Enables operation of pressure sensor from MPX5xxx series."
-			},
-			"es": {
-				"name": "Sensor de presión MPX5xxx",
-				"desc": "Configuración del dispositivo-> Otro. Habilita el funcionamiento del sensor de presión de la serie MPX5xxx"
-			},
-			"de": {
-				"name": "MPX5xxx Drucksensor",
-				"desc": "Geräteeinstellungen-> Andere. Aktiviert den Betrieb der Drucksensorserie MPX5xxx."
-			},
-			"fr": {
-				"name": "capteur de pression MPX5xxx",
-				"desc": "Paramètres de l'appareil-> Autre. Permet le fonctionnement du capteur de pression série MPX5xxx."
 			}
 		},
 		"SUPLA_HLW8012": {
