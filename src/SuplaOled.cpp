@@ -378,7 +378,6 @@ SuplaOled::SuplaOled() {
           oled[frameCount].forSecondaryValue = false;
           frameCount += 1;
         }
-        
       }
       if (element->getSecondaryChannel()) {
         auto channel = element->getSecondaryChannel();
@@ -438,27 +437,26 @@ void SuplaOled::setupAnimate() {
 
 void SuplaOled::iterateAlways() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
-    if (ConfigESP->getLastStatusSupla() != STATUS_REGISTERED_AND_READY) {
-      displayUiSuplaStatus(display);
+    if (ConfigESP->configModeESP == CONFIG_MODE) {
+      displayConfigMode(display);
       return;
     }
 
-    setupAnimate();
+    if (ConfigESP->getLastStatusSupla() == STATUS_REGISTERED_AND_READY || ConfigESP->getLastStatusSupla() == STATUS_NETWORK_DISCONNECTED || ConfigESP->getLastStatusSupla() == STATUS_INITIALIZED) {
+      // setupAnimate();
 
-    if (millis() - timeLastChangeOled > (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() * 1000) && oledON &&
-        ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
-      display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() / 100.0) * 255);
-      oledON = false;
-    }
-
-    if (ConfigESP->configModeESP == NORMAL_MODE) {
+      if (millis() - timeLastChangeOled > (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() * 1000) && oledON &&
+          ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
+        display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() / 100.0) * 255);
+        oledON = false;
+      }
       int remainingTimeBudget = ui->update();
 
       if (remainingTimeBudget > 0)
         delay(remainingTimeBudget);
     }
     else {
-      displayConfigMode(display);
+      displayUiSuplaStatus(display);
     }
   }
 }
