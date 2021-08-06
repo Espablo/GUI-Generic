@@ -25,6 +25,10 @@
 
 #include <supla/sensor/percentage.h>
 
+extern "C" {
+#include "user_interface.h"
+}
+
 //#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 //#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
 // DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
@@ -350,7 +354,10 @@ void setup() {
 
   Supla::GUI::addCorrectionSensor();
 
-  ESP.wdtEnable(100);
+  // https://github.com/esp8266/Arduino/issues/2070#issuecomment-258660760
+  wifi_set_sleep_type(NONE_SLEEP_T);
+
+  ESP.wdtEnable(WDTO_120MS);
 }
 
 void loop() {
