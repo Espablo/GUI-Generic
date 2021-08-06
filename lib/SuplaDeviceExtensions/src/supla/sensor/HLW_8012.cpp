@@ -132,7 +132,7 @@ double HLW_8012::getVoltageMultiplier() {
 }
 
 double HLW_8012::getPowerMultiplier() {
-  return voltageMultiplier;
+  return powerMultiplier;
 }
 
 bool HLW_8012::getMode() {
@@ -144,7 +144,7 @@ _supla_int64_t HLW_8012::getCounter() {
 }
 
 void HLW_8012::setCurrentMultiplier(double value) {
-  powerMultiplier = value;
+  currentMultiplier = value;
   sensor->setCurrentMultiplier(value);
 }
 

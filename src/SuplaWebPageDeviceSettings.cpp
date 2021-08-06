@@ -84,6 +84,7 @@ void handleDeviceSettingsSave() {
 
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     saveChooseTemplateBoard(WebServer->httpServer->arg(input).toInt());
+    Supla::Storage::ScheduleSave(2000);
   }
 
   switch (ConfigManager->save()) {
