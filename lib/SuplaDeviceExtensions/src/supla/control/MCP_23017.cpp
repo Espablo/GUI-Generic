@@ -102,6 +102,7 @@ bool MCP23017::digitalRead(uint8_t pin) {
   if (pin < 16) {
     return ((ba >> (pin % 16)) & 0x01);
   }
+  return false;
 }
 
 void MCP23017::digitalWrite(uint8_t pin, bool value) {
@@ -254,9 +255,6 @@ MCP_23017::MCP_23017() {
 void MCP_23017::customDigitalWrite(int channelNumber,
                                    uint8_t pin,
                                    uint8_t val) {
-  if (pin < 100) {
-    return ::digitalWrite(pin, val);
-  }
   if ((pin > 99) && (pin < 116)) {
     mcp1->digitalWrite(pin - 100, val);
     return;
@@ -272,11 +270,10 @@ void MCP_23017::customDigitalWrite(int channelNumber,
     mcp4->digitalWrite(pin - 148, val);
     return;
   }
+
+  return ::digitalWrite(pin, val);
 }
 int MCP_23017::customDigitalRead(int channelNumber, uint8_t pin) {
-  if (pin < 100) {
-    return ::digitalRead(pin);
-  }
   if ((pin > 99) && (pin < 116)) {
     return mcp1->digitalRead(pin - 100);
   }
@@ -289,12 +286,12 @@ int MCP_23017::customDigitalRead(int channelNumber, uint8_t pin) {
   if ((pin > 147) && (pin < 164)) {
     return mcp4->digitalRead(pin - 148);
   }
+
+  return ::digitalRead(pin);
 }
 void MCP_23017::customPinMode(int channelNumber, uint8_t pin, uint8_t mode) {
   (void)(channelNumber);
-  if (pin < 100) {
-    return ::pinMode(pin, mode);
-  }
+
   if ((pin > 99) && (pin < 116)) {
     mcp1->pinMode(pin - 100, mode);
   }
@@ -307,6 +304,8 @@ void MCP_23017::customPinMode(int channelNumber, uint8_t pin, uint8_t mode) {
   if ((pin > 147) && (pin < 164)) {
     mcp4->pinMode(pin - 148, mode);
   }
+
+  return ::pinMode(pin, mode);
 }
 
 void MCP_23017::setPullup(uint8_t pin, bool pullup, bool inverse) {

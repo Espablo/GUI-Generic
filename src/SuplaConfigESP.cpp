@@ -379,8 +379,6 @@ int SuplaConfigESP::getGpio(int nr, int function) {
 }
 
 uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
-  if (gpio < 100)
-    return KEY_GPIO + gpio;
   if ((gpio > 99) && (gpio < 116))
     return KEY_GPIO + gpio - 100;
   if ((gpio > 115) && (gpio < 132))
@@ -389,6 +387,8 @@ uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
     return KEY_GPIO + gpio - 132;
   if ((gpio > 147) && (gpio < 164))
     return KEY_GPIO + gpio - 148;
+
+  return KEY_GPIO + gpio;
 }
 
 bool SuplaConfigESP::getLevel(uint8_t gpio) {
