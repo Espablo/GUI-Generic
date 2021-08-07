@@ -9,6 +9,7 @@
 				"defOn": "[opcja] true - domyślnie włączona, false - domyślnie wyłączona (domyślnie)",
 				"depOn": "[opcja] tablica SUPLA_OPTION, których włączenie automatycznie włącza daną opcję",
 				"depOff": "[opcja] tablica SUPLA_OPTION, których wyłączenie nie pozwala włączyć danej opcji",
+				"depRel": "[opcja] tablica SULPA_OPTION, które zostaną wyłączone po włączeniu danej opcji",
 				"new": "[opcja] true - oznacz opcję jako nową, false - nie oznaczaj jako nową (domyślnie)",
 				"test": "[opcja] true - oznacz opcję jako testową, false - nie oznaczaj jako testową (domyślnie)",
 				"en": {
@@ -616,6 +617,10 @@
 			"name": "Pomiar analogowy (ADC Pin)",
 			"desc": "Ustawienia urządzenia->Analog. Umożliwia obsługę pomiaru napięcia na wejściu ADC Pin.",
 			"defOn": false,
+			"depRel": [
+				"SUPLA_NTC_10K",
+				"SUPLA_MPX_5XXX"
+			],
 			"en": {
 				"name": "Analog measurement (ADC Pin)",
 				"desc": "Device settings->Analog. Enables support for voltage measurement at ADC Pin input."
@@ -635,44 +640,52 @@
 		},
 		"SUPLA_NTC_10K": {
 			"name": "Termistor NTC 10K",
-			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę termistora NTC 10K.",
+			"desc": "Ustawienia urządzenia->Analog. Umożliwia obsługę termistora NTC 10K.",
 			"defOn": false,
+			"depRel": [
+				"SUPLA_ANALOG_READING_MAP",
+				"SUPLA_MPX_5XXX"
+			],
 			"en": {
 				"name": "NTC 10K thermistor",
-				"desc": "Device settings->Other. Supports the NTC 10K thermistor."
+				"desc": "Device settings->Analog. Supports the NTC 10K thermistor."
 			},
 			"es": {
 				"name": "Termistor NTC 10K",
-				"desc": "Configuración del dispositivo->Otro. Admite el termistor NTC 10K."
+				"desc": "Configuración del dispositivo->Analógico. Admite el termistor NTC 10K."
 			},
 			"de": {
 				"name": "NTC 10K Thermistor",
-				"desc": "Geräteeinstellungen->Andere. Unterstützt den NTC 10K Thermistor."
+				"desc": "Geräteeinstellungen->Analog. Unterstützt den NTC 10K Thermistor."
 			},
 			"fr": {
 				"name": "Thermistance NTC 10K",
-				"desc": "Paramètres de l´appareil->Autre. Prend en charge la thermistance NTC 10K."
+				"desc": "Paramètres de l´appareil->Analogique. Prend en charge la thermistance NTC 10K."
 			}
 		},
 		"SUPLA_MPX_5XXX": {
 			"name": "Czujnik ciśnienia MPX5xxx",
-			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę czujnika ciśnienia z serii MPX5xxx.",
+			"desc": "Ustawienia urządzenia->Analog. Umożliwia obsługę czujnika ciśnienia z serii MPX5xxx.",
 			"defOn": false,
+			"depRel": [
+				"SUPLA_NTC_10K",
+				"SUPLA_ANALOG_READING_MAP"
+			],
 			"en": {
 				"name": "MPX5xxx pressure sensor",
-				"desc": "Device settings->Other. Enables operation of pressure sensor from MPX5xxx series."
+				"desc": "Device settings->Analog. Enables operation of pressure sensor from MPX5xxx series."
 			},
 			"es": {
 				"name": "Sensor de presión MPX5xxx",
-				"desc": "Configuración del dispositivo-> Otro. Habilita el funcionamiento del sensor de presión de la serie MPX5xxx"
+				"desc": "Configuración del dispositivo->Analógico. Habilita el funcionamiento del sensor de presión de la serie MPX5xxx."
 			},
 			"de": {
 				"name": "MPX5xxx Drucksensor",
-				"desc": "Geräteeinstellungen-> Andere. Aktiviert den Betrieb der Drucksensorserie MPX5xxx."
+				"desc": "Geräteeinstellungen->Analog. Aktiviert den Betrieb der Drucksensorserie MPX5xxx."
 			},
 			"fr": {
 				"name": "capteur de pression MPX5xxx",
-				"desc": "Paramètres de l'appareil-> Autre. Permet le fonctionnement du capteur de pression série MPX5xxx."
+				"desc": "Paramètres de l'appareil->Analogique. Permet le fonctionnement du capteur de pression série MPX5xxx."
 			}
 		}
 	},
