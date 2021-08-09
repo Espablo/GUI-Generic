@@ -97,7 +97,9 @@ enum _key
   KEY_ENABLE_GUI,
   KEY_ENABLE_SSL,
   KEY_OLED_BACK_LIGHT,
-  KEY_DEEP_SLEEP_TIME
+  KEY_DEEP_SLEEP_TIME,
+ // KEY_TEST,
+  OPTION_COUNT
 };
 
 //#define GPIO      "GPIO"
@@ -174,7 +176,7 @@ enum _e_onfig
 
 class ConfigOption {
  public:
-  ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version);
+  ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version, bool loadKey);
   uint8_t getKey();
   const char *getValue();
   int getValueInt();
@@ -183,7 +185,7 @@ class ConfigOption {
 
   int getLength();
   void setLength(int maxLength);
-
+  bool getLoadKey();
   uint8_t getVersion();
 
   void setValue(const char *value);
@@ -194,7 +196,8 @@ class ConfigOption {
  private:
   uint8_t _key;
   char *_value;
-  int _maxLength;
+  uint16_t _maxLength;
+  bool _loadKey;
   uint8_t _version;
 };
 
@@ -202,8 +205,8 @@ class SuplaConfigManager {
  public:
   SuplaConfigManager();
   bool migrationConfig();
-  uint8_t addKey(uint8_t key, int maxLength);
-  uint8_t addKey(uint8_t key, const char *value, int maxLength, uint8_t version = 1);
+  uint8_t addKey(uint8_t key, int maxLength, uint8_t version = 1, bool loadKey = true);
+  uint8_t addKey(uint8_t key, const char *value, int maxLength, uint8_t version = 1, bool loadKey = true);
   uint8_t deleteKey(uint8_t key);
   int sizeFile();
   uint8_t load(uint8_t version = 0);
