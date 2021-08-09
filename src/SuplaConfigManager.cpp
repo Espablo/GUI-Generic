@@ -191,7 +191,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4);
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4);
 #else
-    this->addKey(KEY_MAX_RELAY, "0", 2, 1, false);
+    this->addKey(KEY_MAX_RELAY, 2, 1, false);
     this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, 1, false);
     this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 1, false);
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 1, false);
@@ -201,31 +201,31 @@ SuplaConfigManager::SuplaConfigManager() {
 #ifdef SUPLA_BUTTON
     this->addKey(KEY_MAX_BUTTON, "0", 2);
 #else
-    this->addKey(KEY_MAX_BUTTON, "0", 2, 1, false);
+    this->addKey(KEY_MAX_BUTTON, 2, 1, false);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
     this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
 #else
-    this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2, 1, false);
+    this->addKey(KEY_MAX_LIMIT_SWITCH, 2, 1, false);
 #endif
 
 #ifdef SUPLA_DHT22
     this->addKey(KEY_MAX_DHT22, "1", 2);
 #else
-    this->addKey(KEY_MAX_DHT22, "1", 2, 1, false);
+    this->addKey(KEY_MAX_DHT22, 2, 1, false);
 #endif
 
 #ifdef SUPLA_DHT11
     this->addKey(KEY_MAX_DHT11, "1", 2);
 #else
-    this->addKey(KEY_MAX_DHT11, "1", 2, 1, false);
+    this->addKey(KEY_MAX_DHT11, 2, 1, false);
 #endif
 
 #ifdef SUPLA_RGBW
     this->addKey(KEY_MAX_RGBW, "0", 2);
 #else
-    this->addKey(KEY_MAX_RGBW, "0", 2, 1, false);
+    this->addKey(KEY_MAX_RGBW, 2, 1, false);
 #endif
 
 #ifdef SUPLA_DS18B20
@@ -233,7 +233,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20);
     this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20);
 #else
-    this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2, 1, false);
+    this->addKey(KEY_MULTI_MAX_DS18B20, 2, 1, false);
     this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20, 1, false);
     this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, 1, false);
 #endif
@@ -241,21 +241,21 @@ SuplaConfigManager::SuplaConfigManager() {
 #ifdef SUPLA_ROLLERSHUTTER
     this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
 #else
-    this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2, 1, false);
+    this->addKey(KEY_MAX_ROLLERSHUTTER, 2, 1, false);
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_BMP280)
     this->addKey(KEY_ALTITUDE_BMX280, "0", 4);
 #else
-    this->addKey(KEY_ALTITUDE_BMX280, "0", 4, 1, false);
+    this->addKey(KEY_ALTITUDE_BMX280, 4, 1, false);
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
     this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
     this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
 #else
-    this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4, 1, false);
-    this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2, 1, false);
+    this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, 4, 1, false);
+    this->addKey(KEY_MAX_IMPULSE_COUNTER, 2, 1, false);
 #endif
 
 #ifdef SUPLA_OLED
@@ -263,9 +263,9 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
     this->addKey(KEY_OLED_BACK_LIGHT, "20", 2);
 #else
-    this->addKey(KEY_OLED_ANIMATION, "5", 1, 1, false);
-    this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2, 1, false);
-    this->addKey(KEY_OLED_BACK_LIGHT, "20", 2, 1, false);
+    this->addKey(KEY_OLED_ANIMATION, 1, 1, false);
+    this->addKey(KEY_OLED_BACK_LIGHT_TIME, 2, 1, false);
+    this->addKey(KEY_OLED_BACK_LIGHT, 2, 1, false);
 #endif
 
 #ifdef SUPLA_PUSHOVER
@@ -273,8 +273,8 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
     this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);
 #else
-    this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE, 1, false);
-    this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE, 1, false);
+    this->addKey(KEY_PUSHOVER_TOKEN, MAX_TOKEN_SIZE, 1, false);
+    this->addKey(KEY_PUSHOVER_USER, MAX_USER_SIZE, 1, false);
     this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE, 1, false);
 #endif
 
