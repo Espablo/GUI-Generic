@@ -81,7 +81,7 @@ enum _key
   KEY_OLED_ANIMATION,
   KEY_OLED_BACK_LIGHT_TIME,
   KEY_MAX_RGBW,
-  KEY_FREE,
+  KEY_FOR_USE,
   KEY_PUSHOVER_TOKEN,
   KEY_PUSHOVER_USER,
   KEY_PUSHOVER_MASSAGE,
@@ -98,7 +98,7 @@ enum _key
   KEY_ENABLE_SSL,
   KEY_OLED_BACK_LIGHT,
   KEY_DEEP_SLEEP_TIME,
- // KEY_TEST,
+  // KEY_TEST,
   OPTION_COUNT
 };
 
@@ -209,7 +209,7 @@ class SuplaConfigManager {
   uint8_t addKey(uint8_t key, const char *value, int maxLength, uint8_t version = 1, bool loadKey = true);
   uint8_t deleteKey(uint8_t key);
   int sizeFile();
-  uint8_t load(uint8_t version = 0);
+  uint8_t load(uint8_t version = 99, bool configParse = true);
   uint8_t save();
   void showAllValue();
   void deleteAllValues();
