@@ -20,12 +20,10 @@ namespace Supla {
 namespace Sensor {
 
 AnalogRedingMap::AnalogRedingMap(uint8_t pin)
-    : min(0), max(0), minDesired(0), maxDesired(0) {
+    : pin(pin), min(0), max(0), minDesired(0), maxDesired(0) {
 }
 
 void AnalogRedingMap::onInit() {
-  pinMode(pin, INPUT);
-
   channel.setNewValue(0, getValue());
 }
 
