@@ -107,6 +107,7 @@
 #define S_REACTION_ON_PRESS             "ON PRESSE"
 #define S_REACTION_ON_RELEASE           "EN LIBÉRATION"
 #define S_REACTION_ON_CHANGE            "SUR LE CHANGEMENT"
+#define S_RELAY_SWITCH_ON_TIME          "TEMPS D'ALLUMAGE DU RELAIS"
 #define S_CFG_10_PRESSES                "10 FOIS SUR PRESSE"
 #define S_5SEK_HOLD                     "5 SEC TENIR"
 #define S_NORMAL                        "ORDINAIRE"

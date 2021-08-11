@@ -107,6 +107,7 @@
 #define S_REACTION_ON_PRESS             "WCIŚNIĘCIE"
 #define S_REACTION_ON_RELEASE           "ZWOLNIENIE"
 #define S_REACTION_ON_CHANGE            "ZMIANA STANU"
+#define S_RELAY_SWITCH_ON_TIME          "CZAS ZAŁĄCZENIA PRZEKAŹNIKA"
 #define S_CFG_10_PRESSES                "10 WCIŚNIĘĆ"
 #define S_5SEK_HOLD                     "WCIŚNIĘTY 5 SEKUND"
 #define S_NORMAL                        "NORMALNE"

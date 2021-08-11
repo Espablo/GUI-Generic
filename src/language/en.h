@@ -106,6 +106,7 @@
 #define S_REACTION_ON_PRESS             "ON PRESS"
 #define S_REACTION_ON_RELEASE           "ON RELEASE"
 #define S_REACTION_ON_CHANGE            "ON CHANGE"
+#define S_RELAY_SWITCH_ON_TIME          "RELAY SWITCH ON TIME"
 #define S_CFG_10_PRESSES                "10 ON PRESSES"
 #define S_5SEK_HOLD                     "5 SEC HOLD"
 #define S_NORMAL                        "NORMAL"
