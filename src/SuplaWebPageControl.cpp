@@ -198,7 +198,7 @@ void handleButtonSet(int save) {
 
       if (nr_button.toInt() % 2 == 1) {
         selected = ConfigESP->getEvent(gpio);
-        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
         selected = ConfigESP->getAction(gpio);
         addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
       }
@@ -210,7 +210,7 @@ void handleButtonSet(int save) {
       selected = ConfigESP->getInversed(gpio);
       addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
       selected = ConfigESP->getEvent(gpio);
-      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
       selected = ConfigESP->getAction(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
     }
@@ -261,7 +261,7 @@ void handleButtonSetMCP23017(int save) {
 
     if (nr_button.toInt() % 2 == 1) {
       selected = ConfigESP->getEvent(gpio);
-      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
       selected = ConfigESP->getAction(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
     }
@@ -273,7 +273,7 @@ void handleButtonSetMCP23017(int save) {
     selected = ConfigESP->getInversed(gpio);
     addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
     selected = ConfigESP->getEvent(gpio);
-    addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+    addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
     selected = ConfigESP->getAction(gpio);
     addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
   }
