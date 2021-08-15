@@ -106,7 +106,6 @@
 #define S_REACTION_ON_PRESS             "WENN GEDRÜCKT"
 #define S_REACTION_ON_RELEASE           "WENN LOSGELASSEN"
 #define S_REACTION_ON_CHANGE            "STATUS ÄNDERUNG"
-#define S_RELAY_SWITCH_ON_TIME          "EINSCHALTZEIT DES RELAIS"
 #define S_CFG_10_PRESSES                "10 MAL DRÜCKEN"
 #define S_5SEK_HOLD                     "5 SEKUNDEN GEDRÜCKT HALTEN"
 #define S_NORMAL                        "NORMAL"

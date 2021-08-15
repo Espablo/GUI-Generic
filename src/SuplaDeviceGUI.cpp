@@ -113,19 +113,13 @@ void addRelayButton(uint8_t nr) {
         break;
     }
 
+    relay[size]->keepTurnOnDuration();
     relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinButton != OFF_GPIO) {
       auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
 
-      if (ConfigESP->getEvent(pinButton) == 3) {  // RELAY_SWITCH_ON_TIME
-        relay[size]->keepTurnOnDuration();
-        button->addAction(ConfigESP->getAction(pinButton), *relay[size], Supla::Event::ON_PRESS);
-      }
-      else {
-        button->addAction(ConfigESP->getAction(pinButton), *relay[size], ConfigESP->getEvent(pinButton));
-      }
-
+      button->addAction(ConfigESP->getAction(pinButton), *relay[size], ConfigESP->getEvent(pinButton));
       button->setSwNoiseFilterDelay(100);
     }
 
