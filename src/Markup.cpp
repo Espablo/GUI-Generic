@@ -147,7 +147,7 @@ void addNumberBox(String& html, const String& input_id, const String& name, uint
   }
 
   html += F(" value='");
-  html += String(ConfigManager->get(value_key)->getValueInt());
+  html += String(ConfigManager->get(value_key)->getValue());
   html += F("'></i>");
   WebServer->sendHeader();
 }

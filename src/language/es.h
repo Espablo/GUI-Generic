@@ -109,7 +109,6 @@
 #define S_REACTION_ON_PRESS             "AL PRESIONAR"
 #define S_REACTION_ON_RELEASE           "AL SOLTAR"
 #define S_REACTION_ON_CHANGE            "AL CAMBIAR DE ESTADO"
-#define S_RELAY_SWITCH_ON_TIME          "INTERRUPTOR DE RELÉ A TIEMPO"
 #define S_CFG_10_PRESSES                "AL PRESIONAR 10 VECES"
 #define S_5SEK_HOLD                     "AL MANTENER PRESIONADO 5 SEGUNDOS"
 #define S_NORMAL                        "NORMAL"
