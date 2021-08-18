@@ -472,7 +472,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
             return E_CONFIG_PARSE_ERROR;
         }
 
-        uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
+        uint8_t *content = new uint8_t[length];
         configFile.read(content, length);
 
         for (i = 0; i < _optionCount; i++) {
@@ -484,7 +484,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
         }
 
         configFile.close();
-        free(content);
+        delete content;
 
         return E_CONFIG_OK;
       }
@@ -514,7 +514,7 @@ uint8_t SuplaConfigManager::save() {
 
     File configFile = SPIFFS.open(CONFIG_FILE_PATH, "w+");
     if (configFile) {
-      uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
+      uint8_t *content = new uint8_t[length];
       for (i = 0; i < _optionCount; i++) {
         if (_options[i]->getLoadKey()) {
           Serial.print(F("Save key: "));
@@ -530,10 +530,11 @@ uint8_t SuplaConfigManager::save() {
       configFile.write(content, length);
       configFile.close();
 
-      free(content);
+      delete content;
       return E_CONFIG_OK;
     }
     else {
+      configFile.close();
       return E_CONFIG_FILE_OPEN;
     }
   }
