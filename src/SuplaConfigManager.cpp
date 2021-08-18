@@ -330,13 +330,9 @@ SuplaConfigManager::SuplaConfigManager() {
         return;
       case E_CONFIG_PARSE_ERROR:
         Serial.println(F("E_CONFIG_PARSE_ERROR: File was not parsable"));
-        delay(2000);
-        ESP.restart();
         return;
       case E_CONFIG_FILE_NOT_FOUND:
         Serial.println(F("File not found"));
-        delay(2000);
-        ESP.restart();
         return;
       default:
         Serial.println(F("Config read error"));
