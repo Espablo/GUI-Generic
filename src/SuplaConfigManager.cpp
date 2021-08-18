@@ -336,10 +336,15 @@ SuplaConfigManager::SuplaConfigManager() {
         return;
       default:
         Serial.println(F("Config read error"));
-        delay(5000);
+        delay(2000);
         ESP.restart();
         return;
     }
+  }
+  else {
+    Serial.println(F("Failed to mount SPIFFS"));
+    delay(2000);
+    ESP.restart();
   }
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
