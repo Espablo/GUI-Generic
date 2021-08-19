@@ -34,10 +34,11 @@ extern "C" {
 // DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 void setup() {
-  Serial.begin(74880);
   uint8_t nr, gpio;
 
+  Serial.begin(74880);
   ESP.wdtDisable();
+  delay(1000);
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();

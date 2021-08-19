@@ -25,27 +25,19 @@
 #include "SuplaConfigManager.h"
 #include "SuplaDeviceGUI.h"
 
-ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version) {
-  // size_t size = strlen(key) + 1;
-  // _key = (char *)malloc(sizeof(char) * size);
-  // memcpy(_key, key, size - 1);
-  // _key[size - 1] = 0;
-  /*size_t size = strlen(key) + 1;
-  _key = new char[size];
-  strncpy(_key, key, size);
-  _key[size - 1] = '\0';
-*/
+ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version, bool loadKey)
+    : _key(0), _value(nullptr), _maxLength(0), _version(1), _loadKey(true) {
   _key = key;
+  _loadKey = loadKey;
   _version = version;
 
   if (maxLength > 0) {
     _maxLength = maxLength + 1;
 
-    _value = new char[_maxLength];
-    setValue(value);
-  }
-  else {
-    _maxLength = maxLength;
+    if (_loadKey) {
+      _value = new char[_maxLength];
+      setValue(value);
+    }
   }
 }
 
@@ -54,11 +46,14 @@ uint8_t ConfigOption::getKey() {
 }
 
 const char *ConfigOption::getValue() {
-  return _value;
+  if (_value)
+    return _value;
+  else
+    return "";
 }
 
 int ConfigOption::getValueInt() {
-  return atoi(_value);
+  return atoi(this->getValue());
 }
 
 const char *ConfigOption::getValueHex(size_t size) {
@@ -76,7 +71,7 @@ const char *ConfigOption::getValueHex(size_t size) {
 }
 
 int ConfigOption::getValueElement(int element) {
-  return _value[element] - 48;
+  return this->getValue()[element] - 48;
 }
 
 int ConfigOption::getLength() {
@@ -86,8 +81,8 @@ int ConfigOption::getLength() {
 void ConfigOption::setLength(int maxLength) {
   if (maxLength > 0) {
     char *oldValue = new char[_maxLength];
-    strncpy(oldValue, _value, _maxLength);
-    _value[_maxLength - 1] = '\0';
+    strncpy(oldValue, this->getValue(), _maxLength);
+    oldValue[_maxLength - 1] = '\0';
 
     _maxLength = maxLength + 1;
     _value = new char[_maxLength];
@@ -98,12 +93,16 @@ void ConfigOption::setLength(int maxLength) {
   }
 }
 
+bool ConfigOption::getLoadKey() {
+  return _loadKey;
+}
+
 uint8_t ConfigOption::getVersion() {
   return _version;
 }
 
 const String ConfigOption::getElement(int index) {
-  String data = _value;
+  String data = this->getValue();
   // data.reserve(_maxLength);
   int found = 0;
   int strIndex[] = {0, -1};
@@ -119,7 +118,7 @@ const String ConfigOption::getElement(int index) {
 }
 
 const String ConfigOption::replaceElement(int index, int newvalue) {
-  String data = _value;
+  String data = this->getValue();
   data.reserve(_maxLength);
   int lenght = _maxLength;
   String table;
@@ -154,7 +153,7 @@ const String ConfigOption::replaceElement(int index, const char *newvalue) {
 }
 
 void ConfigOption::setValue(const char *value) {
-  if (value != NULL) {
+  if (value && _value) {
     size_t size = getLength();
     strncpy(_value, value, size);
     _value[size - 1] = '\0';
@@ -166,10 +165,7 @@ void ConfigOption::setValue(const char *value) {
 //
 SuplaConfigManager::SuplaConfigManager() {
   if (SPIFFS.begin()) {
-    //    Serial.println(F("\nSPIFFS mounted"));
-    //  } else {
-    //    Serial.println(F("\nFailed to mount SPIFFS"));
-    _optionCount = 0;
+    _optionCount = OPTION_COUNT;
 
     this->addKey(KEY_SUPLA_GUID, MAX_GUID);
     this->addKey(KEY_SUPLA_AUTHKEY, MAX_AUTHKEY);
@@ -180,60 +176,152 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_HOST_NAME, DEFAULT_HOSTNAME, MAX_HOSTNAME);
     this->addKey(KEY_SUPLA_SERVER, DEFAULT_SERVER, MAX_SUPLA_SERVER);
     this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL, MAX_EMAIL);
-    this->addKey(KEY_MAX_RELAY, "0", 2);
-    this->addKey(KEY_MAX_BUTTON, "0", 2);
-    this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
-    this->addKey(KEY_MAX_DHT22, "1", 2);
-    this->addKey(KEY_MAX_DHT11, "1", 2);
-    this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
-    this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
-    this->addKey(KEY_ALTITUDE_BMX280, "0", 4);
-    this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
-    this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
-    this->addKey(KEY_ACTIVE_SENSOR, 16);
+
+    this->addKey(KEY_CFG_MODE, 2);
+    this->addKey(KEY_ENABLE_GUI, "1", sizeof(bool));
+    this->addKey(KEY_ENABLE_SSL, "0", sizeof(bool));
+
     this->addKey(KEY_BOARD, 2);
-    this->addKey(KEY_CFG_MODE, "0", 2);
-    this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20);
-    this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20);
 
     uint8_t nr, key;
     for (nr = 0; nr <= MAX_GPIO; nr++) {
       key = KEY_GPIO + nr;
-      this->addKey(key, 36);
+      this->addKey(key, 36, 2);
     }
 
-    this->addKey(KEY_LEVEL_LED, "0", 1);
-    this->addKey(KEY_OLED_ANIMATION, "5", 1);
-    this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
-    this->addKey(KEY_MAX_RGBW, "0", 2);
+#ifdef SUPLA_RELAY
+    this->addKey(KEY_MAX_RELAY, "0", 2, 2);
+    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, 2);
+    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2);
+    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2);
+    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2);
+#else
+    this->addKey(KEY_MAX_RELAY, 2, 2, false);
+    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, 2, false);
+    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2, false);
+    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2, false);
+    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2, false);
+#endif
 
-    this->addKey(KEY_FREE, 0);
+#ifdef SUPLA_BUTTON
+    this->addKey(KEY_MAX_BUTTON, "0", 2, 2);
+#else
+    this->addKey(KEY_MAX_BUTTON, 2, 2, false);
+#endif
 
-    this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
-    this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
-    this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);
+#ifdef SUPLA_LIMIT_SWITCH
+    this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2, 2);
+#else
+    this->addKey(KEY_MAX_LIMIT_SWITCH, 2, 2, false);
+#endif
 
-    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2);
-    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1);
-    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4);
-    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4);
+#ifdef SUPLA_DHT22
+    this->addKey(KEY_MAX_DHT22, "1", 2, 2);
+#else
+    this->addKey(KEY_MAX_DHT22, 2, 2, false);
+#endif
 
-    this->addKey(KEY_HC_SR04_MAX_SENSOR_READ, 3);
+#ifdef SUPLA_DHT11
+    this->addKey(KEY_MAX_DHT11, "1", 2, 2);
+#else
+    this->addKey(KEY_MAX_DHT11, 2, 2, false);
+#endif
 
-    this->addKey(KEY_DIRECT_LINKS_ON, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
-    this->addKey(KEY_DIRECT_LINKS_OFF, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
+#ifdef SUPLA_RGBW
+    this->addKey(KEY_MAX_RGBW, "0", 2, 2);
+#else
+    this->addKey(KEY_MAX_RGBW, 2, 2, false);
+#endif
 
+#ifdef SUPLA_DS18B20
+    this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2, 2);
+    this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20, 2);
+    this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, 2);
+#else
+    this->addKey(KEY_MULTI_MAX_DS18B20, 2, 2, false);
+    this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20, 2, false);
+    this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, 2, false);
+#endif
+
+#ifdef SUPLA_ROLLERSHUTTER
+    this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2, 2);
+#else
+    this->addKey(KEY_MAX_ROLLERSHUTTER, 2, 2, false);
+#endif
+
+#if defined(SUPLA_BME280) || defined(SUPLA_BMP280)
+    this->addKey(KEY_ALTITUDE_BMX280, "0", 4, 2);
+#else
+    this->addKey(KEY_ALTITUDE_BMX280, 4, 2, false);
+#endif
+
+#ifdef SUPLA_IMPULSE_COUNTER
+    this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4, 2);
+    this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2, 2);
+#else
+    this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, 4, 2, false);
+    this->addKey(KEY_MAX_IMPULSE_COUNTER, 2, 2, false);
+#endif
+
+#ifdef SUPLA_OLED
+    this->addKey(KEY_OLED_ANIMATION, "5", 1, 2);
+    this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2, 2);
+    this->addKey(KEY_OLED_BACK_LIGHT, "20", 2, 2);
+#else
+    this->addKey(KEY_OLED_ANIMATION, 1, 2, false);
+    this->addKey(KEY_OLED_BACK_LIGHT_TIME, 2, 2, false);
+    this->addKey(KEY_OLED_BACK_LIGHT, 2, 2, false);
+#endif
+
+#ifdef SUPLA_PUSHOVER
+    this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE, 2);
+    this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE, 2);
+    this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE, 2);
+#else
+    this->addKey(KEY_PUSHOVER_TOKEN, MAX_TOKEN_SIZE, 2, false);
+    this->addKey(KEY_PUSHOVER_USER, MAX_USER_SIZE, 2, false);
+    this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE, 2, false);
+#endif
+
+#ifdef SUPLA_HC_SR04
+    this->addKey(KEY_HC_SR04_MAX_SENSOR_READ, 3, 2);
+#else
+    this->addKey(KEY_HC_SR04_MAX_SENSOR_READ, 3, 2, false);
+#endif
+
+#ifdef SUPLA_DIRECT_LINKS
+    this->addKey(KEY_DIRECT_LINKS_ON, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 2);
+    this->addKey(KEY_DIRECT_LINKS_OFF, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 2);
+#else
+    this->addKey(KEY_DIRECT_LINKS_ON, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 2, false);
+    this->addKey(KEY_DIRECT_LINKS_OFF, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 2, false);
+#endif
+
+#if defined(GUI_SENSOR_SPI) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_OTHER)
     this->addKey(KEY_CORRECTION_TEMP, 6 * MAX_DS18B20);
-    this->addKey(KEY_CORRECTION_HUMIDITY, 6 * MAX_DS18B20);
+    this->addKey(KEY_CORRECTION_HUMIDITY, 6 * MAX_DS18B20, 2);
+#else
+    this->addKey(KEY_CORRECTION_TEMP, 6 * MAX_DS18B20, 2, false);
+    this->addKey(KEY_CORRECTION_HUMIDITY, 6 * MAX_DS18B20, 2, false);
+#endif
 
-    this->addKey(KEY_ENABLE_GUI, sizeof(bool));
-    this->addKey(KEY_ENABLE_SSL, sizeof(bool));
+#ifdef GUI_SENSOR_I2C
+    this->addKey(KEY_ACTIVE_SENSOR, 16, 2);
+#else
+    this->addKey(KEY_ACTIVE_SENSOR, 16, 2, false);
+#endif
 
-    this->addKey(KEY_OLED_BACK_LIGHT, "20", 2);
+#ifdef SUPLA_DEEP_SLEEP
+    this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3, 2);
+#else
+    this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3, 2, false);
+#endif
 
-    this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3);
+    // nieużywane
+    this->addKey(KEY_LEVEL_LED, "", 1, 0, false);
+    this->addKey(KEY_FOR_USE, "", 0, 0, false);
 
-    // this->addKey(KEY_TEST, "0", 3, 2); //dodanie parametru do wersji 2 configa
+    // this->addKey(KEY_TEST, "0", 2000, 3); //dodanie parametru do wersji 2 configa
 
     switch (this->load()) {
       case E_CONFIG_OK:
@@ -248,10 +336,15 @@ SuplaConfigManager::SuplaConfigManager() {
         return;
       default:
         Serial.println(F("Config read error"));
-        delay(5000);
+        delay(2000);
         ESP.restart();
         return;
     }
+  }
+  else {
+    Serial.println(F("Failed to mount SPIFFS"));
+    delay(2000);
+    ESP.restart();
   }
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
@@ -276,29 +369,30 @@ bool SuplaConfigManager::migrationConfig() {
   bool migration = false;
 
   if (this->sizeFile() == 2681) {  // pierwsza wersja configa
+    Serial.println(F("migration version 1 -> 2"));
     uint8_t nr, key;
     // ustawienie starej długości zmiennej przed wczytaniem starego konfiga
     for (nr = 0; nr <= MAX_GPIO; nr++) {
       key = KEY_GPIO + nr;
       this->get(key)->setLength(16 * 2);
     }
-    this->get(KEY_FREE)->setLength(MAX_GPIO * 2);
+    this->get(KEY_FOR_USE)->setLength(MAX_GPIO * 2);
 
     // ustawienie nowej długości po wczytaniu starego konfiga
-    if (this->load(1) == E_CONFIG_OK) {
+    if (this->load(2) == E_CONFIG_OK) {
       for (nr = 0; nr <= MAX_GPIO; nr++) {
         key = KEY_GPIO + nr;
         this->get(key)->setLength(36);
       }
-      this->get(KEY_FREE)->setLength(0);
+      this->get(KEY_FOR_USE)->setLength(0);
 
       migration = true;
     }
   }
 
   if (this->sizeFile() == 2718) {  // druga wersja configa
-
-    if (this->load(1) == E_CONFIG_OK) {  // wczytanie kluczy tylko z wersji 1 configa
+    Serial.println(F("migration version 2 -> 3"));
+    if (this->load(2) == E_CONFIG_OK) {  // wczytanie kluczy tylko z wersji 2 configa
       migration = true;
     }
   }
@@ -309,21 +403,25 @@ bool SuplaConfigManager::migrationConfig() {
   }
   else {
     Serial.println(F("error Config migration"));
+    if (this->load(1, false) == E_CONFIG_OK) {  // jeżeli migracja się nie uda, nastąpi próba wczytania tylko danych podstowych
+      Serial.println(F("load version 1"));
+      this->save();
+    }
   }
 
   return migration;
 }
 
-uint8_t SuplaConfigManager::addKey(uint8_t key, int maxLength) {
-  return addKey(key, "", maxLength);
+uint8_t SuplaConfigManager::addKey(uint8_t key, int maxLength, uint8_t version, bool loadKey) {
+  return addKey(key, "", maxLength, version, loadKey);
 }
 
-uint8_t SuplaConfigManager::addKey(uint8_t key, const char *value, int maxLength, uint8_t version) {
+uint8_t SuplaConfigManager::addKey(uint8_t key, const char *value, int maxLength, uint8_t version, bool loadKey) {
   if (_optionCount == CONFIG_MAX_OPTIONS) {
     return E_CONFIG_MAX;
   }
-  _options[_optionCount] = new ConfigOption(key, value, maxLength, version);
-  _optionCount += 1;
+  _options[key] = new ConfigOption(key, value, maxLength, version, loadKey);
+  //_optionCount += 1; OPTION_COUNT
 
   return E_CONFIG_OK;
 }
@@ -349,7 +447,7 @@ int SuplaConfigManager::sizeFile() {
   return -1;
 }
 
-uint8_t SuplaConfigManager::load(uint8_t version) {
+uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
   if (SPIFFS.begin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
@@ -360,32 +458,33 @@ uint8_t SuplaConfigManager::load(uint8_t version) {
         int length = 0;
 
         for (i = 0; i < _optionCount; i++) {
-          if (version >= _options[i]->getVersion() || version == 0) {
+          if (version >= _options[i]->getVersion()) {
             length += _options[i]->getLength();
           }
         }
 
-        Serial.print(F("size file: "));
-        Serial.println(configFile.size());
-        Serial.print(F("size conf: "));
-        Serial.println(length);
-
-        if (length != configFile.size()) {
+        if (length != configFile.size() && configParse) {
+          Serial.print(F("size file: "));
+          Serial.println(configFile.size());
+          Serial.print(F("size conf: "));
+          Serial.println(length);
           if (!this->migrationConfig())
             return E_CONFIG_PARSE_ERROR;
         }
 
-        uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
+        uint8_t *content = new uint8_t[length];
         configFile.read(content, length);
 
         for (i = 0; i < _optionCount; i++) {
-          _options[i]->setValue((const char *)(content + offset));
+          if (_options[i]->getLoadKey()) {
+            _options[i]->setValue((const char *)(content + offset));
+          }
           offset += _options[i]->getLength();
           delay(0);
         }
 
         configFile.close();
-        free(content);
+        delete content;
 
         return E_CONFIG_OK;
       }
@@ -415,14 +514,15 @@ uint8_t SuplaConfigManager::save() {
 
     File configFile = SPIFFS.open(CONFIG_FILE_PATH, "w+");
     if (configFile) {
-      uint8_t *content = (uint8_t *)malloc(sizeof(uint8_t) * length);
+      uint8_t *content = new uint8_t[length];
       for (i = 0; i < _optionCount; i++) {
-        Serial.print(F("Save key: "));
-        Serial.print(_options[i]->getKey());
-        Serial.print(F(" Value: "));
-        Serial.println(_options[i]->getValue());
-
-        memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
+        if (_options[i]->getLoadKey()) {
+          Serial.print(F("Save key: "));
+          Serial.print(_options[i]->getKey());
+          Serial.print(F(" Value: "));
+          Serial.println(_options[i]->getValue());
+          memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
+        }
         offset += _options[i]->getLength();
         delay(0);
       }
@@ -430,10 +530,11 @@ uint8_t SuplaConfigManager::save() {
       configFile.write(content, length);
       configFile.close();
 
-      free(content);
+      delete content;
       return E_CONFIG_OK;
     }
     else {
+      configFile.close();
       return E_CONFIG_FILE_OPEN;
     }
   }
