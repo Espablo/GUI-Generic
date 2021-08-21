@@ -1,5 +1,5 @@
 {
-	"version" : "3.1.1",
+	"version" : "3.1.2",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -618,7 +618,7 @@
 			"name": "Pomiar analogowy (ADC Pin)",
 			"desc": "Ustawienia urządzenia->Analog. Umożliwia obsługę pomiaru napięcia na wejściu ADC Pin.",
 			"defOn": false,
-			"depRel": [
+			"depOn": [
 				"SUPLA_NTC_10K",
 				"SUPLA_MPX_5XXX"
 			],
@@ -644,7 +644,6 @@
 			"desc": "Ustawienia urządzenia->Analog. Umożliwia obsługę termistora NTC 10K.",
 			"defOn": false,
 			"depRel": [
-				"SUPLA_ANALOG_READING_MAP",
 				"SUPLA_MPX_5XXX"
 			],
 			"en": {
@@ -669,8 +668,7 @@
 			"desc": "Ustawienia urządzenia->Analog. Umożliwia obsługę czujnika ciśnienia z serii MPX5xxx.",
 			"defOn": false,
 			"depRel": [
-				"SUPLA_NTC_10K",
-				"SUPLA_ANALOG_READING_MAP"
+				"SUPLA_NTC_10K"
 			],
 			"en": {
 				"name": "MPX5xxx pressure sensor",
