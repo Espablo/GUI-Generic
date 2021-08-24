@@ -36,11 +36,11 @@ void handleCorrection(int save) {
       }
 
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
-        correction = ConfigManager->get(KEY_CORRECTION_TEMP)->getElement(channel->getChannelNumber()).toDouble();
+        correction = ConfigManager->get(KEY_CORRECTION_TEMP)->getElement(channel->getChannelNumber());
         addNumberBox(webContentBuffer, getInput(INPUT_CORRECTION_TEMP, channel->getChannelNumber()),
                      String(S_CH_CORRECTION) + S_SPACE + channel->getChannelNumber() + S_SPACE + ("[1]"), emptyString, false, correction);
 
-        correction = ConfigManager->get(KEY_CORRECTION_HUMIDITY)->getElement(channel->getChannelNumber()).toDouble();
+        correction = ConfigManager->get(KEY_CORRECTION_HUMIDITY)->getElement(channel->getChannelNumber());
         addNumberBox(webContentBuffer, getInput(INPUT_CORRECTION_HUMIDITY, channel->getChannelNumber()),
                      String(S_CH_CORRECTION) + S_SPACE + channel->getChannelNumber() + S_SPACE + F("[2]"), emptyString, false, correction);
       }
