@@ -15,7 +15,7 @@ void createWebPageLimitSwitch() {
 }
 
 void handleLimitSwitch(int save) {
-  uint8_t nr, countFreeGpio;
+  uint8_t nr;
 
   WebServer->sendHeaderStart();
 
@@ -24,19 +24,7 @@ void handleLimitSwitch(int save) {
 
   addForm(webContentBuffer, F("post"), PATH_SWITCH);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_LIMIT_SWITCH);
-
-#ifdef SUPLA_MCP23017
-  if (ConfigESP->checkActiveMCP23017(FUNCTION_LIMIT_SWITCH)) {
-    countFreeGpio = 32;
-  }
-  else {
-    countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH);
-  }
-#else
-  countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH);
-#endif
-
-  addNumberBox(webContentBuffer, INPUT_MAX_LIMIT_SWITCH, S_QUANTITY, KEY_MAX_LIMIT_SWITCH, countFreeGpio);
+  addNumberBox(webContentBuffer, INPUT_MAX_LIMIT_SWITCH, S_QUANTITY, KEY_MAX_LIMIT_SWITCH, ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH););
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
 #ifdef SUPLA_MCP23017

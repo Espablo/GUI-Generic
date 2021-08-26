@@ -25,8 +25,10 @@
 #include <supla/element.h>
 #include "SuplaConfigManager.h"
 
+#ifdef ARDUINO_ARCH_ESP8266
 #include <cont.h>
 #include <user_interface.h>
+#endif
 
 enum _configModeESP
 {
@@ -40,7 +42,7 @@ enum _ConfigMode
   FACTORYRESET
 };
 
-#define OFF_GPIO     17
+#define OFF_GPIO     MAX_GPIO + 1
 #define OFF_MCP23017 4
 
 typedef struct {
@@ -94,6 +96,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   bool checkBusyCfg(int gpio);
   int checkBusyGpio(int gpio, int function);
   uint8_t countFreeGpio(uint8_t exception = 0);
+  bool checkGpio(int gpio);
 
   void setLevel(uint8_t gpio, int level);
   void setMemory(uint8_t gpio, int memory);

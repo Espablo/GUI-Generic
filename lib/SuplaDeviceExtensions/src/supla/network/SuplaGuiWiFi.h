@@ -10,6 +10,9 @@ class GUIESPWifi : public Supla::ESPWifi {
  public:
   GUIESPWifi(const char *wifiSsid = nullptr, const char *wifiPassword = nullptr)
       : ESPWifi(wifiSsid, wifiPassword) {
+#ifdef ARDUINO_ARCH_ESP32
+    enableSSL(false);  // ESP32 WiFiClientSecure does not suport "setInsecure"
+#endif
   }
 
   void setup() {

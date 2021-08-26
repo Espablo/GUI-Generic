@@ -20,9 +20,18 @@
 String webContentBuffer;
 
 SuplaWebServer::SuplaWebServer() {
+#ifdef ARDUINO_ARCH_ESP8266
   httpServer = new ESP8266WebServer(80);
 #ifdef SUPLA_OTA
   httpUpdater = new ESP8266HTTPUpdateServer();
+  httpUpdater->setup(httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());
+#endif
+#elif ARDUINO_ARCH_ESP32
+  httpServer = new ESP32WebServer(80);
+#ifdef SUPLA_OTA
+  httpUpdater = new ESP32HTTPUpdateServer();
+  httpUpdater->setup(httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());
+#endif
 #endif
 }
 
@@ -52,9 +61,6 @@ void SuplaWebServer::createWebServer() {
 #ifdef SUPLA_CONFIG
   createWebPageConfig();
 #endif
-#ifdef SUPLA_OTA
-  httpUpdater->setup(httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());
-#endif
 
   createWebUpload();
   createWebTools();
@@ -68,7 +74,9 @@ void SuplaWebServer::createWebServer() {
 void SuplaWebServer::sendHeaderStart() {
   if (!chunkedSendHeader) {
     chunkedSendHeader = true;
+#ifdef ARDUINO_ARCH_ESP8266
     tcpCleanup();
+#endif
     httpServer->sendHeader(F("Cache-Control"), F("no-cache, no-store, must-revalidate"));
     httpServer->sendHeader(F("Pragma"), F("no-cache"));
     httpServer->sendHeader(F("Expires"), F("-1"));
@@ -111,7 +119,9 @@ void SuplaWebServer::sendHeaderEnd() {
     httpServer->sendContent_P(HTTP_RBT);
     httpServer->chunkedResponseFinalize();
 
+#ifdef ARDUINO_ARCH_ESP8266
     tcpCleanup();
+#endif
     httpServer->client().flush();
     httpServer->client().stop();
     chunkedSendHeader = false;
@@ -257,7 +267,7 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
 }
 #endif
 
-#if defined(ESP8266)
+#ifdef ARDUINO_ARCH_ESP8266
 
 struct tcp_pcb;
 extern struct tcp_pcb* tcp_tw_pcbs;

@@ -1,5 +1,10 @@
 #include "SuplaWebPageDownload.h"
+
+#ifdef ARDUINO_ARCH_ESP8266
 #include "FS.h"
+#elif ARDUINO_ARCH_ESP32
+#include "SPIFFS.h"
+#endif
 
 void handleDownload() {
   if (!WebServer->isLoggedIn()) {

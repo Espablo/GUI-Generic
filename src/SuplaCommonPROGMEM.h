@@ -79,22 +79,24 @@ const char ICON_EDIT[] PROGMEM =
     "gMxAzZhEGRAF2ZQmoGpA6R6BlSaAV34P0QYIYEmDJPAEIZJQFxSg+"
     "kPDGFsHiQkAQDjTS5MMLyE4wAAAABJRU5ErkJggg=='>";
 
-const char GPIO0[] PROGMEM = "GPIO0-D3";
-const char GPIO1[] PROGMEM = "GPIO1-TX";
-const char GPIO2[] PROGMEM = "GPIO2-D4";
-const char GPIO3[] PROGMEM = "GPIO3-RX";
-const char GPIO4[] PROGMEM = "GPIO4-D2";
-const char GPIO5[] PROGMEM = "GPIO5-D1";
-const char GPIO9[] PROGMEM = "GPIO9-FL (ESP8285)";
-const char GPIO10[] PROGMEM = "GPIO10-FL (ESP8285)";
-const char GPIO12[] PROGMEM = "GPIO12-D6";
-const char GPIO13[] PROGMEM = "GPIO13-D7";
-const char GPIO14[] PROGMEM = "GPIO14-D5";
-const char GPIO15[] PROGMEM = "GPIO15-D8";
-const char GPIO16[] PROGMEM = "GPIO16-D0";
 const char OFF[] PROGMEM = S_OFF;
 const char ON[] PROGMEM = S_ON;
 const char S_EMPTY[] PROGMEM = "";
+
+#ifdef ARDUINO_ARCH_ESP8266
+const char GPIO0[] PROGMEM = "0-D3";
+const char GPIO1[] PROGMEM = "1-TX";
+const char GPIO2[] PROGMEM = "2-D4";
+const char GPIO3[] PROGMEM = "3-RX";
+const char GPIO4[] PROGMEM = "4-D2";
+const char GPIO5[] PROGMEM = "5-D1";
+const char GPIO9[] PROGMEM = "9-FL (ESP8285)";
+const char GPIO10[] PROGMEM = "10-FL (ESP8285)";
+const char GPIO12[] PROGMEM = "12-D6";
+const char GPIO13[] PROGMEM = "13-D7";
+const char GPIO14[] PROGMEM = "14-D5";
+const char GPIO15[] PROGMEM = "15-D8";
+const char GPIO16[] PROGMEM = "16-D0";
 
 const char* const GPIO_P[] PROGMEM = {GPIO0,
                                       GPIO1,
@@ -122,6 +124,39 @@ const char* const GPIO_P[] PROGMEM = {GPIO0,
                                       GPIO15,
                                       GPIO16,
                                       OFF};
+#elif ARDUINO_ARCH_ESP32
+const char GPIO0[] PROGMEM = "0-IO";
+const char GPIO1[] PROGMEM = "1-TX";
+const char GPIO2[] PROGMEM = "2-IO";
+const char GPIO3[] PROGMEM = "3-RX";
+const char GPIO4[] PROGMEM = "4-IO";
+const char GPIO5[] PROGMEM = "5-IO";
+const char GPIO12[] PROGMEM = "12-IO";
+const char GPIO13[] PROGMEM = "13-IO";
+const char GPIO14[] PROGMEM = "14-IO";
+const char GPIO15[] PROGMEM = "15-IO";
+const char GPIO16[] PROGMEM = "16-IO";
+const char GPIO17[] PROGMEM = "17-IO";
+const char GPIO18[] PROGMEM = "18-IO";
+const char GPIO19[] PROGMEM = "19-IO";
+const char GPIO21[] PROGMEM = "21-IO";
+const char GPIO22[] PROGMEM = "22-IO";
+const char GPIO23[] PROGMEM = "23-IO";
+const char GPIO25[] PROGMEM = "25-IO";
+const char GPIO26[] PROGMEM = "26-IO";
+const char GPIO27[] PROGMEM = "27-IO";
+const char GPIO32[] PROGMEM = "32-AO";
+const char GPIO33[] PROGMEM = "33-AO";
+const char GPIO34[] PROGMEM = "34-IA";
+const char GPIO35[] PROGMEM = "35-IA";
+const char GPIO36[] PROGMEM = "36-IA";
+const char GPIO39[] PROGMEM = "39-IA";
+
+const char* const GPIO_P[] PROGMEM = {GPIO0,   GPIO1,  GPIO2,  GPIO3,  GPIO4,   GPIO5,   S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
+                                      S_EMPTY, GPIO12, GPIO13, GPIO14, GPIO15,  GPIO16,  GPIO17,  GPIO18,  GPIO19,  S_EMPTY, GPIO21,
+                                      GPIO22,  GPIO23, S_EMPTY, GPIO25, GPIO26,  GPIO27,  S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, GPIO32,
+                                      GPIO33,  GPIO34, GPIO35, GPIO36, S_EMPTY, S_EMPTY, GPIO39,  OFF};
+#endif
 
 const char GPIO_A0[] PROGMEM = "A0";
 const char GPIO_A1[] PROGMEM = "A1";
