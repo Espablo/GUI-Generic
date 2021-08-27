@@ -94,9 +94,7 @@ void DirectLinks::toggleConnection() {
     if (_isSecured) {
       client = new WiFiClientSecure();
       ((WiFiClientSecure *)client)->setInsecure();
-#ifdef ARDUINO_ARCH_ESP8266
       ((WiFiClientSecure *)client)->setBufferSizes(256, 256);
-#endif
       ((WiFiClientSecure *)client)->setTimeout(200);
     } else {
       client = new WiFiClient();

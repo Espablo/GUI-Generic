@@ -64,12 +64,10 @@ void checkRAM() {
   if (freeRAM <= lowestRAM) {
     lowestRAM = freeRAM;
   }
-#ifdef ARDUINO_ARCH_ESP8266
   uint32_t freeStack = ESP.getFreeContStack();
   Serial.print(F("freeStack: "));
   Serial.println(freeStack);
   if (freeStack <= lowestFreeStack) {
     lowestFreeStack = freeStack;
   }
-#endif
 }

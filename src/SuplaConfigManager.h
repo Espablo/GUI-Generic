@@ -17,14 +17,6 @@
 #ifndef SuplaConfigManager_h
 #define SuplaConfigManager_h
 
-#ifdef ARDUINO_ARCH_ESP8266
-#include "FS.h"
-#elif ARDUINO_ARCH_ESP32
-#include "SPIFFS.h"
-#include <os.h>
-#include <esp_wifi.h>
-#endif
-
 #define CONFIG_FILE_PATH "/dat"
 
 #define DEFAULT_HOSTNAME "GUI Generic"
@@ -53,15 +45,10 @@
 #define MAX_FUNCTION            1
 
 #define MAX_DS18B20          20
+#define MAX_GPIO             17
 #define MAX_PUSHOVER_MESSAGE 5
 #define MAX_DIRECT_LINK      5
-
-#ifdef ARDUINO_ARCH_ESP8266
-#define MAX_GPIO               17
-#define GPIO_ANALOG_A0_ESP8266 11
-#elif ARDUINO_ARCH_ESP32
-#define MAX_GPIO 39
-#endif
+#define GPIO_ANALOG_A0       11
 
 enum _key
 {

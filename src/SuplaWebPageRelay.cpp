@@ -83,7 +83,7 @@ void handleRelaySave() {
 }
 
 void handleRelay(int save) {
-  uint8_t nr;
+  uint8_t nr, countFreeGpio;
 
   WebServer->sendHeaderStart();
 
@@ -92,7 +92,19 @@ void handleRelay(int save) {
 
   addForm(webContentBuffer, F("post"), PATH_RELAY);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_RELAYS);
-  addNumberBox(webContentBuffer, INPUT_MAX_RELAY, S_QUANTITY, KEY_MAX_RELAY, ConfigESP->countFreeGpio(FUNCTION_RELAY));
+
+#ifdef SUPLA_MCP23017
+  if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
+    countFreeGpio = 32;
+  }
+  else {
+    countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_RELAY);
+  }
+#else
+  countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_RELAY);
+#endif
+
+  addNumberBox(webContentBuffer, INPUT_MAX_RELAY, S_QUANTITY, KEY_MAX_RELAY, countFreeGpio);
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
 #ifdef SUPLA_MCP23017

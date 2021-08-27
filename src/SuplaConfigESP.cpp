@@ -14,16 +14,14 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifdef ARDUINO_ARCH_ESP8266
 #include <ESP8266WiFi.h>
+
+#include "SuplaConfigESP.h"
+#include "SuplaDeviceGUI.h"
 
 #ifdef SUPLA_MDNS
 #include <ESP8266mDNS.h>
 #endif
-#endif
-
-#include "SuplaConfigESP.h"
-#include "SuplaDeviceGUI.h"
 
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
@@ -153,11 +151,13 @@ void SuplaConfigESP::configModeInit() {
 
   Supla::GUI::enableWifiSSL(false);
 
+  Supla::GUI::crateWebServer();
+
   WiFi.setAutoConnect(false);
   WiFi.setAutoReconnect(false);
 
   WiFi.mode(WIFI_AP_STA);
-  WiFi.softAP(getConfigNameAP().c_str(), "");
+  // WiFi.softAP(getConfigNameAP(), "");
   WiFi.begin(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
   Serial.println(F("Config Mode started"));
 }
@@ -169,13 +169,11 @@ bool SuplaConfigESP::checkSSL() {
 void SuplaConfigESP::iterateAlways() {
   if (configModeESP == CONFIG_MODE) {
     if (!APConfigured) {
-      APConfigured = WiFi.softAP(getConfigNameAP().c_str(), "");
+      APConfigured = WiFi.softAP(getConfigNameAP(), "");
       Serial.print(F("AP started IP: "));
       Serial.println(WiFi.softAPIP());
-      Supla::GUI::crateWebServer();
     }
 
-#ifdef ARDUINO_ARCH_ESP8266
 #ifdef SUPLA_MDNS
     if (WiFi.status() == WL_CONNECTED) {
       if (!MDNSConfigured) {
@@ -188,7 +186,6 @@ void SuplaConfigESP::iterateAlways() {
       }
       MDNS.update();
     }
-#endif
 #endif
   }
 }
@@ -206,11 +203,14 @@ int SuplaConfigESP::getLastStatusSupla() {
 }
 
 void SuplaConfigESP::ledBlinking(int time) {
-  led.attach_ms(time, ledBlinkingTicker);
+  os_timer_disarm(&led_timer);
+  os_timer_setfn(&led_timer, ledBlinking_func, NULL);
+  os_timer_arm(&led_timer, time, true);
 }
 
 void SuplaConfigESP::ledBlinkingStop(void) {
-  led.detach();
+  os_timer_disarm(&led_timer);
+  digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), pinOffValue());
 }
 
 uint8_t SuplaConfigESP::pinOnValue() {
@@ -236,7 +236,7 @@ String SuplaConfigESP::getMacAddress(bool formating) {
   return String(baseMacChr);
 }
 
-void ledBlinkingTicker() {
+void ledBlinking_func(void *timer_arg) {
   int val = digitalRead(ConfigESP->getGpio(FUNCTION_CFG_LED));
   digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), val == HIGH ? 0 : 1);
 }
@@ -426,7 +426,11 @@ bool SuplaConfigESP::checkBusyCfg(int gpio) {
 }
 
 int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
-  if (!checkGpio(gpio)) {
+  if (gpio == 6 || gpio == 7 || gpio == 8
+#ifdef ARDUINO_ESP8266_GENERIC
+      || gpio == 9 || gpio == 10
+#endif
+  ) {
     return false;
   }
   else {
@@ -516,15 +520,8 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
 
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   uint8_t count = 0;
-
-#ifdef SUPLA_MCP23017
-  if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
-    return 32;
-  }
-#endif
-
   for (uint8_t gpio = 0; gpio < OFF_GPIO; gpio++) {
-    if (checkGpio(gpio)) {
+    if (gpio != 6 && gpio != 7 && gpio != 8 && gpio != 11) {
       uint8_t key = KEY_GPIO + gpio;
       if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_OFF ||
           ConfigManager->get(key)->getElement(FUNCTION).toInt() == exception) {
@@ -534,24 +531,6 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
     delay(0);
   }
   return count;
-}
-
-bool SuplaConfigESP::checkGpio(int gpio) {
-  if (
-#ifdef ARDUINO_ARCH_ESP8266
-      gpio == 6 || gpio == 7 || gpio == 8
-#ifdef ARDUINO_ESP8266_GENERIC
-      || gpio == 9 || gpio == 10
-#endif
-#elif ARDUINO_ARCH_ESP32
-      gpio == 6 || gpio == 7 || gpio == 8 || gpio == 9 || gpio == 10 || gpio == 11 || gpio == 20 || gpio == 24 || gpio == 28 || gpio == 29 ||
-      gpio == 30 || gpio == 31 || gpio == 37 || gpio == 38
-#endif
-  ) {
-    return false;
-  }
-
-  return true;
 }
 
 #ifdef SUPLA_MCP23017

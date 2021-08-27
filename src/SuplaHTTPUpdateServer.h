@@ -1,7 +1,6 @@
 #ifndef __HTTP_UPDATE_SERVER_H
 #define __HTTP_UPDATE_SERVER_H
 
-#ifdef ARDUINO_ARCH_ESP8266
 #include <ESP8266WebServer.h>
 
 #define PATH_UPDATE_HENDLE    "update"
@@ -49,6 +48,5 @@ class ESP8266HTTPUpdateServer
   void handleFirmwareUp();
   void suplaWebPageUpddate();
 };
-#endif
 
 #endif

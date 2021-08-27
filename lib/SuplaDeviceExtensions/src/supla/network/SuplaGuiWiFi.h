@@ -12,48 +12,6 @@ class GUIESPWifi : public Supla::ESPWifi {
       : ESPWifi(wifiSsid, wifiPassword) {
   }
 
-  int connect(const char *server, int port = -1) {
-    String message;
-    if (client == NULL) {
-      if (isSecured) {
-        message = "Secured connection";
-        auto clientSec = new WiFiClientSecure();
-        client = clientSec;
-
-#ifdef ARDUINO_ARCH_ESP8266
-        clientSec->setBufferSizes(2048, 512);  // EXPERIMENTAL
-        if (fingerprint.length() > 0) {
-          message += " with certificate matching";
-          clientSec->setFingerprint(fingerprint.c_str());
-        } else {
-          message += " without certificate matching";
-          clientSec->setInsecure();
-        }
-#elif ARDUINO_ARCH_ESP32
-        clientSec->setInsecure();
-#endif
-      } else {
-        message = "unsecured connection";
-        client = new WiFiClient();
-      }
-    }
-
-    int connectionPort = (isSecured ? 2016 : 2015);
-    if (port != -1) {
-      connectionPort = port;
-    }
-
-    supla_log(LOG_DEBUG,
-              "Establishing %s with: %s (port: %d)",
-              message.c_str(),
-              server,
-              connectionPort);
-
-    bool result = client->connect(server, connectionPort);
-
-    return result;
-  }
-
   void setup() {
     if (!wifiConfigured) {
       wifiConfigured = true;

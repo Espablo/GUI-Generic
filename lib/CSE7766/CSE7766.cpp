@@ -136,19 +136,12 @@ void CSE7766::begin() {
   else if (13 == _pin_rx) {
     Serial.begin(CSE7766_BAUDRATE);
     Serial.flush();
-#ifdef ARDUINO_ARCH_ESP8266
     Serial.swap();
-#endif
   }
   else {
-#ifdef ARDUINO_ARCH_ESP8266
     _serial = new SoftwareSerial(_pin_rx, -1, _inverted);
     _serial->enableIntTx(false);
     _serial->begin(CSE7766_BAUDRATE);
-#elif ARDUINO_ARCH_ESP32
-    _serial = new HardwareSerial(_pin_rx);
-    _serial->begin(CSE7766_BAUDRATE, SERIAL_8N1, _pin_rx, -1, _inverted);
-#endif
   }
 
   _ready = true;

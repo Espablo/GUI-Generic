@@ -25,11 +25,9 @@
 
 #include <supla/sensor/percentage.h>
 
-#ifdef ARDUINO_ARCH_ESP8266
 extern "C" {
 #include "user_interface.h"
 }
-#endif
 
 //#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 //#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
@@ -39,11 +37,7 @@ void setup() {
   uint8_t nr, gpio;
 
   Serial.begin(74880);
-
-#ifdef ARDUINO_ARCH_ESP8266
   ESP.wdtDisable();
-#endif
-
   delay(1000);
 
   ConfigManager = new SuplaConfigManager();
@@ -155,7 +149,7 @@ void setup() {
 
 #ifdef SUPLA_NTC_10K
   if (ConfigESP->getGpio(FUNCTION_NTC_10K) != OFF_GPIO) {
-    auto ntc10k = new Supla::Sensor::NTC10K(ConfigESP->getGpio(FUNCTION_NTC_10K));
+    auto ntc10k = new Supla::Sensor::NTC10K(A0);
     Supla::GUI::addConditionsTurnON(SENSOR_NTC_10K, ntc10k);
     Supla::GUI::addConditionsTurnOFF(SENSOR_NTC_10K, ntc10k);
   }
@@ -163,7 +157,7 @@ void setup() {
 
 #ifdef SUPLA_MPX_5XXX
   if (ConfigESP->getGpio(FUNCTION_MPX_5XXX) != OFF_GPIO) {
-    Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(ConfigESP->getGpio(FUNCTION_MPX_5XXX));
+    Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(A0);
     Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX, Supla::GUI::mpx);
     Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX, Supla::GUI::mpx);
   }
@@ -171,7 +165,7 @@ void setup() {
 
 #ifdef SUPLA_ANALOG_READING_MAP
   if (ConfigESP->getGpio(FUNCTION_ANALOG_READING) != OFF_GPIO) {
-    Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap(ConfigESP->getGpio(FUNCTION_ANALOG_READING));
+    Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap(A0);
     Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
     Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
   }
@@ -361,12 +355,10 @@ void setup() {
 
   Supla::GUI::addCorrectionSensor();
 
-#ifdef ARDUINO_ARCH_ESP8266
   // https://github.com/esp8266/Arduino/issues/2070#issuecomment-258660760
   wifi_set_sleep_type(NONE_SLEEP_T);
 
   ESP.wdtEnable(WDTO_120MS);
-#endif
 }
 
 void loop() {
