@@ -25,6 +25,8 @@
 #include <supla/element.h>
 #include "SuplaConfigManager.h"
 
+#include <Ticker.h>
+
 #ifdef ARDUINO_ARCH_ESP8266
 #include <cont.h>
 #include <user_interface.h>
@@ -136,10 +138,10 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void iterateAlways();
   void clearEEPROM();
 
-  ETSTimer led_timer;
+  Ticker led;
 };
 
-void ledBlinking_func(void *timer_arg);
+void ledBlinkingTicker();
 void status_func(int status, const char *msg);
 
 uint32_t getFreeStackWatermark();

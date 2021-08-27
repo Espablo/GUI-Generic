@@ -206,18 +206,11 @@ int SuplaConfigESP::getLastStatusSupla() {
 }
 
 void SuplaConfigESP::ledBlinking(int time) {
-#ifdef ARDUINO_ARCH_ESP8266
-  os_timer_disarm(&led_timer);
-  os_timer_setfn(&led_timer, ledBlinking_func, NULL);
-  os_timer_arm(&led_timer, time, true);
-#endif
+  led.attach_ms(time, ledBlinkingTicker);
 }
 
 void SuplaConfigESP::ledBlinkingStop(void) {
-#ifdef ARDUINO_ARCH_ESP8266
-  os_timer_disarm(&led_timer);
-  digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), pinOffValue());
-#endif
+  led.detach();
 }
 
 uint8_t SuplaConfigESP::pinOnValue() {
@@ -243,7 +236,7 @@ String SuplaConfigESP::getMacAddress(bool formating) {
   return String(baseMacChr);
 }
 
-void ledBlinking_func(void *timer_arg) {
+void ledBlinkingTicker() {
   int val = digitalRead(ConfigESP->getGpio(FUNCTION_CFG_LED));
   digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), val == HIGH ? 0 : 1);
 }
