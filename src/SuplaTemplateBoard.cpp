@@ -250,7 +250,7 @@ void chooseTemplateBoard(uint8_t board) {
       addButton(5);
       addButton(4);
       addButton(16);
-      ConfigESP->setGpio(GPIO_ANALOG_A0, FUNCTION_NTC_10K);
+      // ConfigESP->setGpio(GPIO_ANALOG_A0_ESP8266, FUNCTION_NTC_10K);
       break;
     case BOARD_H801:
       addLedCFG(1);

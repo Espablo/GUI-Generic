@@ -245,12 +245,22 @@ void addListGPIOBox(
   }
   html += F("'>");
 
-  if (ConfigESP->checkBusyGpio(GPIO_ANALOG_A0, function) || gpio == GPIO_ANALOG_A0)
-    addGPIOOptionValue(html, GPIO_ANALOG_A0, gpio, F("ANALOG PIN-A0"));
+#ifdef ARDUINO_ARCH_ESP8266
 
-  for (uint8_t suported = 0; suported < 18; suported++)
-    if ((ConfigESP->checkBusyGpio(suported, function) || suported == gpio) && suported != GPIO_ANALOG_A0)
+  if (ConfigESP->checkBusyGpio(GPIO_ANALOG_A0_ESP8266, function) || gpio == GPIO_ANALOG_A0_ESP8266)
+    addGPIOOptionValue(html, GPIO_ANALOG_A0_ESP8266, gpio, F("ANALOG PIN-A0"));
+
+  for (uint8_t suported = 0; suported <= OFF_GPIO; suported++)
+    if ((ConfigESP->checkBusyGpio(suported, function) || suported == gpio) && suported != GPIO_ANALOG_A0_ESP8266)
       addGPIOOptionValue(html, suported, gpio, FPSTR(GPIO_P[suported]));
+
+#elif ARDUINO_ARCH_ESP32
+
+  for (uint8_t suported = 0; suported <= OFF_GPIO; suported++)
+    if ((ConfigESP->checkBusyGpio(suported, function) || suported == gpio))
+      addGPIOOptionValue(html, suported, gpio, FPSTR(GPIO_P[suported]));
+
+#endif
 
   WebServer->sendHeader();
   html += F("</select>");
@@ -261,11 +271,18 @@ void addListGPIOBox(
 void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const String& name) {
   html += F("<option value='");
   html += gpio;
-  if (gpio == selectedGpio) {
-    html += F("' selected>");
+
+  if (gpio == OFF_GPIO) {
+    if (gpio == selectedGpio)
+      html += F("' selected>");
+    else
+      html += F("'>");
   }
   else {
-    html += F("'>");
+    if (gpio == selectedGpio)
+      html += F("' selected> GPIO");
+    else
+      html += F("'> GPIO");
   }
   html += name;
 }
@@ -310,7 +327,7 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
 
     html += F(" ");
     html += name;
-    //html += FPSTR(ICON_EDIT);
+    // html += FPSTR(ICON_EDIT);
     html += F("</a>");
     WebServer->sendHeader();
   }

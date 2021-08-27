@@ -46,12 +46,11 @@ void begin() {
                     ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),             // Email address used to login to Supla Cloud
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
-  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt()) {
-    crateWebServer();
-  }
-
   if (getCountChannels() == 0)
     ConfigESP->configModeInit();
+
+  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
+    crateWebServer();
 }
 
 void setupWifi() {
