@@ -725,8 +725,9 @@ void SuplaConfigESP::reset(bool forceReset) {
     Serial.println(F("DEVICES CONFIGURATION RESET!"));
 
     clearEEPROM();
-
     ConfigManager->deleteDeviceValues();
+    
+    saveChooseTemplateBoard(getDefaultTamplateBoard());
 
     ConfigManager->save();
 
