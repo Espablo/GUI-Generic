@@ -126,14 +126,14 @@ void chooseTemplateBoard(uint8_t board) {
       break;
     case BOARD_SHELLY1:
       addButtonCFG(5);
-      addButton(5, false, true);
+      addButton(5, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
       addRelay(4);
       break;
     case BOARD_SHELLY2:
       addLedCFG(16);
       addButtonCFG(12);
-      addButton(12, false, true);
-      addButton(14, false, true);
+      addButton(12, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
+      addButton(14, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
       addRelay(4);
       addRelay(5);
       break;
@@ -216,14 +216,14 @@ void chooseTemplateBoard(uint8_t board) {
     case BOARD_YUNSHAN:
       addLedCFG(2, LOW);
       addButtonCFG(0);
-      addButton(3, Supla::Event::ON_CHANGE);
+      addButton(3);
       addRelay(4);
       break;
 
     case BOARD_YUNTONG_SMART:
       addLedCFG(15);
       addButtonCFG(12);
-      addButton(12, Supla::Event::ON_CHANGE);
+      addButton(12);
       addRelay(4);
       break;
 
@@ -269,6 +269,30 @@ void chooseTemplateBoard(uint8_t board) {
       // Supla::GUI::counterHLW8012->setVoltageMultiplier(247704);
       // Supla::GUI::counterHLW8012->setPowerMultiplier(2586583);
 #endif
+      break;
+    case BOARD_MINITIGER_1CH:
+      addLedCFG(13);
+      addButtonCFG(0);
+      addButton(0);
+      addRelay(12);
+      break;
+    case BOARD_MINITIGER_2CH:
+      addLedCFG(13);
+      addButtonCFG(0);
+      addButton(0);
+      addButton(9);
+      addRelay(12);
+      addRelay(5);
+      break;
+    case BOARD_MINITIGER_3CH:
+      addLedCFG(13);
+      addButtonCFG(0);
+      addButton(0);
+      addButton(9);
+      addButton(10);
+      addRelay(12);
+      addRelay(5);
+      addRelay(4);
       break;
   }
 }
