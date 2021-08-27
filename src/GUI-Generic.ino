@@ -155,7 +155,7 @@ void setup() {
 
 #ifdef SUPLA_NTC_10K
   if (ConfigESP->getGpio(FUNCTION_NTC_10K) != OFF_GPIO) {
-    auto ntc10k = new Supla::Sensor::NTC10K(A0);
+    auto ntc10k = new Supla::Sensor::NTC10K(ConfigESP->getGpio(FUNCTION_NTC_10K));
     Supla::GUI::addConditionsTurnON(SENSOR_NTC_10K, ntc10k);
     Supla::GUI::addConditionsTurnOFF(SENSOR_NTC_10K, ntc10k);
   }
@@ -163,7 +163,7 @@ void setup() {
 
 #ifdef SUPLA_MPX_5XXX
   if (ConfigESP->getGpio(FUNCTION_MPX_5XXX) != OFF_GPIO) {
-    Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(A0);
+    Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(ConfigESP->getGpio(FUNCTION_MPX_5XXX));
     Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX, Supla::GUI::mpx);
     Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX, Supla::GUI::mpx);
   }
@@ -171,7 +171,7 @@ void setup() {
 
 #ifdef SUPLA_ANALOG_READING_MAP
   if (ConfigESP->getGpio(FUNCTION_ANALOG_READING) != OFF_GPIO) {
-    Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap(A0);
+    Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap(ConfigESP->getGpio(FUNCTION_ANALOG_READING));
     Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
     Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
   }
