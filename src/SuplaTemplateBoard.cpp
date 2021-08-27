@@ -271,28 +271,28 @@ void chooseTemplateBoard(uint8_t board) {
 #endif
       break;
     case BOARD_MINITIGER_1CH:
-      addLedCFG(13);
-      addButtonCFG(0);
-      addButton(0);
+      addLedCFG(1);
+      addButtonCFG(5);
+      addButton(5);
       addRelay(12);
       break;
     case BOARD_MINITIGER_2CH:
-      addLedCFG(13);
-      addButtonCFG(0);
-      addButton(0);
-      addButton(9);
-      addRelay(12);
-      addRelay(5);
+      addLedCFG(1);
+      addButtonCFG(3);
+      addButton(3);
+      addButton(4);
+      addRelay(13);
+      addRelay(14);
       break;
     case BOARD_MINITIGER_3CH:
-      addLedCFG(13);
-      addButtonCFG(0);
-      addButton(0);
-      addButton(9);
-      addButton(10);
+      addLedCFG(1);
+      addButtonCFG(3);
+      addButton(3);
+      addButton(5);
+      addButton(4);
+      addRelay(13);
       addRelay(12);
-      addRelay(5);
-      addRelay(4);
+      addRelay(14);
       break;
   }
 }

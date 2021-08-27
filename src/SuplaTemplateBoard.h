@@ -101,8 +101,8 @@ const char DIMMER_LUKASZH[] PROGMEM = "Dimmer by @LukaszH";
 const char H801[] PROGMEM = "H801 RGBW";
 const char SHELLY_PLUG_S[] PROGMEM = "Shelly Plug S";
 const char SONOFF_MINI[] PROGMEM = "SONOFF Mini";
-const char MINITIGER_1CH[] PROGMEM = "Minitiger 1 Gang Switch";
-const char MINITIGER_2CH[] PROGMEM = "Minitiger 2 Gang Switch";
+const char MINITIGER_1CH[] PROGMEM = "Minitiger 1 Gang v2 Switch";
+const char MINITIGER_2CH[] PROGMEM = "Minitiger 2 Gang v2 Switch";
 const char MINITIGER_3CH[] PROGMEM = "Minitiger 3 Gang Switch";
 
 const char* const BOARD_P[MAX_MODULE] PROGMEM = {
