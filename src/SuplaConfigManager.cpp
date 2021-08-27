@@ -163,7 +163,7 @@ void ConfigOption::setValue(const char *value) {
 // class SuplaConfigManager
 //
 SuplaConfigManager::SuplaConfigManager() {
-  if (SPIFFS.begin(true)) {
+  if (SPIFFS.begin()) {
     _optionCount = OPTION_COUNT;
 
     // SPIFFS.format();
@@ -358,6 +358,8 @@ SuplaConfigManager::SuplaConfigManager() {
   }
   else {
     Serial.println(F("Failed to mount SPIFFS"));
+    Serial.println(F("Formatting SPIFFS"));
+    SPIFFS.format();
     delay(2000);
     ESP.restart();
   }
@@ -453,7 +455,7 @@ uint8_t SuplaConfigManager::deleteKey(uint8_t key) {
 }
 
 int SuplaConfigManager::sizeFile() {
-  if (SPIFFS.begin(true)) {
+  if (SPIFFS.begin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
       return configFile.size();
@@ -463,7 +465,7 @@ int SuplaConfigManager::sizeFile() {
 }
 
 uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
-  if (SPIFFS.begin(true)) {
+  if (SPIFFS.begin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
 
@@ -518,7 +520,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
 }
 
 uint8_t SuplaConfigManager::save() {
-  if (SPIFFS.begin(true)) {
+  if (SPIFFS.begin()) {
     int i = 0;
     int offset = 0;
     int length = 0;
