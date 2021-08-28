@@ -9,7 +9,12 @@
 
 #include "Arduino.h"
 #include "debug.h"
+
+#ifdef ARDUINO_ARCH_ESP8266
 #include <SoftwareSerial.h>
+#elif ARDUINO_ARCH_ESP32
+#include <HardwareSerial.h>
+#endif
 
 #ifndef CSE7766_RX_PIN
 #define CSE7766_RX_PIN 3
@@ -82,7 +87,12 @@ class CSE7766 {
   bool _ready = false;
   unsigned int _pin_rx = CSE7766_RX_PIN;
   bool _inverted = CSE7766_PIN_INVERSE;
+
+#ifdef ARDUINO_ARCH_ESP8266
   SoftwareSerial* _serial = NULL;
+#elif ARDUINO_ARCH_ESP32
+  HardwareSerial* _serial = NULL;
+#endif
 
   double _active = 0;
   double _voltage = 0;
