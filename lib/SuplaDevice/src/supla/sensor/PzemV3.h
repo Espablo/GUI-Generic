@@ -21,7 +21,9 @@
 // dependence: Arduino library for the Updated PZEM-004T v3.0 Power and Energy
 // meter  https://github.com/mandulaj/PZEM-004T-v30
 #include <PZEM004Tv30.h>
+#ifdef PZEM004_SOFTSERIAL
 #include <SoftwareSerial.h>
+#endif
 
 #include "one_phase_electricity_meter.h"
 
@@ -30,11 +32,16 @@ namespace Sensor {
 
 class PZEMv3 : public OnePhaseElectricityMeter {
  public:
+#ifdef ARDUINO_ARCH_ESP32
+  PZEMv3(int8_t pinRX, int8_t pinTX) : pzem(Serial2, pinRX, pinTX) {
+  }
+#else
   PZEMv3(int8_t pinRX, int8_t pinTX) : pzem(pinRX, pinTX) {
   }
 
   PZEMv3(HardwareSerial *serial) : pzem(serial) {
   }
+#endif
 
   void onInit() {
     readValuesFromDevice();
@@ -43,8 +50,8 @@ class PZEMv3 : public OnePhaseElectricityMeter {
 
   virtual void readValuesFromDevice() {
     float current = pzem.current();
-    // If current reading is NAN, we assume that PZEM there is no valid communication
-    // with PZEM. Sensor shouldn't show any data
+    // If current reading is NAN, we assume that PZEM there is no valid
+    // communication with PZEM. Sensor shouldn't show any data
     if (isnan(current)) {
       resetReadParameters();
       return;
