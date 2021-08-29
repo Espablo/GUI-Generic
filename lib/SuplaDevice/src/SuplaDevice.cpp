@@ -44,8 +44,8 @@ SuplaDeviceClass::SuplaDeviceClass()
       connectionFailCounter(0),
       networkIsNotReadyCounter(0),
       currentStatus(STATUS_UNKNOWN),
-      clock(nullptr),
-      impl_arduino_status(nullptr) {
+      impl_arduino_status(nullptr),
+      clock(nullptr) {
   srpc = NULL;
   registered = 0;
   lastIterateTime = 0;
@@ -182,7 +182,7 @@ bool SuplaDeviceClass::begin(unsigned char version) {
 
   if (strnlen(Supla::Channel::reg_dev.SoftVer, SUPLA_SOFTVER_MAXSIZE) == 0) {
     setString(Supla::Channel::reg_dev.SoftVer,
-              "User SW, lib 2.3.4",
+              "User SW, lib 2.3.5",
               SUPLA_SOFTVER_MAXSIZE);
   }
 
