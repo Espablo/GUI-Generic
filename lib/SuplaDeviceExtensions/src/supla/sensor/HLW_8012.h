@@ -61,12 +61,11 @@ class HLW_8012 : public OnePhaseElectricityMeter {
   int8_t pinCF1;
   int8_t pinSEL;
 
+  bool useInterrupts;
   double currentMultiplier;
   double voltageMultiplier;
   double powerMultiplier;
-
   bool currentWhen;
-  bool useInterrupts;
 
   unsigned _supla_int64_t energy = 0;
   unsigned _supla_int64_t _energy =

@@ -144,7 +144,7 @@ void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, 
 }
 
 void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name) {
-  uint8_t temp_width, temp_height;
+  uint8_t temp_width;
 
   int drawHeightIcon = display->getHeight() / 2 - 10;
   int drawStringIcon = display->getHeight() / 2 - 6;
@@ -154,13 +154,11 @@ void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16
 
   if (display->getWidth() <= 64 || display->getHeight() <= 48) {
     temp_width = 0;
-    temp_height = 0;
   }
   else {
     display->drawXbm(x + 0, y + drawHeightIcon, TEMP_WIDTH, TEMP_HEIGHT, temp_bits);
 
     temp_width = TEMP_WIDTH + 10;
-    temp_height = TEMP_HEIGHT;
   }
 
   if (name != NULL) {
@@ -175,7 +173,7 @@ void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16
 }
 
 void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity, const String& name) {
-  uint8_t humidity_width, humidity_height;
+  uint8_t humidity_width;
 
   int drawHeightIcon = display->getHeight() / 2 - 10;
   int drawStringIcon = display->getHeight() / 2 - 6;
@@ -185,12 +183,10 @@ void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x
 
   if (display->getWidth() <= 64 || display->getHeight() <= 48) {
     humidity_width = 0;
-    humidity_height = 0;
   }
   else {
     display->drawXbm(x + 0, y + drawHeightIcon, HUMIDITY_WIDTH, HUMIDITY_HEIGHT, humidity_bits);
     humidity_width = HUMIDITY_WIDTH + 20;
-    humidity_height = HUMIDITY_HEIGHT;
   }
 
   if (name != NULL) {
@@ -205,7 +201,7 @@ void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x
 }
 
 void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure, const String& name) {
-  uint8_t pressure_width, pressure_height;
+  uint8_t pressure_width;
 
   int drawHeightIcon = display->getHeight() / 2 - 10;
   int drawStringIcon = display->getHeight() / 2 - 6;
@@ -215,12 +211,10 @@ void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t 
 
   if (display->getWidth() <= 64 || display->getHeight() <= 48) {
     pressure_width = 0;
-    pressure_height = 0;
   }
   else {
     display->drawXbm(x + 0, y + drawHeightIcon, PRESSURE_WIDTH, PRESSURE_HEIGHT, pressure_bits);
     pressure_width = PRESSURE_WIDTH + 10;
-    pressure_height = PRESSURE_HEIGHT;
   }
 
   if (name != NULL) {

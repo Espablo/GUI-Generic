@@ -216,14 +216,13 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
 
 #ifdef SUPLA_MCP23017
 bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
-  uint8_t key, address, _address, gpio, _gpio, _function, _nr;
+  uint8_t key, _address, gpio, _gpio, _function, _nr;
   String input = _input + nr;
 
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") == 0) {
     return true;
   }
 
-  address = ConfigESP->getAdressMCP23017(nr, function);
   if (nr <= 16)
     _address = WebServer->httpServer->arg(String(INPUT_ADRESS_MCP23017) + 1).toInt();
   if (nr >= 17)

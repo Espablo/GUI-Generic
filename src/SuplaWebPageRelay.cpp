@@ -351,7 +351,7 @@ void handleRelaySaveSetMCP23017() {
   }
 
   String input, nr_relay;
-  uint8_t key, gpio, memory, level, address;
+  uint8_t key, gpio, memory, level;
 
   input.reserve(9);
   nr_relay.reserve(2);

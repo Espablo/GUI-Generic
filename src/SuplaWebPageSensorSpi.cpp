@@ -15,7 +15,7 @@ void createWebPageSensorSpi() {
 }
 
 void handleSensorSpi(int save) {
-  uint8_t nr, suported, selected;
+  uint8_t selected;
 
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
@@ -42,7 +42,6 @@ void handleSensorSpi(int save) {
 
 void handleSensorSpiSave() {
   String input;
-  uint8_t key;
 
   if (!WebServer->saveGPIO(INPUT_CLK_GPIO, FUNCTION_CLK) || !WebServer->saveGPIO(INPUT_CS_GPIO, FUNCTION_CS) ||
       !WebServer->saveGPIO(INPUT_D0_GPIO, FUNCTION_D0)) {
@@ -50,7 +49,6 @@ void handleSensorSpiSave() {
     return;
   }
 
-  key = KEY_ACTIVE_SENSOR;
   input = INPUT_MAX6675;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MAX6675, WebServer->httpServer->arg(input).toInt());

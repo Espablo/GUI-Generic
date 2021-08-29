@@ -53,7 +53,7 @@ void handleConfigSave() {
 }
 
 void handleConfig(int save) {
-  uint8_t selected, suported;
+  uint8_t selected;
 
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);

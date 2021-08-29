@@ -46,7 +46,7 @@ void createWebPageOther() {
 
 #ifdef GUI_OTHER
 void handleOther(int save) {
-  uint8_t nr, suported, selected;
+  uint8_t nr, selected;
 
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
@@ -368,7 +368,7 @@ void handleCounterCalibrate(int save) {
 }
 
 void handleCounterCalibrateSave() {
-  double calibPower, calibVoltage = 0;
+  double calibPower = 0, calibVoltage = 0;
   String couter = WebServer->httpServer->arg(ARG_PARM_URL);
 
   String input = INPUT_CALIB_POWER;
@@ -381,7 +381,7 @@ void handleCounterCalibrateSave() {
     calibVoltage = WebServer->httpServer->arg(input).toDouble();
   }
 
-  if (calibPower && calibVoltage) {
+  if (calibPower != 0 && calibVoltage != 0) {
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
     for (int i = 0; i < Supla::GUI::relay.size(); i++) {
       Supla::GUI::relay[i]->turnOn();

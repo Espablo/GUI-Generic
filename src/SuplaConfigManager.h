@@ -210,8 +210,8 @@ class ConfigOption {
   uint8_t _key;
   char *_value;
   uint16_t _maxLength;
-  bool _loadKey;
   uint8_t _version;
+  bool _loadKey;
 };
 
 class SuplaConfigManager {

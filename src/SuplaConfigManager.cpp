@@ -25,11 +25,7 @@
 #include "SuplaDeviceGUI.h"
 
 ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version, bool loadKey)
-    : _key(0), _value(nullptr), _maxLength(0), _version(1), _loadKey(true) {
-  _key = key;
-  _loadKey = loadKey;
-  _version = version;
-
+    : _key(key), _value(nullptr), _maxLength(maxLength), _version(version), _loadKey(loadKey) {
   if (maxLength > 0) {
     _maxLength = maxLength + 1;
 

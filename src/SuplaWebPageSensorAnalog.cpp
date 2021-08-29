@@ -41,8 +41,6 @@ void createWebPageSensorAnalog() {
 }
 
 void handleSensorAnalog(int save) {
-  uint8_t nr, suported, selected;
-
   WebServer->sendHeaderStart();
 
   webContentBuffer += SuplaSaveResult(save);
