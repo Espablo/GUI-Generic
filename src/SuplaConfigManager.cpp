@@ -381,6 +381,7 @@ SuplaConfigManager::SuplaConfigManager() {
 bool SuplaConfigManager::migrationConfig() {
   bool migration = false;
 
+#ifdef ARDUINO_ARCH_ESP8266
   if (this->sizeFile() == 2681) {  // pierwsza wersja configa
     Serial.println(F("migration version 1 -> 2"));
     uint8_t nr, key;
@@ -409,6 +410,9 @@ bool SuplaConfigManager::migrationConfig() {
       migration = true;
     }
   }
+#elif ARDUINO_ARCH_ESP32
+// migracja dla ESP32
+#endif
 
   if (migration) {
     this->save();
