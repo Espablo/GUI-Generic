@@ -168,7 +168,7 @@ SHT31D ClosedCube_SHT31D::readTempAndHumidity(SHT31D_Repeatability repeatability
 SHT31D ClosedCube_SHT31D::readTempAndHumidityClockStretch(SHT31D_Repeatability repeatability)
 {
 	SHT31D_ErrorCode error = SHT3XD_NO_ERROR;
-	SHT31D_Commands command;
+	//SHT31D_Commands command;
 
 	switch (repeatability)
 	{
@@ -200,7 +200,7 @@ SHT31D ClosedCube_SHT31D::readTempAndHumidityClockStretch(SHT31D_Repeatability r
 SHT31D ClosedCube_SHT31D::readTempAndHumidityPolling(SHT31D_Repeatability repeatability, uint8_t timeout)
 {
 	SHT31D_ErrorCode error = SHT3XD_NO_ERROR;
-	SHT31D_Commands command;
+	//SHT31D_Commands command;
 
 	switch (repeatability)
 	{
@@ -361,7 +361,7 @@ SHT31D ClosedCube_SHT31D::readTemperatureAndHumidity()
 	result.t = 0;
 	result.rh = 0;
 
-	SHT31D_ErrorCode error;
+	SHT31D_ErrorCode error = SHT3XD_NO_ERROR;
 	uint16_t buf[2];
 
 	if (error == SHT3XD_NO_ERROR)
