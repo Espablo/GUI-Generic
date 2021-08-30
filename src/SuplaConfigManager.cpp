@@ -679,7 +679,10 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
 #ifdef ARDUINO_ARCH_ESP8266
     GUID[a] = (GUID[a] + system_get_time() + spi_flash_get_id() + system_get_chip_id() + system_get_rtc_time()) % 255;
 #elif ARDUINO_ARCH_ESP32
-    GUID[a] = (GUID[a] + system_get_time()) % 255;
+    struct timeval now;
+    gettimeofday(&now, NULL);
+
+    GUID[a] = (GUID[a] + now.tv_usec + ((uint32_t)(clock() * 1000 / CLOCKS_PER_SEC))) % 255;
 #endif
   }
 

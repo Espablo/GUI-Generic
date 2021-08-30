@@ -78,7 +78,7 @@ class GUIESPWifi : public Supla::ESPWifi {
             Serial.println(F("WiFi station disconnected"));
           });
 #else
-      WiFiEventId_t event_gotIP = WiFi.onEvent(
+      WiFi.onEvent(
           [](WiFiEvent_t event, WiFiEventInfo_t info) {
             Serial.print(F("local IP: "));
             Serial.println(WiFi.localIP());
@@ -93,7 +93,7 @@ class GUIESPWifi : public Supla::ESPWifi {
           },
           WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
 
-      WiFiEventId_t event_disconnected = WiFi.onEvent(
+      WiFi.onEvent(
           [](WiFiEvent_t event, WiFiEventInfo_t info) {
             Serial.println(F("wifi Station disconnected"));
           },

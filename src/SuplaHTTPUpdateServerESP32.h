@@ -3,6 +3,7 @@
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <WebServer.h>
+#include <supla/ESP32WebServer/ESP32WebServer.h>
 #include <Update.h>
 
 #define PATH_UPDATE_HENDLE "update"

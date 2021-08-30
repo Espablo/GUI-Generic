@@ -8,7 +8,7 @@
 #include <FS.h>
 #include "StreamString.h"
 
-#include "SuplaHTTPUpdateServer.h"
+#include "SuplaHTTPUpdateServerESP32.h"
 #include "SuplaDeviceGUI.h"
 
 static const char serverIndex[] PROGMEM =

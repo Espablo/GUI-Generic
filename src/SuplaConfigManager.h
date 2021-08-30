@@ -23,6 +23,7 @@
 #include "SPIFFS.h"
 #include <os.h>
 #include <esp_wifi.h>
+#include <time.h>
 #endif
 
 #define CONFIG_FILE_PATH "/dat"
