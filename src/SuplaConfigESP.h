@@ -13,7 +13,6 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-
 #ifndef SuplaConfigESP_h
 #define SuplaConfigESP_h
 
@@ -30,6 +29,18 @@
 #ifdef ARDUINO_ARCH_ESP8266
 #include <cont.h>
 #include <user_interface.h>
+#include <ESP8266WiFi.h>
+
+#ifdef SUPLA_MDNS
+#include <ESP8266mDNS.h>
+#endif
+
+#elif ARDUINO_ARCH_ESP32
+
+#ifdef SUPLA_MDNS
+#include <ESPmDNS.h>
+#endif
+
 #endif
 
 enum _configModeESP

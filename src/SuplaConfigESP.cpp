@@ -13,17 +13,7 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-
-#ifdef ARDUINO_ARCH_ESP8266
-#include <ESP8266WiFi.h>
-
-#ifdef SUPLA_MDNS
-#include <ESP8266mDNS.h>
-#endif
-#endif
-
 #include "SuplaConfigESP.h"
-#include "SuplaDeviceGUI.h"
 
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = NORMAL_MODE;
@@ -175,20 +165,24 @@ void SuplaConfigESP::iterateAlways() {
       Supla::GUI::crateWebServer();
     }
 
-#ifdef ARDUINO_ARCH_ESP8266
 #ifdef SUPLA_MDNS
     if (WiFi.status() == WL_CONNECTED) {
       if (!MDNSConfigured) {
+#ifdef ARDUINO_ARCH_ESP8266
         MDNSConfigured = MDNS.begin("supla", WiFi.localIP());
+#elif ARDUINO_ARCH_ESP32
+        MDNSConfigured = MDNS.begin("supla");
+#endif
         if (MDNSConfigured) {
           Serial.print(F("MDNS started IP: "));
           Serial.println(WiFi.localIP());
           MDNS.addService("http", "tcp", 80);
         }
       }
+#ifdef ARDUINO_ARCH_ESP8266
       MDNS.update();
-    }
 #endif
+    }
 #endif
   }
 }
@@ -747,7 +741,7 @@ void SuplaConfigESP::reset(bool forceReset) {
 
     clearEEPROM();
     ConfigManager->deleteDeviceValues();
-    
+
     saveChooseTemplateBoard(getDefaultTamplateBoard());
 
     ConfigManager->save();
