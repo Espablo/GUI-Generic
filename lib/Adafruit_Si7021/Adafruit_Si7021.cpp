@@ -85,7 +85,7 @@ float Adafruit_Si7021::readHumidity() {
   while (millis() - start < _TRANSACTION_TIMEOUT) {
     if (_wire->requestFrom(_i2caddr, 3) == 3) {
       uint16_t hum = _wire->read() << 8 | _wire->read();
-      uint8_t chxsum = _wire->read();
+      _wire->read();
 
       float humidity = hum;
       humidity *= 125;
@@ -118,7 +118,7 @@ float Adafruit_Si7021::readTemperature() {
   while (millis() - start < _TRANSACTION_TIMEOUT) {
     if (_wire->requestFrom(_i2caddr, 3) == 3) {
       uint16_t temp = _wire->read() << 8 | _wire->read();
-      uint8_t chxsum = _wire->read();
+      _wire->read();
 
       float temperature = temp;
       temperature *= 175.72;

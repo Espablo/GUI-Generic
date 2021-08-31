@@ -53,7 +53,7 @@ int ConfigOption::getValueInt() {
 
 const char *ConfigOption::getValueHex(size_t size) {
   char *buffer = (char *)malloc(sizeof(char) * (size * 2));
-  int a, b;
+  size_t a, b;
 
   buffer[0] = 0;
   b = 0;
@@ -472,7 +472,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
       if (configFile) {
         int i = 0;
         int offset = 0;
-        int length = 0;
+        size_t length = 0;
 
         for (i = 0; i < _optionCount; i++) {
           if (version >= _options[i]->getVersion()) {
