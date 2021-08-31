@@ -18,7 +18,7 @@
 
 namespace Supla {
 namespace Sensor {
-Supla::Sensor::Percentage::Percentage(Supla::ChannelElement *src,
+Percentage::Percentage(Supla::ChannelElement *src,
                                       int16_t minValue,
                                       int16_t maxValue,
                                       bool useAlternativeMeasurement)

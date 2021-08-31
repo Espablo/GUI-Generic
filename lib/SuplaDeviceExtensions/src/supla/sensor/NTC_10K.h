@@ -31,8 +31,8 @@ class NTC10K : public Thermometer {
 
  protected:
   int8_t pin;
-  double vcc;
   uint32_t rs;
+  double vcc;
 };
 }  // namespace Sensor
 }  // namespace Supla

@@ -29,12 +29,11 @@ class Percentage : public ChannelElement {
       double x, double in_min, double in_max, double out_min, double out_max);
 
  protected:
-  unsigned long lastReadTime;
-  bool useAlternativeMeasurement;
+  Supla::ChannelElement *source;
   int16_t _minValue;
   int16_t _maxValue;
-
-  Supla::ChannelElement *source;
+  bool useAlternativeMeasurement;
+  unsigned long lastReadTime;
 };
 
 };  // namespace Sensor

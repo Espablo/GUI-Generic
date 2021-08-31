@@ -12,6 +12,48 @@ class GUIESPWifi : public Supla::ESPWifi {
       : ESPWifi(wifiSsid, wifiPassword) {
   }
 
+  int connect(const char *server, int port = -1) {
+    String message;
+    if (client == NULL) {
+      if (isSecured) {
+        message = "Secured connection";
+        auto clientSec = new WiFiClientSecure();
+        client = clientSec;
+
+#ifdef ARDUINO_ARCH_ESP8266
+        clientSec->setBufferSizes(2048, 512);  // EXPERIMENTAL
+        if (fingerprint.length() > 0) {
+          message += " with certificate matching";
+          clientSec->setFingerprint(fingerprint.c_str());
+        } else {
+          message += " without certificate matching";
+          clientSec->setInsecure();
+        }
+#elif ARDUINO_ARCH_ESP32
+        clientSec->setInsecure();
+#endif
+      } else {
+        message = "unsecured connection";
+        client = new WiFiClient();
+      }
+    }
+
+    int connectionPort = (isSecured ? 2016 : 2015);
+    if (port != -1) {
+      connectionPort = port;
+    }
+
+    supla_log(LOG_DEBUG,
+              "Establishing %s with: %s (port: %d)",
+              message.c_str(),
+              server,
+              connectionPort);
+
+    bool result = client->connect(server, connectionPort);
+
+    return result;
+  }
+
   void setup() {
     if (!wifiConfigured) {
       wifiConfigured = true;
@@ -36,7 +78,7 @@ class GUIESPWifi : public Supla::ESPWifi {
             Serial.println(F("WiFi station disconnected"));
           });
 #else
-      WiFiEventId_t event_gotIP = WiFi.onEvent(
+      WiFi.onEvent(
           [](WiFiEvent_t event, WiFiEventInfo_t info) {
             Serial.print(F("local IP: "));
             Serial.println(WiFi.localIP());
@@ -51,7 +93,7 @@ class GUIESPWifi : public Supla::ESPWifi {
           },
           WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
 
-      WiFiEventId_t event_disconnected = WiFi.onEvent(
+      WiFi.onEvent(
           [](WiFiEvent_t event, WiFiEventInfo_t info) {
             Serial.println(F("wifi Station disconnected"));
           },

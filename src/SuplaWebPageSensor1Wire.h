@@ -16,12 +16,12 @@
 #define INPUT_MAX_DHT11  "mdht11"
 #endif
 
-#ifdef SUPLA_DHT11
+#ifdef SUPLA_DHT22
 #define INPUT_DHT22_GPIO "dht22"
 #define INPUT_MAX_DHT22  "mdht22"
 #endif
 
-#ifdef SUPLA_DHT11
+#ifdef SUPLA_SI7021_SONOFF
 #define INPUT_SI7021_SONOFF "si7021sonoff"
 #endif
 

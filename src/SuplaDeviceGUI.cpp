@@ -46,12 +46,11 @@ void begin() {
                     ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),             // Email address used to login to Supla Cloud
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
-  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt()) {
-    crateWebServer();
-  }
-
   if (getCountChannels() == 0)
     ConfigESP->configModeInit();
+
+  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
+    crateWebServer();
 }
 
 void setupWifi() {
@@ -189,7 +188,7 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig) {
 #ifdef SUPLA_ROLLERSHUTTER
 void addRolleShutter(uint8_t nr) {
   int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pullupButtonUp, pullupButtonDown, inversedButtonUp, inversedButtonDown, pinLedUp,
-      pinLedDown, actionButtonUp, actionButtonDown, eventButtonUp;
+      pinLedDown, actionButtonUp, actionButtonDown = Supla::Action::MOVE_DOWN_OR_STOP, eventButtonUp;
   bool highIsOn, levelLedUp, levelLedDown;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);

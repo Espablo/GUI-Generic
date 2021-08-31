@@ -1,3 +1,4 @@
+#ifdef ARDUINO_ARCH_ESP8266
 #include <Arduino.h>
 #include <WiFiClient.h>
 #include <WiFiServer.h>
@@ -187,3 +188,4 @@ void ESP8266HTTPUpdateServer::_setUpdaterError() {
   Serial.println(str.c_str());
   _updaterError = str.c_str();
 }
+#endif

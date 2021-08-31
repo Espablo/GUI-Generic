@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/ThingPulse/esp8266-oled-ssd1306.svg?branch=master)](https://travis-ci.com/ThingPulse/esp8266-oled-ssd1306)
+[![Build Status](https://github.com/ThingPulse/esp8266-oled-ssd1306/actions/workflows/main.yml/badge.svg)](https://github.com/ThingPulse/esp8266-oled-ssd1306/actions)
 
 # ThingPulse OLED SSD1306 (ESP8266/ESP32/Mbed-OS)
 
@@ -23,7 +23,7 @@ platformio lib install 2978
 
 ## Credits
 
-This library has initially been written by Daniel Eichhorn ([@squix78](https://github.com/squix78)). Many thanks go to Fabrice Weinberg ([@FWeinb](https://github.com/FWeinb)) for optimizing and refactoring many aspects of the library. Also many thanks to the many committers who helped to add new features and who fixed many bugs. Mbed-OS support and other improvements were contributed by Helmut Tschemernjak ([@helmut64](https://github.com/helmut64)).
+This library has initially been written by [Daniel Eichhorn](https://github.com/squix78). Many thanks go to [Fabrice Weinberg](https://github.com/FWeinb) for optimizing and refactoring many aspects of the library. Also many thanks to the many committers who helped to add new features and who fixed many bugs. Mbed-OS support and other improvements were contributed by [Helmut Tschemernjak](https://github.com/helmut64).
 
 The init sequence for the SSD1306 was inspired by Adafruit's library for the same display.
 
@@ -258,9 +258,10 @@ void setFont(const uint8_t* fontData);
 
 ## Ui Library (OLEDDisplayUi)
 
-The Ui Library is used to provide a basic set of Ui elements called, `Frames` and `Overlays`. A `Frame` is used to provide
-information the default behaviour is to display a `Frame` for a defined time and than move to the next. The library also provides an `Indicator` that will be updated accordingly. An `Overlay` on the other hand is a pieces of information (e.g. a clock) that is displayed always at the same position.
-
+The Ui Library is used to provide a basic set of user interface elements called `Frames` and `Overlays`. A `Frame` is used to provide
+information to the user. The default behaviour is to display a `Frame` for a defined time and than move to the next `Frame`. The library also
+provides an `Indicator` element that will be updated accordingly. An `Overlay` on the other hand is a piece of information (e.g. a clock) that
+is always displayed at the same position.
 
 ```C++
 /**
@@ -371,7 +372,7 @@ void setLoadingDrawFunction(LoadingDrawFunction loadingDrawFunction);
  */
 void runLoadingProcess(LoadingStage* stages, uint8_t stagesCount);
 
-// Manuell Controll
+// Manual control
 void nextFrame();
 void previousFrame();
 
@@ -381,7 +382,7 @@ void previousFrame();
 void switchToFrame(uint8_t frame);
 
 /**
- * Transition to frame `frame`, when the `frame` number is bigger than the current
+ * Transition to frame `frame`. When the `frame` number is bigger than the current
  * frame the forward animation will be used, otherwise the backwards animation is used.
  */
 void transitionToFrame(uint8_t frame);
@@ -401,8 +402,8 @@ int8_t update();
 ![DemoFrame1](https://github.com/squix78/esp8266-oled-ssd1306/raw/master/resources/DemoFrame1.jpg)
 
 This frame shows three things:
- * How to draw an xbm image
- * How to draw a static text which is not moved by the frame transition
+ * How to draw an XMB image
+ * How to draw static text which is not moved by the frame transition
  * The active/inactive frame indicators
 
 ### Frame 2

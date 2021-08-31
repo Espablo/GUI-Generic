@@ -25,9 +25,11 @@
 
 #include <supla/sensor/percentage.h>
 
+#ifdef ARDUINO_ARCH_ESP8266
 extern "C" {
 #include "user_interface.h"
 }
+#endif
 
 //#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 //#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
@@ -37,7 +39,11 @@ void setup() {
   uint8_t nr, gpio;
 
   Serial.begin(74880);
+
+#ifdef ARDUINO_ARCH_ESP8266
   ESP.wdtDisable();
+#endif
+
   delay(1000);
 
   ConfigManager = new SuplaConfigManager();
@@ -149,7 +155,7 @@ void setup() {
 
 #ifdef SUPLA_NTC_10K
   if (ConfigESP->getGpio(FUNCTION_NTC_10K) != OFF_GPIO) {
-    auto ntc10k = new Supla::Sensor::NTC10K(A0);
+    auto ntc10k = new Supla::Sensor::NTC10K(ConfigESP->getGpio(FUNCTION_NTC_10K));
     Supla::GUI::addConditionsTurnON(SENSOR_NTC_10K, ntc10k);
     Supla::GUI::addConditionsTurnOFF(SENSOR_NTC_10K, ntc10k);
   }
@@ -157,7 +163,7 @@ void setup() {
 
 #ifdef SUPLA_MPX_5XXX
   if (ConfigESP->getGpio(FUNCTION_MPX_5XXX) != OFF_GPIO) {
-    Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(A0);
+    Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(ConfigESP->getGpio(FUNCTION_MPX_5XXX));
     Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX, Supla::GUI::mpx);
     Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX, Supla::GUI::mpx);
   }
@@ -165,7 +171,7 @@ void setup() {
 
 #ifdef SUPLA_ANALOG_READING_MAP
   if (ConfigESP->getGpio(FUNCTION_ANALOG_READING) != OFF_GPIO) {
-    Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap(A0);
+    Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap(ConfigESP->getGpio(FUNCTION_ANALOG_READING));
     Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
     Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
   }
@@ -231,17 +237,23 @@ void setup() {
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt()) {
         case BMx280_ADDRESS_0X76:
           bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+
+          Supla::GUI::addConditionsTurnON(SENSOR_BME280, bme280);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_BME280, bme280);
           break;
         case BMx280_ADDRESS_0X77:
           bme280 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          Supla::GUI::addConditionsTurnON(SENSOR_BME280, bme280);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_BME280, bme280);
           break;
         case BMx280_ADDRESS_0X76_AND_0X77:
           bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+
+          Supla::GUI::addConditionsTurnON(SENSOR_BME280, bme280);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_BME280, bme280);
           break;
       }
-      Supla::GUI::addConditionsTurnON(SENSOR_BME280, bme280);
-      Supla::GUI::addConditionsTurnOFF(SENSOR_BME280, bme280);
     }
 #endif
 
@@ -251,17 +263,21 @@ void setup() {
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt()) {
         case BMx280_ADDRESS_0X76:
           bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280);
           break;
         case BMx280_ADDRESS_0X77:
           bmp280 = new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280);
           break;
         case BMx280_ADDRESS_0X76_AND_0X77:
           bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
           new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280);
           break;
       }
-      Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280);
-      Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280);
     }
 #endif
 
@@ -272,17 +288,24 @@ void setup() {
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SHT3x).toInt()) {
         case SHT3x_ADDRESS_0X44:
           sht3x = new Supla::Sensor::SHT3x(0x44);
+
+          Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
           break;
         case SHT3x_ADDRESS_0X45:
           sht3x = new Supla::Sensor::SHT3x(0x45);
+
+          Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
           break;
         case SHT3x_ADDRESS_0X44_AND_0X45:
           sht3x = new Supla::Sensor::SHT3x(0x44);
           new Supla::Sensor::SHT3x(0x45);
+
+          Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
           break;
       }
-      Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
-      Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
     }
 #endif
 
@@ -355,10 +378,12 @@ void setup() {
 
   Supla::GUI::addCorrectionSensor();
 
+#ifdef ARDUINO_ARCH_ESP8266
   // https://github.com/esp8266/Arduino/issues/2070#issuecomment-258660760
   wifi_set_sleep_type(NONE_SLEEP_T);
 
   ESP.wdtEnable(WDTO_120MS);
+#endif
 }
 
 void loop() {

@@ -21,16 +21,11 @@
 #include <IPAddress.h>
 #include <supla-common/proto.h>
 
-#include "FS.h"
 #include "SuplaConfigManager.h"
 #include "SuplaDeviceGUI.h"
 
 ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version, bool loadKey)
-    : _key(0), _value(nullptr), _maxLength(0), _version(1), _loadKey(true) {
-  _key = key;
-  _loadKey = loadKey;
-  _version = version;
-
+    : _key(key), _value(nullptr), _maxLength(maxLength), _version(version), _loadKey(loadKey) {
   if (maxLength > 0) {
     _maxLength = maxLength + 1;
 
@@ -167,6 +162,8 @@ SuplaConfigManager::SuplaConfigManager() {
   if (SPIFFS.begin()) {
     _optionCount = OPTION_COUNT;
 
+    // SPIFFS.format();
+
     this->addKey(KEY_SUPLA_GUID, MAX_GUID);
     this->addKey(KEY_SUPLA_AUTHKEY, MAX_AUTHKEY);
     this->addKey(KEY_WIFI_SSID, MAX_SSID);
@@ -183,11 +180,25 @@ SuplaConfigManager::SuplaConfigManager() {
 
     this->addKey(KEY_BOARD, 2);
 
+#ifdef ARDUINO_ARCH_ESP8266
     uint8_t nr, key;
     for (nr = 0; nr <= MAX_GPIO; nr++) {
       key = KEY_GPIO + nr;
       this->addKey(key, 36, 2);
     }
+#elif ARDUINO_ARCH_ESP32
+    uint8_t nr, key;
+    for (nr = 0; nr <= MAX_GPIO; nr++) {
+      key = KEY_GPIO + nr;
+      if (nr <= 17) {
+        this->addKey(key, 36, 2);
+      }
+      else {
+        if (nr != 20 || nr != 24 || nr != 28 || nr != 29 || nr != 30 || nr != 31 || nr != 37 || nr != 38)
+          this->addKey(key, 36, 2);
+      }
+    }
+#endif
 
 #ifdef SUPLA_RELAY
     this->addKey(KEY_MAX_RELAY, "0", 2, 2);
@@ -343,6 +354,8 @@ SuplaConfigManager::SuplaConfigManager() {
   }
   else {
     Serial.println(F("Failed to mount SPIFFS"));
+    Serial.println(F("Formatting SPIFFS"));
+    SPIFFS.format();
     delay(2000);
     ESP.restart();
   }
@@ -368,6 +381,7 @@ SuplaConfigManager::SuplaConfigManager() {
 bool SuplaConfigManager::migrationConfig() {
   bool migration = false;
 
+#ifdef ARDUINO_ARCH_ESP8266
   if (this->sizeFile() == 2681) {  // pierwsza wersja configa
     Serial.println(F("migration version 1 -> 2"));
     uint8_t nr, key;
@@ -396,6 +410,9 @@ bool SuplaConfigManager::migrationConfig() {
       migration = true;
     }
   }
+#elif ARDUINO_ARCH_ESP32
+// migracja dla ESP32
+#endif
 
   if (migration) {
     this->save();
@@ -635,23 +652,42 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
   memset(GUID, 0, SUPLA_GUID_SIZE);
   memset(AUTHKEY, 0, SUPLA_AUTHKEY_SIZE);
 
+#ifdef ARDUINO_ARCH_ESP8266
   os_get_random((unsigned char *)GUID, SUPLA_GUID_SIZE);
   os_get_random((unsigned char *)AUTHKEY, SUPLA_AUTHKEY_SIZE);
+#elif ARDUINO_ARCH_ESP32
+  esp_fill_random((unsigned char *)GUID, SUPLA_GUID_SIZE);
+  esp_fill_random((unsigned char *)AUTHKEY, SUPLA_AUTHKEY_SIZE);
+#endif
 
   if (SUPLA_GUID_SIZE >= 6) {
+#ifdef ARDUINO_ARCH_ESP8266
     wifi_get_macaddr(STATION_IF, (unsigned char *)mac);
+#elif ARDUINO_ARCH_ESP32
+    esp_wifi_get_mac(WIFI_IF_STA, (unsigned char *)mac);
+#endif
 
     for (a = 0; a < 6; a++) GUID[a] = (GUID[a] * mac[a]) % 255;
   }
 
   if (SUPLA_GUID_SIZE >= 12) {
+#ifdef ARDUINO_ARCH_ESP8266
     wifi_get_macaddr(SOFTAP_IF, (unsigned char *)mac);
-
+#elif ARDUINO_ARCH_ESP32
+    esp_wifi_get_mac(WIFI_IF_AP, (unsigned char *)mac);
+#endif
     for (a = 0; a < 6; a++) GUID[a + 6] = (GUID[a + 6] * mac[a]) % 255;
   }
 
   for (a = 0; a < SUPLA_GUID_SIZE; a++) {
+#ifdef ARDUINO_ARCH_ESP8266
     GUID[a] = (GUID[a] + system_get_time() + spi_flash_get_id() + system_get_chip_id() + system_get_rtc_time()) % 255;
+#elif ARDUINO_ARCH_ESP32
+    struct timeval now;
+    gettimeofday(&now, NULL);
+
+    GUID[a] = (GUID[a] + now.tv_usec + ((uint32_t)(clock() * 1000 / CLOCKS_PER_SEC))) % 255;
+#endif
   }
 
   a = SUPLA_GUID_SIZE > SUPLA_AUTHKEY_SIZE ? SUPLA_AUTHKEY_SIZE : SUPLA_GUID_SIZE;

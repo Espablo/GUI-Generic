@@ -30,9 +30,9 @@ namespace Sensor {
 class SHT3x : public ThermHygroMeter {
  public:
   SHT3x(int8_t address = 0x44)
-      : temperature(TEMPERATURE_NOT_AVAILABLE),
+      : address(address),
+        temperature(TEMPERATURE_NOT_AVAILABLE),
         humidity(HUMIDITY_NOT_AVAILABLE),
-        address(address),
         retryCount(0) {
   }
 

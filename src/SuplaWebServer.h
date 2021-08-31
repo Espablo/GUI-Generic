@@ -20,10 +20,19 @@
 #include "GUI-Generic_Config.h"
 #include "SuplaTemplateBoard.h"
 
+#ifdef ARDUINO_ARCH_ESP8266
 #ifdef SUPLA_OTA
 #include "SuplaHTTPUpdateServer.h"
 #endif
 #include <ESP8266WebServer.h>
+
+#elif ARDUINO_ARCH_ESP32
+#ifdef SUPLA_OTA
+#include "SuplaHTTPUpdateServerESP32.h"
+#endif
+#include <supla/ESP32WebServer/ESP32WebServer.h>
+#endif
+
 #include <supla/element.h>
 
 #define ARG_PARM_URL    "url"
@@ -43,17 +52,25 @@ class SuplaWebServer : public Supla::Element {
 
   void sendContent();
 
+#ifdef ARDUINO_ARCH_ESP8266
   ESP8266WebServer* httpServer;
 
 #ifdef SUPLA_OTA
   ESP8266HTTPUpdateServer* httpUpdater;
 #endif
+#elif ARDUINO_ARCH_ESP32
+  ESP32WebServer* httpServer;
+
+#ifdef SUPLA_OTA
+  ESP32HTTPUpdateServer* httpUpdater;
+#endif
+#endif
 
   bool isLoggedIn();
   bool saveGPIO(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
-  #ifdef SUPLA_MCP23017
+#ifdef SUPLA_MCP23017
   bool saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
-  #endif
+#endif
 
  private:
   void iterateAlways();

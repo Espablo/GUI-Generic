@@ -85,27 +85,15 @@ void handleControlSave() {
 }
 
 void handleControl(int save) {
-  uint8_t nr, countFreeGpio;
+  uint8_t nr;
 
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_CONTROL);
+
   addForm(webContentBuffer, F("post"), PATH_CONTROL);
-
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_BUTTONS);
-
-#ifdef SUPLA_MCP23017
-  if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
-    countFreeGpio = 32;
-  }
-  else {
-    countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_BUTTON);
-  }
-#else
-  countFreeGpio = ConfigESP->countFreeGpio(FUNCTION_BUTTON);
-#endif
-
-  addNumberBox(webContentBuffer, INPUT_MAX_BUTTON, S_QUANTITY, KEY_MAX_BUTTON, countFreeGpio);
+  addNumberBox(webContentBuffer, INPUT_MAX_BUTTON, S_QUANTITY, KEY_MAX_BUTTON, ConfigESP->countFreeGpio(FUNCTION_BUTTON));
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
 #ifdef SUPLA_MCP23017

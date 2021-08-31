@@ -94,7 +94,9 @@ void DirectLinks::toggleConnection() {
     if (_isSecured) {
       client = new WiFiClientSecure();
       ((WiFiClientSecure *)client)->setInsecure();
+#ifdef ARDUINO_ARCH_ESP8266
       ((WiFiClientSecure *)client)->setBufferSizes(256, 256);
+#endif
       ((WiFiClientSecure *)client)->setTimeout(200);
     } else {
       client = new WiFiClient();
@@ -110,10 +112,10 @@ void DirectLinks::toggleConnection() {
 
 void DirectLinks::sendRequest(const char *url) {
   if (client) {
-    (WiFiClientSecure *)client->print(
-        String("GET /direct/") + url + " HTTP/1.1\r\n" + "Host: " + _host +
-        "\r\n" + "User-Agent: BuildFailureDetectorESP8266\r\n" +
-        "Connection: close\r\n\r\n");
+    client->print(String("GET /direct/") + url + " HTTP/1.1\r\n" +
+                  "Host: " + _host + "\r\n" +
+                  "User-Agent: BuildFailureDetectorESP8266\r\n" +
+                  "Connection: close\r\n\r\n");
 
     while (client->connected() || client->available()) {
       String line = client->readStringUntil('\n');

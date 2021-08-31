@@ -14,13 +14,11 @@ class OneWireBus {
   OneWireBus(uint8_t pinNumberConfig);
   int8_t getIndex(uint8_t *deviceAddress);
 
+  OneWire oneWire;
   uint8_t pin;
   OneWireBus *nextBus;
   unsigned long lastReadTime;
   DallasTemperature sensors;
-
- protected:
-  OneWire oneWire;
 };
 
 class DS18B20 : public Supla::Sensor::Thermometer {

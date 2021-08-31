@@ -17,7 +17,7 @@ OneWireBus::OneWireBus(uint8_t pinNumberConfig)
   // report parasite power requirements
 
   DeviceAddress address;
-  char strAddr[64];
+  //char strAddr[64];
   for (int i = 0; i < sensors.getDeviceCount(); i++) {
     if (!sensors.getAddress(address, i)) {
       supla_log(LOG_DEBUG, "Unable to find address for Device %d", i);

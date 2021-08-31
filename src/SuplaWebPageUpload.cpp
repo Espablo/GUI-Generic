@@ -1,5 +1,10 @@
 #include "SuplaWebPageUpload.h"
+
+#ifdef ARDUINO_ARCH_ESP8266
 #include "FS.h"
+#elif ARDUINO_ARCH_ESP32
+#include "SPIFFS.h"
+#endif
 
 static const char uploadIndex[] PROGMEM =
     R"(<form class="formcenter" method="POST" action="/upload" enctype="multipart/form-data">
