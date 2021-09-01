@@ -55,7 +55,11 @@ enum _ConfigMode
   FACTORYRESET
 };
 
-#define OFF_GPIO     MAX_GPIO + 1
+#ifdef ARDUINO_ARCH_ESP8266
+#define OFF_GPIO MAX_GPIO  //źle została określony MAX_GPIO dla ESP8266 w starych wersjach.
+#elif ARDUINO_ARCH_ESP32
+#define OFF_GPIO MAX_GPIO + 1
+#endif
 #define OFF_MCP23017 4
 
 typedef struct {
