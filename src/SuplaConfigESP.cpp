@@ -333,7 +333,8 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     //"Pin 100 - 115"
     // Pin 116 - 131"
 #ifdef SUPLA_MCP23017
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF &&
+        ((function == FUNCTION_RELAY) || (function == FUNCTION_BUTTON) || (function == FUNCTION_LIMIT_SWITCH))) {
       switch (getAdressMCP23017(nr, function)) {
         case 0:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function &&
@@ -358,6 +359,9 @@ int SuplaConfigESP::getGpio(int nr, int function) {
               ConfigManager->get(key)->getElement(MCP23017_NR_4).toInt() == nr) {
             return gpio + 100 + 16 + 16 + 16;
           }
+          break;
+        default:
+          return OFF_GPIO_MCP23017;
           break;
       }
     }
@@ -543,7 +547,7 @@ bool SuplaConfigESP::checkGpio(int gpio) {
 
 #ifdef SUPLA_MCP23017
 bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function) {
-  if (gpio == OFF_GPIO) {
+  if (gpio == OFF_GPIO_MCP23017) {
     return true;
   }
   else if (gpio == 16) {
@@ -558,7 +562,7 @@ bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t fun
     if (nr >= 17)
       address = ConfigESP->getAdressMCP23017(17, function);
 
-    if (address == OFF_MCP23017) {
+    if (address == OFF_GPIO_MCP23017) {
       return true;
     }
 
@@ -575,18 +579,18 @@ uint8_t SuplaConfigESP::getGpioMCP23017(uint8_t nr, uint8_t function) {
     key = KEY_GPIO + gpio;
     address = getAdressMCP23017(nr, function);
 
-    if (address != OFF_MCP23017) {
+    if (address != OFF_ADDRESS_MCP23017) {
       if (ConfigManager->get(key)->getElement(getFunctionMCP23017(address)).toInt() == function)
         if (ConfigManager->get(key)->getElement(getNrMCP23017(address)).toInt() == nr)
           return gpio;
     }
     delay(0);
   }
-  return OFF_GPIO;
+  return OFF_GPIO_MCP23017;
 }
 
 uint8_t SuplaConfigESP::getAdressMCP23017(uint8_t nr, uint8_t function) {
-  for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
+  for (uint8_t gpio = 0; gpio <= OFF_GPIO_MCP23017; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
 
     if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr)
@@ -606,7 +610,7 @@ uint8_t SuplaConfigESP::getAdressMCP23017(uint8_t nr, uint8_t function) {
         return 3;
     delay(0);
   }
-  return OFF_MCP23017;
+  return OFF_ADDRESS_MCP23017;
 }
 
 void SuplaConfigESP::setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, uint8_t function) {
@@ -629,9 +633,9 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
   uint8_t key = KEY_GPIO + gpio;
   uint8_t adress = getAdressMCP23017(nr, function);
 
-  if (getNrMCP23017(adress) != OFF_MCP23017)
+  if (getNrMCP23017(adress) != OFF_GPIO_MCP23017)
     ConfigManager->setElement(key, getNrMCP23017(adress), 0);
-  if (getFunctionMCP23017(adress) != OFF_MCP23017)
+  if (getFunctionMCP23017(adress) != OFF_GPIO_MCP23017)
     ConfigManager->setElement(key, getFunctionMCP23017(adress), FUNCTION_OFF);
 
   if (function == FUNCTION_BUTTON) {
@@ -660,7 +664,7 @@ void SuplaConfigESP::clearFunctionGpio(uint8_t function) {
 
 bool SuplaConfigESP::checkActiveMCP23017(uint8_t function) {
   return ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF &&
-         (ConfigESP->getGpio(function) >= 100 || ConfigESP->getGpio(function) == OFF_GPIO);
+         (ConfigESP->getGpio(function) >= 100 || ConfigESP->getGpio(function) == OFF_GPIO_MCP23017);
 }
 
 uint8_t SuplaConfigESP::getFunctionMCP23017(uint8_t adress) {
@@ -678,7 +682,7 @@ uint8_t SuplaConfigESP::getFunctionMCP23017(uint8_t adress) {
       return MCP23017_FUNCTION_4;
       break;
   }
-  return OFF_MCP23017;
+  return OFF_GPIO_MCP23017;
 }
 
 uint8_t SuplaConfigESP::getNrMCP23017(uint8_t adress) {
@@ -696,7 +700,7 @@ uint8_t SuplaConfigESP::getNrMCP23017(uint8_t adress) {
       return MCP23017_NR_4;
       break;
   }
-  return OFF_MCP23017;
+  return OFF_GPIO_MCP23017;
 }
 #endif
 

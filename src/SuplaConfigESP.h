@@ -60,7 +60,9 @@ enum _ConfigMode
 #elif ARDUINO_ARCH_ESP32
 #define OFF_GPIO MAX_GPIO + 1
 #endif
-#define OFF_MCP23017 4
+
+#define OFF_GPIO_MCP23017    17
+#define OFF_ADDRESS_MCP23017 4
 
 typedef struct {
   int status;
