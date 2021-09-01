@@ -84,9 +84,6 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void ledBlinking(int time);
   void ledBlinkingStop(void);
 
-  uint8_t pinOnValue();
-  uint8_t pinOffValue();
-
   String getMacAddress(bool formating);
 
   _configModeESP configModeESP;

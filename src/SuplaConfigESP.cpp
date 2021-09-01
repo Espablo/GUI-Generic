@@ -88,7 +88,7 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig) {
 
   if (pinLedConfig != OFF_GPIO) {
     pinMode(pinLedConfig, OUTPUT);
-    digitalWrite(pinLedConfig, pinOffValue());
+    digitalWrite(pinLedConfig, ConfigESP->getLevel(pinLedConfig) ? LOW : HIGH);
   }
 
   if (pinNumberConfig != OFF_GPIO) {
@@ -201,21 +201,13 @@ int SuplaConfigESP::getLastStatusSupla() {
 }
 
 void SuplaConfigESP::ledBlinking(int time) {
-  led.attach_ms(time, ledBlinkingTicker);
+  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO)
+    led.attach_ms(time, ledBlinkingTicker);
 }
 
 void SuplaConfigESP::ledBlinkingStop(void) {
-  led.detach();
-}
-
-uint8_t SuplaConfigESP::pinOnValue() {
-  uint8_t gpio = ConfigESP->getGpio(FUNCTION_CFG_LED);
-  return ConfigESP->getLevel(gpio) ? HIGH : LOW;
-}
-
-uint8_t SuplaConfigESP::pinOffValue() {
-  uint8_t gpio = ConfigESP->getGpio(FUNCTION_CFG_LED);
-  return ConfigESP->getLevel(gpio) ? LOW : HIGH;
+  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO)
+    led.detach();
 }
 
 String SuplaConfigESP::getMacAddress(bool formating) {
