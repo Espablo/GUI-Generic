@@ -139,9 +139,9 @@ void SuplaWebServer::sendContent() {
 }
 
 void SuplaWebServer::handleNotFound() {
-  // httpServer->sendHeader("Location", PATH_START, true);
-  // handlePageHome(2);
-  ConfigESP->rebootESP();
+  httpServer->sendHeader("Location", PATH_START, true);
+  handlePageHome(2);
+  // ConfigESP->rebootESP();
 }
 
 bool SuplaWebServer::isLoggedIn() {
