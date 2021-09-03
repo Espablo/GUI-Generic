@@ -167,8 +167,8 @@ void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int d
 void addRGBWLeds(uint8_t nr);
 #endif
 
-void addConditionsTurnON(int function, Supla::ChannelElement *client);
-void addConditionsTurnOFF(int function, Supla::ChannelElement *client);
+void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
+void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
 void addCorrectionSensor();
 
 #ifdef SUPLA_HLW8012

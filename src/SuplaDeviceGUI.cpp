@@ -168,14 +168,16 @@ void addDS18B20MultiThermometer(int pinNumber) {
     for (int i = 0; i < ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt(); ++i) {
       sensorDS.push_back(new DS18B20(pinNumber, HexToBytes(ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i))));
       supla_log(LOG_DEBUG, "Index %d - address %s", i, ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i).c_str());
+
+      Supla::GUI::addConditionsTurnON(SENSOR_DS18B20, sensorDS[i], i);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_DS18B20, sensorDS[i], i);
     }
   }
   else {
     sensorDS.push_back(new DS18B20(ConfigESP->getGpio(FUNCTION_DS18B20)));
+    Supla::GUI::addConditionsTurnON(SENSOR_DS18B20, sensorDS[0]);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_DS18B20, sensorDS[0]);
   }
-
-  Supla::GUI::addConditionsTurnON(SENSOR_DS18B20, sensorDS[0]);
-  Supla::GUI::addConditionsTurnOFF(SENSOR_DS18B20, sensorDS[0]);
 }
 #endif
 
@@ -324,14 +326,17 @@ void addRGBWLeds(uint8_t nr) {
 }
 #endif
 
-void addConditionsTurnON(int function, Supla::ChannelElement *client) {
-#if defined(SUPLA_RELAY)
+void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t sensorNumber) {
+#if defined(SUPLA_RELAY) && defined(SUPLA_CONDITIONS)
   if (Supla::GUI::relay.size() == 0)
     return;
 
   for (uint8_t nr = 0; nr <= OFF_GPIO; nr++) {
     if (ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt() == function &&
-        strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0) {
+        strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0 &&
+        ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber) {
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
       double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
 
       client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
@@ -358,14 +363,17 @@ void addConditionsTurnON(int function, Supla::ChannelElement *client) {
 #endif
 }
 
-void addConditionsTurnOFF(int function, Supla::ChannelElement *client) {
-#if defined(SUPLA_RELAY)
+void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t sensorNumber) {
+#if defined(SUPLA_RELAY) && defined(SUPLA_CONDITIONS)
   if (Supla::GUI::relay.size() == 0)
     return;
 
   for (uint8_t nr = 0; nr <= OFF_GPIO; nr++) {
     if (ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt() == function &&
-        strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0) {
+        strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0 &&
+        ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber) {
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
       double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
 
       client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());

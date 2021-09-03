@@ -132,6 +132,21 @@ void handleOther(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+  String input;
+
+  addFormHeader(webContentBuffer, String(S_DIRECT_LINKS) + S_SPACE + "-" + S_SPACE + S_TEMPERATURE);
+  addNumberBox(webContentBuffer, INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, S_QUANTITY, KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, MAX_DIRECT_LINK);
+
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR)->getValueInt(); nr++) {
+    input = INPUT_DIRECT_LINKS_SENSOR_THERMOMETR;
+    input = input + nr;
+    String massage = ConfigManager->get(KEY_DIRECT_LINKS_SENSOR_THERMOMETR)->getElement(nr).c_str();
+    addTextBox(webContentBuffer, input, String(S_SENSOR) + S_SPACE + (nr + 1), massage, F("xx/xxxxxxxxx/read"), 0, MAX_DIRECT_LINKS_SIZE, false);
+  }
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
@@ -163,7 +178,7 @@ void handleOtherSave() {
     return;
   }
   else {
-   // Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
+    // Supla::GUI::addHLW8012(ConfigESP->getGpio(FUNCTION_CF), ConfigESP->getGpio(FUNCTION_CF1), ConfigESP->getGpio(FUNCTION_SEL));
     if (strcmp(WebServer->httpServer->arg(INPUT_MODE_HLW8012).c_str(), "") != 0) {
       Supla::GUI::counterHLW8012->setMode(WebServer->httpServer->arg(INPUT_MODE_HLW8012).toInt());
     }
@@ -225,6 +240,20 @@ void handleOtherSave() {
 
   if (strcmp(WebServer->httpServer->arg(INPUT_PUSHOVER_USER).c_str(), "") != 0) {
     ConfigManager->set(KEY_PUSHOVER_USER, WebServer->httpServer->arg(INPUT_PUSHOVER_USER).c_str());
+  }
+#endif
+
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+  String input;
+
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR)->getValueInt(); nr++) {
+    input = INPUT_DIRECT_LINKS_SENSOR_THERMOMETR;
+    input = input + nr;
+    ConfigManager->setElement(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, nr, WebServer->httpServer->arg(input).c_str());
+  }
+
+  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, WebServer->httpServer->arg(INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR).c_str());
   }
 #endif
 

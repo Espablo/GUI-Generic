@@ -134,14 +134,9 @@ void handleRelaySaveSet() {
   input += nr_relay;
   ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer->arg(input).toInt());
 
-  input = INPUT_CONDITIONS_SENSOR_TYPE;
-  ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
-  input = INPUT_CONDITIONS_TYPE;
-  ConfigManager->setElement(KEY_CONDITIONS_TYPE, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
-  input = INPUT_CONDITIONS_MIN;
-  ConfigManager->setElement(KEY_CONDITIONS_MIN, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
-  input = INPUT_CONDITIONS_MAX;
-  ConfigManager->setElement(KEY_CONDITIONS_MAX, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
+#ifdef SUPLA_CONDITIONS
+  conditionsWebPageSave(nr_relay.toInt() - 1);
+#endif
 
 #if defined(SUPLA_LED)
   input = INPUT_LED;
@@ -247,20 +242,9 @@ void handleRelaySet(int save) {
     }
 #endif
 
-    if (COUNT_SENSOR_LIST > 1) {
-      addFormHeader(webContentBuffer, S_CONDITIONING);
-      selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-      addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_SENSOR, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
-
-      selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-      addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, 4, selected);
-
-      String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr_relay.toInt() - 1);
-      addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
-      value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr_relay.toInt() - 1);
-      addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
-      addFormHeaderEnd(webContentBuffer);
-    }
+#ifdef SUPLA_CONDITIONS
+    conditionsWebPage(nr_relay.toInt() - 1);
+#endif
 
     addButtonSubmit(webContentBuffer, S_SAVE);
     addFormEnd(webContentBuffer);
@@ -321,22 +305,9 @@ void handleRelaySetMCP23017(int save) {
   }
 #endif
 
-  if (!nr_relay.isEmpty()) {
-    if (COUNT_SENSOR_LIST > 1) {
-      addFormHeader(webContentBuffer, S_CONDITIONING);
-      selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-      addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_SENSOR, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
-
-      selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
-      addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, 4, selected);
-
-      String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr_relay.toInt() - 1);
-      addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
-      value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr_relay.toInt() - 1);
-      addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
-      addFormHeaderEnd(webContentBuffer);
-    }
-  }
+#ifdef SUPLA_CONDITIONS
+  conditionsWebPage(nr_relay.toInt() - 1);
+#endif
 
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
@@ -378,14 +349,9 @@ void handleRelaySaveSetMCP23017() {
     }
 #endif
 
-    input = INPUT_CONDITIONS_SENSOR_TYPE;
-    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
-    input = INPUT_CONDITIONS_TYPE;
-    ConfigManager->setElement(KEY_CONDITIONS_TYPE, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).toInt());
-    input = INPUT_CONDITIONS_MIN;
-    ConfigManager->setElement(KEY_CONDITIONS_MIN, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
-    input = INPUT_CONDITIONS_MAX;
-    ConfigManager->setElement(KEY_CONDITIONS_MAX, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
+#ifdef SUPLA_CONDITIONS
+    conditionsWebPageSave(nr_relay.toInt() - 1);
+#endif
   }
   else {
     for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
@@ -411,5 +377,41 @@ void handleRelaySaveSetMCP23017() {
       handleRelaySetMCP23017(2);
       break;
   }
+}
+#endif
+
+#ifdef SUPLA_CONDITIONS
+void conditionsWebPage(int nr) {
+  if (COUNT_SENSOR_LIST > 1) {
+    addFormHeader(webContentBuffer, S_CONDITIONING);
+
+    uint8_t selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt();
+    addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_TYPE, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
+
+    String value = ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr);
+    addNumberBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_NUMBER, S_SENSOR, "", false, value);
+
+    selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt();
+    addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, 4, selected);
+
+    value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr);
+    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
+    value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr);
+    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
+    addFormHeaderEnd(webContentBuffer);
+  }
+}
+
+void conditionsWebPageSave(int nr) {
+  String input = INPUT_CONDITIONS_SENSOR_TYPE;
+  ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, nr, WebServer->httpServer->arg(input).toInt());
+  input = INPUT_CONDITIONS_TYPE;
+  ConfigManager->setElement(KEY_CONDITIONS_TYPE, nr, WebServer->httpServer->arg(input).toInt());
+  input = INPUT_CONDITIONS_MIN;
+  ConfigManager->setElement(KEY_CONDITIONS_MIN, nr, WebServer->httpServer->arg(input).c_str());
+  input = INPUT_CONDITIONS_MAX;
+  ConfigManager->setElement(KEY_CONDITIONS_MAX, nr, WebServer->httpServer->arg(input).c_str());
+  input = INPUT_CONDITIONS_SENSOR_NUMBER;
+  ConfigManager->setElement(KEY_CONDITIONS_SENSOR_NUMBER, nr, WebServer->httpServer->arg(input).c_str());
 }
 #endif

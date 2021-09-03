@@ -31,6 +31,9 @@ extern "C" {
 }
 #endif
 
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+#include <supla/sensor/direct_link_sensor_thermometer.h>
+#endif
 //#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 //#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
 // DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
@@ -93,15 +96,25 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR)->getValueInt(); nr++) {
+    if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR_THERMOMETR)->getElement(nr).c_str(), "") != 0) {
+      auto directLinkSensorThermometer = new Supla::Sensor::DirectLinksSensorThermometer(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+      directLinkSensorThermometer->setUrl(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR_THERMOMETR)->getElement(nr).c_str());
+
+      Supla::GUI::addConditionsTurnON(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
+    }
+  }
+#endif
+
 #ifdef SUPLA_DHT11
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_DHT11) != OFF_GPIO) {
       auto dht11 = new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT11), DHT11);
 
-      if (nr == 1) {
-        Supla::GUI::addConditionsTurnON(SENSOR_DHT11, dht11);
-        Supla::GUI::addConditionsTurnOFF(SENSOR_DHT11, dht11);
-      }
+      Supla::GUI::addConditionsTurnON(SENSOR_DHT11, dht11, nr);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_DHT11, dht11, nr);
     }
   }
 #endif
@@ -111,10 +124,8 @@ void setup() {
     if (ConfigESP->getGpio(nr, FUNCTION_DHT22) != OFF_GPIO) {
       auto dht22 = new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22);
 
-      if (nr == 1) {
-        Supla::GUI::addConditionsTurnON(SENSOR_DHT22, dht22);
-        Supla::GUI::addConditionsTurnOFF(SENSOR_DHT22, dht22);
-      }
+      Supla::GUI::addConditionsTurnON(SENSOR_DHT22, dht22, nr);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_DHT22, dht22, nr);
     }
   }
 #endif

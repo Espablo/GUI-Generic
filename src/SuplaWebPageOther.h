@@ -8,7 +8,7 @@
 #endif
 
 #if defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER) || \
-    defined(GUI_SENSOR_OTHER) || defined(SUPLA_CSE7766)
+    defined(GUI_SENSOR_OTHER) || defined(SUPLA_CSE7766) || defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR)
 #define GUI_OTHER
 #endif
 
@@ -85,6 +85,11 @@ void handleCounterCalibrateSave();
 
 #ifdef SUPLA_IMPULSE_COUNTER
 #define PATH_IMPULSE_COUNTER_SET "setcounter"
+#endif
+
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+#define INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR "imdlst"
+#define INPUT_DIRECT_LINKS_SENSOR_THERMOMETR     "idlst"
 #endif
 
 #endif  // SuplaWebPageOther_h

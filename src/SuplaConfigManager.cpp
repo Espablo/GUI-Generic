@@ -206,8 +206,22 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2);
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2);
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2);
+
 #else
     this->addKey(KEY_MAX_RELAY, 2, 2, false);
+    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, 2, false);
+    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2, false);
+    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2, false);
+    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2, false);
+#endif
+
+#ifdef SUPLA_CONDITIONS
+    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, 2);
+    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2);
+    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2);
+    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2);
+
+#else
     this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, 2, false);
     this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2, false);
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2, false);
@@ -332,7 +346,19 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_LEVEL_LED, "", 1, 0, false);
     this->addKey(KEY_FOR_USE, "", 0, 0, false);
 
-    // this->addKey(KEY_TEST, "0", 2000, 3); //dodanie parametru do wersji 2 configa
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2, 3);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 3);
+#else
+    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2, 3, false);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 3, false);
+#endif
+
+#ifdef SUPLA_CONDITIONS
+    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3, 3);
+#else
+    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3, 3, false);
+#endif
 
     switch (this->load()) {
       case E_CONFIG_OK:
@@ -411,7 +437,11 @@ bool SuplaConfigManager::migrationConfig() {
     }
   }
 #elif ARDUINO_ARCH_ESP32
-// migracja dla ESP32
+  if (this->sizeFile() == 3774) {  // wersja 2 configa
+    Serial.println(F("migration version 2 -> 3"));
+    if (this->load(2) == E_CONFIG_OK)
+      migration = true;
+  }
 #endif
 
   if (migration) {

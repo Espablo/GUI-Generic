@@ -152,10 +152,10 @@ const char GPIO35[] PROGMEM = "35-IA";
 const char GPIO36[] PROGMEM = "36-IA";
 const char GPIO39[] PROGMEM = "39-IA";
 
-const char* const GPIO_P[] PROGMEM = {GPIO0,   GPIO1,  GPIO2,  GPIO3,  GPIO4,   GPIO5,   S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
-                                      S_EMPTY, GPIO12, GPIO13, GPIO14, GPIO15,  GPIO16,  GPIO17,  GPIO18,  GPIO19,  S_EMPTY, GPIO21,
+const char* const GPIO_P[] PROGMEM = {GPIO0,   GPIO1,  GPIO2,   GPIO3,  GPIO4,   GPIO5,   S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
+                                      S_EMPTY, GPIO12, GPIO13,  GPIO14, GPIO15,  GPIO16,  GPIO17,  GPIO18,  GPIO19,  S_EMPTY, GPIO21,
                                       GPIO22,  GPIO23, S_EMPTY, GPIO25, GPIO26,  GPIO27,  S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, GPIO32,
-                                      GPIO33,  GPIO34, GPIO35, GPIO36, S_EMPTY, S_EMPTY, GPIO39,  OFF};
+                                      GPIO33,  GPIO34, GPIO35,  GPIO36, S_EMPTY, S_EMPTY, GPIO39,  OFF};
 #endif
 
 const char GPIO_A0[] PROGMEM = "A0";
@@ -322,6 +322,11 @@ enum sensorList
   ,
   SENSOR_VL53L0X
 #endif
+
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+  ,
+  SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR
+#endif
   ,
   COUNT_SENSOR_LIST
 };
@@ -365,6 +370,9 @@ const char NAME_SENSOR_MPX_5XXX_PERCENT[] PROGMEM = S_MPX_5XXX_PERCENT;
 #endif
 #ifdef SUPLA_VL53L0X
 const char NAME_VL53L0X[] PROGMEM = "VL53L0X";
+#endif
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+const char NAME_SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR[] PROGMEM = "Direct Links Temp";
 #endif
 
 const char* const SENSOR_LIST_P[] PROGMEM = {OFF
@@ -426,6 +434,11 @@ const char* const SENSOR_LIST_P[] PROGMEM = {OFF
 #ifdef SUPLA_VL53L0X
                                              ,
                                              NAME_VL53L0X
+#endif
+
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+                                             ,
+                                             NAME_SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR
 #endif
 };
 

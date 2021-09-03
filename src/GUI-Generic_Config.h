@@ -23,6 +23,7 @@
 //#define UI_LANGUAGE de
 
 #define SUPLA_RELAY
+#define SUPLA_CONDITIONS
 #define SUPLA_BUTTON
 #define SUPLA_LIMIT_SWITCH
 #define SUPLA_ROLLERSHUTTER
@@ -61,6 +62,7 @@
 #define SUPLA_PZEM_V_3
 #define SUPLA_CSE7766
 #define SUPLA_DEEP_SLEEP
+#define SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
 
 // ##### Analog #####
 #define SUPLA_NTC_10K
