@@ -45,7 +45,7 @@ DirectLinksSensorThermometer::~DirectLinksSensorThermometer() {
 }
 
 void DirectLinksSensorThermometer::onInit() {
-  channel.setNewValue(TEMPERATURE_NOT_AVAILABLE);
+  channel.setNewValue(_temp);
 }
 void DirectLinksSensorThermometer::setHost(const char *host) {
   if (host) {
