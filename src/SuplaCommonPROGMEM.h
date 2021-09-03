@@ -178,24 +178,29 @@ const char GPIO_B7[] PROGMEM = "B7";
 
 const char* const GPIO_MCP23017_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, GPIO_B0,
                                                GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7, S_EMPTY, OFF};
-
 #endif
 
-const char ADR44[] PROGMEM = "0x44";
-const char ADR45[] PROGMEM = "0x45";
-const char ADR44_ADR45[] PROGMEM = "0x44 & 0x45";
+#if defined(SUPLA_BME280) || defined(SUPLA_BMP280)
 const char ADR76[] PROGMEM = "0x76";
 const char ADR77[] PROGMEM = "0x77";
 const char ADR76_ADR77[] PROGMEM = "0x76 & 0x77";
-
 const char* const BMx280_P[] PROGMEM = {OFF, ADR76, ADR77, ADR76_ADR77};
-const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
+#endif
 
+#ifdef SUPLA_SHT3x
+const char ADR44[] PROGMEM = "0x44";
+const char ADR45[] PROGMEM = "0x45";
+const char ADR44_ADR45[] PROGMEM = "0x44 & 0x45";
+const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
+#endif
+
+#ifdef SUPLA_MCP23017
 const char ADR20[] PROGMEM = "0x20";
 const char ADR21[] PROGMEM = "0x21";
 const char ADR22[] PROGMEM = "0x22";
 const char ADR23[] PROGMEM = "0x23";
 const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, ADR22, ADR23, OFF};
+#endif
 
 const char* const STATE_P[] PROGMEM = {OFF, ON};
 

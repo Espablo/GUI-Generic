@@ -52,7 +52,10 @@
 
 #include "SuplaCommonPROGMEM.h"
 #include "Markup.h"
+
+#ifdef SUPLA_OLED
 #include "SuplaOled.h"
+#endif
 
 #include <vector>
 
@@ -60,7 +63,9 @@
 #include <supla/control/relay.h>
 #include <supla/control/roller_shutter.h>
 
+#ifdef SUPLA_DS18B20
 #include <supla/sensor/DS_18B20.h>
+#endif
 #include <supla/sensor/DHT.h>
 #include <supla/sensor/HC_SR04.h>
 #include <supla/sensor/binary.h>

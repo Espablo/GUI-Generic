@@ -23,7 +23,9 @@
 #include <supla/control/deepSleep.h>
 #endif
 
+#ifdef SUPLA_MPX_5XXX
 #include <supla/sensor/percentage.h>
+#endif
 
 #ifdef ARDUINO_ARCH_ESP8266
 extern "C" {
