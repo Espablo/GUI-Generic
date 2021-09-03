@@ -158,6 +158,7 @@ const char* const GPIO_P[] PROGMEM = {GPIO0,   GPIO1,  GPIO2,   GPIO3,  GPIO4,  
                                       GPIO33,  GPIO34, GPIO35,  GPIO36, S_EMPTY, S_EMPTY, GPIO39,  OFF};
 #endif
 
+#ifdef SUPLA_MCP23017
 const char GPIO_A0[] PROGMEM = "A0";
 const char GPIO_A1[] PROGMEM = "A1";
 const char GPIO_A2[] PROGMEM = "A2";
@@ -177,6 +178,8 @@ const char GPIO_B7[] PROGMEM = "B7";
 
 const char* const GPIO_MCP23017_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, GPIO_B0,
                                                GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7, S_EMPTY, OFF};
+
+#endif
 
 const char ADR44[] PROGMEM = "0x44";
 const char ADR45[] PROGMEM = "0x45";
