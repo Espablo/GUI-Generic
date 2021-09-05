@@ -56,7 +56,7 @@ enum _ConfigMode
 };
 
 #ifdef ARDUINO_ARCH_ESP8266
-#define OFF_GPIO MAX_GPIO  //źle została określony MAX_GPIO dla ESP8266 w starych wersjach.
+#define OFF_GPIO MAX_GPIO + 1
 #elif ARDUINO_ARCH_ESP32
 #define OFF_GPIO MAX_GPIO + 1
 #endif

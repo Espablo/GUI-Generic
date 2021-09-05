@@ -59,7 +59,6 @@
 
 #ifdef ARDUINO_ARCH_ESP8266
 #define MAX_GPIO               17
-#define GPIO_ANALOG_A0_ESP8266 11
 #elif ARDUINO_ARCH_ESP32
 #define MAX_GPIO 39
 #endif

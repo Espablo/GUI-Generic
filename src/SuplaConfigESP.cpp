@@ -530,7 +530,7 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
 bool SuplaConfigESP::checkGpio(int gpio) {
   if (
 #ifdef ARDUINO_ARCH_ESP8266
-      gpio == 6 || gpio == 7 || gpio == 8
+      gpio == 6 || gpio == 7 || gpio == 8 || gpio == 11
 #ifdef ARDUINO_ESP8266_GENERIC
       || gpio == 9 || gpio == 10
 #endif
