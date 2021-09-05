@@ -349,9 +349,12 @@ SuplaConfigManager::SuplaConfigManager() {
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
     this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2, 3);
     this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 3);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR_TYPE, "0", MAX_DIRECT_LINK * 2, 3);
+
 #else
     this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2, 3, false);
     this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 3, false);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR_TYPE, "0", MAX_DIRECT_LINK * 2, 3, false);
 #endif
 
 #ifdef SUPLA_CONDITIONS
@@ -408,7 +411,7 @@ bool SuplaConfigManager::migrationConfig() {
   bool migration = false;
 
 #ifdef ARDUINO_ARCH_ESP8266
-  if (this->sizeFile() == 2681) {  // pierwsza wersja configa
+  if (this->sizeFile() == ESP8226_CONFIG_V1) {  // pierwsza wersja configa
     Serial.println(F("migration version 1 -> 2"));
     uint8_t nr, key;
     // ustawienie starej długości zmiennej przed wczytaniem starego konfiga
@@ -419,7 +422,7 @@ bool SuplaConfigManager::migrationConfig() {
     this->get(KEY_FOR_USE)->setLength(MAX_GPIO * 2);
 
     // ustawienie nowej długości po wczytaniu starego konfiga
-    if (this->load(2) == E_CONFIG_OK) {
+    if (this->load(2, false) == E_CONFIG_OK) {
       for (nr = 0; nr <= MAX_GPIO; nr++) {
         key = KEY_GPIO + nr;
         this->get(key)->setLength(36);
@@ -431,16 +434,15 @@ bool SuplaConfigManager::migrationConfig() {
   }
 
   if (this->sizeFile() == 2718) {  // druga wersja configa
-    Serial.println(F("migration version 2 -> 3"));
-    if (this->load(2) == E_CONFIG_OK) {  // wczytanie kluczy tylko z wersji 2 configa
-      migration = true;
-    }
+                                   // Serial.println(F("migration version 2 -> 3"));
+    // if (this->load(2, false) == E_CONFIG_OK) // wczytanie kluczy tylko z wersji 2 configa
+    //   migration = true;
   }
 #elif ARDUINO_ARCH_ESP32
   if (this->sizeFile() == 3774) {  // wersja 2 configa
     Serial.println(F("migration version 2 -> 3"));
-    if (this->load(2) == E_CONFIG_OK)
-      migration = true;
+    // if (this->load(2, false) == E_CONFIG_OK)
+    //   migration = true;
   }
 #endif
 
@@ -494,6 +496,13 @@ int SuplaConfigManager::sizeFile() {
   return -1;
 }
 
+bool SuplaConfigManager::checkFileConvert(int size) {
+  if (size == ESP8226_CONFIG_V1) {
+    return true;
+  }
+  return false;
+}
+
 uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
   if (SPIFFS.begin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
@@ -510,7 +519,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
           }
         }
 
-        if (length != configFile.size() && configParse) {
+        if (checkFileConvert(configFile.size()) && configParse) {
           Serial.print(F("size file: "));
           Serial.println(configFile.size());
           Serial.print(F("size conf: "));

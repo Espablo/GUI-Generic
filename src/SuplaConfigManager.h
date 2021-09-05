@@ -114,6 +114,7 @@ enum _key
   KEY_DEEP_SLEEP_TIME,
   KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR,
   KEY_DIRECT_LINKS_SENSOR_THERMOMETR,
+  KEY_DIRECT_LINKS_SENSOR_TYPE,
   KEY_CONDITIONS_SENSOR_NUMBER,
   OPTION_COUNT
 };
@@ -190,6 +191,8 @@ enum _e_onfig
 
 #define CONFIG_MAX_OPTIONS 100
 
+#define ESP8226_CONFIG_V1 2681
+
 class ConfigOption {
  public:
   ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version, bool loadKey);
@@ -224,6 +227,8 @@ class SuplaConfigManager {
   uint8_t addKey(uint8_t key, int maxLength, uint8_t version = 1, bool loadKey = true);
   uint8_t addKey(uint8_t key, const char *value, int maxLength, uint8_t version = 1, bool loadKey = true);
   uint8_t deleteKey(uint8_t key);
+
+  bool checkFileConvert(int size);
   int sizeFile();
   uint8_t load(uint8_t version = 99, bool configParse = true);
   uint8_t save();
