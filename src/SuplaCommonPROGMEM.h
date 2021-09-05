@@ -97,6 +97,7 @@ const char GPIO13[] PROGMEM = "13-D7";
 const char GPIO14[] PROGMEM = "14-D5";
 const char GPIO15[] PROGMEM = "15-D8";
 const char GPIO16[] PROGMEM = "16-D0";
+const char GPIO17[] PROGMEM = "17-A0 ANALOG";
 
 const char* const GPIO_P[] PROGMEM = {GPIO0,
                                       GPIO1,
@@ -123,6 +124,7 @@ const char* const GPIO_P[] PROGMEM = {GPIO0,
                                       GPIO14,
                                       GPIO15,
                                       GPIO16,
+                                      GPIO17,
                                       OFF};
 #elif ARDUINO_ARCH_ESP32
 const char GPIO0[] PROGMEM = "0-IO";

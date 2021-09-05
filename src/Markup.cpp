@@ -246,12 +246,8 @@ void addListGPIOBox(
   html += F("'>");
 
 #ifdef ARDUINO_ARCH_ESP8266
-
-  if (ConfigESP->checkBusyGpio(GPIO_ANALOG_A0_ESP8266, function) || gpio == GPIO_ANALOG_A0_ESP8266)
-    addGPIOOptionValue(html, GPIO_ANALOG_A0_ESP8266, gpio, F("ANALOG PIN-A0"));
-
   for (uint8_t suported = 0; suported <= OFF_GPIO; suported++)
-    if ((ConfigESP->checkBusyGpio(suported, function) || suported == gpio) && suported != GPIO_ANALOG_A0_ESP8266)
+    if (ConfigESP->checkBusyGpio(suported, function) || suported == gpio)
       addGPIOOptionValue(html, suported, gpio, FPSTR(GPIO_P[suported]));
 
 #elif ARDUINO_ARCH_ESP32
