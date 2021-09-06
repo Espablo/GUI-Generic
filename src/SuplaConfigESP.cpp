@@ -206,8 +206,10 @@ void SuplaConfigESP::ledBlinking(int time) {
 }
 
 void SuplaConfigESP::ledBlinkingStop(void) {
-  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO)
+  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO) {
     led.detach();
+    digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)) ? LOW : HIGH);
+  }
 }
 
 String SuplaConfigESP::getMacAddress(bool formating) {
@@ -225,7 +227,7 @@ String SuplaConfigESP::getMacAddress(bool formating) {
 
 void ledBlinkingTicker() {
   int val = digitalRead(ConfigESP->getGpio(FUNCTION_CFG_LED));
-  digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), val == HIGH ? 0 : 1);
+  digitalWrite(ConfigESP->getGpio(FUNCTION_CFG_LED), val == HIGH ? LOW : HIGH);
 }
 
 void status_func(int status, const char *msg) {
