@@ -68,10 +68,7 @@ void DirectLinksSensorThermometer::enableSSL(bool isSecured) {
 }
 
 bool DirectLinksSensorThermometer::openConnection() {
-  if (!client->connect(_host, _port)) {
-    return false;
-  }
-  return true;
+  return client->connect(_host, _port) ? true : false;
 }
 
 bool DirectLinksSensorThermometer::closeConnection() {
@@ -80,11 +77,7 @@ bool DirectLinksSensorThermometer::closeConnection() {
 }
 
 bool DirectLinksSensorThermometer::checkConnection() {
-  if (client->connected() == 1) {
-    return true;
-  } else {
-    return false;
-  }
+  return client->connected() == 1 ? true : false;
 }
 
 void DirectLinksSensorThermometer::toggleConnection() {
@@ -95,7 +88,7 @@ void DirectLinksSensorThermometer::toggleConnection() {
 #ifdef ARDUINO_ARCH_ESP8266
       ((WiFiClientSecure *)client)->setBufferSizes(256, 256);
 #endif
-      ((WiFiClientSecure *)client)->setTimeout(200);
+      ((WiFiClientSecure *)client)->setTimeout(10000);
     } else {
       client = new WiFiClient();
     }

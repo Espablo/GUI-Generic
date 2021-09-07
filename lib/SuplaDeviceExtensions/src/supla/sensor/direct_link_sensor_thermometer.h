@@ -17,6 +17,8 @@
 #ifndef _direct_link_sensor_thermometer_h
 #define _direct_link_sensor_thermometer_h
 
+#undef BEARSSL_SSL_BASIC
+
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <WiFiClientSecure.h>
