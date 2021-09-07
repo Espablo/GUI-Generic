@@ -14,11 +14,6 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
-#undef BEARSSL_SSL_BASIC
-#include <supla/sensor/direct_link_sensor_thermometer.h>
-#endif
-
 #include "SuplaDeviceGUI.h"
 
 #ifdef SUPLA_PZEM_V_3
