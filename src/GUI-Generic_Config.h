@@ -75,4 +75,10 @@
 #define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
 #endif
 
+#if !defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || !defined(SUPLA_DIRECT_LINKS)
+#define BEARSSL_SSL_BASIC
+#else
+#undef BEARSSL_SSL_BASIC
+#endif
+
 #endif  // GUI-Generic_Config_h
