@@ -13,6 +13,12 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+#undef BEARSSL_SSL_BASIC
+#include <supla/sensor/direct_link_sensor_thermometer.h>
+#endif
+
 #include "SuplaDeviceGUI.h"
 
 #ifdef SUPLA_PZEM_V_3
@@ -33,9 +39,6 @@ extern "C" {
 }
 #endif
 
-#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
-#include <supla/sensor/direct_link_sensor_thermometer.h>
-#endif
 //#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
 //#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
 // DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
@@ -45,11 +48,15 @@ void setup() {
 
   Serial.begin(74880);
 
+  for (uint8_t t = 4; t > 0; t--) {
+    Serial.printf("[SETUP] WAIT %d...\n", t);
+    Serial.flush();
+    delay(1000);
+  }
+
 #ifdef ARDUINO_ARCH_ESP8266
   ESP.wdtDisable();
 #endif
-
-  delay(1000);
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
