@@ -23,11 +23,6 @@
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
 
-#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
-#undef BEARSSL_SSL_BASIC
-#include <supla/sensor/direct_link_sensor_thermometer.h>
-#endif
-
 #include "GUIGenericCommon.h"
 #include "GUI-Generic_Config.h"
 #include "SuplaTemplateBoard.h"
