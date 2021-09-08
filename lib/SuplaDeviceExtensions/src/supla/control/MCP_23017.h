@@ -13,7 +13,7 @@ class MCP23017 {
   MCP23017() : _callback(NULL) {
   }
 
-#ifdef ESP8266
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
   static void init(uint8_t sda, uint8_t scl, bool fast = true);
   static void init(bool fast = true) {
     init(SDA, SCL, fast);
