@@ -28,28 +28,13 @@ void AnalogRedingMap::onInit() {
 }
 
 int16_t AnalogRedingMap::readValuesFromDevice() {
-  static uint8_t samples = 10;
-  static int readings[20];
-  static uint8_t cur = 0;
-  static uint8_t allValid = 0;
   int16_t average = 0;
-
-  readings[cur++ % samples] = analogRead(pin);
-
-  if (allValid) {
-    for (uint8_t i = 0; i < samples; i++) {
-      average += readings[i];
-    }
-    average /= samples;
-  } else {
-    for (uint8_t i = 0; i < cur; i++) {
-      average += readings[i];
-    }
-    average /= cur;
-    if (cur == samples) {
-      allValid = 1;
-    }
+  
+  for (int i = 0; i < 10; i++) {
+    average += analogRead(pin);
+    delay(1);
   }
+  average = average / 10;
 
   return average;
 }
