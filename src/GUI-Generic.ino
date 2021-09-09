@@ -412,6 +412,5 @@ void loop() {
   
 #ifdef ARDUINO_ARCH_ESP8266
   delay(25);
-#endif
   // drd.loop();
 }
