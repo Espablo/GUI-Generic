@@ -165,12 +165,7 @@ void handleRelaySaveSet() {
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
-  if (nr_relay.toInt() - 1 <= MAX_DIRECT_LINK) {
-    input = INPUT_DIRECT_LINK_ON;
-    ConfigManager->setElement(KEY_DIRECT_LINKS_ON, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
-    input = INPUT_DIRECT_LINK_OFF;
-    ConfigManager->setElement(KEY_DIRECT_LINKS_OFF, (nr_relay.toInt() - 1), WebServer->httpServer->arg(input).c_str());
-  }
+  directLinksWebPageSave(nr_relay.toInt() - 1);
 #endif
 
   switch (ConfigManager->save()) {
@@ -230,16 +225,7 @@ void handleRelaySet(int save) {
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
-    if (nr_relay.toInt() - 1 <= MAX_DIRECT_LINK) {
-      addFormHeader(webContentBuffer, S_DIRECT_LINKS);
-      massage = ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr_relay.toInt() - 1).c_str();
-      addTextBox(webContentBuffer, INPUT_DIRECT_LINK_ON, S_ON, massage, F("xx/xxxxxxxxx/turn-on"), 0, MAX_DIRECT_LINKS_SIZE, false);
-
-      massage = ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(nr_relay.toInt() - 1).c_str();
-      addTextBox(webContentBuffer, INPUT_DIRECT_LINK_OFF, S_OFF, massage, F("xx/xxxxxxxxx/turn-off"), 0, MAX_DIRECT_LINKS_SIZE, false);
-
-      addFormHeaderEnd(webContentBuffer);
-    }
+    directLinksWebPage(nr_relay.toInt() - 1);
 #endif
 
 #ifdef SUPLA_CONDITIONS
@@ -305,9 +291,15 @@ void handleRelaySetMCP23017(int save) {
   }
 #endif
 
-#ifdef SUPLA_CONDITIONS
-  conditionsWebPage(nr_relay.toInt() - 1);
+  if (!nr_relay.isEmpty()) {
+#if defined(SUPLA_DIRECT_LINKS)
+    directLinksWebPage(nr_relay.toInt() - 1);
 #endif
+
+#ifdef SUPLA_CONDITIONS
+    conditionsWebPage(nr_relay.toInt() - 1);
+#endif
+  }
 
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
@@ -349,6 +341,18 @@ void handleRelaySaveSetMCP23017() {
     }
 #endif
 
+#if defined(SUPLA_PUSHOVER)
+    for (uint8_t i = 0; i <= MAX_PUSHOVER_MESSAGE; i++) {
+      input = INPUT_PUSHOVER_MESSAGE;
+      input += i;
+      ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, i, WebServer->httpServer->arg(input).c_str());
+    }
+#endif
+
+#if defined(SUPLA_DIRECT_LINKS)
+    directLinksWebPageSave(nr_relay.toInt() - 1);
+#endif
+
 #ifdef SUPLA_CONDITIONS
     conditionsWebPageSave(nr_relay.toInt() - 1);
 #endif
@@ -359,14 +363,6 @@ void handleRelaySaveSetMCP23017() {
       ConfigManager->setElement(key, MEMORY, memory);
       ConfigManager->setElement(key, LEVEL_RELAY, level);
     }
-
-#if defined(SUPLA_PUSHOVER)
-    for (uint8_t i = 0; i <= MAX_PUSHOVER_MESSAGE; i++) {
-      input = INPUT_PUSHOVER_MESSAGE;
-      input += i;
-      ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, i, WebServer->httpServer->arg(input).c_str());
-    }
-#endif
   }
 
   switch (ConfigManager->save()) {
@@ -413,5 +409,29 @@ void conditionsWebPageSave(int nr) {
   ConfigManager->setElement(KEY_CONDITIONS_MAX, nr, WebServer->httpServer->arg(input).c_str());
   input = INPUT_CONDITIONS_SENSOR_NUMBER;
   ConfigManager->setElement(KEY_CONDITIONS_SENSOR_NUMBER, nr, WebServer->httpServer->arg(input).c_str());
+}
+#endif
+
+#ifdef SUPLA_DIRECT_LINKS
+void directLinksWebPage(int nr) {
+  if (nr <= MAX_DIRECT_LINK) {
+    addFormHeader(webContentBuffer, S_DIRECT_LINKS);
+    String massage = ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr).c_str();
+    addTextBox(webContentBuffer, INPUT_DIRECT_LINK_ON, S_ON, massage, F("xx/xxxxxxxxx/turn-on"), 0, MAX_DIRECT_LINKS_SIZE, false);
+
+    massage = ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(nr).c_str();
+    addTextBox(webContentBuffer, INPUT_DIRECT_LINK_OFF, S_OFF, massage, F("xx/xxxxxxxxx/turn-off"), 0, MAX_DIRECT_LINKS_SIZE, false);
+
+    addFormHeaderEnd(webContentBuffer);
+  }
+}
+
+void directLinksWebPageSave(int nr) {
+  if (nr <= MAX_DIRECT_LINK) {
+    String input = INPUT_DIRECT_LINK_ON;
+    ConfigManager->setElement(KEY_DIRECT_LINKS_ON, nr, WebServer->httpServer->arg(input).c_str());
+    input = INPUT_DIRECT_LINK_OFF;
+    ConfigManager->setElement(KEY_DIRECT_LINKS_OFF, nr, WebServer->httpServer->arg(input).c_str());
+  }
 }
 #endif

@@ -54,11 +54,6 @@ void handleRelaySaveSetMCP23017();
 #define INPUT_PUSHOVER_MESSAGE "pm"
 #endif
 
-#ifdef SUPLA_DIRECT_LINKS
-#define INPUT_DIRECT_LINK_ON  "dlo"
-#define INPUT_DIRECT_LINK_OFF "dlof"
-#endif
-
 #ifdef SUPLA_LED
 #define PATH_LED        "led"
 #define PATH_SAVE_LED   "saveled"
@@ -77,4 +72,11 @@ void conditionsWebPage(int nr);
 void conditionsWebPageSave(int nr);
 #endif
 
+#ifdef SUPLA_DIRECT_LINKS
+#define INPUT_DIRECT_LINK_ON  "dlo"
+#define INPUT_DIRECT_LINK_OFF "dlof"
+
+void directLinksWebPage(int nr);
+void directLinksWebPageSave(int nr);
+#endif
 #endif  // SuplaWebPageRelay_h
