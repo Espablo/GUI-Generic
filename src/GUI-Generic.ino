@@ -409,6 +409,9 @@ void setup() {
 
 void loop() {
   SuplaDevice.iterate();
-  // delay(25);
+  
+#ifdef ARDUINO_ARCH_ESP8266
+  delay(25);
+#endif
   // drd.loop();
 }
