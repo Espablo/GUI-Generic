@@ -93,16 +93,13 @@ void MCP23017::setPullup(uint8_t pin, bool pullup, bool inverse) {
 }
 
 bool MCP23017::digitalRead(uint8_t pin) {
-  unsigned long now = millis();
-  if (now > get_ba) {
-    ba = readReg16(MCP23017_GPIOA);  // --------- reads "readReg16" only once
-                                     // every 20 ms  ----
-    get_ba = now + 20;
+  if (millis() - get_ba > 30) {
+    ba = readReg16(MCP23017_GPIOA);
+    get_ba = millis();
   }
-  if (pin < 16) {
-    return ((ba >> (pin % 16)) & 0x01);
-  }
-  return false;
+  // if (pin < 16) {
+  return ((ba >> (pin % 16)) & 0x01);
+  // }
 }
 
 void MCP23017::digitalWrite(uint8_t pin, bool value) {
