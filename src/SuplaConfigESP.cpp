@@ -362,9 +362,6 @@ int SuplaConfigESP::getGpio(int nr, int function) {
             return gpio + 100 + 16 + 16 + 16;
           }
           break;
-        default:
-          return OFF_GPIO_MCP23017;
-          break;
       }
     }
 #endif
