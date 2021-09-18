@@ -51,7 +51,7 @@ double AnalogRedingMap::getValue() {
 }
 
 void AnalogRedingMap::iterateAlways() {
-  if (millis() - lastReadTime > 10000) {
+  if (millis() - lastReadTime > 1000) {
     lastReadTime = millis();
 
     channel.setNewValue(0, getValue());
@@ -91,39 +91,39 @@ void AnalogRedingMap::calibrateMaxValue() {
   Supla::Storage::ScheduleSave(1000);
 }
 
-void AnalogRedingMap::setMinValue(int value) {
+void AnalogRedingMap::setMinValue(float value) {
   min = value;
   Supla::Storage::ScheduleSave(1000);
 }
 
-int AnalogRedingMap::getMinValue() {
+float AnalogRedingMap::getMinValue() {
   return min;
 }
 
-void AnalogRedingMap::setMaxValue(int value) {
+void AnalogRedingMap::setMaxValue(float value) {
   max = value;
   Supla::Storage::ScheduleSave(1000);
 }
 
-int AnalogRedingMap::getMaxValue() {
+float AnalogRedingMap::getMaxValue() {
   return max;
 }
 
-void AnalogRedingMap::setMinDesiredValue(int value) {
+void AnalogRedingMap::setMinDesiredValue(float value) {
   minDesired = value;
   Supla::Storage::ScheduleSave(1000);
 }
 
-int AnalogRedingMap::getMinDesiredValue() {
+float AnalogRedingMap::getMinDesiredValue() {
   return minDesired;
 }
 
-void AnalogRedingMap::setMaxDesiredValue(int value) {
+void AnalogRedingMap::setMaxDesiredValue(float value) {
   maxDesired = value;
   Supla::Storage::ScheduleSave(1000);
 }
 
-int AnalogRedingMap::getMaxDesiredValue() {
+float AnalogRedingMap::getMaxDesiredValue() {
   return maxDesired;
 }
 

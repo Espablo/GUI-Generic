@@ -77,7 +77,7 @@ void handleSensorAnalog(int save) {
   addListGPIOBox(webContentBuffer, INPUT_ANALOG_READING_MAP, F("ADC Pin"), FUNCTION_ANALOG_READING);
 
   if (ConfigESP->getGpio(FUNCTION_ANALOG_READING) != OFF_GPIO) {
-    int16_t value = Supla::GUI::analog->getMinValue();
+    float value = Supla::GUI::analog->getMinValue();
     addNumberBox(webContentBuffer, INPUT_ANALOG_READING_MAP_MIN, F("MIN IN"), F("wartość kalibracji min"), false, String(value));
 
     value = Supla::GUI::analog->getMaxValue();
@@ -148,16 +148,16 @@ void handleSensorAnalogSave() {
       }
 
       if (strcmp(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MIN).c_str(), "") != 0) {
-        Supla::GUI::analog->setMinValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MIN).toInt());
+        Supla::GUI::analog->setMinValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MIN).toFloat());
       }
       if (strcmp(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MAX).c_str(), "") != 0) {
-        Supla::GUI::analog->setMaxValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MAX).toInt());
+        Supla::GUI::analog->setMaxValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MAX).toFloat());
       }
       if (strcmp(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MIN_DESIRED).c_str(), "") != 0) {
-        Supla::GUI::analog->setMinDesiredValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MIN_DESIRED).toInt());
+        Supla::GUI::analog->setMinDesiredValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MIN_DESIRED).toFloat());
       }
       if (strcmp(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MAX_DESIRED).c_str(), "") != 0) {
-        Supla::GUI::analog->setMaxDesiredValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MAX_DESIRED).toInt());
+        Supla::GUI::analog->setMaxDesiredValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MAX_DESIRED).toFloat());
       }
     }
   }

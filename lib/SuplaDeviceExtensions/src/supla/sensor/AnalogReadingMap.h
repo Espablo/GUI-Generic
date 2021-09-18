@@ -45,25 +45,25 @@ class AnalogRedingMap : public HumidityMeter {
   void calibrateMinValue();
   void calibrateMaxValue();
 
-  void setMinValue(int value);
-  int getMinValue();
+  void setMinValue(float value);
+  float getMinValue();
 
-  void setMaxValue(int value);
-  int getMaxValue();
+  void setMaxValue(float value);
+  float getMaxValue();
 
-  void setMinDesiredValue(int value);
-  int getMinDesiredValue();
+  void setMinDesiredValue(float value);
+  float getMinDesiredValue();
 
-  void setMaxDesiredValue(int value);
-  int getMaxDesiredValue();
+  void setMaxDesiredValue(float value);
+  float getMaxDesiredValue();
 
  protected:
   uint8_t pin;
 
-  int min;
-  int max;
-  int minDesired;
-  int maxDesired;
+  float min;
+  float max;
+  float minDesired;
+  float maxDesired;
 };
 
 };  // namespace Sensor
