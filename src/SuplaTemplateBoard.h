@@ -77,6 +77,10 @@
 #endif
 #endif
 
+#if !defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || !defined(SUPLA_DIRECT_LINKS)
+#define BEARSSL_SSL_BASIC
+#endif
+
 const char BOARD_NULL[] PROGMEM = "";
 const char ELECTRODRAGON[] PROGMEM = "ElectroDragon";
 const char INCAN3[] PROGMEM = "inCan3";
