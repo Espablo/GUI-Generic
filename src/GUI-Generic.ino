@@ -13,6 +13,11 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+#if !defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || !defined(SUPLA_DIRECT_LINKS)
+#define BEARSSL_SSL_BASIC
+#endif
+
 #include "SuplaDeviceGUI.h"
 
 #ifdef SUPLA_PZEM_V_3
