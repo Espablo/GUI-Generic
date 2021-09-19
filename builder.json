@@ -199,7 +199,8 @@
 				"SUPLA_ROLLERSHUTTER",
 				"SUPLA_PUSHOVER",
 				"SUPLA_DIRECT_LINKS",
-				"SUPLA_LED"
+				"SUPLA_LED",
+				"SUPLA_CONDITIONS"
 			],
 			"en": {
 				"name": "Relays",
@@ -216,6 +217,28 @@
 			"fr": {
 				"name": "Relais",
 				"desc": "Paramètres de l´appareil->Relais. Il permet le fonctionnement des relais."
+			}
+		},
+		"SUPLA_CONDITIONS": {
+			"name": "Warunkowanie przekaźnika",
+			"desc": "Umożliwia sterowanie przekaźnikiem w zależnośći od wartości sensora.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "Conditioning of relay",
+				"desc": "It allows you to control the relay depending on the sensor value."
+			},
+			"es": {
+				"name": "Acondicionamiento de relé",
+				"desc": "Le permite controlar el relé en función del valor del sensor."
+			},
+			"de": {
+				"name": "Konditionierung des Relais",
+				"desc": "Damit können Sie das Relais abhängig vom Sensorwert steuern."
+			},
+			"fr": {
+				"name": "Conditionnement de relais",
+				"desc": "Il permet de contrôler le relais en fonction de la valeur du capteur."
 			}
 		},
 		"SUPLA_BUTTON": {
@@ -812,6 +835,28 @@
 			"fr": {
 				"name": "Compteur d´impulsions",
 				"desc": "Paramètres de l´appareil->Autre. Il permet le fonctionnement du compteur d´impulsions."
+			}
+		},
+		"SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR": {
+			"name": "Linki bezpośrednie - odczyt temperatury",
+			"desc": "Umożliwia odczytywanie temperatury za pomocą linków bezpośrednich.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "Direct links - temperature reading",
+				"desc": "It allows you to read the temperature using direct links."
+			},
+			"es": {
+				"name": "Enlaces directos - lectura de temperatura",
+				"desc": "Le permite leer la temperatura mediante enlaces directos."
+			},
+			"de": {
+				"name": "Direkte Links - Temperaturmessung",
+				"desc": "Es ermöglicht Ihnen, die Temperatur über direkte Links abzulesen."
+			},
+			"fr": {
+				"name": "Liens directs - relevé de température",
+				"desc": "Il vous permet de lire la température à l'aide de liens directs."
 			}
 		}
 	},
