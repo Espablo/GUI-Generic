@@ -31,7 +31,7 @@ class AnalogRedingMap : public HumidityMeter {
   AnalogRedingMap(uint8_t pin);
 
   void onInit();
-  int16_t readValuesFromDevice();
+  uint16_t readValuesFromDevice();
   virtual double getValue();
 
   void iterateAlways();
