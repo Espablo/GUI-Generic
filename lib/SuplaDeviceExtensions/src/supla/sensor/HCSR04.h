@@ -20,7 +20,7 @@ class HCSR04 : public HC_SR04 {
     digitalWrite(_trigPin, LOW);
     noInterrupts();
 
-    unsigned long duration = pulseIn(_echoPin, HIGH, 60000);
+    unsigned long duration = pulseIn(_echoPin, HIGH);
     interrupts();
     if (duration > 50) {
       index++;
