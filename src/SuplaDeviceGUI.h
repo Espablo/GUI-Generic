@@ -69,7 +69,7 @@
 #include <supla/sensor/DHT.h>
 
 #ifdef SUPLA_HC_SR04
-#include <supla/sensor/HCSR04.h>
+#include <supla/sensor/HC_SR04_NewPing.h>
 #endif
 
 #include <supla/sensor/binary.h>
