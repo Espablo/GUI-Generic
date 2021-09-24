@@ -15,13 +15,13 @@ class HCSR04 : public HC_SR04 {
 
     digitalWrite(_trigPin, LOW);
     delayMicroseconds(2);
+    noInterrupts();
     digitalWrite(_trigPin, HIGH);
     delayMicroseconds(10);
     digitalWrite(_trigPin, LOW);
-    noInterrupts();
-
-    unsigned long duration = pulseIn(_echoPin, HIGH);
+    unsigned long duration = pulseIn(_echoPin, HIGH, 26000);
     interrupts();
+
     if (duration > 50) {
       index++;
       if (index > 4) index = 0;

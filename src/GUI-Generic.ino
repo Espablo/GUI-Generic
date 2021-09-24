@@ -403,7 +403,7 @@ void setup() {
   // https://github.com/esp8266/Arduino/issues/2070#issuecomment-258660760
   wifi_set_sleep_type(NONE_SLEEP_T);
 
-  ESP.wdtEnable(WDTO_120MS);
+  ESP.wdtEnable(WDTO_250MS);
 #endif
 }
 
