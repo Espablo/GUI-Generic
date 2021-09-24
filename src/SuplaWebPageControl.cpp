@@ -68,6 +68,17 @@ void handleControlSave() {
       return;
     }
 #endif
+
+#ifdef SUPLA_ROLLERSHUTTER
+    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr) {
+      if (nr % 2 == 0) {
+        if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO_STOP, FUNCTION_BUTTON_STOP, nr - 1)) {
+          handleControl(6);
+          return;
+        }
+      }
+    }
+#endif
   }
 
   if (strcmp(WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str(), "") != 0) {
@@ -106,6 +117,15 @@ void handleControl(int save) {
 #else
     addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER), FUNCTION_BUTTON, nr);
 #endif
+
+#ifdef SUPLA_ROLLERSHUTTER
+    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr) {
+      if (nr % 2 == 0) {
+        addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO_STOP, String(S_BUTTON) + S_SPACE + " STOP",
+                           getParameterRequest(PATH_BUTTON_SET, "stop"), FUNCTION_BUTTON_STOP, nr - 1);
+      }
+    }
+#endif
   }
 
   addFormHeaderEnd(webContentBuffer);
@@ -120,12 +140,18 @@ void handleControl(int save) {
 
 #if defined(SUPLA_BUTTON)
 void handleButtonSaveSet() {
-  String input, nr_button;
+  String input, button, buttonStop;
   uint8_t key, gpio;
 
-  nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
+  button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
+  buttonStop = WebServer->httpServer->arg("stop");
 
-  gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
+  if (!buttonStop.isEmpty()) {
+    gpio = ConfigESP->getGpio(buttonStop.toInt(), FUNCTION_BUTTON_STOP);
+  }
+  else {
+    gpio = ConfigESP->getGpio(button.toInt(), FUNCTION_BUTTON);
+  }
   key = KEY_GPIO + gpio;
 
   input = INPUT_BUTTON_INVERSED;
@@ -162,29 +188,47 @@ void handleButtonSaveSet() {
 
 void handleButtonSet(int save) {
   uint8_t gpio, selected;
-  String nr_button;
+  String button, buttonStop, url;
 
-  nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
+  button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
+  buttonStop = WebServer->httpServer->arg("stop");
 
   WebServer->sendHeaderStart();
 
-  if (!nr_button.isEmpty()) {
+  if (!button.isEmpty() || !buttonStop.isEmpty()) {
+    if (!buttonStop.isEmpty()) {
+      gpio = ConfigESP->getGpio(buttonStop.toInt(), FUNCTION_BUTTON_STOP);
+      url = getParameterRequest(PATH_BUTTON_SET, "stop", buttonStop);
+    }
+    else {
+      gpio = ConfigESP->getGpio(button.toInt(), FUNCTION_BUTTON);
+      url = getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, button);
+    }
+
     webContentBuffer += SuplaSaveResult(save);
-    webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
+    webContentBuffer += SuplaJavaScript(url);
 
-    gpio = ConfigESP->getGpio(nr_button.toInt(), FUNCTION_BUTTON);
+    addForm(webContentBuffer, F("post"), url);
+    if (!buttonStop.isEmpty()) {
+      addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_BUTTON + S_SPACE +"STOP");
+    }
+    else {
+      addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + button);
+    }
 
-    addForm(webContentBuffer, F("post"), getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
-    addFormHeader(webContentBuffer, S_BUTTON_NR_SETTINGS + nr_button);
-
-    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr_button.toInt()) {
+    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= button.toInt()) {
 #ifdef SUPLA_ROLLERSHUTTER
       selected = ConfigESP->getPullUp(gpio);
       addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
       selected = ConfigESP->getInversed(gpio);
       addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
 
-      if (nr_button.toInt() % 2 == 1) {
+      if (!buttonStop.isEmpty()) {
+        selected = ConfigESP->getEvent(gpio);
+        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 2, selected);
+      }
+
+      if (button.toInt() % 2 == 1) {
         selected = ConfigESP->getEvent(gpio);
         addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
         selected = ConfigESP->getAction(gpio);
@@ -216,38 +260,38 @@ void handleButtonSet(int save) {
 #ifdef SUPLA_MCP23017
 void handleButtonSetMCP23017(int save) {
   uint8_t gpio, selected;
-  String nr_button;
+  String button;
 
-  nr_button.reserve(2);
+  button.reserve(2);
 
   WebServer->sendHeaderStart();
-  nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
+  button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
-  if (!nr_button.isEmpty())
-    gpio = ConfigESP->getGpioMCP23017(nr_button.toInt(), FUNCTION_BUTTON);
+  if (!button.isEmpty())
+    gpio = ConfigESP->getGpioMCP23017(button.toInt(), FUNCTION_BUTTON);
   else
     gpio = ConfigESP->getGpioMCP23017(1, FUNCTION_BUTTON);
 
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
+  webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, button));
 
-  addForm(webContentBuffer, F("post"), getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, nr_button));
+  addForm(webContentBuffer, F("post"), getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, button));
 
-  if (!nr_button.isEmpty()) {
-    addFormHeader(webContentBuffer, String(S_BUTTON_NR_SETTINGS) + nr_button.toInt());
+  if (!button.isEmpty()) {
+    addFormHeader(webContentBuffer, String(S_BUTTON_NR_SETTINGS) + button.toInt());
   }
   else {
     addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);
   }
 
-  if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr_button.toInt() && !nr_button.isEmpty()) {
+  if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= button.toInt() && !button.isEmpty()) {
 #ifdef SUPLA_ROLLERSHUTTER
     selected = ConfigESP->getPullUp(gpio);
     addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
     selected = ConfigESP->getInversed(gpio);
     addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
 
-    if (nr_button.toInt() % 2 == 1) {
+    if (button.toInt() % 2 == 1) {
       selected = ConfigESP->getEvent(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
       selected = ConfigESP->getAction(gpio);
@@ -279,11 +323,11 @@ void handleButtonSaveSetMCP23017() {
     return;
   }
 
-  String input, nr_button;
+  String input, button;
   uint8_t key, gpio, pullup, inversed, event, action;
 
   input.reserve(10);
-  nr_button.reserve(2);
+  button.reserve(2);
 
   input = INPUT_BUTTON_EVENT;
   event = WebServer->httpServer->arg(input).toInt();
@@ -307,10 +351,10 @@ void handleButtonSaveSetMCP23017() {
   input = INPUT_BUTTON_ACTION;
   action = WebServer->httpServer->arg(input).toInt();
 
-  nr_button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
+  button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
-  if (!nr_button.isEmpty()) {
-    gpio = ConfigESP->getGpioMCP23017(nr_button.toInt(), FUNCTION_BUTTON);
+  if (!button.isEmpty()) {
+    gpio = ConfigESP->getGpioMCP23017(button.toInt(), FUNCTION_BUTTON);
     key = KEY_GPIO + gpio;
 
     ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);

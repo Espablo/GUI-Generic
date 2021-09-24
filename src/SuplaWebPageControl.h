@@ -10,16 +10,17 @@
 #ifdef GUI_CONTROL
 #define PATH_CONTROL "control"
 
-#define PATH_BUTTON_SET          "setbutton"
+#define PATH_BUTTON_SET "setbutton"
 
-#define INPUT_TRIGGER         "trs"
-#define INPUT_BUTTON_SET      "bts"
-#define INPUT_BUTTON_GPIO     "btg"
-#define INPUT_BUTTON_LEVEL    "ibl"
-#define INPUT_BUTTON_INVERSED "ibi"
-#define INPUT_BUTTON_EVENT    "icl"
-#define INPUT_BUTTON_ACTION   "bta"
-#define INPUT_MAX_BUTTON      "mbt"
+#define INPUT_TRIGGER          "trs"
+#define INPUT_BUTTON_SET       "bts"
+#define INPUT_BUTTON_GPIO      "btg"
+#define INPUT_BUTTON_GPIO_STOP "btgs"
+#define INPUT_BUTTON_LEVEL     "ibl"
+#define INPUT_BUTTON_INVERSED  "ibi"
+#define INPUT_BUTTON_EVENT     "icl"
+#define INPUT_BUTTON_ACTION    "bta"
+#define INPUT_MAX_BUTTON       "mbt"
 
 void createWebPageControl();
 void handleControl(int save = 0);

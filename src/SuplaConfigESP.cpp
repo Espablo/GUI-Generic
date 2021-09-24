@@ -492,11 +492,18 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   ConfigManager->setElement(key, NR, 0);
   ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
 
-  if (function == FUNCTION_BUTTON) {
+  if (function == FUNCTION_BUTTON || function == FUNCTION_BUTTON_STOP) {
     setPullUp(gpio, true);
     setInversed(gpio, true);
-    setAction(gpio, Supla::Action::TOGGLE);
-    setEvent(gpio, Supla::Event::ON_CHANGE);
+
+    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= gpio) {
+      setAction(gpio, Supla::GUI::ActionRolleShutter::OPEN_OR_CLOSE);
+      setEvent(gpio, Supla::Event::ON_CHANGE);
+    }
+    else {
+      setAction(gpio, Supla::Action::TOGGLE);
+      setEvent(gpio, Supla::Event::ON_CHANGE);
+    }
   }
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, false);
