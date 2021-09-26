@@ -261,10 +261,14 @@ SuplaConfigManager::SuplaConfigManager() {
 #ifdef SUPLA_DS18B20
     this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2, 2);
     this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20, 2);
-    this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, 2);
 #else
     this->addKey(KEY_MULTI_MAX_DS18B20, 2, 2, false);
     this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20, 2, false);
+#endif
+
+#if defined(SUPLA_DS18B20) || defined(SUPLA_OLED)
+    this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, 2);
+#else
     this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, 2, false);
 #endif
 
