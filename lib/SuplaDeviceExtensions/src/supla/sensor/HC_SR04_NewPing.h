@@ -18,54 +18,47 @@
 #define _hc_sr04_newping_h
 
 #include <NewPing.h>
-
-#include "supla/channel.h"
-#include "supla/sensor/distance.h"
+#include <supla/sensor/HC_SR04.h>
 
 namespace Supla {
 namespace Sensor {
-class HC_SR04_NewPing : public Distance {
+class HC_SR04_NewPing : public HC_SR04 {
  public:
-  HC_SR04_NewPing(int8_t trigPin, int8_t echoPin, int16_t depth = 0) : retryCount(0) {
-    _depth = depth;
-    sonar = new NewPing(trigPin, echoPin);
-  }
-  void onInit() {
-    channel.setNewValue(getValue());
+  HC_SR04_NewPing(int8_t trigPin,
+                  int8_t echoPin,
+                  int16_t minIn = 0,
+                  int16_t maxIn = 500,
+                  int16_t minOut = 0,
+                  int16_t maxOut = 500)
+      : HC_SR04(trigPin, echoPin, minIn, maxIn, minOut, maxOut) {
+    sonar = new NewPing(trigPin, echoPin, maxIn);
   }
 
   virtual double getValue() {
     unsigned long uS = sonar->ping_median();
 
     if (uS < 50) {
-      retryCount++;
-      if (retryCount > 3) {
-        retryCount = 0;
-        value = DISTANCE_NOT_AVAILABLE;
-      }
-    }
-    else {
-      retryCount = 0;
+      failCount++;
+    } else {
+      failCount = 0;
+
       unsigned long distance = sonar->convert_cm(uS);
 
-      if (_depth > 0) {
-        value = map(distance, 0, _depth, _depth, 0);
-        if (value > _depth)
-          value = 0;
+      value = map(distance, _minIn, _maxIn, _minOut, _maxOut);
+      if (_minOut < _maxOut) {
+        value = constrain(value, _minOut, _maxOut);
+      } else {
+        value = constrain(value, _maxOut, _minOut);
       }
-      else {
-        value = distance;
-      }
-      value = value / 100.0;
     }
-    return value;
+
+    return failCount <= 3 ? static_cast<double>(value) / 100.0
+                          : DISTANCE_NOT_AVAILABLE;
   }
 
  protected:
   NewPing *sonar = nullptr;
-  double value;
-  int16_t _depth;
-  int8_t retryCount;
+  long value;
 };
 
 };  // namespace Sensor

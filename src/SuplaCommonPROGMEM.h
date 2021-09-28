@@ -222,7 +222,6 @@ const char ACTION_TOGGLE[] PROGMEM = S_TOGGLE;
 
 const char* const ACTION_P[] PROGMEM = {ON, OFF, ACTION_TOGGLE};
 
-#ifdef SUPLA_ROLLERSHUTTER
 namespace Supla {
 namespace GUI {
 enum ActionRolleShutter
@@ -233,6 +232,7 @@ enum ActionRolleShutter
 };
 }
 }  // namespace Supla
+#ifdef SUPLA_ROLLERSHUTTER
 const char* const ACTION_ROLLER_SHUTTER_P[] PROGMEM = {"OPEN OR CLOSE", "MOVE UP OR MOVE DOWN", "STEP BY STEP"};
 #endif
 

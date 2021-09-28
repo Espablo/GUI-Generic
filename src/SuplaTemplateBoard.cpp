@@ -168,6 +168,7 @@ void chooseTemplateBoard(uint8_t board) {
       addButtonCFG(0);
       addButton(0);
       addRelay(12);
+      addLimitSwitch(4);
       break;
     case BOARD_SONOFF_TH:
       addLedCFG(13);

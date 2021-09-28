@@ -68,7 +68,11 @@
 #include <supla/sensor/DS_18B20.h>
 #endif
 #include <supla/sensor/DHT.h>
-#include <supla/sensor/HC_SR04.h>
+
+#ifdef SUPLA_HC_SR04
+#include <supla/sensor/HC_SR04_NewPing.h>
+#endif
+
 #include <supla/sensor/binary.h>
 
 #ifdef SUPLA_BME280

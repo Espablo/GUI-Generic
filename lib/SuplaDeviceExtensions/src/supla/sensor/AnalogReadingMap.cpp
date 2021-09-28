@@ -27,9 +27,9 @@ void AnalogRedingMap::onInit() {
   channel.setNewValue(0, getValue());
 }
 
-int16_t AnalogRedingMap::readValuesFromDevice() {
-  int16_t average = 0;
-  
+uint16_t AnalogRedingMap::readValuesFromDevice() {
+  uint16_t average = 0;
+
   for (int i = 0; i < 10; i++) {
     average += analogRead(pin);
     delay(1);

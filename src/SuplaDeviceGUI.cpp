@@ -194,8 +194,9 @@ void addConfigESP(int pinNumberConfig, int pinLedConfig) {
 
 #ifdef SUPLA_ROLLERSHUTTER
 void addRolleShutter(uint8_t nr) {
-  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pullupButtonUp, pullupButtonDown, inversedButtonUp, inversedButtonDown, pinLedUp,
-      pinLedDown, actionButtonUp, actionButtonDown = Supla::Action::MOVE_DOWN_OR_STOP, eventButtonUp;
+  int pinRelayUp, pinRelayDown, pinButtonUp, pinButtonDown, pinButtonStop, pullupButtonUp, pullupButtonDown, pullupButtonStop, inversedButtonUp,
+      inversedButtonDown, inversedButtonStop, pinLedUp, pinLedDown, actionButtonUp, actionButtonDown = Supla::Action::MOVE_DOWN_OR_STOP,
+                                                                                    eventButtonUp, eventButtonStop;
   bool highIsOn, levelLedUp, levelLedDown;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
@@ -203,15 +204,20 @@ void addRolleShutter(uint8_t nr) {
 
   pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
+  pinButtonStop = ConfigESP->getGpio(nr, FUNCTION_BUTTON_STOP);
 
   pullupButtonUp = ConfigESP->getPullUp(pinButtonUp);
   pullupButtonDown = ConfigESP->getPullUp(pinButtonDown);
+  pullupButtonStop = ConfigESP->getPullUp(pinButtonStop);
 
   inversedButtonUp = ConfigESP->getInversed(pinButtonUp);
   inversedButtonDown = ConfigESP->getInversed(pinButtonDown);
+  inversedButtonStop = ConfigESP->getInversed(pinButtonStop);
 
   actionButtonUp = ConfigESP->getAction(pinButtonUp);
+
   eventButtonUp = ConfigESP->getEvent(pinButtonUp);
+  eventButtonStop = ConfigESP->getEvent(pinButtonStop);
 
   pinLedUp = ConfigESP->getGpio(nr, FUNCTION_LED);
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
@@ -248,15 +254,22 @@ void addRolleShutter(uint8_t nr) {
 
     if (eventButtonUp == Supla::Event::ON_CHANGE) {
       RollerShutterButtonOpen->addAction(actionButtonUp, RollerShutterRelay, Supla::Event::ON_PRESS);
-      RollerShutterButtonOpen->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
+      if (pinButtonStop == OFF_GPIO)
+        RollerShutterButtonOpen->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
 
       RollerShutterButtonClose->addAction(actionButtonDown, RollerShutterRelay, Supla::Event::ON_PRESS);
-      RollerShutterButtonClose->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
+      if (pinButtonStop == OFF_GPIO)
+        RollerShutterButtonClose->addAction(Supla::Action::STOP, RollerShutterRelay, Supla::Event::ON_RELEASE);
     }
     else {
       RollerShutterButtonOpen->addAction(actionButtonUp, RollerShutterRelay, eventButtonUp);
       RollerShutterButtonClose->addAction(actionButtonDown, RollerShutterRelay, eventButtonUp);
     }
+  }
+
+  if (pinButtonStop != OFF_GPIO) {
+    auto RollerShutterButtonStop = new Supla::Control::Button(pinButtonStop, pullupButtonStop, inversedButtonStop);
+    RollerShutterButtonStop->addAction(Supla::Action::STOP, RollerShutterRelay, eventButtonStop);
   }
 
   if (pinLedUp != OFF_GPIO) {
