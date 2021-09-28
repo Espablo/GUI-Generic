@@ -245,6 +245,9 @@ void addListGPIOBox(
   }
   html += F("'>");
 
+  if (function == FUNCTION_RELAY)
+    addGPIOOptionValue(html, GPIO_VIRTUAL_RELAY, gpio, S_SPACE "VIRTUAL");
+
 #ifdef ARDUINO_ARCH_ESP8266
   for (uint8_t suported = 0; suported <= OFF_GPIO; suported++)
     if (ConfigESP->checkBusyGpio(suported, function) || suported == gpio)

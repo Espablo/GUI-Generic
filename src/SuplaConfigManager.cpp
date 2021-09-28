@@ -206,6 +206,8 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2);
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2);
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2);
+    this->addKey(KEY_VIRTUAL_RELAY, MAX_VIRTUAL_RELAY * 2, 4);
+    this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_VIRTUAL_RELAY * 2, 4);
 
 #else
     this->addKey(KEY_MAX_RELAY, 2, 2, false);
@@ -213,6 +215,9 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2, false);
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2, false);
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2, false);
+    this->addKey(KEY_VIRTUAL_RELAY, MAX_GPIO * 2, 4, false);
+    this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_GPIO * 2, 4, false);
+
 #endif
 
 #ifdef SUPLA_CONDITIONS

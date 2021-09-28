@@ -319,6 +319,10 @@ void status_func(int status, const char *msg) {
 }
 
 int SuplaConfigESP::getGpio(int nr, int function) {
+  if (function == FUNCTION_RELAY && ConfigManager->get(KEY_VIRTUAL_RELAY)->getElement(nr).toInt()) {
+    return GPIO_VIRTUAL_RELAY;
+  }
+
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
     if (function == FUNCTION_CFG_BUTTON) {
@@ -395,7 +399,10 @@ bool SuplaConfigESP::getInversed(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(INVERSED_BUTTON).toInt();
 }
 
-uint8_t SuplaConfigESP::getMemory(uint8_t gpio) {
+uint8_t SuplaConfigESP::getMemory(uint8_t gpio, uint8_t nr) {
+  if (gpio == GPIO_VIRTUAL_RELAY) {
+    return ConfigManager->get(KEY_VIRTUAL_RELAY_MEMORY)->getElement(nr).toInt();
+  }
   return ConfigManager->get(getKeyGpio(gpio))->getElement(MEMORY).toInt();
 }
 
@@ -440,8 +447,13 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
 void SuplaConfigESP::setLevel(uint8_t gpio, int level) {
   ConfigManager->setElement(getKeyGpio(gpio), LEVEL_RELAY, level);
 }
-void SuplaConfigESP::setMemory(uint8_t gpio, int memory) {
-  ConfigManager->setElement(getKeyGpio(gpio), MEMORY, memory);
+void SuplaConfigESP::setMemory(uint8_t gpio, int memory, uint8_t nr) {
+  if (gpio == GPIO_VIRTUAL_RELAY) {
+    ConfigManager->setElement(KEY_VIRTUAL_RELAY_MEMORY, nr, memory);
+  }
+  else {
+    ConfigManager->setElement(getKeyGpio(gpio), MEMORY, memory);
+  }
 }
 
 void SuplaConfigESP::setPullUp(uint8_t gpio, int pullup) {
@@ -499,8 +511,8 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
     setEvent(gpio, Supla::Event::ON_CHANGE);
   }
   if (function == FUNCTION_RELAY) {
-    setLevel(gpio, false);
-    setMemory(gpio, 2);
+    setLevel(gpio, LOW);
+    setMemory(gpio, MEMORY_RELAY_RESTORE);
   }
 }
 

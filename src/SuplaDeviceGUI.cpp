@@ -92,15 +92,20 @@ void addRelayButton(uint8_t nr) {
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
-  highIsOn = ConfigESP->getLevel(pinRelay);
   levelLed = ConfigESP->getInversed(pinLED);
 
   if (pinRelay != OFF_GPIO) {
-    relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
+    if (pinRelay == GPIO_VIRTUAL_RELAY) {
+      relay.push_back(new Supla::Control::VirtualRelay());
+    }
+    else {
+      highIsOn = ConfigESP->getLevel(pinRelay);
+      relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
+    }
 
     int size = relay.size() - 1;
 
-    switch (ConfigESP->getMemory(pinRelay)) {
+    switch (ConfigESP->getMemory(pinRelay, nr)) {
       case MEMORY_RELAY_OFF:
         relay[size]->setDefaultStateOff();
         break;

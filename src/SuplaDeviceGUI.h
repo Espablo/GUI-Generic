@@ -61,6 +61,7 @@
 
 #include <supla/control/button.h>
 #include <supla/control/relay.h>
+#include <supla/control/virtual_relay.h>
 #include <supla/control/roller_shutter.h>
 
 #ifdef SUPLA_DS18B20
