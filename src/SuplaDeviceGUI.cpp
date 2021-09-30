@@ -158,7 +158,7 @@ void addRelayBridge(uint8_t nr) {
   if (pinRelay != OFF_GPIO && pinTransmitter != OFF_GPIO) {
     if (pinRelay == GPIO_VIRTUAL_RELAY) {
       auto bridgeVirtualRelay = new Supla::Control::RFBridgeVirtualRelay(pinTransmitter);
-      bridgeVirtualRelay->setRepeatProtocol(5);
+      bridgeVirtualRelay->setRepeatProtocol(1);
       bridgeVirtualRelay->setPulseLengthint(350);
       bridgeVirtualRelay->setRepeatTransmit(15);
 
@@ -169,7 +169,7 @@ void addRelayBridge(uint8_t nr) {
     }
     else {
       auto bridgeRelay = new Supla::Control::RFBridgeRelay(pinTransmitter, pinRelay, highIsOn);
-      bridgeRelay->setRepeatProtocol(5);
+      bridgeRelay->setRepeatProtocol(1);
       bridgeRelay->setPulseLengthint(350);
       bridgeRelay->setRepeatTransmit(15);
 
