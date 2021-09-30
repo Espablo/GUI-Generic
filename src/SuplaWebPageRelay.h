@@ -79,4 +79,13 @@ void conditionsWebPageSave(int nr);
 void directLinksWebPage(int nr);
 void directLinksWebPageSave(int nr);
 #endif
+
+#ifdef SUPLA_RF_BRIDGE
+#define INPUT_RF_BRIDGE_CODE_ON  "irbcon"
+#define INPUT_RF_BRIDGE_CODE_OFF "irbcoff"
+
+// void directLinksWebPage(int nr);
+// void directLinksWebPageSave(int nr);
+#endif
+
 #endif  // SuplaWebPageRelay_h

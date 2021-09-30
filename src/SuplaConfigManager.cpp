@@ -369,6 +369,16 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3, 3, false);
 #endif
 
+#ifdef SUPLA_RF_BRIDGE
+    this->addKey(KEY_RF_BRIDGE_CODE_ON, MAX_BRIDGE_RF * 10, 4);
+    this->addKey(KEY_RF_BRIDGE_CODE_OFF, MAX_BRIDGE_RF * 10, 4);
+    this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, 4);
+#else
+    this->addKey(KEY_RF_BRIDGE_CODE_ON, MAX_BRIDGE_RF * 10, 4, false);
+    this->addKey(KEY_RF_BRIDGE_CODE_OFF, MAX_BRIDGE_RF * 10, 4, false);
+    this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, 4, false);
+#endif
+
     switch (this->load()) {
       case E_CONFIG_OK:
         Serial.println(F("Config read"));

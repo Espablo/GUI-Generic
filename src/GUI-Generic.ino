@@ -76,10 +76,48 @@ void setup() {
         nr++;
       }
       else {
+#ifdef SUPLA_RF_BRIDGE
+        if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_TRANSMITTER) != OFF_GPIO && ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == 0 &&
+            (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
+             strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
+          Supla::GUI::addRelayBridge(nr);
+        }
+        else {
 #ifdef SUPLA_RELAY
-        Supla::GUI::addRelayButton(nr);
+          Supla::GUI::addRelay(nr);
+#endif
+        }
+#else
+#ifdef SUPLA_RELAY
+        Supla::GUI::addRelay(nr);
+#endif
+#endif
+
+#ifdef SUPLA_RF_BRIDGE
+        if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE) != OFF_GPIO && ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == 1 &&
+            (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
+             strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
+          Supla::GUI::addButtonBridge(nr);
+        }
+        else {
+#ifdef SUPLA_BUTTON
+          Supla::GUI::addButton(nr);
+#endif
+        }
+#else
+#ifdef SUPLA_BUTTON
+        Supla::GUI::addButton(nr);
+#endif
 #endif
       }
+
+#ifdef SUPLA_PUSHOVER
+      Supla::GUI::addPushover(nr);
+#endif
+
+#ifdef SUPLA_DIRECT_LINKS
+      Supla::GUI::addDirectLinks(nr);
+#endif
     }
   }
 #endif
@@ -149,8 +187,8 @@ void setup() {
     Supla::Sensor::HC_SR04 *hcsr04;
     if (ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValueInt() > 0) {
       hcsr04 = new Supla::Sensor::HC_SR04_NewPing(ConfigESP->getGpio(FUNCTION_TRIG), ConfigESP->getGpio(FUNCTION_ECHO), 0,
-                                          ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValueInt(),
-                                          ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValueInt(), 0);
+                                                  ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValueInt(),
+                                                  ConfigManager->get(KEY_HC_SR04_MAX_SENSOR_READ)->getValueInt(), 0);
     }
     else {
       hcsr04 = new Supla::Sensor::HC_SR04_NewPing(ConfigESP->getGpio(FUNCTION_TRIG), ConfigESP->getGpio(FUNCTION_ECHO));

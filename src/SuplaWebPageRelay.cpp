@@ -170,6 +170,15 @@ void handleRelaySaveSet() {
   directLinksWebPageSave(nr_relay.toInt() - 1);
 #endif
 
+#ifdef SUPLA_RF_BRIDGE
+  if (nr_relay.toInt() <= MAX_BRIDGE_RF) {
+    String input = INPUT_RF_BRIDGE_CODE_ON;
+    ConfigManager->setElement(KEY_RF_BRIDGE_CODE_ON, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    input = INPUT_RF_BRIDGE_CODE_OFF;
+    ConfigManager->setElement(KEY_RF_BRIDGE_CODE_OFF, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+  }
+#endif
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       handleRelaySet(1);
@@ -206,6 +215,19 @@ void handleRelaySet(int save) {
     selected = ConfigESP->getMemory(gpio, nr_relay.toInt());
     addListBox(webContentBuffer, INPUT_RELAY_MEMORY + nr_relay, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
     addFormHeaderEnd(webContentBuffer);
+
+#ifdef SUPLA_RF_BRIDGE
+    if (nr_relay.toInt() <= MAX_BRIDGE_RF) {
+      addFormHeader(webContentBuffer, F("RF BRIDGE"));
+      String massage = ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr_relay.toInt()).c_str();
+      addTextBox(webContentBuffer, INPUT_RF_BRIDGE_CODE_ON, S_ON, massage, F(""), 0, 10, false);
+
+      massage = ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr_relay.toInt()).c_str();
+      addTextBox(webContentBuffer, INPUT_RF_BRIDGE_CODE_OFF, S_OFF, massage, F(""), 0, 10, false);
+
+      addFormHeaderEnd(webContentBuffer);
+    }
+#endif
 
 #if defined(SUPLA_LED)
     if (gpio != GPIO_VIRTUAL_RELAY) {

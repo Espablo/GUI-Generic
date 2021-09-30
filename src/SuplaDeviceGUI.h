@@ -140,6 +140,12 @@
 #include <supla/sensor/VL_53L0X.h>
 #endif
 
+#ifdef SUPLA_RF_BRIDGE
+#include <supla/control/RFBridgeRelay.h>
+#include <supla/control/RFBridgeVirtualRelay.h>
+#include <supla/control/RFBridgeReceive.h>
+#endif
+
 namespace Supla {
 namespace GUI {
 
@@ -148,10 +154,29 @@ void setupWifi();
 void enableWifiSSL(bool value);
 void crateWebServer();
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-void addRelayButton(uint8_t nr);
+#if defined(SUPLA_RELAY)
+void addRelay(uint8_t nr);
+#endif
 
+#if defined(SUPLA_BUTTON)
+void addButton(uint8_t nr);
+#endif
+
+#if defined(SUPLA_RF_BRIDGE)
+void addRelayBridge(uint8_t nr);
+void addButtonBridge(uint8_t nr);
+#endif
+
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_RF_BRIDGE)
 extern std::vector<Supla::Control::Relay *> relay;
+#endif
+
+#if defined(SUPLA_PUSHOVER)
+void addPushover(uint8_t nr);
+#endif
+
+#if defined(SUPLA_DIRECT_LINKS)
+void addDirectLinks(uint8_t nr);
 #endif
 
 #ifdef SUPLA_DS18B20

@@ -84,13 +84,12 @@ void crateWebServer() {
   }
 }
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-void addRelayButton(uint8_t nr) {
-  uint8_t pinRelay, pinButton, pinLED;
+#if defined(SUPLA_RELAY)
+void addRelay(uint8_t nr) {
+  uint8_t pinRelay, pinLED;
   bool highIsOn, levelLed;
 
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
-  pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
   levelLed = ConfigESP->getInversed(pinLED);
 
@@ -120,50 +119,138 @@ void addRelayButton(uint8_t nr) {
     relay[size]->keepTurnOnDuration();
     relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
-    if (pinButton != OFF_GPIO) {
-      auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
-
-      button->addAction(ConfigESP->getAction(pinButton), *relay[size], ConfigESP->getEvent(pinButton));
-      button->setSwNoiseFilterDelay(100);
+    if (pinLED != OFF_GPIO) {
+      new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
     }
+  }
+  delay(0);
+}
+#endif
+
+#if defined(SUPLA_BUTTON)
+void addButton(uint8_t nr) {
+  uint8_t pinButton;
+
+  pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+
+  nr--;
+  if (pinButton != OFF_GPIO) {
+    auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
+
+    button->addAction(ConfigESP->getAction(pinButton), *relay[nr], ConfigESP->getEvent(pinButton));
+    button->setSwNoiseFilterDelay(100);
+  }
+}
+#endif
+
+#if defined(SUPLA_RF_BRIDGE)
+void addRelayBridge(uint8_t nr) {
+  uint8_t pinRelay, pinLED, pinTransmitter;
+  bool highIsOn, levelLed;
+
+  pinTransmitter = ConfigESP->getGpio(FUNCTION_RF_BRIDGE_TRANSMITTER);
+
+  pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
+  pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
+  highIsOn = ConfigESP->getLevel(pinRelay);
+  levelLed = ConfigESP->getInversed(pinLED);
+
+  if (pinRelay != OFF_GPIO && pinTransmitter != OFF_GPIO) {
+    if (pinRelay == GPIO_VIRTUAL_RELAY) {
+      auto bridgeVirtualRelay = new Supla::Control::RFBridgeVirtualRelay(pinTransmitter);
+      bridgeVirtualRelay->setRepeatProtocol(5);
+      bridgeVirtualRelay->setPulseLengthint(350);
+      bridgeVirtualRelay->setRepeatTransmit(15);
+
+      bridgeVirtualRelay->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
+      bridgeVirtualRelay->setCodeOFF(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).toInt());
+
+      relay.push_back(bridgeVirtualRelay);
+    }
+    else {
+      auto bridgeRelay = new Supla::Control::RFBridgeRelay(pinTransmitter, pinRelay, highIsOn);
+      bridgeRelay->setRepeatProtocol(5);
+      bridgeRelay->setPulseLengthint(350);
+      bridgeRelay->setRepeatTransmit(15);
+
+      bridgeRelay->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
+      bridgeRelay->setCodeOFF(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).toInt());
+
+      relay.push_back(bridgeRelay);
+    }
+
+    int size = relay.size() - 1;
+
+    switch (ConfigESP->getMemory(pinRelay, nr)) {
+      case MEMORY_RELAY_OFF:
+        relay[size]->setDefaultStateOff();
+        break;
+      case MEMORY_RELAY_ON:
+        relay[size]->setDefaultStateOn();
+        break;
+      case MEMORY_RELAY_RESTORE:
+        relay[size]->setDefaultStateRestore();
+        break;
+    }
+
+    relay[size]->keepTurnOnDuration();
+    relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinLED != OFF_GPIO) {
       new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
     }
+  }
+  delay(0);
+}
+
+void addButtonBridge(uint8_t nr) {
+  uint8_t pinButton;
+  pinButton = ConfigESP->getGpio(nr, FUNCTION_RF_BRIDGE_RECEIVE);
+
+  if (pinButton != OFF_GPIO) {
+    auto receiveBridge = new Supla::Control::RFBridgeReceive(pinButton);
+    receiveBridge->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
+    receiveBridge->setCodeOFF(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).toInt());
+
+    receiveBridge->addAction(Supla::TURN_ON, relay[nr - 1], Supla::TURN_ON);
+    receiveBridge->addAction(Supla::TURN_OFF, relay[nr - 1], Supla::TURN_OFF);
+  }
+}
+#endif
 
 #if defined(SUPLA_PUSHOVER)
-    if (size <= MAX_PUSHOVER_MESSAGE) {
-      if (strcmp(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(size).c_str(), "") != 0 &&
-          strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 && strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
-        auto pushover =
-            new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
+void addPushover(uint8_t nr) {
+  if (nr <= MAX_PUSHOVER_MESSAGE) {
+    if (strcmp(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str(), "") != 0 &&
+        strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 && strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
+      auto pushover =
+          new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
 
-        pushover->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
-        pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(size).c_str());
-        relay[size]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
-      }
+      pushover->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
+      pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str());
+      relay[nr - 1]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
     }
+  }
+}
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
-    if (size <= MAX_DIRECT_LINK) {
-      if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str(), "") != 0 ||
-          strcmp(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str(), "") != 0) {
-        auto directLink = new Supla::Control::DirectLinks(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+void addDirectLinks(uint8_t nr) {
+  if (nr <= MAX_DIRECT_LINK) {
+    if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr).c_str(), "") != 0 ||
+        strcmp(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(nr).c_str(), "") != 0) {
+      auto directLink = new Supla::Control::DirectLinks(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
 
-        if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str(), "") != 0) {
-          directLink->setUrlON(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(size).c_str());
-          relay[size]->addAction(DirectLinks::SEND_DIRECT_LINKS_ON, directLink, Supla::ON_TURN_ON);
-        }
-        if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str(), "") != 0) {
-          directLink->setUrlOFF(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(size).c_str());
-          relay[size]->addAction(DirectLinks::SEND_DIRECT_LINKS_OFF, directLink, Supla::ON_TURN_OFF);
-        }
+      if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr).c_str(), "") != 0) {
+        directLink->setUrlON(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr).c_str());
+        relay[nr - 1]->addAction(DirectLinks::SEND_DIRECT_LINKS_ON, directLink, Supla::ON_TURN_ON);
+      }
+      if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(nr).c_str(), "") != 0) {
+        directLink->setUrlOFF(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(nr).c_str());
+        relay[nr - 1]->addAction(DirectLinks::SEND_DIRECT_LINKS_OFF, directLink, Supla::ON_TURN_OFF);
       }
     }
-#endif
   }
-  delay(0);
 }
 #endif
 
