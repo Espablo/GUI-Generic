@@ -165,7 +165,7 @@ void handleOther(int save) {
   addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_TX, F("TX"), FUNCTION_RF_BRIDGE_TRANSMITTER);
   addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_RX, F("RX"), FUNCTION_RF_BRIDGE_RECEIVE);
   if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE) != OFF_GPIO) {
-    addLinkBox(webContentBuffer, S_CALIBRATION, PATH_BRIDGE);
+    addLinkBox(webContentBuffer, String(S_CALIBRATION) + S_SPACE + S_CODES, PATH_BRIDGE);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -446,7 +446,7 @@ void handleCounterCalibrateSave() {
 
   if (calibPower != 0 && calibVoltage != 0) {
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-    for (int i = 0; i < Supla::GUI::relay.size(); i++) {
+    for (size_t i = 0; i < Supla::GUI::relay.size(); i++) {
       Supla::GUI::relay[i]->turnOn();
     }
 #endif
@@ -473,34 +473,43 @@ void handleCounterCalibrateSave() {
 
 void receiveCodeRFBridge() {
   String code;
-  RCSwitch *mySwitch = new RCSwitch();
-  mySwitch->enableReceive(ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE));
 
-  unsigned long timeout = millis();
-  while ((millis() - timeout) < 5000) {
-    if (mySwitch->available()) {
-      code += "Received ";
-      code += mySwitch->getReceivedValue();
-      code += " / ";
-      code += mySwitch->getReceivedBitlength();
-      code += "bit ";
-      code += "Protocol: ";
-      code += mySwitch->getReceivedProtocol();
-      code += "<br>";
+  if (WebServer->httpServer->arg(ARG_PARM_URL) == "read") {
+    RCSwitch *mySwitch = new RCSwitch();
+    mySwitch->enableReceive(ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE));
 
-      mySwitch->resetAvailable();
+    unsigned long timeout = millis();
+    while ((millis() - timeout) < 5000) {
+      if (mySwitch->available()) {
+        code += "Received ";
+        code += mySwitch->getReceivedValue();
+        code += " / ";
+        code += mySwitch->getReceivedBitlength();
+        code += "bit ";
+        code += "Protocol: ";
+        code += mySwitch->getReceivedProtocol();
+        code += "<br>";
+
+        mySwitch->resetAvailable();
+      }
+      delay(0);
     }
-    delay(0);
+    delete mySwitch;
   }
-  delete mySwitch;
 
-  addForm(webContentBuffer, F("post"), PATH_BRIDGE);
-  addFormHeader(webContentBuffer, S_CALIBRATION_SETTINGS);
+  addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_CODES);
   webContentBuffer += F("<p style='color:#000;'>");
-  webContentBuffer += code;
-  webContentBuffer += F("</p");
+  if (!code.isEmpty()) {
+    webContentBuffer += code;
+  }
+  else {
+    webContentBuffer += "<br>";
+    webContentBuffer += String(S_NO) + S_SPACE + S_CODES;
+    webContentBuffer += "<br>";
+  }
+  webContentBuffer += F("</p>");
+  addButton(webContentBuffer, S_READ, getParameterRequest(PATH_BRIDGE, ARG_PARM_URL, "read"));
   addFormHeaderEnd(webContentBuffer);
-  addFormEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_RETURN, PATH_OTHER);
   WebServer->sendContent();
