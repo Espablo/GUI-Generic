@@ -488,12 +488,15 @@ void receiveCodeRFBridge() {
         code += "bit ";
         code += "Protocol: ";
         code += mySwitch->getReceivedProtocol();
+        code += " Pulse Length: ";
+        code += mySwitch->getReceivedDelay();
         code += "<br>";
 
         mySwitch->resetAvailable();
       }
       delay(0);
     }
+    
     delete mySwitch;
   }
 

@@ -139,7 +139,7 @@ volatile unsigned int RCSwitch::nReceivedBitlength = 0;
 volatile unsigned int RCSwitch::nReceivedDelay = 0;
 volatile unsigned int RCSwitch::nReceivedProtocol = 0;
 int RCSwitch::nReceiveTolerance = 60;
-const unsigned int RCSwitch::nSeparationLimit = 4300;
+const unsigned int VAR_ISR_ATTR RCSwitch::nSeparationLimit = 2600;    // 4300 default
 // separationLimit: minimum microseconds between received codes, closer codes are ignored.
 // according to discussion on issue #14 it might be more suitable to set the separation
 // limit to the same time as the 'low' part of the sync signal for the current protocol.
@@ -513,6 +513,26 @@ void RCSwitch::sendTriState(const char* sCodeWord) {
 }
 
 /**
+ * @param duration   no. of microseconds to delay
+ */
+static inline void safeDelayMicroseconds(unsigned long duration) {
+#if defined(ESP8266) || defined(ESP32)
+  if (duration > 10000) {
+    // if delay > 10 milliseconds, use yield() to avoid wdt reset
+    unsigned long start = micros();
+    while ((micros() - start) < duration) {
+      yield();
+    }
+  }
+  else {
+    delayMicroseconds(duration);
+  }
+#else
+  delayMicroseconds(duration);
+#endif
+}
+
+/**
  * @param sCodeWord   a binary code word consisting of the letter 0, 1
  */
 void RCSwitch::send(const char* sCodeWord) {
@@ -680,7 +700,7 @@ static inline unsigned int diff(int A, int B) {
 /**
  *
  */
-bool ICACHE_FLASH_ATTR RCSwitch::receiveProtocol(const int p, unsigned int changeCount) {
+bool RECEIVE_ATTR RCSwitch::receiveProtocol(const int p, unsigned int changeCount) {
 #if defined(ESP8266) || defined(ESP32)
     const Protocol &pro = proto[p-1];
 #else
