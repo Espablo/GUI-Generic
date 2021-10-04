@@ -226,14 +226,14 @@ namespace Supla {
 namespace GUI {
 enum ActionRolleShutter
 {
-  OPEN_OR_CLOSE,
+  STEP_BY_STEP,
   MOVE_UP_OR_MOVE_DOWN,
-  STEP_BY_STEP
+  OPEN_OR_CLOSE
 };
 }
 }  // namespace Supla
 #ifdef SUPLA_ROLLERSHUTTER
-const char* const ACTION_ROLLER_SHUTTER_P[] PROGMEM = {"OPEN OR CLOSE", "MOVE UP OR MOVE DOWN", "STEP BY STEP"};
+const char* const ACTION_ROLLER_SHUTTER_P[] PROGMEM = {"STEP BY STEP", "MOVE UP OR MOVE DOWN", "OPEN OR CLOSE"};
 #endif
 
 const char CFG_10_PRESSES[] PROGMEM = S_CFG_10_PRESSES;
