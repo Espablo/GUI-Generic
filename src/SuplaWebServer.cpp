@@ -174,9 +174,8 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
 
   if (function == FUNCTION_RELAY) {
     if (_gpio == GPIO_VIRTUAL_RELAY) {
-      
       if (gpio != GPIO_VIRTUAL_RELAY) {
-        ConfigManager->setElement(KEY_VIRTUAL_RELAY_MEMORY, nr, MEMORY_RELAY_RESTORE);
+        ConfigManager->setElement(KEY_VIRTUAL_RELAY_MEMORY, nr, false);
         ConfigESP->clearGpio(gpio, function);
       }
 
@@ -191,7 +190,9 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
 
   if (_gpio == OFF_GPIO) {
     ConfigESP->clearGpio(gpio, function);
-    ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
+    if (gpio == GPIO_VIRTUAL_RELAY) {
+      ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
+    }
   }
 
   if (_gpio != OFF_GPIO) {
@@ -199,7 +200,9 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
       ConfigESP->clearGpio(gpio, function);
       ConfigESP->clearGpio(_gpio, function);
       ConfigESP->setGpio(_gpio, nr, function);
-      ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
+      if (gpio == GPIO_VIRTUAL_RELAY) {
+        ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
+      }
 
 #ifdef SUPLA_ROLLERSHUTTER
       if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr) {
