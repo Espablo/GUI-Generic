@@ -31,6 +31,7 @@ class RFBridge {
   void setRepeatTransmit(int repeatTransmit);
   void setRepeatProtocol(int protocol);
 
+  void setCodeLength(int length);
   void setCodeON(int code);
   void setCodeOFF(int code);
 
@@ -39,6 +40,8 @@ class RFBridge {
 
   int codeON;
   int codeOFF;
+
+  u_int8_t lengthCode;
 };
 
 };  // namespace Control

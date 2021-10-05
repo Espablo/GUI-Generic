@@ -19,7 +19,8 @@
 namespace Supla {
 namespace Control {
 RFBridgeVirtualRelay::RFBridgeVirtualRelay(int transmitterPin,
-                                           _supla_int_t functions) : RFBridge() {
+                                           _supla_int_t functions)
+    : RFBridge() {
   mySwitch->enableTransmit(transmitterPin);
 }
 
@@ -31,10 +32,11 @@ void RFBridgeVirtualRelay::turnOn(_supla_int_t duration) {
   }
   state = true;
 
-  Serial.println("send code on");
-  mySwitch->send(codeON, 24);
-
   channel.setNewValue(state);
+
+  Serial.println("send code on");
+  delay(0);
+  mySwitch->send(codeON, lengthCode);
   // Schedule save in 5 s after state change
   Supla::Storage::ScheduleSave(5000);
 }
@@ -44,10 +46,12 @@ void RFBridgeVirtualRelay::turnOff(_supla_int_t duration) {
   durationTimestamp = millis();
   state = false;
 
-  Serial.println("send code off");
-  mySwitch->send(codeOFF, 24);
-
   channel.setNewValue(state);
+
+  Serial.println("send code off");
+  delay(0);
+  mySwitch->send(codeOFF, lengthCode);
+
   // Schedule save in 5 s after state change
   Supla::Storage::ScheduleSave(5000);
 }

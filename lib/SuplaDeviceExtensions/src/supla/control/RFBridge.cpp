@@ -37,6 +37,10 @@ void RFBridge::setRepeatProtocol(int protocol) {
   mySwitch->setProtocol(protocol);
 }
 
+void RFBridge::setCodeLength(int length) {
+  lengthCode = length;
+}
+
 void RFBridge::setCodeON(int code) {
   codeON = code;
 }

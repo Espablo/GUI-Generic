@@ -37,9 +37,10 @@ void RFBridgeRelay::turnOn(_supla_int_t duration) {
   Serial.print("send code on: ");
   Serial.println(codeON);
 
-  mySwitch->send(codeON, 24);
 
   channel.setNewValue(true);
+  delay(0);
+  mySwitch->send(codeON, lengthCode);
 
   // Schedule save in 5 s after state change
   Supla::Storage::ScheduleSave(5000);
@@ -53,10 +54,9 @@ void RFBridgeRelay::turnOff(_supla_int_t duration) {
   Serial.print("send code off: ");
   Serial.println(codeOFF);
 
-  mySwitch->send(codeOFF, 24);
-
   channel.setNewValue(false);
-
+  delay(0);
+  Serial.println(lengthCode);
   // Schedule save in 5 s after state change
   Supla::Storage::ScheduleSave(5000);
 }
