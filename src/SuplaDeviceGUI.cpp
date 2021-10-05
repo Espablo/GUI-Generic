@@ -158,10 +158,11 @@ void addRelayBridge(uint8_t nr) {
   if (pinRelay != OFF_GPIO && pinTransmitter != OFF_GPIO) {
     if (pinRelay == GPIO_VIRTUAL_RELAY) {
       auto bridgeVirtualRelay = new Supla::Control::RFBridgeVirtualRelay(pinTransmitter);
-      bridgeVirtualRelay->setRepeatProtocol(1);
-      bridgeVirtualRelay->setPulseLengthint(350);
-      bridgeVirtualRelay->setRepeatTransmit(15);
+      bridgeVirtualRelay->setRepeatProtocol(ConfigManager->get(KEY_RF_BRIDGE_PROTOCOL)->getElement(nr).toInt());
+      bridgeVirtualRelay->setPulseLengthint(ConfigManager->get(KEY_RF_BRIDGE_PULSE_LENGTHINT)->getElement(nr).toInt());
+      bridgeVirtualRelay->setRepeatTransmit(20);
 
+      bridgeVirtualRelay->setCodeLength(ConfigManager->get(KEY_RF_BRIDGE_LENGTH)->getElement(nr).toInt());
       bridgeVirtualRelay->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
       bridgeVirtualRelay->setCodeOFF(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).toInt());
 
@@ -169,10 +170,11 @@ void addRelayBridge(uint8_t nr) {
     }
     else {
       auto bridgeRelay = new Supla::Control::RFBridgeRelay(pinTransmitter, pinRelay, highIsOn);
-      bridgeRelay->setRepeatProtocol(1);
-      bridgeRelay->setPulseLengthint(350);
-      bridgeRelay->setRepeatTransmit(15);
+      bridgeRelay->setRepeatProtocol(ConfigManager->get(KEY_RF_BRIDGE_PROTOCOL)->getElement(nr).toInt());
+      bridgeRelay->setPulseLengthint(ConfigManager->get(KEY_RF_BRIDGE_PULSE_LENGTHINT)->getElement(nr).toInt());
+      bridgeRelay->setRepeatTransmit(20);
 
+      bridgeRelay->setCodeLength(ConfigManager->get(KEY_RF_BRIDGE_LENGTH)->getElement(nr).toInt());
       bridgeRelay->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
       bridgeRelay->setCodeOFF(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).toInt());
 

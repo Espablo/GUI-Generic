@@ -64,9 +64,9 @@ void addTextBox(String& html,
   }
 
   html += F("' value='");
-  if (value != placeholder) {
+  //if (value != placeholder) {
     html += value;
-  }
+  //}
   if (minlength > 0) {
     html += F("' minlength='");
     html += minlength;

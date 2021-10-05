@@ -222,6 +222,23 @@ const char ACTION_TOGGLE[] PROGMEM = S_TOGGLE;
 
 const char* const ACTION_P[] PROGMEM = {ON, OFF, ACTION_TOGGLE};
 
+#ifdef SUPLA_RF_BRIDGE
+namespace Supla {
+namespace GUI {
+
+enum RFBridgeType
+{
+  TRANSMITTER,
+  RECEIVER
+};
+
+}
+}
+const char TRANSMITTER[] PROGMEM = "Nadajnik";
+const char RECEIVER[] PROGMEM = "Odbiornik";
+const char* const RF_BRIDGE_TYPE_P[] PROGMEM = {TRANSMITTER, RECEIVER};
+#endif
+
 namespace Supla {
 namespace GUI {
 enum ActionRolleShutter

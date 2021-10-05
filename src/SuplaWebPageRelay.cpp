@@ -172,7 +172,17 @@ void handleRelaySaveSet() {
 
 #ifdef SUPLA_RF_BRIDGE
   if (nr_relay.toInt() <= MAX_BRIDGE_RF) {
-    String input = INPUT_RF_BRIDGE_CODE_ON;
+    String input;
+
+    input = INPUT_RF_BRIDGE_TYPE;
+    ConfigManager->setElement(KEY_RF_BRIDGE_TYPE, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    input = INPUT_RF_BRIDGE_PROTOCO;
+    ConfigManager->setElement(KEY_RF_BRIDGE_PROTOCOL, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    input = INPUT_RF_BRIDGE_PULSE_LENGTHIN;
+    ConfigManager->setElement(KEY_RF_BRIDGE_PULSE_LENGTHINT, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    input = INPUT_RF_BRIDGE_LENGTH;
+    ConfigManager->setElement(KEY_RF_BRIDGE_LENGTH, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    input = INPUT_RF_BRIDGE_CODE_ON;
     ConfigManager->setElement(KEY_RF_BRIDGE_CODE_ON, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
     input = INPUT_RF_BRIDGE_CODE_OFF;
     ConfigManager->setElement(KEY_RF_BRIDGE_CODE_OFF, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
@@ -218,12 +228,34 @@ void handleRelaySet(int save) {
 
 #ifdef SUPLA_RF_BRIDGE
     if (nr_relay.toInt() <= MAX_BRIDGE_RF) {
-      addFormHeader(webContentBuffer, F("RF BRIDGE"));
-      String massage = ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr_relay.toInt()).c_str();
-      addTextBox(webContentBuffer, INPUT_RF_BRIDGE_CODE_ON, S_ON, massage, F(""), 0, 10, false);
+      String value;
 
-      massage = ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr_relay.toInt()).c_str();
-      addTextBox(webContentBuffer, INPUT_RF_BRIDGE_CODE_OFF, S_OFF, massage, F(""), 0, 10, false);
+      addFormHeader(webContentBuffer, F("RF BRIDGE"));
+
+      selected = ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr_relay.toInt()).toInt();
+      addListBox(webContentBuffer, INPUT_RF_BRIDGE_TYPE, S_TYPE, RF_BRIDGE_TYPE_P, 2, selected);
+
+      if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr_relay.toInt()).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER) {
+        value = ConfigManager->get(KEY_RF_BRIDGE_PROTOCOL)->getElement(nr_relay.toInt()).c_str();
+        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_PROTOCO, F("PROTOCO"), value, F("1"), 0, 2, false);
+
+        value = ConfigManager->get(KEY_RF_BRIDGE_PULSE_LENGTHINT)->getElement(nr_relay.toInt()).c_str();
+        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_PULSE_LENGTHIN, F("PULSE LENGTHINT"), value, F("320"), 0, 4, false);
+
+        value = ConfigManager->get(KEY_RF_BRIDGE_LENGTH)->getElement(nr_relay.toInt()).c_str();
+        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_LENGTH, F("LENGTH"), value, F("24"), 0, 3, false);
+      }
+
+      value = ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr_relay.toInt()).c_str();
+      addTextBox(webContentBuffer, INPUT_RF_BRIDGE_CODE_ON, S_ON, value, F(""), 0, 10, false);
+
+      value = ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr_relay.toInt()).c_str();
+      addTextBox(webContentBuffer, INPUT_RF_BRIDGE_CODE_OFF, S_OFF, value, F(""), 0, 10, false);
+
+      // this->addKey(KEY_RF_BRIDGE_LENGTH, MAX_BRIDGE_RF * 3, 4);
+      ///////// // this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, 4);
+      // this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, 4);
+      // this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, 4);
 
       addFormHeaderEnd(webContentBuffer);
     }

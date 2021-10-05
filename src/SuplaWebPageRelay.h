@@ -81,8 +81,12 @@ void directLinksWebPageSave(int nr);
 #endif
 
 #ifdef SUPLA_RF_BRIDGE
-#define INPUT_RF_BRIDGE_CODE_ON  "irbcon"
-#define INPUT_RF_BRIDGE_CODE_OFF "irbcoff"
+#define INPUT_RF_BRIDGE_TYPE           "irbt"
+#define INPUT_RF_BRIDGE_PROTOCO        "irbp"
+#define INPUT_RF_BRIDGE_PULSE_LENGTHIN "irbpl"
+#define INPUT_RF_BRIDGE_LENGTH         "irbl"
+#define INPUT_RF_BRIDGE_CODE_ON        "irbcon"
+#define INPUT_RF_BRIDGE_CODE_OFF       "irbcoff"
 
 // void directLinksWebPage(int nr);
 // void directLinksWebPageSave(int nr);

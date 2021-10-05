@@ -42,16 +42,16 @@ void createWebPageOther() {
   }
 #endif
 #ifdef SUPLA_RF_BRIDGE
-  if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE) != OFF_GPIO) {
-    WebServer->httpServer->on(getURL(PATH_BRIDGE), [&]() {
-      if (!WebServer->isLoggedIn()) {
-        return;
-      }
+  // if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE) != OFF_GPIO) {
+  WebServer->httpServer->on(getURL(PATH_BRIDGE), [&]() {
+    if (!WebServer->isLoggedIn()) {
+      return;
+    }
 
-      if (WebServer->httpServer->method() == HTTP_GET)
-        receiveCodeRFBridge();
-    });
-  }
+    if (WebServer->httpServer->method() == HTTP_GET)
+      receiveCodeRFBridge();
+  });
+  //}
 #endif
 
 #endif
@@ -471,11 +471,33 @@ void handleCounterCalibrateSave() {
 #ifdef SUPLA_RF_BRIDGE
 #include <RCSwitch.h>
 
+static char* dec2binWzerofill(unsigned long Dec, unsigned int bitLength) {
+  static char bin[64];
+  unsigned int i = 0;
+
+  while (Dec > 0) {
+    bin[32 + i++] = ((Dec & 1) > 0) ? '1' : '0';
+    Dec = Dec >> 1;
+  }
+
+  for (unsigned int j = 0; j < bitLength; j++) {
+    if (j >= bitLength - i) {
+      bin[j] = bin[31 + i - (j - (bitLength - i))];
+    }
+    else {
+      bin[j] = '0';
+    }
+  }
+  bin[bitLength] = '\0';
+
+  return bin;
+}
+
 void receiveCodeRFBridge() {
   String code;
 
   if (WebServer->httpServer->arg(ARG_PARM_URL) == "read") {
-    RCSwitch *mySwitch = new RCSwitch();
+    RCSwitch* mySwitch = new RCSwitch();
     mySwitch->enableReceive(ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE));
 
     unsigned long timeout = millis();
@@ -490,13 +512,15 @@ void receiveCodeRFBridge() {
         code += mySwitch->getReceivedProtocol();
         code += " Pulse Length: ";
         code += mySwitch->getReceivedDelay();
+        code += "Binary: ";
+        code += dec2binWzerofill(mySwitch->getReceivedValue(), mySwitch->getReceivedBitlength());
         code += "<br>";
 
         mySwitch->resetAvailable();
       }
       delay(0);
     }
-    
+
     delete mySwitch;
   }
 
