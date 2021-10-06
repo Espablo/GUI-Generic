@@ -601,6 +601,9 @@ uint8_t SuplaConfigManager::save() {
           Serial.println(_options[i]->getValue());
           memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
         }
+        else {
+          memcpy(content + offset, "", _options[i]->getLength());
+        }
         offset += _options[i]->getLength();
         delay(0);
       }
