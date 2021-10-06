@@ -543,7 +543,6 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
             length += _options[i]->getLength();
           }
         }
-        Serial.println(length);
         FSInfo fs_info;
         SPIFFS.info(fs_info);
 
@@ -560,6 +559,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
         Serial.print(F("Size file: "));
         Serial.println(configFile.size());
         Serial.print(F("Size conf: "));
+        Serial.println(length);
 
         if (checkFileConvert(configFile.size()) && configParse) {
           if (!this->migrationConfig())
