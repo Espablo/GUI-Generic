@@ -471,28 +471,6 @@ void handleCounterCalibrateSave() {
 #ifdef SUPLA_RF_BRIDGE
 #include <RCSwitch.h>
 
-static char* dec2binWzerofill(unsigned long Dec, unsigned int bitLength) {
-  static char bin[64];
-  unsigned int i = 0;
-
-  while (Dec > 0) {
-    bin[32 + i++] = ((Dec & 1) > 0) ? '1' : '0';
-    Dec = Dec >> 1;
-  }
-
-  for (unsigned int j = 0; j < bitLength; j++) {
-    if (j >= bitLength - i) {
-      bin[j] = bin[31 + i - (j - (bitLength - i))];
-    }
-    else {
-      bin[j] = '0';
-    }
-  }
-  bin[bitLength] = '\0';
-
-  return bin;
-}
-
 void receiveCodeRFBridge() {
   String code;
 
@@ -505,15 +483,13 @@ void receiveCodeRFBridge() {
       if (mySwitch->available()) {
         code += "Received ";
         code += mySwitch->getReceivedValue();
-        code += " / ";
+        code += " Length: ";
         code += mySwitch->getReceivedBitlength();
         code += "bit ";
         code += "Protocol: ";
         code += mySwitch->getReceivedProtocol();
         code += " Pulse Length: ";
         code += mySwitch->getReceivedDelay();
-        code += "Binary: ";
-        code += dec2binWzerofill(mySwitch->getReceivedValue(), mySwitch->getReceivedBitlength());
         code += "<br>";
 
         mySwitch->resetAvailable();
