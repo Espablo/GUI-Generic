@@ -152,7 +152,6 @@ void addRelayBridge(uint8_t nr) {
 
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
-  highIsOn = ConfigESP->getLevel(pinRelay);
   levelLed = ConfigESP->getInversed(pinLED);
 
   if (pinRelay != OFF_GPIO && pinTransmitter != OFF_GPIO) {
@@ -169,6 +168,7 @@ void addRelayBridge(uint8_t nr) {
       relay.push_back(bridgeVirtualRelay);
     }
     else {
+      highIsOn = ConfigESP->getLevel(pinRelay);
       auto bridgeRelay = new Supla::Control::RFBridgeRelay(pinTransmitter, pinRelay, highIsOn);
       bridgeRelay->setRepeatProtocol(ConfigManager->get(KEY_RF_BRIDGE_PROTOCOL)->getElement(nr).toInt());
       bridgeRelay->setPulseLengthint(ConfigManager->get(KEY_RF_BRIDGE_PULSE_LENGTHINT)->getElement(nr).toInt());
