@@ -58,15 +58,16 @@ void addTextBox(String& html,
     }
   }
 
+  html += F("' value='");
+  // if (value != placeholder) {
+  html += value;
+  // }
+
   if (placeholder != "") {
     html += F("' placeholder='");
     html += placeholder;
   }
 
-  html += F("' value='");
-  if (value != placeholder) {
-    html += value;
-  }
   if (minlength > 0) {
     html += F("' minlength='");
     html += minlength;
