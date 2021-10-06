@@ -20,7 +20,7 @@ namespace Supla {
 namespace Control {
 RFBridgeVirtualRelay::RFBridgeVirtualRelay(int transmitterPin,
                                            _supla_int_t functions)
-    : RFBridge() {
+    : RFBridge(), VirtualRelay(functions) {
   mySwitch->enableTransmit(transmitterPin);
 }
 
