@@ -1,5 +1,5 @@
 {
-	"version" : "4.2.1",
+	"version" : "4.2.2",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -567,6 +567,28 @@
 			"fr": {
 				"name": "Capteur VL53L0X",
 				"desc": "Paramètres de l´appareil->I2C. Prend en charge les capteurs VL53L0X."
+			}
+		},
+		"SUPLA_HDC1080": {
+			"name": "Sensor HDC1080",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę sensorów HDC1080.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "HDC1080 sensor",
+				"desc": "Device settings->I2C. Supports HDC1080 sensors."
+			},
+			"es": {
+				"name": "Sensor HDC1080",
+				"desc": "Configuración del dispositivo->I2C. Admite sensores HDC1080."
+			},
+			"de": {
+				"name": "HDC1080 Sensor",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt HDC1080-Sensoren."
+			},
+			"fr": {
+				"name": "Capteur HDC1080",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge les capteurs HDC1080."
 			}
 		},
 		"SUPLA_OLED": {

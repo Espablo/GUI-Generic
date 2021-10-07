@@ -233,7 +233,7 @@ enum RFBridgeType
 };
 
 }
-}
+}  // namespace Supla
 const char TRANSMITTER[] PROGMEM = "Nadajnik";
 const char RECEIVER[] PROGMEM = "Odbiornik";
 const char* const RF_BRIDGE_TYPE_P[] PROGMEM = {TRANSMITTER, RECEIVER};
@@ -354,6 +354,11 @@ enum sensorList
   ,
   SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR
 #endif
+
+#ifdef SUPLA_HDC1080
+  ,
+  SENSOR_HDC1080
+#endif
   ,
   COUNT_SENSOR_LIST
 };
@@ -400,6 +405,9 @@ const char NAME_VL53L0X[] PROGMEM = "VL53L0X";
 #endif
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
 const char NAME_SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR[] PROGMEM = "Direct Links Temp";
+#endif
+#ifdef SUPLA_HDC1080
+const char NAME_HDC1080[] PROGMEM = "HDC1080";
 #endif
 
 const char* const SENSOR_LIST_P[] PROGMEM = {OFF
@@ -466,6 +474,10 @@ const char* const SENSOR_LIST_P[] PROGMEM = {OFF
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
                                              ,
                                              NAME_SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR
+#endif
+#ifdef SUPLA_HDC1080
+                                             ,
+                                             NAME_HDC1080
 #endif
 };
 

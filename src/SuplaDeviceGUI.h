@@ -146,6 +146,10 @@
 #include <supla/control/RFBridgeReceive.h>
 #endif
 
+#ifdef SUPLA_HDC1080
+#include <supla/sensor/HDC1080.h>
+#endif
+
 namespace Supla {
 namespace GUI {
 
