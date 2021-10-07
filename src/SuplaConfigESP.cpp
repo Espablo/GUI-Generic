@@ -508,14 +508,8 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
     setPullUp(gpio, true);
     setInversed(gpio, true);
 
-    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= gpio) {
-      setAction(gpio, Supla::GUI::ActionRolleShutter::OPEN_OR_CLOSE);
-      setEvent(gpio, Supla::Event::ON_CHANGE);
-    }
-    else {
-      setAction(gpio, Supla::Action::TOGGLE);
-      setEvent(gpio, Supla::Event::ON_CHANGE);
-    }
+    setAction(gpio, Supla::Action::TOGGLE);
+    setEvent(gpio, Supla::Event::ON_CHANGE);
   }
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, LOW);
