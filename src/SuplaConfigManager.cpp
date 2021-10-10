@@ -206,6 +206,8 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2);
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2);
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2);
+    this->addKey(KEY_VIRTUAL_RELAY, MAX_VIRTUAL_RELAY * 2, 4);
+    this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_VIRTUAL_RELAY * 2, 4);
 
 #else
     this->addKey(KEY_MAX_RELAY, 2, 2, false);
@@ -213,6 +215,9 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2, false);
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2, false);
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2, false);
+    this->addKey(KEY_VIRTUAL_RELAY, MAX_GPIO * 2, 4, false);
+    this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_GPIO * 2, 4, false);
+
 #endif
 
 #ifdef SUPLA_CONDITIONS
@@ -364,6 +369,23 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3, 3, false);
 #endif
 
+#ifdef SUPLA_RF_BRIDGE
+    this->addKey(KEY_RF_BRIDGE_CODE_ON, MAX_BRIDGE_RF * 10, 4);
+    this->addKey(KEY_RF_BRIDGE_CODE_OFF, MAX_BRIDGE_RF * 10, 4);
+    this->addKey(KEY_RF_BRIDGE_LENGTH, MAX_BRIDGE_RF * 3, 4);
+    this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, 4);
+    this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, 4);
+    this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, 4);
+#else
+    this->addKey(KEY_RF_BRIDGE_CODE_ON, MAX_BRIDGE_RF * 10, 4, false);
+    this->addKey(KEY_RF_BRIDGE_CODE_OFF, MAX_BRIDGE_RF * 10, 4, false);
+    this->addKey(KEY_RF_BRIDGE_LENGTH, MAX_BRIDGE_RF * 3, 4, false);
+    this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, 4, false);
+    this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, 4, false);
+    this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, 4, false);
+#endif
+
+    SPIFFS.end();
     switch (this->load()) {
       case E_CONFIG_OK:
         Serial.println(F("Config read"));
@@ -493,6 +515,7 @@ int SuplaConfigManager::sizeFile() {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
       return configFile.size();
     }
+    SPIFFS.end();
   }
   return -1;
 }
@@ -508,6 +531,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
   if (SPIFFS.begin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
+      configFile.setTimeout(5000);
 
       if (configFile) {
         int i = 0;
@@ -519,12 +543,25 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
             length += _options[i]->getLength();
           }
         }
+        FSInfo fs_info;
+        SPIFFS.info(fs_info);
+
+        float fileTotalKB = (float)fs_info.totalBytes / 1024.0;
+        float fileUsedKB = (float)fs_info.usedBytes / 1024.0;
+
+        Serial.println(F("File system (SPIFFS): "));
+        Serial.print(F(" Total KB: "));
+        Serial.print(fileTotalKB);
+        Serial.println(F(" KB"));
+        Serial.print(F(" Used KB: "));
+        Serial.print(fileUsedKB);
+        Serial.println(F(" KB"));
+        Serial.print(F("Size file: "));
+        Serial.println(configFile.size());
+        Serial.print(F("Size conf: "));
+        Serial.println(length);
 
         if (checkFileConvert(configFile.size()) && configParse) {
-          Serial.print(F("size file: "));
-          Serial.println(configFile.size());
-          Serial.print(F("size conf: "));
-          Serial.println(length);
           if (!this->migrationConfig())
             return E_CONFIG_PARSE_ERROR;
         }
@@ -541,12 +578,14 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
         }
 
         configFile.close();
+        SPIFFS.end();
         delete content;
 
         return E_CONFIG_OK;
       }
       else {
         configFile.close();
+        SPIFFS.end();
         return E_CONFIG_FILE_OPEN;
       }
     }
@@ -569,7 +608,7 @@ uint8_t SuplaConfigManager::save() {
       length += _options[i]->getLength();
     }
 
-    File configFile = SPIFFS.open(CONFIG_FILE_PATH, "w+");
+    File configFile = SPIFFS.open(CONFIG_FILE_PATH, "w");
     if (configFile) {
       uint8_t *content = new uint8_t[length];
       for (i = 0; i < _optionCount; i++) {
@@ -580,18 +619,25 @@ uint8_t SuplaConfigManager::save() {
           Serial.println(_options[i]->getValue());
           memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
         }
+        else {
+          memcpy(content + offset, "", _options[i]->getLength());
+        }
         offset += _options[i]->getLength();
         delay(0);
       }
 
       configFile.write(content, length);
+      configFile.flush();
       configFile.close();
+      SPIFFS.end();
 
       delete content;
+
       return E_CONFIG_OK;
     }
     else {
       configFile.close();
+      SPIFFS.end();
       return E_CONFIG_FILE_OPEN;
     }
   }

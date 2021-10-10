@@ -5,7 +5,7 @@
 #include "SuplaDeviceGUI.h"
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017) || \
-    defined(SUPLA_BMP280) || defined(SUPLA_VL53L0X)
+    defined(SUPLA_BMP280) || defined(SUPLA_VL53L0X) || defined(SUPLA_HDC1080)
 #define GUI_SENSOR_I2C
 #endif
 
@@ -20,7 +20,8 @@ enum _sensorI2C
   SENSOR_I2C_OLED,
   SENSOR_I2C_MCP23017,
   SENSOR_I2C_BMP280,
-  SENSOR_I2C_VL53L0X
+  SENSOR_I2C_VL53L0X,
+  SENSOR_I2C_HDC1080,
 };
 
 #if defined(SUPLA_BME280) || defined(SUPLA_BMP280)
@@ -71,6 +72,10 @@ void handleSensorI2cSave();
 
 #ifdef SUPLA_VL53L0X
 #define INPUT_VL53L0X "ilox"
+#endif
+
+#ifdef SUPLA_HDC1080
+#define INPUT_HDC1080 "ihdc"
 #endif
 
 #endif

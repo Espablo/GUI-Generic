@@ -188,4 +188,10 @@
 #define S_CORRECTION_FOR_CH "Correction pour les canaux"
 #define S_CH_CORRECTION     "Correction de canal:"
 
+#ifdef SUPLA_RF_BRIDGE
+#define S_CODES "kodów"
+#define S_NO    "Brak"
+#define S_READ  "Odczytaj"
+#endif
+
 #endif  // _LANGUAGE_FR_S_H_

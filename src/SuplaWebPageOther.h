@@ -8,7 +8,7 @@
 #endif
 
 #if defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER) || \
-    defined(GUI_SENSOR_OTHER) || defined(SUPLA_CSE7766) || defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR)
+    defined(GUI_SENSOR_OTHER) || defined(SUPLA_CSE7766) || defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_RF_BRIDGE)
 #define GUI_OTHER
 #endif
 
@@ -92,4 +92,12 @@ void handleCounterCalibrateSave();
 #define INPUT_DIRECT_LINKS_SENSOR_THERMOMETR     "idlst"
 #endif
 
+#ifdef SUPLA_RF_BRIDGE
+#define INPUT_RF_BRIDGE_RX "irbr"
+#define INPUT_RF_BRIDGE_TX "irbt"
+
+#define PATH_BRIDGE "bridge"
+
+void receiveCodeRFBridge();
+#endif
 #endif  // SuplaWebPageOther_h

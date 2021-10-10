@@ -58,15 +58,16 @@ void addTextBox(String& html,
     }
   }
 
+  html += F("' value='");
+  // if (value != placeholder) {
+  html += value;
+  // }
+
   if (placeholder != "") {
     html += F("' placeholder='");
     html += placeholder;
   }
 
-  html += F("' value='");
-  if (value != placeholder) {
-    html += value;
-  }
   if (minlength > 0) {
     html += F("' minlength='");
     html += minlength;
@@ -244,6 +245,9 @@ void addListGPIOBox(
     html += nr;
   }
   html += F("'>");
+
+  if (function == FUNCTION_RELAY)
+    addGPIOOptionValue(html, GPIO_VIRTUAL_RELAY, gpio, S_SPACE "VIRTUAL");
 
 #ifdef ARDUINO_ARCH_ESP8266
   for (uint8_t suported = 0; suported <= OFF_GPIO; suported++)

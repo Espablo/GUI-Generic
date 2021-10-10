@@ -141,7 +141,7 @@ void SuplaWebServer::sendContent() {
 void SuplaWebServer::handleNotFound() {
   httpServer->sendHeader("Location", PATH_START, true);
   handlePageHome(2);
-  // ConfigESP->rebootESP();
+  ConfigESP->rebootESP();
 }
 
 bool SuplaWebServer::isLoggedIn() {
@@ -172,18 +172,37 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   gpio = ConfigESP->getGpio(nr, function);
   _gpio = WebServer->httpServer->arg(input).toInt();
 
+  if (function == FUNCTION_RELAY) {
+    if (_gpio == GPIO_VIRTUAL_RELAY) {
+      if (gpio != GPIO_VIRTUAL_RELAY) {
+        ConfigManager->setElement(KEY_VIRTUAL_RELAY_MEMORY, nr, false);
+        ConfigESP->clearGpio(gpio, function);
+      }
+
+      ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, true);
+      return true;
+    }
+  }
+
   key = KEY_GPIO + _gpio;
   _function = ConfigManager->get(key)->getElement(FUNCTION).toInt();
   _nr = ConfigManager->get(key)->getElement(NR).toInt();
 
-  if (_gpio == OFF_GPIO)
+  if (_gpio == OFF_GPIO) {
     ConfigESP->clearGpio(gpio, function);
+    if (gpio == GPIO_VIRTUAL_RELAY) {
+      ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
+    }
+  }
 
   if (_gpio != OFF_GPIO) {
     if (_function == FUNCTION_OFF && _nr == FUNCTION_OFF) {
       ConfigESP->clearGpio(gpio, function);
       ConfigESP->clearGpio(_gpio, function);
       ConfigESP->setGpio(_gpio, nr, function);
+      if (gpio == GPIO_VIRTUAL_RELAY) {
+        ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
+      }
 
 #ifdef SUPLA_ROLLERSHUTTER
       if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr) {

@@ -92,7 +92,7 @@ void handleRelay(int save) {
 
   addForm(webContentBuffer, F("post"), PATH_RELAY);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_RELAYS);
-  addNumberBox(webContentBuffer, INPUT_MAX_RELAY, S_QUANTITY, KEY_MAX_RELAY, ConfigESP->countFreeGpio(FUNCTION_RELAY));
+  addNumberBox(webContentBuffer, INPUT_MAX_RELAY, S_QUANTITY, KEY_MAX_RELAY, ConfigESP->countFreeGpio(FUNCTION_RELAY) + MAX_VIRTUAL_RELAY);
 
   for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
 #ifdef SUPLA_MCP23017
@@ -119,42 +119,44 @@ void handleRelay(int save) {
 #if defined(SUPLA_RELAY)
 void handleRelaySaveSet() {
   String input, nr_relay;
-  uint8_t key, gpio;
+  uint8_t gpio;
 
   nr_relay = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
-  key = KEY_GPIO + gpio;
 
   input = INPUT_RELAY_MEMORY;
   input += nr_relay;
-  ConfigManager->setElement(key, MEMORY, WebServer->httpServer->arg(input).toInt());
+  ConfigESP->setMemory(gpio, WebServer->httpServer->arg(input).toInt(), nr_relay.toInt());
 
-  input = INPUT_RELAY_LEVEL;
-  input += nr_relay;
-  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer->arg(input).toInt());
+  if (gpio != GPIO_VIRTUAL_RELAY) {
+    input = INPUT_RELAY_LEVEL;
+    input += nr_relay;
+    ConfigESP->setLevel(gpio, WebServer->httpServer->arg(input).toInt());
+  }
 
 #ifdef SUPLA_CONDITIONS
   conditionsWebPageSave(nr_relay.toInt() - 1);
 #endif
 
 #if defined(SUPLA_LED)
-  input = INPUT_LED;
-  input += nr_relay;
-  if (!WebServer->saveGPIO(input, FUNCTION_LED, nr_relay.toInt())) {
-    handleRelaySet(6);
-    return;
-  }
-
-  if (ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED) != OFF_GPIO) {
-    gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED);
-    key = KEY_GPIO + gpio;
-    input = INPUT_LEVEL_LED;
+  if (gpio != GPIO_VIRTUAL_RELAY) {
+    input = INPUT_LED;
     input += nr_relay;
+    if (!WebServer->saveGPIO(input, FUNCTION_LED, nr_relay.toInt())) {
+      handleRelaySet(6);
+      return;
+    }
 
-    ConfigManager->setElement(key, INVERSED_BUTTON, WebServer->httpServer->arg(input).toInt());
+    if (ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED) != OFF_GPIO) {
+      gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED);
+      uint8_t key = KEY_GPIO + gpio;
+      input = INPUT_LEVEL_LED;
+      input += nr_relay;
+
+      ConfigManager->setElement(key, INVERSED_BUTTON, WebServer->httpServer->arg(input).toInt());
+    }
   }
-
 #endif
 
 #if defined(SUPLA_PUSHOVER)
@@ -166,6 +168,25 @@ void handleRelaySaveSet() {
 
 #if defined(SUPLA_DIRECT_LINKS)
   directLinksWebPageSave(nr_relay.toInt() - 1);
+#endif
+
+#ifdef SUPLA_RF_BRIDGE
+  if (nr_relay.toInt() <= MAX_BRIDGE_RF) {
+    String input;
+
+    input = INPUT_RF_BRIDGE_TYPE;
+    ConfigManager->setElement(KEY_RF_BRIDGE_TYPE, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    input = INPUT_RF_BRIDGE_PROTOCO;
+    ConfigManager->setElement(KEY_RF_BRIDGE_PROTOCOL, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    input = INPUT_RF_BRIDGE_PULSE_LENGTHIN;
+    ConfigManager->setElement(KEY_RF_BRIDGE_PULSE_LENGTHINT, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    input = INPUT_RF_BRIDGE_LENGTH;
+    ConfigManager->setElement(KEY_RF_BRIDGE_LENGTH, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    input = INPUT_RF_BRIDGE_CODE_ON;
+    ConfigManager->setElement(KEY_RF_BRIDGE_CODE_ON, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    input = INPUT_RF_BRIDGE_CODE_OFF;
+    ConfigManager->setElement(KEY_RF_BRIDGE_CODE_OFF, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+  }
 #endif
 
   switch (ConfigManager->save()) {
@@ -196,22 +217,61 @@ void handleRelaySet(int save) {
     addForm(webContentBuffer, F("post"), getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER, nr_relay));
     addFormHeader(webContentBuffer, S_RELAY_NR_SETTINGS + nr_relay);
 
-    selected = ConfigESP->getLevel(gpio);
-    addListBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
+    if (gpio != GPIO_VIRTUAL_RELAY) {
+      selected = ConfigESP->getLevel(gpio);
+      addListBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
+    }
 
-    selected = ConfigESP->getMemory(gpio);
+    selected = ConfigESP->getMemory(gpio, nr_relay.toInt());
     addListBox(webContentBuffer, INPUT_RELAY_MEMORY + nr_relay, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
     addFormHeaderEnd(webContentBuffer);
 
+#ifdef SUPLA_RF_BRIDGE
+    if (nr_relay.toInt() <= MAX_BRIDGE_RF) {
+      String value;
+
+      addFormHeader(webContentBuffer, F("RF BRIDGE"));
+
+      selected = ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr_relay.toInt()).toInt();
+      addListBox(webContentBuffer, INPUT_RF_BRIDGE_TYPE, S_TYPE, RF_BRIDGE_TYPE_P, 2, selected);
+
+      if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr_relay.toInt()).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER) {
+        value = ConfigManager->get(KEY_RF_BRIDGE_PROTOCOL)->getElement(nr_relay.toInt()).c_str();
+        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_PROTOCO, F("PROTOCO"), value, F("1"), 0, 2, false);
+
+        value = ConfigManager->get(KEY_RF_BRIDGE_PULSE_LENGTHINT)->getElement(nr_relay.toInt()).c_str();
+        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_PULSE_LENGTHIN, F("PULSE LENGTHINT"), value, F("320"), 0, 4, false);
+
+        value = ConfigManager->get(KEY_RF_BRIDGE_LENGTH)->getElement(nr_relay.toInt()).c_str();
+        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_LENGTH, F("LENGTH"), value, F("21"), 0, 3, false);
+      }
+
+      value = ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr_relay.toInt()).c_str();
+      addTextBox(webContentBuffer, INPUT_RF_BRIDGE_CODE_ON, S_ON, value, F(""), 0, 10, false);
+
+      value = ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr_relay.toInt()).c_str();
+      addTextBox(webContentBuffer, INPUT_RF_BRIDGE_CODE_OFF, S_OFF, value, F(""), 0, 10, false);
+
+      // this->addKey(KEY_RF_BRIDGE_LENGTH, MAX_BRIDGE_RF * 3, 4);
+      ///////// // this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, 4);
+      // this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, 4);
+      // this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, 4);
+
+      addFormHeaderEnd(webContentBuffer);
+    }
+#endif
+
 #if defined(SUPLA_LED)
-    addFormHeader(webContentBuffer, S_RELAY_ACTIVATION_STATUS);
+    if (gpio != GPIO_VIRTUAL_RELAY) {
+      addFormHeader(webContentBuffer, S_RELAY_ACTIVATION_STATUS);
 
-    addListGPIOBox(webContentBuffer, INPUT_LED + nr_relay, S_LED, FUNCTION_LED, nr_relay.toInt());
+      addListGPIOBox(webContentBuffer, INPUT_LED + nr_relay, S_LED, FUNCTION_LED, nr_relay.toInt());
 
-    selected = ConfigESP->getInversed(ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED));
-    addListBox(webContentBuffer, INPUT_LEVEL_LED + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
+      selected = ConfigESP->getInversed(ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED));
+      addListBox(webContentBuffer, INPUT_LEVEL_LED + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
-    addFormHeaderEnd(webContentBuffer);
+      addFormHeaderEnd(webContentBuffer);
+    }
 #endif
 
 #if defined(SUPLA_PUSHOVER)

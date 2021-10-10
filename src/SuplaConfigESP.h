@@ -64,6 +64,8 @@ enum _ConfigMode
 #define OFF_GPIO_MCP23017    17
 #define OFF_ADDRESS_MCP23017 4
 
+#define GPIO_VIRTUAL_RELAY 99
+
 typedef struct {
   int status;
   const char *msg;
@@ -105,7 +107,8 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   bool getLevel(uint8_t gpio);
   bool getPullUp(uint8_t gpio);
   bool getInversed(uint8_t gpio);
-  uint8_t getMemory(uint8_t gpio);
+
+  uint8_t getMemory(uint8_t gpio, uint8_t nr = 0);
   uint8_t getAction(uint8_t gpio);
   uint8_t getEvent(uint8_t gpio);
 
@@ -115,7 +118,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   bool checkGpio(int gpio);
 
   void setLevel(uint8_t gpio, int level);
-  void setMemory(uint8_t gpio, int memory);
+  void setMemory(uint8_t gpio, int memory, uint8_t nr = 0);
 
   void setPullUp(uint8_t gpio, int pullup);
   void setInversed(uint8_t gpio, int inversed);

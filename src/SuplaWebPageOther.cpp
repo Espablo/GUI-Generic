@@ -41,6 +41,19 @@ void createWebPageOther() {
     });
   }
 #endif
+#ifdef SUPLA_RF_BRIDGE
+  // if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE) != OFF_GPIO) {
+  WebServer->httpServer->on(getURL(PATH_BRIDGE), [&]() {
+    if (!WebServer->isLoggedIn()) {
+      return;
+    }
+
+    if (WebServer->httpServer->method() == HTTP_GET)
+      receiveCodeRFBridge();
+  });
+  //}
+#endif
+
 #endif
 }
 
@@ -143,6 +156,16 @@ void handleOther(int save) {
     input = input + nr;
     String massage = ConfigManager->get(KEY_DIRECT_LINKS_SENSOR_THERMOMETR)->getElement(nr).c_str();
     addTextBox(webContentBuffer, input, String(S_SENSOR) + S_SPACE + (nr + 1), massage, F("xx/xxxxxxxxx/read"), 0, MAX_DIRECT_LINKS_SIZE, false);
+  }
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
+#ifdef SUPLA_RF_BRIDGE
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("RF BRIDGE"));
+  addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_TX, F("TX"), FUNCTION_RF_BRIDGE_TRANSMITTER);
+  addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_RX, F("RX"), FUNCTION_RF_BRIDGE_RECEIVE);
+  if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE) != OFF_GPIO) {
+    addLinkBox(webContentBuffer, String(S_CALIBRATION) + S_SPACE + S_CODES, PATH_BRIDGE);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -254,6 +277,17 @@ void handleOtherSave() {
 
   if (strcmp(WebServer->httpServer->arg(INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, WebServer->httpServer->arg(INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR).c_str());
+  }
+#endif
+
+#ifdef SUPLA_RF_BRIDGE
+  if (!WebServer->saveGPIO(INPUT_RF_BRIDGE_TX, FUNCTION_RF_BRIDGE_TRANSMITTER)) {
+    handleOther(6);
+    return;
+  }
+  if (!WebServer->saveGPIO(INPUT_RF_BRIDGE_RX, FUNCTION_RF_BRIDGE_RECEIVE)) {
+    handleOther(6);
+    return;
   }
 #endif
 
@@ -412,7 +446,7 @@ void handleCounterCalibrateSave() {
 
   if (calibPower != 0 && calibVoltage != 0) {
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
-    for (int i = 0; i < Supla::GUI::relay.size(); i++) {
+    for (size_t i = 0; i < Supla::GUI::relay.size(); i++) {
       Supla::GUI::relay[i]->turnOn();
     }
 #endif
@@ -431,5 +465,56 @@ void handleCounterCalibrateSave() {
   else {
     handleCounterCalibrate(6);
   }
+}
+#endif
+
+#ifdef SUPLA_RF_BRIDGE
+#include <RCSwitch.h>
+
+void receiveCodeRFBridge() {
+  String code;
+
+  if (WebServer->httpServer->arg(ARG_PARM_URL) == "read") {
+    RCSwitch* mySwitch = new RCSwitch();
+    mySwitch->enableReceive(ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE));
+
+    unsigned long timeout = millis();
+    while ((millis() - timeout) < 5000) {
+      if (mySwitch->available()) {
+        code += "Received ";
+        code += mySwitch->getReceivedValue();
+        code += " Length: ";
+        code += mySwitch->getReceivedBitlength();
+        code += "bit ";
+        code += "Protocol: ";
+        code += mySwitch->getReceivedProtocol();
+        code += " Pulse Length: ";
+        code += mySwitch->getReceivedDelay();
+        code += "<br>";
+
+        mySwitch->resetAvailable();
+      }
+      delay(0);
+    }
+
+    delete mySwitch;
+  }
+
+  addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_CODES);
+  webContentBuffer += F("<p style='color:#000;'>");
+  if (!code.isEmpty()) {
+    webContentBuffer += code;
+  }
+  else {
+    webContentBuffer += "<br>";
+    webContentBuffer += String(S_NO) + S_SPACE + S_CODES;
+    webContentBuffer += "<br>";
+  }
+  webContentBuffer += F("</p>");
+  addButton(webContentBuffer, S_READ, getParameterRequest(PATH_BRIDGE, ARG_PARM_URL, "read"));
+  addFormHeaderEnd(webContentBuffer);
+
+  addButton(webContentBuffer, S_RETURN, PATH_OTHER);
+  WebServer->sendContent();
 }
 #endif
