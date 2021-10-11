@@ -85,6 +85,7 @@ void directLinksWebPageSave(int nr);
 #define INPUT_RF_BRIDGE_PROTOCO        "irbp"
 #define INPUT_RF_BRIDGE_PULSE_LENGTHIN "irbpl"
 #define INPUT_RF_BRIDGE_LENGTH         "irbl"
+#define INPUT_RF_BRIDGE_REPEAT         "irbr"
 #define INPUT_RF_BRIDGE_CODE_ON        "irbcon"
 #define INPUT_RF_BRIDGE_CODE_OFF       "irbcoff"
 

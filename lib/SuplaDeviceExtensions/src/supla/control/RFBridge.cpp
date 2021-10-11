@@ -18,7 +18,8 @@
 
 namespace Supla {
 namespace Control {
-RFBridge::RFBridge() {
+RFBridge::RFBridge()
+    : mySwitch(NULL), stateCode(false), repeatMs(0), repeatSending(false) {
   mySwitch = new RCSwitch();
 }
 
@@ -47,6 +48,42 @@ void RFBridge::setCodeON(int code) {
 
 void RFBridge::setCodeOFF(int code) {
   codeOFF = code;
+}
+
+void RFBridge::sendCodeON() {
+  if (repeatSending) {
+    repeatMs = millis();
+  }
+
+  Serial.print(F("send code on: "));
+  Serial.println(codeON);
+  delay(0);
+  mySwitch->send(codeON, lengthCode);
+}
+
+void RFBridge::sendCodeOFF() {
+  if (repeatSending) {
+    repeatMs = millis();
+  }
+
+  Serial.print(F("send code off: "));
+  Serial.println(codeOFF);
+  delay(0);
+  mySwitch->send(codeOFF, lengthCode);
+}
+
+void RFBridge::setRepeatSending(bool value) {
+  repeatSending = value;
+}
+
+void RFBridge::onTimer() {
+  if (repeatSending && millis() - repeatMs > TIME_REPEAT_SENDING_SEK * 1000) {
+    if (stateCode) {
+      sendCodeON();
+    } else {
+      sendCodeOFF();
+    }
+  }
 }
 
 }  // namespace Control

@@ -19,11 +19,14 @@
 
 #include <Arduino.h>
 #include <RCSwitch.h>
+#include <supla/channel_element.h>
+
+#define TIME_REPEAT_SENDING_SEK 600  // 10mim
 
 namespace Supla {
 namespace Control {
 
-class RFBridge {
+class RFBridge : public Element {
  public:
   RFBridge();
 
@@ -35,12 +38,22 @@ class RFBridge {
   void setCodeON(int code);
   void setCodeOFF(int code);
 
+  void sendCodeON();
+  void sendCodeOFF();
+
+  void setRepeatSending(bool value);
+
+  void onTimer();
+
  protected:
-  RCSwitch *mySwitch = NULL;
+  RCSwitch *mySwitch;
+
+  bool stateCode;
+  unsigned long repeatMs;
+  bool repeatSending;
 
   int codeON;
   int codeOFF;
-
   u_int8_t lengthCode;
 };
 

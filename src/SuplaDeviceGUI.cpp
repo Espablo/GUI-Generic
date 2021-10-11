@@ -160,6 +160,7 @@ void addRelayBridge(uint8_t nr) {
       bridgeVirtualRelay->setRepeatProtocol(ConfigManager->get(KEY_RF_BRIDGE_PROTOCOL)->getElement(nr).toInt());
       bridgeVirtualRelay->setPulseLengthint(ConfigManager->get(KEY_RF_BRIDGE_PULSE_LENGTHINT)->getElement(nr).toInt());
       bridgeVirtualRelay->setRepeatTransmit(20);
+      bridgeVirtualRelay->setRepeatSending(ConfigManager->get(KEY_RF_BRIDGE_REPEAT)->getElement(nr).toInt());
 
       bridgeVirtualRelay->setCodeLength(ConfigManager->get(KEY_RF_BRIDGE_LENGTH)->getElement(nr).toInt());
       bridgeVirtualRelay->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
@@ -173,6 +174,7 @@ void addRelayBridge(uint8_t nr) {
       bridgeRelay->setRepeatProtocol(ConfigManager->get(KEY_RF_BRIDGE_PROTOCOL)->getElement(nr).toInt());
       bridgeRelay->setPulseLengthint(ConfigManager->get(KEY_RF_BRIDGE_PULSE_LENGTHINT)->getElement(nr).toInt());
       bridgeRelay->setRepeatTransmit(20);
+      bridgeRelay->setRepeatSending(ConfigManager->get(KEY_RF_BRIDGE_REPEAT)->getElement(nr).toInt());
 
       bridgeRelay->setCodeLength(ConfigManager->get(KEY_RF_BRIDGE_LENGTH)->getElement(nr).toInt());
       bridgeRelay->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
@@ -207,15 +209,15 @@ void addRelayBridge(uint8_t nr) {
 
 void addButtonBridge(uint8_t nr) {
   uint8_t pinButton;
-  pinButton = ConfigESP->getGpio(nr, FUNCTION_RF_BRIDGE_RECEIVE);
+  pinButton = ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE);
 
   if (pinButton != OFF_GPIO) {
     auto receiveBridge = new Supla::Control::RFBridgeReceive(pinButton);
     receiveBridge->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
     receiveBridge->setCodeOFF(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).toInt());
 
-    receiveBridge->addAction(Supla::TURN_ON, relay[nr - 1], Supla::TURN_ON);
-    receiveBridge->addAction(Supla::TURN_OFF, relay[nr - 1], Supla::TURN_OFF);
+    receiveBridge->addAction(Supla::TURN_ON, relay[nr], Supla::TURN_ON);
+    receiveBridge->addAction(Supla::TURN_OFF, relay[nr], Supla::TURN_OFF);
   }
 }
 #endif

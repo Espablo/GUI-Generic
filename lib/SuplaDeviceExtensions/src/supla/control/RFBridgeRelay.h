@@ -25,7 +25,7 @@
 namespace Supla {
 namespace Control {
 
-class RFBridgeRelay :  public RFBridge, public Relay {
+class RFBridgeRelay : public Relay, public RFBridge{
  public:
   RFBridgeRelay(int transmitterPin,
                 int pin,

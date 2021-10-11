@@ -175,17 +175,26 @@ void handleRelaySaveSet() {
     String input;
 
     input = INPUT_RF_BRIDGE_TYPE;
-    ConfigManager->setElement(KEY_RF_BRIDGE_TYPE, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    ConfigManager->setElement(KEY_RF_BRIDGE_TYPE, nr_relay.toInt() - 1, WebServer->httpServer->arg(input).c_str());
     input = INPUT_RF_BRIDGE_PROTOCO;
-    ConfigManager->setElement(KEY_RF_BRIDGE_PROTOCOL, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    ConfigManager->setElement(KEY_RF_BRIDGE_PROTOCOL, nr_relay.toInt() - 1, WebServer->httpServer->arg(input).c_str());
     input = INPUT_RF_BRIDGE_PULSE_LENGTHIN;
-    ConfigManager->setElement(KEY_RF_BRIDGE_PULSE_LENGTHINT, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    ConfigManager->setElement(KEY_RF_BRIDGE_PULSE_LENGTHINT, nr_relay.toInt() - 1, WebServer->httpServer->arg(input).c_str());
     input = INPUT_RF_BRIDGE_LENGTH;
-    ConfigManager->setElement(KEY_RF_BRIDGE_LENGTH, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    ConfigManager->setElement(KEY_RF_BRIDGE_LENGTH, nr_relay.toInt() - 1, WebServer->httpServer->arg(input).c_str());
+
+    input = INPUT_RF_BRIDGE_REPEAT;
+    if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+      ConfigManager->setElement(KEY_RF_BRIDGE_REPEAT, nr_relay.toInt() - 1, 1);
+    }
+    else {
+      ConfigManager->setElement(KEY_RF_BRIDGE_REPEAT, nr_relay.toInt() - 1, 0);
+    }
+
     input = INPUT_RF_BRIDGE_CODE_ON;
-    ConfigManager->setElement(KEY_RF_BRIDGE_CODE_ON, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    ConfigManager->setElement(KEY_RF_BRIDGE_CODE_ON, nr_relay.toInt() - 1, WebServer->httpServer->arg(input).c_str());
     input = INPUT_RF_BRIDGE_CODE_OFF;
-    ConfigManager->setElement(KEY_RF_BRIDGE_CODE_OFF, nr_relay.toInt(), WebServer->httpServer->arg(input).c_str());
+    ConfigManager->setElement(KEY_RF_BRIDGE_CODE_OFF, nr_relay.toInt() - 1, WebServer->httpServer->arg(input).c_str());
   }
 #endif
 
@@ -232,24 +241,27 @@ void handleRelaySet(int save) {
 
       addFormHeader(webContentBuffer, F("RF BRIDGE"));
 
-      selected = ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr_relay.toInt()).toInt();
+      selected = ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr_relay.toInt() - 1).toInt();
       addListBox(webContentBuffer, INPUT_RF_BRIDGE_TYPE, S_TYPE, RF_BRIDGE_TYPE_P, 2, selected);
 
-      if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr_relay.toInt()).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER) {
-        value = ConfigManager->get(KEY_RF_BRIDGE_PROTOCOL)->getElement(nr_relay.toInt()).c_str();
+      if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr_relay.toInt() - 1).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER) {
+        value = ConfigManager->get(KEY_RF_BRIDGE_PROTOCOL)->getElement(nr_relay.toInt() - 1).c_str();
         addTextBox(webContentBuffer, INPUT_RF_BRIDGE_PROTOCO, F("PROTOCO"), value, F("1"), 0, 2, true);
 
-        value = ConfigManager->get(KEY_RF_BRIDGE_PULSE_LENGTHINT)->getElement(nr_relay.toInt()).c_str();
+        value = ConfigManager->get(KEY_RF_BRIDGE_PULSE_LENGTHINT)->getElement(nr_relay.toInt() - 1).c_str();
         addTextBox(webContentBuffer, INPUT_RF_BRIDGE_PULSE_LENGTHIN, F("PULSE LENGTHINT"), value, F("320"), 0, 4, true);
 
-        value = ConfigManager->get(KEY_RF_BRIDGE_LENGTH)->getElement(nr_relay.toInt()).c_str();
+        value = ConfigManager->get(KEY_RF_BRIDGE_LENGTH)->getElement(nr_relay.toInt() - 1).c_str();
         addTextBox(webContentBuffer, INPUT_RF_BRIDGE_LENGTH, F("LENGTH"), value, F("24"), 0, 3, true);
+
+        selected = ConfigManager->get(KEY_RF_BRIDGE_REPEAT)->getElement(nr_relay.toInt() - 1).toInt();
+        addCheckBox(webContentBuffer, INPUT_RF_BRIDGE_REPEAT, F("Powtarzaj[10min]"), selected);
       }
 
-      value = ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr_relay.toInt()).c_str();
+      value = ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr_relay.toInt() - 1).c_str();
       addTextBox(webContentBuffer, INPUT_RF_BRIDGE_CODE_ON, S_ON, value, F(""), 0, 10, false);
 
-      value = ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr_relay.toInt()).c_str();
+      value = ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr_relay.toInt() - 1).c_str();
       addTextBox(webContentBuffer, INPUT_RF_BRIDGE_CODE_OFF, S_OFF, value, F(""), 0, 10, false);
 
       // this->addKey(KEY_RF_BRIDGE_LENGTH, MAX_BRIDGE_RF * 3, 4);

@@ -22,7 +22,7 @@ RFBridgeRelay::RFBridgeRelay(int transmitterPin,
                              int pin,
                              bool highIsOn,
                              _supla_int_t functions)
-    : RFBridge(), Relay(pin, highIsOn, functions) {
+    : Relay(pin, highIsOn, functions), RFBridge() {
   mySwitch->enableTransmit(transmitterPin);
 }
 
@@ -34,12 +34,10 @@ void RFBridgeRelay::turnOn(_supla_int_t duration) {
   }
   Supla::Io::digitalWrite(channel.getChannelNumber(), pin, pinOnValue());
 
-  Serial.print("send code on: ");
-  Serial.println(codeON);
-
   channel.setNewValue(true);
-  delay(0);
-  mySwitch->send(codeON, lengthCode);
+  stateCode = true;
+
+  sendCodeON();
 
   // Schedule save in 5 s after state change
   Supla::Storage::ScheduleSave(5000);
@@ -50,12 +48,10 @@ void RFBridgeRelay::turnOff(_supla_int_t duration) {
   durationTimestamp = millis();
   Supla::Io::digitalWrite(channel.getChannelNumber(), pin, pinOffValue());
 
-  Serial.print("send code off: ");
-  Serial.println(codeOFF);
-
   channel.setNewValue(false);
-  delay(0);
-  mySwitch->send(codeOFF, lengthCode);
+  stateCode = false;
+
+  sendCodeOFF();
 
   // Schedule save in 5 s after state change
   Supla::Storage::ScheduleSave(5000);

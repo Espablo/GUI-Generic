@@ -32,7 +32,7 @@ const char HTTP_STYLE[] PROGMEM =
     "12px;color:#00d151;font-size:13px;position:relative;line-height:18px}i input,select{width:calc(100% - "
     "10px);font-size:16px;line-height:28px;padding:0 5px;border-bottom:solid 1px "
     "#00d151}select{width:100%;float:none;margin:0}}iframe{margin:auto;display:block;}.formcenter{color:#000;width:50%;margin: 25px auto 25px "
-    "auto;} input[type='checkbox' i]{appearance: auto; margin-top: 10px; height: 20px;} @media (max-width: 900px)input[type='checkbox' i]{width: "
+    "auto;} input[type='checkbox' i]{appearance: auto; margin-top: 10px; height: 20px; width: calc(100% - 116px);} @media (max-width: 900px)input[type='checkbox' i]{width: "
     "auto;}</style>";
 
 const char HTTP_LOGO[] PROGMEM =

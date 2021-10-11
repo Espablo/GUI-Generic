@@ -19,18 +19,14 @@
 
 #include <Arduino.h>
 #include <RCSwitch.h>
-
-#include <supla/action_handler.h>
 #include <supla/actions.h>
-#include <supla/channel_element.h>
 #include <supla/control/RFBridge.h>
 #include <supla/local_action.h>
-
 
 namespace Supla {
 namespace Control {
 
-class RFBridgeReceive : public RFBridge, public Element, public LocalAction{
+class RFBridgeReceive : public LocalAction, public RFBridge {
  public:
   RFBridgeReceive(int receivePin);
   void onTimer();

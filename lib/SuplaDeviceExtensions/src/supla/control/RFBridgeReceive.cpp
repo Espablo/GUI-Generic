@@ -25,22 +25,21 @@ RFBridgeReceive::RFBridgeReceive(int receivePin) : RFBridge() {
 void RFBridgeReceive::onTimer() {
   if (mySwitch->available()) {
     int code = mySwitch->getReceivedValue();
-
-    Serial.print("Received ");
-    Serial.print(code);
-    Serial.print(" / ");
-    Serial.print(mySwitch->getReceivedBitlength());
-    Serial.print("bit ");
-    Serial.print("Protocol: ");
-    Serial.println(mySwitch->getReceivedProtocol());
-
     if (code == codeON) {
+      Serial.print("Received code ON ");
+      Serial.println(code);
+
       runAction(Supla::TURN_ON);
-    } else if (code == codeOFF) {
-      runAction(Supla::TURN_OFF);
+      mySwitch->resetAvailable();
     }
 
-    mySwitch->resetAvailable();
+    if (code == codeOFF) {
+      Serial.print("Received code OFF ");
+      Serial.println(code);
+
+      runAction(Supla::TURN_OFF);
+      mySwitch->resetAvailable();
+    }
   }
 }
 

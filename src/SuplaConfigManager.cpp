@@ -376,6 +376,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, 4);
     this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, 4);
     this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, 4);
+    this->addKey(KEY_RF_BRIDGE_REPEAT, MAX_BRIDGE_RF * 2, 4);
 #else
     this->addKey(KEY_RF_BRIDGE_CODE_ON, MAX_BRIDGE_RF * 10, 4, false);
     this->addKey(KEY_RF_BRIDGE_CODE_OFF, MAX_BRIDGE_RF * 10, 4, false);
@@ -383,6 +384,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, 4, false);
     this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, 4, false);
     this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, 4, false);
+    this->addKey(KEY_RF_BRIDGE_REPEAT, MAX_BRIDGE_RF * 2, 4, false);
 #endif
 
     SPIFFS.end();
