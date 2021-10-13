@@ -114,11 +114,11 @@ void setup() {
       }
 
 #ifdef SUPLA_PUSHOVER
-      Supla::GUI::addPushover(nr);
+      Supla::GUI::addPushover(nr - 1);
 #endif
 
 #ifdef SUPLA_DIRECT_LINKS
-      Supla::GUI::addDirectLinks(nr);
+      Supla::GUI::addDirectLinks(nr - 1);
 #endif
     }
   }

@@ -232,7 +232,7 @@ void addPushover(uint8_t nr) {
 
       pushover->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
       pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str());
-      relay[nr - 1]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
+      relay[nr]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
     }
   }
 }
@@ -247,11 +247,11 @@ void addDirectLinks(uint8_t nr) {
 
       if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr).c_str(), "") != 0) {
         directLink->setUrlON(ConfigManager->get(KEY_DIRECT_LINKS_ON)->getElement(nr).c_str());
-        relay[nr - 1]->addAction(DirectLinks::SEND_DIRECT_LINKS_ON, directLink, Supla::ON_TURN_ON);
+        relay[nr]->addAction(DirectLinks::SEND_DIRECT_LINKS_ON, directLink, Supla::ON_TURN_ON);
       }
       if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(nr).c_str(), "") != 0) {
         directLink->setUrlOFF(ConfigManager->get(KEY_DIRECT_LINKS_OFF)->getElement(nr).c_str());
-        relay[nr - 1]->addAction(DirectLinks::SEND_DIRECT_LINKS_OFF, directLink, Supla::ON_TURN_OFF);
+        relay[nr]->addAction(DirectLinks::SEND_DIRECT_LINKS_OFF, directLink, Supla::ON_TURN_OFF);
       }
     }
   }
