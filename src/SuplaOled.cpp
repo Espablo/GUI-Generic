@@ -82,7 +82,7 @@ void displayUiRelayState(OLEDDisplay* display) {
 
   display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
-  for (int i = 0; i < Supla::GUI::relay.size(); i++) {
+  for (size_t i = 0; i < Supla::GUI::relay.size(); i++) {
     if (Supla::GUI::relay[i]->isOn()) {
       display->setColor(WHITE);
       display->fillRect(x, y + 1, 10, 10);
@@ -439,7 +439,7 @@ void SuplaOled::iterateAlways() {
     if (ConfigESP->getLastStatusSupla() == STATUS_REGISTERED_AND_READY || ConfigESP->getLastStatusSupla() == STATUS_NETWORK_DISCONNECTED || ConfigESP->getLastStatusSupla() == STATUS_INITIALIZED) {
       // setupAnimate();
 
-      if (millis() - timeLastChangeOled > (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() * 1000) && oledON &&
+      if (millis() - timeLastChangeOled > (unsigned long)(ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() * 1000) && oledON &&
           ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
         display->setBrightness((ConfigManager->get(KEY_OLED_BACK_LIGHT)->getValueInt() / 100.0) * 255);
         oledON = false;

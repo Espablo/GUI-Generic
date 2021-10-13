@@ -64,7 +64,7 @@ class HDC1080 : public ThermHygroMeter {
 
     Serial.print("Device Serial Number=");
     HDC1080_SerialNumber sernum = hdc1080.readSerialNumber();
-    char format[12];
+    char format[15];
     sprintf(format,
             "%02X-%04X-%04X",
             sernum.serialFirst,
