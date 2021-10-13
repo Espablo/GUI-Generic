@@ -82,6 +82,7 @@ void chooseTemplateBoard(uint8_t board) {
   ConfigManager->set(KEY_MAX_RELAY, "0");
   ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
   ConfigManager->set(KEY_MAX_RGBW, "0");
+  ConfigManager->set(KEY_CFG_MODE, CONFIG_MODE_10_ON_PRESSES);
 
   switch (board) {
     case BOARD_ELECTRODRAGON:
