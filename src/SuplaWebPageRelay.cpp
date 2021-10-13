@@ -457,7 +457,7 @@ void conditionsWebPage(int nr) {
     addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_TYPE, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
 
     String value = ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr);
-    addNumberBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_NUMBER, S_SENSOR, "", false, value);
+    addNumberBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_NUMBER, S_SENSOR, "0", false, value);
 
     selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt();
     addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, 4, selected);
