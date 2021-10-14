@@ -146,9 +146,11 @@ void SuplaWebServer::handleNotFound() {
 
 bool SuplaWebServer::isLoggedIn() {
   if (ConfigESP->configModeESP == NORMAL_MODE) {
-    if (!httpServer->authenticate(ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue()))
+    if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") != 0 && strcmp(ConfigManager->get(KEY_LOGIN_PASS)->getValue(), "") != 0 &&
+        !httpServer->authenticate(ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue())) {
       httpServer->requestAuthentication();
-    return true;
+      return false;
+    }
   }
   return true;
 }

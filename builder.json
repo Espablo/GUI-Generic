@@ -1,5 +1,5 @@
 {
-	"version" : "4.2.2",
+	"version" : "4.2.7",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -374,6 +374,28 @@
 			"fr": {
 				"name": "Liens directs",
 				"desc": "Active la prise en charge des liens directs."
+			}
+		},
+		"SUPLA_RF_BRIDGE": {
+			"name": "Bramka RF 315/433MHz",
+			"desc": "",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "Bridge RF 315/433MHz",
+				"desc": ""
+			},
+			"es": {
+				"name": "Enlaces directos",
+				"desc": ""
+			},
+			"de": {
+				"name": "Direkte Links",
+				"desc": ""
+			},
+			"fr": {
+				"name": "Liens directs",
+				"desc": ""
 			}
 		}
 	},
