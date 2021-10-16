@@ -11,19 +11,28 @@ void handleDownload() {
     return;
   }
 
-  File dataFile = SPIFFS.open(F(CONFIG_FILE_PATH), "r");
+  if (SPIFFS.begin()) {
+    if (SPIFFS.exists(CONFIG_FILE_PATH)) {
+      File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
 
-  if (!dataFile) {
-    return;
+      if (!configFile) {
+        handleTools();
+        return;
+      }
+
+      String str = F("attachment; filename=config_");
+      str += ConfigManager->get(KEY_HOST_NAME)->getValue();
+      str += Supla::Channel::reg_dev.SoftVer;
+      str += '_';
+      str += F(".dat");
+
+      WebServer->httpServer->sendHeader(F("Content-Disposition"), str);
+      WebServer->httpServer->streamFile(configFile, F("application/octet-stream"));
+      configFile.close();
+      SPIFFS.end();
+    }
   }
-
-  String str = F("attachment; filename=config_");
-  str += ConfigManager->get(KEY_HOST_NAME)->getValue();
-  str += Supla::Channel::reg_dev.SoftVer;
-  str += '_';
-  str += F(".dat");
-
-  WebServer->httpServer->sendHeader(F("Content-Disposition"), str);
-  WebServer->httpServer->streamFile(dataFile, F("application/octet-stream"));
-  dataFile.close();
+  else {
+    handleTools();
+  }
 }
