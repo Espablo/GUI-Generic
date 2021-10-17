@@ -99,7 +99,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   int getGpio(int nr, int function);
   int getGpio(int function) {
-    return getGpio(1, function);
+    return getGpio(0, function);
   }
 
   uint8_t getKeyGpio(uint8_t gpio);

@@ -195,10 +195,7 @@ void addListGPIOBox(
     String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, bool underline, const String& url, bool no_number) {
   uint8_t gpio;
 
-  if (nr == 0)
-    gpio = ConfigESP->getGpio(1, function);
-  else
-    gpio = ConfigESP->getGpio(nr, function);
+  gpio = ConfigESP->getGpio(nr, function);
 
   if (underline) {
     html += F("<i><label>");
@@ -211,13 +208,11 @@ void addListGPIOBox(
     html += F("<a href='");
     html += PATH_START;
     html += url;
-    if (nr > 0) {
-      html += nr;
-    }
+    html += nr;
     html += F("'>");
 
-    if (nr > 0 && !no_number) {
-      html += nr;
+    if (!no_number) {
+      html += nr + 1;
       html += F(".");
     }
 
@@ -228,8 +223,8 @@ void addListGPIOBox(
     WebServer->sendHeader();
   }
   else {
-    if (nr > 0 && !no_number) {
-      html += nr;
+    if (!no_number) {
+      html += nr + 1;
       html += F(".");
     }
 
@@ -241,9 +236,7 @@ void addListGPIOBox(
 
   html += F("<select name='");
   html += input_id;
-  if (nr != 0) {
-    html += nr;
-  }
+  html += nr;
   html += F("'>");
 
   if (function == FUNCTION_RELAY)
@@ -295,7 +288,7 @@ void addListGPIOLinkBox(String& html, const String& input_id, const String& name
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
   uint8_t address;
 
-  if (nr == 1) {
+  if (nr == 0) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
       addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 1"), MCP23017_P, 5, address, url);

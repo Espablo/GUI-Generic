@@ -66,7 +66,7 @@ void setup() {
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
       if (rollershutters > 0) {
 #ifdef SUPLA_ROLLERSHUTTER
@@ -78,9 +78,9 @@ void setup() {
       else {
 #ifdef SUPLA_RF_BRIDGE
         if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_TRANSMITTER) != OFF_GPIO &&
-            ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr - 1).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER &&
-            (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr - 1).c_str(), "") != 0 ||
-             strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr - 1).c_str(), "") != 0)) {
+            ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER &&
+            (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
+             strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
           Supla::GUI::addRelayBridge(nr);
         }
         else {
@@ -95,10 +95,9 @@ void setup() {
 #endif
 
 #ifdef SUPLA_RF_BRIDGE
-        if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE) != OFF_GPIO &&
-            ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr - 1).toInt() == Supla::GUI::RFBridgeType::RECEIVER &&
-            (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr - 1).c_str(), "") != 0 ||
-             strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr - 1).c_str(), "") != 0)) {
+        if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::RECEIVER &&
+            (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
+             strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
           Supla::GUI::addButtonBridge(nr);
         }
         else {
@@ -114,18 +113,18 @@ void setup() {
       }
 
 #ifdef SUPLA_PUSHOVER
-      Supla::GUI::addPushover(nr - 1);
+      Supla::GUI::addPushover(nr);
 #endif
 
 #ifdef SUPLA_DIRECT_LINKS
-      Supla::GUI::addDirectLinks(nr - 1);
+      Supla::GUI::addDirectLinks(nr);
 #endif
     }
   }
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != OFF_GPIO) {
       new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), true);
     }
@@ -155,7 +154,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_DHT11
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_DHT11) != OFF_GPIO) {
       auto dht11 = new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT11), DHT11);
 
@@ -166,7 +165,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_DHT22
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_DHT22) != OFF_GPIO) {
       auto dht22 = new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22);
 
@@ -235,14 +234,14 @@ void setup() {
 #endif
 
 #ifdef SUPLA_RGBW
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     Supla::GUI::addRGBWLeds(nr);
   }
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
   if (ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() > 0) {
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
+    for (nr = 0; nr < ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
       gpio = ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER);
       if (gpio != OFF_GPIO) {
         Supla::GUI::addImpulseCounter(gpio, ConfigESP->getLevel(gpio), ConfigESP->getMemory(gpio),
@@ -401,7 +400,7 @@ void setup() {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
 
-      for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+      for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
         gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
         if (gpio != OFF_GPIO)
           mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), false);

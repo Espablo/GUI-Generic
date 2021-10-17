@@ -37,7 +37,7 @@ void handleSensor1Wire(int save) {
 #ifdef SUPLA_DHT11
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_DHT11);
   addNumberBox(webContentBuffer, INPUT_MAX_DHT11, S_QUANTITY, KEY_MAX_DHT11, ConfigESP->countFreeGpio(FUNCTION_DHT11));
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
     addListGPIOBox(webContentBuffer, INPUT_DHT11_GPIO, S_DHT11, FUNCTION_DHT11, nr);
   }
   addFormHeaderEnd(webContentBuffer);
@@ -46,7 +46,7 @@ void handleSensor1Wire(int save) {
 #ifdef SUPLA_DHT22
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_DHT22);
   addNumberBox(webContentBuffer, INPUT_MAX_DHT22, S_QUANTITY, KEY_MAX_DHT22, ConfigESP->countFreeGpio(FUNCTION_DHT22));
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
     addListGPIOBox(webContentBuffer, INPUT_DHT22_GPIO, S_DHT22, FUNCTION_DHT22, nr);
   }
   addFormHeaderEnd(webContentBuffer);
@@ -82,7 +82,7 @@ void handleSensor1WireSave() {
 
 #ifdef SUPLA_DHT11
   last_value = ConfigManager->get(KEY_MAX_DHT11)->getValueInt();
-  for (nr = 1; nr <= last_value; nr++) {
+  for (nr = 0; nr <= last_value; nr++) {
     if (!WebServer->saveGPIO(INPUT_DHT11_GPIO, FUNCTION_DHT11, nr, INPUT_MAX_DHT11)) {
       handleSensor1Wire(6);
       return;
@@ -96,7 +96,7 @@ void handleSensor1WireSave() {
 
 #ifdef SUPLA_DHT22
   last_value = ConfigManager->get(KEY_MAX_DHT22)->getValueInt();
-  for (nr = 1; nr <= last_value; nr++) {
+  for (nr = 0; nr <= last_value; nr++) {
     if (!WebServer->saveGPIO(INPUT_DHT22_GPIO, FUNCTION_DHT22, nr, INPUT_MAX_DHT22)) {
       handleSensor1Wire(6);
       return;

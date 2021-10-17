@@ -158,14 +158,7 @@ bool SuplaWebServer::isLoggedIn() {
 bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
   uint8_t gpio, _gpio, _function, _nr, current_value, key;
   String input;
-  input = _input;
-
-  if (nr != 0) {
-    input += nr;
-  }
-  else {
-    nr = 1;
-  }
+  input = _input + nr;
 
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") == 0) {
     return true;
@@ -188,7 +181,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
 
   key = KEY_GPIO + _gpio;
   _function = ConfigManager->get(key)->getElement(FUNCTION).toInt();
-  _nr = ConfigManager->get(key)->getElement(NR).toInt();
+  _nr = ConfigManager->get(key)->getElement(NR).toInt() - 1;
 
   if (_gpio == OFF_GPIO) {
     ConfigESP->clearGpio(gpio, function);
@@ -198,7 +191,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   }
 
   if (_gpio != OFF_GPIO) {
-    if (_function == FUNCTION_OFF && _nr == FUNCTION_OFF) {
+    if (_function == FUNCTION_OFF) {
       ConfigESP->clearGpio(gpio, function);
       ConfigESP->clearGpio(_gpio, function);
       ConfigESP->setGpio(_gpio, nr, function);
@@ -207,8 +200,8 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
       }
 
 #ifdef SUPLA_ROLLERSHUTTER
-      if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr) {
-        // if (nr % 2 == 1) {
+      if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr) {
+        // if (nr % 2 == 0) {
         ConfigESP->setEvent(_gpio, Supla::Event::ON_PRESS);
         ConfigESP->setAction(_gpio, Supla::GUI::ActionRolleShutter::OPEN_OR_CLOSE);
         //  }
@@ -268,8 +261,8 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
       ConfigESP->clearGpioMCP23017(_gpio, nr, function);
       ConfigESP->setGpioMCP23017(_gpio, _address, nr, function);
 #ifdef SUPLA_ROLLERSHUTTER
-      if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 >= nr) {
-        if (nr % 2 == 1) {
+      if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr) {
+        if (nr % 2 == 0) {
           ConfigESP->setEvent(_gpio, Supla::Event::ON_PRESS);
           ConfigESP->setAction(_gpio, Supla::GUI::ActionRolleShutter::OPEN_OR_CLOSE);
         }
