@@ -191,8 +191,16 @@ void addLinkBox(String& html, const String& name, const String& url) {
   WebServer->sendHeader();
 }
 
+void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function) {
+  addListGPIOBox(html, input_id, name, function, 0, true, url, true);
+}
+
+void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr) {
+  addListGPIOBox(html, input_id, name, function, nr, true, url);
+}
+
 void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function) {
-  return addListGPIOBox(html, input_id, name, function, 0, true, "", true);
+  addListGPIOBox(html, input_id, name, function, 0, true, "", true);
 }
 
 void addListGPIOBox(
@@ -212,7 +220,9 @@ void addListGPIOBox(
     html += F("<a href='");
     html += PATH_START;
     html += url;
-    html += nr;
+    if (!no_number) {
+      html += nr;
+    }
     html += F("'>");
 
     if (!no_number) {
@@ -282,10 +292,6 @@ void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const 
       html += F("'> GPIO");
   }
   html += name;
-}
-
-void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr) {
-  addListGPIOBox(html, input_id, name, function, nr, true, url);
 }
 
 #ifdef SUPLA_MCP23017
