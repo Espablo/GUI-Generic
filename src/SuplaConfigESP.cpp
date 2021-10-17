@@ -49,6 +49,9 @@ SuplaConfigESP::SuplaConfigESP() {
     if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0)
       saveChooseTemplateBoard(getDefaultTamplateBoard());
 
+    if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
+      ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+
     ConfigManager->save();
 
     configModeInit();
