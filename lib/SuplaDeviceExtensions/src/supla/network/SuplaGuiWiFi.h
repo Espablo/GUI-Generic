@@ -114,7 +114,7 @@ class GUIESPWifi : public Supla::ESPWifi {
         WiFi.setHostname(hostname);
       }
 
-    } else if (ConfigESP->configModeESP == NORMAL_MODE) {
+    } else if (strcmp(ssid, "") != 0) {
       Serial.println(F("WiFi: resetting WiFi connection"));
       if (client) {
         delete client;
