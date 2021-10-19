@@ -42,20 +42,6 @@
     #define memcpy_P(dest, src, num) memcpy((dest), (src), (num))
 #endif
 
-#if defined(ESP8266)
-    // interrupt handler and related code must be in RAM on ESP8266,
-    // according to issue #46.
-    #define RECEIVE_ATTR ICACHE_RAM_ATTR
-    #define VAR_ISR_ATTR
-#elif defined(ESP32)
-    #define RECEIVE_ATTR IRAM_ATTR
-    #define VAR_ISR_ATTR DRAM_ATTR
-#else
-    #define RECEIVE_ATTR
-    #define VAR_ISR_ATTR
-#endif
-
-
 /* Protocol description format
  *
  * {Pulse length, Preamble, Sync bit, "0" bit, "1" bit, Inverted Signal, Guard time}
@@ -795,7 +781,7 @@ bool RECEIVE_ATTR RCSwitch::receiveProtocol(const int p, unsigned int changeCoun
     return false;
 }
 
-void RECEIVE_ATTR RCSwitch::handleInterrupt() {
+void RECEIVE_ATTR RCSwitch::handleInterrupt(void) {
 
   static unsigned int changeCount = 0;
   static unsigned long lastTime = 0;
