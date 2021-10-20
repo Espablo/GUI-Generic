@@ -64,6 +64,7 @@
 #define SUPLA_CSE7766
 #define SUPLA_DEEP_SLEEP
 #define SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+#define SUPLA_RF_BRIDGE
 
 // ##### Analog #####
 #define SUPLA_NTC_10K
