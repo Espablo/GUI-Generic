@@ -147,7 +147,7 @@ void addRelayBridge(uint8_t nr) {
   uint8_t pinRelay, pinLED, pinTransmitter;
   bool highIsOn, levelLed;
 
-  pinTransmitter = ConfigESP->getGpio(nr, FUNCTION_RF_BRIDGE_TRANSMITTER);
+  pinTransmitter = ConfigESP->getGpio(FUNCTION_RF_BRIDGE_TRANSMITTER);
 
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
@@ -208,7 +208,7 @@ void addRelayBridge(uint8_t nr) {
 
 void addButtonBridge(uint8_t nr) {
   uint8_t pinButton;
-  pinButton = ConfigESP->getGpio(nr, FUNCTION_RF_BRIDGE_RECEIVE);
+  pinButton = ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE);
 
   if (pinButton != OFF_GPIO) {
     auto receiveBridge = new Supla::Control::RFBridgeReceive(pinButton);

@@ -61,6 +61,19 @@
 // Для keeloq нужно увеличить RCSWITCH_MAX_CHANGES до 23+1+66*2+1=157
 #define RCSWITCH_MAX_CHANGES 67        // default 67
 
+#if defined(ESP8266)
+    // interrupt handler and related code must be in RAM on ESP8266,
+    // according to issue #46.
+    #define RECEIVE_ATTR IRAM_ATTR
+    #define VAR_ISR_ATTR
+#elif defined(ESP32)
+    #define RECEIVE_ATTR IRAM_ATTR
+    #define VAR_ISR_ATTR DRAM_ATTR
+#else
+    #define RECEIVE_ATTR
+    #define VAR_ISR_ATTR
+#endif
+
 class RCSwitch {
 
   public:
@@ -161,8 +174,8 @@ class RCSwitch {
     void transmit(HighLow pulses);
 
     #if not defined( RCSwitchDisableReceiving )
-    static void handleInterrupt();
-    static bool receiveProtocol(const int p, unsigned int changeCount);
+    static RECEIVE_ATTR bool receiveProtocol(const int p, unsigned int changeCount);
+    static RECEIVE_ATTR void handleInterrupt(void);
     int nReceiverInterrupt;
     #endif
     int nTransmitterPin;
