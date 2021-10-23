@@ -127,7 +127,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   void setGpio(uint8_t gpio, uint8_t nr, uint8_t function);
   void setGpio(uint8_t gpio, uint8_t function) {
-    setGpio(gpio, 1, function);
+    setGpio(gpio, 0, function);
   }
 
   void clearGpio(uint8_t gpio, uint8_t function = 0);
