@@ -127,6 +127,8 @@ enum _key
   KEY_RF_BRIDGE_PULSE_LENGTHINT,
   KEY_RF_BRIDGE_REPEAT,
 
+  KEY_VERSION_CONFIG,
+
   OPTION_COUNT
 };
 
@@ -206,6 +208,7 @@ enum _e_onfig
 #define CONFIG_MAX_OPTIONS 100
 
 #define ESP8226_CONFIG_V1 2681
+#define ESP8226_CONFIG_V2 3323
 
 class ConfigOption {
  public:

@@ -387,6 +387,8 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_RF_BRIDGE_REPEAT, MAX_BRIDGE_RF * 2, 4, false);
 #endif
 
+    this->addKey(KEY_VERSION_CONFIG, "3", 2, 5);
+
     SPIFFS.end();
     switch (this->load()) {
       case E_CONFIG_OK:
@@ -434,11 +436,11 @@ SuplaConfigManager::SuplaConfigManager() {
 
 bool SuplaConfigManager::migrationConfig() {
   bool migration = false;
+  uint8_t nr, key;
 
 #ifdef ARDUINO_ARCH_ESP8266
   if (this->sizeFile() == ESP8226_CONFIG_V1) {  // pierwsza wersja configa
     Serial.println(F("migration version 1 -> 2"));
-    uint8_t nr, key;
     // ustawienie starej długości zmiennej przed wczytaniem starego konfiga
     for (nr = 0; nr <= MAX_GPIO; nr++) {
       key = KEY_GPIO + nr;
@@ -458,11 +460,32 @@ bool SuplaConfigManager::migrationConfig() {
     }
   }
 
-  if (this->sizeFile() == 2718) {  // druga wersja configa
-                                   // Serial.println(F("migration version 2 -> 3"));
-    // if (this->load(2, false) == E_CONFIG_OK) // wczytanie kluczy tylko z wersji 2 configa
-    //   migration = true;
+  if (this->sizeFile() <= ESP8226_CONFIG_V2) {
+    Serial.println(F("migration version 2 -> 3"));
+
+    if (this->load(4, false) == E_CONFIG_OK) {
+      this->set(KEY_VERSION_CONFIG, "3");
+
+      for (nr = 0; nr <= MAX_GPIO; nr++) {
+        key = KEY_GPIO + nr;
+        if (this->get(key)->getElement(NR).toInt() >= 1) {
+          this->setElement(key, NR, this->get(key)->getElement(NR).toInt() - 1);
+        }
+      }
+      for (nr = 0; nr < ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
+        ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, this->get(KEY_VIRTUAL_RELAY)->getElement(nr + 1).toInt());
+        ConfigManager->setElement(KEY_VIRTUAL_RELAY_MEMORY, nr, this->get(KEY_VIRTUAL_RELAY_MEMORY)->getElement(nr + 1).toInt());
+      }
+
+      migration = true;
+    }
   }
+
+  // if (this->sizeFile() == 2718) {  // druga wersja configa
+  // Serial.println(F("migration version 2 -> 3"));
+  // if (this->load(2, false) == E_CONFIG_OK) // wczytanie kluczy tylko z wersji 2 configa
+  //   migration = true;
+  // }
 #elif ARDUINO_ARCH_ESP32
   if (this->sizeFile() == 3774) {  // wersja 2 configa
     Serial.println(F("migration version 2 -> 3"));
@@ -473,6 +496,7 @@ bool SuplaConfigManager::migrationConfig() {
 
   if (migration) {
     this->save();
+    this->showAllValue();
     Serial.println(F("successful Config migration"));
   }
   else {
@@ -524,6 +548,9 @@ int SuplaConfigManager::sizeFile() {
 
 bool SuplaConfigManager::checkFileConvert(int size) {
   if (size == ESP8226_CONFIG_V1) {
+    return true;
+  }
+  if (size <= ESP8226_CONFIG_V2) {
     return true;
   }
   return false;
