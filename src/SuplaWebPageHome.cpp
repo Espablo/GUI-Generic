@@ -52,7 +52,7 @@ void handlePageHome(int save) {
   addForm(webContentBuffer, F("post"));
   addFormHeader(webContentBuffer, S_SETTING_WIFI_SSID);
   addTextBox(webContentBuffer, INPUT_WIFI_SSID, S_WIFI_SSID, KEY_WIFI_SSID, 0, MAX_SSID, true);
-  addTextBoxPassword(webContentBuffer, INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, MIN_PASSWORD, MAX_PASSWORD, true);
+  addTextBoxPassword(webContentBuffer, INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, 0, MAX_PASSWORD, false);
   addTextBox(webContentBuffer, INPUT_HOSTNAME, S_HOST_NAME, KEY_HOST_NAME, 0, MAX_HOSTNAME, true);
   addFormHeaderEnd(webContentBuffer);
 
@@ -87,8 +87,8 @@ void handlePageHome(int save) {
 void handlePageHomeSave() {
   if (strcmp(WebServer->httpServer->arg(INPUT_WIFI_SSID).c_str(), "") != 0)
     ConfigManager->set(KEY_WIFI_SSID, WebServer->httpServer->arg(INPUT_WIFI_SSID).c_str());
-  if (strcmp(WebServer->httpServer->arg(INPUT_WIFI_PASS).c_str(), "") != 0)
-    ConfigManager->set(KEY_WIFI_PASS, WebServer->httpServer->arg(INPUT_WIFI_PASS).c_str());
+  // if (strcmp(WebServer->httpServer->arg(INPUT_WIFI_PASS).c_str(), "") != 0)
+  ConfigManager->set(KEY_WIFI_PASS, WebServer->httpServer->arg(INPUT_WIFI_PASS).c_str());
   if (strcmp(WebServer->httpServer->arg(INPUT_SERVER).c_str(), "") != 0)
     ConfigManager->set(KEY_SUPLA_SERVER, WebServer->httpServer->arg(INPUT_SERVER).c_str());
   if (strcmp(WebServer->httpServer->arg(INPUT_EMAIL).c_str(), "") != 0)
