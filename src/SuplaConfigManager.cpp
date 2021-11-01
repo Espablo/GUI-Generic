@@ -545,6 +545,8 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
             length += _options[i]->getLength();
           }
         }
+        
+#ifdef ARDUINO_ARCH_ESP8266
         FSInfo fs_info;
         SPIFFS.info(fs_info);
 
@@ -562,6 +564,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
         Serial.println(configFile.size());
         Serial.print(F("Size conf: "));
         Serial.println(length);
+#endif
 
         if (checkFileConvert(configFile.size()) && configParse) {
           if (!this->migrationConfig())
