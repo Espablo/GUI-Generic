@@ -80,9 +80,9 @@ class SHT3x : public ThermHygroMeter {
   }
 
  protected:
-  int8_t address;
   double temperature;
   double humidity;
+  int8_t address;
   int8_t retryCount;
   ::ClosedCube_SHT31D sht;  // I2C
 };

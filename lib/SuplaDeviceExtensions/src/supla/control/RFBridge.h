@@ -54,7 +54,7 @@ class RFBridge : public Element {
 
   int codeON;
   int codeOFF;
-  u_int8_t lengthCode;
+  uint8_t lengthCode;
 };
 
 };  // namespace Control
