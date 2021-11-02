@@ -545,7 +545,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
             length += _options[i]->getLength();
           }
         }
-        
+
 #ifdef ARDUINO_ARCH_ESP8266
         FSInfo fs_info;
         SPIFFS.info(fs_info);
@@ -680,11 +680,10 @@ void SuplaConfigManager::deleteWifiSuplaAdminValues() {
 
 bool SuplaConfigManager::isDeviceConfigured() {
   return strcmp(this->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(this->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_WIFI_SSID)->getValue(), "") == 0 || strcmp(this->get(KEY_WIFI_PASS)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_LOGIN)->getValue(), "") == 0 || strcmp(this->get(KEY_ENABLE_SSL)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_ENABLE_GUI)->getValue(), "") == 0 || strcmp(this->get(KEY_BOARD)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_SUPLA_SERVER)->getValue(), DEFAULT_SERVER) == 0 || strcmp(this->get(KEY_SUPLA_EMAIL)->getValue(), DEFAULT_EMAIL) == 0 ||
-         ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO;
+         strcmp(this->get(KEY_WIFI_SSID)->getValue(), "") == 0 || strcmp(this->get(KEY_LOGIN)->getValue(), "") == 0 ||
+         strcmp(this->get(KEY_ENABLE_SSL)->getValue(), "") == 0 || strcmp(this->get(KEY_ENABLE_GUI)->getValue(), "") == 0 ||
+         strcmp(this->get(KEY_BOARD)->getValue(), "") == 0 || strcmp(this->get(KEY_SUPLA_SERVER)->getValue(), DEFAULT_SERVER) == 0 ||
+         strcmp(this->get(KEY_SUPLA_EMAIL)->getValue(), DEFAULT_EMAIL) == 0 || ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO;
 }
 
 ConfigOption *SuplaConfigManager::get(uint8_t key) {
