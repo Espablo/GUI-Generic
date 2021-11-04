@@ -14,34 +14,30 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _local_action_h
-#define _local_action_h
+#ifndef _maxThermocouple_k_h
+#define _maxThermocouple_k_h
 
-#include <stdint.h>
-#include "action_handler.h"
+#include <Arduino.h>
+#include <supla/sensor/thermometer.h>
 
 namespace Supla {
-
-class ActionHandlerClient;
-
-class LocalAction {
+namespace Sensor {
+class MAXThermocouple : public Thermometer {
  public:
-  virtual ~LocalAction();
-  virtual void addAction(int action, ActionHandler &client, int event);
-  virtual void addAction(int action, ActionHandler *client, int event);
+  MAXThermocouple(uint8_t pin_CLK, uint8_t pin_CS, uint8_t pin_DO);
+  double getValue();
 
-  virtual void runAction(int event);
+ private:
+  void onInit();
+  uint32_t spiRead(void);
 
-  virtual bool isEventAlreadyUsed(int event);
-
-  virtual void disableOtherClients(ActionHandler &client, int event);
-  virtual void enabledOtherClients(ActionHandler &client, int event);
-  virtual void disableOtherClients(ActionHandler *client, int event);
-  virtual void enabledOtherClients(ActionHandler *client, int event);
-
-  static ActionHandlerClient *getClientListPtr();
+ protected:
+  int8_t pin_CLK;
+  int8_t pin_CS;
+  int8_t pin_DO;
 };
 
+};  // namespace Sensor
 };  // namespace Supla
 
 #endif
