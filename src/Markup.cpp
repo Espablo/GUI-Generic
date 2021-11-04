@@ -70,7 +70,7 @@ void addTextBox(String& html,
   html += input_id;
   if (password) {
     if (ConfigESP->configModeESP != NORMAL_MODE) {
-      html += F("' type='password' ");
+      html += F("' type='password");
     }
   }
 
@@ -87,13 +87,12 @@ void addTextBox(String& html,
   if (minlength > 0) {
     html += F("' minlength='");
     html += minlength;
-    html += F("'");
   }
   if (maxlength > 0) {
     html += F("' maxlength='");
     html += maxlength;
-    html += F("'");
   }
+  html += F("'");
   if (readonly) {
     html += F(" readonly");
   }
@@ -102,7 +101,7 @@ void addTextBox(String& html,
     html += F(" required");
   }
 
-  html += F(" ><label>");
+  html += F("><label>");
   html += name;
   html += F("</label></i> ");
   WebServer->sendHeader();
@@ -141,13 +140,11 @@ void addCheckBox(String& html, const String& input_id, const String& name, bool 
   html += name;
   html += F("</label><input type='checkbox' name='");
   html += input_id;
-  if (checked) {
-    html += F("' checked>");
+  html += F("'");
+if (checked) {
+    html += F(" checked");
   }
-  else {
-    html += F("'>");
-  }
-  html += F("</i>");
+  html += F("></i>");
 }
 
 void addNumberBox(String& html, const String& input_id, const String& name, uint8_t value_key, int max) {
@@ -217,11 +214,12 @@ void addListGPIOBox(
     gpio = ConfigESP->getGpio(nr, function);
 
   if (underline) {
-    html += F("<i><label>");
+    html += F("<i>");
   }
   else {
-    html += F("<i style='border-bottom:none !important;'><label>");
+    html += F("<i style='border-bottom:none !important;'>");
   }
+  html += F("<label>");
 
   if (!url.isEmpty() && gpio != OFF_GPIO) {
     html += F("<a href='");
@@ -287,18 +285,16 @@ void addListGPIOBox(
 void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const String& name) {
   html += F("<option value='");
   html += gpio;
+  html += F("'");
 
+  if (gpio == selectedGpio) {
+    html += F(" selected");
+  }
   if (gpio == OFF_GPIO) {
-    if (gpio == selectedGpio)
-      html += F("' selected>");
-    else
-      html += F("'>");
+    html += F(">");
   }
   else {
-    if (gpio == selectedGpio)
-      html += F("' selected> GPIO");
-    else
-      html += F("'> GPIO");
+    html += F("> GPIO");
   }
   html += name;
 }
@@ -368,12 +364,11 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
     if (ConfigESP->checkBusyGpioMCP23017(suported, nr, function) || selected == suported) {
       html += F("<option value='");
       html += suported;
+      html += F("'");
       if (selected == suported) {
-        html += F("' selected>");
+        html += F(" selected");
       }
-      else {
-        html += F("'>");
-      }
+      html += F(">");
       html += FPSTR(GPIO_MCP23017_P[suported]);
     }
     WebServer->sendHeader();
@@ -401,12 +396,11 @@ void addListBox(String& html, const String& input_id, const String& name, const 
     if (String(FPSTR(array_P[suported])) != "") {
       html += F("<option value='");
       html += suported;
+      html += F("'");
       if (selected == suported) {
-        html += F("' selected>");
+        html += F(" selected");
       }
-      else {
-        html += F("'>");
-      }
+      html += F(">");
       html += FPSTR(array_P[suported]);
       WebServer->sendHeader();
     }
@@ -443,12 +437,11 @@ void addListLinkBox(String& html,
   for (uint8_t suported = 0; suported < size; suported++) {
     html += F("<option value='");
     html += suported;
+    html += F("'");
     if (selected == suported) {
-      html += F("' selected>");
+      html += F(" selected");
     }
-    else {
-      html += F("'>");
-    }
+    html += F(">");
     html += FPSTR(array_P[suported]);
   }
   WebServer->sendHeader();
