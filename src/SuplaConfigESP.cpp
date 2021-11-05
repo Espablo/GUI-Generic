@@ -326,7 +326,7 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     return GPIO_VIRTUAL_RELAY;
   }
 
- // nr++;
+  nr++;
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
     if (function == FUNCTION_CFG_BUTTON) {
@@ -478,7 +478,7 @@ void SuplaConfigESP::setEvent(uint8_t gpio, int event) {
 
 void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
   uint8_t key;
- // nr++;
+  nr++;
   key = KEY_GPIO + gpio;
 
   if (function == FUNCTION_CFG_BUTTON) {

@@ -167,33 +167,21 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   gpio = ConfigESP->getGpio(nr, function);
   _gpio = WebServer->httpServer->arg(input).toInt();
 
-  if (function == FUNCTION_RELAY && _gpio == GPIO_VIRTUAL_RELAY) {
-    if (gpio != GPIO_VIRTUAL_RELAY) {
-      ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
-      ConfigESP->clearGpio(gpio, function);
-    }
-
-    ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, true);
-
-    if (input_max != "\n") {
-      current_value = WebServer->httpServer->arg(input_max).toInt();
-      if (nr >= current_value) {
-        ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
+  if (function == FUNCTION_RELAY) {
+    if (_gpio == GPIO_VIRTUAL_RELAY) {
+      if (gpio != GPIO_VIRTUAL_RELAY) {
+        ConfigManager->setElement(KEY_VIRTUAL_RELAY_MEMORY, nr, false);
+        ConfigESP->clearGpio(gpio, function);
       }
-    }
 
-    return true;
+      ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, true);
+      return true;
+    }
   }
 
   key = KEY_GPIO + _gpio;
-
-  if (function == FUNCTION_CFG_BUTTON) {
-    _function = ConfigManager->get(key)->getElement(CFG).toInt();
-  }
-  else {
-    _function = ConfigManager->get(key)->getElement(FUNCTION).toInt();
-    _nr = ConfigManager->get(key)->getElement(NR).toInt();
-  }
+  _function = ConfigManager->get(key)->getElement(FUNCTION).toInt();
+  _nr = ConfigManager->get(key)->getElement(NR).toInt() - 1;
 
   if (_gpio == OFF_GPIO) {
     ConfigESP->clearGpio(gpio, function);
@@ -220,11 +208,11 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
       }
 #endif
     }
-    else if (function == FUNCTION_CFG_BUTTON) {
-      ConfigESP->setGpio(_gpio, FUNCTION_CFG_BUTTON);
-    }
     else if (gpio == _gpio && _function == function && _nr == nr) {
       ConfigESP->setGpio(_gpio, nr, function);
+    }
+    else if (function == FUNCTION_CFG_BUTTON) {
+      ConfigESP->setGpio(_gpio, FUNCTION_CFG_BUTTON);
     }
     else {
       return false;
@@ -233,11 +221,10 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
 
   if (input_max != "\n") {
     current_value = WebServer->httpServer->arg(input_max).toInt();
-    if (ConfigManager->get(key)->getElement(NR).toInt() >= current_value) {
+    if (ConfigManager->get(key)->getElement(NR).toInt() > current_value) {
       ConfigESP->clearGpio(gpio, function);
     }
   }
-
   return true;
 }
 
