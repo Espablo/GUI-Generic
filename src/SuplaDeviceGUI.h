@@ -150,6 +150,8 @@
 #include <supla/sensor/HDC1080.h>
 #endif
 
+#include <supla/control/action_trigger.h>
+
 namespace Supla {
 namespace GUI {
 

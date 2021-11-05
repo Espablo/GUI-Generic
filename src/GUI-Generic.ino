@@ -36,9 +36,6 @@ extern "C" {
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
 #include <supla/sensor/direct_link_sensor_thermometer.h>
 #endif
-//#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
-//#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
-// DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 void setup() {
   uint8_t nr, gpio;
@@ -57,11 +54,6 @@ void setup() {
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
-
-  // if (drd.detectDoubleReset()) {
-  //   drd.stop();
-  //   ConfigESP->factoryReset();
-  // }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
@@ -83,32 +75,22 @@ void setup() {
              strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
           Supla::GUI::addRelayBridge(nr);
         }
+        else if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::RECEIVER &&
+                 (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
+                  strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
+          Supla::GUI::addButtonBridge(nr);
+        }
         else {
 #ifdef SUPLA_RELAY
           Supla::GUI::addRelay(nr);
 #endif
         }
 #else
+
 #ifdef SUPLA_RELAY
         Supla::GUI::addRelay(nr);
 #endif
-#endif
 
-#ifdef SUPLA_RF_BRIDGE
-        if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::RECEIVER &&
-            (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
-             strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
-          Supla::GUI::addButtonBridge(nr);
-        }
-        else {
-#ifdef SUPLA_BUTTON
-          Supla::GUI::addButton(nr);
-#endif
-        }
-#else
-#ifdef SUPLA_BUTTON
-        Supla::GUI::addButton(nr);
-#endif
 #endif
       }
 
@@ -438,6 +420,12 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_BUTTON
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+    Supla::GUI::addButton(nr);
+  }
+#endif
+
   Supla::GUI::begin();
 
 #ifdef SUPLA_MPX_5XXX
@@ -469,5 +457,4 @@ void setup() {
 void loop() {
   SuplaDevice.iterate();
   delay(25);
-  // drd.loop();
 }
