@@ -23,6 +23,7 @@
 namespace Supla {
 
 class ActionHandlerClient;
+class Condition;
 
 class LocalAction {
  public:
@@ -35,9 +36,9 @@ class LocalAction {
   virtual bool isEventAlreadyUsed(int event);
 
   virtual void disableOtherClients(ActionHandler &client, int event);
-  virtual void enabledOtherClients(ActionHandler &client, int event);
+  virtual void enableOtherClients(ActionHandler &client, int event);
   virtual void disableOtherClients(ActionHandler *client, int event);
-  virtual void enabledOtherClients(ActionHandler *client, int event);
+  virtual void enableOtherClients(ActionHandler *client, int event);
 
   static ActionHandlerClient *getClientListPtr();
 };
