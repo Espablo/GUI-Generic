@@ -85,7 +85,7 @@
 #define S_STATUS_BAD_CREDENTIALS         "Złe poświadczenia"
 #define S_STATUS_TEMPORARILY_UNAVAILABLE "Tymczasowo niedostępne"
 #define S_STATUS_LOCATION_CONFLICT       "Konflikt lokalizacji"
-#define S_STATUS_CHANNEL_CONFLICT        "Konflikt kanałów"
+#define S_STATUS_CHANNEL_CONFLICT        "Konflikt kanałów - należy z clouda usunąć urządzenie i zarejestorwać je ponownie"
 #define S_STATUS_REGISTERED_AND_READY    "Zarejestrowany i gotowy"
 #define S_STATUS_DEVICE_IS_DISABLED      "Urządzenie jest rozłączone"
 #define S_STATUS_LOCATION_IS_DISABLED    "Lokalizacja jest wyłączona"
