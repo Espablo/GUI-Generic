@@ -135,7 +135,11 @@ void handleControl(int save) {
 #endif
 
 #ifdef SUPLA_ROLLERSHUTTER
-    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr && !ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
+    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr
+#ifdef SUPLA_MCP23017
+        && !ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)
+#endif
+    ) {
       if (nr % 2 == 0) {
         addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO_STOP, String(S_BUTTON) + S_SPACE + " STOP",
                            getParameterRequest(PATH_BUTTON_SET, "stop"), FUNCTION_BUTTON_STOP, nr);
