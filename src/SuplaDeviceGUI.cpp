@@ -138,6 +138,7 @@ void addButton(uint8_t nr) {
     }
     else {
       button->setMulticlickTime(800);
+      button->setHoldTime(2000);
     }
 
     if (Supla::GUI::relay.size() > nr) {
