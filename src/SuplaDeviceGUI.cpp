@@ -123,6 +123,9 @@ void addRelay(uint8_t nr) {
       new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
     }
   }
+  else {
+    relay.push_back(NULL);
+  }
   delay(0);
 }
 #endif
@@ -140,19 +143,22 @@ void addButton(uint8_t nr) {
     auto at = new Supla::Control::ActionTrigger();
 
     if (ConfigESP->getEvent(pinButton) == Supla::ON_CHANGE) {
-      button->setMulticlickTime(800, true);
+      button->setMulticlickTime(350, true);
     }
     else {
-      button->setMulticlickTime(800);
-      button->setHoldTime(800);
+      button->setMulticlickTime(350);
+      button->setHoldTime(350);
     }
 
-    if (Supla::GUI::relay.size() > nr) {
+    if (Supla::GUI::relay.size() >= nr && Supla::GUI::relay[nr] != NULL) {
       // button->addAction(ConfigESP->getAction(pinButton), *relay[nr], ConfigESP->getEvent(pinButton));
       button->addAction(ConfigESP->getAction(pinButton), *relay[nr], Supla::ON_CLICK_1);
       button->setSwNoiseFilterDelay(100);
 
       at->setRelatedChannel(relay[nr]);
+    }
+    else {
+      button->addAction(ConfigESP->getAction(pinButton), at, Supla::ON_CLICK_1);
     }
 
     at->attach(button);
