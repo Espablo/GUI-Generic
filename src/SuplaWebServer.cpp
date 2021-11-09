@@ -233,7 +233,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
 
   if (input_max != "\n") {
     current_value = WebServer->httpServer->arg(input_max).toInt();
-    if (ConfigManager->get(key)->getElement(NR).toInt() >= current_value) {
+    if ((ConfigManager->get(key)->getElement(NR).toInt() - 1) >= current_value) {
       ConfigESP->clearGpio(gpio, function);
     }
   }
