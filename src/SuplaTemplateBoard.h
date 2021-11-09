@@ -81,7 +81,7 @@
 #endif
 #endif
 
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_RGBW)
+#if defined(SUPLA_ROLLERSHUTTER)
 #if !defined(SUPLA_BUTTON)
 #define SUPLA_BUTTON
 #endif

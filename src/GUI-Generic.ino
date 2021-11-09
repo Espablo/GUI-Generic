@@ -91,10 +91,7 @@ void setup() {
 #endif
 
 #endif
-
-#ifdef SUPLA_BUTTON
-      Supla::GUI::addButton(nr);
-#endif
+      Supla::GUI::addButtonToRelay(nr);
     }
 
     if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {

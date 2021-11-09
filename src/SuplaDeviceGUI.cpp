@@ -125,10 +125,8 @@ void addRelay(uint8_t nr) {
   }
   delay(0);
 }
-#endif
 
-#if defined(SUPLA_BUTTON)
-void addButton(uint8_t nr) {
+void addButtonToRelay(uint8_t nr) {
   uint8_t pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
 
   if (pinButton != OFF_GPIO) {
@@ -140,7 +138,9 @@ void addButton(uint8_t nr) {
     addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[size]);
   }
 }
+#endif
 
+#ifdef SUPLA_BUTTON
 void addButtonActionTrigger(uint8_t nr) {
   uint8_t pinRelay, pinButton;
 

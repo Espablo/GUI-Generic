@@ -162,10 +162,10 @@ void crateWebServer();
 
 #if defined(SUPLA_RELAY)
 void addRelay(uint8_t nr);
+void addButtonToRelay(uint8_t nr);
 #endif
 
-#if defined(SUPLA_BUTTON)
-void addButton(uint8_t nr);
+#ifdef SUPLA_BUTTON
 void addButtonActionTrigger(uint8_t nr);
 #endif
 
