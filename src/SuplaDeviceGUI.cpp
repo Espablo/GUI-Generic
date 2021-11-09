@@ -123,9 +123,6 @@ void addRelay(uint8_t nr) {
       new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
     }
   }
-  else {
-    relay.push_back(NULL);
-  }
   delay(0);
 }
 #endif
@@ -134,13 +131,27 @@ void addRelay(uint8_t nr) {
 void addButton(uint8_t nr) {
   uint8_t pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
 
-  if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr) {
-    return;
-  }
-
   if (pinButton != OFF_GPIO) {
     auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
+
+    int size = relay.size() - 1;
+    button->addAction(ConfigESP->getAction(pinButton), relay[size], ConfigESP->getEvent(pinButton));
+    button->setSwNoiseFilterDelay(100);
+    addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[size]);
+  }
+}
+
+void addButtonActionTrigger(uint8_t nr) {
+  uint8_t pinRelay, pinButton;
+
+  pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
+  pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+
+  if (pinRelay == OFF_GPIO && pinButton != OFF_GPIO) {
+    auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
     auto at = new Supla::Control::ActionTrigger();
+
+    button->addAction(ConfigESP->getAction(pinButton), at, ConfigESP->getEvent(pinButton));
 
     if (ConfigESP->getEvent(pinButton) == Supla::ON_CHANGE) {
       button->setMulticlickTime(350, true);
@@ -150,21 +161,27 @@ void addButton(uint8_t nr) {
       button->setHoldTime(350);
     }
 
-    if (Supla::GUI::relay.size() >= nr && Supla::GUI::relay[nr] != NULL) {
-      // button->addAction(ConfigESP->getAction(pinButton), *relay[nr], ConfigESP->getEvent(pinButton));
-      button->addAction(ConfigESP->getAction(pinButton), *relay[nr], Supla::ON_CLICK_1);
-      button->setSwNoiseFilterDelay(100);
-
-      at->setRelatedChannel(relay[nr]);
-    }
-    else {
-      button->addAction(ConfigESP->getAction(pinButton), at, Supla::ON_CLICK_1);
-    }
-
     at->attach(button);
   }
 }
 #endif
+
+void addActionTriggerRelatedChannel(Supla::Control::Button *button, int eventButton, Supla::Element *element) {
+  auto at = new Supla::Control::ActionTrigger();
+  button->setSwNoiseFilterDelay(100);
+
+  if (eventButton == Supla::ON_CHANGE) {
+    button->setMulticlickTime(350, true);
+  }
+  else {
+    button->setMulticlickTime(350);
+    button->setHoldTime(350);
+  }
+  if (element != NULL) {
+    at->setRelatedChannel(element);
+  }
+  at->attach(button);
+}
 
 #if defined(SUPLA_RF_BRIDGE)
 void addRelayBridge(uint8_t nr) {
@@ -359,12 +376,16 @@ void addRolleShutter(uint8_t nr) {
 
   if (pinButtonUp != OFF_GPIO && actionButtonUp == Supla::Action::STEP_BY_STEP) {
     auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
+    addActionTriggerRelatedChannel(RollerShutterButtonOpen, eventButtonUp, RollerShutterRelay);
 
     RollerShutterButtonOpen->addAction(actionButtonUp, RollerShutterRelay, eventButtonUp);
   }
   else if (pinButtonUp != OFF_GPIO && pinButtonDown != OFF_GPIO) {
     auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
     auto RollerShutterButtonClose = new Supla::Control::Button(pinButtonDown, pullupButtonDown, inversedButtonDown);
+
+    addActionTriggerRelatedChannel(RollerShutterButtonOpen, eventButtonUp, RollerShutterRelay);
+    addActionTriggerRelatedChannel(RollerShutterButtonClose, eventButtonUp, RollerShutterRelay);
 
     if (eventButtonUp == Supla::Event::ON_CHANGE) {
       RollerShutterButtonOpen->addAction(actionButtonUp, RollerShutterRelay, Supla::Event::ON_PRESS);

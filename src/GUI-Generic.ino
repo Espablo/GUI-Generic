@@ -91,6 +91,10 @@ void setup() {
 #endif
 
 #endif
+
+#ifdef SUPLA_BUTTON
+      Supla::GUI::addButton(nr);
+#endif
     }
 
     if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
@@ -422,7 +426,7 @@ void setup() {
 
 #ifdef SUPLA_BUTTON
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-    Supla::GUI::addButton(nr);
+    Supla::GUI::addButtonActionTrigger(nr);
   }
 #endif
 
