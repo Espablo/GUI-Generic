@@ -97,7 +97,7 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig) {
   if (pinNumberConfig != OFF_GPIO) {
     bool pullUp = true, invertLogic = true;
 
-    for (uint8 nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+    for (uint8_t nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
       if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) == pinNumberConfig) {
         pullUp = ConfigESP->getPullUp(pinNumberConfig);
         invertLogic = ConfigESP->getInversed(pinNumberConfig);
