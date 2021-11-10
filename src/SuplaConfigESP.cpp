@@ -394,6 +394,9 @@ uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
 }
 
 bool SuplaConfigESP::getLevel(uint8_t gpio) {
+  if (gpio == GPIO_VIRTUAL_RELAY) {
+    return false;
+  }
   return ConfigManager->get(getKeyGpio(gpio))->getElement(LEVEL_RELAY).toInt();
 }
 
