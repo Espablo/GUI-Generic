@@ -99,7 +99,7 @@ void handleDeviceSettingsSave() {
   String input = INPUT_BOARD;
 
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    saveChooseTemplateBoard(WebServer->httpServer->arg(input).toInt());
+    chooseTemplateBoard(WebServer->httpServer->arg(input).toInt());
     Supla::Storage::ScheduleSave(2000);
   }
 

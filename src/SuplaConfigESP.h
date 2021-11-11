@@ -149,12 +149,12 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   uint8_t getNrMCP23017(uint8_t adress);
 #endif
   void configModeInit();
+  void clearEEPROM();
 
  private:
   bool MDNSConfigured = false;
   bool APConfigured = false;
   void iterateAlways();
-  void clearEEPROM();
 
   Ticker led;
 };

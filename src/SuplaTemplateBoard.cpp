@@ -19,7 +19,6 @@
 
 void addButton(uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
-  nr++;
 
   ConfigESP->setEvent(gpio, event);
   ConfigESP->setAction(gpio, action);
@@ -27,23 +26,23 @@ void addButton(uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool in
   ConfigESP->setInversed(gpio, invertLogic);
 
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
-  ConfigManager->set(KEY_MAX_BUTTON, nr++);
+  ConfigManager->set(KEY_MAX_BUTTON, nr + 1);
 }
 
 void addRelay(uint8_t gpio, uint8_t level) {
   uint8_t nr = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
-  nr++;
+
   ConfigESP->setLevel(gpio, level);
   ConfigESP->setMemory(gpio, MEMORY_RELAY_RESTORE);
   ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY);
-  ConfigManager->set(KEY_MAX_RELAY, nr++);
+  ConfigManager->set(KEY_MAX_RELAY, nr + 1);
 }
 
 void addLimitSwitch(uint8_t gpio) {
   uint8_t nr = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
-  nr++;
+
   ConfigESP->setGpio(gpio, nr, FUNCTION_LIMIT_SWITCH);
-  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, nr++);
+  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, nr + 1);
 }
 
 void addLedCFG(uint8_t gpio, uint8_t level) {
@@ -70,30 +69,23 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
 
 void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t brightnessPin) {
   uint8_t nr = ConfigManager->get(KEY_MAX_RGBW)->getValueInt();
-  nr++;
+
   ConfigESP->setGpio(redPin, nr, FUNCTION_RGBW_RED);
   ConfigESP->setGpio(greenPin, nr, FUNCTION_RGBW_GREEN);
   ConfigESP->setGpio(bluePin, nr, FUNCTION_RGBW_BLUE);
   ConfigESP->setGpio(brightnessPin, nr, FUNCTION_RGBW_BRIGHTNESS);
-  ConfigManager->set(KEY_MAX_RGBW, nr++);
+  ConfigManager->set(KEY_MAX_RGBW, nr + 1);
 }
 
 void addDimmer(int8_t brightnessPin) {
   addRGBW(OFF_GPIO, OFF_GPIO, OFF_GPIO, brightnessPin);
 }
 
-void saveChooseTemplateBoard(int8_t board) {
-  ConfigManager->set(KEY_BOARD, board);
-  chooseTemplateBoard(board);
-}
-
 void chooseTemplateBoard(uint8_t board) {
-  int8_t nr, key;
-  for (nr = 0; nr <= OFF_GPIO; nr++) {
-    key = KEY_GPIO + nr;
-    ConfigManager->set(key, "");
-  }
+  ConfigESP->clearEEPROM();
+  ConfigManager->deleteDeviceValues();
 
+  ConfigManager->set(KEY_BOARD, board);
   ConfigManager->set(KEY_MAX_BUTTON, "0");
   ConfigManager->set(KEY_MAX_RELAY, "0");
   ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
