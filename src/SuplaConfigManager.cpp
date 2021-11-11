@@ -235,12 +235,12 @@ SuplaConfigManager::SuplaConfigManager() {
 
 #ifdef SUPLA_BUTTON
     this->addKey(KEY_MAX_BUTTON, "0", 2, 2);
-    this->addKey(KEY_AT_MULTICLICK_TIME, "0.35", 4, 5);
-    this->addKey(KEY_AT_HOLD_TIME, "0.35", 4, 5);
+    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5);
+    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5);
 #else
     this->addKey(KEY_MAX_BUTTON, 2, 2, false);
-    this->addKey(KEY_AT_MULTICLICK_TIME, "0.35", 4, 5, false);
-    this->addKey(KEY_AT_HOLD_TIME, "0.35", 4, 5, false);
+    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5, false);
+    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5, false);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
@@ -680,6 +680,12 @@ void SuplaConfigManager::deleteDeviceValues() {
 
 void SuplaConfigManager::deleteWifiSuplaAdminValues() {
   for (int i = KEY_WIFI_SSID; i <= KEY_SUPLA_EMAIL; i++) {
+    _options[i]->setValue("");
+  }
+}
+
+void SuplaConfigManager::deleteGPIODeviceValues() {
+  for (int i = KEY_GPIO; i <= KEY_GPIO + MAX_GPIO; i++) {
     _options[i]->setValue("");
   }
 }

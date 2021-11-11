@@ -83,7 +83,7 @@ void addDimmer(int8_t brightnessPin) {
 
 void chooseTemplateBoard(uint8_t board) {
   ConfigESP->clearEEPROM();
-  ConfigManager->deleteDeviceValues();
+  ConfigManager->deleteGPIODeviceValues();
 
   ConfigManager->set(KEY_BOARD, board);
   ConfigManager->set(KEY_MAX_BUTTON, "0");

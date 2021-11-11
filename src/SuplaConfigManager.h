@@ -253,6 +253,7 @@ class SuplaConfigManager {
   void deleteAllValues();
   void deleteDeviceValues();
   void deleteWifiSuplaAdminValues();
+  void deleteGPIODeviceValues();
 
   ConfigOption *get(uint8_t key);
   bool set(uint8_t key, int value);
