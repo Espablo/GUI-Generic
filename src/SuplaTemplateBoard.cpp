@@ -282,23 +282,23 @@ void chooseTemplateBoard(uint8_t board) {
     case BOARD_MINITIGER_1CH:
       addLedCFG(1);
       addButtonCFG(5);
-      addButton(5, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, true, false);
+      addButton(5, Supla::Event::ON_PRESS, Supla::Action::TOGGLE);
       addRelay(12);
       break;
     case BOARD_MINITIGER_2CH:
       addLedCFG(1);
       addButtonCFG(3);
-      addButton(3, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, true, false);
-      addButton(4, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, true, false);
+      addButton(3, Supla::Event::ON_PRESS, Supla::Action::TOGGLE);
+      addButton(4, Supla::Event::ON_PRESS, Supla::Action::TOGGLE);
       addRelay(13);
       addRelay(14);
       break;
     case BOARD_MINITIGER_3CH:
       addLedCFG(1);
       addButtonCFG(3);
-      addButton(3, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, true, false);
-      addButton(5, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, true, false);
-      addButton(4, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, true, false);
+      addButton(3, Supla::Event::ON_PRESS, Supla::Action::TOGGLE);
+      addButton(5, Supla::Event::ON_PRESS, Supla::Action::TOGGLE);
+      addButton(4, Supla::Event::ON_PRESS, Supla::Action::TOGGLE);
       addRelay(13);
       addRelay(12);
       addRelay(14);
