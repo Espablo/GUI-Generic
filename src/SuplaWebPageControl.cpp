@@ -290,7 +290,7 @@ void handleButtonSetMCP23017(int save) {
   if (!button.isEmpty())
     gpio = ConfigESP->getGpioMCP23017(button.toInt(), FUNCTION_BUTTON);
   else
-    gpio = ConfigESP->getGpioMCP23017(1, FUNCTION_BUTTON);
+    gpio = ConfigESP->getGpioMCP23017(0, FUNCTION_BUTTON);
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, button));
@@ -298,7 +298,7 @@ void handleButtonSetMCP23017(int save) {
   addForm(webContentBuffer, F("post"), getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, button));
 
   if (!button.isEmpty()) {
-    addFormHeader(webContentBuffer, String(S_BUTTON_NR_SETTINGS) + button.toInt());
+    addFormHeader(webContentBuffer, String(S_BUTTON_NR_SETTINGS) + (button.toInt() + 1));
   }
   else {
     addFormHeader(webContentBuffer, S_SETTINGS_FOR_BUTTONS);

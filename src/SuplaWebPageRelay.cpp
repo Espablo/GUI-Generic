@@ -343,7 +343,7 @@ void handleRelaySetMCP23017(int save) {
   if (!nr_relay.isEmpty())
     gpio = ConfigESP->getGpioMCP23017(nr_relay.toInt(), FUNCTION_RELAY);
   else
-    gpio = ConfigESP->getGpioMCP23017(1, FUNCTION_RELAY);
+    gpio = ConfigESP->getGpioMCP23017(0, FUNCTION_RELAY);
 
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
@@ -352,7 +352,7 @@ void handleRelaySetMCP23017(int save) {
   addForm(webContentBuffer, F("post"), getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER, nr_relay));
 
   if (!nr_relay.isEmpty()) {
-    addFormHeader(webContentBuffer, String(S_RELAY_NR_SETTINGS) + nr_relay.toInt());
+    addFormHeader(webContentBuffer, String(S_RELAY_NR_SETTINGS) + (nr_relay.toInt() + 1));
   }
   else {
     addFormHeader(webContentBuffer, S_SETTINGS_FOR_RELAYS);
@@ -426,14 +426,6 @@ void handleRelaySaveSetMCP23017() {
     if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
       input = INPUT_PUSHOVER_MESSAGE;
       ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, (nr_relay.toInt()), WebServer->httpServer->arg(input).c_str());
-    }
-#endif
-
-#if defined(SUPLA_PUSHOVER)
-    for (uint8_t i = 0; i <= MAX_PUSHOVER_MESSAGE; i++) {
-      input = INPUT_PUSHOVER_MESSAGE;
-      input += i;
-      ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, i, WebServer->httpServer->arg(input).c_str());
     }
 #endif
 
