@@ -73,6 +73,8 @@
 #define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Error de escritura: no se puede leer el archivo. Falta partición FS."
 #define S_DATA_SAVED_RESTART_MODULE                            "Datos guardados: reinicio de módulo."
 #define S_WRITE_ERROR_BAD_DATA                                 "Error de escritura: datos incorrectos."
+#define S_SETTINGS_FOR                                         "Ustawienie dla"
+#define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Ya iniciado"

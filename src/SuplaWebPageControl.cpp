@@ -97,9 +97,14 @@ void handleControlSave() {
 #endif
   }
 
-  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str(), "") != 0) {
+  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str(), "") != 0)
     ConfigManager->set(KEY_MAX_BUTTON, WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str());
-  }
+
+  if (strcmp(WebServer->httpServer->arg(INPUT_AT_MULTICLICK_TIME).c_str(), "") != 0)
+    ConfigManager->set(KEY_AT_MULTICLICK_TIME, WebServer->httpServer->arg(INPUT_AT_MULTICLICK_TIME).c_str());
+
+  if (strcmp(WebServer->httpServer->arg(INPUT_AT_HOLD_TIME).c_str(), "") != 0)
+    ConfigManager->set(KEY_AT_HOLD_TIME, WebServer->httpServer->arg(INPUT_AT_HOLD_TIME).c_str());
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -147,7 +152,14 @@ void handleControl(int save) {
     }
 #endif
   }
+  addFormHeaderEnd(webContentBuffer);
 
+  addFormHeader(webContentBuffer, String(S_SETTINGS_FOR) + S_SPACE + S_ACTION_TRIGGER);
+  String value = ConfigManager->get(KEY_AT_MULTICLICK_TIME)->getValue();
+  addNumberBox(webContentBuffer, INPUT_AT_MULTICLICK_TIME, "Multiclick[s]", "", true, value);
+
+  value = ConfigManager->get(KEY_AT_HOLD_TIME)->getValue();
+  addNumberBox(webContentBuffer, INPUT_AT_HOLD_TIME, "Hold[s]", "", true, value);
   addFormHeaderEnd(webContentBuffer);
 
   addButtonSubmit(webContentBuffer, S_SAVE);

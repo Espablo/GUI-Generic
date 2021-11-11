@@ -38,6 +38,9 @@
 #define INPUT_BUTTON_ACTION    "bta"
 #define INPUT_MAX_BUTTON       "mbt"
 
+#define INPUT_AT_MULTICLICK_TIME "iamt"
+#define INPUT_AT_HOLD_TIME       "iaht"
+
 void createWebPageControl();
 void handleControl(int save = 0);
 void handleControlSave();

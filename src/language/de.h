@@ -70,6 +70,8 @@
 #define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Schreibfehler: Datei kann nicht gelesen werden. FS-Partition fehlt."
 #define S_DATA_SAVED_RESTART_MODULE                            "Daten Gespeichert: Modul Neustart."
 #define S_WRITE_ERROR_BAD_DATA                                 "Schreibfehler - falsche Daten."
+#define S_SETTINGS_FOR                                         "Ustawienie dla"
+#define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Bereits gestartet"

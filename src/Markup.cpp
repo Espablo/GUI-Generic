@@ -172,13 +172,13 @@ void addNumberBox(String& html, const String& input_id, const String& name, cons
   html += F("</label><input name='");
   html += input_id;
   html += F("' type='number'");
-  if (placeholder != "") {
+  if (!placeholder.isEmpty()) {
     html += F(" placeholder='");
-    html += placeholder;
+    html += placeholder.c_str();
     html += F("'");
   }
   html += F(" step='0.01' value='");
-  html += value;
+  html += value.c_str();
   html += F("'");
 
   if (required) {

@@ -235,8 +235,12 @@ SuplaConfigManager::SuplaConfigManager() {
 
 #ifdef SUPLA_BUTTON
     this->addKey(KEY_MAX_BUTTON, "0", 2, 2);
+    this->addKey(KEY_AT_MULTICLICK_TIME, "0.35", 4, 5);
+    this->addKey(KEY_AT_HOLD_TIME, "0.35", 4, 5);
 #else
     this->addKey(KEY_MAX_BUTTON, 2, 2, false);
+    this->addKey(KEY_AT_MULTICLICK_TIME, "0.35", 4, 5, false);
+    this->addKey(KEY_AT_HOLD_TIME, "0.35", 4, 5, false);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
@@ -576,7 +580,9 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
 
         for (i = 0; i < _optionCount; i++) {
           if (_options[i]->getLoadKey()) {
-            _options[i]->setValue((const char *)(content + offset));
+            if (strcmp((const char *)(content + offset), "") != 0) {
+              _options[i]->setValue((const char *)(content + offset));
+            }
           }
           offset += _options[i]->getLength();
           delay(0);
@@ -617,7 +623,7 @@ uint8_t SuplaConfigManager::save() {
     if (configFile) {
       uint8_t *content = new uint8_t[length];
       for (i = 0; i < _optionCount; i++) {
-        if (_options[i]->getLoadKey()) {
+        if (_options[i]->getLoadKey() && strcmp(_options[i]->getValue(), "") != 0) {
           Serial.print(F("Save key: "));
           Serial.print(_options[i]->getKey());
           Serial.print(F(" Value: "));

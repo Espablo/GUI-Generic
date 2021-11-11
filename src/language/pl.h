@@ -71,6 +71,8 @@
 #define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Błąd zapisu - nie można odczytać pliku - brak partycji FS."
 #define S_DATA_SAVED_RESTART_MODULE                            "Dane zapisane - restart modułu."
 #define S_WRITE_ERROR_BAD_DATA                                 "Błąd zapisu - złe dane."
+#define S_SETTINGS_FOR                                         "Ustawienie dla"
+#define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Już zainicjalizowane"

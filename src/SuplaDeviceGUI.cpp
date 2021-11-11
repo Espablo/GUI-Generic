@@ -170,12 +170,15 @@ void addActionTriggerRelatedChannel(Supla::Control::Button *button, int eventBut
   auto at = new Supla::Control::ActionTrigger();
   button->setSwNoiseFilterDelay(100);
 
+  int muliclickTimeMs = String(ConfigManager->get(KEY_AT_MULTICLICK_TIME)->getValue()).toDouble() * 1000;
+  int holdTimeMs = String(ConfigManager->get(KEY_AT_HOLD_TIME)->getValue()).toDouble() * 1000;
+
   if (eventButton == Supla::ON_CHANGE) {
-    button->setMulticlickTime(350, true);
+    button->setMulticlickTime(muliclickTimeMs, true);
   }
   else {
-    button->setMulticlickTime(350);
-    button->setHoldTime(350);
+    button->setMulticlickTime(muliclickTimeMs);
+    button->setHoldTime(holdTimeMs);
   }
   if (element != NULL) {
     at->setRelatedChannel(element);
