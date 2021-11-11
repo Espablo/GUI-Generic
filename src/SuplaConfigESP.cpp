@@ -328,7 +328,6 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     return GPIO_VIRTUAL_RELAY;
   }
 
-  nr++;
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
     if (function == FUNCTION_CFG_BUTTON) {
@@ -337,7 +336,7 @@ int SuplaConfigESP::getGpio(int nr, int function) {
       }
     }
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
-      if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
+      if (ConfigManager->get(key)->getElement(NR).toInt() == (nr + 1)) {
         return gpio;
       }
     }
@@ -579,10 +578,10 @@ bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t fun
     uint8_t key = KEY_GPIO + gpio;
     uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
 
-    if (nr <= 16)
-      address = ConfigESP->getAdressMCP23017(1, function);
-    if (nr >= 17)
-      address = ConfigESP->getAdressMCP23017(17, function);
+    if (nr < 16)
+      address = ConfigESP->getAdressMCP23017(0, function);
+    else
+      address = ConfigESP->getAdressMCP23017(16, function);
 
     if (address == OFF_GPIO_MCP23017) {
       return true;

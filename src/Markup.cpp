@@ -141,7 +141,7 @@ void addCheckBox(String& html, const String& input_id, const String& name, bool 
   html += F("</label><input type='checkbox' name='");
   html += input_id;
   html += F("'");
-if (checked) {
+  if (checked) {
     html += F(" checked");
   }
   html += F("></i>");
@@ -317,7 +317,7 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
     else
       addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 1"), MCP23017_P, 5, address);
   }
-  if (nr == 17) {
+  if (nr == 16) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
       addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 2"), MCP23017_P, 5, address, url);
@@ -330,15 +330,15 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
   if (!url.isEmpty()) {
     html += F("<a href='");
     html += getParameterRequest(url, ARG_PARM_NUMBER);
-    if (nr > 0) {
-      html += nr;
-    }
+    html += nr;
     html += F("'>");
 
-    if (nr > 0) {
-      html += nr;
-      html += F(".");
-    }
+    if (nr < 16)
+      html += nr + 1;
+    else
+      html += nr - 15;
+
+    html += F(".");
 
     html += F(" ");
     html += name;
@@ -347,10 +347,11 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
     WebServer->sendHeader();
   }
   else {
-    if (nr > 0) {
-      html += nr;
-      html += F(".");
-    }
+    if (nr < 16)
+      html += nr + 1;
+    else
+      html += nr - 15;
+    html += F(".");
     html += F(" ");
     html += name;
   }

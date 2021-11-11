@@ -253,44 +253,42 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
     return true;
   }
 
-  if (nr <= 16)
-    _address = WebServer->httpServer->arg(String(INPUT_ADRESS_MCP23017) + 1).toInt();
-  if (nr >= 17)
-    _address = WebServer->httpServer->arg(String(INPUT_ADRESS_MCP23017) + 17).toInt();
+  if (nr < 16)
+    _address = WebServer->httpServer->arg(String(INPUT_ADRESS_MCP23017) + 0).toInt();
+  else
+    _address = WebServer->httpServer->arg(String(INPUT_ADRESS_MCP23017) + 16).toInt();
 
   gpio = ConfigESP->getGpioMCP23017(nr, function);
   _gpio = WebServer->httpServer->arg(input).toInt();
 
-  if ((nr == 1 || nr == 17) && _gpio == OFF_GPIO_MCP23017 && _address != OFF_ADDRESS_MCP23017)
+  if ((nr == 0 || nr == 16) && _gpio == OFF_GPIO_MCP23017 && _address != OFF_ADDRESS_MCP23017)
     return false;
 
   key = KEY_GPIO + _gpio;
   _function = ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(_address)).toInt();
   _nr = ConfigManager->get(key)->getElement(ConfigESP->getNrMCP23017(_address)).toInt();
 
-  if (_gpio == OFF_GPIO_MCP23017 || _address == OFF_ADDRESS_MCP23017)
+  if (_gpio == OFF_GPIO_MCP23017 || _address == OFF_ADDRESS_MCP23017) {
     ConfigESP->clearGpioMCP23017(gpio, nr, function);
-
-  if (_gpio != OFF_GPIO_MCP23017 && _address != OFF_ADDRESS_MCP23017) {
-    if (_function == FUNCTION_OFF && _nr == FUNCTION_OFF) {
-      ConfigESP->clearGpioMCP23017(gpio, nr, function);
-      ConfigESP->clearGpioMCP23017(_gpio, nr, function);
-      ConfigESP->setGpioMCP23017(_gpio, _address, nr, function);
+  }
+  else if (_function == FUNCTION_OFF) {
+    ConfigESP->clearGpioMCP23017(gpio, nr, function);
+    ConfigESP->clearGpioMCP23017(_gpio, nr, function);
+    ConfigESP->setGpioMCP23017(_gpio, _address, nr, function);
 #ifdef SUPLA_ROLLERSHUTTER
-      if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr) {
-        if (nr % 2 == 0) {
-          ConfigESP->setEvent(_gpio, Supla::Event::ON_PRESS);
-          ConfigESP->setAction(_gpio, Supla::GUI::ActionRolleShutter::OPEN_OR_CLOSE);
-        }
+    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr) {
+      if (nr % 2 == 0) {
+        ConfigESP->setEvent(_gpio, Supla::Event::ON_PRESS);
+        ConfigESP->setAction(_gpio, Supla::GUI::ActionRolleShutter::OPEN_OR_CLOSE);
       }
+    }
 #endif
-    }
-    else if (gpio == _gpio && function == _function && nr == _nr) {
-      ConfigESP->setGpioMCP23017(_gpio, _address, nr, function);
-    }
-    else {
-      return false;
-    }
+  }
+  else if (gpio == _gpio && function == _function && nr == _nr) {
+    ConfigESP->setGpioMCP23017(_gpio, _address, nr, function);
+  }
+  else {
+    return false;
   }
   return true;
 }
