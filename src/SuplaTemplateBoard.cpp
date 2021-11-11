@@ -155,7 +155,7 @@ void chooseTemplateBoard(uint8_t board) {
     case BOARD_SONOFF_MINI:
       addLedCFG(13);
       addButtonCFG(4);
-      addButton(4, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, true, false);
+      addButton(4, Supla::Event::ON_PRESS, Supla::Action::TOGGLE);
       addRelay(12);
       break;
     case BOARD_SONOFF_DUAL_R2:
