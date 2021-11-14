@@ -17,6 +17,223 @@
 #include "SuplaTemplateBoard.h"
 #include "SuplaDeviceGUI.h"
 
+#ifdef SUPLA_TEMPLATE_BOARD_JSON
+namespace Supla {
+namespace TanplateBoard {
+
+void chooseTemplateBoard(String board) {
+  ConfigESP->clearEEPROM();
+  ConfigManager->deleteGPIODeviceValues();
+
+  ConfigManager->set(KEY_MAX_BUTTON, "0");
+  ConfigManager->set(KEY_MAX_RELAY, "0");
+  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
+  ConfigManager->set(KEY_MAX_RGBW, "0");
+  ConfigManager->set(KEY_CFG_MODE, CONFIG_MODE_10_ON_PRESSES);
+
+  const size_t capacity = JSON_ARRAY_SIZE(13) + JSON_OBJECT_SIZE(4) + 80;
+  DynamicJsonBuffer jsonBuffer(capacity);
+
+  JsonObject& root = jsonBuffer.parseObject(board);
+
+  String name = root["NAME"];
+  ConfigManager->set(KEY_HOST_NAME, name.c_str());
+
+  int version = root["VERSION"];
+
+  Serial.println(name);
+  Serial.println(version);
+
+  JsonArray& GPIO = root["GPIO"];
+
+  for (size_t i = 0; i <= 12; i++) {
+    int gpioJSON = (int)GPIO[i];
+    int gpio = getGPIO(i);
+
+    if (version == 1) {
+      switch (gpioJSON) {
+        case Relay::Relay1 + Shift::Relay:
+        case Relay::Relay2 + Shift::Relay:
+        case Relay::Relay3 + Shift::Relay:
+        case Relay::Relay4 + Shift::Relay:
+          gpioJSON = gpioJSON - Shift::Relay;
+          break;
+
+        case RelayInverted::Relay1i + Shift::Relayi:
+        case RelayInverted::Relay2i + Shift::Relayi:
+        case RelayInverted::Relay3i + Shift::Relayi:
+        case RelayInverted::Relay4i + Shift::Relayi:
+          gpioJSON = gpioJSON - Shift::Relayi;
+          break;
+
+        case Button::Button1 + Shift::Button:
+        case Button::Button2 + Shift::Button:
+        case Button::Button3 + Shift::Button:
+        case Button::Button4 + Shift::Button:
+          gpioJSON = gpioJSON - Shift::Button;
+          break;
+
+        case ButtonNoPullupResistor::Button1n + Shift::Buttonn:
+        case ButtonNoPullupResistor::Button2n + Shift::Buttonn:
+        case ButtonNoPullupResistor::Button3n + Shift::Buttonn:
+        case ButtonNoPullupResistor::Button4n + Shift::Buttonn:
+          gpioJSON = gpioJSON - Shift::Buttonn;
+          break;
+
+        case Led::Led1 + Shift::Led:
+        case Led::Led2 + Shift::Led:
+        case Led::Led3 + Shift::Led:
+        case Led::Led4 + Shift::Led:
+          gpioJSON = gpioJSON - Shift::Led;
+          break;
+
+        case LedInverted::Led1i + Shift::Ledi:
+        case LedInverted::Led2i + Shift::Ledi:
+        case LedInverted::Led3i + Shift::Ledi:
+        case LedInverted::Led4i + Shift::Ledi:
+          gpioJSON = gpioJSON - Shift::Ledi;
+          break;
+      }
+    }
+
+    switch (gpioJSON) {
+      case General::None:
+        break;
+      case General::Users:
+        break;
+
+      case Relay::Relay1:
+        Supla::TanplateBoard::addRelay(0, gpio);
+        break;
+      case Relay::Relay2:
+        Supla::TanplateBoard::addRelay(1, gpio);
+        break;
+      case Relay::Relay3:
+        Supla::TanplateBoard::addRelay(2, gpio);
+        break;
+      case Relay::Relay4:
+        Supla::TanplateBoard::addRelay(3, gpio);
+        break;
+
+      case RelayInverted::Relay1i:
+        Supla::TanplateBoard::addRelay(0, gpio, LOW);
+        break;
+      case RelayInverted::Relay2i:
+        Supla::TanplateBoard::addRelay(1, gpio, LOW);
+        break;
+      case RelayInverted::Relay3i:
+        Supla::TanplateBoard::addRelay(2, gpio, LOW);
+        break;
+      case RelayInverted::Relay4i:
+        Supla::TanplateBoard::addRelay(3, gpio, LOW);
+        break;
+
+      case Button::Button1:
+        Supla::TanplateBoard::addButton(0, gpio);
+        Supla::TanplateBoard::addButtonCFG(gpio);
+        break;
+      case Button::Button2:
+        Supla::TanplateBoard::addButton(1, gpio);
+        break;
+      case Button::Button3:
+        Supla::TanplateBoard::addButton(2, gpio);
+        break;
+      case Button::Button4:
+        Supla::TanplateBoard::addButton(3, gpio);
+        break;
+
+      case ButtonNoPullupResistor::Button1n:
+        Supla::TanplateBoard::addButton(0, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
+        Supla::TanplateBoard::addButtonCFG(gpio);
+        break;
+      case ButtonNoPullupResistor::Button2n:
+        Supla::TanplateBoard::addButton(1, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
+        break;
+      case ButtonNoPullupResistor::Button3n:
+        Supla::TanplateBoard::addButton(2, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
+        break;
+      case ButtonNoPullupResistor::Button4n:
+        Supla::TanplateBoard::addButton(3, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
+        break;
+
+      case Led::Led1:
+        // pierwszy led przeznaczony jest dla LED konfiguracyjnego
+        Supla::TanplateBoard::addLedCFG(gpio);
+        break;
+      case Led::Led2:
+        Supla::TanplateBoard::addLed(0, gpio);
+        break;
+      case Led::Led3:
+        Supla::TanplateBoard::addLed(1, gpio);
+        break;
+      case Led::Led4:
+        Supla::TanplateBoard::addLed(2, gpio);
+        break;
+
+      case LedInverted::Led1i:
+        Supla::TanplateBoard::addLedCFG(gpio, LOW);
+        break;
+      case LedInverted::Led2i:
+        Supla::TanplateBoard::addLed(1, gpio, LOW);
+        break;
+      case LedInverted::Led3i:
+        Supla::TanplateBoard::addLed(2, gpio, LOW);
+        break;
+      case LedInverted::Led4i:
+        Supla::TanplateBoard::addLed(3, gpio, LOW);
+        break;
+
+      default:
+        Serial.print("Brak funkcji: ");
+        Serial.println(gpioJSON);
+    }
+  }
+}
+
+uint8_t getGPIO(uint8_t gpio) {
+  if (gpio == 6 || gpio == 7)
+    gpio = gpio + 3;
+  else if (gpio >= 8)
+    gpio = gpio + 4;
+
+  return gpio;
+}
+
+void addButton(uint8_t nr, uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
+  ConfigESP->setEvent(gpio, event);
+  ConfigESP->setAction(gpio, action);
+  ConfigESP->setPullUp(gpio, pullUp);
+  ConfigESP->setInversed(gpio, invertLogic);
+
+  ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
+  ConfigManager->set(KEY_MAX_BUTTON, nr + 1);
+}
+
+void addRelay(uint8_t nr, uint8_t gpio, uint8_t level) {
+  ConfigESP->setLevel(gpio, level);
+  ConfigESP->setMemory(gpio, MEMORY_RELAY_RESTORE);
+
+  ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY);
+  ConfigManager->set(KEY_MAX_RELAY, nr + 1);
+}
+
+void addLedCFG(uint8_t gpio, uint8_t level) {
+  ConfigESP->setLevel(gpio, level);
+  ConfigESP->setGpio(gpio, FUNCTION_CFG_LED);
+}
+
+void addLed(uint8_t nr, uint8_t gpio, uint8_t level) {
+  ConfigESP->setInversed(gpio, level);
+  ConfigESP->setGpio(gpio, nr, FUNCTION_LED);
+}
+
+void addButtonCFG(uint8_t gpio) {
+  ConfigESP->setGpio(gpio, FUNCTION_CFG_BUTTON);
+}
+
+}  // namespace TanplateBoard
+}  // namespace Supla
+#else
 void addButton(uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
 
@@ -305,3 +522,4 @@ void chooseTemplateBoard(uint8_t board) {
       break;
   }
 }
+#endif

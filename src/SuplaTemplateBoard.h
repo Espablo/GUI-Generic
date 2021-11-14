@@ -23,6 +23,91 @@
 #include <pgmspace.h>
 #include "GUIGenericCommon.h"
 
+#ifdef SUPLA_TEMPLATE_BOARD_JSON
+#include <ArduinoJson.h>
+enum General
+{
+  None = 0,
+  Users = 255
+};
+
+enum Shift
+{
+  Relay = 203,
+  Relayi = 227,
+  Button = 15,
+  Buttonn = -26,
+  Led = 263,
+  Ledi = 264
+};
+
+enum Relay
+{
+  Relay1 = 21,
+  Relay2,
+  Relay3,
+  Relay4
+};
+
+enum RelayInverted
+{
+  Relay1i = 29,
+  Relay2i,
+  Relay3i,
+  Relay4i
+};
+
+enum Button
+{
+  Button1 = 17,
+  Button2,
+  Button3,
+  Button4
+};
+
+enum ButtonNoPullupResistor
+{
+  Button1n = 90,
+  Button2n,
+  Button3n,
+  Button4n
+};
+
+enum Led
+{
+  Led1 = 52,
+  Led2,
+  Led3,
+  Led4
+};
+
+enum LedInverted
+{
+  Led1i = 56,
+  Led2i,
+  Led3i,
+  Led4i
+};
+
+namespace Supla {
+namespace TanplateBoard {
+void chooseTemplateBoard(String board);
+uint8_t getGPIO(uint8_t gpio);
+
+void addButton(uint8_t nr,
+               uint8_t gpio,
+               uint8_t event = Supla::Event::ON_PRESS,
+               uint8_t action = Supla::Action::TOGGLE,
+               bool pullUp = true,
+               bool invertLogic = true);
+void addRelay(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
+void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
+void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
+void addButtonCFG(uint8_t gpio);
+}  // namespace TanplateBoard
+}  // namespace Supla
+
+#else
 #define BOARD_OFF              0
 #define BOARD_ELECTRODRAGON    1
 #define BOARD_INCAN3           2
@@ -137,5 +222,5 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t brightnessPin);
 void addDimmer(int8_t brightnessPin);
 void chooseTemplateBoard(uint8_t board);
-
+#endif
 #endif  // SuplaTemplateBoard_h
