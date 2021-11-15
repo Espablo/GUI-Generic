@@ -239,14 +239,6 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_MAX_BUTTON, 2, 2, false);
 #endif
 
-#ifdef SUPLA_ACTION_TRIGGER
-    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5);
-    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5);
-#else
-    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5, false);
-    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5, false);
-#endif
-
 #ifdef SUPLA_LIMIT_SWITCH
     this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2, 2);
 #else
@@ -393,6 +385,14 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, 4, false);
     this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, 4, false);
     this->addKey(KEY_RF_BRIDGE_REPEAT, MAX_BRIDGE_RF * 2, 4, false);
+#endif
+
+#ifdef SUPLA_ACTION_TRIGGER
+    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5);
+    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5);
+#else
+    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5, false);
+    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5, false);
 #endif
 
     SPIFFS.end();
@@ -635,7 +635,7 @@ uint8_t SuplaConfigManager::save() {
           memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
         }
         else {
-          memcpy(content + offset, "", _options[i]->getLength());
+          content[offset] = 0;
         }
         offset += _options[i]->getLength();
         delay(0);
