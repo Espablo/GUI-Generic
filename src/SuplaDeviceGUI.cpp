@@ -134,7 +134,7 @@ void addButtonToRelay(uint8_t nr) {
 
     int size = relay.size() - 1;
     button->addAction(ConfigESP->getAction(pinButton), relay[size], ConfigESP->getEvent(pinButton));
-    button->setSwNoiseFilterDelay(100);
+    button->setSwNoiseFilterDelay(50);
     addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[size]);
   }
 }
