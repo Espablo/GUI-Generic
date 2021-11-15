@@ -247,12 +247,14 @@
 			"defOn": false,
 			"depOn": [
 				"SUPLA_ROLLERSHUTTER",
-				"SUPLA_RGBW"
+				"SUPLA_RGBW",
+				"SUPLA_ACTION_TRIGGER"
 			],
 			"depOff": [
 				"SUPLA_RELAY",
 				"SUPLA_ROLLERSHUTTER",
-				"SUPLA_RGBW"
+				"SUPLA_RGBW",
+				"SUPLA_ACTION_TRIGGER"
 			],
 			"en": {
 				"name": "Buttons",
@@ -274,9 +276,6 @@
 		"SUPLA_ACTION_TRIGGER": {
 			"name": "Wyzwalacze akcji",
 			"defOn": false,
-			"depOn": [
-				"SUPLA_BUTTON"
-			],
 			"en": {
 				"name": "Action Trigger"
 			},
