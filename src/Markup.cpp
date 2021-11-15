@@ -75,9 +75,9 @@ void addTextBox(String& html,
   }
 
   html += F("' value='");
-  // if (value != placeholder) {
-  html += value;
-  // }
+  if (value != placeholder) {
+    html += value;
+  }
 
   if (placeholder != "") {
     html += F("' placeholder='");
