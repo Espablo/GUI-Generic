@@ -24,6 +24,7 @@ namespace TanplateBoard {
 void chooseTemplateBoard(String board) {
   ConfigESP->clearEEPROM();
   ConfigManager->deleteGPIODeviceValues();
+  templateBoardWarning = "";
 
   ConfigManager->set(KEY_MAX_BUTTON, "0");
   ConfigManager->set(KEY_MAX_RELAY, "0");
@@ -86,12 +87,28 @@ void chooseTemplateBoard(String board) {
         case Led::Led4 + Shift::Led:
           gpioJSON = gpioJSON - Shift::Led;
           break;
+        case Led::LedLink + 387:
+          gpioJSON = gpioJSON - 387;
+          break;
 
         case LedInverted::Led1i + Shift::Ledi:
         case LedInverted::Led2i + Shift::Ledi:
         case LedInverted::Led3i + Shift::Ledi:
         case LedInverted::Led4i + Shift::Ledi:
           gpioJSON = gpioJSON - Shift::Ledi;
+          break;
+        case LedInverted::LedLinki + 418:
+          gpioJSON = gpioJSON - 418;
+          break;
+
+        case Energy::BL0937CF + 2586:
+          gpioJSON = gpioJSON - 2586;
+          break;
+        case Energy::HLWBLCF1 + 2524:
+          gpioJSON = gpioJSON - 2524;
+          break;
+        case Energy::HLWBLSELi + 2493:
+          gpioJSON = gpioJSON - 2493;
           break;
       }
     }
@@ -169,6 +186,9 @@ void chooseTemplateBoard(String board) {
       case Led::Led4:
         Supla::TanplateBoard::addLed(2, gpio);
         break;
+      case Led::LedLink:
+        Supla::TanplateBoard::addLed(0, gpio);
+        break;
 
       case LedInverted::Led1i:
         Supla::TanplateBoard::addLedCFG(gpio, LOW);
@@ -182,10 +202,22 @@ void chooseTemplateBoard(String board) {
       case LedInverted::Led4i:
         Supla::TanplateBoard::addLed(3, gpio, LOW);
         break;
+      case LedInverted::LedLinki:
+        Supla::TanplateBoard::addLed(0, gpio, LOW);
+        break;
+
+      case Energy::BL0937CF:
+        ConfigESP->setGpio(gpio, FUNCTION_CF);
+        break;
+      case Energy::HLWBLCF1:
+        ConfigESP->setGpio(gpio, FUNCTION_CF1);
+        break;
+      case Energy::HLWBLSELi:
+        ConfigESP->setGpio(gpio, FUNCTION_SEL);
+        break;
 
       default:
-        Serial.print("Brak funkcji: ");
-        Serial.println(gpioJSON);
+        templateBoardWarning += F("Brak funkcji: ") + String(gpioJSON) + F("<br>");
     }
   }
 }
@@ -230,6 +262,8 @@ void addLed(uint8_t nr, uint8_t gpio, uint8_t level) {
 void addButtonCFG(uint8_t gpio) {
   ConfigESP->setGpio(gpio, FUNCTION_CFG_BUTTON);
 }
+
+String templateBoardWarning;
 
 }  // namespace TanplateBoard
 }  // namespace Supla

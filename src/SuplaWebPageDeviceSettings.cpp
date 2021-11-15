@@ -39,6 +39,11 @@ void handleDeviceSettings(int save) {
   addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
   addFormHeader(webContentBuffer, S_DEFAULT_TEMPLATE_BOARD);
   addTextBox(webContentBuffer, INPUT_BOARD, F("JSON"), F(""), 0, 100, false);
+  webContentBuffer += F("<style>input[name='board']{padding-left: 48px;width: calc(100% - 52px);}</style>");
+  webContentBuffer += F("<p style='color:#000;'>");
+  webContentBuffer += Supla::TanplateBoard::templateBoardWarning;
+  Supla::TanplateBoard::templateBoardWarning = "";
+  webContentBuffer += F("</p>");
   addFormHeaderEnd(webContentBuffer);
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);

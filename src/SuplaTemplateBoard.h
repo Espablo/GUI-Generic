@@ -25,6 +25,7 @@
 
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
 #include <ArduinoJson.h>
+
 enum General
 {
   None = 0,
@@ -78,7 +79,8 @@ enum Led
   Led1 = 52,
   Led2,
   Led3,
-  Led4
+  Led4,
+  LedLink = 157
 };
 
 enum LedInverted
@@ -86,7 +88,16 @@ enum LedInverted
   Led1i = 56,
   Led2i,
   Led3i,
-  Led4i
+  Led4i,
+  LedLinki = 158
+};
+
+enum Energy
+{
+  HLWBLSELi = 131,
+  HLWBLCF1 = 132,
+  BL0937CF = 134
+
 };
 
 namespace Supla {
@@ -104,6 +115,8 @@ void addRelay(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
 void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addButtonCFG(uint8_t gpio);
+
+extern String templateBoardWarning;
 }  // namespace TanplateBoard
 }  // namespace Supla
 
