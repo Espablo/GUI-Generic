@@ -235,10 +235,14 @@ SuplaConfigManager::SuplaConfigManager() {
 
 #ifdef SUPLA_BUTTON
     this->addKey(KEY_MAX_BUTTON, "0", 2, 2);
+#else
+    this->addKey(KEY_MAX_BUTTON, 2, 2, false);
+#endif
+
+#ifdef SUPLA_ACTION_TRIGGER
     this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5);
     this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5);
 #else
-    this->addKey(KEY_MAX_BUTTON, 2, 2, false);
     this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5, false);
     this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5, false);
 #endif

@@ -135,12 +135,14 @@ void addButtonToRelay(uint8_t nr) {
     int size = relay.size() - 1;
     button->addAction(ConfigESP->getAction(pinButton), relay[size], ConfigESP->getEvent(pinButton));
     button->setSwNoiseFilterDelay(50);
+#ifdef SUPLA_ACTION_TRIGGER
     addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[size]);
+#endif
   }
 }
 #endif
 
-#ifdef SUPLA_BUTTON
+#ifdef SUPLA_ACTION_TRIGGER
 void addButtonActionTrigger(uint8_t nr) {
   uint8_t pinRelay, pinButton;
 
@@ -166,6 +168,7 @@ void addButtonActionTrigger(uint8_t nr) {
 }
 #endif
 
+#ifdef SUPLA_ACTION_TRIGGER
 void addActionTriggerRelatedChannel(Supla::Control::Button *button, int eventButton, Supla::Element *element) {
   auto at = new Supla::Control::ActionTrigger();
   button->setSwNoiseFilterDelay(100);
@@ -185,6 +188,7 @@ void addActionTriggerRelatedChannel(Supla::Control::Button *button, int eventBut
   }
   at->attach(button);
 }
+#endif
 
 #if defined(SUPLA_RF_BRIDGE)
 void addRelayBridge(uint8_t nr) {
@@ -379,7 +383,9 @@ void addRolleShutter(uint8_t nr) {
 
   if (pinButtonUp != OFF_GPIO && actionButtonUp == Supla::Action::STEP_BY_STEP) {
     auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
+#ifdef SUPLA_ACTION_TRIGGER
     addActionTriggerRelatedChannel(RollerShutterButtonOpen, eventButtonUp, RollerShutterRelay);
+#endif
 
     RollerShutterButtonOpen->addAction(actionButtonUp, RollerShutterRelay, eventButtonUp);
   }
@@ -387,8 +393,10 @@ void addRolleShutter(uint8_t nr) {
     auto RollerShutterButtonOpen = new Supla::Control::Button(pinButtonUp, pullupButtonUp, inversedButtonUp);
     auto RollerShutterButtonClose = new Supla::Control::Button(pinButtonDown, pullupButtonDown, inversedButtonDown);
 
+#ifdef SUPLA_ACTION_TRIGGER
     addActionTriggerRelatedChannel(RollerShutterButtonOpen, eventButtonUp, RollerShutterRelay);
     addActionTriggerRelatedChannel(RollerShutterButtonClose, eventButtonUp, RollerShutterRelay);
+#endif
 
     if (eventButtonUp == Supla::Event::ON_CHANGE) {
       RollerShutterButtonOpen->addAction(actionButtonUp, RollerShutterRelay, Supla::Event::ON_PRESS);

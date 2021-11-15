@@ -165,11 +165,10 @@ void addRelay(uint8_t nr);
 void addButtonToRelay(uint8_t nr);
 #endif
 
-#ifdef SUPLA_BUTTON
+#ifdef SUPLA_ACTION_TRIGGER
 void addButtonActionTrigger(uint8_t nr);
-#endif
-
 void addActionTriggerRelatedChannel(Supla::Control::Button *button, int eventButton, Supla::Element *element);
+#endif
 
 #if defined(SUPLA_RF_BRIDGE)
 void addRelayBridge(uint8_t nr);

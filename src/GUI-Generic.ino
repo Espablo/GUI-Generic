@@ -421,7 +421,7 @@ void setup() {
   }
 #endif
 
-#ifdef SUPLA_BUTTON
+#ifdef SUPLA_ACTION_TRIGGER
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
     Supla::GUI::addButtonActionTrigger(nr);
   }

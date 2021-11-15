@@ -100,11 +100,13 @@ void handleControlSave() {
   if (strcmp(WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str(), "") != 0)
     ConfigManager->set(KEY_MAX_BUTTON, WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str());
 
+#ifdef SUPLA_ACTION_TRIGGER
   if (strcmp(WebServer->httpServer->arg(INPUT_AT_MULTICLICK_TIME).c_str(), "") != 0)
     ConfigManager->set(KEY_AT_MULTICLICK_TIME, WebServer->httpServer->arg(INPUT_AT_MULTICLICK_TIME).c_str());
 
   if (strcmp(WebServer->httpServer->arg(INPUT_AT_HOLD_TIME).c_str(), "") != 0)
     ConfigManager->set(KEY_AT_HOLD_TIME, WebServer->httpServer->arg(INPUT_AT_HOLD_TIME).c_str());
+#endif
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
@@ -152,6 +154,8 @@ void handleControl(int save) {
     }
 #endif
   }
+
+#ifdef SUPLA_ACTION_TRIGGER
   addFormHeaderEnd(webContentBuffer);
 
   addFormHeader(webContentBuffer, String(S_SETTINGS_FOR) + S_SPACE + S_ACTION_TRIGGER);
@@ -161,6 +165,7 @@ void handleControl(int save) {
   value = ConfigManager->get(KEY_AT_HOLD_TIME)->getValue();
   addNumberBox(webContentBuffer, INPUT_AT_HOLD_TIME, "Hold[s]", "", true, value);
   addFormHeaderEnd(webContentBuffer);
+#endif
 
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
