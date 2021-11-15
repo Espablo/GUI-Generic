@@ -45,7 +45,7 @@ void handleDeviceSettings(int save) {
   Supla::TanplateBoard::templateBoardWarning = "";
   webContentBuffer += F("</p>");
   addFormHeaderEnd(webContentBuffer);
-  addButtonSubmit(webContentBuffer, S_SAVE);
+  addButtonSubmit(webContentBuffer, S_LOAD_CONFIGURATION);
   addFormEnd(webContentBuffer);
 #else
 #if (DEFAULT_TEMPLATE_BOARD == BOARD_OFF)
