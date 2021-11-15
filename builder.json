@@ -275,6 +275,7 @@
 		},
 		"SUPLA_ACTION_TRIGGER": {
 			"name": "Wyzwalacze akcji",
+			"desc": "Pozwalają na wykonanie dowolnej akcji na dowolnym posiadanym przez Ciebie urządzeniu.",
 			"defOn": false,
 			"en": {
 				"name": "Action Trigger"
