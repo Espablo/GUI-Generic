@@ -42,7 +42,6 @@ void handleDeviceSettings(int save) {
   webContentBuffer += F("<style>input[name='board']{padding-left: 48px;width: calc(100% - 52px);}</style>");
   webContentBuffer += F("<p style='color:#000;'>");
   webContentBuffer += Supla::TanplateBoard::templateBoardWarning;
-  Supla::TanplateBoard::templateBoardWarning = "";
   webContentBuffer += F("</p>");
   addFormHeaderEnd(webContentBuffer);
   addButtonSubmit(webContentBuffer, S_LOAD_CONFIGURATION);
