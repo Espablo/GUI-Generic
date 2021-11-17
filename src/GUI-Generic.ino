@@ -445,7 +445,9 @@ void setup() {
   }
 #endif
 
+#if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
   Supla::GUI::addCorrectionSensor();
+#endif
 
 #ifdef ARDUINO_ARCH_ESP8266
   // https://github.com/esp8266/Arduino/issues/2070#issuecomment-258660760

@@ -220,7 +220,9 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t s
 void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
 void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
 
+#if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
 void addCorrectionSensor();
+#endif
 
 #ifdef SUPLA_HLW8012
 extern Supla::Sensor::HLW_8012 *counterHLW8012;

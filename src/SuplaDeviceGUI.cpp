@@ -565,9 +565,9 @@ void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, 
         strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-      Serial.println("addConditionsTurnON - ElectricityMeter");
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
+     // Serial.println("addConditionsTurnON - ElectricityMeter");
+     // Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+     // Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
       // client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
@@ -595,9 +595,9 @@ void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client,
         strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-      Serial.println("addConditionsTurnOFF - ElectricityMeter");
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
+     // Serial.println("addConditionsTurnOFF - ElectricityMeter");
+     // Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+     // Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
       //   client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
@@ -618,6 +618,7 @@ void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client,
 #endif
 }
 
+#if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
 void addCorrectionSensor() {
   double correction;
 
@@ -640,6 +641,7 @@ void addCorrectionSensor() {
     }
   }
 }
+#endif
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER)
 std::vector<Supla::Control::Relay *> relay;
