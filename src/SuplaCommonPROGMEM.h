@@ -323,6 +323,7 @@ enum conditioningType
   TOTAL_POWER_ACTIVE
 };
 
+#ifdef SUPLA_CONDITIONS
 const char CONDITIONING_HEATING[] PROGMEM = S_ON_CH_VAL_OFF_HEATING;
 const char CONDITIONING_COOLING[] PROGMEM = S_ON_CH_VAL_OFF_COOLING;
 const char CONDITIONING_MOISTURIZING[] PROGMEM = S_ON_2CH_VAL_OFF_HUMIDIFICATION;
@@ -336,206 +337,120 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
     CONDITIONING_HEATING,       CONDITIONING_COOLING,           CONDITIONING_MOISTURIZING, CONDITIONING_DRAINGE, CONDITIONING_TOTAL_POWER_APPARENT,
     CONDITIONING_TOTAL_CURRENT, CONDITIONING_TOTAL_POWER_ACTIVE};
 
+const char* const SENSOR_LIST_P[] PROGMEM = {
+    OFF,
+#ifdef SUPLA_DS18B20
+    S_DS18B20,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_DHT11
+    S_DHT11,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_DHT22
+    S_DHT22,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_SI7021_SONOFF
+    S_SI7021_SONOFF,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_HC_SR04
+
+    S_HC_SR04,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_BME280
+    S_BME280,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_SHT3x
+    S_SHT3X,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_SI7021
+    S_SI702,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_MAX6675
+    S_MAX6675,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_NTC_10K
+    S_NTC_10K,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_BMP280
+    S_BMP280,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_MPX_5XXX
+    S_MPX_5XXX,
+    S_MPX_5XXX_PERCENT,
+#else
+    S_EMPTY, S_EMPTY,
+#endif
+#ifdef SUPLA_ANALOG_READING_MAP
+    "ANALOG READING",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_VL53L0X
+    "VL53L0X",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
+    "Direct Links Temp",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_HDC1080
+    "HDC1080",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_HLW8012
+    "HLW8012",
+#else
+    S_EMPTY,
+#endif
+};
+#endif
+
 enum sensorList
 {
-  NO_SENSORS = 0
-#ifdef SUPLA_DS18B20
-  ,
-  SENSOR_DS18B20
-#endif
-#ifdef SUPLA_DHT11
-  ,
-  SENSOR_DHT11
-#endif
-#ifdef SUPLA_DHT22
-  ,
-  SENSOR_DHT22
-#endif
-#ifdef SUPLA_SI7021_SONOFF
-  ,
-  SENSOR_SI7021_SONOFF
-#endif
-#ifdef SUPLA_HC_SR04
-  ,
-  SENSOR_HC_SR04
-#endif
-#ifdef SUPLA_BME280
-  ,
-  SENSOR_BME280
-#endif
-#ifdef SUPLA_SHT3x
-  ,
-  SENSOR_SHT3x
-#endif
-#ifdef SUPLA_SI7021
-  ,
-  SENSOR_SI7021
-#endif
-#ifdef SUPLA_MAX6675
-  ,
-  SENSOR_MAX6675
-#endif
-#ifdef SUPLA_NTC_10K
-  ,
-  SENSOR_NTC_10K
-#endif
-#ifdef SUPLA_BMP280
-  ,
-  SENSOR_BMP280
-#endif
-#ifdef SUPLA_MPX_5XXX
-  ,
+  NO_SENSORS = 0,
+  SENSOR_DS18B20,
+  SENSOR_DHT11,
+  SENSOR_DHT22,
+  SENSOR_SI7021_SONOFF,
+  SENSOR_HC_SR04,
+  SENSOR_BME280,
+  SENSOR_SHT3x,
+  SENSOR_SI7021,
+  SENSOR_MAX6675,
+  SENSOR_NTC_10K,
+  SENSOR_BMP280,
   SENSOR_MPX_5XXX,
-  SENSOR_MPX_5XXX_PERCENT
-#endif
-
-#ifdef SUPLA_ANALOG_READING_MAP
-  ,
-  SENSOR_ANALOG_READING_MAP
-#endif
-
-#ifdef SUPLA_VL53L0X
-  ,
-  SENSOR_VL53L0X
-#endif
-
-#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
-  ,
-  SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR
-#endif
-
-#ifdef SUPLA_HDC1080
-  ,
-  SENSOR_HDC1080
-#endif
-#ifdef SUPLA_HLW8012
-  ,
-  SENSOR_HLW8012
-#endif
-  ,
+  SENSOR_MPX_5XXX_PERCENT,
+  SENSOR_ANALOG_READING_MAP,
+  SENSOR_VL53L0X,
+  SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR,
+  SENSOR_HDC1080,
+  SENSOR_HLW8012,
   COUNT_SENSOR_LIST
-};
-
-#ifdef SUPLA_DS18B20
-const char NAME_DS18B20[] PROGMEM = S_DS18B20;
-#endif
-#ifdef SUPLA_DHT11
-const char NAME_DHT11[] PROGMEM = S_DHT11;
-#endif
-#ifdef SUPLA_DHT22
-const char NAME_DHT22[] PROGMEM = S_DHT22;
-#endif
-#ifdef SUPLA_SI7021_SONOFF
-const char NAME_SI7021_SONOFF[] PROGMEM = S_SI7021_SONOFF;
-#endif
-#ifdef SUPLA_HC_SR04
-const char NAME_HC_SR04[] PROGMEM = S_HC_SR04;
-#endif
-#ifdef SUPLA_BME280
-const char NAME_BME280[] PROGMEM = S_BME280;
-#endif
-#ifdef SUPLA_SHT3x
-const char NAME_SHT3x[] PROGMEM = S_SHT3X;
-#endif
-#ifdef SUPLA_SI7021
-const char NAME_SI7021[] PROGMEM = S_SI702;
-#endif
-#ifdef SUPLA_MAX6675
-const char NAME_MAX6675[] PROGMEM = S_MAX6675;
-#endif
-#ifdef SUPLA_NTC_10K
-const char NAME_NTC_10K[] PROGMEM = S_NTC_10K;
-#endif
-#ifdef SUPLA_BMP280
-const char NAME_BMP280[] PROGMEM = S_BMP280;
-#endif
-#ifdef SUPLA_MPX_5XXX
-const char NAME_SENSOR_MPX_5XXX[] PROGMEM = S_MPX_5XXX;
-const char NAME_SENSOR_MPX_5XXX_PERCENT[] PROGMEM = S_MPX_5XXX_PERCENT;
-#endif
-#ifdef SUPLA_VL53L0X
-const char NAME_VL53L0X[] PROGMEM = "VL53L0X";
-#endif
-#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
-const char NAME_SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR[] PROGMEM = "Direct Links Temp";
-#endif
-#ifdef SUPLA_HDC1080
-const char NAME_HDC1080[] PROGMEM = "HDC1080";
-#endif
-
-const char* const SENSOR_LIST_P[] PROGMEM = {OFF
-#ifdef SUPLA_DS18B20
-                                             ,
-                                             NAME_DS18B20
-#endif
-#ifdef SUPLA_DHT11
-                                             ,
-                                             NAME_DHT11
-#endif
-#ifdef SUPLA_DHT22
-                                             ,
-                                             NAME_DHT22
-#endif
-#ifdef SUPLA_SI7021_SONOFF
-                                             ,
-                                             NAME_SI7021_SONOFF
-#endif
-#ifdef SUPLA_HC_SR04
-                                             ,
-                                             NAME_HC_SR04
-#endif
-#ifdef SUPLA_BME280
-                                             ,
-                                             NAME_BME280
-#endif
-#ifdef SUPLA_SHT3x
-                                             ,
-                                             NAME_SHT3x
-#endif
-#ifdef SUPLA_SI7021
-                                             ,
-                                             NAME_SI7021
-#endif
-#ifdef SUPLA_MAX6675
-                                             ,
-                                             NAME_MAX6675
-#endif
-#ifdef SUPLA_NTC_10K
-                                             ,
-                                             NAME_NTC_10K
-#endif
-#ifdef SUPLA_BMP280
-                                             ,
-                                             NAME_BMP280
-#endif
-#ifdef SUPLA_MPX_5XXX
-                                             ,
-                                             NAME_SENSOR_MPX_5XXX,
-                                             NAME_SENSOR_MPX_5XXX_PERCENT
-#endif
-
-#ifdef SUPLA_ANALOG_READING_MAP
-                                             ,
-                                             "ANALOG READING"
-#endif
-
-#ifdef SUPLA_VL53L0X
-                                             ,
-                                             NAME_VL53L0X
-#endif
-
-#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
-                                             ,
-                                             NAME_SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR
-#endif
-#ifdef SUPLA_HDC1080
-                                             ,
-                                             NAME_HDC1080
-#endif
-#ifdef SUPLA_HLW8012
-                                             ,
-                                             "HLW8012"
-#endif
 };
 
 #endif  // SuplaCommonPROGMEM_h
