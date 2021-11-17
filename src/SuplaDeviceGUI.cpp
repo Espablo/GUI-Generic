@@ -656,8 +656,8 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
   if (counterHLW8012 == NULL && pinCF != OFF_GPIO && pinCF1 != OFF_GPIO && pinSEL != OFF_GPIO) {
     counterHLW8012 = new Supla::Sensor::HLW_8012(pinCF, pinCF1, pinSEL);
 
-    //Supla::GUI::addConditionsTurnON(SENSOR_HLW8012, counterHLW8012);
-    //Supla::GUI::addConditionsTurnOFF(SENSOR_HLW8012, counterHLW8012);
+    Supla::GUI::addConditionsTurnON(SENSOR_HLW8012, counterHLW8012);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_HLW8012, counterHLW8012);
   }
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
 }
