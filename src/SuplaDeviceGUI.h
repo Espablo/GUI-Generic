@@ -152,6 +152,11 @@
 
 #include <supla/control/action_trigger.h>
 
+#if defined(SUPLA_RELAY) && defined(SUPLA_CONDITIONS)
+#include <supla/condition.h>
+#include <supla/sensor/electricity_meter.h>
+#endif
+
 namespace Supla {
 namespace GUI {
 
@@ -212,6 +217,9 @@ void addRGBWLeds(uint8_t nr);
 
 void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
 void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
+void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
+void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
+
 void addCorrectionSensor();
 
 #ifdef SUPLA_HLW8012

@@ -154,10 +154,9 @@ void handleControl(int save) {
     }
 #endif
   }
-
-#ifdef SUPLA_ACTION_TRIGGER
   addFormHeaderEnd(webContentBuffer);
 
+#ifdef SUPLA_ACTION_TRIGGER
   addFormHeader(webContentBuffer, String(S_SETTINGS_FOR) + S_SPACE + S_ACTION_TRIGGER);
   String value = ConfigManager->get(KEY_AT_MULTICLICK_TIME)->getValue();
   addNumberBox(webContentBuffer, INPUT_AT_MULTICLICK_TIME, "Multiclick[s]", "", true, value);
