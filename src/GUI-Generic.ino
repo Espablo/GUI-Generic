@@ -260,15 +260,19 @@ void setup() {
 #ifdef ARDUINO_ARCH_ESP32
     new Supla::Sensor::ThreePhasePZEMv3(&Serial, pinRX1, pinTX1, &Serial1, pinRX1, pinTX2, &Serial2, pinRX1, pinTX3);
 #else
-    new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX1, pinTX2, pinRX1, pinTX3);
+    auto threePhasePZEMv3 = new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX1, pinTX2, pinRX1, pinTX3);
 #endif
+    Supla::GUI::addConditionsTurnON(SENSOR_PZEM_V3, threePhasePZEMv3);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_PZEM_V3, threePhasePZEMv3);
   }
   else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO) {
 #ifdef ARDUINO_ARCH_ESP32
-    new Supla::Sensor::PZEMv3(&Serial, pinRX1, pinTX1);
+    auto PZEMv3 = new Supla::Sensor::PZEMv3(&Serial, pinRX1, pinTX1);
 #else
-    new Supla::Sensor::PZEMv3(pinRX1, pinTX1);
+    auto PZEMv3 = new Supla::Sensor::PZEMv3(pinRX1, pinTX1);
 #endif
+    Supla::GUI::addConditionsTurnON(SENSOR_PZEM_V3, PZEMv3);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_PZEM_V3, PZEMv3);
   }
 #endif
 
