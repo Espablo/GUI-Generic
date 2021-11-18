@@ -38,12 +38,6 @@
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
 #include <ArduinoJson.h>
 
-enum General
-{
-  None = 0,
-  Users = 255
-};
-
 enum Shift
 {
   Relay = 203,
@@ -54,62 +48,39 @@ enum Shift
   Ledi = 264
 };
 
-enum Relay
+enum FunctionOld
 {
-  Relay1 = 21,
-  Relay2,
-  Relay3,
-  Relay4
-};
-
-enum RelayInverted
-{
-  Relay1i = 29,
-  Relay2i,
-  Relay3i,
-  Relay4i
-};
-
-enum Button
-{
+  None = 0,
   Button1 = 17,
   Button2,
   Button3,
-  Button4
-};
-
-enum ButtonNoPullupResistor
-{
+  Button4,
+  Relay1 = 21,
+  Relay2,
+  Relay3,
+  Relay4,
+  Relay1i = 29,
+  Relay2i,
+  Relay3i,
+  Relay4i,
   Button1n = 90,
   Button2n,
   Button3n,
-  Button4n
-};
-
-enum Led
-{
+  Button4n,
   Led1 = 52,
   Led2,
   Led3,
   Led4,
-  LedLink = 157
-};
-
-enum LedInverted
-{
   Led1i = 56,
   Led2i,
   Led3i,
   Led4i,
-  LedLinki = 158
-};
-
-enum Energy
-{
   HLWBLSELi = 131,
   HLWBLCF1 = 132,
-  BL0937CF = 134
-
+  BL0937CF = 134,
+  LedLink = 157,
+  LedLinki = 158,
+  Users = 255,
 };
 
 namespace Supla {

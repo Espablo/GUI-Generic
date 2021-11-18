@@ -38,7 +38,7 @@ void handleDeviceSettings(int save) {
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
   addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
   addFormHeader(webContentBuffer, S_DEFAULT_TEMPLATE_BOARD);
-  addTextBox(webContentBuffer, INPUT_BOARD, F("JSON"), F(""), 0, 100, false);
+  addTextBox(webContentBuffer, INPUT_BOARD, F("JSON"), F(""), 0, 200, false);
   webContentBuffer += F("<style>input[name='board']{padding-left: 48px;width: calc(100% - 52px);}</style>");
   webContentBuffer += F("<p style='color:#000;'>");
   webContentBuffer += Supla::TanplateBoard::templateBoardWarning;

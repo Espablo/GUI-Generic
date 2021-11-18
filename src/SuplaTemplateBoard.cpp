@@ -18,10 +18,13 @@
 #include "SuplaDeviceGUI.h"
 
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
+
 namespace Supla {
 namespace TanplateBoard {
 
 void chooseTemplateBoard(String board) {
+  bool newVersion = false;
+
   ConfigESP->clearEEPROM();
   ConfigManager->deleteGPIODeviceValues();
   templateBoardWarning = "";
@@ -32,187 +35,189 @@ void chooseTemplateBoard(String board) {
   ConfigManager->set(KEY_MAX_RGBW, "0");
   ConfigManager->set(KEY_CFG_MODE, CONFIG_MODE_10_ON_PRESSES);
 
-  const size_t capacity = JSON_ARRAY_SIZE(13) + JSON_OBJECT_SIZE(4) + 80;
+  const size_t capacity = JSON_ARRAY_SIZE(14) + JSON_OBJECT_SIZE(4) + 200;
   DynamicJsonBuffer jsonBuffer(capacity);
 
   JsonObject& root = jsonBuffer.parseObject(board);
+  JsonArray& GPIO = root["GPIO"];
+
+  if (GPIO.size() == 14)
+    newVersion = true;
+
+  templateBoardWarning += F("Wersja: ") + String(newVersion) + F("<br>");
+  if (GPIO.size() == 0) {
+    templateBoardWarning += "Błąd wczytania<br>";
+    return;
+  }
 
   String name = root["NAME"];
   ConfigManager->set(KEY_HOST_NAME, name.c_str());
 
-  int version = root["VERSION"];
-
-  Serial.println(name);
-  Serial.println(version);
-
-  JsonArray& GPIO = root["GPIO"];
-
-  for (size_t i = 0; i <= 12; i++) {
+  for (size_t i = 0; i < GPIO.size(); i++) {
     int gpioJSON = (int)GPIO[i];
     int gpio = getGPIO(i);
 
-    if (version == 1) {
+    if (newVersion) {
       switch (gpioJSON) {
-        case Relay::Relay1 + Shift::Relay:
-        case Relay::Relay2 + Shift::Relay:
-        case Relay::Relay3 + Shift::Relay:
-        case Relay::Relay4 + Shift::Relay:
+        case FunctionOld::Relay1 + Shift::Relay:
+        case FunctionOld::Relay2 + Shift::Relay:
+        case FunctionOld::Relay3 + Shift::Relay:
+        case FunctionOld::Relay4 + Shift::Relay:
           gpioJSON = gpioJSON - Shift::Relay;
           break;
 
-        case RelayInverted::Relay1i + Shift::Relayi:
-        case RelayInverted::Relay2i + Shift::Relayi:
-        case RelayInverted::Relay3i + Shift::Relayi:
-        case RelayInverted::Relay4i + Shift::Relayi:
+        case FunctionOld::Relay1i + Shift::Relayi:
+        case FunctionOld::Relay2i + Shift::Relayi:
+        case FunctionOld::Relay3i + Shift::Relayi:
+        case FunctionOld::Relay4i + Shift::Relayi:
           gpioJSON = gpioJSON - Shift::Relayi;
           break;
 
-        case Button::Button1 + Shift::Button:
-        case Button::Button2 + Shift::Button:
-        case Button::Button3 + Shift::Button:
-        case Button::Button4 + Shift::Button:
+        case FunctionOld::Button1 + Shift::Button:
+        case FunctionOld::Button2 + Shift::Button:
+        case FunctionOld::Button3 + Shift::Button:
+        case FunctionOld::Button4 + Shift::Button:
           gpioJSON = gpioJSON - Shift::Button;
           break;
 
-        case ButtonNoPullupResistor::Button1n + Shift::Buttonn:
-        case ButtonNoPullupResistor::Button2n + Shift::Buttonn:
-        case ButtonNoPullupResistor::Button3n + Shift::Buttonn:
-        case ButtonNoPullupResistor::Button4n + Shift::Buttonn:
+        case FunctionOld::Button1n + Shift::Buttonn:
+        case FunctionOld::Button2n + Shift::Buttonn:
+        case FunctionOld::Button3n + Shift::Buttonn:
+        case FunctionOld::Button4n + Shift::Buttonn:
           gpioJSON = gpioJSON - Shift::Buttonn;
           break;
 
-        case Led::Led1 + Shift::Led:
-        case Led::Led2 + Shift::Led:
-        case Led::Led3 + Shift::Led:
-        case Led::Led4 + Shift::Led:
+        case FunctionOld::Led1 + Shift::Led:
+        case FunctionOld::Led2 + Shift::Led:
+        case FunctionOld::Led3 + Shift::Led:
+        case FunctionOld::Led4 + Shift::Led:
           gpioJSON = gpioJSON - Shift::Led;
           break;
-        case Led::LedLink + 387:
+        case FunctionOld::LedLink + 387:
           gpioJSON = gpioJSON - 387;
           break;
 
-        case LedInverted::Led1i + Shift::Ledi:
-        case LedInverted::Led2i + Shift::Ledi:
-        case LedInverted::Led3i + Shift::Ledi:
-        case LedInverted::Led4i + Shift::Ledi:
+        case FunctionOld::Led1i + Shift::Ledi:
+        case FunctionOld::Led2i + Shift::Ledi:
+        case FunctionOld::Led3i + Shift::Ledi:
+        case FunctionOld::Led4i + Shift::Ledi:
           gpioJSON = gpioJSON - Shift::Ledi;
           break;
-        case LedInverted::LedLinki + 418:
+        case FunctionOld::LedLinki + 418:
           gpioJSON = gpioJSON - 418;
           break;
 
-        case Energy::BL0937CF + 2586:
+        case FunctionOld::BL0937CF + 2586:
           gpioJSON = gpioJSON - 2586;
           break;
-        case Energy::HLWBLCF1 + 2524:
+        case FunctionOld::HLWBLCF1 + 2524:
           gpioJSON = gpioJSON - 2524;
           break;
-        case Energy::HLWBLSELi + 2493:
+        case FunctionOld::HLWBLSELi + 2493:
           gpioJSON = gpioJSON - 2493;
           break;
       }
     }
 
     switch (gpioJSON) {
-      case General::None:
+      case FunctionOld::None:
         break;
-      case General::Users:
+      case FunctionOld::Users:
         break;
-
-      case Relay::Relay1:
+      case FunctionOld::Relay1:
         Supla::TanplateBoard::addRelay(0, gpio);
         break;
-      case Relay::Relay2:
+      case FunctionOld::Relay2:
         Supla::TanplateBoard::addRelay(1, gpio);
         break;
-      case Relay::Relay3:
+      case FunctionOld::Relay3:
         Supla::TanplateBoard::addRelay(2, gpio);
         break;
-      case Relay::Relay4:
+      case FunctionOld::Relay4:
         Supla::TanplateBoard::addRelay(3, gpio);
         break;
 
-      case RelayInverted::Relay1i:
+      case FunctionOld::Relay1i:
         Supla::TanplateBoard::addRelay(0, gpio, LOW);
         break;
-      case RelayInverted::Relay2i:
+      case FunctionOld::Relay2i:
         Supla::TanplateBoard::addRelay(1, gpio, LOW);
         break;
-      case RelayInverted::Relay3i:
+      case FunctionOld::Relay3i:
         Supla::TanplateBoard::addRelay(2, gpio, LOW);
         break;
-      case RelayInverted::Relay4i:
+      case FunctionOld::Relay4i:
         Supla::TanplateBoard::addRelay(3, gpio, LOW);
         break;
 
-      case Button::Button1:
+      case FunctionOld::Button1:
         Supla::TanplateBoard::addButton(0, gpio);
         Supla::TanplateBoard::addButtonCFG(gpio);
         break;
-      case Button::Button2:
+      case FunctionOld::Button2:
         Supla::TanplateBoard::addButton(1, gpio);
         break;
-      case Button::Button3:
+      case FunctionOld::Button3:
         Supla::TanplateBoard::addButton(2, gpio);
         break;
-      case Button::Button4:
+      case FunctionOld::Button4:
         Supla::TanplateBoard::addButton(3, gpio);
         break;
 
-      case ButtonNoPullupResistor::Button1n:
+      case FunctionOld::Button1n:
         Supla::TanplateBoard::addButton(0, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
         Supla::TanplateBoard::addButtonCFG(gpio);
         break;
-      case ButtonNoPullupResistor::Button2n:
+      case FunctionOld::Button2n:
         Supla::TanplateBoard::addButton(1, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
         break;
-      case ButtonNoPullupResistor::Button3n:
+      case FunctionOld::Button3n:
         Supla::TanplateBoard::addButton(2, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
         break;
-      case ButtonNoPullupResistor::Button4n:
+      case FunctionOld::Button4n:
         Supla::TanplateBoard::addButton(3, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
         break;
 
-      case Led::Led1:
+      case FunctionOld::Led1:
         // pierwszy led przeznaczony jest dla LED konfiguracyjnego
         Supla::TanplateBoard::addLedCFG(gpio);
         break;
-      case Led::Led2:
+      case FunctionOld::Led2:
         Supla::TanplateBoard::addLed(0, gpio);
         break;
-      case Led::Led3:
+      case FunctionOld::Led3:
         Supla::TanplateBoard::addLed(1, gpio);
         break;
-      case Led::Led4:
+      case FunctionOld::Led4:
         Supla::TanplateBoard::addLed(2, gpio);
         break;
-      case Led::LedLink:
+      case FunctionOld::LedLink:
         Supla::TanplateBoard::addLed(0, gpio);
         break;
 
-      case LedInverted::Led1i:
+      case FunctionOld::Led1i:
         Supla::TanplateBoard::addLedCFG(gpio, LOW);
         break;
-      case LedInverted::Led2i:
+      case FunctionOld::Led2i:
         Supla::TanplateBoard::addLed(1, gpio, LOW);
         break;
-      case LedInverted::Led3i:
+      case FunctionOld::Led3i:
         Supla::TanplateBoard::addLed(2, gpio, LOW);
         break;
-      case LedInverted::Led4i:
+      case FunctionOld::Led4i:
         Supla::TanplateBoard::addLed(3, gpio, LOW);
         break;
-      case LedInverted::LedLinki:
+      case FunctionOld::LedLinki:
         Supla::TanplateBoard::addLed(0, gpio, LOW);
         break;
 
-      case Energy::BL0937CF:
+      case FunctionOld::BL0937CF:
         ConfigESP->setGpio(gpio, FUNCTION_CF);
         break;
-      case Energy::HLWBLCF1:
+      case FunctionOld::HLWBLCF1:
         ConfigESP->setGpio(gpio, FUNCTION_CF1);
         break;
-      case Energy::HLWBLSELi:
+      case FunctionOld::HLWBLSELi:
         ConfigESP->setGpio(gpio, FUNCTION_SEL);
         break;
 
