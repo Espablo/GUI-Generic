@@ -441,13 +441,11 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   else {
     uint8_t key = KEY_GPIO + gpio;
 
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_BUTTON)
-      if (function == FUNCTION_CFG_BUTTON)
-        return true;
+    if (function == FUNCTION_CFG_BUTTON && ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_BUTTON)
+      return true;
 
-    if (checkBusyCfg(gpio))
-      if (function == FUNCTION_BUTTON)
-        return true;
+    if (function == FUNCTION_BUTTON && checkBusyCfg(gpio) && ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_BUTTON)
+      return true;
 
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF || checkBusyCfg(gpio))
       return false;
