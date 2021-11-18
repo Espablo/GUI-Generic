@@ -152,10 +152,8 @@
 
 #include <supla/control/action_trigger.h>
 
-#if defined(SUPLA_RELAY) && defined(SUPLA_CONDITIONS)
 #include <supla/condition.h>
 #include <supla/sensor/electricity_meter.h>
-#endif
 
 namespace Supla {
 namespace GUI {
