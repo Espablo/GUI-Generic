@@ -38,19 +38,19 @@
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
 #include <ArduinoJson.h>
 
-enum Shift
-{
-  Relay = 203,
-  Relayi = 227,
-  Button = 15,
-  Buttonn = -26,
-  Led = 263,
-  Ledi = 264
-};
+// Button to łącznik monostabilny, Switch to łącznik bistabilny.
 
 enum FunctionOld
 {
   None = 0,
+  Switch1 = 9,
+  Switch2,
+  Switch3,
+  Switch4,
+  Switch5,
+  Switch6,
+  Switch7,
+  Switch8,
   Button1 = 17,
   Button2,
   Button3,
@@ -63,10 +63,6 @@ enum FunctionOld
   Relay2i,
   Relay3i,
   Relay4i,
-  Button1n = 90,
-  Button2n,
-  Button3n,
-  Button4n,
   Led1 = 52,
   Led2,
   Led3,
@@ -75,6 +71,17 @@ enum FunctionOld
   Led2i,
   Led3i,
   Led4i,
+  Switch1n = 82,
+  Switch2n,
+  Switch3n,
+  Switch4n,
+  Switch5n,
+  Switch6n,
+  Switch7n,
+  Button1n = 90,
+  Button2n,
+  Button3n,
+  Button4n,
   HLWBLSELi = 131,
   HLWBLCF1 = 132,
   BL0937CF = 134,
@@ -83,18 +90,65 @@ enum FunctionOld
   Users = 255,
 };
 
+enum FunctionNew
+{
+  NewNone = 0,
+  NewButton1 = 32,
+  NewButton2,
+  NewButton3,
+  NewButton4,
+  NewSwitch1 = 160,
+  NewSwitch2,
+  NewSwitch3,
+  NewSwitch4,
+  NewSwitch5,
+  NewSwitch6,
+  NewSwitch7,
+  NewSwitch8,
+  NewSwitch1n = 192,
+  NewSwitch2n,
+  NewSwitch3n,
+  NewSwitch4n,
+  NewSwitch5n,
+  NewSwitch6n,
+  NewSwitch7n,
+  NewRelay1 = 224,
+  NewRelay2,
+  NewRelay3,
+  NewRelay4,
+  NewRelay1i = 256,
+  NewRelay2i,
+  NewRelay3i,
+  NewRelay4i,
+  NewButton1n = 64,
+  NewButton2n,
+  NewButton3n,
+  NewButton4n,
+  NewLed1 = 288,
+  NewLed2,
+  NewLed3,
+  NewLed4,
+  NewLed1i = 320,
+  NewLed2i,
+  NewLed3i,
+  NewLed4i,
+  NewHLWBLSELi = 2624,
+  NewHLWBLCF1 = 2656,
+  NewBL0937CF = 2720,
+  NewLedLink = 544,
+  NewLedLinki = 576,
+  NewUsers = 1,
+};
+
 namespace Supla {
 namespace TanplateBoard {
 void chooseTemplateBoard(String board);
 uint8_t getGPIO(uint8_t gpio);
+int convert(int gpioJSON);
 
-void addButton(uint8_t nr,
-               uint8_t gpio,
-               uint8_t event = Supla::Event::ON_PRESS,
-               uint8_t action = Supla::Action::TOGGLE,
-               bool pullUp = true,
-               bool invertLogic = true);
-void addRelay(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
+void addButton(
+    uint8_t gpio, uint8_t event = Supla::Event::ON_PRESS, uint8_t action = Supla::Action::TOGGLE, bool pullUp = true, bool invertLogic = true);
+void addRelay(uint8_t gpio, uint8_t level = HIGH);
 void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
 void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addButtonCFG(uint8_t gpio);
