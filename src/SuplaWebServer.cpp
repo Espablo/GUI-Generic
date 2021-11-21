@@ -177,6 +177,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     }
 
     ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, true);
+    ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
 
     if (input_max != "\n") {
       current_value = WebServer->httpServer->arg(input_max).toInt();
@@ -213,6 +214,8 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
       if (gpio == GPIO_VIRTUAL_RELAY) {
         ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
       }
+      if (function == FUNCTION_RELAY)
+        ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
 
 #ifdef SUPLA_ROLLERSHUTTER
       if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr) {

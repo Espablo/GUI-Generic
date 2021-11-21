@@ -141,6 +141,9 @@ void handleRelaySaveSet() {
 
   gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
 
+  input = INPUT_BUTTON_NUMBER;
+  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr_relay.toInt(), WebServer->httpServer->arg(input).toInt());
+
   input = INPUT_RELAY_MEMORY;
   input += nr_relay;
   ConfigESP->setMemory(gpio, WebServer->httpServer->arg(input).toInt(), nr_relay.toInt());
@@ -241,6 +244,9 @@ void handleRelaySet(int save) {
 
     addForm(webContentBuffer, F("post"), getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER, nr_relay));
     addFormHeader(webContentBuffer, String(S_RELAY_NR_SETTINGS) + (nr_relay.toInt() + 1));
+
+    selected = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr_relay.toInt()).toInt();
+    addListBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_NUMBER, NUMBER_P, 7, selected);
 
     if (gpio != GPIO_VIRTUAL_RELAY) {
       selected = ConfigESP->getLevel(gpio);

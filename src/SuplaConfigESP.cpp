@@ -46,13 +46,14 @@ SuplaConfigESP::SuplaConfigESP() {
     if (strcmp(ConfigManager->get(KEY_ENABLE_SSL)->getValue(), "") == 0)
       ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
 
-    if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0) {
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
 
 #else
+    if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0) {
       chooseTemplateBoard(getDefaultTamplateBoard());
-#endif
     }
+#endif
+
     if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
       ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 

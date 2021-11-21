@@ -208,6 +208,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2);
     this->addKey(KEY_VIRTUAL_RELAY, MAX_VIRTUAL_RELAY * 2, 4);
     this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_VIRTUAL_RELAY * 2, 4);
+    this->addKey(KEY_NUMBER_BUTTON, "1,2,3,4,5,6,7", MAX_GPIO * 2, 6);
 
 #else
     this->addKey(KEY_MAX_RELAY, 2, 2, false);
@@ -217,6 +218,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2, false);
     this->addKey(KEY_VIRTUAL_RELAY, MAX_GPIO * 2, 4, false);
     this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_GPIO * 2, 4, false);
+    this->addKey(KEY_NUMBER_BUTTON, "1,2,3,4,5,6,7", MAX_GPIO * 2, 6, false);
 
 #endif
 
@@ -698,8 +700,8 @@ bool SuplaConfigManager::isDeviceConfigured() {
   return strcmp(this->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(this->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0 ||
          strcmp(this->get(KEY_WIFI_SSID)->getValue(), "") == 0 || strcmp(this->get(KEY_LOGIN)->getValue(), "") == 0 ||
          strcmp(this->get(KEY_ENABLE_SSL)->getValue(), "") == 0 || strcmp(this->get(KEY_ENABLE_GUI)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_BOARD)->getValue(), "") == 0 || strcmp(this->get(KEY_SUPLA_SERVER)->getValue(), DEFAULT_SERVER) == 0 ||
-         strcmp(this->get(KEY_SUPLA_EMAIL)->getValue(), DEFAULT_EMAIL) == 0 || ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO;
+         strcmp(this->get(KEY_SUPLA_SERVER)->getValue(), DEFAULT_SERVER) == 0 || strcmp(this->get(KEY_SUPLA_EMAIL)->getValue(), DEFAULT_EMAIL) == 0 ||
+         ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO;
 }
 
 ConfigOption *SuplaConfigManager::get(uint8_t key) {
