@@ -376,9 +376,12 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, uint8_t action, bool pul
   ConfigESP->setPullUp(gpio, pullUp);
   ConfigESP->setInversed(gpio, invertLogic);
 
-  ConfigESP->setGpio(gpio, maxButton, FUNCTION_BUTTON);
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, maxButton, nr);
+  if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) != OFF_GPIO)
+    ConfigESP->setGpio(gpio, maxButton, FUNCTION_BUTTON);
+  else
+    ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
 
+  ConfigManager->setElement(KEY_NUMBER_BUTTON, maxButton, nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
