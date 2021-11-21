@@ -387,7 +387,7 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, uint8_t action, bool pul
 
 void addRelay(uint8_t nr, uint8_t gpio, uint8_t level) {
   uint8_t maxRelay = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
-  Serial.println(gpio);
+
   ConfigESP->setLevel(gpio, level);
   ConfigESP->setMemory(gpio, MEMORY_RELAY_RESTORE);
   ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY);
