@@ -212,9 +212,6 @@ void handleButtonSaveSet() {
   input = INPUT_BUTTON_ACTION;
   ConfigManager->setElement(key, ACTION_BUTTON, WebServer->httpServer->arg(input).toInt());
 
-  input = INPUT_BUTTON_NUMBER;
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, button.toInt(), WebServer->httpServer->arg(input).toInt());
-
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       handleButtonSet(1);
@@ -276,8 +273,6 @@ void handleButtonSet(int save) {
 #endif
     }
     else {
-      selected = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(button.toInt()).toInt();
-      addListBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_NUMBER, NUMBER_P, 7, selected);
       selected = ConfigESP->getPullUp(gpio);
       addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
       selected = ConfigESP->getInversed(gpio);

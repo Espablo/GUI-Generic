@@ -396,8 +396,6 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, uint8_t action, bool pul
   //  ConfigESP->setGpio(gpio, maxButton, FUNCTION_BUTTON);
   // else
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
-
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 

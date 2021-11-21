@@ -128,16 +128,15 @@ void addRelay(uint8_t nr) {
 
 void addButtonToRelay(uint8_t nr) {
   uint8_t pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-  uint8_t numberButton = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).toInt();
   int size = relay.size() - 1;
 
-  if (pinButton != OFF_GPIO && size >= numberButton) {
+  if (pinButton != OFF_GPIO) {
     auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
 
-    button->addAction(ConfigESP->getAction(pinButton), relay[numberButton], ConfigESP->getEvent(pinButton));
+    button->addAction(ConfigESP->getAction(pinButton), relay[size], ConfigESP->getEvent(pinButton));
     button->setSwNoiseFilterDelay(50);
 #ifdef SUPLA_ACTION_TRIGGER
-    addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[numberButton]);
+    addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[size]);
 #endif
   }
 }
