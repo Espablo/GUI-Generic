@@ -102,8 +102,16 @@ void chooseTemplateBoard(String board) {
         break;
 
       case FunctionNew::NewSwitch1:
+        if (ConfigESP->getGpio(0, FUNCTION_BUTTON) != OFF_GPIO) {
+          ConfigESP->clearGpio(ConfigESP->getGpio(0, FUNCTION_BUTTON), FUNCTION_BUTTON);
+          ConfigManager->set(KEY_MAX_BUTTON, ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() - 1);
+        }
+        else {
+          Supla::TanplateBoard::addButtonCFG(gpio);
+        }
+
         Supla::TanplateBoard::addButton(0, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
-        // Supla::TanplateBoard::addButtonCFG(gpio);
+
         break;
       case FunctionNew::NewSwitch2:
         Supla::TanplateBoard::addButton(1, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
@@ -125,8 +133,16 @@ void chooseTemplateBoard(String board) {
         break;
 
       case FunctionNew::NewSwitch1n:
+        if (ConfigESP->getGpio(0, FUNCTION_BUTTON) != OFF_GPIO) {
+          ConfigESP->clearGpio(ConfigESP->getGpio(0, FUNCTION_BUTTON), FUNCTION_BUTTON);
+          ConfigManager->set(KEY_MAX_BUTTON, ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() - 1);
+        }
+        else {
+          Supla::TanplateBoard::addButtonCFG(gpio);
+        }
+
         Supla::TanplateBoard::addButton(0, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
-        // Supla::TanplateBoard::addButtonCFG(gpio);
+
         break;
       case FunctionNew::NewSwitch2n:
         Supla::TanplateBoard::addButton(1, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
@@ -376,12 +392,12 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, uint8_t action, bool pul
   ConfigESP->setPullUp(gpio, pullUp);
   ConfigESP->setInversed(gpio, invertLogic);
 
-  if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) != OFF_GPIO)
-    ConfigESP->setGpio(gpio, maxButton, FUNCTION_BUTTON);
-  else
-    ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
+  // if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) != OFF_GPIO)
+  //  ConfigESP->setGpio(gpio, maxButton, FUNCTION_BUTTON);
+  // else
+  ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
 
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, maxButton, nr);
+  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
