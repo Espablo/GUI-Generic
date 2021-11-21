@@ -128,15 +128,16 @@ void addRelay(uint8_t nr) {
 
 void addButtonToRelay(uint8_t nr) {
   uint8_t pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+  uint8_t numberButton = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).toInt();
+  int size = relay.size() - 1;
 
-  if (pinButton != OFF_GPIO) {
+  if (pinButton != OFF_GPIO && size >= numberButton) {
     auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
 
-    int size = relay.size() - 1;
-    button->addAction(ConfigESP->getAction(pinButton), relay[size], ConfigESP->getEvent(pinButton));
+    button->addAction(ConfigESP->getAction(pinButton), relay[numberButton], ConfigESP->getEvent(pinButton));
     button->setSwNoiseFilterDelay(50);
 #ifdef SUPLA_ACTION_TRIGGER
-    addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[size]);
+    addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[numberButton]);
 #endif
   }
 }
@@ -565,9 +566,9 @@ void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, 
         strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-     // Serial.println("addConditionsTurnON - ElectricityMeter");
-     // Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-     // Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
+      // Serial.println("addConditionsTurnON - ElectricityMeter");
+      // Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      // Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
       // client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
@@ -595,9 +596,9 @@ void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client,
         strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-     // Serial.println("addConditionsTurnOFF - ElectricityMeter");
-     // Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-     // Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
+      // Serial.println("addConditionsTurnOFF - ElectricityMeter");
+      // Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      // Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
       //   client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());

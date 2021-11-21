@@ -235,8 +235,10 @@ SuplaConfigManager::SuplaConfigManager() {
 
 #ifdef SUPLA_BUTTON
     this->addKey(KEY_MAX_BUTTON, "0", 2, 2);
+    this->addKey(KEY_NUMBER_BUTTON, "1,2,3,4,5,6,7", MAX_GPIO * 2, 6);
 #else
     this->addKey(KEY_MAX_BUTTON, 2, 2, false);
+    this->addKey(KEY_NUMBER_BUTTON, "1,2,3,4,5,6,7", MAX_GPIO * 2, 6, false);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH

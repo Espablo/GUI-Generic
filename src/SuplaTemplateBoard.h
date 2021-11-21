@@ -43,6 +43,7 @@
 enum FunctionOld
 {
   None = 0,
+  TemperatureAnalog = 2,
   Switch1 = 9,
   Switch2,
   Switch3,
@@ -141,11 +142,12 @@ enum FunctionNew
   NewPWM3,
   NewPWM4,
   NewPWM5,
+  NewLedLink = 544,
+  NewLedLinki = 576,
   NewHLWBLSELi = 2624,
   NewHLWBLCF1 = 2656,
   NewBL0937CF = 2720,
-  NewLedLink = 544,
-  NewLedLinki = 576,
+  NewTemperatureAnalog = 4736,
   NewUsers = 1,
 };
 
@@ -155,9 +157,13 @@ void chooseTemplateBoard(String board);
 uint8_t getGPIO(uint8_t gpio);
 int convert(int gpioJSON);
 
-void addButton(
-    uint8_t gpio, uint8_t event = Supla::Event::ON_PRESS, uint8_t action = Supla::Action::TOGGLE, bool pullUp = true, bool invertLogic = true);
-void addRelay(uint8_t gpio, uint8_t level = HIGH);
+void addButton(uint8_t nr,
+               uint8_t gpio,
+               uint8_t event = Supla::Event::ON_PRESS,
+               uint8_t action = Supla::Action::TOGGLE,
+               bool pullUp = true,
+               bool invertLogic = true);
+void addRelay(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
 void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addButtonCFG(uint8_t gpio);

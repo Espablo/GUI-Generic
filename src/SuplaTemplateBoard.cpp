@@ -31,6 +31,7 @@ void chooseTemplateBoard(String board) {
 
   ConfigManager->set(KEY_MAX_BUTTON, "0");
   ConfigManager->set(KEY_MAX_RELAY, "0");
+  ConfigManager->set(KEY_VIRTUAL_RELAY, "");
   ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
   ConfigManager->set(KEY_MAX_RGBW, "0");
   ConfigManager->set(KEY_CFG_MODE, CONFIG_MODE_10_ON_PRESSES);
@@ -75,63 +76,103 @@ void chooseTemplateBoard(String board) {
         break;
 
       case FunctionNew::NewRelay1:
+        Supla::TanplateBoard::addRelay(0, gpio);
+        break;
       case FunctionNew::NewRelay2:
+        Supla::TanplateBoard::addRelay(1, gpio);
+        break;
       case FunctionNew::NewRelay3:
+        Supla::TanplateBoard::addRelay(2, gpio);
+        break;
       case FunctionNew::NewRelay4:
-        Supla::TanplateBoard::addRelay(gpio);
+        Supla::TanplateBoard::addRelay(3, gpio);
         break;
 
       case FunctionNew::NewRelay1i:
+        Supla::TanplateBoard::addRelay(0, gpio, LOW);
+        break;
       case FunctionNew::NewRelay2i:
+        Supla::TanplateBoard::addRelay(1, gpio, LOW);
+        break;
       case FunctionNew::NewRelay3i:
+        Supla::TanplateBoard::addRelay(2, gpio, LOW);
+        break;
       case FunctionNew::NewRelay4i:
-        Supla::TanplateBoard::addRelay(gpio, LOW);
+        Supla::TanplateBoard::addRelay(3, gpio, LOW);
         break;
 
       case FunctionNew::NewSwitch1:
-        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
-        Supla::TanplateBoard::addButtonCFG(gpio);
+        Supla::TanplateBoard::addButton(0, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+        // Supla::TanplateBoard::addButtonCFG(gpio);
         break;
       case FunctionNew::NewSwitch2:
+        Supla::TanplateBoard::addButton(1, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+        break;
       case FunctionNew::NewSwitch3:
+        Supla::TanplateBoard::addButton(2, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+        break;
       case FunctionNew::NewSwitch4:
+        Supla::TanplateBoard::addButton(3, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+        break;
       case FunctionNew::NewSwitch5:
+        Supla::TanplateBoard::addButton(4, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+        break;
       case FunctionNew::NewSwitch6:
+        Supla::TanplateBoard::addButton(5, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+        break;
       case FunctionNew::NewSwitch7:
-        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+        Supla::TanplateBoard::addButton(6, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
         break;
 
       case FunctionNew::NewSwitch1n:
-        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
-        Supla::TanplateBoard::addButtonCFG(gpio);
+        Supla::TanplateBoard::addButton(0, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+        // Supla::TanplateBoard::addButtonCFG(gpio);
         break;
       case FunctionNew::NewSwitch2n:
+        Supla::TanplateBoard::addButton(1, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+        break;
       case FunctionNew::NewSwitch3n:
+        Supla::TanplateBoard::addButton(2, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+        break;
       case FunctionNew::NewSwitch4n:
+        Supla::TanplateBoard::addButton(3, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+        break;
       case FunctionNew::NewSwitch5n:
+        Supla::TanplateBoard::addButton(4, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+        break;
       case FunctionNew::NewSwitch6n:
+        Supla::TanplateBoard::addButton(5, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+        break;
       case FunctionNew::NewSwitch7n:
-        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+        Supla::TanplateBoard::addButton(6, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
         break;
 
       case FunctionNew::NewButton1:
-        Supla::TanplateBoard::addButton(gpio);
+        Supla::TanplateBoard::addButton(0, gpio);
         Supla::TanplateBoard::addButtonCFG(gpio);
         break;
       case FunctionNew::NewButton2:
+        Supla::TanplateBoard::addButton(1, gpio);
+        break;
       case FunctionNew::NewButton3:
+        Supla::TanplateBoard::addButton(2, gpio);
+        break;
       case FunctionNew::NewButton4:
-        Supla::TanplateBoard::addButton(gpio);
+        Supla::TanplateBoard::addButton(3, gpio);
         break;
 
       case FunctionNew::NewButton1n:
-        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
+        Supla::TanplateBoard::addButton(0, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
         Supla::TanplateBoard::addButtonCFG(gpio);
         break;
       case FunctionNew::NewButton2n:
+        Supla::TanplateBoard::addButton(1, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
+        break;
       case FunctionNew::NewButton3n:
+        Supla::TanplateBoard::addButton(2, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
+        break;
       case FunctionNew::NewButton4n:
-        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
+        Supla::TanplateBoard::addButton(3, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
         break;
 
       case FunctionNew::NewLed1:
@@ -189,6 +230,10 @@ void chooseTemplateBoard(String board) {
         break;
       case FunctionNew::NewHLWBLSELi:
         ConfigESP->setGpio(gpio, FUNCTION_SEL);
+        break;
+
+      case FunctionNew::NewTemperatureAnalog:
+        ConfigESP->setGpio(gpio, FUNCTION_NTC_10K);
         break;
 
       default:
@@ -307,6 +352,9 @@ int convert(int gpioJSON) {
       return FunctionNew::NewHLWBLCF1;
     case FunctionOld::HLWBLSELi:
       return FunctionNew::NewHLWBLSELi;
+
+    case FunctionOld::TemperatureAnalog:
+      return FunctionNew::NewTemperatureAnalog;
   }
   return FunctionNew::NewNone;
 }
@@ -320,25 +368,28 @@ uint8_t getGPIO(uint8_t gpio) {
   return gpio;
 }
 
-void addButton(uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
-  uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
+void addButton(uint8_t nr, uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
+  uint8_t maxButton = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
 
   ConfigESP->setEvent(gpio, event);
   ConfigESP->setAction(gpio, action);
   ConfigESP->setPullUp(gpio, pullUp);
   ConfigESP->setInversed(gpio, invertLogic);
 
-  ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
-  ConfigManager->set(KEY_MAX_BUTTON, nr + 1);
+  ConfigESP->setGpio(gpio, maxButton, FUNCTION_BUTTON);
+  ConfigManager->setElement(KEY_NUMBER_BUTTON, maxButton, nr);
+
+  ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
-void addRelay(uint8_t gpio, uint8_t level) {
-  uint8_t nr = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
+void addRelay(uint8_t nr, uint8_t gpio, uint8_t level) {
+  uint8_t maxRelay = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
+  Serial.println(gpio);
   ConfigESP->setLevel(gpio, level);
   ConfigESP->setMemory(gpio, MEMORY_RELAY_RESTORE);
-
   ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY);
-  ConfigManager->set(KEY_MAX_RELAY, nr + 1);
+
+  ConfigManager->set(KEY_MAX_RELAY, maxRelay + 1);
 }
 
 void addLedCFG(uint8_t gpio, uint8_t level) {
