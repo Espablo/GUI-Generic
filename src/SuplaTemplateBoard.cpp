@@ -17,8 +17,21 @@
 #include "SuplaTemplateBoard.h"
 #include "SuplaDeviceGUI.h"
 
+namespace Supla {
+namespace TanplateBoard {
+void addTemplateBoard() {
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
+#ifdef TEMPLATE_JSON
+  Supla::TanplateBoard::chooseTemplateBoard(TEMPLATE_JSON);
+#endif
+#else
+  chooseTemplateBoard(getDefaultTamplateBoard());
+#endif
+}
+}  // namespace TanplateBoard
+}  // namespace Supla
 
+#ifdef SUPLA_TEMPLATE_BOARD_JSON
 namespace Supla {
 namespace TanplateBoard {
 

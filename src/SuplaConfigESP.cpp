@@ -47,7 +47,7 @@ SuplaConfigESP::SuplaConfigESP() {
       ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
 
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
-
+    Supla::TanplateBoard::addTemplateBoard();
 #else
     if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0) {
       chooseTemplateBoard(getDefaultTamplateBoard());
@@ -745,11 +745,7 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
     ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
     ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
-#ifdef SUPLA_TEMPLATE_BOARD_JSON
-
-#else
-    chooseTemplateBoard(getDefaultTamplateBoard());
-#endif
+    Supla::TanplateBoard::addTemplateBoard();
     ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
     ConfigManager->save();
@@ -770,11 +766,7 @@ void SuplaConfigESP::reset(bool forceReset) {
 
     ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
     ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
-#ifdef SUPLA_TEMPLATE_BOARD_JSON
-
-#else
-    chooseTemplateBoard(getDefaultTamplateBoard());
-#endif
+    Supla::TanplateBoard::addTemplateBoard();
     ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
     ConfigManager->save();

@@ -35,6 +35,12 @@
 #endif
 #endif
 
+namespace Supla {
+namespace TanplateBoard {
+void addTemplateBoard();
+}
+}  // namespace Supla
+
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
 #include <ArduinoJson.h>
 

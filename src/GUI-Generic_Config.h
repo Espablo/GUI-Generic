@@ -1,8 +1,9 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
-// #define USE_CUSTOM
+//#define TEMPLATE_JSON "{\"NAME\":\"Shelly 2.5\",\"GPIO\":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736]}"
 
+// #define USE_CUSTOM
 // User configuration
 #ifdef USE_CUSTOM
 #ifdef BUILD_VERSION
