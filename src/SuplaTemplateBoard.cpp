@@ -102,7 +102,7 @@ void chooseTemplateBoard(String board) {
         break;
 
       case FunctionNew::NewSwitch1n:
-        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, true);
+        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
         Supla::TanplateBoard::addButtonCFG(gpio);
         break;
       case FunctionNew::NewSwitch2n:
@@ -111,7 +111,7 @@ void chooseTemplateBoard(String board) {
       case FunctionNew::NewSwitch5n:
       case FunctionNew::NewSwitch6n:
       case FunctionNew::NewSwitch7n:
-        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, true);
+        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
         break;
 
       case FunctionNew::NewButton1:
@@ -125,13 +125,13 @@ void chooseTemplateBoard(String board) {
         break;
 
       case FunctionNew::NewButton1n:
-        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
+        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
         Supla::TanplateBoard::addButtonCFG(gpio);
         break;
       case FunctionNew::NewButton2n:
       case FunctionNew::NewButton3n:
       case FunctionNew::NewButton4n:
-        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, true);
+        Supla::TanplateBoard::addButton(gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
         break;
 
       case FunctionNew::NewLed1:
@@ -165,6 +165,20 @@ void chooseTemplateBoard(String board) {
         break;
       case FunctionNew::NewLedLinki:
         Supla::TanplateBoard::addLed(0, gpio, LOW);
+        break;
+
+      case FunctionNew::NewPWM1:
+        ConfigESP->setGpio(gpio, FUNCTION_RGBW_RED);
+        ConfigManager->set(KEY_MAX_RGBW, ConfigManager->get(KEY_MAX_RGBW)->getValueInt() + 1);
+        break;
+      case FunctionNew::NewPWM2:
+        ConfigESP->setGpio(gpio, FUNCTION_RGBW_GREEN);
+        break;
+      case FunctionNew::NewPWM3:
+        ConfigESP->setGpio(gpio, FUNCTION_RGBW_BLUE);
+        break;
+      case FunctionNew::NewPWM4:
+        ConfigESP->setGpio(gpio, FUNCTION_RGBW_BRIGHTNESS);
         break;
 
       case FunctionNew::NewBL0937CF:
@@ -277,6 +291,15 @@ int convert(int gpioJSON) {
       return FunctionNew::NewLed4i;
     case FunctionOld::LedLinki:
       return FunctionNew::NewLedLinki;
+
+    case FunctionOld::PWM1:
+      return FunctionNew::NewPWM1;
+    case FunctionOld::PWM2:
+      return FunctionNew::NewPWM2;
+    case FunctionOld::PWM3:
+      return FunctionNew::NewPWM3;
+    case FunctionOld::PWM4:
+      return FunctionNew::NewPWM4;
 
     case FunctionOld::BL0937CF:
       return FunctionNew::NewBL0937CF;
