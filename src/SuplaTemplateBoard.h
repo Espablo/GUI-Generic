@@ -181,34 +181,34 @@ extern String templateBoardWarning;
 }  // namespace Supla
 
 #else
-//#define BOARD_OFF              0
-//#define BOARD_ELECTRODRAGON    1
-//#define BOARD_INCAN3           2
-//#define BOARD_INCAN4           3
-//#define BOARD_MELINK           4
-//#define BOARD_NEO_COOLCAM      5
-//#define BOARD_SHELLY1          6
-//#define BOARD_SHELLY2          7
-//#define BOARD_SONOFF_BASIC     8
-//#define BOARD_SONOFF_DUAL_R2   9
-//#define BOARD_SONOFF_S2X       10
-//#define BOARD_SONOFF_SV        11
-//#define BOARD_SONOFF_TH        12
-//#define BOARD_SONOFF_TOUCH     13
-//#define BOARD_SONOFF_TOUCH_2CH 14
-//#define BOARD_SONOFF_TOUCH_3CH 15
-//#define BOARD_SONOFF_4CH       16
-//#define BOARD_YUNSHAN          17
-//#define BOARD_YUNTONG_SMART    18
-//#define BOARD_GOSUND_SP111     19
-//#define BOARD_DIMMER_LUKASZH   20
-//#define BOARD_H801             21
-//#define BOARD_SHELLY_PLUG_S    22
-//#define BOARD_SONOFF_MINI      23
-//#define BOARD_MINITIGER_1CH    24
-//#define BOARD_MINITIGER_2CH    25
-//#define BOARD_MINITIGER_3CH    26
-//#define MAX_MODULE             27
+#define BOARD_OFF              0
+#define BOARD_ELECTRODRAGON    1
+#define BOARD_INCAN3           2
+#define BOARD_INCAN4           3
+#define BOARD_MELINK           4
+#define BOARD_NEO_COOLCAM      5
+#define BOARD_SHELLY1          6
+#define BOARD_SHELLY2          7
+#define BOARD_SONOFF_BASIC     8
+#define BOARD_SONOFF_DUAL_R2   9
+#define BOARD_SONOFF_S2X       10
+#define BOARD_SONOFF_SV        11
+#define BOARD_SONOFF_TH        12
+#define BOARD_SONOFF_TOUCH     13
+#define BOARD_SONOFF_TOUCH_2CH 14
+#define BOARD_SONOFF_TOUCH_3CH 15
+#define BOARD_SONOFF_4CH       16
+#define BOARD_YUNSHAN          17
+#define BOARD_YUNTONG_SMART    18
+#define BOARD_GOSUND_SP111     19
+#define BOARD_DIMMER_LUKASZH   20
+#define BOARD_H801             21
+#define BOARD_SHELLY_PLUG_S    22
+#define BOARD_SONOFF_MINI      23
+#define BOARD_MINITIGER_1CH    24
+#define BOARD_MINITIGER_2CH    25
+#define BOARD_MINITIGER_3CH    26
+#define MAX_MODULE             27
 
 #if (DEFAULT_TEMPLATE_BOARD != BOARD_OFF)
 #define SUPLA_RELAY
