@@ -50,6 +50,7 @@ enum FunctionOld
 {
   None = 0,
   TemperatureAnalog = 2,
+  SI7021 = 3,
   Switch1 = 9,
   Switch2,
   Switch3,
@@ -150,6 +151,7 @@ enum FunctionNew
   NewPWM5,
   NewLedLink = 544,
   NewLedLinki = 576,
+  NewSI7021 = 1248,
   NewHLWBLSELi = 2624,
   NewHLWBLCF1 = 2656,
   NewBL0937CF = 2720,

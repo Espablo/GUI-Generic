@@ -265,6 +265,10 @@ void chooseTemplateBoard(String board) {
         ConfigESP->setGpio(gpio, FUNCTION_NTC_10K);
         break;
 
+      case FunctionNew::NewSI7021:
+        ConfigESP->setGpio(gpio, FUNCTION_SI7021_SONOFF);
+        break;
+
       default:
         templateBoardWarning += F("Brak funkcji: ") + String(gpioJSON) + F("<br>");
     }
@@ -384,6 +388,9 @@ int convert(int gpioJSON) {
 
     case FunctionOld::TemperatureAnalog:
       return FunctionNew::NewTemperatureAnalog;
+
+    case FunctionOld::SI7021:
+      return FunctionNew::NewSI7021;
   }
   return FunctionNew::NewNone;
 }
