@@ -239,33 +239,33 @@ extern String templateBoardWarning;
 #endif
 #endif
 
-// const char BOARD_NULL[] PROGMEM = "";
-// const char ELECTRODRAGON[] PROGMEM = "ElectroDragon";
-// const char INCAN3[] PROGMEM = "inCan3";
-// const char INCAN4[] PROGMEM = "inCan4";
-// const char MELINK[] PROGMEM = "Melink";
-// const char NEO_COOLCAM[] PROGMEM = "Neo Coolcam";
-// const char SHELLY1[] PROGMEM = "Shelly 1";
-// const char SHELLY2[] PROGMEM = "Shelly 2";
-// const char SONOFF_BASIC[] PROGMEM = "SONOFF BASIC";
-// const char SONOFF_DUAL_R2[] PROGMEM = "SONOFF DUAL R2";
-// const char SONOFF_S2X[] PROGMEM = "SONOFF S2X";
-// const char SONOFF_SV[] PROGMEM = "SONOFF SV";
-// const char SONOFF_TH[] PROGMEM = "SONOFF TH";
-// const char SONOFF_TOUCH[] PROGMEM = "SONOFF TOUCH";
-// const char SONOFF_TOUCH_2CH[] PROGMEM = "SONOFF TOUCH DUAL";
-// const char SONOFF_TOUCH_3CH[] PROGMEM = "SONOFF TOUCH TRIPLE";
-// const char SONOFF_4CH[] PROGMEM = "SONOFF 4CH";
-// const char YUNSHAN[] PROGMEM = "Yunshan";
-// const char YUNTONG_SMART[] PROGMEM = "YUNTONG Smart";
-// const char GOSUNG_SP111[] PROGMEM = "Gosund SP111";
-// const char DIMMER_LUKASZH[] PROGMEM = "Dimmer by @LukaszH";
-// const char H801[] PROGMEM = "H801 RGBW";
-// const char SHELLY_PLUG_S[] PROGMEM = "Shelly Plug S";
-// const char SONOFF_MINI[] PROGMEM = "SONOFF Mini";
-// const char MINITIGER_1CH[] PROGMEM = "Minitiger 1 Gang v2 Switch";
-// const char MINITIGER_2CH[] PROGMEM = "Minitiger 2 Gang v2 Switch";
-// const char MINITIGER_3CH[] PROGMEM = "Minitiger 3 Gang Switch";
+const char BOARD_NULL[] PROGMEM = "";
+const char ELECTRODRAGON[] PROGMEM = "ElectroDragon";
+const char INCAN3[] PROGMEM = "inCan3";
+const char INCAN4[] PROGMEM = "inCan4";
+const char MELINK[] PROGMEM = "Melink";
+const char NEO_COOLCAM[] PROGMEM = "Neo Coolcam";
+const char SHELLY1[] PROGMEM = "Shelly 1";
+const char SHELLY2[] PROGMEM = "Shelly 2";
+const char SONOFF_BASIC[] PROGMEM = "SONOFF BASIC";
+const char SONOFF_DUAL_R2[] PROGMEM = "SONOFF DUAL R2";
+const char SONOFF_S2X[] PROGMEM = "SONOFF S2X";
+const char SONOFF_SV[] PROGMEM = "SONOFF SV";
+const char SONOFF_TH[] PROGMEM = "SONOFF TH";
+const char SONOFF_TOUCH[] PROGMEM = "SONOFF TOUCH";
+const char SONOFF_TOUCH_2CH[] PROGMEM = "SONOFF TOUCH DUAL";
+const char SONOFF_TOUCH_3CH[] PROGMEM = "SONOFF TOUCH TRIPLE";
+const char SONOFF_4CH[] PROGMEM = "SONOFF 4CH";
+const char YUNSHAN[] PROGMEM = "Yunshan";
+const char YUNTONG_SMART[] PROGMEM = "YUNTONG Smart";
+const char GOSUNG_SP111[] PROGMEM = "Gosund SP111";
+const char DIMMER_LUKASZH[] PROGMEM = "Dimmer by @LukaszH";
+const char H801[] PROGMEM = "H801 RGBW";
+const char SHELLY_PLUG_S[] PROGMEM = "Shelly Plug S";
+const char SONOFF_MINI[] PROGMEM = "SONOFF Mini";
+const char MINITIGER_1CH[] PROGMEM = "Minitiger 1 Gang v2 Switch";
+const char MINITIGER_2CH[] PROGMEM = "Minitiger 2 Gang v2 Switch";
+const char MINITIGER_3CH[] PROGMEM = "Minitiger 3 Gang Switch";
 
 const char* const BOARD_P[MAX_MODULE] PROGMEM = {
     S_ABSENT,       ELECTRODRAGON, INCAN3,         INCAN4,    MELINK,        NEO_COOLCAM,      SHELLY1,          SHELLY2,       SONOFF_BASIC,
