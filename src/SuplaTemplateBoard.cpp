@@ -25,7 +25,7 @@ void addTemplateBoard() {
   Supla::TanplateBoard::chooseTemplateBoard(TEMPLATE_JSON);
 #endif
 #else
-  chooseTemplateBoard(getDefaultTamplateBoard());
+  chooseTemplateBoard(ConfigESP->getDefaultTamplateBoard());
 #endif
 }
 }  // namespace TanplateBoard
