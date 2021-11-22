@@ -48,7 +48,7 @@ SuplaConfigESP::SuplaConfigESP() {
 
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
     Supla::TanplateBoard::addTemplateBoard();
-#else
+#elif SUPLA_TEMPLATE_BOARD_OLD
     if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0) {
       chooseTemplateBoard(getDefaultTamplateBoard());
     }

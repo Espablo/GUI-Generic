@@ -24,7 +24,7 @@ void addTemplateBoard() {
 #ifdef TEMPLATE_JSON
   Supla::TanplateBoard::chooseTemplateBoard(TEMPLATE_JSON);
 #endif
-#else
+#elif SUPLA_TEMPLATE_BOARD_OLD
   chooseTemplateBoard(ConfigESP->getDefaultTamplateBoard());
 #endif
 }
@@ -448,7 +448,7 @@ String templateBoardWarning;
 
 }  // namespace TanplateBoard
 }  // namespace Supla
-#else
+#elif SUPLA_TEMPLATE_BOARD_OLD
 void addButton(uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
 
