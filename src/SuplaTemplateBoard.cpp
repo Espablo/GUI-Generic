@@ -36,8 +36,6 @@ namespace Supla {
 namespace TanplateBoard {
 
 void chooseTemplateBoard(String board) {
-  bool oldVersion = false;
-
   ConfigESP->clearEEPROM();
   ConfigManager->deleteGPIODeviceValues();
   templateBoardWarning = "";
@@ -55,6 +53,12 @@ void chooseTemplateBoard(String board) {
   JsonObject& root = jsonBuffer.parseObject(board);
   JsonArray& GPIO = root["GPIO"];
 
+  String name = root["NAME"];
+  ConfigManager->set(KEY_HOST_NAME, name.c_str());
+
+#ifdef ARDUINO_ARCH_ESP8266
+  bool oldVersion = false;
+
   if (GPIO.size() == 13)
     oldVersion = true;
 
@@ -69,18 +73,20 @@ void chooseTemplateBoard(String board) {
     templateBoardWarning += "Błąd wczytania<br>";
     return;
   }
+#elif ARDUINO_ARCH_ESP32
 
-  String name = root["NAME"];
-  ConfigManager->set(KEY_HOST_NAME, name.c_str());
+#endif
 
   for (size_t i = 0; i < GPIO.size(); i++) {
     int gpioJSON = (int)GPIO[i];
     int gpio = getGPIO(i);
 
+#ifdef ARDUINO_ARCH_ESP8266
     if (oldVersion) {
       Serial.println("Konwersja starej wersji JSONa");
       gpioJSON = convert(gpioJSON);
     }
+#endif
 
     switch (gpioJSON) {
       case FunctionNew::NewNone:
@@ -269,7 +275,7 @@ void chooseTemplateBoard(String board) {
         break;
 
       default:
-        templateBoardWarning += F("Brak funkcji: ") + String(gpioJSON) + F("<br>");
+        templateBoardWarning += "Brak funkcji: " + String(gpioJSON) + "<br>";
     }
   }
 }
@@ -395,10 +401,27 @@ int convert(int gpioJSON) {
 }
 
 uint8_t getGPIO(uint8_t gpio) {
+#ifdef ARDUINO_ARCH_ESP8266
   if (gpio == 6 || gpio == 7)
     gpio = gpio + 3;
   else if (gpio >= 8)
     gpio = gpio + 4;
+#elif ARDUINO_ARCH_ESP32
+  if (gpio == 6 || gpio == 7)
+    gpio = gpio + 3;
+  else if (gpio >= 8 && gpio <= 23)
+    gpio = gpio + 4;
+  else if (gpio == 24)
+    gpio = 6;
+  else if (gpio == 25)
+    gpio = 7;
+  else if (gpio == 26)
+    gpio = 8;
+  else if (gpio == 27)
+    gpio = 11;
+  else if (gpio >= 28)
+    gpio = gpio + 4;
+#endif
 
   return gpio;
 }

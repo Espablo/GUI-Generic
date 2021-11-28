@@ -176,6 +176,12 @@ const char GPIO2[] PROGMEM = "2-IO";
 const char GPIO3[] PROGMEM = "3-RX";
 const char GPIO4[] PROGMEM = "4-IO";
 const char GPIO5[] PROGMEM = "5-IO";
+const char GPIO6[] PROGMEM = "6-IO";
+const char GPIO7[] PROGMEM = "7-IO";
+const char GPIO8[] PROGMEM = "8-IO";
+const char GPIO9[] PROGMEM = "9-IO";
+const char GPIO10[] PROGMEM = "10-IO";
+const char GPIO11[] PROGMEM = "11-IO";
 const char GPIO12[] PROGMEM = "12-IO";
 const char GPIO13[] PROGMEM = "13-IO";
 const char GPIO14[] PROGMEM = "14-IO";
@@ -184,9 +190,11 @@ const char GPIO16[] PROGMEM = "16-IO";
 const char GPIO17[] PROGMEM = "17-IO";
 const char GPIO18[] PROGMEM = "18-IO";
 const char GPIO19[] PROGMEM = "19-IO";
+const char GPIO20[] PROGMEM = "20-IO";
 const char GPIO21[] PROGMEM = "21-IO";
 const char GPIO22[] PROGMEM = "22-IO";
 const char GPIO23[] PROGMEM = "23-IO";
+const char GPIO24[] PROGMEM = "24-IO";
 const char GPIO25[] PROGMEM = "25-IO";
 const char GPIO26[] PROGMEM = "26-IO";
 const char GPIO27[] PROGMEM = "27-IO";
@@ -195,12 +203,14 @@ const char GPIO33[] PROGMEM = "33-AO";
 const char GPIO34[] PROGMEM = "34-IA";
 const char GPIO35[] PROGMEM = "35-IA";
 const char GPIO36[] PROGMEM = "36-IA";
+const char GPIO37[] PROGMEM = "37-IA";
+const char GPIO38[] PROGMEM = "38-IA";
 const char GPIO39[] PROGMEM = "39-IA";
 
-const char* const GPIO_P[] PROGMEM = {GPIO0,   GPIO1,  GPIO2,   GPIO3,  GPIO4,   GPIO5,   S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
-                                      S_EMPTY, GPIO12, GPIO13,  GPIO14, GPIO15,  GPIO16,  GPIO17,  GPIO18,  GPIO19,  S_EMPTY, GPIO21,
-                                      GPIO22,  GPIO23, S_EMPTY, GPIO25, GPIO26,  GPIO27,  S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, GPIO32,
-                                      GPIO33,  GPIO34, GPIO35,  GPIO36, S_EMPTY, S_EMPTY, GPIO39,  OFF};
+const char* const GPIO_P[] PROGMEM = {GPIO0,   GPIO1,  GPIO2,   GPIO3,  GPIO4,   GPIO5,   GPIO6,   GPIO7,   GPIO8,   GPIO9, GPIO10,
+                                      GPIO11, GPIO12, GPIO13,  GPIO14, GPIO15,  GPIO16,  GPIO17,  GPIO18,  GPIO19,  GPIO20, GPIO21,
+                                      GPIO22,  GPIO23, GPIO24, GPIO25, GPIO26,  GPIO27,  S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, GPIO32,
+                                      GPIO33,  GPIO34, GPIO35,  GPIO36, GPIO37, GPIO38, GPIO39,  OFF};
 #endif
 
 #ifdef SUPLA_MCP23017

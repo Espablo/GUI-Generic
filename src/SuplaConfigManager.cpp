@@ -162,7 +162,7 @@ SuplaConfigManager::SuplaConfigManager() {
   if (SPIFFS.begin()) {
     _optionCount = OPTION_COUNT;
 
-    // SPIFFS.format();
+    //SPIFFS.format();
 
     this->addKey(KEY_SUPLA_GUID, MAX_GUID);
     this->addKey(KEY_SUPLA_AUTHKEY, MAX_AUTHKEY);
@@ -190,13 +190,7 @@ SuplaConfigManager::SuplaConfigManager() {
     uint8_t nr, key;
     for (nr = 0; nr <= MAX_GPIO; nr++) {
       key = KEY_GPIO + nr;
-      if (nr <= 17) {
-        this->addKey(key, 36, 2);
-      }
-      else {
-        if (nr != 20 || nr != 24 || nr != 28 || nr != 29 || nr != 30 || nr != 31 || nr != 37 || nr != 38)
-          this->addKey(key, 36, 2);
-      }
+      this->addKey(key, 36, 2);
     }
 #endif
 

@@ -563,8 +563,7 @@ bool SuplaConfigESP::checkGpio(int gpio) {
       || gpio == 9 || gpio == 10
 #endif
 #elif ARDUINO_ARCH_ESP32
-      gpio == 6 || gpio == 7 || gpio == 8 || gpio == 9 || gpio == 10 || gpio == 11 || gpio == 20 || gpio == 24 || gpio == 28 || gpio == 29 ||
-      gpio == 30 || gpio == 31 || gpio == 37 || gpio == 38
+      gpio == 28 || gpio == 29 || gpio == 30 || gpio == 31
 #endif
   ) {
     return false;
