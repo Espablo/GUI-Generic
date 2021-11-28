@@ -334,7 +334,7 @@ int SuplaConfigESP::getGpio(int nr, int function) {
   }
 
   if (function == FUNCTION_BUTTON && ConfigManager->get(KEY_ANALOG_BUTTON)->getElement(nr).toInt()) {
-    return PIN_A0;
+    return A0;
   }
 
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {

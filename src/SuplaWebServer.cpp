@@ -189,8 +189,8 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     return true;
   }
 
-  if (function == FUNCTION_BUTTON && _gpio == PIN_A0) {
-    if (gpio != PIN_A0) {
+  if (function == FUNCTION_BUTTON && _gpio == A0) {
+    if (gpio != A0) {
       ConfigManager->setElement(KEY_ANALOG_BUTTON, nr, false);
       ConfigESP->clearGpio(gpio, function);
     }
@@ -221,7 +221,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     if (gpio == GPIO_VIRTUAL_RELAY) {
       ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
     }
-    if (gpio == PIN_A0) {
+    if (gpio == A0) {
       ConfigManager->setElement(KEY_ANALOG_BUTTON, nr, false);
     }
   }

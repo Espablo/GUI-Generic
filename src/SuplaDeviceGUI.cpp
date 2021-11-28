@@ -136,8 +136,8 @@ void addButtonToRelay(uint8_t nr) {
   if (pinButton != OFF_GPIO) {
     Supla::Control::Button *button;
 
-    if (pinButton == PIN_A0) {
-      button = new Supla::Control::ButtonAnalog(PIN_A0, ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(nr).toInt());
+    if (pinButton == A0) {
+      button = new Supla::Control::ButtonAnalog(A0, ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(nr).toInt());
     }
     else {
       button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));

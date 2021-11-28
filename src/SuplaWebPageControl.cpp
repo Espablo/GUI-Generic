@@ -275,7 +275,7 @@ void handleButtonSet(int save) {
       }
 #endif
     }
-    else if (gpio == PIN_A0) {
+    else if (gpio == A0) {
       addNumberBox(webContentBuffer, INPUT_ANALOG_EXPECTED, S_CONDITION, "0", false,
                    ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(button.toInt()));
 
