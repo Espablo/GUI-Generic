@@ -211,7 +211,7 @@ enum _e_onfig
   E_CONFIG_MAX
 };
 
-#define CONFIG_MAX_OPTIONS 100
+#define CONFIG_MAX_OPTIONS 200
 
 #define ESP8226_CONFIG_V1 2681
 
