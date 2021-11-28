@@ -205,36 +205,35 @@ void chooseTemplateBoard(String board) {
         break;
 
       case FunctionNew::NewLed1:
-        // pierwszy led przeznaczony jest dla LED konfiguracyjnego
-        Supla::TanplateBoard::addLedCFG(gpio);
+        Supla::TanplateBoard::addLed(0, gpio);
         break;
       case FunctionNew::NewLed2:
-        Supla::TanplateBoard::addLed(0, gpio);
-        break;
-      case FunctionNew::NewLed3:
         Supla::TanplateBoard::addLed(1, gpio);
         break;
-      case FunctionNew::NewLed4:
+      case FunctionNew::NewLed3:
         Supla::TanplateBoard::addLed(2, gpio);
         break;
+      case FunctionNew::NewLed4:
+        Supla::TanplateBoard::addLed(3, gpio);
+        break;
       case FunctionNew::NewLedLink:
-        Supla::TanplateBoard::addLed(0, gpio);
+        Supla::TanplateBoard::addLedCFG(gpio);
         break;
 
       case FunctionNew::NewLed1i:
-        Supla::TanplateBoard::addLedCFG(gpio, LOW);
+        Supla::TanplateBoard::addLed(0, gpio, LOW);
         break;
       case FunctionNew::NewLed2i:
-        Supla::TanplateBoard::addLed(0, gpio, LOW);
-        break;
-      case FunctionNew::NewLed3i:
         Supla::TanplateBoard::addLed(1, gpio, LOW);
         break;
-      case FunctionNew::NewLed4i:
+      case FunctionNew::NewLed3i:
         Supla::TanplateBoard::addLed(2, gpio, LOW);
         break;
+      case FunctionNew::NewLed4i:
+        Supla::TanplateBoard::addLed(3, gpio, LOW);
+        break;
       case FunctionNew::NewLedLinki:
-        Supla::TanplateBoard::addLed(0, gpio, LOW);
+        Supla::TanplateBoard::addLedCFG(gpio, LOW);
         break;
 
       case FunctionNew::NewPWM1:
