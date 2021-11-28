@@ -237,8 +237,12 @@ SuplaConfigManager::SuplaConfigManager() {
 
 #ifdef SUPLA_BUTTON
     this->addKey(KEY_MAX_BUTTON, "0", 2, 2);
+    this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON, 6);
+    this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON, 6);
 #else
     this->addKey(KEY_MAX_BUTTON, 2, 2, false);
+    this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON, 6, false);
+    this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON, 6, false);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH

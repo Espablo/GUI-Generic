@@ -333,6 +333,10 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     return GPIO_VIRTUAL_RELAY;
   }
 
+  if (function == FUNCTION_BUTTON && ConfigManager->get(KEY_ANALOG_BUTTON)->getElement(nr).toInt()) {
+    return PIN_A0;
+  }
+
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
     if (function == FUNCTION_CFG_BUTTON) {
@@ -521,7 +525,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
     setInversed(gpio, true);
 
     setAction(gpio, Supla::Action::TOGGLE);
-    setEvent(gpio, Supla::Event::ON_CHANGE);
+    setEvent(gpio, Supla::Event::ON_PRESS);
   }
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, LOW);

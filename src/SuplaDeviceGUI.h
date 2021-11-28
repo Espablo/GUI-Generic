@@ -60,6 +60,7 @@
 #include <vector>
 
 #include <supla/control/button.h>
+#include <supla/control/ButtonAnalog.h>
 #include <supla/control/relay.h>
 #include <supla/control/virtual_relay.h>
 #include <supla/control/roller_shutter.h>

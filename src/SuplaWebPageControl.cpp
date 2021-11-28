@@ -212,6 +212,9 @@ void handleButtonSaveSet() {
   input = INPUT_BUTTON_ACTION;
   ConfigManager->setElement(key, ACTION_BUTTON, WebServer->httpServer->arg(input).toInt());
 
+  input = INPUT_ANALOG_EXPECTED;
+  ConfigManager->setElement(KEY_ANALOG_INPUT_EXPECTED, button.toInt(), WebServer->httpServer->arg(input).toInt());
+
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       handleButtonSet(1);
@@ -271,6 +274,15 @@ void handleButtonSet(int save) {
         addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
       }
 #endif
+    }
+    else if (gpio == PIN_A0) {
+      addNumberBox(webContentBuffer, INPUT_ANALOG_EXPECTED, S_CONDITION, "0", false,
+                   ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(button.toInt()));
+
+      selected = ConfigESP->getEvent(gpio);
+      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+      selected = ConfigESP->getAction(gpio);
+      addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
     }
     else {
       selected = ConfigESP->getPullUp(gpio);

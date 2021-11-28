@@ -21,6 +21,7 @@
 #define TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK 600  // 10min
 #define STORAGE_OFFSET                       0
 #include <supla/storage/eeprom.h>
+
 Supla::Eeprom eeprom(STORAGE_OFFSET);
 
 Supla::GUIESPWifi *wifi = nullptr;
@@ -133,10 +134,18 @@ void addButtonToRelay(uint8_t nr) {
   int size = relay.size() - 1;
 
   if (pinButton != OFF_GPIO) {
-    auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
+    Supla::Control::Button *button;
+
+    if (pinButton == PIN_A0) {
+      button = new Supla::Control::ButtonAnalog(PIN_A0, ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(nr).toInt());
+    }
+    else {
+      button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
+      button->setSwNoiseFilterDelay(50);
+    }
 
     button->addAction(ConfigESP->getAction(pinButton), relay[size], ConfigESP->getEvent(pinButton));
-    button->setSwNoiseFilterDelay(50);
+
 #ifdef SUPLA_ACTION_TRIGGER
     addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[size]);
 #endif
