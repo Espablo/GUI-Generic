@@ -274,8 +274,14 @@ void chooseTemplateBoard(String board) {
         ConfigESP->setGpio(gpio, FUNCTION_SI7021_SONOFF);
         break;
 
+      case FunctionNew::NewCSE7766Rx:
+        ConfigESP->setGpio(gpio, FUNCTION_CSE7766_RX);
+        break;
+
       default:
-        templateBoardWarning += "Brak funkcji: " + String(gpioJSON) + "<br>";
+        templateBoardWarning += "Brak funkcji: ";
+        templateBoardWarning += gpioJSON;
+        templateBoardWarning += "<br>";
     }
   }
 }
@@ -396,6 +402,11 @@ int convert(int gpioJSON) {
 
     case FunctionOld::SI7021:
       return FunctionNew::NewSI7021;
+
+    case FunctionOld::CSE7766Tx:
+      return FunctionNew::NewCSE7766Tx;
+    case FunctionOld::CSE7766Rx:
+      return FunctionNew::NewCSE7766Rx;
   }
   return FunctionNew::NewNone;
 }

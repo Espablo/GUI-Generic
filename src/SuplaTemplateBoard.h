@@ -97,6 +97,8 @@ enum FunctionOld
   HLWBLSELi = 131,
   HLWBLCF1 = 132,
   BL0937CF = 134,
+  CSE7766Tx = 145,
+  CSE7766Rx = 146,
   LedLink = 157,
   LedLinki = 158,
   Users = 255,
@@ -155,6 +157,8 @@ enum FunctionNew
   NewHLWBLSELi = 2624,
   NewHLWBLCF1 = 2656,
   NewBL0937CF = 2720,
+  NewCSE7766Tx = 3072,
+  NewCSE7766Rx = 3104,
   NewTemperatureAnalog = 4736,
   NewUsers = 1,
 };
