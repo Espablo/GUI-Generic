@@ -23,18 +23,17 @@ CSE_7766::CSE_7766(int8_t pinRX)
     : pinRX(pinRX),
       currentMultiplier(0.92),
       voltageMultiplier(1),
-      powerMultiplier(0.92)
-{
+      powerMultiplier(0.92) {
   sensor = new CSE7766();
 }
 
 void CSE_7766::onInit() {
-  sensor->setRX(pinRX);
-  sensor->begin();
-
   sensor->setCurrentRatio(currentMultiplier);
   sensor->setVoltageRatio(voltageMultiplier);
   sensor->setPowerRatio(powerMultiplier);
+
+  sensor->setRX(pinRX);
+  sensor->begin();
 
   readValuesFromDevice();
   updateChannelValues();
