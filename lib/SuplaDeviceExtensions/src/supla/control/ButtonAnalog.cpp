@@ -140,7 +140,7 @@ void Supla::Control::ButtonAnalog::onTimer() {
 int Supla::Control::ButtonAnalog::update() {
   int currentState = analogRead(pin);
 
-  if (currentState >= expected - 10 && currentState <= expected + 10 &&
+  if (currentState >= expected - 50 && currentState <= expected + 50 &&
       state == false) {
     state = true;
     return TO_PRESSED;
