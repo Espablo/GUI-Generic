@@ -46,6 +46,8 @@ void chooseTemplateBoard(String board) {
   ConfigManager->set(KEY_MAX_LIMIT_SWITCH, "0");
   ConfigManager->set(KEY_MAX_RGBW, "0");
   ConfigManager->set(KEY_CFG_MODE, CONFIG_MODE_10_ON_PRESSES);
+  ConfigManager->set(KEY_ANALOG_BUTTON, "");
+  ConfigManager->set(KEY_ANALOG_INPUT_EXPECTED, "");
 
   const size_t capacity = JSON_ARRAY_SIZE(14) + JSON_OBJECT_SIZE(4) + 200;
   DynamicJsonBuffer jsonBuffer(capacity);
@@ -53,8 +55,19 @@ void chooseTemplateBoard(String board) {
   JsonObject& root = jsonBuffer.parseObject(board);
   JsonArray& GPIO = root["GPIO"];
 
+  JsonArray& analogButtons = root["AnalogButtons"];
+  //"AnalogButtons":[250, 500, 750]
+  for (size_t i = 0; i < analogButtons.size(); i++) {
+    addButtonAnalog(i, analogButtons[i]);
+  }
+
   String name = root["NAME"];
   ConfigManager->set(KEY_HOST_NAME, name.c_str());
+
+  if (GPIO.size() == 0) {
+    templateBoardWarning += "Błąd wczytania<br>";
+    return;
+  }
 
 #ifdef ARDUINO_ARCH_ESP8266
   bool oldVersion = false;
@@ -68,11 +81,6 @@ void chooseTemplateBoard(String board) {
   else
     templateBoardWarning += 2;
   templateBoardWarning += F("<br>");
-
-  if (GPIO.size() == 0) {
-    templateBoardWarning += "Błąd wczytania<br>";
-    return;
-  }
 #elif ARDUINO_ARCH_ESP32
 
 #endif
@@ -82,10 +90,8 @@ void chooseTemplateBoard(String board) {
     int gpio = getGPIO(i);
 
 #ifdef ARDUINO_ARCH_ESP8266
-    if (oldVersion) {
-      Serial.println("Konwersja starej wersji JSONa");
+    if (oldVersion)
       gpioJSON = convert(gpioJSON);
-    }
 #endif
 
     switch (gpioJSON) {
@@ -445,10 +451,19 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, uint8_t action, bool pul
   ConfigESP->setPullUp(gpio, pullUp);
   ConfigESP->setInversed(gpio, invertLogic);
 
-  // if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) != OFF_GPIO)
-  //  ConfigESP->setGpio(gpio, maxButton, FUNCTION_BUTTON);
-  // else
+  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO) {
+    Supla::TanplateBoard::addButtonCFG(gpio);
+  }
+
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
+  ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
+}
+
+void addButtonAnalog(uint8_t nr, int expected) {
+  uint8_t maxButton = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
+
+  ConfigManager->setElement(KEY_ANALOG_BUTTON, nr, true);
+  ConfigManager->setElement(KEY_ANALOG_INPUT_EXPECTED, nr, expected);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
@@ -474,6 +489,10 @@ void addLed(uint8_t nr, uint8_t gpio, uint8_t level) {
 }
 
 void addButtonCFG(uint8_t gpio) {
+  for (uint8_t nr = 0; nr <= OFF_GPIO; nr++) {
+    ConfigESP->clearGpio(nr, FUNCTION_CFG_BUTTON);
+  }
+  
   ConfigESP->setGpio(gpio, FUNCTION_CFG_BUTTON);
 }
 

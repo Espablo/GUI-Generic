@@ -175,6 +175,7 @@ void addButton(uint8_t nr,
                uint8_t action = Supla::Action::TOGGLE,
                bool pullUp = true,
                bool invertLogic = true);
+void addButtonAnalog(uint8_t nr, int expected);
 void addRelay(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
 void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
