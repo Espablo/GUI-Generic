@@ -462,6 +462,12 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, uint8_t action, bool pul
 void addButtonAnalog(uint8_t nr, int expected) {
   uint8_t maxButton = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
 
+  if (expected == 0) {
+    ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
+    return;
+  }
+
+  ConfigESP->setAction(A0, Supla::Action::TOGGLE);
   ConfigManager->setElement(KEY_ANALOG_BUTTON, nr, true);
   ConfigManager->setElement(KEY_ANALOG_INPUT_EXPECTED, nr, expected);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
@@ -492,7 +498,7 @@ void addButtonCFG(uint8_t gpio) {
   for (uint8_t nr = 0; nr <= OFF_GPIO; nr++) {
     ConfigESP->clearGpio(nr, FUNCTION_CFG_BUTTON);
   }
-  
+
   ConfigESP->setGpio(gpio, FUNCTION_CFG_BUTTON);
 }
 
