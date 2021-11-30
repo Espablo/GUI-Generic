@@ -170,7 +170,6 @@ uint8_t getGPIO(uint8_t gpio);
 int convert(int gpioJSON);
 
 void addButton(uint8_t nr, uint8_t gpio, uint8_t event, JsonArray& buttonAction, bool pullUp, bool invertLogic);
-void addButtonAnalog(uint8_t nr, int expected);
 void addRelay(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
 void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);

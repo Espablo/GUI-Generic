@@ -55,13 +55,25 @@ void chooseTemplateBoard(String board) {
   JsonObject& root = jsonBuffer.parseObject(board);
   JsonArray& GPIO = root["GPIO"];
 
+  //"BTNACTION":[0,1,2]
+  // 0 - Supla::Action::TURN_ON
+  // 1 - Supla::Action::TURN_OFF
+  // 2 - Supla::Action::TOGGLE
+  JsonArray& buttonAction = root["BTNACTION"];
+
   //"BTNADC":[250, 500, 750]
   JsonArray& analogButtons = root["BTNADC"];
   for (size_t i = 0; i < analogButtons.size(); i++) {
-    addButtonAnalog(i, analogButtons[i]);
+    int expected = analogButtons[i];
+
+    if (expected != 0) {
+      ConfigManager->setElement(KEY_ANALOG_BUTTON, i, true);
+      ConfigManager->setElement(KEY_ANALOG_INPUT_EXPECTED, i, expected);
+    }
+
+    addButton(i, A0, Supla::Event::ON_CHANGE, buttonAction, true, true);
+    // addButtonAnalog(i, analogButtons[i]);
   }
-  //"BTNACTION":[0,1,2] 0-załącz 1-wyłącz 3-przełącz
-  JsonArray& buttonAction = root["BTNACTION"];
 
   String name = root["NAME"];
   ConfigManager->set(KEY_HOST_NAME, name.c_str());
@@ -457,25 +469,13 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, JsonArray& buttonAction,
   ConfigESP->setPullUp(gpio, pullUp);
   ConfigESP->setInversed(gpio, invertLogic);
 
-  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO) {
-    addButtonCFG(gpio);
+  if (gpio != A0) {
+    if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
+      addButtonCFG(gpio);
+
+    ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
   }
 
-  ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
-  ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
-}
-
-void addButtonAnalog(uint8_t nr, int expected) {
-  uint8_t maxButton = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
-
-  if (expected == 0) {
-    ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
-    return;
-  }
-
-  ConfigESP->setAction(A0, Supla::Action::TOGGLE);
-  ConfigManager->setElement(KEY_ANALOG_BUTTON, nr, true);
-  ConfigManager->setElement(KEY_ANALOG_INPUT_EXPECTED, nr, expected);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
