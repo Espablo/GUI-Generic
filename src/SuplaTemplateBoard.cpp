@@ -22,7 +22,7 @@ namespace TanplateBoard {
 void addTemplateBoard() {
 #ifdef SUPLA_TEMPLATE_BOARD_JSON
 #ifdef TEMPLATE_JSON
-  Supla::TanplateBoard::chooseTemplateBoard(TEMPLATE_JSON);
+  chooseTemplateBoard(TEMPLATE_JSON);
 #endif
 #elif SUPLA_TEMPLATE_BOARD_OLD
   chooseTemplateBoard(ConfigESP->getDefaultTamplateBoard());
@@ -55,11 +55,13 @@ void chooseTemplateBoard(String board) {
   JsonObject& root = jsonBuffer.parseObject(board);
   JsonArray& GPIO = root["GPIO"];
 
-  JsonArray& analogButtons = root["AnalogButtons"];
-  //"AnalogButtons":[250, 500, 750]
+  //"BTNADC":[250, 500, 750]
+  JsonArray& analogButtons = root["BTNADC"];
   for (size_t i = 0; i < analogButtons.size(); i++) {
     addButtonAnalog(i, analogButtons[i]);
   }
+  //"BTNACTION":[0,1,2] 0-załącz 1-wyłącz 3-przełącz
+  JsonArray& buttonAction = root["BTNACTION"];
 
   String name = root["NAME"];
   ConfigManager->set(KEY_HOST_NAME, name.c_str());
@@ -95,192 +97,192 @@ void chooseTemplateBoard(String board) {
 #endif
 
     switch (gpioJSON) {
-      case FunctionNew::NewNone:
+      case NewNone:
         break;
-      case FunctionNew::NewUsers:
-        break;
-
-      case FunctionNew::NewRelay1:
-        Supla::TanplateBoard::addRelay(0, gpio);
-        break;
-      case FunctionNew::NewRelay2:
-        Supla::TanplateBoard::addRelay(1, gpio);
-        break;
-      case FunctionNew::NewRelay3:
-        Supla::TanplateBoard::addRelay(2, gpio);
-        break;
-      case FunctionNew::NewRelay4:
-        Supla::TanplateBoard::addRelay(3, gpio);
+      case NewUsers:
         break;
 
-      case FunctionNew::NewRelay1i:
-        Supla::TanplateBoard::addRelay(0, gpio, LOW);
+      case NewRelay1:
+        addRelay(0, gpio);
         break;
-      case FunctionNew::NewRelay2i:
-        Supla::TanplateBoard::addRelay(1, gpio, LOW);
+      case NewRelay2:
+        addRelay(1, gpio);
         break;
-      case FunctionNew::NewRelay3i:
-        Supla::TanplateBoard::addRelay(2, gpio, LOW);
+      case NewRelay3:
+        addRelay(2, gpio);
         break;
-      case FunctionNew::NewRelay4i:
-        Supla::TanplateBoard::addRelay(3, gpio, LOW);
+      case NewRelay4:
+        addRelay(3, gpio);
         break;
 
-      case FunctionNew::NewSwitch1:
+      case NewRelay1i:
+        addRelay(0, gpio, LOW);
+        break;
+      case NewRelay2i:
+        addRelay(1, gpio, LOW);
+        break;
+      case NewRelay3i:
+        addRelay(2, gpio, LOW);
+        break;
+      case NewRelay4i:
+        addRelay(3, gpio, LOW);
+        break;
+
+      case NewSwitch1:
         if (ConfigESP->getGpio(0, FUNCTION_BUTTON) != OFF_GPIO) {
           ConfigESP->clearGpio(ConfigESP->getGpio(0, FUNCTION_BUTTON), FUNCTION_BUTTON);
           ConfigManager->set(KEY_MAX_BUTTON, ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() - 1);
         }
         else {
-          Supla::TanplateBoard::addButtonCFG(gpio);
+          addButtonCFG(gpio);
         }
 
-        Supla::TanplateBoard::addButton(0, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+        addButton(0, gpio, Supla::Event::ON_CHANGE, buttonAction, true, true);
 
         break;
-      case FunctionNew::NewSwitch2:
-        Supla::TanplateBoard::addButton(1, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+      case NewSwitch2:
+        addButton(1, gpio, Supla::Event::ON_CHANGE, buttonAction, true, true);
         break;
-      case FunctionNew::NewSwitch3:
-        Supla::TanplateBoard::addButton(2, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+      case NewSwitch3:
+        addButton(2, gpio, Supla::Event::ON_CHANGE, buttonAction, true, true);
         break;
-      case FunctionNew::NewSwitch4:
-        Supla::TanplateBoard::addButton(3, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+      case NewSwitch4:
+        addButton(3, gpio, Supla::Event::ON_CHANGE, buttonAction, true, true);
         break;
-      case FunctionNew::NewSwitch5:
-        Supla::TanplateBoard::addButton(4, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+      case NewSwitch5:
+        addButton(4, gpio, Supla::Event::ON_CHANGE, buttonAction, true, true);
         break;
-      case FunctionNew::NewSwitch6:
-        Supla::TanplateBoard::addButton(5, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+      case NewSwitch6:
+        addButton(5, gpio, Supla::Event::ON_CHANGE, buttonAction, true, true);
         break;
-      case FunctionNew::NewSwitch7:
-        Supla::TanplateBoard::addButton(6, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, true, true);
+      case NewSwitch7:
+        addButton(6, gpio, Supla::Event::ON_CHANGE, buttonAction, true, true);
         break;
 
-      case FunctionNew::NewSwitch1n:
+      case NewSwitch1n:
         if (ConfigESP->getGpio(0, FUNCTION_BUTTON) != OFF_GPIO) {
           ConfigESP->clearGpio(ConfigESP->getGpio(0, FUNCTION_BUTTON), FUNCTION_BUTTON);
           ConfigManager->set(KEY_MAX_BUTTON, ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() - 1);
         }
         else {
-          Supla::TanplateBoard::addButtonCFG(gpio);
+          addButtonCFG(gpio);
         }
 
-        Supla::TanplateBoard::addButton(0, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+        addButton(0, gpio, Supla::Event::ON_CHANGE, buttonAction, false, false);
 
         break;
-      case FunctionNew::NewSwitch2n:
-        Supla::TanplateBoard::addButton(1, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+      case NewSwitch2n:
+        addButton(1, gpio, Supla::Event::ON_CHANGE, buttonAction, false, false);
         break;
-      case FunctionNew::NewSwitch3n:
-        Supla::TanplateBoard::addButton(2, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+      case NewSwitch3n:
+        addButton(2, gpio, Supla::Event::ON_CHANGE, buttonAction, false, false);
         break;
-      case FunctionNew::NewSwitch4n:
-        Supla::TanplateBoard::addButton(3, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+      case NewSwitch4n:
+        addButton(3, gpio, Supla::Event::ON_CHANGE, buttonAction, false, false);
         break;
-      case FunctionNew::NewSwitch5n:
-        Supla::TanplateBoard::addButton(4, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+      case NewSwitch5n:
+        addButton(4, gpio, Supla::Event::ON_CHANGE, buttonAction, false, false);
         break;
-      case FunctionNew::NewSwitch6n:
-        Supla::TanplateBoard::addButton(5, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
+      case NewSwitch6n:
+        addButton(5, gpio, Supla::Event::ON_CHANGE, buttonAction, false, false);
         break;
-      case FunctionNew::NewSwitch7n:
-        Supla::TanplateBoard::addButton(6, gpio, Supla::Event::ON_CHANGE, Supla::Action::TOGGLE, false, false);
-        break;
-
-      case FunctionNew::NewButton1:
-        Supla::TanplateBoard::addButton(0, gpio);
-        Supla::TanplateBoard::addButtonCFG(gpio);
-        break;
-      case FunctionNew::NewButton2:
-        Supla::TanplateBoard::addButton(1, gpio);
-        break;
-      case FunctionNew::NewButton3:
-        Supla::TanplateBoard::addButton(2, gpio);
-        break;
-      case FunctionNew::NewButton4:
-        Supla::TanplateBoard::addButton(3, gpio);
+      case NewSwitch7n:
+        addButton(6, gpio, Supla::Event::ON_CHANGE, buttonAction, false, false);
         break;
 
-      case FunctionNew::NewButton1n:
-        Supla::TanplateBoard::addButton(0, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
-        Supla::TanplateBoard::addButtonCFG(gpio);
+      case NewButton1:
+        addButton(0, gpio, Supla::Event::ON_PRESS, buttonAction, true, true);
+        addButtonCFG(gpio);
         break;
-      case FunctionNew::NewButton2n:
-        Supla::TanplateBoard::addButton(1, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
+      case NewButton2:
+        addButton(1, gpio, Supla::Event::ON_PRESS, buttonAction, true, true);
         break;
-      case FunctionNew::NewButton3n:
-        Supla::TanplateBoard::addButton(2, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
+      case NewButton3:
+        addButton(2, gpio, Supla::Event::ON_PRESS, buttonAction, true, true);
         break;
-      case FunctionNew::NewButton4n:
-        Supla::TanplateBoard::addButton(3, gpio, Supla::Event::ON_PRESS, Supla::Action::TOGGLE, false, false);
-        break;
-
-      case FunctionNew::NewLed1:
-        Supla::TanplateBoard::addLed(0, gpio);
-        break;
-      case FunctionNew::NewLed2:
-        Supla::TanplateBoard::addLed(1, gpio);
-        break;
-      case FunctionNew::NewLed3:
-        Supla::TanplateBoard::addLed(2, gpio);
-        break;
-      case FunctionNew::NewLed4:
-        Supla::TanplateBoard::addLed(3, gpio);
-        break;
-      case FunctionNew::NewLedLink:
-        Supla::TanplateBoard::addLedCFG(gpio);
+      case NewButton4:
+        addButton(3, gpio, Supla::Event::ON_PRESS, buttonAction, true, true);
         break;
 
-      case FunctionNew::NewLed1i:
-        Supla::TanplateBoard::addLed(0, gpio, LOW);
+      case NewButton1n:
+        addButton(0, gpio, Supla::Event::ON_PRESS, buttonAction, false, false);
+        addButtonCFG(gpio);
         break;
-      case FunctionNew::NewLed2i:
-        Supla::TanplateBoard::addLed(1, gpio, LOW);
+      case NewButton2n:
+        addButton(1, gpio, Supla::Event::ON_PRESS, buttonAction, false, false);
         break;
-      case FunctionNew::NewLed3i:
-        Supla::TanplateBoard::addLed(2, gpio, LOW);
+      case NewButton3n:
+        addButton(2, gpio, Supla::Event::ON_PRESS, buttonAction, false, false);
         break;
-      case FunctionNew::NewLed4i:
-        Supla::TanplateBoard::addLed(3, gpio, LOW);
-        break;
-      case FunctionNew::NewLedLinki:
-        Supla::TanplateBoard::addLedCFG(gpio, LOW);
+      case NewButton4n:
+        addButton(3, gpio, Supla::Event::ON_PRESS, buttonAction, false, false);
         break;
 
-      case FunctionNew::NewPWM1:
+      case NewLed1:
+        addLed(0, gpio);
+        break;
+      case NewLed2:
+        addLed(1, gpio);
+        break;
+      case NewLed3:
+        addLed(2, gpio);
+        break;
+      case NewLed4:
+        addLed(3, gpio);
+        break;
+      case NewLedLink:
+        addLedCFG(gpio);
+        break;
+
+      case NewLed1i:
+        addLed(0, gpio, LOW);
+        break;
+      case NewLed2i:
+        addLed(1, gpio, LOW);
+        break;
+      case NewLed3i:
+        addLed(2, gpio, LOW);
+        break;
+      case NewLed4i:
+        addLed(3, gpio, LOW);
+        break;
+      case NewLedLinki:
+        addLedCFG(gpio, LOW);
+        break;
+
+      case NewPWM1:
         ConfigESP->setGpio(gpio, FUNCTION_RGBW_RED);
         ConfigManager->set(KEY_MAX_RGBW, ConfigManager->get(KEY_MAX_RGBW)->getValueInt() + 1);
         break;
-      case FunctionNew::NewPWM2:
+      case NewPWM2:
         ConfigESP->setGpio(gpio, FUNCTION_RGBW_GREEN);
         break;
-      case FunctionNew::NewPWM3:
+      case NewPWM3:
         ConfigESP->setGpio(gpio, FUNCTION_RGBW_BLUE);
         break;
-      case FunctionNew::NewPWM4:
+      case NewPWM4:
         ConfigESP->setGpio(gpio, FUNCTION_RGBW_BRIGHTNESS);
         break;
 
-      case FunctionNew::NewBL0937CF:
+      case NewBL0937CF:
         ConfigESP->setGpio(gpio, FUNCTION_CF);
         break;
-      case FunctionNew::NewHLWBLCF1:
+      case NewHLWBLCF1:
         ConfigESP->setGpio(gpio, FUNCTION_CF1);
         break;
-      case FunctionNew::NewHLWBLSELi:
+      case NewHLWBLSELi:
         ConfigESP->setGpio(gpio, FUNCTION_SEL);
         break;
 
-      case FunctionNew::NewTemperatureAnalog:
+      case NewTemperatureAnalog:
         ConfigESP->setGpio(gpio, FUNCTION_NTC_10K);
         break;
 
-      case FunctionNew::NewSI7021:
+      case NewSI7021:
         ConfigESP->setGpio(gpio, FUNCTION_SI7021_SONOFF);
         break;
 
-      case FunctionNew::NewCSE7766Rx:
+      case NewCSE7766Rx:
         ConfigESP->setGpio(gpio, FUNCTION_CSE7766_RX);
         break;
 
@@ -294,127 +296,127 @@ void chooseTemplateBoard(String board) {
 
 int convert(int gpioJSON) {
   switch (gpioJSON) {
-    case FunctionOld::None:
-      return FunctionNew::NewNone;
-    case FunctionOld::Users:
-      return FunctionNew::NewUsers;
+    case None:
+      return NewNone;
+    case Users:
+      return NewUsers;
 
-    case FunctionOld::Relay1:
-      return FunctionNew::NewRelay1;
-    case FunctionOld::Relay2:
-      return FunctionNew::NewRelay2;
-    case FunctionOld::Relay3:
-      return FunctionNew::NewRelay3;
-    case FunctionOld::Relay4:
-      return FunctionNew::NewRelay4;
+    case Relay1:
+      return NewRelay1;
+    case Relay2:
+      return NewRelay2;
+    case Relay3:
+      return NewRelay3;
+    case Relay4:
+      return NewRelay4;
 
-    case FunctionOld::Relay1i:
-      return FunctionNew::NewRelay1i;
-    case FunctionOld::Relay2i:
-      return FunctionNew::NewRelay2i;
-    case FunctionOld::Relay3i:
-      return FunctionNew::NewRelay3i;
-    case FunctionOld::Relay4i:
-      return FunctionNew::NewRelay4i;
+    case Relay1i:
+      return NewRelay1i;
+    case Relay2i:
+      return NewRelay2i;
+    case Relay3i:
+      return NewRelay3i;
+    case Relay4i:
+      return NewRelay4i;
 
-    case FunctionOld::Switch1:
-      return FunctionNew::NewSwitch1;
-    case FunctionOld::Switch2:
-      return FunctionNew::NewSwitch2;
-    case FunctionOld::Switch3:
-      return FunctionNew::NewSwitch3;
-    case FunctionOld::Switch4:
-      return FunctionNew::NewSwitch4;
-    case FunctionOld::Switch5:
-      return FunctionNew::NewSwitch5;
-    case FunctionOld::Switch6:
-      return FunctionNew::NewSwitch6;
-    case FunctionOld::Switch7:
-      return FunctionNew::NewSwitch7;
+    case Switch1:
+      return NewSwitch1;
+    case Switch2:
+      return NewSwitch2;
+    case Switch3:
+      return NewSwitch3;
+    case Switch4:
+      return NewSwitch4;
+    case Switch5:
+      return NewSwitch5;
+    case Switch6:
+      return NewSwitch6;
+    case Switch7:
+      return NewSwitch7;
 
-    case FunctionOld::Switch1n:
-      return FunctionNew::NewSwitch1n;
-    case FunctionOld::Switch2n:
-      return FunctionNew::NewSwitch2n;
-    case FunctionOld::Switch3n:
-      return FunctionNew::NewSwitch3n;
-    case FunctionOld::Switch4n:
-      return FunctionNew::NewSwitch4n;
-    case FunctionOld::Switch5n:
-      return FunctionNew::NewSwitch5n;
-    case FunctionOld::Switch6n:
-      return FunctionNew::NewSwitch6n;
-    case FunctionOld::Switch7n:
-      return FunctionNew::NewSwitch7n;
+    case Switch1n:
+      return NewSwitch1n;
+    case Switch2n:
+      return NewSwitch2n;
+    case Switch3n:
+      return NewSwitch3n;
+    case Switch4n:
+      return NewSwitch4n;
+    case Switch5n:
+      return NewSwitch5n;
+    case Switch6n:
+      return NewSwitch6n;
+    case Switch7n:
+      return NewSwitch7n;
 
-    case FunctionOld::Button1:
-      return FunctionNew::NewButton1;
-    case FunctionOld::Button2:
-      return FunctionNew::NewButton2;
-    case FunctionOld::Button3:
-      return FunctionNew::NewButton3;
-    case FunctionOld::Button4:
-      return FunctionNew::NewButton4;
+    case Button1:
+      return NewButton1;
+    case Button2:
+      return NewButton2;
+    case Button3:
+      return NewButton3;
+    case Button4:
+      return NewButton4;
 
-    case FunctionOld::Button1n:
-      return FunctionNew::NewButton1n;
-    case FunctionOld::Button2n:
-      return FunctionNew::NewButton2n;
-    case FunctionOld::Button3n:
-      return FunctionNew::NewButton3n;
-    case FunctionOld::Button4n:
-      return FunctionNew::NewButton4n;
+    case Button1n:
+      return NewButton1n;
+    case Button2n:
+      return NewButton2n;
+    case Button3n:
+      return NewButton3n;
+    case Button4n:
+      return NewButton4n;
 
-    case FunctionOld::Led1:
-      return FunctionNew::NewLed1;
-    case FunctionOld::Led2:
-      return FunctionNew::NewLed2;
-    case FunctionOld::Led3:
-      return FunctionNew::NewLed3;
-    case FunctionOld::Led4:
-      return FunctionNew::NewLed4;
-    case FunctionOld::LedLink:
-      return FunctionNew::NewLedLink;
+    case Led1:
+      return NewLed1;
+    case Led2:
+      return NewLed2;
+    case Led3:
+      return NewLed3;
+    case Led4:
+      return NewLed4;
+    case LedLink:
+      return NewLedLink;
 
-    case FunctionOld::Led1i:
-      return FunctionNew::NewLed1i;
-    case FunctionOld::Led2i:
-      return FunctionNew::NewLed2i;
-    case FunctionOld::Led3i:
-      return FunctionNew::NewLed3i;
-    case FunctionOld::Led4i:
-      return FunctionNew::NewLed4i;
-    case FunctionOld::LedLinki:
-      return FunctionNew::NewLedLinki;
+    case Led1i:
+      return NewLed1i;
+    case Led2i:
+      return NewLed2i;
+    case Led3i:
+      return NewLed3i;
+    case Led4i:
+      return NewLed4i;
+    case LedLinki:
+      return NewLedLinki;
 
-    case FunctionOld::PWM1:
-      return FunctionNew::NewPWM1;
-    case FunctionOld::PWM2:
-      return FunctionNew::NewPWM2;
-    case FunctionOld::PWM3:
-      return FunctionNew::NewPWM3;
-    case FunctionOld::PWM4:
-      return FunctionNew::NewPWM4;
+    case PWM1:
+      return NewPWM1;
+    case PWM2:
+      return NewPWM2;
+    case PWM3:
+      return NewPWM3;
+    case PWM4:
+      return NewPWM4;
 
-    case FunctionOld::BL0937CF:
-      return FunctionNew::NewBL0937CF;
-    case FunctionOld::HLWBLCF1:
-      return FunctionNew::NewHLWBLCF1;
-    case FunctionOld::HLWBLSELi:
-      return FunctionNew::NewHLWBLSELi;
+    case BL0937CF:
+      return NewBL0937CF;
+    case HLWBLCF1:
+      return NewHLWBLCF1;
+    case HLWBLSELi:
+      return NewHLWBLSELi;
 
-    case FunctionOld::TemperatureAnalog:
-      return FunctionNew::NewTemperatureAnalog;
+    case TemperatureAnalog:
+      return NewTemperatureAnalog;
 
-    case FunctionOld::SI7021:
-      return FunctionNew::NewSI7021;
+    case SI7021:
+      return NewSI7021;
 
-    case FunctionOld::CSE7766Tx:
-      return FunctionNew::NewCSE7766Tx;
-    case FunctionOld::CSE7766Rx:
-      return FunctionNew::NewCSE7766Rx;
+    case CSE7766Tx:
+      return NewCSE7766Tx;
+    case CSE7766Rx:
+      return NewCSE7766Rx;
   }
-  return FunctionNew::NewNone;
+  return NewNone;
 }
 
 uint8_t getGPIO(uint8_t gpio) {
@@ -443,16 +445,20 @@ uint8_t getGPIO(uint8_t gpio) {
   return gpio;
 }
 
-void addButton(uint8_t nr, uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
+void addButton(uint8_t nr, uint8_t gpio, uint8_t event, JsonArray& buttonAction, bool pullUp, bool invertLogic) {
   uint8_t maxButton = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
 
+  if (buttonAction[nr].success())
+    ConfigESP->setAction(gpio, (int)buttonAction[nr]);
+  else
+    ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
+
   ConfigESP->setEvent(gpio, event);
-  ConfigESP->setAction(gpio, action);
   ConfigESP->setPullUp(gpio, pullUp);
   ConfigESP->setInversed(gpio, invertLogic);
 
   if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO) {
-    Supla::TanplateBoard::addButtonCFG(gpio);
+    addButtonCFG(gpio);
   }
 
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
