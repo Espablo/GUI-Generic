@@ -74,6 +74,11 @@ void setup() {
            strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
         Supla::GUI::addRelayBridge(nr);
       }
+      else if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::RECEIVER &&
+               (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
+                strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
+        Supla::GUI::addButtonBridge(nr);
+      }
       else {
 #ifdef SUPLA_RELAY
         Supla::GUI::addRelay(nr);
@@ -84,16 +89,8 @@ void setup() {
 #ifdef SUPLA_RELAY
       Supla::GUI::addRelay(nr);
 #endif
-#endif
 
-#ifdef SUPLA_RF_BRIDGE
-      if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::RECEIVER &&
-          (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
-           strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
-        Supla::GUI::addButtonBridge(nr);
-      }
 #endif
-
       Supla::GUI::addButtonToRelay(nr);
     }
 
