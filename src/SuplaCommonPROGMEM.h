@@ -331,7 +331,8 @@ enum conditioningType
   DRAINGE,
   TOTAL_POWER_APPARENT,
   TOTAL_CURRENT,
-  TOTAL_POWER_ACTIVE
+  TOTAL_POWER_ACTIVE,
+  GPIO
 };
 
 enum sensorList
@@ -356,6 +357,7 @@ enum sensorList
   SENSOR_HDC1080,
   SENSOR_HLW8012,
   SENSOR_PZEM_V3,
+  SENSOR_BINARY,
   COUNT_SENSOR_LIST
 };
 
@@ -374,17 +376,27 @@ enum sensorList
 
 const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #ifdef GUI_ALL_SENSOR
-    S_ON_CH_VAL_OFF_HEATING, S_ON_CH_VAL_OFF_COOLING, S_ON_2CH_VAL_OFF_HUMIDIFICATION,
+    S_ON_CH_VAL_OFF_HEATING,
+    S_ON_CH_VAL_OFF_COOLING,
+    S_ON_2CH_VAL_OFF_HUMIDIFICATION,
     S_ON_2CH_VAL_OFF_DRYING,
 #else
     S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
 
 #ifdef GUI_ALL_ENERGY_COUNTER
-    "Napięcie[V]",           "Natężenie[A]",          "Moc czynna[W]",
+    "Napięcie[V]",
+    "Natężenie[A]",
+    "Moc czynna[W]",
 #else
     S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
+#ifdef SUPLA_LIMIT_SWITCH
+    "GPIO",
+#else
+    S_EMPTY,
+#endif
+
 };
 
 const char* const SENSOR_LIST_P[] PROGMEM = {
@@ -477,6 +489,11 @@ const char* const SENSOR_LIST_P[] PROGMEM = {
 #endif
 #ifdef SUPLA_PZEM_V_3
     "PZEM-004T V3",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_LIMIT_SWITCH
+    S_LIMIT_SWITCH,
 #else
     S_EMPTY,
 #endif

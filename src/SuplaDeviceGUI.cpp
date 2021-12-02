@@ -533,6 +533,9 @@ void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t se
         case conditioningType::DRAINGE:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, true));
           break;
+        case conditioningType::GPIO:
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], Supla::ON_TURN_ON);
+          break;
       }
     }
   }
@@ -566,6 +569,9 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t s
           break;
         case conditioningType::DRAINGE:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, true));
+          break;
+        case conditioningType::GPIO:
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], Supla::ON_TURN_OFF);
           break;
       }
     }
