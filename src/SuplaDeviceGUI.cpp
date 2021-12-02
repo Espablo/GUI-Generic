@@ -521,19 +521,19 @@ void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t se
       client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
-        case conditioningType::HEATING:
+        case CONDITION_HEATING:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold));
           break;
-        case conditioningType::COOLING:
+        case CONDITION_COOLING:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold));
           break;
-        case conditioningType::MOISTURIZING:
+        case CONDITION_MOISTURIZING:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, true));
           break;
-        case conditioningType::DRAINGE:
+        case CONDITION_DRAINGE:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, true));
           break;
-        case conditioningType::GPIO:
+        case CONDITION_GPIO:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], Supla::ON_TURN_ON);
           break;
       }
@@ -558,19 +558,19 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t s
       client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
-        case conditioningType::HEATING:
+        case CONDITION_HEATING:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold));
           break;
-        case conditioningType::COOLING:
+        case CONDITION_COOLING:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold));
           break;
-        case conditioningType::MOISTURIZING:
+        case CONDITION_MOISTURIZING:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, true));
           break;
-        case conditioningType::DRAINGE:
+        case CONDITION_DRAINGE:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, true));
           break;
-        case conditioningType::GPIO:
+        case CONDITION_GPIO:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], Supla::ON_TURN_OFF);
           break;
       }
@@ -594,13 +594,13 @@ void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, 
       // client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
-        case conditioningType::TOTAL_POWER_APPARENT:
+        case CONDITION_TOTAL_POWER_APPARENT:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerApparentVA()));
           break;
-        case conditioningType::TOTAL_CURRENT:
+        case CONDITION_TOTAL_CURRENT:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmTotalCurrent()));
           break;
-        case conditioningType::TOTAL_POWER_ACTIVE:
+        case CONDITION_TOTAL_POWER_ACTIVE:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerActiveW()));
           break;
       }
@@ -624,13 +624,13 @@ void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client,
       //   client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
-        case conditioningType::TOTAL_POWER_APPARENT:
+        case CONDITION_TOTAL_POWER_APPARENT:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerApparentVA()));
           break;
-        case conditioningType::TOTAL_CURRENT:
+        case CONDITION_TOTAL_CURRENT:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalCurrent()));
           break;
-        case conditioningType::TOTAL_POWER_ACTIVE:
+        case CONDITION_TOTAL_POWER_ACTIVE:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerActiveW()));
           break;
       }
