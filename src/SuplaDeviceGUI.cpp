@@ -128,7 +128,11 @@ void addRelay(uint8_t nr) {
 }
 
 void addButtonToRelay(uint8_t nr) {
-  uint8_t numberButton = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).toInt();
+  uint8_t numberButton = nr;
+
+  if (strcmp(ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0) {
+    numberButton = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).toInt();
+  }
   uint8_t pinButton = ConfigESP->getGpio(numberButton, FUNCTION_BUTTON);
 
   int size = relay.size() - 1;

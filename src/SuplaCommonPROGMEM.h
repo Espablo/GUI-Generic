@@ -207,10 +207,10 @@ const char GPIO37[] PROGMEM = "37-IA";
 const char GPIO38[] PROGMEM = "38-IA";
 const char GPIO39[] PROGMEM = "39-IA";
 
-const char* const GPIO_P[] PROGMEM = {GPIO0,   GPIO1,  GPIO2,   GPIO3,  GPIO4,   GPIO5,   GPIO6,   GPIO7,   GPIO8,   GPIO9, GPIO10,
-                                      GPIO11, GPIO12, GPIO13,  GPIO14, GPIO15,  GPIO16,  GPIO17,  GPIO18,  GPIO19,  GPIO20, GPIO21,
-                                      GPIO22,  GPIO23, GPIO24, GPIO25, GPIO26,  GPIO27,  S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, GPIO32,
-                                      GPIO33,  GPIO34, GPIO35,  GPIO36, GPIO37, GPIO38, GPIO39,  OFF};
+const char* const GPIO_P[] PROGMEM = {GPIO0,  GPIO1,  GPIO2,  GPIO3,  GPIO4,  GPIO5,  GPIO6,   GPIO7,   GPIO8,   GPIO9,   GPIO10,
+                                      GPIO11, GPIO12, GPIO13, GPIO14, GPIO15, GPIO16, GPIO17,  GPIO18,  GPIO19,  GPIO20,  GPIO21,
+                                      GPIO22, GPIO23, GPIO24, GPIO25, GPIO26, GPIO27, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, GPIO32,
+                                      GPIO33, GPIO34, GPIO35, GPIO36, GPIO37, GPIO38, GPIO39,  OFF};
 #endif
 
 #ifdef SUPLA_MCP23017
@@ -270,7 +270,7 @@ const char REACTION_ON_PRESS[] PROGMEM = S_REACTION_ON_PRESS;
 const char REACTION_ON_RELEASE[] PROGMEM = S_REACTION_ON_RELEASE;
 const char REACTION_ON_CHANGE[] PROGMEM = S_REACTION_ON_CHANGE;
 const char* const TRIGGER_P[] PROGMEM = {REACTION_ON_PRESS, REACTION_ON_RELEASE, REACTION_ON_CHANGE};
-const char* const NUMBER_P[] PROGMEM = {"1", "2", "3", "4", "5", "6", "7"};
+const char* const NUMBER_P[] PROGMEM = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
 
 const char ACTION_TOGGLE[] PROGMEM = S_TOGGLE;
 

@@ -202,7 +202,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2);
     this->addKey(KEY_VIRTUAL_RELAY, MAX_VIRTUAL_RELAY * 2, 4);
     this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_VIRTUAL_RELAY * 2, 4);
-    this->addKey(KEY_NUMBER_BUTTON, "0,1,2,3,4,5,6", MAX_GPIO * 2, 6);
+    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, 6);
 
 #else
     this->addKey(KEY_MAX_RELAY, 2, 2, false);
@@ -212,7 +212,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2, false);
     this->addKey(KEY_VIRTUAL_RELAY, MAX_GPIO * 2, 4, false);
     this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_GPIO * 2, 4, false);
-    this->addKey(KEY_NUMBER_BUTTON, "0,1,2,3,4,5,6,7", MAX_GPIO * 2, 6, false);
+    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, 6, false);
 
 #endif
 

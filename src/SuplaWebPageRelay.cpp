@@ -246,7 +246,7 @@ void handleRelaySet(int save) {
     addFormHeader(webContentBuffer, String(S_RELAY_NR_SETTINGS) + (nr_relay.toInt() + 1));
 
     selected = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr_relay.toInt()).toInt();
-    addListBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_NUMBER, NUMBER_P, 7, selected);
+    addListBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_NUMBER, NUMBER_P, 10, selected);
 
     if (gpio != GPIO_VIRTUAL_RELAY) {
       selected = ConfigESP->getLevel(gpio);
@@ -470,13 +470,13 @@ void conditionsWebPage(int nr) {
     uint8_t selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt();
     addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_TYPE, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
 
-    String value = ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr);
-    addNumberBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_NUMBER, S_SENSOR, "0", false, value);
+    selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt();
+    addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_NUMBER, S_SENSOR, NUMBER_P, 10, selected);
 
     selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt();
     addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, 7, selected);
 
-    value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr);
+    String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr);
     addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
     value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr);
     addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
