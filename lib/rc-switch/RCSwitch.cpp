@@ -90,8 +90,7 @@ static const RCSwitch::Protocol PROGMEM proto[] = {
   { 200, { 130, 7 }, {  16, 7 }, { 16,  3 }, true},      // protocol 9 Conrad RS-200 TX
   { 365, { 18,  1 }, {  3,  1 }, {  1,  3 }, true },     // protocol 10 (1ByOne Doorbell)
   { 270, { 36,  1 }, {  1,  2 }, {  2,  1 }, true },     // protocol 11 (HT12E)
-  { 320, { 36,  1 }, {  1,  2 }, {  2,  1 }, true },     // protocol 12 (SM5212)
-  { 100, { 3, 100 }, { 3, 8 }, { 8, 3 }, false }         // protocol 13 (Mumbi RC-10)
+  { 320, { 36,  1 }, {  1,  2 }, {  2,  1 }, true }      // protocol 12 (SM5212)
 };
 
 enum {
@@ -99,7 +98,7 @@ enum {
 };
 
 #if not defined( RCSwitchDisableReceiving )
-volatile unsigned long long RCSwitch::nReceivedValue = 0;
+volatile unsigned long RCSwitch::nReceivedValue = 0;
 volatile unsigned int RCSwitch::nReceivedBitlength = 0;
 volatile unsigned int RCSwitch::nReceivedDelay = 0;
 volatile unsigned int RCSwitch::nReceivedProtocol = 0;
@@ -134,8 +133,7 @@ void RCSwitch::setProtocol(Protocol protocol) {
   */
 void RCSwitch::setProtocol(int nProtocol) {
   if (nProtocol < 1 || nProtocol > numProto) {
-    nProtocol = 1; 
-    printf("Error, bad protocol ID. Falling back to protocol 1.\n");
+    nProtocol = 1;  // TODO: trigger an error, e.g. "bad protocol" ???
   }
 #if defined(ESP8266) || defined(ESP32)
   this->protocol = proto[nProtocol-1];
@@ -454,7 +452,7 @@ char* RCSwitch::getCodeWordD(char sGroup, int nDevice, bool bStatus) {
  */
 void RCSwitch::sendTriState(const char* sCodeWord) {
   // turn the tristate code word into the corresponding bit pattern, then send it
-  unsigned long long code = 0;
+  unsigned long code = 0;
   unsigned int length = 0;
   for (const char* p = sCodeWord; *p; p++) {
     code <<= 2L;
@@ -464,11 +462,11 @@ void RCSwitch::sendTriState(const char* sCodeWord) {
         break;
       case 'F':
         // bit pattern 01
-        code |= 1LL;
+        code |= 1L;
         break;
       case '1':
         // bit pattern 11
-        code |= 3LL;
+        code |= 3L;
         break;
     }
     length += 2;
@@ -481,12 +479,12 @@ void RCSwitch::sendTriState(const char* sCodeWord) {
  */
 void RCSwitch::send(const char* sCodeWord) {
   // turn the tristate code word into the corresponding bit pattern, then send it
-  unsigned long long code = 0;
+  unsigned long code = 0;
   unsigned int length = 0;
   for (const char* p = sCodeWord; *p; p++) {
-    code <<= 1LL;
+    code <<= 1L;
     if (*p != '0')
-      code |= 1LL;
+      code |= 1L;
     length++;
   }
   this->send(code, length);
@@ -497,7 +495,7 @@ void RCSwitch::send(const char* sCodeWord) {
  * bits are sent from MSB to LSB, i.e., first the bit at position length-1,
  * then the bit at position length-2, and so on, till finally the bit at position 0.
  */
-void RCSwitch::send(unsigned long long code, unsigned int length) {
+void RCSwitch::send(unsigned long code, unsigned int length) {
   if (this->nTransmitterPin == -1)
     return;
 
@@ -511,7 +509,7 @@ void RCSwitch::send(unsigned long long code, unsigned int length) {
 
   for (int nRepeat = 0; nRepeat < nRepeatTransmit; nRepeat++) {
     for (int i = length-1; i >= 0; i--) {
-      if (code & (1LL << i))
+      if (code & (1L << i))
         this->transmit(protocol.one);
       else
         this->transmit(protocol.zero);
@@ -583,7 +581,7 @@ void RCSwitch::resetAvailable() {
   RCSwitch::nReceivedValue = 0;
 }
 
-unsigned long long RCSwitch::getReceivedValue() {
+unsigned long RCSwitch::getReceivedValue() {
   return RCSwitch::nReceivedValue;
 }
 
@@ -619,7 +617,7 @@ bool RECEIVE_ATTR RCSwitch::receiveProtocol(const int p, unsigned int changeCoun
     memcpy_P(&pro, &proto[p-1], sizeof(Protocol));
 #endif
 
-    unsigned long long code = 0;
+    unsigned long code = 0;
     //Assuming the longer pulse length is the pulse captured in timings[0]
     const unsigned int syncLengthInPulses =  ((pro.syncFactor.low) > (pro.syncFactor.high)) ? (pro.syncFactor.low) : (pro.syncFactor.high);
     const unsigned int delay = RCSwitch::timings[0] / syncLengthInPulses;
@@ -645,14 +643,14 @@ bool RECEIVE_ATTR RCSwitch::receiveProtocol(const int p, unsigned int changeCoun
     const unsigned int firstDataTiming = (pro.invertedSignal) ? (2) : (1);
 
     for (unsigned int i = firstDataTiming; i < changeCount - 1; i += 2) {
-        code <<= 1LL;
+        code <<= 1;
         if (diff(RCSwitch::timings[i], delay * pro.zero.high) < delayTolerance &&
             diff(RCSwitch::timings[i + 1], delay * pro.zero.low) < delayTolerance) {
             // zero
         } else if (diff(RCSwitch::timings[i], delay * pro.one.high) < delayTolerance &&
                    diff(RCSwitch::timings[i + 1], delay * pro.one.low) < delayTolerance) {
             // one
-            code |= 1LL;
+            code |= 1;
         } else {
             // Failed
             return false;
