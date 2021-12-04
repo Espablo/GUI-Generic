@@ -507,7 +507,7 @@ void receiveCodeRFBridge() {
         code += " Pulse Length: ";
         code += mySwitch->getReceivedDelay();
         code += "<br>";
-
+        delay(5);
         mySwitch->resetAvailable();
       }
       delay(0);

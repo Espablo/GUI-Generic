@@ -90,8 +90,8 @@ bool SuplaDeviceClass::begin(unsigned char version) {
 
   Supla::Storage::Init();
 
-  // Supla::Storage::LoadDeviceConfig();
-  // Supla::Storage::LoadElementConfig();
+   Supla::Storage::LoadDeviceConfig();
+   Supla::Storage::LoadElementConfig();
 
   // Pefrorm dry run of write state to validate stored state section with
   // current device configuration
