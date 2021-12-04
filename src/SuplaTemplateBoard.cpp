@@ -49,6 +49,12 @@ void chooseTemplateBoard(String board) {
   ConfigManager->set(KEY_ANALOG_BUTTON, "");
   ConfigManager->set(KEY_ANALOG_INPUT_EXPECTED, "");
 
+  ConfigManager->set(KEY_CONDITIONS_SENSOR_TYPE, "");
+  ConfigManager->set(KEY_CONDITIONS_SENSOR_NUMBER, "");
+  ConfigManager->set(KEY_CONDITIONS_TYPE, "");
+  ConfigManager->set(KEY_CONDITIONS_MIN, "");
+  ConfigManager->set(KEY_CONDITIONS_MAX, "");
+
   const size_t capacity = JSON_ARRAY_SIZE(14) + JSON_OBJECT_SIZE(4) + 200;
   DynamicJsonBuffer jsonBuffer(capacity);
 
@@ -73,6 +79,56 @@ void chooseTemplateBoard(String board) {
 
     addButton(i, A0, Supla::Event::ON_CHANGE, buttonAction, true, true);
     // addButtonAnalog(i, analogButtons[i]);
+  }
+
+  // {"NAME":"Shelly 2.5","GPIO":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736],"COND":[{"relay":0,"type":2,"number":1,"condition":1,"data":[20.5,21.1]},{"relay":1,"type":3,"number":1,"condition":1,"data":[20.5,21.1]}]}
+
+  //"type"
+  // 0 - NO_SENSORS
+  // 1 - SENSOR_DS18B20
+  // 2 - SENSOR_DHT11
+  // 3 - SENSOR_DHT22
+  // 4 - SENSOR_SI7021_SONOFF
+  // 5 - SENSOR_HC_SR04
+  // 6 - SENSOR_BME280
+  // 7 - SENSOR_SHT3x
+  // 8 - SENSOR_SI7021
+  // 9 - SENSOR_MAX6675
+  // 10 - SENSOR_NTC_10K
+  // 11 - SENSOR_BMP280
+  // 12 - SENSOR_MPX_5XXX
+  // 13 - SENSOR_MPX_5XXX_PERCENT
+  // 14 - SENSOR_ANALOG_READING_MAP
+  // 15 - SENSOR_VL53L0X
+  // 16 - SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR
+  // 17 - SENSOR_HDC1080
+  // 18 - SENSOR_HLW8012
+  // 19 - SENSOR_PZEM_V3
+  // 20 - SENSOR_BINARY
+
+  //"condition"
+  //  0 - CONDITION_HEATING
+  //  1 - CONDITION_COOLING
+  //  2 - CONDITION_MOISTURIZING
+  //  3 - CONDITION_DRAINGE
+  //  4 - CONDITION_TOTAL_POWER_APPARENT
+  //  5 - CONDITION_TOTAL_CURRENT
+  //  6 - CONDITION_TOTAL_POWER_ACTIVE
+  //  7 - CONDITION_GPIO
+
+  JsonArray& conditions = root["COND"];
+  for (size_t i = 0; i < conditions.size(); i++) {
+    int relay = conditions[i]["relay"];
+
+    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, relay, (int)conditions[i]["type"]);
+    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_NUMBER, relay, (int)conditions[i]["number"]);
+    ConfigManager->setElement(KEY_CONDITIONS_TYPE, relay, (int)conditions[i]["condition"]);
+
+    if (strcmp(conditions[i]["data"][0], "") != 0)
+      ConfigManager->setElement(KEY_CONDITIONS_MIN, relay, (float)conditions[i]["data"][0]);
+      
+    if (strcmp(conditions[i]["data"][1], "") != 0)
+      ConfigManager->setElement(KEY_CONDITIONS_MAX, relay, (float)conditions[i]["data"][1]);
   }
 
   String name = root["NAME"];
