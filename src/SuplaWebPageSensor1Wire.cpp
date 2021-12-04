@@ -178,7 +178,7 @@ void handleSensorDs18b20(int save) {
         temp = Supla::GUI::sensorDS[i]->getValue();
 
         addTextBox(webContentBuffer, getInput(INPUT_DS18B20_NAME, i), String(S_NAME) + (i + 1), ConfigManager->get(KEY_NAME_SENSOR)->getElement(i),
-                   emptyString, 0, MAX_DS18B20_NAME, false, true, false);
+                   emptyString, 0, MAX_DS18B20_NAME, false, false, false, false);
 
         s_temp = emptyString;
         if (temp != -275) {
