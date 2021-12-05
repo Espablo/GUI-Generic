@@ -82,7 +82,7 @@ void chooseTemplateBoard(String board) {
   }
 
   // {"NAME":"Shelly 2.5","GPIO":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736],"COND":[{"relay":0,"type":2,"number":1,"condition":1,"data":[20.5,21.1]},{"relay":1,"type":3,"number":1,"condition":1,"data":[20.5,21.1]}]}
-
+  // {"NAME":"Shelly 2.5","GPIO":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736],"COND":[[1,3,1,1,20.5,21.1],[1,3,1,1,20.5,21.1]]}
   //"type"
   // 0 - NO_SENSORS
   // 1 - SENSOR_DS18B20
@@ -118,17 +118,19 @@ void chooseTemplateBoard(String board) {
 
   JsonArray& conditions = root["COND"];
   for (size_t i = 0; i < conditions.size(); i++) {
-    int relay = conditions[i]["relay"];
+    int relay = (int)conditions[i][0];  //"relay"
 
-    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, relay, (int)conditions[i]["type"]);
-    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_NUMBER, relay, (int)conditions[i]["number"]);
-    ConfigManager->setElement(KEY_CONDITIONS_TYPE, relay, (int)conditions[i]["condition"]);
+    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, relay, (int)conditions[i][1]);    // "type"
+    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_NUMBER, relay, (int)conditions[i][2]);  // "number"
+    ConfigManager->setElement(KEY_CONDITIONS_TYPE, relay, (int)conditions[i][3]);           // "condition"
 
-    if (strcmp(conditions[i]["data"][0], "") != 0)
-      ConfigManager->setElement(KEY_CONDITIONS_MIN, relay, (float)conditions[i]["data"][0]);
-      
-    if (strcmp(conditions[i]["data"][1], "") != 0)
-      ConfigManager->setElement(KEY_CONDITIONS_MAX, relay, (float)conditions[i]["data"][1]);
+    if (strcmp(conditions[i][4], "") != 0) {
+      ConfigManager->setElement(KEY_CONDITIONS_MIN, relay, (const char*)conditions[i][4]);
+    }
+
+    if (strcmp(conditions[i][5], "") != 0) {
+      ConfigManager->setElement(KEY_CONDITIONS_MAX, relay, (const char*)conditions[i][5]);
+    }
   }
 
   String name = root["NAME"];
