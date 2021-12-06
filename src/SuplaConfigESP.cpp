@@ -749,7 +749,8 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
     ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
     Supla::TanplateBoard::addTemplateBoard();
-    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+    if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
+      ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
     ConfigManager->save();
 
@@ -770,7 +771,8 @@ void SuplaConfigESP::reset(bool forceReset) {
     ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
     ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
     Supla::TanplateBoard::addTemplateBoard();
-    ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
+    if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
+      ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
     ConfigManager->save();
 
