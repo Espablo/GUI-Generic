@@ -77,12 +77,13 @@ void chooseTemplateBoard(String board) {
       ConfigManager->setElement(KEY_ANALOG_INPUT_EXPECTED, i, expected);
     }
 
-    addButton(i, A0, Supla::Event::ON_CHANGE, buttonAction, true, true);
-    // addButtonAnalog(i, analogButtons[i]);
+    addButtonAnalog(i, A0, buttonAction);
+    // addButton(i, A0, Supla::Event::ON_CHANGE, buttonAction, true, true);
   }
 
   // {"NAME":"Shelly 2.5","GPIO":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736],"COND":[{"relay":0,"type":2,"number":1,"condition":1,"data":[20.5,21.1]},{"relay":1,"type":3,"number":1,"condition":1,"data":[20.5,21.1]}]}
-  // {"NAME":"Shelly 2.5","GPIO":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736],"COND":[[1,3,1,1,20.5,21.1],[1,3,1,1,20.5,21.1]]}
+  // {"NAME":"Shelly 2.5","GPIO":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736],"COND":[[0,1,0,1,20.5,21.1],[1,20,0,7,"",1]]}
+  // "COND":[numberRelay,type,numberSensor,condition,valueON,valueOFF]
   //"type"
   // 0 - NO_SENSORS
   // 1 - SENSOR_DS18B20
@@ -117,6 +118,7 @@ void chooseTemplateBoard(String board) {
   //  7 - CONDITION_GPIO
 
   JsonArray& conditions = root["COND"];
+
   for (size_t i = 0; i < conditions.size(); i++) {
     int relay = (int)conditions[i][0];  //"relay"
 
@@ -125,11 +127,11 @@ void chooseTemplateBoard(String board) {
     ConfigManager->setElement(KEY_CONDITIONS_TYPE, relay, (int)conditions[i][3]);           // "condition"
 
     if (strcmp(conditions[i][4], "") != 0) {
-      ConfigManager->setElement(KEY_CONDITIONS_MIN, relay, (const char*)conditions[i][4]);
+      ConfigManager->setElement(KEY_CONDITIONS_MIN, relay, (const char*)conditions[i][4]);  // "valueON"
     }
 
     if (strcmp(conditions[i][5], "") != 0) {
-      ConfigManager->setElement(KEY_CONDITIONS_MAX, relay, (const char*)conditions[i][5]);
+      ConfigManager->setElement(KEY_CONDITIONS_MAX, relay, (const char*)conditions[i][5]);  // "valueOFF"
     }
   }
 
@@ -527,13 +529,22 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, JsonArray& buttonAction,
   ConfigESP->setPullUp(gpio, pullUp);
   ConfigESP->setInversed(gpio, invertLogic);
 
-  if (gpio != A0) {
-    if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
-      addButtonCFG(gpio);
+  if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
+    addButtonCFG(gpio);
+  ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
 
-    ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
-  }
+  ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
+}
 
+void addButtonAnalog(uint8_t nr, uint8_t gpio, JsonArray& buttonAction) {
+  uint8_t maxButton = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
+
+  if (buttonAction[nr].success())
+    ConfigESP->setAction(gpio, (int)buttonAction[nr]);
+  else
+    ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
+
+  ConfigESP->setEvent(gpio, Supla::Event::ON_PRESS);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
