@@ -101,6 +101,10 @@ enum FunctionOld
   CSE7766Rx = 146,
   LedLink = 157,
   LedLinki = 158,
+  Binary1 = 217,
+  Binary2,
+  Binary3,
+  Binary4,
   Users = 255,
 };
 
@@ -111,6 +115,10 @@ enum FunctionNew
   NewButton2,
   NewButton3,
   NewButton4,
+  NewBinary1 = 50,
+  NewBinary2,
+  NewBinary3,
+  NewBinary4,
   NewSwitch1 = 160,
   NewSwitch2,
   NewSwitch3,
@@ -175,6 +183,7 @@ void addRelay(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
 void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addButtonCFG(uint8_t gpio);
+void addLimitSwitch(uint8_t nr, uint8_t gpio);
 
 extern String templateBoardWarning;
 }  // namespace TanplateBoard

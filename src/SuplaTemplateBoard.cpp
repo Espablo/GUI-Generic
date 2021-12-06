@@ -358,6 +358,19 @@ void chooseTemplateBoard(String board) {
         ConfigESP->setGpio(gpio, FUNCTION_CSE7766_RX);
         break;
 
+      case NewBinary1:
+        addLimitSwitch(0, gpio);
+        break;
+      case NewBinary2:
+        addLimitSwitch(1, gpio);
+        break;
+      case NewBinary3:
+        addLimitSwitch(2, gpio);
+        break;
+      case NewBinary4:
+        addLimitSwitch(3, gpio);
+        break;
+
       default:
         templateBoardWarning += "Brak funkcji: ";
         templateBoardWarning += gpioJSON;
@@ -487,6 +500,15 @@ int convert(int gpioJSON) {
       return NewCSE7766Tx;
     case CSE7766Rx:
       return NewCSE7766Rx;
+
+    case Binary1:
+      return NewBinary1;
+    case Binary2:
+      return NewBinary2;
+    case Binary3:
+      return NewBinary3;
+    case Binary4:
+      return NewBinary4;
   }
   return NewNone;
 }
@@ -575,6 +597,13 @@ void addButtonCFG(uint8_t gpio) {
   }
 
   ConfigESP->setGpio(gpio, FUNCTION_CFG_BUTTON);
+}
+
+void addLimitSwitch(uint8_t nr, uint8_t gpio) {
+  uint8_t max = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
+
+  ConfigESP->setGpio(gpio, nr, FUNCTION_LIMIT_SWITCH);
+  ConfigManager->set(KEY_MAX_LIMIT_SWITCH, max + 1);
 }
 
 String templateBoardWarning;
