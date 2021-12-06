@@ -357,6 +357,7 @@ enum sensorList
   SENSOR_HDC1080,
   SENSOR_HLW8012,
   SENSOR_PZEM_V3,
+  SENSOR_CSE7766,
   SENSOR_BINARY,
   COUNT_SENSOR_LIST
 };
@@ -489,6 +490,11 @@ const char* const SENSOR_LIST_P[] PROGMEM = {
 #endif
 #ifdef SUPLA_PZEM_V_3
     "PZEM-004T V3",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_CSE7766
+    "CSE7766",
 #else
     S_EMPTY,
 #endif

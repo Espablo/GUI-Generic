@@ -692,6 +692,9 @@ Supla::Sensor::CSE_7766 *counterCSE7766 = nullptr;
 void addCSE7766(int8_t pinRX) {
   if (counterCSE7766 == NULL && pinRX != OFF_GPIO) {
     counterCSE7766 = new Supla::Sensor::CSE_7766(pinRX);
+
+    Supla::GUI::addConditionsTurnON(SUPLA_CSE7766, counterCSE7766);
+    Supla::GUI::addConditionsTurnOFF(SUPLA_CSE7766, counterCSE7766);
   }
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
 }
