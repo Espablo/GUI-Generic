@@ -35,7 +35,7 @@ void handleDeviceSettings(int save) {
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_DEVICE_SETTINGS);
 
-#ifdef SUPLA_TEMPLATE_BOARD_JSON
+#ifdef TEMPLATE_BOARD_JSON
   addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
   addFormHeader(webContentBuffer, S_DEFAULT_TEMPLATE_BOARD);
   addTextBox(webContentBuffer, INPUT_BOARD, F("JSON"), F(""), 0, 200, false);
@@ -46,7 +46,7 @@ void handleDeviceSettings(int save) {
   addFormHeaderEnd(webContentBuffer);
   addButtonSubmit(webContentBuffer, S_LOAD_CONFIGURATION);
   addFormEnd(webContentBuffer);
-#elif SUPLA_TEMPLATE_BOARD_OLD
+#elif TEMPLATE_BOARD_OLD
 #if (DEFAULT_TEMPLATE_BOARD == BOARD_OFF)
   addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
   addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
@@ -109,9 +109,9 @@ void handleDeviceSettings(int save) {
 }
 
 void handleDeviceSettingsSave() {
-#ifdef SUPLA_TEMPLATE_BOARD_JSON
+#ifdef TEMPLATE_BOARD_JSON
   Supla::TanplateBoard::chooseTemplateBoard(WebServer->httpServer->arg(INPUT_BOARD).c_str());
-#elif SUPLA_TEMPLATE_BOARD_OLD
+#elif TEMPLATE_BOARD_OLD
   if (strcmp(WebServer->httpServer->arg(INPUT_BOARD).c_str(), "") != 0) {
     chooseTemplateBoard(WebServer->httpServer->arg(INPUT_BOARD).toInt());
     Supla::Storage::ScheduleSave(2000);

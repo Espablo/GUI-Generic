@@ -20,18 +20,18 @@
 namespace Supla {
 namespace TanplateBoard {
 void addTemplateBoard() {
-#ifdef SUPLA_TEMPLATE_BOARD_JSON
+#ifdef TEMPLATE_BOARD_JSON
 #ifdef TEMPLATE_JSON
   chooseTemplateBoard(TEMPLATE_JSON);
 #endif
-#elif SUPLA_TEMPLATE_BOARD_OLD
+#elif TEMPLATE_BOARD_OLD
   chooseTemplateBoard(ConfigESP->getDefaultTamplateBoard());
 #endif
 }
 }  // namespace TanplateBoard
 }  // namespace Supla
 
-#ifdef SUPLA_TEMPLATE_BOARD_JSON
+#ifdef TEMPLATE_BOARD_JSON
 namespace Supla {
 namespace TanplateBoard {
 
@@ -617,7 +617,7 @@ String templateBoardWarning;
 
 }  // namespace TanplateBoard
 }  // namespace Supla
-#elif SUPLA_TEMPLATE_BOARD_OLD
+#elif TEMPLATE_BOARD_OLD
 void addButton(uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
 

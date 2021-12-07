@@ -46,9 +46,9 @@ SuplaConfigESP::SuplaConfigESP() {
     if (strcmp(ConfigManager->get(KEY_ENABLE_SSL)->getValue(), "") == 0)
       ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
 
-#ifdef SUPLA_TEMPLATE_BOARD_JSON
+#ifdef TEMPLATE_BOARD_JSON
     Supla::TanplateBoard::addTemplateBoard();
-#elif SUPLA_TEMPLATE_BOARD_OLD
+#elif TEMPLATE_BOARD_OLD
     if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0) {
       chooseTemplateBoard(getDefaultTamplateBoard());
     }
