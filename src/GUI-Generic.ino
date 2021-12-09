@@ -113,7 +113,7 @@ void setup() {
 #ifdef SUPLA_LIMIT_SWITCH
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != OFF_GPIO) {
-      auto binary = new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), false);
+      auto binary = new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), true);
       Supla::GUI::addConditionsTurnON(SENSOR_BINARY, binary, nr);
       Supla::GUI::addConditionsTurnOFF(SENSOR_BINARY, binary, nr);
     }
