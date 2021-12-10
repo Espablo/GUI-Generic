@@ -75,9 +75,9 @@ void addTextBox(String& html,
   }
 
   html += F("' value='");
-  // if (value != placeholder) {
-  html += value;
-  // }
+  if (value != placeholder) {
+    html += value;
+  }
 
   if (placeholder != "") {
     html += F("' placeholder='");
@@ -141,7 +141,7 @@ void addCheckBox(String& html, const String& input_id, const String& name, bool 
   html += F("</label><input type='checkbox' name='");
   html += input_id;
   html += F("'");
-if (checked) {
+  if (checked) {
     html += F(" checked");
   }
   html += F("></i>");
@@ -172,13 +172,13 @@ void addNumberBox(String& html, const String& input_id, const String& name, cons
   html += F("</label><input name='");
   html += input_id;
   html += F("' type='number'");
-  if (placeholder != "") {
+  if (!placeholder.isEmpty()) {
     html += F(" placeholder='");
-    html += placeholder;
+    html += placeholder.c_str();
     html += F("'");
   }
   html += F(" step='0.01' value='");
-  html += value;
+  html += value.c_str();
   html += F("'");
 
   if (required) {
@@ -204,14 +204,23 @@ void addLinkBox(String& html, const String& name, const String& url) {
   WebServer->sendHeader();
 }
 
+void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function) {
+  addListGPIOBox(html, input_id, name, function, 0, true, url, true);
+}
+
+void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr) {
+  addListGPIOBox(html, input_id, name, function, nr, true, url);
+}
+
+void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function) {
+  addListGPIOBox(html, input_id, name, function, 0, true, "", true);
+}
+
 void addListGPIOBox(
     String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, bool underline, const String& url, bool no_number) {
   uint8_t gpio;
 
-  if (nr == 0)
-    gpio = ConfigESP->getGpio(1, function);
-  else
-    gpio = ConfigESP->getGpio(nr, function);
+  gpio = ConfigESP->getGpio(nr, function);
 
   if (underline) {
     html += F("<i>");
@@ -225,13 +234,13 @@ void addListGPIOBox(
     html += F("<a href='");
     html += PATH_START;
     html += url;
-    if (nr > 0) {
+    if (!no_number) {
       html += nr;
     }
     html += F("'>");
 
-    if (nr > 0 && !no_number) {
-      html += nr;
+    if (!no_number) {
+      html += nr + 1;
       html += F(".");
     }
 
@@ -242,8 +251,8 @@ void addListGPIOBox(
     WebServer->sendHeader();
   }
   else {
-    if (nr > 0 && !no_number) {
-      html += nr;
+    if (!no_number) {
+      html += nr + 1;
       html += F(".");
     }
 
@@ -255,9 +264,7 @@ void addListGPIOBox(
 
   html += F("<select name='");
   html += input_id;
-  if (nr != 0) {
-    html += nr;
-  }
+  html += nr;
   html += F("'>");
 
   if (function == FUNCTION_RELAY)
@@ -299,22 +306,18 @@ void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const 
   html += name;
 }
 
-void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr) {
-  addListGPIOBox(html, input_id, name, function, nr, true, url);
-}
-
 #ifdef SUPLA_MCP23017
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
   uint8_t address;
 
-  if (nr == 1) {
+  if (nr == 0) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
       addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 1"), MCP23017_P, 5, address, url);
     else
       addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 1"), MCP23017_P, 5, address);
   }
-  if (nr == 17) {
+  if (nr == 16) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
       addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 2"), MCP23017_P, 5, address, url);
@@ -327,15 +330,15 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
   if (!url.isEmpty()) {
     html += F("<a href='");
     html += getParameterRequest(url, ARG_PARM_NUMBER);
-    if (nr > 0) {
-      html += nr;
-    }
+    html += nr;
     html += F("'>");
 
-    if (nr > 0) {
-      html += nr;
-      html += F(".");
-    }
+    if (nr < 16)
+      html += nr + 1;
+    else
+      html += nr - 15;
+
+    html += F(".");
 
     html += F(" ");
     html += name;
@@ -344,10 +347,11 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
     WebServer->sendHeader();
   }
   else {
-    if (nr > 0) {
-      html += nr;
-      html += F(".");
-    }
+    if (nr < 16)
+      html += nr + 1;
+    else
+      html += nr - 15;
+    html += F(".");
     html += F(" ");
     html += name;
   }

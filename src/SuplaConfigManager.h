@@ -58,6 +58,7 @@
 #define MAX_DIRECT_LINK      5
 #define MAX_VIRTUAL_RELAY    10
 #define MAX_BRIDGE_RF        10
+#define MAX_ANALOG_BUTTON    5
 
 #ifdef ARDUINO_ARCH_ESP8266
 #define MAX_GPIO 17
@@ -126,6 +127,13 @@ enum _key
   KEY_RF_BRIDGE_PROTOCOL,
   KEY_RF_BRIDGE_PULSE_LENGTHINT,
   KEY_RF_BRIDGE_REPEAT,
+
+  KEY_AT_MULTICLICK_TIME,
+  KEY_AT_HOLD_TIME,
+
+  KEY_NUMBER_BUTTON,
+  KEY_ANALOG_BUTTON,
+  KEY_ANALOG_INPUT_EXPECTED,
 
   OPTION_COUNT
 };
@@ -203,7 +211,7 @@ enum _e_onfig
   E_CONFIG_MAX
 };
 
-#define CONFIG_MAX_OPTIONS 100
+#define CONFIG_MAX_OPTIONS 200
 
 #define ESP8226_CONFIG_V1 2681
 
@@ -250,6 +258,7 @@ class SuplaConfigManager {
   void deleteAllValues();
   void deleteDeviceValues();
   void deleteWifiSuplaAdminValues();
+  void deleteGPIODeviceValues();
 
   ConfigOption *get(uint8_t key);
   bool set(uint8_t key, int value);

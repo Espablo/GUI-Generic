@@ -36,9 +36,6 @@ extern "C" {
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
 #include <supla/sensor/direct_link_sensor_thermometer.h>
 #endif
-//#define DRD_TIMEOUT 5  // Number of seconds after reset during which a subseqent reset will be considered a double reset.
-//#define DRD_ADDRESS 0  // RTC Memory Address for the DoubleResetDetector to use
-// DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
 
 void setup() {
   uint8_t nr, gpio;
@@ -58,76 +55,67 @@ void setup() {
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
 
-  // if (drd.detectDoubleReset()) {
-  //   drd.stop();
-  //   ConfigESP->factoryReset();
-  // }
-
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-    if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-      if (rollershutters > 0) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
+    if (rollershutters > 0) {
 #ifdef SUPLA_ROLLERSHUTTER
-        Supla::GUI::addRolleShutter(nr);
+      Supla::GUI::addRolleShutter(nr);
 #endif
-        rollershutters--;
-        nr++;
+      rollershutters--;
+      nr++;
+    }
+    else {
+#ifdef SUPLA_RF_BRIDGE
+      if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_TRANSMITTER) != OFF_GPIO &&
+          ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER &&
+          (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
+           strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
+        Supla::GUI::addRelayBridge(nr);
       }
       else {
-#ifdef SUPLA_RF_BRIDGE
-        if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_TRANSMITTER) != OFF_GPIO &&
-            ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr - 1).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER &&
-            (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr - 1).c_str(), "") != 0 ||
-             strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr - 1).c_str(), "") != 0)) {
-          Supla::GUI::addRelayBridge(nr);
-        }
-        else {
-#ifdef SUPLA_RELAY
-          Supla::GUI::addRelay(nr);
-#endif
-        }
-#else
 #ifdef SUPLA_RELAY
         Supla::GUI::addRelay(nr);
 #endif
+      }
+#else
+
+#ifdef SUPLA_RELAY
+      Supla::GUI::addRelay(nr);
+#endif
+
 #endif
 
 #ifdef SUPLA_RF_BRIDGE
-        if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE) != OFF_GPIO &&
-            ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr - 1).toInt() == Supla::GUI::RFBridgeType::RECEIVER &&
-            (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr - 1).c_str(), "") != 0 ||
-             strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr - 1).c_str(), "") != 0)) {
-          Supla::GUI::addButtonBridge(nr);
-        }
-        else {
-#ifdef SUPLA_BUTTON
-          Supla::GUI::addButton(nr);
-#endif
-        }
-#else
-#ifdef SUPLA_BUTTON
-        Supla::GUI::addButton(nr);
-#endif
-#endif
+      if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::RECEIVER &&
+          (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
+           strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
+        Supla::GUI::addButtonBridge(nr);
       }
+#endif
 
+      Supla::GUI::addButtonToRelay(nr);
+    }
+
+    if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
 #ifdef SUPLA_PUSHOVER
-      Supla::GUI::addPushover(nr - 1);
+      Supla::GUI::addPushover(nr);
 #endif
 
 #ifdef SUPLA_DIRECT_LINKS
-      Supla::GUI::addDirectLinks(nr - 1);
+      Supla::GUI::addDirectLinks(nr);
 #endif
     }
   }
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != OFF_GPIO) {
-      new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), true);
+      auto binary = new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), true);
+      Supla::GUI::addConditionsTurnON(SENSOR_BINARY, binary, nr);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_BINARY, binary, nr);
     }
   }
 #endif
@@ -155,7 +143,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_DHT11
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DHT11)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_DHT11) != OFF_GPIO) {
       auto dht11 = new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT11), DHT11);
 
@@ -166,7 +154,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_DHT22
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DHT22)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_DHT22) != OFF_GPIO) {
       auto dht22 = new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22);
 
@@ -235,14 +223,14 @@ void setup() {
 #endif
 
 #ifdef SUPLA_RGBW
-  for (nr = 1; nr <= ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     Supla::GUI::addRGBWLeds(nr);
   }
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
   if (ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() > 0) {
-    for (nr = 1; nr <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
+    for (nr = 0; nr < ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
       gpio = ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER);
       if (gpio != OFF_GPIO) {
         Supla::GUI::addImpulseCounter(gpio, ConfigESP->getLevel(gpio), ConfigESP->getMemory(gpio),
@@ -268,13 +256,29 @@ void setup() {
   int8_t pinTX3 = ConfigESP->getGpio(3, FUNCTION_PZEM_TX);
 
   if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinRX2 != OFF_GPIO && pinTX2 != OFF_GPIO && pinRX3 != OFF_GPIO && pinTX3 != OFF_GPIO) {
+#ifdef ARDUINO_ARCH_ESP32
+    new Supla::Sensor::ThreePhasePZEMv3(&Serial, pinRX1, pinTX1, &Serial1, pinRX2, pinTX2, &Serial2, pinRX3, pinTX3);
+#else
     new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX2, pinTX2, pinRX3, pinTX3);
+#endif
   }
   else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinTX2 != OFF_GPIO && pinTX3 != OFF_GPIO) {
-    new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX1, pinTX2, pinRX1, pinTX3);
+#ifdef ARDUINO_ARCH_ESP32
+    new Supla::Sensor::ThreePhasePZEMv3(&Serial, pinRX1, pinTX1, &Serial1, pinRX1, pinTX2, &Serial2, pinRX1, pinTX3);
+#else
+    auto threePhasePZEMv3 = new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX1, pinTX2, pinRX1, pinTX3);
+#endif
+    Supla::GUI::addConditionsTurnON(SENSOR_PZEM_V3, threePhasePZEMv3);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_PZEM_V3, threePhasePZEMv3);
   }
   else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO) {
-    new Supla::Sensor::PZEMv3(pinRX1, pinTX1);
+#ifdef ARDUINO_ARCH_ESP32
+    auto PZEMv3 = new Supla::Sensor::PZEMv3(&Serial, pinRX1, pinTX1);
+#else
+    auto PZEMv3 = new Supla::Sensor::PZEMv3(pinRX1, pinTX1);
+#endif
+    Supla::GUI::addConditionsTurnON(SENSOR_PZEM_V3, PZEMv3);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_PZEM_V3, PZEMv3);
   }
 #endif
 
@@ -401,7 +405,7 @@ void setup() {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
 
-      for (nr = 1; nr <= ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+      for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
         gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
         if (gpio != OFF_GPIO)
           mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), false);
@@ -427,6 +431,12 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_ACTION_TRIGGER
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+    Supla::GUI::addButtonActionTrigger(nr);
+  }
+#endif
+
   Supla::GUI::begin();
 
 #ifdef SUPLA_MPX_5XXX
@@ -445,7 +455,9 @@ void setup() {
   }
 #endif
 
+#if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
   Supla::GUI::addCorrectionSensor();
+#endif
 
 #ifdef ARDUINO_ARCH_ESP8266
   // https://github.com/esp8266/Arduino/issues/2070#issuecomment-258660760
@@ -458,5 +470,4 @@ void setup() {
 void loop() {
   SuplaDevice.iterate();
   delay(25);
-  // drd.loop();
 }

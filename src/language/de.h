@@ -52,6 +52,7 @@
 #define S_BUTTON                                               "TASTE"
 #define S_BUTTON_NR_SETTINGS                                   "Parameter für Tasten Nr. "
 #define S_REACTION_TO                                          "Reaktion auf"
+#define S_NUMBER                                               "Number"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO-Einstellungen für Endschalter"
 #define S_LIMIT_SWITCH                                         "ENDSCHALTER"
@@ -70,6 +71,8 @@
 #define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Schreibfehler: Datei kann nicht gelesen werden. FS-Partition fehlt."
 #define S_DATA_SAVED_RESTART_MODULE                            "Daten Gespeichert: Modul Neustart."
 #define S_WRITE_ERROR_BAD_DATA                                 "Schreibfehler - falsche Daten."
+#define S_SETTINGS_FOR                                         "Ustawienie dla"
+#define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Bereits gestartet"

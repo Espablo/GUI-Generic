@@ -53,6 +53,7 @@
 #define S_BUTTON                                               "BOUTON"
 #define S_BUTTON_NR_SETTINGS                                   "Bouton mettre à jour "
 #define S_REACTION_TO                                          "Réaction à"
+#define S_NUMBER                                               "Number"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Paramètres GPIO pour capteur de limite"
 #define S_LIMIT_SWITCH                                         "Capteur de limite"
@@ -71,6 +72,8 @@
 #define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Erreur d'écriture - impossible de lire à partir du fichier FS. Partition manquante"
 #define S_DATA_SAVED_RESTART_MODULE                            "Données enregistrées - redémarrer le module"
 #define S_WRITE_ERROR_BAD_DATA                                 "Erreur d'écriture - données incorrectes"
+#define S_SETTINGS_FOR                                         "Ustawienie dla"
+#define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Déjà lancé"

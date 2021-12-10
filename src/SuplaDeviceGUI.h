@@ -60,6 +60,7 @@
 #include <vector>
 
 #include <supla/control/button.h>
+#include <supla/control/ButtonAnalog.h>
 #include <supla/control/relay.h>
 #include <supla/control/virtual_relay.h>
 #include <supla/control/roller_shutter.h>
@@ -150,6 +151,11 @@
 #include <supla/sensor/HDC1080.h>
 #endif
 
+#include <supla/control/action_trigger.h>
+
+#include <supla/condition.h>
+#include <supla/sensor/electricity_meter.h>
+
 namespace Supla {
 namespace GUI {
 
@@ -160,10 +166,12 @@ void crateWebServer();
 
 #if defined(SUPLA_RELAY)
 void addRelay(uint8_t nr);
+void addButtonToRelay(uint8_t nr);
 #endif
 
-#if defined(SUPLA_BUTTON)
-void addButton(uint8_t nr);
+#ifdef SUPLA_ACTION_TRIGGER
+void addButtonActionTrigger(uint8_t nr);
+void addActionTriggerRelatedChannel(Supla::Control::Button *button, int eventButton, Supla::Element *element);
 #endif
 
 #if defined(SUPLA_RF_BRIDGE)
@@ -208,7 +216,12 @@ void addRGBWLeds(uint8_t nr);
 
 void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
 void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
+void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
+void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
+
+#if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
 void addCorrectionSensor();
+#endif
 
 #ifdef SUPLA_HLW8012
 extern Supla::Sensor::HLW_8012 *counterHLW8012;

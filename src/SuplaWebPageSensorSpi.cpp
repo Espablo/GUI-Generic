@@ -45,7 +45,7 @@ void handleSensorSpi(int save) {
   addListGPIOBox(webContentBuffer, INPUT_D0_GPIO, S_D0, FUNCTION_D0);
 
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
-    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MAX6675).toInt();
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SPI_MAX6675).toInt();
     addListBox(webContentBuffer, INPUT_MAX6675, S_MAX6675_MAX31855, STATE_P, 2, selected);
   }
   addFormHeaderEnd(webContentBuffer);
@@ -67,7 +67,7 @@ void handleSensorSpiSave() {
 
   input = INPUT_MAX6675;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MAX6675, WebServer->httpServer->arg(input).toInt());
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_SPI_MAX6675, WebServer->httpServer->arg(input).toInt());
   }
 
   switch (ConfigManager->save()) {

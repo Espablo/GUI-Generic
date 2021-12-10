@@ -55,6 +55,7 @@
 #define S_BUTTON                                               "BOTÓN"
 #define S_BUTTON_NR_SETTINGS                                   "Parámetros del botón no. "
 #define S_REACTION_TO                                          "Reacción a"
+#define S_NUMBER                                               "Number"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Parámetros GPIO para el sensor de apertura"
 #define S_LIMIT_SWITCH                                         "INTERRUPTOR DE LÍMITE"
@@ -73,6 +74,8 @@
 #define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Error de escritura: no se puede leer el archivo. Falta partición FS."
 #define S_DATA_SAVED_RESTART_MODULE                            "Datos guardados: reinicio de módulo."
 #define S_WRITE_ERROR_BAD_DATA                                 "Error de escritura: datos incorrectos."
+#define S_SETTINGS_FOR                                         "Ustawienie dla"
+#define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Ya iniciado"

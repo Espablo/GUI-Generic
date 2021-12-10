@@ -162,7 +162,7 @@ SuplaConfigManager::SuplaConfigManager() {
   if (SPIFFS.begin()) {
     _optionCount = OPTION_COUNT;
 
-    // SPIFFS.format();
+    //SPIFFS.format();
 
     this->addKey(KEY_SUPLA_GUID, MAX_GUID);
     this->addKey(KEY_SUPLA_AUTHKEY, MAX_AUTHKEY);
@@ -190,13 +190,7 @@ SuplaConfigManager::SuplaConfigManager() {
     uint8_t nr, key;
     for (nr = 0; nr <= MAX_GPIO; nr++) {
       key = KEY_GPIO + nr;
-      if (nr <= 17) {
-        this->addKey(key, 36, 2);
-      }
-      else {
-        if (nr != 20 || nr != 24 || nr != 28 || nr != 29 || nr != 30 || nr != 31 || nr != 37 || nr != 38)
-          this->addKey(key, 36, 2);
-      }
+      this->addKey(key, 36, 2);
     }
 #endif
 
@@ -208,6 +202,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2);
     this->addKey(KEY_VIRTUAL_RELAY, MAX_VIRTUAL_RELAY * 2, 4);
     this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_VIRTUAL_RELAY * 2, 4);
+    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, 6);
 
 #else
     this->addKey(KEY_MAX_RELAY, 2, 2, false);
@@ -217,6 +212,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2, false);
     this->addKey(KEY_VIRTUAL_RELAY, MAX_GPIO * 2, 4, false);
     this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_GPIO * 2, 4, false);
+    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, 6, false);
 
 #endif
 
@@ -235,8 +231,12 @@ SuplaConfigManager::SuplaConfigManager() {
 
 #ifdef SUPLA_BUTTON
     this->addKey(KEY_MAX_BUTTON, "0", 2, 2);
+    this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON, 6);
+    this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON, 6);
 #else
     this->addKey(KEY_MAX_BUTTON, 2, 2, false);
+    this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON, 6, false);
+    this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON, 6, false);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
@@ -385,6 +385,14 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, 4, false);
     this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, 4, false);
     this->addKey(KEY_RF_BRIDGE_REPEAT, MAX_BRIDGE_RF * 2, 4, false);
+#endif
+
+#ifdef SUPLA_ACTION_TRIGGER
+    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5);
+    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5);
+#else
+    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5, false);
+    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5, false);
 #endif
 
     SPIFFS.end();
@@ -576,7 +584,9 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
 
         for (i = 0; i < _optionCount; i++) {
           if (_options[i]->getLoadKey()) {
-            _options[i]->setValue((const char *)(content + offset));
+            if (strcmp((const char *)(content + offset), "") != 0) {
+              _options[i]->setValue((const char *)(content + offset));
+            }
           }
           offset += _options[i]->getLength();
           delay(0);
@@ -617,7 +627,7 @@ uint8_t SuplaConfigManager::save() {
     if (configFile) {
       uint8_t *content = new uint8_t[length];
       for (i = 0; i < _optionCount; i++) {
-        if (_options[i]->getLoadKey()) {
+        if (_options[i]->getLoadKey() && strcmp(_options[i]->getValue(), "") != 0) {
           Serial.print(F("Save key: "));
           Serial.print(_options[i]->getKey());
           Serial.print(F(" Value: "));
@@ -625,7 +635,7 @@ uint8_t SuplaConfigManager::save() {
           memcpy(content + offset, _options[i]->getValue(), _options[i]->getLength());
         }
         else {
-          memcpy(content + offset, "", _options[i]->getLength());
+          content[offset] = 0;
         }
         offset += _options[i]->getLength();
         delay(0);
@@ -678,12 +688,18 @@ void SuplaConfigManager::deleteWifiSuplaAdminValues() {
   }
 }
 
+void SuplaConfigManager::deleteGPIODeviceValues() {
+  for (int i = KEY_GPIO; i <= KEY_GPIO + MAX_GPIO; i++) {
+    _options[i]->setValue("");
+  }
+}
+
 bool SuplaConfigManager::isDeviceConfigured() {
   return strcmp(this->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(this->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0 ||
          strcmp(this->get(KEY_WIFI_SSID)->getValue(), "") == 0 || strcmp(this->get(KEY_LOGIN)->getValue(), "") == 0 ||
          strcmp(this->get(KEY_ENABLE_SSL)->getValue(), "") == 0 || strcmp(this->get(KEY_ENABLE_GUI)->getValue(), "") == 0 ||
-         strcmp(this->get(KEY_BOARD)->getValue(), "") == 0 || strcmp(this->get(KEY_SUPLA_SERVER)->getValue(), DEFAULT_SERVER) == 0 ||
-         strcmp(this->get(KEY_SUPLA_EMAIL)->getValue(), DEFAULT_EMAIL) == 0 || ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO;
+         strcmp(this->get(KEY_SUPLA_SERVER)->getValue(), DEFAULT_SERVER) == 0 || strcmp(this->get(KEY_SUPLA_EMAIL)->getValue(), DEFAULT_EMAIL) == 0 ||
+         ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO;
 }
 
 ConfigOption *SuplaConfigManager::get(uint8_t key) {

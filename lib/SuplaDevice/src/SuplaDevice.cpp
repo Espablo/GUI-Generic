@@ -90,8 +90,8 @@ bool SuplaDeviceClass::begin(unsigned char version) {
 
   Supla::Storage::Init();
 
-  // Supla::Storage::LoadDeviceConfig();
-  // Supla::Storage::LoadElementConfig();
+   Supla::Storage::LoadDeviceConfig();
+   Supla::Storage::LoadElementConfig();
 
   // Pefrorm dry run of write state to validate stored state section with
   // current device configuration
@@ -418,6 +418,12 @@ void SuplaDeviceClass::onRegisterResult(
         TDCS_SuplaSetActivityTimeout at;
         at.activity_timeout = ACTIVITY_TIMEOUT;
         srpc_dcs_async_set_activity_timeout(srpc, &at);
+      }
+
+      for (auto element = Supla::Element::begin(); element != nullptr;
+           element = element->next()) {
+        element->onRegistered();
+        delay(0);
       }
 
       return;

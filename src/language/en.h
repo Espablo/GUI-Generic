@@ -52,6 +52,7 @@
 #define S_BUTTON                                               "BUTTON"
 #define S_BUTTON_NR_SETTINGS                                   "Setting button nr. "
 #define S_REACTION_TO                                          "Reaction to"
+#define S_NUMBER                                               "Number"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO settings for limit switch"
 #define S_LIMIT_SWITCH                                         "LIMIT SWITCH"
@@ -70,6 +71,8 @@
 #define S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING "Write error - unable to read file FS. Partition missing"
 #define S_DATA_SAVED_RESTART_MODULE                            "Data saved - restart module"
 #define S_WRITE_ERROR_BAD_DATA                                 "Write error - bad data"
+#define S_SETTINGS_FOR                                         "Setting for"
+#define S_ACTION_TRIGGER                                       "Action trigger"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Already initiated"

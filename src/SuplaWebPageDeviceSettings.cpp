@@ -35,6 +35,18 @@ void handleDeviceSettings(int save) {
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(PATH_DEVICE_SETTINGS);
 
+#ifdef TEMPLATE_BOARD_JSON
+  addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
+  addFormHeader(webContentBuffer, S_DEFAULT_TEMPLATE_BOARD);
+  addTextBox(webContentBuffer, INPUT_BOARD, F("JSON"), F(""), 0, 200, false);
+  webContentBuffer += F("<style>input[name='board']{padding-left: 48px;width: calc(100% - 52px);}</style>");
+  webContentBuffer += F("<p style='color:#000;'>");
+  webContentBuffer += Supla::TanplateBoard::templateBoardWarning;
+  webContentBuffer += F("</p>");
+  addFormHeaderEnd(webContentBuffer);
+  addButtonSubmit(webContentBuffer, S_LOAD_CONFIGURATION);
+  addFormEnd(webContentBuffer);
+#elif TEMPLATE_BOARD_OLD
 #if (DEFAULT_TEMPLATE_BOARD == BOARD_OFF)
   addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
   addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
@@ -47,6 +59,7 @@ void handleDeviceSettings(int save) {
   addFormHeader(webContentBuffer, S_DEFAULT_TEMPLATE_BOARD);
   addLabel(webContentBuffer, FPSTR(BOARD_P[DEFAULT_TEMPLATE_BOARD]));
   addFormHeaderEnd(webContentBuffer);
+#endif
 #endif
 
   addFormHeader(webContentBuffer, S_DEVICE_SETTINGS);
@@ -96,12 +109,14 @@ void handleDeviceSettings(int save) {
 }
 
 void handleDeviceSettingsSave() {
-  String input = INPUT_BOARD;
-
-  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    saveChooseTemplateBoard(WebServer->httpServer->arg(input).toInt());
+#ifdef TEMPLATE_BOARD_JSON
+  Supla::TanplateBoard::chooseTemplateBoard(WebServer->httpServer->arg(INPUT_BOARD).c_str());
+#elif TEMPLATE_BOARD_OLD
+  if (strcmp(WebServer->httpServer->arg(INPUT_BOARD).c_str(), "") != 0) {
+    chooseTemplateBoard(WebServer->httpServer->arg(INPUT_BOARD).toInt());
     Supla::Storage::ScheduleSave(2000);
   }
+#endif
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:

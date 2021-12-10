@@ -19,6 +19,7 @@
 #include "GUI-Generic_Config.h"
 
 #include "Arduino.h"
+#include <stdint.h>
 #include "EEPROM.h"
 #include <supla/action_handler.h>
 #include <supla/element.h>
@@ -99,7 +100,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   int getGpio(int nr, int function);
   int getGpio(int function) {
-    return getGpio(1, function);
+    return getGpio(0, function);
   }
 
   uint8_t getKeyGpio(uint8_t gpio);
@@ -127,7 +128,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   void setGpio(uint8_t gpio, uint8_t nr, uint8_t function);
   void setGpio(uint8_t gpio, uint8_t function) {
-    setGpio(gpio, 1, function);
+    setGpio(gpio, 0, function);
   }
 
   void clearGpio(uint8_t gpio, uint8_t function = 0);
@@ -148,12 +149,12 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   uint8_t getNrMCP23017(uint8_t adress);
 #endif
   void configModeInit();
+  void clearEEPROM();
 
  private:
   bool MDNSConfigured = false;
   bool APConfigured = false;
   void iterateAlways();
-  void clearEEPROM();
 
   Ticker led;
 };

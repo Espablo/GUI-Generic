@@ -51,8 +51,8 @@ class HLW_8012 : public OnePhaseElectricityMeter {
   void setMode(bool value);
   void setCounter(_supla_int64_t value);
 
-  static void ICACHE_RAM_ATTR hjl01_cf1_interrupt();
-  static void ICACHE_RAM_ATTR hjl01_cf_interrupt();
+  static IRAM_ATTR void hjl01_cf1_interrupt();
+  static IRAM_ATTR void hjl01_cf_interrupt();
   void calibrate(double calibPower, double calibVoltage);
 
  protected:

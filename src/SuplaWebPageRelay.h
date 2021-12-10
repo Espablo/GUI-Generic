@@ -36,6 +36,7 @@
 #define INPUT_RELAY_MEMORY   "irm"
 #define INPUT_RELAY_DURATION "ird"
 #define INPUT_ROLLERSHUTTER  "irsr"
+#define INPUT_BUTTON_NUMBER    "ibn"
 
 void createWebPageRelay();
 void handleRelay(int save = 0);

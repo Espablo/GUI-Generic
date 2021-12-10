@@ -23,6 +23,173 @@
 #include <pgmspace.h>
 #include "GUIGenericCommon.h"
 
+#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_ACTION_TRIGGER)
+#if !defined(SUPLA_BUTTON)
+#define SUPLA_BUTTON
+#endif
+#endif
+
+#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS) || defined(SUPLA_LED)
+#if !defined(SUPLA_RELAY)
+#define SUPLA_RELAY
+#endif
+#endif
+
+namespace Supla {
+namespace TanplateBoard {
+void addTemplateBoard();
+}
+}  // namespace Supla
+
+#ifdef TEMPLATE_BOARD_JSON
+#include <ArduinoJson.h>
+
+// Button to łącznik monostabilny, Switch to łącznik bistabilny.
+
+enum FunctionOld
+{
+  None = 0,
+  TemperatureAnalog = 2,
+  SI7021 = 3,
+  Switch1 = 9,
+  Switch2,
+  Switch3,
+  Switch4,
+  Switch5,
+  Switch6,
+  Switch7,
+  Switch8,
+  Button1 = 17,
+  Button2,
+  Button3,
+  Button4,
+  Relay1 = 21,
+  Relay2,
+  Relay3,
+  Relay4,
+  Relay1i = 29,
+  Relay2i,
+  Relay3i,
+  Relay4i,
+  PWM1 = 37,
+  PWM2,
+  PWM3,
+  PWM4,
+  Led1 = 52,
+  Led2,
+  Led3,
+  Led4,
+  Led1i = 56,
+  Led2i,
+  Led3i,
+  Led4i,
+  Switch1n = 82,
+  Switch2n,
+  Switch3n,
+  Switch4n,
+  Switch5n,
+  Switch6n,
+  Switch7n,
+  Button1n = 90,
+  Button2n,
+  Button3n,
+  Button4n,
+  HLWBLSELi = 131,
+  HLWBLCF1 = 132,
+  BL0937CF = 134,
+  CSE7766Tx = 145,
+  CSE7766Rx = 146,
+  LedLink = 157,
+  LedLinki = 158,
+  Binary1 = 217,
+  Binary2,
+  Binary3,
+  Binary4,
+  Users = 255,
+};
+
+enum FunctionNew
+{
+  NewNone = 0,
+  NewButton1 = 32,
+  NewButton2,
+  NewButton3,
+  NewButton4,
+  NewBinary1 = 50,
+  NewBinary2,
+  NewBinary3,
+  NewBinary4,
+  NewSwitch1 = 160,
+  NewSwitch2,
+  NewSwitch3,
+  NewSwitch4,
+  NewSwitch5,
+  NewSwitch6,
+  NewSwitch7,
+  NewSwitch8,
+  NewSwitch1n = 192,
+  NewSwitch2n,
+  NewSwitch3n,
+  NewSwitch4n,
+  NewSwitch5n,
+  NewSwitch6n,
+  NewSwitch7n,
+  NewRelay1 = 224,
+  NewRelay2,
+  NewRelay3,
+  NewRelay4,
+  NewRelay1i = 256,
+  NewRelay2i,
+  NewRelay3i,
+  NewRelay4i,
+  NewButton1n = 64,
+  NewButton2n,
+  NewButton3n,
+  NewButton4n,
+  NewLed1 = 288,
+  NewLed2,
+  NewLed3,
+  NewLed4,
+  NewLed1i = 320,
+  NewLed2i,
+  NewLed3i,
+  NewLed4i,
+  NewPWM1 = 416,
+  NewPWM2,
+  NewPWM3,
+  NewPWM4,
+  NewPWM5,
+  NewLedLink = 544,
+  NewLedLinki = 576,
+  NewSI7021 = 1248,
+  NewHLWBLSELi = 2624,
+  NewHLWBLCF1 = 2656,
+  NewBL0937CF = 2720,
+  NewCSE7766Tx = 3072,
+  NewCSE7766Rx = 3104,
+  NewTemperatureAnalog = 4736,
+  NewUsers = 1,
+};
+
+namespace Supla {
+namespace TanplateBoard {
+void chooseTemplateBoard(String board);
+uint8_t getGPIO(uint8_t gpio);
+int convert(int gpioJSON);
+
+void addButton(uint8_t nr, uint8_t gpio, uint8_t event, JsonArray& buttonAction, bool pullUp, bool invertLogic);
+void addButtonAnalog(uint8_t nr, uint8_t gpio, JsonArray& buttonAction);
+void addRelay(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
+void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
+void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
+void addButtonCFG(uint8_t gpio);
+void addLimitSwitch(uint8_t nr, uint8_t gpio);
+
+extern String templateBoardWarning;
+}  // namespace TanplateBoard
+}  // namespace Supla
+
+#elif TEMPLATE_BOARD_OLD
 #define BOARD_OFF              0
 #define BOARD_ELECTRODRAGON    1
 #define BOARD_INCAN3           2
@@ -81,18 +248,6 @@
 #endif
 #endif
 
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_RGBW)
-#if !defined(SUPLA_BUTTON)
-#define SUPLA_BUTTON
-#endif
-#endif
-
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS) || defined(SUPLA_LED)
-#if !defined(SUPLA_RELAY)
-#define SUPLA_RELAY
-#endif
-#endif
-
 const char BOARD_NULL[] PROGMEM = "";
 const char ELECTRODRAGON[] PROGMEM = "ElectroDragon";
 const char INCAN3[] PROGMEM = "inCan3";
@@ -136,7 +291,6 @@ void addButtonCFG(uint8_t gpio);
 void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 void addRGBW(int8_t redPin, int8_t greenPin, int8_t bluePin, int8_t brightnessPin);
 void addDimmer(int8_t brightnessPin);
-void saveChooseTemplateBoard(int8_t board);
 void chooseTemplateBoard(uint8_t board);
-
+#endif
 #endif  // SuplaTemplateBoard_h

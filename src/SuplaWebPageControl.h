@@ -37,6 +37,10 @@
 #define INPUT_BUTTON_EVENT     "icl"
 #define INPUT_BUTTON_ACTION    "bta"
 #define INPUT_MAX_BUTTON       "mbt"
+#define INPUT_ANALOG_EXPECTED  "iae"
+
+#define INPUT_AT_MULTICLICK_TIME "iamt"
+#define INPUT_AT_HOLD_TIME       "iaht"
 
 void createWebPageControl();
 void handleControl(int save = 0);

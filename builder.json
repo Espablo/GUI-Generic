@@ -1,5 +1,5 @@
 {
-	"version" : "4.2.7",
+	"version" : "4.4.0",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -247,12 +247,14 @@
 			"defOn": false,
 			"depOn": [
 				"SUPLA_ROLLERSHUTTER",
-				"SUPLA_RGBW"
+				"SUPLA_RGBW",
+				"SUPLA_ACTION_TRIGGER"
 			],
 			"depOff": [
 				"SUPLA_RELAY",
 				"SUPLA_ROLLERSHUTTER",
-				"SUPLA_RGBW"
+				"SUPLA_RGBW",
+				"SUPLA_ACTION_TRIGGER"
 			],
 			"en": {
 				"name": "Buttons",
@@ -271,6 +273,23 @@
 				"desc": "Paramètres de l´appareil->Boutons. Il permet l´utilisation de boutons ainsi que d´autres fonctionnalités."
 			}
 		},
+		"SUPLA_ACTION_TRIGGER": {
+			"name": "Wyzwalacze akcji",
+			"desc": "Pozwalają na wykonanie dowolnej akcji na dowolnym posiadanym przez Ciebie urządzeniu.",
+			"defOn": false,
+			"en": {
+				"name": "Action Trigger"
+			},
+			"es": {
+				"name": "Action Trigger"
+			},
+			"de": {
+				"name": "Action Trigger"
+			},
+			"fr": {
+				"name": "Action Trigger"
+			}
+		},		
 		"SUPLA_ROLLERSHUTTER": {
 			"name": "Rolety",
 			"desc": "Ustawienia urządzenia->Rolety. Umożliwia obsługę rolet. Wymagana włączona obsługa przekaźników i przycisków.",

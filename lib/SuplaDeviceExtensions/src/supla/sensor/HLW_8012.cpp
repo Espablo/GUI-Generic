@@ -171,11 +171,11 @@ void HLW_8012::setCounter(_supla_int64_t newEnergy) {
 
 // When using interrupts we have to call the library entry point
 // whenever an interrupt is triggered
-void ICACHE_RAM_ATTR HLW_8012::hjl01_cf1_interrupt() {
+void IRAM_ATTR HLW_8012::hjl01_cf1_interrupt() {
   sensor->cf1_interrupt();
 }
 
-void ICACHE_RAM_ATTR HLW_8012::hjl01_cf_interrupt() {
+void IRAM_ATTR HLW_8012::hjl01_cf_interrupt() {
   sensor->cf_interrupt();
 }
 

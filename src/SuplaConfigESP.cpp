@@ -46,8 +46,13 @@ SuplaConfigESP::SuplaConfigESP() {
     if (strcmp(ConfigManager->get(KEY_ENABLE_SSL)->getValue(), "") == 0)
       ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
 
-    if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0)
-      saveChooseTemplateBoard(getDefaultTamplateBoard());
+#ifdef TEMPLATE_BOARD_JSON
+    Supla::TanplateBoard::addTemplateBoard();
+#elif TEMPLATE_BOARD_OLD
+    if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0) {
+      chooseTemplateBoard(getDefaultTamplateBoard());
+    }
+#endif
 
     if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
       ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
@@ -97,13 +102,15 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig) {
   if (pinNumberConfig != OFF_GPIO) {
     bool pullUp = true, invertLogic = true;
 
-    if (ConfigESP->getGpio(FUNCTION_BUTTON) != OFF_GPIO) {
-      pullUp = ConfigESP->getPullUp(ConfigESP->getGpio(FUNCTION_BUTTON));
-      invertLogic = ConfigESP->getInversed(ConfigESP->getGpio(FUNCTION_BUTTON));
+    for (uint8_t nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+      if (ConfigESP->getGpio(nr, FUNCTION_BUTTON) == pinNumberConfig) {
+        pullUp = ConfigESP->getPullUp(pinNumberConfig);
+        invertLogic = ConfigESP->getInversed(pinNumberConfig);
+      }
     }
 
     Supla::Control::Button *buttonConfig = new Supla::Control::Button(pinNumberConfig, pullUp, invertLogic);
-    buttonConfig->setMulticlickTime(1000);
+    buttonConfig->setMulticlickTime(800);
     buttonConfig->addAction(Supla::TURN_ON, *ConfigESP, Supla::ON_CLICK_1);
 
     if (modeConfigButton == CONFIG_MODE_10_ON_PRESSES) {
@@ -326,6 +333,10 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     return GPIO_VIRTUAL_RELAY;
   }
 
+  if (function == FUNCTION_BUTTON && ConfigManager->get(KEY_ANALOG_BUTTON)->getElement(nr).toInt()) {
+    return A0;
+  }
+
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
     if (function == FUNCTION_CFG_BUTTON) {
@@ -334,7 +345,7 @@ int SuplaConfigESP::getGpio(int nr, int function) {
       }
     }
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
-      if (ConfigManager->get(key)->getElement(NR).toInt() == nr) {
+      if (ConfigManager->get(key)->getElement(NR).toInt() == (nr + 1)) {
         return gpio;
       }
     }
@@ -391,6 +402,9 @@ uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
 }
 
 bool SuplaConfigESP::getLevel(uint8_t gpio) {
+  if (gpio == GPIO_VIRTUAL_RELAY) {
+    return false;
+  }
   return ConfigManager->get(getKeyGpio(gpio))->getElement(LEVEL_RELAY).toInt();
 }
 
@@ -432,13 +446,11 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   else {
     uint8_t key = KEY_GPIO + gpio;
 
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_BUTTON)
-      if (function == FUNCTION_CFG_BUTTON)
-        return true;
+    if (function == FUNCTION_CFG_BUTTON && ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_BUTTON)
+      return true;
 
-    if (checkBusyCfg(gpio))
-      if (function == FUNCTION_BUTTON)
-        return true;
+    if (function == FUNCTION_BUTTON && checkBusyCfg(gpio) && ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_BUTTON)
+      return true;
 
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF || checkBusyCfg(gpio))
       return false;
@@ -477,6 +489,7 @@ void SuplaConfigESP::setEvent(uint8_t gpio, int event) {
 
 void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
   uint8_t key;
+  nr++;
   key = KEY_GPIO + gpio;
 
   if (function == FUNCTION_CFG_BUTTON) {
@@ -512,7 +525,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
     setInversed(gpio, true);
 
     setAction(gpio, Supla::Action::TOGGLE);
-    setEvent(gpio, Supla::Event::ON_CHANGE);
+    setEvent(gpio, Supla::Event::ON_PRESS);
   }
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, LOW);
@@ -550,8 +563,7 @@ bool SuplaConfigESP::checkGpio(int gpio) {
       || gpio == 9 || gpio == 10
 #endif
 #elif ARDUINO_ARCH_ESP32
-      gpio == 6 || gpio == 7 || gpio == 8 || gpio == 9 || gpio == 10 || gpio == 11 || gpio == 20 || gpio == 24 || gpio == 28 || gpio == 29 ||
-      gpio == 30 || gpio == 31 || gpio == 37 || gpio == 38
+      gpio == 28 || gpio == 29 || gpio == 30 || gpio == 31
 #endif
   ) {
     return false;
@@ -572,10 +584,10 @@ bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t fun
     uint8_t key = KEY_GPIO + gpio;
     uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
 
-    if (nr <= 16)
-      address = ConfigESP->getAdressMCP23017(1, function);
-    if (nr >= 17)
-      address = ConfigESP->getAdressMCP23017(17, function);
+    if (nr < 16)
+      address = ConfigESP->getAdressMCP23017(0, function);
+    else
+      address = ConfigESP->getAdressMCP23017(16, function);
 
     if (address == OFF_GPIO_MCP23017) {
       return true;
@@ -736,7 +748,9 @@ void SuplaConfigESP::factoryReset(bool forceReset) {
     ConfigManager->set(KEY_LOGIN_PASS, DEFAULT_LOGIN_PASS);
     ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
     ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
-    saveChooseTemplateBoard(getDefaultTamplateBoard());
+    Supla::TanplateBoard::addTemplateBoard();
+    if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
+      ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
     ConfigManager->save();
 
@@ -754,7 +768,11 @@ void SuplaConfigESP::reset(bool forceReset) {
     clearEEPROM();
     ConfigManager->deleteDeviceValues();
 
-    saveChooseTemplateBoard(getDefaultTamplateBoard());
+    ConfigManager->set(KEY_ENABLE_GUI, getDefaultEnableGUI());
+    ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
+    Supla::TanplateBoard::addTemplateBoard();
+    if (ConfigESP->getGpio(FUNCTION_CFG_BUTTON) == OFF_GPIO)
+      ConfigESP->setGpio(0, FUNCTION_CFG_BUTTON);
 
     ConfigManager->save();
 

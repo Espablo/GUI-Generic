@@ -1,8 +1,9 @@
 #ifndef GUI_Generic_Config_h
 #define GUI_Generic_Config_h
 
-// #define USE_CUSTOM
+//#define TEMPLATE_JSON "{\"NAME\":\"Shelly 2.5\",\"GPIO\":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736]}"
 
+// #define USE_CUSTOM
 // User configuration
 #ifdef USE_CUSTOM
 #ifdef BUILD_VERSION
@@ -25,6 +26,7 @@
 #define SUPLA_RELAY
 #define SUPLA_CONDITIONS
 #define SUPLA_BUTTON
+#define SUPLA_ACTION_TRIGGER
 #define SUPLA_LIMIT_SWITCH
 #define SUPLA_ROLLERSHUTTER
 #define SUPLA_CONFIG
