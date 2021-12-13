@@ -162,7 +162,7 @@ SuplaConfigManager::SuplaConfigManager() {
   if (SPIFFS.begin()) {
     _optionCount = OPTION_COUNT;
 
-    //SPIFFS.format();
+    // SPIFFS.format();
 
     this->addKey(KEY_SUPLA_GUID, MAX_GUID);
     this->addKey(KEY_SUPLA_AUTHKEY, MAX_AUTHKEY);

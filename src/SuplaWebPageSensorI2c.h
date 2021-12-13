@@ -20,7 +20,7 @@
 #include "SuplaDeviceGUI.h"
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017) || \
-    defined(SUPLA_BMP280) || defined(SUPLA_VL53L0X) || defined(SUPLA_HDC1080)
+    defined(SUPLA_BMP280) || defined(SUPLA_VL53L0X) || defined(SUPLA_HDC1080) || defined(SUPLA_LCD_HD44780)
 #define GUI_SENSOR_I2C
 #endif
 
