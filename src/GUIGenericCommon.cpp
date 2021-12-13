@@ -57,6 +57,7 @@ int getCountSensorChannels() {
       }
     }
   }
+  maxFrame--;
 
   return maxFrame;
 }

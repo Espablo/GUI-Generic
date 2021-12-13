@@ -35,6 +35,7 @@ enum _sensor
   SENSOR_I2C_BMP280,
   SENSOR_I2C_VL53L0X,
   SENSOR_I2C_HDC1080,
+  SENSOR_I2C_HD44780,
 };
 
 #ifdef GUI_SENSOR_I2C
@@ -61,6 +62,16 @@ enum _shtAdress
 };
 #endif
 
+#ifdef SUPLA_LCD_HD44780
+enum _LCDAdress
+{
+  HD44780_ADDRESS_0X20 = 1,
+  HD44780_ADDRESS_0X27,
+  HD44780_ADDRESS_0X38,
+  HD44780_ADDRESS_0X3F,
+};
+#endif
+
 #define PATH_I2C "i2c"
 
 #define INPUT_SDA_GPIO "sdag"
@@ -68,8 +79,10 @@ enum _shtAdress
 #define INPUT_SHT3x    "sht30"
 #define INPUT_SI7021   "si7021"
 
-#ifdef SUPLA_OLED
+#if defined(SUPLA_OLED) || defined(SUPLA_LCD_HD44780)
 #define INPUT_OLED                 "oled"
+#define INPUT_LCD                  "ilcd"
+#define INPUT_HD44780_TYPE         "iht"
 #define INPUT_OLED_ANIMATION       "oleda"
 #define INPUT_OLED_BRIGHTNESS_TIME "oledb"
 #define INPUT_OLED_BRIGHTNESS_LVL  "oledc"
@@ -77,7 +90,7 @@ enum _shtAdress
 #ifndef INPUT_BUTTON_GPIO
 #define INPUT_BUTTON_GPIO "btg"
 #endif
-#endif  // SUPLA_OLED
+#endif
 
 #define INPUT_MCP23017 "mcp"
 

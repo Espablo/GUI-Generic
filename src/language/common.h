@@ -38,4 +38,5 @@
 #define S_CLK "CLK"
 #define S_CS  "CS"
 
+#define S_IP_AP "IP: 192.168.4.1"
 #endif /* LANGUAGE_COMMON_H_ */

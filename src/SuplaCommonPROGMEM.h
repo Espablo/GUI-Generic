@@ -249,6 +249,15 @@ const char ADR44_ADR45[] PROGMEM = "0x44 & 0x45";
 const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
 #endif
 
+#if defined(SUPLA_MCP23017) || defined(SUPLA_LCD_HD44780)
+const char ADR20[] PROGMEM = "0x20";
+#endif
+
+#ifdef SUPLA_LCD_HD44780
+const char* const HD44780_P[] PROGMEM = {OFF, ADR20, "0x27", "0x38", "0x3F"};
+const char* const HD44780_TYPE_P[] PROGMEM = {S_EMPTY, S_EMPTY, "2x16", S_EMPTY, "4x20"};
+#endif
+
 #ifdef SUPLA_MCP23017
 const char ADR20[] PROGMEM = "0x20";
 const char ADR21[] PROGMEM = "0x21";

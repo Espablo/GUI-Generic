@@ -148,7 +148,7 @@ void displayConfigMode(OLEDDisplay* display) {
   display->drawString(0, 15, S_CONFIGURATION_MODE);
   display->drawString(0, 28, S_AP_NAME);
   display->drawString(0, 41, ConfigESP->getConfigNameAP());
-  display->drawString(0, 54, F("IP: 192.168.4.1"));
+  display->drawString(0, 54, S_IP_AP);
   display->display();
 }
 

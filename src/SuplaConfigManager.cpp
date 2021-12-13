@@ -271,7 +271,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20, 2, false);
 #endif
 
-#if defined(SUPLA_DS18B20) || defined(SUPLA_OLED)
+#if defined(SUPLA_DS18B20) || defined(SUPLA_OLED) || defined(SUPLA_LCD_HD44780)
     this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, 2);
 #else
     this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, 2, false);
@@ -297,7 +297,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_MAX_IMPULSE_COUNTER, 2, 2, false);
 #endif
 
-#ifdef SUPLA_OLED
+#if defined(SUPLA_OLED) || defined(SUPLA_LCD_HD44780)
     this->addKey(KEY_OLED_ANIMATION, "5", 1, 2);
     this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2, 2);
     this->addKey(KEY_OLED_BACK_LIGHT, "20", 2, 2);
@@ -351,9 +351,13 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3, 2, false);
 #endif
 
-    // nieużywane
-    this->addKey(KEY_LEVEL_LED, "", 1, 0, false);
-    this->addKey(KEY_FOR_USE, "", 0, 0, false);
+#ifdef SUPLA_LCD_HD44780
+    this->addKey(KEY_HD44780_TYPE, "2", 1, 5);
+#else
+    this->addKey(KEY_HD44780_TYPE, "2", 1, 5, false);
+#endif
+
+    this->addKey(KEY_FOR_USE, "", 0, 0, false);  // nieużywane
 
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
     this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2, 3);

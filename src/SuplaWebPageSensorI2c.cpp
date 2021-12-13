@@ -116,6 +116,34 @@ void handleSensorI2c(int save) {
     addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_LCD_HD44780
+    addFormHeader(webContentBuffer);
+
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HD44780).toInt();
+    addListBox(webContentBuffer, INPUT_LCD, "HD44780", HD44780_P, 5, selected);
+
+    selected = ConfigManager->get(KEY_HD44780_TYPE)->getValueInt();
+    addListBox(webContentBuffer, INPUT_HD44780_TYPE, S_TYPE, HD44780_TYPE_P, 5, selected);
+
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HD44780).toInt()) {
+      String name, sensorName, input;
+
+      addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON);
+      addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 9);
+      addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_TIME, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
+
+      for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
+        sensorName = String(ConfigManager->get(KEY_NAME_SENSOR)->getElement(i));
+        input = INPUT_OLED_NAME;
+        input += i;
+        name = S_SCREEN;
+        name += i + 1;
+        addTextBox(webContentBuffer, input, name, sensorName, 0, MAX_DS18B20_NAME, false);
+      }
+    }
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
 #ifdef SUPLA_MCP23017
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt();
     addFormHeader(webContentBuffer);
@@ -211,7 +239,7 @@ void handleSensorI2cSave() {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_OLED, WebServer->httpServer->arg(input).toInt());
   }
 
-  if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_CFG_BUTTON)) {
+  if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
     handleSensorI2c(6);
     return;
   }
@@ -227,6 +255,38 @@ void handleSensorI2cSave() {
   input = INPUT_OLED_BRIGHTNESS_LVL;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0)
     ConfigManager->set(KEY_OLED_BACK_LIGHT, WebServer->httpServer->arg(input).c_str());
+
+  for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
+    input = INPUT_OLED_NAME;
+    input += i;
+    if (strcmp(WebServer->httpServer->arg(input).c_str(), ConfigManager->get(KEY_NAME_SENSOR)->getElement(i).c_str()) != 0) {
+      ConfigManager->setElement(KEY_NAME_SENSOR, i, WebServer->httpServer->arg(input).c_str());
+    }
+  }
+#endif
+
+#ifdef SUPLA_LCD_HD44780
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_LCD;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_HD44780, WebServer->httpServer->arg(input).toInt());
+  }
+
+  if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_CFG_BUTTON)) {
+    handleSensorI2c(6);
+    return;
+  }
+  input = INPUT_HD44780_TYPE;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0)
+    ConfigManager->set(KEY_HD44780_TYPE, WebServer->httpServer->arg(input).c_str());
+
+  input = INPUT_OLED_ANIMATION;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0)
+    ConfigManager->set(KEY_OLED_ANIMATION, WebServer->httpServer->arg(input).c_str());
+
+  input = INPUT_OLED_BRIGHTNESS_TIME;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0)
+    ConfigManager->set(KEY_OLED_BACK_LIGHT_TIME, WebServer->httpServer->arg(input).c_str());
 
   for (uint8_t i = 0; i < getCountSensorChannels(); i++) {
     input = INPUT_OLED_NAME;
