@@ -30,7 +30,7 @@
 #include INCLUDE_FILE(UI_LANGUAGE)
 
 uint8_t *HexToBytes(String _value);
-int getCountSensorChannels();
+uint8_t getCountSensorChannels();
 int getCountChannels();
 
 #endif  // GUI_GENERIC_COMMON_H

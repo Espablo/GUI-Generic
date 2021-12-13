@@ -30,8 +30,11 @@ SuplaLCD::SuplaLCD(uint8_t lcdAddr, uint8_t lcdRows) {
   lcd->backlight();
 
   sensorCount = getCountSensorChannels();
-  screenMax = sensorCount / lcdRows;
-  lcdElement = new LCDElement[sensorCount];
+
+  if (sensorCount != 0) {
+    screenMax = (sensorCount - 1) / lcdRows;
+    lcdElement = new LCDElement[sensorCount];
+  }
 
   for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
     if (element->getChannel()) {
@@ -127,7 +130,7 @@ void SuplaLCD::iterateAlways() {
       lcd->clear();
       lcd->home();
 
-      for (size_t i = 0; i <= sensorCount; i++) {
+      for (size_t i = 0; i < sensorCount; i++) {
         if (screenNumbers == lcdElement[i].screenNumbers) {
           String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(i);
 
