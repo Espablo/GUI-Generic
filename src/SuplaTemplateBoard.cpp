@@ -295,13 +295,13 @@ void chooseTemplateBoard(String board) {
         // addLed(0, gpio);
         break;
       case NewLed2:
-        addLed(1, gpio);
+        addLed(0, gpio);
         break;
       case NewLed3:
-        addLed(2, gpio);
+        addLed(1, gpio);
         break;
       case NewLed4:
-        addLed(3, gpio);
+        addLed(2, gpio);
         break;
       case NewLedLink:
         addLedCFG(gpio);
@@ -312,13 +312,13 @@ void chooseTemplateBoard(String board) {
         // addLed(0, gpio, LOW);
         break;
       case NewLed2i:
-        addLed(1, gpio, LOW);
+        addLed(0, gpio, LOW);
         break;
       case NewLed3i:
-        addLed(2, gpio, LOW);
+        addLed(1, gpio, LOW);
         break;
       case NewLed4i:
-        addLed(3, gpio, LOW);
+        addLed(2, gpio, LOW);
         break;
       case NewLedLinki:
         addLedCFG(gpio, LOW);
@@ -584,9 +584,11 @@ void addRelay(uint8_t nr, uint8_t gpio, uint8_t level) {
 }
 
 void addLedCFG(uint8_t gpio, uint8_t level) {
-  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO) {
-    addLed(0, ConfigESP->getGpio(FUNCTION_CFG_LED));
-    ConfigESP->clearGpio(ConfigESP->getGpio(FUNCTION_CFG_LED), FUNCTION_CFG_LED);
+  uint8_t ledPin = ConfigESP->getGpio(FUNCTION_CFG_LED);
+
+  if (ledPin != OFF_GPIO) {
+    ConfigESP->clearGpio(ledPin, FUNCTION_CFG_LED);
+    addLed(0, ledPin, ConfigESP->getInversed(ledPin));
   }
 
   ConfigESP->setLevel(gpio, level);
