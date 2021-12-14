@@ -35,8 +35,9 @@
 
 enum typeLCD
 {
-  LCD_2X16 = 1,
+  LCD_2X16,
   LCD_2X20,
+  LCD_4X16,
   LCD_4X20,
 };
 

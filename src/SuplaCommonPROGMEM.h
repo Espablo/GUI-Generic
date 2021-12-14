@@ -255,7 +255,7 @@ const char ADR20[] PROGMEM = "0x20";
 
 #ifdef SUPLA_LCD_HD44780
 const char* const HD44780_P[] PROGMEM = {OFF, ADR20, "0x27", "0x38", "0x3F"};
-const char* const HD44780_TYPE_P[] PROGMEM = {OFF, "2x16", "2x20", "4x20"};
+const char* const HD44780_TYPE_P[] PROGMEM = {"2x16", "2x20", "4x16", "4x20"};
 #endif
 
 #ifdef SUPLA_MCP23017

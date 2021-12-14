@@ -431,6 +431,10 @@ void setup() {
           lcdCols = 20;
           lcdRows = 2;
           break;
+        case LCD_4X16:
+          lcdCols = 16;
+          lcdRows = 4;
+          break;
         case LCD_4X20:
           lcdCols = 20;
           lcdRows = 4;
