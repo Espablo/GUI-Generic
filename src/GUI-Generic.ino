@@ -405,7 +405,7 @@ void setup() {
 
 #ifdef SUPLA_LCD_HD44780
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HD44780).toInt()) {
-      uint8_t addressLCD = 0x27;
+      uint8_t lcdCols, lcdRows, addressLCD;
 
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HD44780).toInt()) {
         case HD44780_ADDRESS_0X20:
@@ -422,7 +422,22 @@ void setup() {
           break;
       }
 
-      SuplaLCD *lcd = new SuplaLCD(addressLCD, ConfigManager->get(KEY_HD44780_TYPE)->getValueInt());
+      switch (ConfigManager->get(KEY_HD44780_TYPE)->getValueInt()) {
+        case LCD_2X16:
+          lcdCols = 16;
+          lcdRows = 2;
+          break;
+        case LCD_2X20:
+          lcdCols = 20;
+          lcdRows = 2;
+          break;
+        case LCD_4X20:
+          lcdCols = 20;
+          lcdRows = 4;
+          break;
+      }
+
+      SuplaLCD *lcd = new SuplaLCD(addressLCD, lcdCols, lcdRows);
       lcd->setup(ConfigManager, ConfigESP);
     }
 #endif

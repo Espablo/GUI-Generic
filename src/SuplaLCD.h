@@ -33,6 +33,13 @@
 
 #define TURN_ON_LCD 1
 
+enum typeLCD
+{
+  LCD_2X16 = 1,
+  LCD_2X20,
+  LCD_4X20,
+};
+
 struct LCDElement {
   uint8_t chanelSensor;
   bool useAlternativeMeasurement = false;
@@ -41,7 +48,7 @@ struct LCDElement {
 
 class SuplaLCD : public Supla::Element, public Supla::ActionHandler {
  public:
-  SuplaLCD(uint8_t lcdAddr, uint8_t lcdRows);
+  SuplaLCD(uint8_t lcdAddr, uint8_t lcdCols, uint8_t lcdRows);
   void setup(SuplaConfigManager* configManager, SuplaConfigESP* configESP);
   virtual void onInit();
   virtual void iterateAlways();
@@ -53,6 +60,7 @@ class SuplaLCD : public Supla::Element, public Supla::ActionHandler {
   LiquidCrystal_I2C* lcd;
   LCDElement* lcdElement;
 
+  uint8_t lcdCols = 0;
   uint8_t sensorCount = 0;
   uint8_t screenNumbers = 0;
   uint8_t screenMax = 0;
