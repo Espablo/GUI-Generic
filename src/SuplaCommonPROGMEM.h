@@ -259,7 +259,6 @@ const char* const HD44780_TYPE_P[] PROGMEM = {S_EMPTY, S_EMPTY, "2x16", S_EMPTY,
 #endif
 
 #ifdef SUPLA_MCP23017
-const char ADR20[] PROGMEM = "0x20";
 const char ADR21[] PROGMEM = "0x21";
 const char ADR22[] PROGMEM = "0x22";
 const char ADR23[] PROGMEM = "0x23";
