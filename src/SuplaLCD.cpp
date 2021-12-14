@@ -39,11 +39,11 @@ SuplaLCD::SuplaLCD(uint8_t lcdAddr, uint8_t lcdCols, uint8_t lcdRows) {
       switch (channel->getChannelType()) {
         case SUPLA_CHANNELTYPE_DISTANCESENSOR:
         case SUPLA_CHANNELTYPE_THERMOMETER:
-        case SUPLA_CHANNELTYPE_WINDSENSOR:
-        case SUPLA_CHANNELTYPE_PRESSURESENSOR:
-        case SUPLA_CHANNELTYPE_RAINSENSOR:
-        case SUPLA_CHANNELTYPE_WEIGHTSENSOR:
-        case SUPLA_CHANNELTYPE_IMPULSE_COUNTER:
+          // case SUPLA_CHANNELTYPE_WINDSENSOR:
+          // case SUPLA_CHANNELTYPE_PRESSURESENSOR:
+          // case SUPLA_CHANNELTYPE_RAINSENSOR:
+          // case SUPLA_CHANNELTYPE_WEIGHTSENSOR:
+          // case SUPLA_CHANNELTYPE_IMPULSE_COUNTER:
           lcdElement[frameCount].chanelSensor = channel->getChannelNumber();
           lcdElement[frameCount].screenNumbers = frameCount / lcdRows;
           frameCount += 1;
@@ -64,10 +64,6 @@ SuplaLCD::SuplaLCD(uint8_t lcdAddr, uint8_t lcdCols, uint8_t lcdRows) {
           lcdElement[frameCount].screenNumbers = frameCount / lcdRows;
           frameCount += 1;
           break;
-          /* case SUPLA_CHANNELTYPE_ELECTRICITY_METER: */
-
-        default:
-          return;
       }
     }
     if (element->getSecondaryChannel()) {
