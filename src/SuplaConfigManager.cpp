@@ -339,7 +339,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CORRECTION_HUMIDITY, 6 * MAX_DS18B20, 2, false);
 #endif
 
-#ifdef GUI_SENSOR_I2C
+#if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
     this->addKey(KEY_ACTIVE_SENSOR, 16, 2);
 #else
     this->addKey(KEY_ACTIVE_SENSOR, 16, 2, false);
