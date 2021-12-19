@@ -13,7 +13,7 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-
+#ifdef SUPLA_LCD_HD44780
 #include "SuplaLCD.h"
 
 SuplaLCD::SuplaLCD(uint8_t lcdAddr, uint8_t lcdCols, uint8_t lcdRows) {
@@ -211,3 +211,4 @@ void SuplaLCD::handleAction(int event, int action) {
     oledON = true;
   }
 }
+#endif

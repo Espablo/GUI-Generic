@@ -251,17 +251,20 @@ const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
 
 #if defined(SUPLA_MCP23017) || defined(SUPLA_LCD_HD44780)
 const char ADR20[] PROGMEM = "0x20";
+const char ADR21[] PROGMEM = "0x21";
+const char ADR22[] PROGMEM = "0x22";
+const char ADR23[] PROGMEM = "0x23";
+const char ADR24[] PROGMEM = "0x24";
+const char ADR25[] PROGMEM = "0x25";
+const char ADR26[] PROGMEM = "0x26";
 #endif
 
 #ifdef SUPLA_LCD_HD44780
-const char* const HD44780_P[] PROGMEM = {OFF, ADR20, "0x27", "0x38", "0x3F"};
+const char* const HD44780_P[] PROGMEM = {OFF, ADR20, ADR21, ADR22, ADR23, ADR24, ADR25, ADR26, "0x27", "0x38", "0x3F"};
 const char* const HD44780_TYPE_P[] PROGMEM = {"2x16", "2x20", "4x16", "4x20"};
 #endif
 
 #ifdef SUPLA_MCP23017
-const char ADR21[] PROGMEM = "0x21";
-const char ADR22[] PROGMEM = "0x22";
-const char ADR23[] PROGMEM = "0x23";
 const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, ADR22, ADR23, OFF};
 #endif
 

@@ -120,7 +120,7 @@ void handleSensorI2c(int save) {
     addFormHeader(webContentBuffer);
 
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HD44780).toInt();
-    addListBox(webContentBuffer, INPUT_LCD, "HD44780", HD44780_P, 5, selected);
+    addListBox(webContentBuffer, INPUT_LCD, "HD44780", HD44780_P, 11, selected);
 
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HD44780).toInt()) {
       String name, sensorName, input;

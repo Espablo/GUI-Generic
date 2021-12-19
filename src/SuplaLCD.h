@@ -18,6 +18,8 @@
 #define SuplaLCD_H
 
 #include "GUI-Generic_Config.h"
+
+#ifdef SUPLA_LCD_HD44780
 #include "GUIGenericCommon.h"
 #include "SuplaConfigManager.h"
 #include "SuplaConfigESP.h"
@@ -45,6 +47,8 @@ struct LCDElement {
   uint8_t chanelSensor;
   bool useAlternativeMeasurement = false;
   uint8_t screenNumbers;
+  uint8_t col = 0;
+  uint8_t row = 0;
 };
 
 class SuplaLCD : public Supla::Element, public Supla::ActionHandler {
@@ -72,5 +76,5 @@ class SuplaLCD : public Supla::Element, public Supla::ActionHandler {
   unsigned long timeLastChange = 0;
   unsigned long backLightTimeLastChange = 0;
 };
-
+#endif
 #endif

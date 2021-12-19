@@ -37,8 +37,6 @@ extern "C" {
 #include <supla/sensor/direct_link_sensor_thermometer.h>
 #endif
 
-#include "SuplaLCD.h"
-
 void setup() {
   uint8_t nr, gpio;
 
@@ -410,6 +408,24 @@ void setup() {
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HD44780).toInt()) {
         case HD44780_ADDRESS_0X20:
           addressLCD = 0x20;
+          break;
+        case HD44780_ADDRESS_0X21:
+          addressLCD = 0x21;
+          break;
+        case HD44780_ADDRESS_0X22:
+          addressLCD = 0x22;
+          break;
+        case HD44780_ADDRESS_0X23:
+          addressLCD = 0x23;
+          break;
+        case HD44780_ADDRESS_0X24:
+          addressLCD = 0x24;
+          break;
+        case HD44780_ADDRESS_0X25:
+          addressLCD = 0x25;
+          break;
+        case HD44780_ADDRESS_0X26:
+          addressLCD = 0x26;
           break;
         case HD44780_ADDRESS_0X27:
           addressLCD = 0x27;

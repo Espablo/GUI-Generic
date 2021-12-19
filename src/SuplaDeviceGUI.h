@@ -156,6 +156,10 @@
 #include <supla/condition.h>
 #include <supla/sensor/electricity_meter.h>
 
+#ifdef SUPLA_LCD_HD44780
+#include "SuplaLCD.h"
+#endif
+
 namespace Supla {
 namespace GUI {
 
