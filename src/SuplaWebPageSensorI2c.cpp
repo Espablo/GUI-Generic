@@ -100,7 +100,7 @@ void handleSensorI2c(int save) {
       String name, sensorName, input;
 
       addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON);
-      addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 9);
+      addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 99);
       addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_TIME, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
       addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_LVL, S_BACKLIGHT_PERCENT, KEY_OLED_BACK_LIGHT, 99);
 
@@ -128,7 +128,7 @@ void handleSensorI2c(int save) {
       selected = ConfigManager->get(KEY_HD44780_TYPE)->getValueInt();
       addListBox(webContentBuffer, INPUT_HD44780_TYPE, S_TYPE, HD44780_TYPE_P, 4, selected);
       addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON);
-      addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 9);
+      addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 99);
       addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_TIME, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
 
       for (uint8_t i = 0; i < getCountSensorChannels(); i++) {

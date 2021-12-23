@@ -39,11 +39,6 @@ SuplaLCD::SuplaLCD(uint8_t lcdAddr, uint8_t lcdCols, uint8_t lcdRows) {
       switch (channel->getChannelType()) {
         case SUPLA_CHANNELTYPE_DISTANCESENSOR:
         case SUPLA_CHANNELTYPE_THERMOMETER:
-          // case SUPLA_CHANNELTYPE_WINDSENSOR:
-          // case SUPLA_CHANNELTYPE_PRESSURESENSOR:
-          // case SUPLA_CHANNELTYPE_RAINSENSOR:
-          // case SUPLA_CHANNELTYPE_WEIGHTSENSOR:
-          // case SUPLA_CHANNELTYPE_IMPULSE_COUNTER:
           lcdElement[frameCount].chanelSensor = channel->getChannelNumber();
           lcdElement[frameCount].screenNumbers = frameCount / lcdRows;
           frameCount += 1;
@@ -85,7 +80,8 @@ void SuplaLCD::onInit() {
     bool invertLogic = ConfigESP->getInversed(ConfigESP->getGpio(FUNCTION_BUTTON));
 
     Supla::Control::Button* button = new Supla::Control::Button(pinButton, pullUp, invertLogic);
-    button->addAction(TURN_ON_LCD, this, Supla::ON_PRESS);
+    button->addAction(ActionLCD::NEXT_FRAME, this, Supla::ON_PRESS);
+    button->addAction(ActionLCD::TURN_ON, this, Supla::ON_PRESS);
   }
 }
 
@@ -98,20 +94,22 @@ void SuplaLCD::iterateAlways() {
   if (ConfigESP->configModeESP == CONFIG_MODE) {
     if (millis() - timeLastChange > 2000) {
       timeLastChange = millis();
+      startFrame = false;
 
       lcd->clear();
       lcd->setCursor(0, 0);
       lcd->print(S_CONFIGURATION_MODE);
       lcd->setCursor(0, 1);
       lcd->print(S_IP_AP);
-      return;
     }
+    return;
   }
 
   if (ConfigESP->getLastStatusSupla() != STATUS_REGISTERED_AND_READY && ConfigESP->getLastStatusSupla() != STATUS_NETWORK_DISCONNECTED &&
       ConfigESP->getLastStatusSupla() != STATUS_INITIALIZED) {
     if (millis() - timeLastChange > 2000) {
       timeLastChange = millis();
+      startFrame = false;
 
       lcd->clear();
       lcd->setCursor(0, 0);
@@ -126,30 +124,41 @@ void SuplaLCD::iterateAlways() {
     oledON = false;
   }
 
-  if (millis() - timeLastChange > (unsigned long)(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() * 1000)) {
+  if (millis() - timeLastChange > (unsigned long)(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() * 1000) &&
+      ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() > 0) {
     timeLastChange = millis();
-    uint8_t row = 0;
-
-    lcd->clear();
-
-    for (size_t i = 0; i < sensorCount; i++) {
-      if (screenNumbers == lcdElement[i].screenNumbers) {
-        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(i);
-
-        lcd->setCursor(0, row);
-        lcd->print(name.c_str());
-        lcd->setCursor(lcdCols / 2, row);
-        lcd->print(getValueSensor(i).c_str());
-
-        row++;
-      }
-    }
-
-    if (screenNumbers == screenMax)
-      screenNumbers = 0;
-    else
-      screenNumbers++;
+    nextFrame();
   }
+
+  if (startFrame == false) {
+    startFrame = true;
+    screenNumbers = 0;
+    nextFrame();
+  }
+}
+
+void SuplaLCD::nextFrame() {
+  uint8_t row = 0;
+
+  lcd->clear();
+
+  for (size_t i = 0; i < sensorCount; i++) {
+    if (screenNumbers == lcdElement[i].screenNumbers) {
+      String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(i);
+
+      lcd->setCursor(0, row);
+      lcd->print(name.c_str());
+      lcd->setCursor(lcdCols / 2, row);
+      lcd->print(getValueSensor(i).c_str());
+
+      row++;
+    }
+  }
+
+  if (screenNumbers == screenMax)
+    screenNumbers = 0;
+  else
+    screenNumbers++;
 }
 
 String SuplaLCD::getValueSensor(uint8_t numberSensor) {
@@ -203,7 +212,11 @@ String SuplaLCD::getValueSensor(uint8_t numberSensor) {
 }
 
 void SuplaLCD::handleAction(int event, int action) {
-  if (action == TURN_ON_LCD && oledON == false) {
+  if (action == ActionLCD::NEXT_FRAME && oledON) {
+    nextFrame();
+  }
+
+  if (action == ActionLCD::TURN_ON && oledON == false) {
     if (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0 && ConfigESP->getGpio(FUNCTION_BUTTON) != OFF_GPIO) {
       lcd->setBacklight(true);
       backLightTimeLastChange = millis();

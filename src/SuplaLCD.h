@@ -33,7 +33,11 @@
 #include <supla/control/button.h>
 #include <Arduino.h>
 
-#define TURN_ON_LCD 1
+enum ActionLCD
+{
+  TURN_ON,
+  NEXT_FRAME,
+};
 
 enum typeLCD
 {
@@ -47,8 +51,6 @@ struct LCDElement {
   uint8_t chanelSensor;
   bool useAlternativeMeasurement = false;
   uint8_t screenNumbers;
-  uint8_t col = 0;
-  uint8_t row = 0;
 };
 
 class SuplaLCD : public Supla::Element, public Supla::ActionHandler {
@@ -71,7 +73,9 @@ class SuplaLCD : public Supla::Element, public Supla::ActionHandler {
   uint8_t screenMax = 0;
 
   bool oledON = true;
+  bool startFrame = false;
 
+  void nextFrame();
   String getValueSensor(uint8_t numberSensor);
   unsigned long timeLastChange = 0;
   unsigned long backLightTimeLastChange = 0;

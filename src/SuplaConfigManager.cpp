@@ -298,11 +298,11 @@ SuplaConfigManager::SuplaConfigManager() {
 #endif
 
 #if defined(SUPLA_OLED) || defined(SUPLA_LCD_HD44780)
-    this->addKey(KEY_OLED_ANIMATION, "5", 1, 2);
+    this->addKey(KEY_OLED_ANIMATION, "5", 2, 2);
     this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2, 2);
     this->addKey(KEY_OLED_BACK_LIGHT, "20", 2, 2);
 #else
-    this->addKey(KEY_OLED_ANIMATION, 1, 2, false);
+    this->addKey(KEY_OLED_ANIMATION, 2, 2, false);
     this->addKey(KEY_OLED_BACK_LIGHT_TIME, 2, 2, false);
     this->addKey(KEY_OLED_BACK_LIGHT, 2, 2, false);
 #endif

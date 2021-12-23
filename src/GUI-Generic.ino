@@ -403,7 +403,7 @@ void setup() {
 
 #ifdef SUPLA_LCD_HD44780
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HD44780).toInt()) {
-      uint8_t lcdCols, lcdRows, addressLCD;
+      uint8_t lcdCols = 16, lcdRows = 2, addressLCD = 0x20;
 
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HD44780).toInt()) {
         case HD44780_ADDRESS_0X20:
