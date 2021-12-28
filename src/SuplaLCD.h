@@ -73,9 +73,11 @@ class SuplaLCD : public Supla::Element, public Supla::ActionHandler {
   uint8_t screenMax = 0;
 
   bool oledON = true;
-  bool startFrame = false;
 
-  void nextFrame();
+  void updateDisplay();
+  void display();
+  void nextDisplay();
+
   String getValueSensor(uint8_t numberSensor);
   unsigned long timeLastChange = 0;
   unsigned long backLightTimeLastChange = 0;

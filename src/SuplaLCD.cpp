@@ -94,7 +94,6 @@ void SuplaLCD::iterateAlways() {
   if (ConfigESP->configModeESP == CONFIG_MODE) {
     if (millis() - timeLastChange > 2000) {
       timeLastChange = millis();
-      startFrame = false;
 
       lcd->clear();
       lcd->setCursor(0, 0);
@@ -109,7 +108,6 @@ void SuplaLCD::iterateAlways() {
       ConfigESP->getLastStatusSupla() != STATUS_INITIALIZED) {
     if (millis() - timeLastChange > 2000) {
       timeLastChange = millis();
-      startFrame = false;
 
       lcd->clear();
       lcd->setCursor(0, 0);
@@ -127,17 +125,21 @@ void SuplaLCD::iterateAlways() {
   if (millis() - timeLastChange > (unsigned long)(ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() * 1000) &&
       ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() > 0) {
     timeLastChange = millis();
-    nextFrame();
+    updateDisplay();
   }
 
-  if (startFrame == false) {
-    startFrame = true;
-    screenNumbers = 0;
-    nextFrame();
+  if (millis() - timeLastChange > 2000 && ConfigManager->get(KEY_OLED_ANIMATION)->getValueInt() == 0) {
+    timeLastChange = millis();
+    display();
   }
 }
 
-void SuplaLCD::nextFrame() {
+void SuplaLCD::updateDisplay() {
+  display();
+  nextDisplay();
+}
+
+void SuplaLCD::display() {
   uint8_t row = 0;
 
   lcd->clear();
@@ -154,7 +156,9 @@ void SuplaLCD::nextFrame() {
       row++;
     }
   }
+}
 
+void SuplaLCD::nextDisplay() {
   if (screenNumbers == screenMax)
     screenNumbers = 0;
   else
@@ -213,7 +217,7 @@ String SuplaLCD::getValueSensor(uint8_t numberSensor) {
 
 void SuplaLCD::handleAction(int event, int action) {
   if (action == ActionLCD::NEXT_FRAME && oledON) {
-    nextFrame();
+    updateDisplay();
   }
 
   if (action == ActionLCD::TURN_ON && oledON == false) {
