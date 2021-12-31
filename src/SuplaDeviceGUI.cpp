@@ -603,6 +603,16 @@ void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, 
         case CONDITION_TOTAL_POWER_ACTIVE:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerActiveW()));
           break;
+
+        case CONDITION_TOTAL_POWER_APPARENT_OPPOSITE:
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerApparentVA()));
+          break;
+        case CONDITION_TOTAL_CURRENT_OPPOSITE:
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalCurrent()));
+          break;
+        case CONDITION_TOTAL_POWER_ACTIVE_OPPOSITE:
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerActiveW()));
+          break;
       }
     }
   }
@@ -632,6 +642,16 @@ void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client,
           break;
         case CONDITION_TOTAL_POWER_ACTIVE:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerActiveW()));
+          break;
+
+        case CONDITION_TOTAL_POWER_APPARENT_OPPOSITE:
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerApparentVA()));
+          break;
+        case CONDITION_TOTAL_CURRENT_OPPOSITE:
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, EmTotalCurrent()));
+          break;
+        case CONDITION_TOTAL_POWER_ACTIVE_OPPOSITE:
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerActiveW()));
           break;
       }
     }

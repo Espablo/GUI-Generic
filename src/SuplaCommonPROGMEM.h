@@ -343,7 +343,11 @@ enum conditioningType
   CONDITION_TOTAL_POWER_APPARENT,
   CONDITION_TOTAL_CURRENT,
   CONDITION_TOTAL_POWER_ACTIVE,
-  CONDITION_GPIO
+  CONDITION_GPIO,
+  CONDITION_TOTAL_POWER_APPARENT_OPPOSITE,
+  CONDITION_TOTAL_CURRENT_OPPOSITE,
+  CONDITION_TOTAL_POWER_ACTIVE_OPPOSITE,
+  CONDITION_COUNT
 };
 
 enum sensorList
@@ -385,7 +389,6 @@ enum sensorList
 #endif
 
 #ifdef SUPLA_CONDITIONS
-
 const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #ifdef GUI_ALL_SENSOR
     S_ON_CH_VAL_OFF_HEATING,
@@ -397,9 +400,9 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #endif
 
 #ifdef GUI_ALL_ENERGY_COUNTER
-    "Napięcie[V]",
-    "Natężenie[A]",
-    "Moc czynna[W]",
+    "ON < Napięcie[V] > OFF",
+    "ON < Natężenie[A] > OFF",
+    "ON < Moc czynna[W] > OFF",
 #else
     S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
@@ -408,7 +411,13 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #else
     S_EMPTY,
 #endif
-
+#ifdef GUI_ALL_ENERGY_COUNTER
+    "ON > Napięcie[V] < OFF",
+    "ON > Natężenie[A] < OFF",
+    "ON > Moc czynna[W] < OFF",
+#else
+    S_EMPTY, S_EMPTY, S_EMPTY,
+#endif
 };
 
 const char* const SENSOR_LIST_P[] PROGMEM = {
