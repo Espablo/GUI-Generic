@@ -24,6 +24,7 @@ AnalogRedingMap::AnalogRedingMap(uint8_t pin)
 }
 
 void AnalogRedingMap::onInit() {
+  pinMode(pin, INPUT);
   channel.setNewValue(0, getValue());
 }
 

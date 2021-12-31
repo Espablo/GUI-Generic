@@ -48,7 +48,7 @@ void handleSensorAnalogSave();
 #endif
 
 #ifdef SUPLA_ANALOG_READING_MAP
-
+#define INPUT_MAX_ANALOG_READING             "imar"
 #define PATH_ANALOG_READING_MAP_MIN          "armin"
 #define PATH_ANALOG_READING_MAP_MAX          "armax"
 #define INPUT_ANALOG_READING_MAP             "ziarm"
@@ -57,6 +57,7 @@ void handleSensorAnalogSave();
 #define INPUT_ANALOG_READING_MAP_MIN_DESIRED "ziarmind"
 #define INPUT_ANALOG_READING_MAP_MAX_DESIRED "ziarmnaxd"
 
+#define URL_ARG_NR "nr"
 #endif
 
 #endif  // ifndef SuplaWebPageSensorAnalog_h

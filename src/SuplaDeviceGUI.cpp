@@ -725,9 +725,13 @@ Supla::Sensor::MPX_5XXX *mpx = nullptr;
 #endif
 
 #ifdef SUPLA_ANALOG_READING_MAP
+#ifdef ARDUINO_ARCH_ESP8266
 Supla::Sensor::AnalogRedingMap *analog = nullptr;
 #endif
-
+#ifdef ARDUINO_ARCH_ESP32
+Supla::Sensor::AnalogRedingMap **analog = nullptr;
+#endif
+#endif
 }  // namespace GUI
 }  // namespace Supla
 

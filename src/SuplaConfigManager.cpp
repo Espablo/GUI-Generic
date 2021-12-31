@@ -399,6 +399,12 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5, false);
 #endif
 
+#if defined(SUPLA_ANALOG_READING_MAP) && defined(ARDUINO_ARCH_ESP32)
+    this->addKey(KEY_MAX_ANALOG_READING, "1", 2, 6);
+#else
+    this->addKey(KEY_MAX_ANALOG_READING, 2, 6, false);
+#endif
+
     SPIFFS.end();
     switch (this->load()) {
       case E_CONFIG_OK:
