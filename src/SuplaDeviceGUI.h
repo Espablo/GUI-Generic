@@ -242,12 +242,7 @@ extern Supla::Sensor::MPX_5XXX *mpx;
 #endif
 
 #ifdef SUPLA_ANALOG_READING_MAP
-#ifdef ARDUINO_ARCH_ESP8266
-extern Supla::Sensor::AnalogRedingMap *analog;
-#endif
-#ifdef ARDUINO_ARCH_ESP32
 extern Supla::Sensor::AnalogRedingMap **analog;
-#endif
 #endif
 
 };  // namespace GUI

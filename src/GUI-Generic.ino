@@ -216,18 +216,24 @@ void setup() {
 
 #ifdef SUPLA_ANALOG_READING_MAP
 #ifdef ARDUINO_ARCH_ESP8266
-  if (ConfigESP->getGpio(FUNCTION_ANALOG_READING) != OFF_GPIO) {
-    Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap(ConfigESP->getGpio(FUNCTION_ANALOG_READING));
-    Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
-    Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog);
+  Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap *[ConfigManager->get(KEY_MAX_ANALOG_READING)->getValueInt()];
+  gpio = ConfigESP->getGpio(FUNCTION_ANALOG_READING);
+
+  if (gpio != OFF_GPIO) {
+    for (nr = 0; nr < ConfigManager->get(KEY_MAX_ANALOG_READING)->getValueInt(); nr++) {
+      Supla::GUI::analog[nr] = new Supla::Sensor::AnalogRedingMap(gpio);
+      Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr]);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr]);
+    }
   }
 #endif
 #ifdef ARDUINO_ARCH_ESP32
   Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap *[ConfigManager->get(KEY_MAX_ANALOG_READING)->getValueInt()];
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_ANALOG_READING)->getValueInt(); nr++) {
-    if (ConfigESP->getGpio(nr, FUNCTION_ANALOG_READING) != OFF_GPIO) {
-      Supla::GUI::analog[nr] = new Supla::Sensor::AnalogRedingMap(ConfigESP->getGpio(nr, FUNCTION_ANALOG_READING));
+    gpio = ConfigESP->getGpio(nr, FUNCTION_ANALOG_READING);
+    if (gpio != OFF_GPIO) {
+      Supla::GUI::analog[nr] = new Supla::Sensor::AnalogRedingMap(gpio);
       Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr]);
       Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr]);
     }

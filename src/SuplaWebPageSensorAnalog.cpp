@@ -37,19 +37,6 @@ void createWebPageSensorAnalog() {
 #endif
 
 #ifdef SUPLA_ANALOG_READING_MAP
-#ifdef ARDUINO_ARCH_ESP8266
-    if (WebServer->httpServer->arg(ARG_PARM_URL) == PATH_ANALOG_READING_MAP_MIN) {
-      Supla::GUI::analog->calibrateMinValue();
-      handleSensorAnalog(1);
-      return;
-    }
-    else if (WebServer->httpServer->arg(ARG_PARM_URL) == PATH_ANALOG_READING_MAP_MAX) {
-      Supla::GUI::analog->calibrateMaxValue();
-      handleSensorAnalog(1);
-      return;
-    }
-#endif
-#ifdef ARDUINO_ARCH_ESP32
     if (WebServer->httpServer->arg(ARG_PARM_URL) == PATH_ANALOG_READING_MAP_MIN) {
       int nr = WebServer->httpServer->arg(URL_ARG_NR).toInt();
       Supla::GUI::analog[nr]->calibrateMinValue();
@@ -62,7 +49,6 @@ void createWebPageSensorAnalog() {
       handleSensorAnalog(1);
       return;
     }
-#endif
 #endif
 
     if (WebServer->httpServer->method() == HTTP_GET)
@@ -105,27 +91,40 @@ void handleSensorAnalog(int save) {
 #endif
 
 #ifdef SUPLA_ANALOG_READING_MAP
+  String input;
 #ifdef ARDUINO_ARCH_ESP8266
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + "pomiaru Analog");
   addListGPIOBox(webContentBuffer, INPUT_ANALOG_READING_MAP, F("ADC Pin"), FUNCTION_ANALOG_READING);
 
   if (ConfigESP->getGpio(FUNCTION_ANALOG_READING) != OFF_GPIO) {
-    float value = Supla::GUI::analog->getMinValue();
-    addNumberBox(webContentBuffer, INPUT_ANALOG_READING_MAP_MIN, F("MIN IN"), F("wartość kalibracji min"), false, String(value));
+    addNumberBox(webContentBuffer, INPUT_MAX_ANALOG_READING, S_QUANTITY, KEY_MAX_ANALOG_READING, ConfigESP->countFreeGpio(FUNCTION_ANALOG_READING));
 
-    value = Supla::GUI::analog->getMaxValue();
-    addNumberBox(webContentBuffer, INPUT_ANALOG_READING_MAP_MAX, F("MAX IN"), F("wartość kalibracji max"), false, String(value));
+    for (int nr = 0; nr < ConfigManager->get(KEY_MAX_ANALOG_READING)->getValueInt(); nr++) {
+      float value = Supla::GUI::analog[nr]->getMinValue();
+      input = INPUT_ANALOG_READING_MAP_MIN;
+      input += nr;
+      addNumberBox(webContentBuffer, input, F("MIN IN"), F("wartość kalibracji min"), false, String(value));
 
-    value = Supla::GUI::analog->getMinDesiredValue();
-    addNumberBox(webContentBuffer, INPUT_ANALOG_READING_MAP_MIN_DESIRED, F("MIN OUT"), F("wartość porządana min"), false, String(value));
+      value = Supla::GUI::analog[nr]->getMaxValue();
+      input = INPUT_ANALOG_READING_MAP_MAX;
+      input += nr;
+      addNumberBox(webContentBuffer, input, F("MAX IN"), F("wartość kalibracji max"), false, String(value));
 
-    value = Supla::GUI::analog->getMaxDesiredValue();
-    addNumberBox(webContentBuffer, INPUT_ANALOG_READING_MAP_MAX_DESIRED, F("MAX OUT"), F("wartość porządana max"), false, String(value));
+      value = Supla::GUI::analog[nr]->getMinDesiredValue();
+      input = INPUT_ANALOG_READING_MAP_MIN_DESIRED;
+      input += nr;
+      addNumberBox(webContentBuffer, input, F("MIN OUT"), F("wartość porządana min"), false, String(value));
 
-    addLinkBox(webContentBuffer, String(S_CALIBRATION) + S_SPACE + F("dla MIN IN"),
-               getParameterRequest(PATH_ANALOG, ARG_PARM_URL) + PATH_ANALOG_READING_MAP_MIN);
-    addLinkBox(webContentBuffer, String(S_CALIBRATION) + S_SPACE + F("dla MAX IN"),
-               getParameterRequest(PATH_ANALOG, ARG_PARM_URL) + PATH_ANALOG_READING_MAP_MAX);
+      value = Supla::GUI::analog[nr]->getMaxDesiredValue();
+      input = INPUT_ANALOG_READING_MAP_MAX_DESIRED;
+      input += nr;
+      addNumberBox(webContentBuffer, input, F("MAX OUT"), F("wartość porządana max"), false, String(value));
+
+      addLinkBox(webContentBuffer, String(S_CALIBRATION) + S_SPACE + F("dla MIN IN"),
+                 getParameterRequest(PATH_ANALOG, ARG_PARM_URL) + String(PATH_ANALOG_READING_MAP_MIN) + "&" + URL_ARG_NR + "=" + nr);
+      addLinkBox(webContentBuffer, String(S_CALIBRATION) + S_SPACE + F("dla MAX IN"),
+                 getParameterRequest(PATH_ANALOG, ARG_PARM_URL) + String(PATH_ANALOG_READING_MAP_MAX) + "&" + URL_ARG_NR + "=" + nr);
+    }
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -140,18 +139,24 @@ void handleSensorAnalog(int save) {
 
     if (ConfigESP->getGpio(nr, FUNCTION_ANALOG_READING) != OFF_GPIO) {
       float value = Supla::GUI::analog[nr]->getMinValue();
-      addNumberBox(webContentBuffer, String(INPUT_ANALOG_READING_MAP_MIN) + nr, F("MIN IN"), F("wartość kalibracji min"), false, String(value));
+      input = INPUT_ANALOG_READING_MAP_MIN;
+      input += nr;
+      addNumberBox(webContentBuffer, input, F("MIN IN"), F("wartość kalibracji min"), false, String(value));
 
       value = Supla::GUI::analog[nr]->getMaxValue();
-      addNumberBox(webContentBuffer, String(INPUT_ANALOG_READING_MAP_MAX) + nr, F("MAX IN"), F("wartość kalibracji max"), false, String(value));
+      input = INPUT_ANALOG_READING_MAP_MAX;
+      input += nr;
+      addNumberBox(webContentBuffer, input, F("MAX IN"), F("wartość kalibracji max"), false, String(value));
 
       value = Supla::GUI::analog[nr]->getMinDesiredValue();
-      addNumberBox(webContentBuffer, String(INPUT_ANALOG_READING_MAP_MIN_DESIRED) + nr, F("MIN OUT"), F("wartość porządana min"), false,
-                   String(value));
+      input = INPUT_ANALOG_READING_MAP_MIN_DESIRED;
+      input += nr;
+      addNumberBox(webContentBuffer, input, F("MIN OUT"), F("wartość porządana min"), false, String(value));
 
       value = Supla::GUI::analog[nr]->getMaxDesiredValue();
-      addNumberBox(webContentBuffer, String(INPUT_ANALOG_READING_MAP_MAX_DESIRED) + nr, F("MAX OUT"), F("wartość porządana max"), false,
-                   String(value));
+      input = INPUT_ANALOG_READING_MAP_MAX_DESIRED;
+      input += nr;
+      addNumberBox(webContentBuffer, input, F("MAX OUT"), F("wartość porządana max"), false, String(value));
 
       addLinkBox(webContentBuffer, String(S_CALIBRATION) + S_SPACE + F("dla MIN IN"),
                  getParameterRequest(PATH_ANALOG, ARG_PARM_URL) + String(PATH_ANALOG_READING_MAP_MIN) + "&" + URL_ARG_NR + "=" + nr);
@@ -203,6 +208,7 @@ void handleSensorAnalogSave() {
 #endif
 
 #ifdef SUPLA_ANALOG_READING_MAP
+  String input;
 #ifdef ARDUINO_ARCH_ESP8266
   if (!WebServer->saveGPIO(INPUT_ANALOG_READING_MAP, FUNCTION_ANALOG_READING)) {
     handleSensorAnalog(6);
@@ -210,27 +216,36 @@ void handleSensorAnalogSave() {
   }
   else {
     if (ConfigESP->getGpio(FUNCTION_ANALOG_READING) != OFF_GPIO) {
-      if (Supla::GUI::analog == NULL) {
-        Supla::GUI::analog = new Supla::Sensor::AnalogRedingMap(ConfigESP->getGpio(FUNCTION_ANALOG_READING));
-      }
+      for (int nr = 0; nr < ConfigManager->get(KEY_MAX_ANALOG_READING)->getValueInt(); nr++) {
+        if (Supla::GUI::analog == NULL) {
+          Supla::GUI::analog[nr] = new Supla::Sensor::AnalogRedingMap(ConfigESP->getGpio(FUNCTION_ANALOG_READING));
+        }
 
-      if (strcmp(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MIN).c_str(), "") != 0) {
-        Supla::GUI::analog->setMinValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MIN).toFloat());
-      }
-      if (strcmp(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MAX).c_str(), "") != 0) {
-        Supla::GUI::analog->setMaxValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MAX).toFloat());
-      }
-      if (strcmp(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MIN_DESIRED).c_str(), "") != 0) {
-        Supla::GUI::analog->setMinDesiredValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MIN_DESIRED).toFloat());
-      }
-      if (strcmp(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MAX_DESIRED).c_str(), "") != 0) {
-        Supla::GUI::analog->setMaxDesiredValue(WebServer->httpServer->arg(INPUT_ANALOG_READING_MAP_MAX_DESIRED).toFloat());
+        input = INPUT_ANALOG_READING_MAP_MIN;
+        input += nr;
+        if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+          Supla::GUI::analog[nr]->setMinValue(WebServer->httpServer->arg(input).toFloat());
+        }
+        input = INPUT_ANALOG_READING_MAP_MAX;
+        input += nr;
+        if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+          Supla::GUI::analog[nr]->setMaxValue(WebServer->httpServer->arg(input).toFloat());
+        }
+        input = INPUT_ANALOG_READING_MAP_MIN_DESIRED;
+        input += nr;
+        if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+          Supla::GUI::analog[nr]->setMinDesiredValue(WebServer->httpServer->arg(input).toFloat());
+        }
+        input = INPUT_ANALOG_READING_MAP_MAX_DESIRED;
+        input += nr;
+        if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+          Supla::GUI::analog[nr]->setMaxDesiredValue(WebServer->httpServer->arg(input).toFloat());
+        }
       }
     }
   }
 #endif
 #ifdef ARDUINO_ARCH_ESP32
-  String input;
   for (int nr = 0; nr < ConfigManager->get(KEY_MAX_ANALOG_READING)->getValueInt(); nr++) {
     if (!WebServer->saveGPIO(INPUT_ANALOG_READING_MAP, FUNCTION_ANALOG_READING, nr)) {
       handleSensorAnalog(6);
@@ -265,11 +280,11 @@ void handleSensorAnalogSave() {
       }
     }
   }
+#endif
   input = INPUT_MAX_ANALOG_READING;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_ANALOG_READING, WebServer->httpServer->arg(input).c_str());
   }
-#endif
 #endif
 
   switch (ConfigManager->save()) {
