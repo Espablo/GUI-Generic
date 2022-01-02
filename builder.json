@@ -722,6 +722,7 @@
 			"name": "Termopara MAX31855",
 			"desc": "Ustawienia urządzenia->SPI. Umożliwoa obsługę termopary MAX31855.",
 			"defOn": false,
+			"new": true,
 			"en": {
 				"name": "Thermocouple MAX31855",
 				"desc": "Device settings->SPI. Supports MAX31855 thermocouple."
