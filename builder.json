@@ -1,5 +1,5 @@
 {
-	"version" : "4.4.0",
+	"version": "4.5.12",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -223,7 +223,6 @@
 			"name": "Warunkowanie przekaźnika",
 			"desc": "Umożliwia sterowanie przekaźnikiem w zależnośći od wartości sensora.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "Conditioning of relay",
 				"desc": "It allows you to control the relay depending on the sensor value."
@@ -277,6 +276,7 @@
 			"name": "Wyzwalacze akcji",
 			"desc": "Pozwalają na wykonanie dowolnej akcji na dowolnym posiadanym przez Ciebie urządzeniu.",
 			"defOn": false,
+			"new": true,
 			"en": {
 				"name": "Action Trigger"
 			},
@@ -289,7 +289,7 @@
 			"fr": {
 				"name": "Action Trigger"
 			}
-		},		
+		},
 		"SUPLA_ROLLERSHUTTER": {
 			"name": "Rolety",
 			"desc": "Ustawienia urządzenia->Rolety. Umożliwia obsługę rolet. Wymagana włączona obsługa przekaźników i przycisków.",
@@ -399,7 +399,6 @@
 			"name": "Bramka RF 315/433MHz",
 			"desc": "",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "Bridge RF 315/433MHz",
 				"desc": ""
@@ -614,7 +613,6 @@
 			"name": "Sensor HDC1080",
 			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę sensorów HDC1080.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "HDC1080 sensor",
 				"desc": "Device settings->I2C. Supports HDC1080 sensors."
@@ -633,24 +631,46 @@
 			}
 		},
 		"SUPLA_OLED": {
-			"name": "Wyświetlacz OLED",
-			"desc": "Ustawienia urządzenia->I2C. Umożliwoa obsługę wyświetlacza OLED.",
+			"name": "Wyświetlacz OLED SSD1306, SH1106",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwoa obsługę wyświetlacza OLED SSD1306, SH1106.",
 			"defOn": false,
 			"en": {
-				"name": "OLED display",
-				"desc": "Device settings->I2C. It enables the operation of an OLED display."
+				"name": "OLED SSD1306, SH1106 display",
+				"desc": "Device settings->I2C. It enables the operation of an OLED SSD1306, SH1106 display."
 			},
 			"es": {
-				"name": "Pantalla OLED",
-				"desc": "Configuración del dispositivo->I2C. Permite el funcionamiento de una pantalla OLED."
+				"name": "Pantalla OLED SSD1306, SH1106",
+				"desc": "Configuración del dispositivo->I2C. Permite el funcionamiento de una pantalla OLED SSD1306, SH1106."
 			},
 			"de": {
-				"name": "OLED-Anzeige",
-				"desc": "Geräteeinstellungen->I2C. Es ermöglicht den Betrieb eines OLED-Displays."
+				"name": "OLED SSD1306, SH1106-Anzeige",
+				"desc": "Geräteeinstellungen->I2C. Es ermöglicht den Betrieb eines OLED SSD1306, SH1106-Displays."
 			},
 			"fr": {
-				"name": "Écran OLED",
-				"desc": "Paramètres de l´appareil->I2C. Il permet le fonctionnement d´un écran OLED."
+				"name": "Écran OLED SSD1306, SH1106",
+				"desc": "Paramètres de l´appareil->I2C. Il permet le fonctionnement d´un écran OLED SSD1306, SH1106."
+			}
+		},
+		"SUPLA_LCD_HD44780": {
+			"name": "Wyświetlacz LCD HD44780",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwoa obsługę wyświetlacza LCD HD44780.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "LCD HD44780 display",
+				"desc": "Device settings->I2C. It enables the operation of an LCD HD44780 display."
+			},
+			"es": {
+				"name": "Pantalla LCD HD44780",
+				"desc": "Configuración del dispositivo->I2C. Permite el funcionamiento de una pantalla LCD HD44780."
+			},
+			"de": {
+				"name": "LCD HD44780-Anzeige",
+				"desc": "Geräteeinstellungen->I2C. Es ermöglicht den Betrieb eines LCD HD44780-Displays."
+			},
+			"fr": {
+				"name": "Écran LCD HD44780",
+				"desc": "Paramètres de l´appareil->I2C. Il permet le fonctionnement d´un écran LCD HD44780."
 			}
 		},
 		"SUPLA_MCP23017": {
@@ -676,10 +696,11 @@
 		}
 	},
 	"SPI": {
-		"SUPLA_MAX6675": {
+		"SUPLA_MAX31855": {
 			"name": "Termopara MAX6675",
 			"desc": "Ustawienia urządzenia->SPI. Umożliwoa obsługę termopary MAX6675.",
 			"defOn": false,
+			"new": true,
 			"en": {
 				"name": "Thermocouple MAX6675",
 				"desc": "Device settings->SPI. Supports MAX6675 thermocouple."
@@ -695,6 +716,27 @@
 			"fr": {
 				"name": "Thermocouple MAX6675",
 				"desc": "Paramètres de l´appareil->SPI. Prend en charge le thermocouple MAX6675."
+			}
+		},
+		"SUPLA_MAX6675": {
+			"name": "Termopara MAX31855",
+			"desc": "Ustawienia urządzenia->SPI. Umożliwoa obsługę termopary MAX31855.",
+			"defOn": false,
+			"en": {
+				"name": "Thermocouple MAX31855",
+				"desc": "Device settings->SPI. Supports MAX31855 thermocouple."
+			},
+			"es": {
+				"name": "Termopar MAX31855",
+				"desc": "Configuración del dispositivo->SPI. Soporta termopar MAX31855."
+			},
+			"de": {
+				"name": "Thermoelement MAX31855",
+				"desc": "Geräteeinstellungen->SPI. Unterstützt das MAX31855-Thermoelement."
+			},
+			"fr": {
+				"name": "Thermocouple MAX31855",
+				"desc": "Paramètres de l´appareil->SPI. Prend en charge le thermocouple MAX31855."
 			}
 		}
 	},
@@ -904,7 +946,6 @@
 			"name": "Linki bezpośrednie - odczyt temperatury",
 			"desc": "Umożliwia odczytywanie temperatury za pomocą linków bezpośrednich.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "Direct links - temperature reading",
 				"desc": "It allows you to read the temperature using direct links."

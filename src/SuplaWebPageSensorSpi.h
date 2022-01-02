@@ -19,7 +19,7 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_MAX6675)
+#if defined(SUPLA_MAX6675) || defined(SUPLA_MAX31855)
 #define GUI_SENSOR_SPI
 #endif
 
@@ -28,6 +28,7 @@
 #define PATH_SPI "spi"
 
 #define INPUT_MAX6675  "max6675"
+#define INPUT_MAX31855 "imax31855"
 #define INPUT_CLK_GPIO "clk"
 #define INPUT_CS_GPIO  "cs"
 #define INPUT_D0_GPIO  "d0"

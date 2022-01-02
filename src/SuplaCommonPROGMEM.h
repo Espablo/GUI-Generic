@@ -374,6 +374,7 @@ enum sensorList
   SENSOR_PZEM_V3,
   SENSOR_CSE7766,
   SENSOR_BINARY,
+  SENSOR_MAX31855,
   COUNT_SENSOR_LIST
 };
 
@@ -520,6 +521,11 @@ const char* const SENSOR_LIST_P[] PROGMEM = {
 #endif
 #ifdef SUPLA_LIMIT_SWITCH
     S_LIMIT_SWITCH,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_MAX31855
+    S_MAX31855,
 #else
     S_EMPTY,
 #endif

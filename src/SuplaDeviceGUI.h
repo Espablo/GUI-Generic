@@ -92,7 +92,10 @@
 #include <supla/sensor/Si7021.h>
 #endif
 #ifdef SUPLA_MAX6675
-#include <supla/sensor/MAXThermocouple.h>
+#include <supla/sensor/MAX6675_K.h>
+#endif
+#ifdef SUPLA_MAX31855
+#include <supla/sensor/MAX31855.h>
 #endif
 #ifdef SUPLA_IMPULSE_COUNTER
 #include <supla/sensor/impulse_counter.h>

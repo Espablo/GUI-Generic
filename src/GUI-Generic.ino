@@ -189,12 +189,25 @@ void setup() {
   }
 #endif
 
-#ifdef SUPLA_MAX6675
+#ifdef GUI_SENSOR_SPI
   if (ConfigESP->getGpio(FUNCTION_CLK) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CS) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_D0) != OFF_GPIO) {
-    auto thermocouple =
-        new Supla::Sensor::MAXThermocouple(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
-    Supla::GUI::addConditionsTurnON(SENSOR_MAX6675, thermocouple);
-    Supla::GUI::addConditionsTurnOFF(SENSOR_MAX6675, thermocouple);
+#ifdef SUPLA_MAX6675
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SPI_MAX6675).toInt()) {
+      auto thermocouple =
+          new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
+      Supla::GUI::addConditionsTurnON(SENSOR_MAX6675, thermocouple);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_MAX6675, thermocouple);
+    }
+#endif
+
+#ifdef SUPLA_MAX31855
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_SPI_MAX31855).toInt()) {
+      auto thermocouple =
+          new Supla::Sensor::MAX31855(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
+      Supla::GUI::addConditionsTurnON(SENSOR_MAX31855, thermocouple);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_MAX31855, thermocouple);
+    }
+#endif
   }
 #endif
 
