@@ -30,8 +30,8 @@
 
 enum customActions
 {
-  TURN_ON_OLED,
-  NEXT_FRAME
+  OLED_TURN_ON,
+  OLED_NEXT_FRAME
 };
 
 enum _OLED

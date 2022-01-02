@@ -452,7 +452,8 @@ void SuplaOled::iterateAlways() {
       return;
     }
 
-    if (ConfigESP->getLastStatusSupla() == STATUS_REGISTERED_AND_READY || ConfigESP->getLastStatusSupla() == STATUS_NETWORK_DISCONNECTED || ConfigESP->getLastStatusSupla() == STATUS_INITIALIZED) {
+    if (ConfigESP->getLastStatusSupla() == STATUS_REGISTERED_AND_READY || ConfigESP->getLastStatusSupla() == STATUS_NETWORK_DISCONNECTED ||
+        ConfigESP->getLastStatusSupla() == STATUS_INITIALIZED) {
       // setupAnimate();
 
       if (millis() - timeLastChangeOled > (unsigned long)(ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() * 1000) && oledON &&
@@ -483,19 +484,19 @@ void SuplaOled::addButtonOled(uint8_t pin) {
     Supla::Control::Button* button = new Supla::Control::Button(pin, pullUp, invertLogic);
 
     if (frameCount > 1) {
-      button->addAction(NEXT_FRAME, this, Supla::ON_PRESS);
+      button->addAction(OLED_NEXT_FRAME, this, Supla::ON_PRESS);
     }
 
-    button->addAction(TURN_ON_OLED, this, Supla::ON_PRESS);
+    button->addAction(OLED_TURN_ON, this, Supla::ON_PRESS);
   }
 }
 
 void SuplaOled::handleAction(int event, int action) {
-  if (action == NEXT_FRAME && oledON) {
+  if (action == OLED_NEXT_FRAME && oledON) {
     ui->nextFrame();
   }
 
-  if (action == TURN_ON_OLED && oledON == false) {
+  if (action == OLED_TURN_ON && oledON == false) {
     if (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0) {
       display->setBrightness(255);
       timeLastChangeOled = millis();

@@ -80,8 +80,8 @@ void SuplaLCD::onInit() {
     bool invertLogic = ConfigESP->getInversed(ConfigESP->getGpio(FUNCTION_BUTTON));
 
     Supla::Control::Button* button = new Supla::Control::Button(pinButton, pullUp, invertLogic);
-    button->addAction(ActionLCD::NEXT_FRAME, this, Supla::ON_PRESS);
-    button->addAction(ActionLCD::TURN_ON, this, Supla::ON_PRESS);
+    button->addAction(ActionLCD::LCD_NEXT_FRAME, this, Supla::ON_PRESS);
+    button->addAction(ActionLCD::LCD_TURN_ON, this, Supla::ON_PRESS);
   }
 }
 
@@ -216,11 +216,11 @@ String SuplaLCD::getValueSensor(uint8_t numberSensor) {
 }
 
 void SuplaLCD::handleAction(int event, int action) {
-  if (action == ActionLCD::NEXT_FRAME && oledON) {
+  if (action == ActionLCD::LCD_NEXT_FRAME && oledON) {
     updateDisplay();
   }
 
-  if (action == ActionLCD::TURN_ON && oledON == false) {
+  if (action == ActionLCD::LCD_TURN_ON && oledON == false) {
     if (ConfigManager->get(KEY_OLED_BACK_LIGHT_TIME)->getValueInt() != 0 && ConfigESP->getGpio(FUNCTION_BUTTON) != OFF_GPIO) {
       lcd->setBacklight(true);
       backLightTimeLastChange = millis();

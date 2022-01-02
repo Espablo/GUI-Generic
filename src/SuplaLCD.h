@@ -35,8 +35,8 @@
 
 enum ActionLCD
 {
-  TURN_ON,
-  NEXT_FRAME,
+  LCD_TURN_ON,
+  LCD_NEXT_FRAME,
 };
 
 enum typeLCD
