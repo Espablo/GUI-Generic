@@ -146,8 +146,16 @@ void chooseTemplateBoard(String board) {
 #ifdef ARDUINO_ARCH_ESP8266
   bool oldVersion = false;
 
-  if (GPIO.size() == 13)
+  if (GPIO.size() == 13) {
     oldVersion = true;
+
+    int flag = root["FLAG"];
+    switch (flag) {
+      case FlagTemperatureAnalog:
+        ConfigESP->setGpio(A0, FUNCTION_NTC_10K);
+        break;
+    }
+  }
 
   templateBoardWarning += F("Wersja: ");
   if (oldVersion)
@@ -338,6 +346,9 @@ void chooseTemplateBoard(String board) {
         ConfigESP->setGpio(gpio, FUNCTION_RGBW_BRIGHTNESS);
         break;
 
+      case NewHLW8012CF:
+        ConfigESP->setGpio(gpio, FUNCTION_CF);
+        break;
       case NewBL0937CF:
         ConfigESP->setGpio(gpio, FUNCTION_CF);
         break;
@@ -485,15 +496,14 @@ int convert(int gpioJSON) {
     case PWM4:
       return NewPWM4;
 
+    case HLW8012CF:
+      return NewHLW8012CF;
     case BL0937CF:
       return NewBL0937CF;
     case HLWBLCF1:
       return NewHLWBLCF1;
     case HLWBLSELi:
       return NewHLWBLSELi;
-
-    case TemperatureAnalog:
-      return NewTemperatureAnalog;
 
     case SI7021:
       return NewSI7021;

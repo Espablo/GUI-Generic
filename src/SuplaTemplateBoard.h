@@ -46,10 +46,14 @@ void addTemplateBoard();
 
 // Button to łącznik monostabilny, Switch to łącznik bistabilny.
 
+enum FlagOld
+{
+  FlagTemperatureAnalog = 2,
+};
+
 enum FunctionOld
 {
   None = 0,
-  TemperatureAnalog = 2,
   SI7021 = 3,
   Switch1 = 9,
   Switch2,
@@ -95,8 +99,9 @@ enum FunctionOld
   Button3n,
   Button4n,
   HLWBLSELi = 131,
-  HLWBLCF1 = 132,
-  BL0937CF = 134,
+  HLWBLCF1,
+  HLW8012CF,
+  BL0937CF,
   CSE7766Tx = 145,
   CSE7766Rx = 146,
   LedLink = 157,
@@ -164,6 +169,7 @@ enum FunctionNew
   NewSI7021 = 1248,
   NewHLWBLSELi = 2624,
   NewHLWBLCF1 = 2656,
+  NewHLW8012CF = 2688,
   NewBL0937CF = 2720,
   NewCSE7766Tx = 3072,
   NewCSE7766Rx = 3104,
