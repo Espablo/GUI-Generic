@@ -860,24 +860,24 @@
 			}
 		},
 		"SUPLA_HLW8012": {
-			"name": "Licznik energii HLW8012",
-			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę licznika energii HLW8012.",
+			"name": "Licznik energii HLW8012, BL0937",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę licznika energii HLW8012, BL0937.",
 			"defOn": false,
 			"en": {
-				"name": "Energy meter HLW8012",
-				"desc": "Device settings->Other. It enables the operation of the energy meter HLW8012."
+				"name": "Energy meter HLW8012, BL0937",
+				"desc": "Device settings->Other. It enables the operation of the energy meter HLW8012, BL0937."
 			},
 			"es": {
-				"name": "Contador de energía HLW8012",
-				"desc": "Configuración del dispositivo->Otro. Permite el funcionamiento del contador de energía HLW8012."
+				"name": "Contador de energía HLW8012, BL0937",
+				"desc": "Configuración del dispositivo->Otro. Permite el funcionamiento del contador de energía HLW8012, BL0937."
 			},
 			"de": {
-				"name": "Energiezähler HLW8012",
-				"desc": "Geräteeinstellungen->Andere. Es ermöglicht den Betrieb des Energiezählers HLW8012."
+				"name": "Energiezähler HLW8012, BL0937",
+				"desc": "Geräteeinstellungen->Andere. Es ermöglicht den Betrieb des Energiezählers HLW8012, BL0937."
 			},
 			"fr": {
-				"name": "Compteur d´énergie HLW8012",
-				"desc": "Paramètres de l´appareil->Autre. Il permet le fonctionnement du compteur d´énergie HLW8012."
+				"name": "Compteur d´énergie HLW8012, BL0937",
+				"desc": "Paramètres de l´appareil->Autre. Il permet le fonctionnement du compteur d´énergie HLW8012, BL0937."
 			}
 		},
 		"SUPLA_PZEM_V_3": {
