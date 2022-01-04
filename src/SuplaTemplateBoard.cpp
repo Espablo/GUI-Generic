@@ -19,6 +19,7 @@
 
 namespace Supla {
 namespace TanplateBoard {
+
 void addTemplateBoard() {
 #ifdef TEMPLATE_BOARD_JSON
 #ifdef TEMPLATE_JSON
@@ -34,6 +35,9 @@ void addTemplateBoard() {
 #ifdef TEMPLATE_BOARD_JSON
 namespace Supla {
 namespace TanplateBoard {
+
+String templateBoardWarning;
+bool oldVersion = false;
 
 void chooseTemplateBoard(String board) {
   ConfigESP->clearEEPROM();
@@ -144,8 +148,6 @@ void chooseTemplateBoard(String board) {
   }
 
 #ifdef ARDUINO_ARCH_ESP8266
-  bool oldVersion = false;
-
   if (GPIO.size() == 13) {
     oldVersion = true;
 
@@ -333,7 +335,13 @@ void chooseTemplateBoard(String board) {
         break;
 
       case NewPWM1:
-        ConfigESP->setGpio(gpio, FUNCTION_RGBW_RED);
+        if (isActiveRGBW(GPIO)) {
+          ConfigESP->setGpio(gpio, FUNCTION_RGBW_RED);
+        }
+        else {
+          ConfigESP->setGpio(gpio, ConfigManager->get(KEY_MAX_RGBW)->getValueInt(), FUNCTION_RGBW_BRIGHTNESS);
+        }
+
         ConfigManager->set(KEY_MAX_RGBW, ConfigManager->get(KEY_MAX_RGBW)->getValueInt() + 1);
         break;
       case NewPWM2:
@@ -344,6 +352,35 @@ void chooseTemplateBoard(String board) {
         break;
       case NewPWM4:
         ConfigESP->setGpio(gpio, FUNCTION_RGBW_BRIGHTNESS);
+        break;
+      case NewPWM5:
+        // Wsparcie dla RGBW+W dodatkowym kanałem ściemniacza
+        ConfigESP->setGpio(gpio, 1, FUNCTION_RGBW_BRIGHTNESS);
+        ConfigManager->set(KEY_MAX_RGBW, ConfigManager->get(KEY_MAX_RGBW)->getValueInt() + 1);
+        break;
+
+      case NewPWM1i:
+        if (isActiveRGBW(GPIO)) {
+          ConfigESP->setGpio(gpio, FUNCTION_RGBW_RED);
+        }
+        else {
+          ConfigESP->setGpio(gpio, ConfigManager->get(KEY_MAX_RGBW)->getValueInt(), FUNCTION_RGBW_BRIGHTNESS);
+        }
+        ConfigManager->set(KEY_MAX_RGBW, ConfigManager->get(KEY_MAX_RGBW)->getValueInt() + 1);
+        break;
+      case NewPWM2i:
+        ConfigESP->setGpio(gpio, FUNCTION_RGBW_GREEN);
+        break;
+      case NewPWM3i:
+        ConfigESP->setGpio(gpio, FUNCTION_RGBW_BLUE);
+        break;
+      case NewPWM4i:
+        ConfigESP->setGpio(gpio, FUNCTION_RGBW_BRIGHTNESS);
+        break;
+      case NewPWM5i:
+        // Wsparcie dla RGBW+W dodatkowym kanałem ściemniacza
+        ConfigESP->setGpio(gpio, 1, FUNCTION_RGBW_BRIGHTNESS);
+        ConfigManager->set(KEY_MAX_RGBW, ConfigManager->get(KEY_MAX_RGBW)->getValueInt() + 1);
         break;
 
       case NewHLW8012CF:
@@ -495,6 +532,18 @@ int convert(int gpioJSON) {
       return NewPWM3;
     case PWM4:
       return NewPWM4;
+    case PWM5:
+      return NewPWM5;
+    case PWM1i:
+      return NewPWM1;
+    case PWM2i:
+      return NewPWM2i;
+    case PWM3i:
+      return NewPWM3i;
+    case PWM4i:
+      return NewPWM4i;
+    case PWM5i:
+      return NewPWM5i;
 
     case HLW8012CF:
       return NewHLW8012CF;
@@ -625,7 +674,25 @@ void addLimitSwitch(uint8_t nr, uint8_t gpio) {
   ConfigManager->set(KEY_MAX_LIMIT_SWITCH, max + 1);
 }
 
-String templateBoardWarning;
+bool isActiveRGBW(JsonArray& GPIO) {
+  bool isActivRGBW = false;
+
+  for (size_t i = 0; i < GPIO.size(); i++) {
+    int gpioJSON = (int)GPIO[i];
+
+#ifdef ARDUINO_ARCH_ESP8266
+    if (oldVersion)
+      gpioJSON = convert(gpioJSON);
+#endif
+
+    if (gpioJSON == NewPWM2 || gpioJSON == NewPWM3 || gpioJSON == NewPWM4 || gpioJSON == NewPWM5 || gpioJSON == NewPWM2i || gpioJSON == NewPWM3i ||
+        gpioJSON == NewPWM4i || gpioJSON == NewPWM5i) {
+      isActivRGBW = true;
+    }
+  }
+
+  return isActivRGBW;
+}
 
 }  // namespace TanplateBoard
 }  // namespace Supla

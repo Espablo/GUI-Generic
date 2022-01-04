@@ -79,6 +79,12 @@ enum FunctionOld
   PWM2,
   PWM3,
   PWM4,
+  PWM5,
+  PWM1i = 46,
+  PWM2i,
+  PWM3i,
+  PWM4i,
+  PWM5i,
   Led1 = 52,
   Led2,
   Led3,
@@ -164,6 +170,11 @@ enum FunctionNew
   NewPWM3,
   NewPWM4,
   NewPWM5,
+  NewPWM1i = 448,
+  NewPWM2i,
+  NewPWM3i,
+  NewPWM4i,
+  NewPWM5i,
   NewLedLink = 544,
   NewLedLinki = 576,
   NewSI7021 = 1248,
@@ -190,6 +201,7 @@ void addLedCFG(uint8_t gpio, uint8_t level = HIGH);
 void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addButtonCFG(uint8_t gpio);
 void addLimitSwitch(uint8_t nr, uint8_t gpio);
+bool isActiveRGBW(JsonArray& GPIO);
 
 extern String templateBoardWarning;
 }  // namespace TanplateBoard
