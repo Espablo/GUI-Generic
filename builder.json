@@ -1,5 +1,5 @@
 {
-	"version": "4.5.17",
+	"version": "4.5.19",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -696,7 +696,7 @@
 		}
 	},
 	"SPI": {
-		"SUPLA_MAX31855": {
+		"SUPLA_MAX6675": {
 			"name": "Termopara MAX6675",
 			"desc": "Ustawienia urządzenia->SPI. Umożliwoa obsługę termopary MAX6675.",
 			"defOn": false,
@@ -718,7 +718,7 @@
 				"desc": "Paramètres de l´appareil->SPI. Prend en charge le thermocouple MAX6675."
 			}
 		},
-		"SUPLA_MAX6675": {
+		"SUPLA_MAX31855": {
 			"name": "Termopara MAX31855",
 			"desc": "Ustawienia urządzenia->SPI. Umożliwoa obsługę termopary MAX31855.",
 			"defOn": false,
