@@ -3,7 +3,7 @@
 
 #include <supla/network/esp_wifi.h>
 
-#define MAX_HOSTNAME 32
+#define MAX_HOSTNAME   32
 
 namespace Supla {
 class GUIESPWifi : public Supla::ESPWifi {
@@ -13,6 +13,10 @@ class GUIESPWifi : public Supla::ESPWifi {
   }
 
   int connect(const char *server, int port = -1) {
+    if (strcmp(server, "svrX.supla.org") == 0) {
+      return 0;
+    }
+
     String message;
     if (client == NULL) {
       if (isSecured) {
@@ -107,20 +111,23 @@ class GUIESPWifi : public Supla::ESPWifi {
         WiFi.softAPdisconnect(true);
         WiFi.setAutoConnect(false);
         WiFi.mode(WIFI_STA);
-        WiFi.begin(ssid, password);
       }
+
+      WiFi.begin(ssid, password);
 
       if (hostname) {
         WiFi.setHostname(hostname);
       }
 
-    } else if (strcmp(ssid, "") != 0) {
-      Serial.println(F("WiFi: resetting WiFi connection"));
-      if (client) {
-        delete client;
-        client = nullptr;
+    } else {
+      if (ConfigESP->configModeESP == NORMAL_MODE) {
+        Serial.println(F("WiFi: resetting WiFi connection"));
+        if (client) {
+          delete client;
+          client = nullptr;
+        }
+        WiFi.reconnect();
       }
-      WiFi.reconnect();
     }
 
     delay(0);
