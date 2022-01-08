@@ -18,7 +18,7 @@
 #define GUI_GENERIC_COMMON_H
 
 #include "GUI-Generic_Config.h"
-#include "language/common.h"
+#include "src/language/common.h"
 #include "Arduino.h"
 
 #ifndef UI_LANGUAGE
@@ -26,7 +26,7 @@
 #endif
 #define QUOTE(x)        QUOTE_1(x)
 #define QUOTE_1(x)      #x
-#define INCLUDE_FILE(x) QUOTE(language/x.h)
+#define INCLUDE_FILE(x) QUOTE(src/language/x.h)
 #include INCLUDE_FILE(UI_LANGUAGE)
 
 uint8_t *HexToBytes(String _value);
