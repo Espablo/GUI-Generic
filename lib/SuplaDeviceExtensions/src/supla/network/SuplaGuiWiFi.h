@@ -3,7 +3,7 @@
 
 #include <supla/network/esp_wifi.h>
 
-#define MAX_HOSTNAME   32
+#define MAX_HOSTNAME 32
 
 namespace Supla {
 class GUIESPWifi : public Supla::ESPWifi {
@@ -11,6 +11,9 @@ class GUIESPWifi : public Supla::ESPWifi {
   GUIESPWifi(const char *wifiSsid = nullptr, const char *wifiPassword = nullptr)
       : ESPWifi(wifiSsid, wifiPassword) {
   }
+  ~GUIESPWifi() {
+    delete[] client;
+  };
 
   int connect(const char *server, int port = -1) {
     if (strcmp(server, "svrX.supla.org") == 0) {

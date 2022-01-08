@@ -70,6 +70,12 @@ void ImprovSerialComponent::iterateAlways() {
     }
   }
 
+  if (this->state_ == improv::STATE_AUTHORIZED) {
+    if (Supla::Network::IsReady()) {
+      this->state_ = improv::STATE_PROVISIONED;
+    }
+  }
+
   if (this->state_ == improv::STATE_PROVISIONING) {
     if (Supla::Network::IsReady()) {
       this->set_state_(improv::STATE_PROVISIONED);
@@ -161,8 +167,10 @@ bool ImprovSerialComponent::parse_improv_payload_(improv::ImprovCommand &command
       ConfigManager->set(KEY_WIFI_PASS, command.password.c_str());
       ConfigManager->save();
 
-      Supla::GUI::setupWifi();
-      Supla::Network::Setup();
+      WiFi.begin(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
+
+      // Supla::GUI::setupWifi();
+      // Supla::Network::Setup();
 
       this->set_state_(improv::STATE_PROVISIONING);
       Serial.printf(
