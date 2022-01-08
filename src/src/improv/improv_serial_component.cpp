@@ -77,7 +77,7 @@ void ImprovSerialComponent::iterateAlways() {
   }
 
   if (this->state_ == improv::STATE_PROVISIONING) {
-    if (Supla::Network::IsReady()) {
+    if (WiFi.isConnected()) {
       this->set_state_(improv::STATE_PROVISIONED);
 
       std::vector<uint8_t> url = this->build_rpc_settings_response_(improv::WIFI_SETTINGS);
