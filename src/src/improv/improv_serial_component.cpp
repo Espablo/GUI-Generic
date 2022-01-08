@@ -168,15 +168,7 @@ bool ImprovSerialComponent::parse_improv_payload_(improv::ImprovCommand &command
       ConfigManager->save();
 
       WiFi.begin(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
-      for (int i = 0; i < 200; i++) {
-        delay(50);
-        if (i % 20 == 0)
-          Serial.print(".");
-        if (WiFi.isConnected() == WL_CONNECTED)
-          break;
-        delay(0);
-      }
-      
+
       // Supla::GUI::setupWifi();
       // Supla::Network::Setup();
 
