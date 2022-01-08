@@ -93,7 +93,7 @@ std::vector<uint8_t> ImprovSerialComponent::build_rpc_settings_response_(improv:
 }
 
 std::vector<uint8_t> ImprovSerialComponent::build_version_info_() {
-  std::vector<std::string> infos = {Supla::Channel::reg_dev.SoftVer, "", "ESP2866"};
+  std::vector<std::string> infos = {Supla::Channel::reg_dev.SoftVer, "", ConfigManager->get(KEY_HOST_NAME)->getValue()};
   std::vector<uint8_t> data = improv::build_rpc_response(improv::GET_DEVICE_INFO, infos, false);
   return data;
 };
