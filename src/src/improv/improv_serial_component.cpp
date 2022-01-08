@@ -167,6 +167,7 @@ bool ImprovSerialComponent::parse_improv_payload_(improv::ImprovCommand &command
       ConfigManager->set(KEY_WIFI_PASS, command.password.c_str());
       ConfigManager->save();
 
+      WiFi.disconnect();
       WiFi.begin(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
 
       // Supla::GUI::setupWifi();
