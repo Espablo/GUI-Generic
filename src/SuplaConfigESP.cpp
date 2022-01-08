@@ -160,6 +160,7 @@ void SuplaConfigESP::configModeInit() {
   WiFi.mode(WIFI_AP_STA);
   WiFi.softAP(getConfigNameAP().c_str(), "");
   WiFi.begin(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
+  //Supla::GUI::setupWifi();
   Serial.println(F("Config Mode started"));
 }
 
