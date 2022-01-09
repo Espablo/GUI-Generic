@@ -37,8 +37,6 @@ extern "C" {
 #include <supla/sensor/direct_link_sensor_thermometer.h>
 #endif
 
-#include "src/improv/improv_serial_component.h"
-
 void setup() {
   uint8_t nr, gpio;
 
@@ -56,7 +54,6 @@ void setup() {
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
-  new ImprovSerialComponent();
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();

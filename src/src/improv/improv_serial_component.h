@@ -62,6 +62,6 @@ class ImprovSerialComponent : public Supla::Element {
 
   std::vector<uint8_t> rx_buffer_;
   uint32_t last_read_byte_{0};
-  improv::State state_{improv::STATE_AUTHORIZED};
+  improv::State state_;
 };
 #endif

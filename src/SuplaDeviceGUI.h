@@ -163,6 +163,8 @@
 #include "SuplaLCD.h"
 #endif
 
+#include "src/improv/improv_serial_component.h"
+
 namespace Supla {
 namespace GUI {
 

@@ -7,8 +7,9 @@ ImprovSerialComponent::ImprovSerialComponent() {
   this->hw_serial_ = &Serial;
 #endif
 #ifdef USE_ESP_IDF
-  this->uart_num_ = logger::global_logger->get_uart_num();
+  this->uart_num_ = &UART_NUM_0;
 #endif
+  this->state_ = improv::STATE_AUTHORIZED;
 };
 
 void ImprovSerialComponent::dump_config() {
