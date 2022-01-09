@@ -5,7 +5,7 @@ namespace Supla {
 
 GUIESPWifi::GUIESPWifi(const char *wifiSsid, const char *wifiPassword) : ESPWifi(wifiSsid, wifiPassword) {
 #ifdef ARDUINO_ARCH_ESP8266
-  gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
+  WiFiEventHandler gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
     (void)(event);
     Serial.print(F("local IP: "));
     Serial.println(WiFi.localIP());
@@ -18,7 +18,7 @@ GUIESPWifi::GUIESPWifi(const char *wifiSsid, const char *wifiPassword) : ESPWifi
     Serial.print(rssi);
     Serial.println(F(" dBm"));
   });
-  disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
+  WiFiEventHandler disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
     (void)(event);
     Serial.println(F("WiFi station disconnected"));
   });

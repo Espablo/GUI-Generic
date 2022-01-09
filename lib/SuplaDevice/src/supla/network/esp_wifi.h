@@ -33,10 +33,6 @@
 #define MAX_SSID_SIZE          32
 #define MAX_WIFI_PASSWORD_SIZE 64
 
-#ifdef ARDUINO_ARCH_ESP8266
-WiFiEventHandler gotIpEventHandler, disconnectedEventHandler;
-#endif
-
 // TODO: change logs to supla_log
 
 namespace Supla {
@@ -149,7 +145,7 @@ class ESPWifi : public Supla::Network {
     if (!wifiConfigured) {
       wifiConfigured = true;
 #ifdef ARDUINO_ARCH_ESP8266
-      gotIpEventHandler =
+      WiFiEventHandler gotIpEventHandler =
           WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
             (void)(event);
             Serial.print(F("local IP: "));
@@ -163,11 +159,12 @@ class ESPWifi : public Supla::Network {
             Serial.print(rssi);
             Serial.println(F(" dBm"));
           });
-      disconnectedEventHandler = WiFi.onStationModeDisconnected(
-          [](const WiFiEventStationModeDisconnected &event) {
-            (void)(event);
-            Serial.println(F("WiFi station disconnected"));
-          });
+      WiFiEventHandler disconnectedEventHandler =
+          WiFi.onStationModeDisconnected(
+              [](const WiFiEventStationModeDisconnected &event) {
+                (void)(event);
+                Serial.println(F("WiFi station disconnected"));
+              });
 #else
       WiFiEventId_t event_gotIP = WiFi.onEvent(
           [](WiFiEvent_t event, WiFiEventInfo_t info) {
