@@ -4,6 +4,7 @@
 #include <supla/network/esp_wifi.h>
 
 #define MAX_HOSTNAME 32
+#define DEFAULT_SERVER "svrX.supla.org"
 
 namespace Supla {
 class GUIESPWifi : public Supla::ESPWifi {
