@@ -1,5 +1,5 @@
 #include "SuplaGuiWiFi.h"
-#include "SuplaDeviceGUI.h"
+#include "../../SuplaDeviceGUI.h"
 
 namespace Supla {
 
