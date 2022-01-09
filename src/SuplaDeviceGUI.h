@@ -164,6 +164,7 @@
 #endif
 
 #include "src/improv/improv_serial_component.h"
+#include "src/network/SuplaGuiWiFi.h"
 
 namespace Supla {
 namespace GUI {
@@ -256,5 +257,6 @@ extern Supla::Sensor::AnalogRedingMap **analog;
 extern SuplaConfigManager *ConfigManager;
 extern SuplaConfigESP *ConfigESP;
 extern SuplaWebServer *WebServer;
+extern Supla::GUIESPWifi *wifi;
 
 #endif  // SuplaDeviceGUI_h

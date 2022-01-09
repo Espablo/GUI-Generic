@@ -219,12 +219,14 @@ class ESPWifi : public Supla::Network {
   void setSsid(const char *wifiSsid) {
     if (wifiSsid) {
       strncpy(ssid, wifiSsid, MAX_SSID_SIZE);
+      wifiConfigured = false;
     }
   }
 
   void setPassword(const char *wifiPassword) {
     if (wifiPassword) {
       strncpy(password, wifiPassword, MAX_WIFI_PASSWORD_SIZE);
+      wifiConfigured = false;
     }
   }
 
