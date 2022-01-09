@@ -145,7 +145,7 @@ class ESPWifi : public Supla::Network {
     if (!wifiConfigured) {
       wifiConfigured = true;
 #ifdef ARDUINO_ARCH_ESP8266
-      WiFiEventHandler gotIpEventHandler =
+      gotIpEventHandler =
           WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
             (void)(event);
             Serial.print(F("local IP: "));
@@ -159,12 +159,11 @@ class ESPWifi : public Supla::Network {
             Serial.print(rssi);
             Serial.println(F(" dBm"));
           });
-      WiFiEventHandler disconnectedEventHandler =
-          WiFi.onStationModeDisconnected(
-              [](const WiFiEventStationModeDisconnected &event) {
-                (void)(event);
-                Serial.println(F("WiFi station disconnected"));
-              });
+      disconnectedEventHandler = WiFi.onStationModeDisconnected(
+          [](const WiFiEventStationModeDisconnected &event) {
+            (void)(event);
+            Serial.println(F("WiFi station disconnected"));
+          });
 #else
       WiFiEventId_t event_gotIP = WiFi.onEvent(
           [](WiFiEvent_t event, WiFiEventInfo_t info) {
@@ -258,6 +257,10 @@ class ESPWifi : public Supla::Network {
   String fingerprint;
   char ssid[MAX_SSID_SIZE];
   char password[MAX_WIFI_PASSWORD_SIZE];
+
+#ifdef ARDUINO_ARCH_ESP8266
+  WiFiEventHandler gotIpEventHandler, disconnectedEventHandler;
+#endif
 };
 
 };  // namespace Supla
