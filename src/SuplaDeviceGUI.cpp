@@ -15,7 +15,6 @@
 */
 #include "SuplaDeviceGUI.h"
 #include "SuplaConfigManager.h"
-#include <supla/network/SuplaGuiWiFi.h>
 
 #define TIME_SAVE_PERIOD_SEK                 30   // the time is given in seconds
 #define TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK 600  // 10min
@@ -23,8 +22,6 @@
 #include <supla/storage/eeprom.h>
 
 Supla::Eeprom eeprom(STORAGE_OFFSET);
-
-Supla::GUIESPWifi *wifi = nullptr;
 
 namespace Supla {
 namespace GUI {
@@ -56,11 +53,13 @@ void begin() {
 
 void setupWifi() {
   if (wifi) {
-    delete wifi;
-    wifi = nullptr;
+    wifi->setSsid(ConfigManager->get(KEY_WIFI_SSID)->getValue());
+    wifi->setPassword(ConfigManager->get(KEY_WIFI_PASS)->getValue());
+    Supla::Network::Setup();
   }
-
-  wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
+  else {
+    wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
+  }
 
   String suplaHostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
   suplaHostname.replace(" ", "_");
@@ -733,3 +732,4 @@ Supla::Sensor::AnalogRedingMap **analog = nullptr;
 SuplaConfigManager *ConfigManager = nullptr;
 SuplaConfigESP *ConfigESP = nullptr;
 SuplaWebServer *WebServer = nullptr;
+Supla::GUIESPWifi *wifi = nullptr;

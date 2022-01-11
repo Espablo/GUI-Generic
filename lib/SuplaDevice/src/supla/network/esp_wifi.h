@@ -33,10 +33,6 @@
 #define MAX_SSID_SIZE          32
 #define MAX_WIFI_PASSWORD_SIZE 64
 
-#ifdef ARDUINO_ARCH_ESP8266
-WiFiEventHandler gotIpEventHandler, disconnectedEventHandler;
-#endif
-
 // TODO: change logs to supla_log
 
 namespace Supla {
@@ -219,12 +215,14 @@ class ESPWifi : public Supla::Network {
   void setSsid(const char *wifiSsid) {
     if (wifiSsid) {
       strncpy(ssid, wifiSsid, MAX_SSID_SIZE);
+      wifiConfigured = false;
     }
   }
 
   void setPassword(const char *wifiPassword) {
     if (wifiPassword) {
       strncpy(password, wifiPassword, MAX_WIFI_PASSWORD_SIZE);
+      wifiConfigured = false;
     }
   }
 
@@ -259,6 +257,10 @@ class ESPWifi : public Supla::Network {
   String fingerprint;
   char ssid[MAX_SSID_SIZE];
   char password[MAX_WIFI_PASSWORD_SIZE];
+
+#ifdef ARDUINO_ARCH_ESP8266
+  WiFiEventHandler gotIpEventHandler, disconnectedEventHandler;
+#endif
 };
 
 };  // namespace Supla

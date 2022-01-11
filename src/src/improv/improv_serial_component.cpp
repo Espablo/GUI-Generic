@@ -78,7 +78,7 @@ void ImprovSerialComponent::iterateAlways() {
   }
 
   if (this->state_ == improv::STATE_PROVISIONING) {
-    if (WiFi.isConnected()) {
+    if (Supla::Network::IsReady()) {
       this->set_state_(improv::STATE_PROVISIONED);
 
       std::vector<uint8_t> url = this->build_rpc_settings_response_(improv::WIFI_SETTINGS);
@@ -168,11 +168,7 @@ bool ImprovSerialComponent::parse_improv_payload_(improv::ImprovCommand &command
       ConfigManager->set(KEY_WIFI_PASS, command.password.c_str());
       ConfigManager->save();
 
-      WiFi.disconnect();
-      WiFi.begin(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
-
-      // Supla::GUI::setupWifi();
-      // Supla::Network::Setup();
+      Supla::GUI::setupWifi();
 
       this->set_state_(improv::STATE_PROVISIONING);
       Serial.printf(

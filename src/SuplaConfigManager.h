@@ -33,7 +33,6 @@
 #define DEFAULT_LOGIN      "admin"
 #define DEFAULT_LOGIN_PASS "pass"
 
-#define DEFAULT_SERVER "svrX.supla.org"
 #define DEFAULT_EMAIL  "email@address.com"
 
 #define MAX_GUID                SUPLA_GUID_SIZE

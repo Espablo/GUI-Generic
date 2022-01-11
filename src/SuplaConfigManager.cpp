@@ -428,8 +428,9 @@ SuplaConfigManager::SuplaConfigManager() {
     Serial.println(F("Failed to mount SPIFFS"));
     Serial.println(F("Formatting SPIFFS"));
     SPIFFS.format();
-    delay(2000);
-    ESP.restart();
+    delay(500);
+    SuplaConfigManager();
+    // ESP.restart();
   }
   //  switch (this->load()) {
   //    case E_CONFIG_OK:
