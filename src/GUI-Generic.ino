@@ -41,6 +41,8 @@ void setup() {
   uint8_t nr, gpio;
 
   Serial.begin(74880);
+  while (!Serial)
+    ;
 
   for (uint8_t t = 4; t > 0; t--) {
     Serial.printf("[SETUP] WAIT %d...\n", t);
