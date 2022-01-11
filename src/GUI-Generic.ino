@@ -41,6 +41,7 @@ void setup() {
   uint8_t nr, gpio;
 
   Serial.begin(74880);
+  Serial.setTimeout(2000);
   while (!Serial)
     ;
 
