@@ -246,6 +246,7 @@ class ConfigOption {
 class SuplaConfigManager {
  public:
   SuplaConfigManager();
+  bool SPIFFSbegin();
   bool migrationConfig();
   uint8_t addKey(uint8_t key, int maxLength, uint8_t version = 1, bool loadKey = true);
   uint8_t addKey(uint8_t key, const char *value, int maxLength, uint8_t version = 1, bool loadKey = true);
