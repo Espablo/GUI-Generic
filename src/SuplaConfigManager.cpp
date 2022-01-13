@@ -159,7 +159,7 @@ void ConfigOption::setValue(const char *value) {
 // class SuplaConfigManager
 //
 SuplaConfigManager::SuplaConfigManager() {
-  if (SPIFFS.begin()) {
+  if (SPIFFSbegin()) {
     _optionCount = OPTION_COUNT;
 
     // SPIFFS.format();
@@ -451,6 +451,14 @@ SuplaConfigManager::SuplaConfigManager() {
   //  }
 }
 
+bool SuplaConfigManager::SPIFFSbegin() {
+#ifdef ARDUINO_ARCH_ESP8266
+  return SPIFFS.begin();
+#elif ARDUINO_ARCH_ESP32
+  return SPIFFS.begin(true);
+#endif
+}
+
 bool SuplaConfigManager::migrationConfig() {
   bool migration = false;
 
@@ -531,7 +539,7 @@ uint8_t SuplaConfigManager::deleteKey(uint8_t key) {
 }
 
 int SuplaConfigManager::sizeFile() {
-  if (SPIFFS.begin()) {
+  if (SPIFFSbegin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
       return configFile.size();
@@ -549,7 +557,7 @@ bool SuplaConfigManager::checkFileConvert(int size) {
 }
 
 uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
-  if (SPIFFS.begin()) {
+  if (SPIFFSbegin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
       configFile.setTimeout(5000);
@@ -625,7 +633,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
 }
 
 uint8_t SuplaConfigManager::save() {
-  if (SPIFFS.begin()) {
+  if (SPIFFSbegin()) {
     int i = 0;
     int offset = 0;
     int length = 0;
