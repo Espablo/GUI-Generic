@@ -49,9 +49,9 @@ void ImprovSerialComponent::write_data_(std::vector<uint8_t> &data) {
 }
 
 void ImprovSerialComponent::onInit() {
-  // if (Supla::Network::IsReady()) {
-  //  this->state_ = improv::STATE_PROVISIONED;
-  //}
+  if (Supla::Network::IsReady()) {
+    this->state_ = improv::STATE_PROVISIONED;
+  }
 }
 
 void ImprovSerialComponent::iterateAlways() {
@@ -74,9 +74,6 @@ void ImprovSerialComponent::iterateAlways() {
   if (this->state_ == improv::STATE_AUTHORIZED) {
     if (Supla::Network::IsReady()) {
       this->state_ = improv::STATE_PROVISIONED;
-
-      std::vector<uint8_t> url = this->build_rpc_settings_response_(improv::WIFI_SETTINGS);
-      this->send_response_(url);
     }
   }
 
