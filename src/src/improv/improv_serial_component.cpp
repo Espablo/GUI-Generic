@@ -49,9 +49,9 @@ void ImprovSerialComponent::write_data_(std::vector<uint8_t> &data) {
 }
 
 void ImprovSerialComponent::onInit() {
-  if (Supla::Network::IsReady()) {
-    this->state_ = improv::STATE_PROVISIONED;
-  }
+  // if (Supla::Network::IsReady()) {
+  //  this->state_ = improv::STATE_PROVISIONED;
+  //}
 }
 
 void ImprovSerialComponent::iterateAlways() {
