@@ -106,7 +106,7 @@ std::vector<uint8_t> ImprovSerialComponent::build_version_info_() {
   std::string type = "ESP32";
 #endif
 
-  std::vector<std::string> infos = {"", Supla::Channel::reg_dev.SoftVer, type, ConfigManager->get(KEY_HOST_NAME)->getValue()};
+  std::vector<std::string> infos = {"GUI-Generic", Supla::Channel::reg_dev.SoftVer, type, ConfigManager->get(KEY_HOST_NAME)->getValue()};
   std::vector<uint8_t> data = improv::build_rpc_response(improv::GET_DEVICE_INFO, infos, false);
   return data;
 };
