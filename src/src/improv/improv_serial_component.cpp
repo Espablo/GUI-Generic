@@ -55,6 +55,12 @@ void ImprovSerialComponent::onInit() {
 }
 
 void ImprovSerialComponent::iterateAlways() {
+  if (this->state_ == improv::STATE_AUTHORIZED) {
+    if (Supla::Network::IsReady()) {
+      this->state_ = improv::STATE_PROVISIONED;
+    }
+  }
+
   const uint32_t now = millis();
   if (now - this->last_read_byte_ > 50) {
     this->rx_buffer_.clear();
@@ -68,12 +74,6 @@ void ImprovSerialComponent::iterateAlways() {
     }
     else {
       this->rx_buffer_.clear();
-    }
-  }
-
-  if (this->state_ == improv::STATE_AUTHORIZED) {
-    if (Supla::Network::IsReady()) {
-      this->state_ = improv::STATE_PROVISIONED;
     }
   }
 
@@ -100,7 +100,13 @@ std::vector<uint8_t> ImprovSerialComponent::build_rpc_settings_response_(improv:
 }
 
 std::vector<uint8_t> ImprovSerialComponent::build_version_info_() {
-  std::vector<std::string> infos = {Supla::Channel::reg_dev.SoftVer, "", ConfigManager->get(KEY_HOST_NAME)->getValue()};
+#ifdef ARDUINO_ARCH_ESP8266
+  std::string type = "ESP8266";
+#else
+  std::string type = "ESP32";
+#endif
+
+  std::vector<std::string> infos = {"", Supla::Channel::reg_dev.SoftVer, type, ConfigManager->get(KEY_HOST_NAME)->getValue()};
   std::vector<uint8_t> data = improv::build_rpc_response(improv::GET_DEVICE_INFO, infos, false);
   return data;
 };
