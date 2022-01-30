@@ -24,6 +24,7 @@ void addTemplateBoard() {
 #ifdef TEMPLATE_BOARD_JSON
 #ifdef TEMPLATE_JSON
   chooseTemplateBoard(TEMPLATE_JSON);
+  ConfigManager->set(KEY_BOARD, true);
 #endif
 #elif TEMPLATE_BOARD_OLD
   chooseTemplateBoard(ConfigESP->getDefaultTamplateBoard());
