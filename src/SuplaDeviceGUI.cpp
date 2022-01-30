@@ -490,6 +490,9 @@ void addRGBWLeds(uint8_t nr) {
   }
   else if (brightnessPin != OFF_GPIO) {
     auto rgbw = new Supla::Control::DimmerLeds(brightnessPin);
+    
+    // https://forum.supla.org/viewtopic.php?p=116483#p116483
+    analogWriteFreq(223);
 
     if (buttonPin != OFF_GPIO) {
       auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
