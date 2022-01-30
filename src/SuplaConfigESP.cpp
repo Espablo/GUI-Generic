@@ -47,7 +47,9 @@ SuplaConfigESP::SuplaConfigESP() {
       ConfigManager->set(KEY_ENABLE_SSL, getDefaultEnableSSL());
 
 #ifdef TEMPLATE_BOARD_JSON
-    Supla::TanplateBoard::addTemplateBoard();
+    if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0) {
+      Supla::TanplateBoard::addTemplateBoard();
+    }
 #elif TEMPLATE_BOARD_OLD
     if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0) {
       chooseTemplateBoard(getDefaultTamplateBoard());
@@ -156,7 +158,7 @@ void SuplaConfigESP::configModeInit() {
 
   WiFi.softAP(getConfigNameAP().c_str(), "");
   Supla::GUI::setupWifi();
-  
+
   Serial.println(F("Config Mode started"));
 }
 
