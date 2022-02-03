@@ -46,7 +46,7 @@ void handleDeviceSettings(int save) {
   addFormHeaderEnd(webContentBuffer);
   addButtonSubmit(webContentBuffer, S_LOAD_CONFIGURATION);
   addFormEnd(webContentBuffer);
-#elif TEMPLATE_BOARD_OLD
+#elif defined(TEMPLATE_BOARD_OLD)
 #if (DEFAULT_TEMPLATE_BOARD == BOARD_OFF)
   addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
   addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
@@ -111,7 +111,7 @@ void handleDeviceSettings(int save) {
 void handleDeviceSettingsSave() {
 #ifdef TEMPLATE_BOARD_JSON
   Supla::TanplateBoard::chooseTemplateBoard(WebServer->httpServer->arg(INPUT_BOARD).c_str());
-#elif TEMPLATE_BOARD_OLD
+#elif defined(TEMPLATE_BOARD_OLD)
   if (strcmp(WebServer->httpServer->arg(INPUT_BOARD).c_str(), "") != 0) {
     chooseTemplateBoard(WebServer->httpServer->arg(INPUT_BOARD).toInt());
     Supla::Storage::ScheduleSave(2000);

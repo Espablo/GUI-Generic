@@ -207,7 +207,7 @@ extern String templateBoardWarning;
 }  // namespace TanplateBoard
 }  // namespace Supla
 
-#elif TEMPLATE_BOARD_OLD
+#elif defined(TEMPLATE_BOARD_OLD)
 #define BOARD_OFF              0
 #define BOARD_ELECTRODRAGON    1
 #define BOARD_INCAN3           2

@@ -26,7 +26,7 @@ void addTemplateBoard() {
   chooseTemplateBoard(TEMPLATE_JSON);
   ConfigManager->set(KEY_BOARD, true);
 #endif
-#elif TEMPLATE_BOARD_OLD
+#elif defined(TEMPLATE_BOARD_OLD)
   chooseTemplateBoard(ConfigESP->getDefaultTamplateBoard());
 #endif
 }
@@ -697,7 +697,7 @@ bool isActiveRGBW(JsonArray& GPIO) {
 
 }  // namespace TanplateBoard
 }  // namespace Supla
-#elif TEMPLATE_BOARD_OLD
+#elif defined(TEMPLATE_BOARD_OLD)
 void addButton(uint8_t gpio, uint8_t event, uint8_t action, bool pullUp, bool invertLogic) {
   uint8_t nr = ConfigManager->get(KEY_MAX_BUTTON)->getValueInt();
 

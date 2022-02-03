@@ -50,7 +50,7 @@ SuplaConfigESP::SuplaConfigESP() {
     if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0) {
       Supla::TanplateBoard::addTemplateBoard();
     }
-#elif TEMPLATE_BOARD_OLD
+#elif defined(TEMPLATE_BOARD_OLD)
     if (strcmp(ConfigManager->get(KEY_BOARD)->getValue(), "") == 0) {
       chooseTemplateBoard(getDefaultTamplateBoard());
     }
