@@ -99,16 +99,18 @@ void GUIESPWifi::setup() {
     Serial.println(F("\""));
 
     WiFi.softAPdisconnect(true);
+    WiFi.reconnect();
+    WiFi.disconnect(true);
     WiFi.setAutoConnect(false);
 
     if (ConfigESP->configModeESP == NORMAL_MODE) {
       WiFi.mode(WIFI_STA);
+      WiFi.begin(ssid, password);
     }
     else {
-      WiFi.mode(WIFI_AP_STA);
+      WiFi.mode(WIFI_AP);
+      WiFi.begin();
     }
-
-    WiFi.begin(ssid, password);
 
     if (hostname) {
       WiFi.setHostname(hostname);
