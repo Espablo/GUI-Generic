@@ -462,8 +462,10 @@ void addRGBWLeds(uint8_t nr) {
   int pullupButton = ConfigESP->getPullUp(buttonPin);
   int inversedButton = ConfigESP->getInversed(buttonPin);
 
+#ifdef ARDUINO_ARCH_ESP8266
   // https://forum.supla.org/viewtopic.php?p=116483#p116483
-  analogWriteFreq(800);
+  analogWriteFreq(400);
+#endif
 
   if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO && brightnessPin != OFF_GPIO) {
     auto rgbw = new Supla::Control::RGBWLeds(redPin, greenPin, bluePin, brightnessPin);
