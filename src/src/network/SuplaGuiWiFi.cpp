@@ -105,12 +105,13 @@ void GUIESPWifi::setup() {
 
     if (ConfigESP->configModeESP == NORMAL_MODE) {
       WiFi.mode(WIFI_STA);
-      WiFi.begin(ssid, password);
     }
     else {
-      WiFi.mode(WIFI_AP);
-      WiFi.begin();
+      WiFi.mode(WIFI_AP_STA);
     }
+
+    if (ssid)
+      WiFi.begin(ssid, password);
 
     if (hostname) {
       WiFi.setHostname(hostname);
