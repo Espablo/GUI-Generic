@@ -99,6 +99,12 @@ void SuplaWebServer::sendHeaderStart() {
     summary.replace(F("{g}"), ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
     summary.replace(F("{m}"), ConfigESP->getMacAddress(true));
     summary.replace(F("{f}"), String(ESP.getFreeHeap() / 1024.0));
+    if (ConfigESP->configModeESP == NORMAL_MODE) {
+      summary.replace(F("{c}"), "NORMAL");
+    }
+    else {
+      summary.replace(F("{c}"), "CONFIG");
+    }
 
     httpServer->sendContent(summary);
   }
