@@ -114,10 +114,10 @@
 #define S_NORMAL                        "NORMAL"
 #define S_SLOW                          "SLOW"
 #define S_MANUALLY                      "MANUALLY"
-#define S_ON_CH_VAL_OFF_HEATING         "ON < channel value > OFF - heating"
-#define S_ON_CH_VAL_OFF_COOLING         "ON > channel value < OFF - cooling"
-#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < 2nd channel value > OFF - humidification"
-#define S_ON_2CH_VAL_OFF_DRYING         "ON > 2nd channel value < OFF - drying"
+#define S_ON_CH_VAL_OFF_HEATING         "ON > channel value > OFF - heating"
+#define S_ON_CH_VAL_OFF_COOLING         "ON < channel value < OFF - cooling"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON > 2nd channel value > OFF - humidification"
+#define S_ON_2CH_VAL_OFF_DRYING         "ON < 2nd channel value < OFF - drying"
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "LIMIT SWITCHES"

@@ -115,10 +115,10 @@
 #define S_NORMAL                        "ORDINAIRE"
 #define S_SLOW                          "LENT"
 #define S_MANUALLY                      "MANUELLEMENT"
-#define S_ON_CH_VAL_OFF_HEATING         "ON < valeur de canal > OFF - chauffage"
-#define S_ON_CH_VAL_OFF_COOLING         "ON > valeur du canal < OFF - refroidissement"
-#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < Valeur 2ème canal > OFF - humidification"
-#define S_ON_2CH_VAL_OFF_DRYING         "ON > Valeur 2ème canal < OFF - séchage"
+#define S_ON_CH_VAL_OFF_HEATING         "ON > valeur de canal > OFF - chauffage"
+#define S_ON_CH_VAL_OFF_COOLING         "ON < valeur du canal < OFF - refroidissement"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON > Valeur 2ème canal > OFF - humidification"
+#define S_ON_2CH_VAL_OFF_DRYING         "ON < Valeur 2ème canal < OFF - séchage"
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "INTERRUPTEURS DE FIN DE COURSE"

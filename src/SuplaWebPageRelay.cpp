@@ -477,9 +477,9 @@ void conditionsWebPage(int nr) {
     addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, CONDITION_COUNT, selected);
 
     String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr);
-    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
+    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, "ON", S_SWITCH_ON_VALUE, false, value);
     value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr);
-    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
+    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, "OFF", S_SWITCH_OFF_VALUE, false, value);
     addFormHeaderEnd(webContentBuffer);
   }
 }

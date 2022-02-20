@@ -401,9 +401,9 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #endif
 
 #ifdef GUI_ALL_ENERGY_COUNTER
-    "ON < Napięcie[V] > OFF",
-    "ON < Natężenie[A] > OFF",
-    "ON < Moc czynna[W] > OFF",
+    "ON > Napięcie[V] > OFF",
+    "ON > Natężenie[A] > OFF",
+    "ON > Moc czynna[W] > OFF",
 #else
     S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
@@ -413,9 +413,9 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
     S_EMPTY,
 #endif
 #ifdef GUI_ALL_ENERGY_COUNTER
-    "ON > Napięcie[V] < OFF",
-    "ON > Natężenie[A] < OFF",
-    "ON > Moc czynna[W] < OFF",
+    "ON < Napięcie[V] < OFF",
+    "ON < Natężenie[A] < OFF",
+    "ON < Moc czynna[W] < OFF",
 #else
     S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
