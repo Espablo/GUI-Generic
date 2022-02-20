@@ -106,9 +106,6 @@ void GUIESPWifi::setup() {
     if (ConfigESP->configModeESP == NORMAL_MODE) {
       WiFi.mode(WIFI_STA);
     }
-    else {
-      WiFi.mode(WIFI_AP_STA);
-    }
 
     if (ssid)
       WiFi.begin(ssid, password);

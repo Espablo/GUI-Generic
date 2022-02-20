@@ -45,7 +45,7 @@ void begin() {
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
   if (getCountChannels() == 0)
-    ConfigESP->configModeInit();
+    ConfigESP->configModeInit(WIFI_AP_STA);
 
   if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
     crateWebServer();

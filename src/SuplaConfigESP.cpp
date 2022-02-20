@@ -61,7 +61,7 @@ SuplaConfigESP::SuplaConfigESP() {
 
     ConfigManager->save();
 
-    configModeInit();
+    configModeInit(WIFI_AP_STA);
   }
 
   SuplaDevice.setStatusFuncImpl(&status_func);
@@ -128,12 +128,12 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig) {
 void SuplaConfigESP::handleAction(int event, int action) {
   if (action == CONFIG_MODE_10_ON_PRESSES) {
     if (event == Supla::ON_CLICK_10) {
-      configModeInit();
+      configModeInit(WIFI_AP);
     }
   }
   if (action == CONFIG_MODE_5SEK_HOLD) {
     if (event == Supla::ON_HOLD) {
-      configModeInit();
+      configModeInit(WIFI_AP);
     }
   }
 
@@ -149,17 +149,17 @@ void SuplaConfigESP::rebootESP() {
   ESP.restart();
 }
 
-void SuplaConfigESP::configModeInit() {
+void SuplaConfigESP::configModeInit(WiFiMode_t m) {
   configModeESP = CONFIG_MODE;
-
+  APConfigured = false;
   ledBlinking(100);
 
   Supla::GUI::enableWifiSSL(false);
-
-  WiFi.softAP(getConfigNameAP().c_str(), "");
   Supla::GUI::setupWifi();
+  WiFi.mode(m);
 
-  Serial.println(F("Config Mode started"));
+  Serial.print(F("Config Mode started: "));
+  Serial.println(m);
 }
 
 bool SuplaConfigESP::checkSSL() {
