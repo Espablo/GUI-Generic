@@ -4,6 +4,7 @@
 namespace Supla {
 
 GUIESPWifi::GUIESPWifi(const char *wifiSsid, const char *wifiPassword) : ESPWifi(wifiSsid, wifiPassword) {
+  retryCount = 0;
 #ifdef ARDUINO_ARCH_ESP8266
   gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
     (void)(event);
@@ -122,6 +123,11 @@ void GUIESPWifi::setup() {
         client = nullptr;
       }
       WiFi.reconnect();
+
+      retryCount++;
+      if (retryCount > 4) {
+        ConfigESP->rebootESP();
+      }
     }
   }
 
