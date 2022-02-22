@@ -302,37 +302,37 @@ void chooseTemplateBoard(String board) {
         break;
 
       case NewLed1:
-        addLedCFG(gpio);
+        addLedCFG(gpio, LOW);
         // addLed(0, gpio);
         break;
       case NewLed2:
-        addLed(0, gpio);
+        addLed(0, gpio, LOW);
         break;
       case NewLed3:
-        addLed(1, gpio);
+        addLed(1, gpio, LOW);
         break;
       case NewLed4:
-        addLed(2, gpio);
+        addLed(2, gpio, LOW);
         break;
       case NewLedLink:
-        addLedCFG(gpio);
+        addLedCFG(gpio, LOW);
         break;
 
       case NewLed1i:
-        addLedCFG(gpio, LOW);
+        addLedCFG(gpio);
         // addLed(0, gpio, LOW);
         break;
       case NewLed2i:
-        addLed(0, gpio, LOW);
+        addLed(0, gpio);
         break;
       case NewLed3i:
-        addLed(1, gpio, LOW);
+        addLed(1, gpio);
         break;
       case NewLed4i:
-        addLed(2, gpio, LOW);
+        addLed(2, gpio);
         break;
       case NewLedLinki:
-        addLedCFG(gpio, LOW);
+        addLedCFG(gpio);
         break;
 
       case NewPWM1:
