@@ -37,7 +37,7 @@
 #endif
 
 #elif ARDUINO_ARCH_ESP32
-
+#include <WiFi.h>
 #ifdef SUPLA_MDNS
 #include <ESPmDNS.h>
 #endif
