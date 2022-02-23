@@ -51,6 +51,10 @@ int ConfigOption::getValueInt() {
   return atoi(this->getValue());
 }
 
+bool ConfigOption::getValueBool() {
+  return atoi(this->getValue());
+}
+
 const char *ConfigOption::getValueHex(size_t size) {
   char *buffer = (char *)malloc(sizeof(char) * (size * 2));
   size_t a, b;
@@ -404,6 +408,8 @@ SuplaConfigManager::SuplaConfigManager() {
 #else
     this->addKey(KEY_MAX_ANALOG_READING, "1", 2, 6, false);
 #endif
+
+    this->addKey(KEY_FORCE_RESTART_ESP, "0", 1);
 
     SPIFFS.end();
     switch (this->load()) {

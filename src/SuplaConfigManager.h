@@ -33,7 +33,7 @@
 #define DEFAULT_LOGIN      "admin"
 #define DEFAULT_LOGIN_PASS "pass"
 
-#define DEFAULT_EMAIL  "email@address.com"
+#define DEFAULT_EMAIL "email@address.com"
 
 #define MAX_GUID                SUPLA_GUID_SIZE
 #define MAX_AUTHKEY             SUPLA_GUID_SIZE
@@ -136,6 +136,8 @@ enum _key
 
   KEY_MAX_ANALOG_READING,
 
+  KEY_FORCE_RESTART_ESP,
+
   OPTION_COUNT
 };
 
@@ -222,6 +224,7 @@ class ConfigOption {
   uint8_t getKey();
   const char *getValue();
   int getValueInt();
+  bool getValueBool();
   const char *getValueHex(size_t size);
   int getValueElement(int element);
 

@@ -126,7 +126,11 @@ void GUIESPWifi::setup() {
 
       retryCount++;
       if (retryCount > 4) {
-        ConfigESP->rebootESP();
+        retryCount = 0;
+        wifiConfigured = false;
+
+        if (ConfigManager->get(KEY_FORCE_RESTART_ESP)->getValueBool())
+          ConfigESP->rebootESP();
       }
     }
   }
