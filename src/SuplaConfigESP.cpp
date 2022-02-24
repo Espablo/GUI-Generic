@@ -146,8 +146,7 @@ void SuplaConfigESP::handleAction(int event, int action) {
 
 void SuplaConfigESP::rebootESP() {
   WiFi.disconnect(true);
-  ESP.reset();
-  // ESP.restart();
+  ESP.restart();
 }
 
 void SuplaConfigESP::configModeInit(WiFiMode_t m) {
