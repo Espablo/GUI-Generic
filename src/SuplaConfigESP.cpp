@@ -198,7 +198,12 @@ void SuplaConfigESP::iterateAlways() {
 }
 
 const String SuplaConfigESP::getConfigNameAP() {
-  String name = F("SUPLA-ESP8266-");
+  String name;
+#ifdef ARDUINO_ARCH_ESP8266
+  name = F("SUPLA-ESP8266-");
+#elif ARDUINO_ARCH_ESP32
+  name = F("SUPLA-ESP32-");
+#endif
   return name += getMacAddress(false);
 }
 const char *SuplaConfigESP::getLastStatusMessageSupla() {
