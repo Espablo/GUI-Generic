@@ -34,7 +34,7 @@ OneWireBus::OneWireBus(uint8_t pinNumberConfig)
         address[6],
         address[7]);
         supla_log(LOG_DEBUG, "Index %d - address %s", i, strAddr);*/
-      sensors.setResolution(address, 12);
+      sensors.setResolution(address, 10);
     }
     delay(0);
   }
@@ -123,6 +123,8 @@ double DS18B20::getValue() {
     retryCounter++;
     if (retryCounter > 3) {
       retryCounter = 0;
+      DS18B20::oneWireBus->oneWire.reset();
+       
     } else {
       value = lastValidValue;
     }
