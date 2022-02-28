@@ -90,6 +90,13 @@ void handleSensorI2c(int save) {
     addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_BH1750
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BH1750).toInt();
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_BH1750, F("BH1750"), STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
 #ifdef SUPLA_OLED
     addFormHeader(webContentBuffer);
 
@@ -228,6 +235,14 @@ void handleSensorI2cSave() {
   input = INPUT_HDC1080;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_HDC1080, WebServer->httpServer->arg(input).toInt());
+  }
+#endif
+
+#ifdef SUPLA_BH1750
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_BH1750;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_BH1750, WebServer->httpServer->arg(input).toInt());
   }
 #endif
 

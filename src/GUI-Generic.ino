@@ -427,6 +427,12 @@ void setup() {
     }
 #endif
 
+#ifdef SUPLA_BH1750
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BH1750).toInt()) {
+      new Supla::Sensor::BH1750();
+    }
+#endif
+
 #ifdef SUPLA_OLED
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       SuplaOled *oled = new SuplaOled();

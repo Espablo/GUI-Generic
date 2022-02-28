@@ -163,6 +163,10 @@
 #include "SuplaLCD.h"
 #endif
 
+#ifdef SUPLA_BH1750
+#include <supla/sensor/BH1750.h>
+#endif
+
 #include "src/improv/improv_serial_component.h"
 #include "src/network/SuplaGuiWiFi.h"
 
