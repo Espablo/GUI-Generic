@@ -110,9 +110,9 @@ void handleConfig(int save) {
   addCheckBox(webContentBuffer, INPUT_CFG_AVAILABLE_GUI, F("GUI"), selected);
   addFormHeaderEnd(webContentBuffer);
 
-  addFormHeader(webContentBuffer, F("Gdy braku połączenia"));
+  addFormHeader(webContentBuffer, F("Gdy brak połączenia"));
   selected = ConfigManager->get(KEY_FORCE_RESTART_ESP)->getValueBool();
-  addCheckBox(webContentBuffer, INPUT_FORCE_RESTART_ESP, F("Reset ESP"), selected);
+  addCheckBox(webContentBuffer, INPUT_FORCE_RESTART_ESP, F("Wymuś reset ESP"), selected);
   addFormHeaderEnd(webContentBuffer);
 
 #ifdef SUPLA_DEEP_SLEEP
