@@ -791,24 +791,13 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
   esp_fill_random((unsigned char *)AUTHKEY, SUPLA_AUTHKEY_SIZE);
 #endif
 
-  if (SUPLA_GUID_SIZE >= 6) {
 #ifdef ARDUINO_ARCH_ESP8266
-    wifi_get_macaddr(STATION_IF, (unsigned char *)mac);
+  wifi_get_macaddr(SOFTAP_IF, (unsigned char *)mac);
 #elif ARDUINO_ARCH_ESP32
-    esp_wifi_get_mac(WIFI_IF_STA, (unsigned char *)mac);
+  esp_wifi_get_mac(WIFI_IF_AP, (unsigned char *)mac);
 #endif
 
-    for (a = 0; a < 6; a++) GUID[a] = (GUID[a] * mac[a]) % 255;
-  }
-
-  if (SUPLA_GUID_SIZE >= 12) {
-#ifdef ARDUINO_ARCH_ESP8266
-    wifi_get_macaddr(SOFTAP_IF, (unsigned char *)mac);
-#elif ARDUINO_ARCH_ESP32
-    esp_wifi_get_mac(WIFI_IF_AP, (unsigned char *)mac);
-#endif
-    for (a = 0; a < 6; a++) GUID[a + 6] = (GUID[a + 6] * mac[a]) % 255;
-  }
+  for (a = 0; a < 6; a++) GUID[a] = (GUID[a] * mac[a]) % 255;
 
   for (a = 0; a < SUPLA_GUID_SIZE; a++) {
 #ifdef ARDUINO_ARCH_ESP8266
