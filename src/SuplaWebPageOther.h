@@ -86,6 +86,7 @@ void handleCounterCalibrateSave();
 #define INPUT_RGBW_BLUE             "rgbwb"
 #define INPUT_RGBW_BRIGHTNESS       "rgbwbr"
 #define INPUT_RGBW_COLOR_BRIGHTNESS "rgbwcb"
+#define INPUT_RGBW_MEMORY           "irm"
 #endif
 
 #ifdef SUPLA_PUSHOVER

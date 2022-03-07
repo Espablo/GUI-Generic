@@ -45,9 +45,9 @@ void handleRelaySave();
 
 enum _memory_relay
 {
-  MEMORY_RELAY_OFF,
-  MEMORY_RELAY_ON,
-  MEMORY_RELAY_RESTORE
+  MEMORY_OFF,
+  MEMORY_ON,
+  MEMORY_RESTORE
 };
 
 enum _conditions

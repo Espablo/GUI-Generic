@@ -533,7 +533,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   }
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, LOW);
-    setMemory(gpio, MEMORY_RELAY_RESTORE);
+    setMemory(gpio, MEMORY_RESTORE);
   }
 }
 

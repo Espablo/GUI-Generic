@@ -226,6 +226,8 @@ void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int d
 
 #ifdef SUPLA_RGBW
 void addRGBWLeds(uint8_t nr);
+void setRGBWButton(Supla::Control::RGBWBase *rgbw, int buttonPin);
+void setRGBWDefaultState(Supla::Control::RGBWBase *rgbw, uint8_t memory);
 #endif
 
 void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);

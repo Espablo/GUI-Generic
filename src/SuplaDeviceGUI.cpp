@@ -105,13 +105,13 @@ void addRelay(uint8_t nr) {
     int size = relay.size() - 1;
 
     switch (ConfigESP->getMemory(pinRelay, nr)) {
-      case MEMORY_RELAY_OFF:
+      case MEMORY_OFF:
         relay[size]->setDefaultStateOff();
         break;
-      case MEMORY_RELAY_ON:
+      case MEMORY_ON:
         relay[size]->setDefaultStateOn();
         break;
-      case MEMORY_RELAY_RESTORE:
+      case MEMORY_RESTORE:
         relay[size]->setDefaultStateRestore();
         break;
     }
@@ -247,13 +247,13 @@ void addRelayBridge(uint8_t nr) {
     int size = relay.size() - 1;
 
     switch (ConfigESP->getMemory(pinRelay, nr)) {
-      case MEMORY_RELAY_OFF:
+      case MEMORY_OFF:
         relay[size]->setDefaultStateOff();
         break;
-      case MEMORY_RELAY_ON:
+      case MEMORY_ON:
         relay[size]->setDefaultStateOn();
         break;
-      case MEMORY_RELAY_RESTORE:
+      case MEMORY_RESTORE:
         relay[size]->setDefaultStateRestore();
         break;
     }
@@ -459,8 +459,6 @@ void addRGBWLeds(uint8_t nr) {
   int brightnessPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BRIGHTNESS);
 
   int buttonPin = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-  int pullupButton = ConfigESP->getPullUp(buttonPin);
-  int inversedButton = ConfigESP->getInversed(buttonPin);
 
 #ifdef ARDUINO_ARCH_ESP8266
   // https://forum.supla.org/viewtopic.php?p=116483#p116483
@@ -469,42 +467,47 @@ void addRGBWLeds(uint8_t nr) {
 
   if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO && brightnessPin != OFF_GPIO) {
     auto rgbw = new Supla::Control::RGBWLeds(redPin, greenPin, bluePin, brightnessPin);
-
-    if (buttonPin != OFF_GPIO) {
-      auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
-      button->setMulticlickTime(200);
-      button->setHoldTime(400);
-      button->repeatOnHoldEvery(200);
-
-      button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
-      button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
-    }
+    setRGBWDefaultState(rgbw, ConfigESP->getMemory(redPin));
+    setRGBWButton(rgbw, buttonPin);
   }
   else if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO) {
     auto rgbw = new Supla::Control::RGBLeds(redPin, greenPin, bluePin);
-
-    if (buttonPin != OFF_GPIO) {
-      auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
-      button->setMulticlickTime(200);
-      button->setHoldTime(400);
-      button->repeatOnHoldEvery(200);
-
-      button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
-      button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
-    }
+    setRGBWDefaultState(rgbw, ConfigESP->getMemory(redPin));
+    setRGBWButton(rgbw, buttonPin);
   }
   else if (brightnessPin != OFF_GPIO) {
     auto rgbw = new Supla::Control::DimmerLeds(brightnessPin);
+    setRGBWDefaultState(rgbw, ConfigESP->getMemory(brightnessPin));
+    setRGBWButton(rgbw, buttonPin);
+  }
+}
 
-    if (buttonPin != OFF_GPIO) {
-      auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
-      button->setMulticlickTime(200);
-      button->setHoldTime(400);
-      button->repeatOnHoldEvery(200);
+void setRGBWButton(Supla::Control::RGBWBase *rgbw, int buttonPin) {
+  int pullupButton = ConfigESP->getPullUp(buttonPin);
+  int inversedButton = ConfigESP->getInversed(buttonPin);
 
-      button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
-      button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
-    }
+  if (buttonPin != OFF_GPIO) {
+    auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
+    button->setMulticlickTime(200);
+    button->setHoldTime(400);
+    button->repeatOnHoldEvery(200);
+
+    button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
+    button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
+  }
+}
+
+void setRGBWDefaultState(Supla::Control::RGBWBase *rgbw, uint8_t memory) {
+  switch (memory) {
+    case MEMORY_OFF:
+      rgbw->setDefaultStateOff();
+      break;
+    case MEMORY_ON:
+      rgbw->setDefaultStateOn();
+      break;
+    case MEMORY_RESTORE:
+      rgbw->setDefaultStateRestore();
+      break;
   }
 }
 #endif

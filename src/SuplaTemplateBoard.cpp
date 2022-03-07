@@ -636,7 +636,7 @@ void addRelay(uint8_t nr, uint8_t gpio, uint8_t level) {
   uint8_t maxRelay = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
 
   ConfigESP->setLevel(gpio, level);
-  ConfigESP->setMemory(gpio, MEMORY_RELAY_RESTORE);
+  ConfigESP->setMemory(gpio, MEMORY_RESTORE);
   ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY);
 
   ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
@@ -714,7 +714,7 @@ void addRelay(uint8_t gpio, uint8_t level) {
   uint8_t nr = ConfigManager->get(KEY_MAX_RELAY)->getValueInt();
 
   ConfigESP->setLevel(gpio, level);
-  ConfigESP->setMemory(gpio, MEMORY_RELAY_RESTORE);
+  ConfigESP->setMemory(gpio, MEMORY_RESTORE);
   ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY);
   ConfigManager->set(KEY_MAX_RELAY, nr + 1);
 }

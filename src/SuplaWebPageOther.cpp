@@ -75,7 +75,7 @@ void createWebPageOther() {
 
 #ifdef GUI_OTHER
 void handleOther(int save) {
-  uint8_t nr, selected;
+  uint8_t nr = 0, selected = 0;
 
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
@@ -150,13 +150,27 @@ void handleOther(int save) {
     addListGPIOBox(webContentBuffer, INPUT_RGBW_GREEN, F("GREEN"), FUNCTION_RGBW_GREEN, nr, false);
     addListGPIOBox(webContentBuffer, INPUT_RGBW_BLUE, F("BLUE"), FUNCTION_RGBW_BLUE, nr, false);
     addListGPIOBox(webContentBuffer, INPUT_RGBW_BRIGHTNESS, F("WHITE / DIMMER"), FUNCTION_RGBW_BRIGHTNESS, nr, false);
+
+    uint8_t redPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_RED);
+    uint8_t brightnessPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BRIGHTNESS);
+
+    if (redPin != OFF_GPIO) {
+      selected = ConfigESP->getMemory(redPin);
+    }
+    else if (brightnessPin != OFF_GPIO) {
+      selected = ConfigESP->getMemory(brightnessPin);
+    }
+    else {
+      selected = OFF_GPIO;
+    }
+    addListBox(webContentBuffer, String(INPUT_RGBW_MEMORY) + nr, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
 
 #if defined(SUPLA_PUSHOVER)
   addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_PUSHOVER);
-    addTextBox(webContentBuffer, INPUT_PUSHOVER_USER, F("Your User Key"), KEY_PUSHOVER_USER, 0, MAX_USER_SIZE, false);
+  addTextBox(webContentBuffer, INPUT_PUSHOVER_USER, F("Your User Key"), KEY_PUSHOVER_USER, 0, MAX_USER_SIZE, false);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_TOKEN, F("API Token"), KEY_PUSHOVER_TOKEN, 0, MAX_TOKEN_SIZE, false);
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -267,6 +281,17 @@ void handleOtherSave() {
         !WebServer->saveGPIO(INPUT_RGBW_BRIGHTNESS, FUNCTION_RGBW_BRIGHTNESS, nr, INPUT_RGBW_MAX)) {
       handleOther(6);
       return;
+    }
+
+    uint8_t redPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_RED);
+    uint8_t brightnessPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BRIGHTNESS);
+    uint8_t memory = WebServer->httpServer->arg(String(INPUT_RGBW_MEMORY) + nr).toInt();
+
+    if (redPin != OFF_GPIO) {
+      ConfigESP->setMemory(redPin, memory);
+    }
+    else if (brightnessPin != OFF_GPIO) {
+      ConfigESP->setMemory(brightnessPin, memory);
     }
   }
   ConfigManager->set(KEY_MAX_RGBW, WebServer->httpServer->arg(INPUT_RGBW_MAX).c_str());
