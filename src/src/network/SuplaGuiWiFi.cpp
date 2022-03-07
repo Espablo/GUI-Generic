@@ -102,7 +102,6 @@ void GUIESPWifi::setup() {
     WiFi.softAPdisconnect(true);
     WiFi.reconnect();
     WiFi.disconnect(true);
-    WiFi.setAutoConnect(false);
 
     if (ConfigESP->configModeESP == NORMAL_MODE) {
       WiFi.mode(WIFI_STA);
