@@ -165,16 +165,20 @@ void addButtonActionTrigger(uint8_t nr) {
 
   if (pinRelay == OFF_GPIO && pinButton != OFF_GPIO) {
     auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
+    button->setSwNoiseFilterDelay(100);
     auto at = new Supla::Control::ActionTrigger();
 
     button->addAction(ConfigESP->getAction(pinButton), at, ConfigESP->getEvent(pinButton));
 
+    int muliclickTimeMs = String(ConfigManager->get(KEY_AT_MULTICLICK_TIME)->getValue()).toDouble() * 1000;
+    int holdTimeMs = String(ConfigManager->get(KEY_AT_HOLD_TIME)->getValue()).toDouble() * 1000;
+
     if (ConfigESP->getEvent(pinButton) == Supla::ON_CHANGE) {
-      button->setMulticlickTime(350, true);
+      button->setMulticlickTime(muliclickTimeMs, true);
     }
     else {
-      button->setMulticlickTime(350);
-      button->setHoldTime(350);
+      button->setMulticlickTime(muliclickTimeMs);
+      button->setHoldTime(holdTimeMs);
     }
 
     at->attach(button);
