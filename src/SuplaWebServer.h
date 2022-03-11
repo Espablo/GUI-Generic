@@ -38,7 +38,8 @@
 #define ARG_PARM_URL    "url"
 #define ARG_PARM_NUMBER "number"
 
-#define PATH_START "/"
+#define PATH_START     "/"
+#define PATH_RESET_ESP "/?reboot=1"
 
 extern String webContentBuffer;
 

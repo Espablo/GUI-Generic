@@ -79,8 +79,6 @@ void handlePageHome(int save) {
   addFormEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_DEVICE_SETTINGS, PATH_DEVICE_SETTINGS);
-  addButton(webContentBuffer, S_TOOLS, PATH_TOOLS);
-
   WebServer->sendHeaderEnd();
 }
 

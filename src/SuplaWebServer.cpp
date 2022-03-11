@@ -124,7 +124,8 @@ void SuplaWebServer::sendHeader() {
 void SuplaWebServer::sendHeaderEnd() {
   if (chunkedSendHeader) {
     sendHeader();
-    httpServer->sendContent_P(HTTP_RBT);
+    addButton(webContentBuffer, S_RESTART, PATH_RESET_ESP);
+    addButton(webContentBuffer, S_TOOLS, PATH_TOOLS);
     httpServer->sendContent_P(HTTP_DIV_END);
     httpServer->chunkedResponseFinalize();
 
