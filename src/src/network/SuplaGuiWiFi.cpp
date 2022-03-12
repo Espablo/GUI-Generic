@@ -24,7 +24,7 @@ GUIESPWifi::GUIESPWifi(const char *wifiSsid, const char *wifiPassword) : ESPWifi
     Serial.println(F("WiFi station disconnected"));
   });
 #else
-  WiFi.onEvent(
+  WiFiEventId_t event_gotIP = WiFi.onEvent(
       [](WiFiEvent_t event, WiFiEventInfo_t info) {
         Serial.print(F("local IP: "));
         Serial.println(WiFi.localIP());
@@ -37,10 +37,12 @@ GUIESPWifi::GUIESPWifi(const char *wifiSsid, const char *wifiPassword) : ESPWifi
         Serial.print(rssi);
         Serial.println(F(" dBm"));
       },
-      WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
+      WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
+  (void)(event_gotIP);
 
-  WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) { Serial.println(F("wifi Station disconnected")); },
-               WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
+  WiFiEventId_t event_disconnected = WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) { Serial.println(F("wifi Station disconnected")); },
+                                                  WiFiEvent_t::ARDUINO_EVENT_WIFI_AP_STADISCONNECTED);
+  (void)(event_disconnected);
 #endif
 }
 
