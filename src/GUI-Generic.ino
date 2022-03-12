@@ -281,6 +281,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_PZEM_V_3
+  Supla::Sensor::ElectricityMeter *PZEMv3 = nullptr;
   int8_t pinRX1 = ConfigESP->getGpio(1, FUNCTION_PZEM_RX);
   int8_t pinTX1 = ConfigESP->getGpio(1, FUNCTION_PZEM_TX);
   int8_t pinRX2 = ConfigESP->getGpio(2, FUNCTION_PZEM_RX);
@@ -290,26 +291,27 @@ void setup() {
 
   if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinRX2 != OFF_GPIO && pinTX2 != OFF_GPIO && pinRX3 != OFF_GPIO && pinTX3 != OFF_GPIO) {
 #ifdef ARDUINO_ARCH_ESP32
-    new Supla::Sensor::ThreePhasePZEMv3(&Serial, pinRX1, pinTX1, &Serial1, pinRX2, pinTX2, &Serial2, pinRX3, pinTX3);
+    PZEMv3 = new Supla::Sensor::ThreePhasePZEMv3(&Serial, pinRX1, pinTX1, &Serial1, pinRX2, pinTX2, &Serial2, pinRX3, pinTX3);
 #else
-    new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX2, pinTX2, pinRX3, pinTX3);
+    PZEMv3 = new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX2, pinTX2, pinRX3, pinTX3);
 #endif
   }
   else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO && pinTX2 != OFF_GPIO && pinTX3 != OFF_GPIO) {
 #ifdef ARDUINO_ARCH_ESP32
-    new Supla::Sensor::ThreePhasePZEMv3(&Serial, pinRX1, pinTX1, &Serial1, pinRX1, pinTX2, &Serial2, pinRX1, pinTX3);
+    PZEMv3 = new Supla::Sensor::ThreePhasePZEMv3(&Serial, pinRX1, pinTX1, &Serial1, pinRX1, pinTX2, &Serial2, pinRX1, pinTX3);
 #else
-    auto threePhasePZEMv3 = new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX1, pinTX2, pinRX1, pinTX3);
+    PZEMv3 = new Supla::Sensor::ThreePhasePZEMv3(pinRX1, pinTX1, pinRX1, pinTX2, pinRX1, pinTX3);
 #endif
-    Supla::GUI::addConditionsTurnON(SENSOR_PZEM_V3, threePhasePZEMv3);
-    Supla::GUI::addConditionsTurnOFF(SENSOR_PZEM_V3, threePhasePZEMv3);
   }
   else if (pinRX1 != OFF_GPIO && pinTX1 != OFF_GPIO) {
 #ifdef ARDUINO_ARCH_ESP32
-    auto PZEMv3 = new Supla::Sensor::PZEMv3(&Serial, pinRX1, pinTX1);
+    PZEMv3 = new Supla::Sensor::PZEMv3(&Serial, pinRX1, pinTX1);
 #else
-    auto PZEMv3 = new Supla::Sensor::PZEMv3(pinRX1, pinTX1);
+    PZEMv3 = new Supla::Sensor::PZEMv3(pinRX1, pinTX1);
 #endif
+  }
+
+  if (PZEMv3) {
     Supla::GUI::addConditionsTurnON(SENSOR_PZEM_V3, PZEMv3);
     Supla::GUI::addConditionsTurnOFF(SENSOR_PZEM_V3, PZEMv3);
   }
