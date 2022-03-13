@@ -95,8 +95,6 @@ void setup() {
         Supla::GUI::addButtonBridge(nr);
       }
 #endif
-
-      Supla::GUI::addButtonToRelay(nr);
     }
 
     if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {

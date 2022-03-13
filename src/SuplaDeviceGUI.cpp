@@ -122,6 +122,8 @@ void addRelay(uint8_t nr) {
     if (pinLED != OFF_GPIO) {
       new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
     }
+
+    Supla::GUI::addButtonToRelay(nr);
   }
   delay(0);
 }
