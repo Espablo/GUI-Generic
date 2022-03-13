@@ -25,7 +25,7 @@
 static const char uploadIndex[] PROGMEM =
     R"(<form class="formcenter" method="POST" action="/upload" enctype="multipart/form-data">
          <input type="file" accept=".dat" name="config"></br>
-         <input type="checkbox" name='generateGUIDandAUTHKEY' value='1'>{g}</br></br>
+         <input type="checkbox" style="width:auto;" name='newGUID' value='1' />{g}</br></br>
          <input type="submit" value="{u}">
      </form>)";
 
@@ -37,8 +37,8 @@ void createWebUpload() {
   WebServer->httpServer->on(
       getURL(PATH_UPLOAD), HTTP_POST,
       []() {
-        if (WebServer->httpServer->hasArg("generateGUIDandAUTHKEY")) {
-          if (WebServer->httpServer->arg("generateGUIDandAUTHKEY") == "1") {
+        if (WebServer->httpServer->hasArg("newGUID")) {
+          if (WebServer->httpServer->arg("newGUID") == "1") {
             ConfigManager->setGUIDandAUTHKEY();
             ConfigManager->save();
           }
