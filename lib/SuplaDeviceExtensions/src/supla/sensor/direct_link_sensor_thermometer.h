@@ -50,6 +50,7 @@ class DirectLinksSensorThermometer : public Supla::Sensor::Thermometer {
   bool closeConnection();
   void sendRequest(const char *url);
   void send(const char *url);
+  void iterateAlways();
 
  protected:
   WiFiClient *client;

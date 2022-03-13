@@ -169,5 +169,12 @@ double DirectLinksSensorThermometer::getValue() {
   return _temp;
 }
 
+void DirectLinksSensorThermometer::iterateAlways() {
+  if (millis() - lastReadTime > 20000) {
+    lastReadTime = millis();
+    channel.setNewValue(getValue());
+  }
+}
+
 };  // namespace Sensor
 };  // namespace Supla
