@@ -42,12 +42,6 @@ void setup() {
 
   Serial.begin(74880);
 
-  for (uint8_t t = 4; t > 0; t--) {
-    Serial.printf("[SETUP] WAIT %d...\n", t);
-    Serial.flush();
-    delay(250);
-  }
-
 #ifdef ARDUINO_ARCH_ESP8266
   ESP.wdtDisable();
 #endif

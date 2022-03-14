@@ -458,11 +458,23 @@ SuplaConfigManager::SuplaConfigManager() {
 }
 
 bool SuplaConfigManager::SPIFFSbegin() {
+  for (uint8_t t = 4; t > 0; t--) {
+    if (
 #ifdef ARDUINO_ARCH_ESP8266
-  return SPIFFS.begin();
+        !SPIFFS.begin()
 #elif ARDUINO_ARCH_ESP32
-  return SPIFFS.begin(true);
+        !SPIFFS.begin(true)
 #endif
+    ) {
+      Serial.printf("[SPIFFS] WAIT %d...\n", t);
+      Serial.flush();
+      delay(250);
+    }
+    else {
+      return true;
+    }
+  }
+  return false;
 }
 
 bool SuplaConfigManager::migrationConfig() {
