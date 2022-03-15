@@ -48,7 +48,9 @@ void setup() {
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
-  new ImprovSerialComponent();
+  if (!ConfigESP->checkBusyGpio(3)) {  // GPIO_RX
+    new ImprovSerialComponent();
+  }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
