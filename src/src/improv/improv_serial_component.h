@@ -31,7 +31,6 @@ class ImprovSerialComponent : public Supla::Element {
   ImprovSerialComponent();
   void onInit();
   void iterateAlways();
-  void dump_config();
 
   float get_setup_priority() {
     return 0;
