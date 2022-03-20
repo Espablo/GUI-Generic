@@ -102,8 +102,8 @@ void GUIESPWifi::setup() {
     Serial.println(F("\""));
 
     WiFi.softAPdisconnect(true);
-    WiFi.reconnect();
     WiFi.disconnect(true);
+    WiFi.reconnect();
 
     if (ConfigESP->configModeESP == NORMAL_MODE) {
       WiFi.mode(WIFI_STA);
@@ -123,8 +123,9 @@ void GUIESPWifi::setup() {
         delete client;
         client = nullptr;
       }
-      // WiFi.reconnect(); // This does not reset dhcp
       WiFi.disconnect();
+      WiFi.reconnect();  // This does not reset dhcp
+
       delay(200);  // do not remove, need a delay for disconnect to change status()
 
       retryCount++;
