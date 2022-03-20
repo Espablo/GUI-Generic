@@ -123,7 +123,9 @@ void GUIESPWifi::setup() {
         delete client;
         client = nullptr;
       }
-      WiFi.reconnect();
+      // WiFi.reconnect(); // This does not reset dhcp
+      WiFiDisconnect();
+      delay(200);  // do not remove, need a delay for disconnect to change status()
 
       retryCount++;
       if (retryCount > 4) {
@@ -152,6 +154,19 @@ void GUIESPWifi::enableSSL(bool value) {
     delete client;
     client = nullptr;
   }
+}
+
+// sta disconnect without persistent
+bool GUIESPWifi::WiFiDisconnect() {
+#ifdef ARDUINO_ARCH_ESP8266
+  bool ret;
+  ETS_UART_INTR_DISABLE();  // @todo probably not needed
+  ret = wifi_station_disconnect();
+  ETS_UART_INTR_ENABLE();
+  return ret;
+#elif ARDUINO_ARCH_ESP32
+  return WiFi.disconnect();  // not persistent atm
+#endif
 }
 
 };  // namespace Supla
