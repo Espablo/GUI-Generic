@@ -51,6 +51,15 @@ void ImprovSerialComponent::onInit() {
 }
 
 void ImprovSerialComponent::iterateAlways() {
+  if (this->state_ == improv::STATE_AUTHORIZED || this->state_ == improv::STATE_PROVISIONING) {
+    if (Supla::Network::IsReady()) {
+      this->set_state_(improv::STATE_PROVISIONED);
+
+      std::vector<uint8_t> url = this->build_rpc_settings_response_(improv::WIFI_SETTINGS);
+      this->send_response_(url);
+    }
+  }
+
   if (!this->available_()) {
     return;
   }
@@ -66,15 +75,6 @@ void ImprovSerialComponent::iterateAlways() {
       if (!this->parse_improv_serial_byte_(byte)) {
         this->rx_buffer_.clear();
       }
-    }
-  }
-
-  if (this->state_ == improv::STATE_PROVISIONING || this->state_ == improv::STATE_AUTHORIZED) {
-    if (Supla::Network::IsReady()) {
-      this->set_state_(improv::STATE_PROVISIONED);
-
-      std::vector<uint8_t> url = this->build_rpc_settings_response_(improv::WIFI_SETTINGS);
-      this->send_response_(url);
     }
   }
 }
@@ -166,7 +166,8 @@ bool ImprovSerialComponent::parse_improv_payload_(improv::ImprovCommand &command
 
       Supla::GUI::setupWifi();
 
-      this->set_state_(improv::STATE_PROVISIONING);
+      this->set_state_(improv::STATE_AUTHORIZED);
+      // this->set_state_(improv::STATE_PROVISIONING);
       //  Serial.printf(
       //     "Received Improv wifi settings ssid=%s, password="
       //     "%s",
