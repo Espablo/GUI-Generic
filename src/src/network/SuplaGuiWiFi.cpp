@@ -157,4 +157,18 @@ void GUIESPWifi::enableSSL(bool value) {
   }
 }
 
+void GUIESPWifi::setSsid(const char *wifiSsid) {
+  if (wifiSsid) {
+    wifiConfigured = false;
+    strncpy(ssid, wifiSsid, MAX_SSID_SIZE);
+  }
+}
+
+void GUIESPWifi::setPassword(const char *wifiPassword) {
+  if (wifiPassword) {
+    wifiConfigured = false;
+    strncpy(password, wifiPassword, MAX_WIFI_PASSWORD_SIZE);
+  }
+}
+
 };  // namespace Supla

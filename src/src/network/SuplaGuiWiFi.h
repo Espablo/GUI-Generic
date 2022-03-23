@@ -16,6 +16,8 @@ class GUIESPWifi : public Supla::ESPWifi {
   void setup();
   void setHostName(const char *wifiHostname);
   void enableSSL(bool value);
+  void setSsid(const char *wifiSsid);
+  void setPassword(const char *wifiPassword);
 
  protected:
   char hostname[MAX_HOSTNAME];
