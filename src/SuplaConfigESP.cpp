@@ -464,12 +464,11 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
 }
 
 bool SuplaConfigESP::checkBusyGpio(int gpio) {
-  for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
-    uint8_t key = KEY_GPIO + gpio;
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF) {
-      return true;
-    }
+  uint8_t key = KEY_GPIO + gpio;
+  if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF) {
+    return true;
   }
+  
   return false;
 }
 
