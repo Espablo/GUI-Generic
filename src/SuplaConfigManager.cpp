@@ -800,6 +800,8 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
 
   String GUID_S = ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE);
   String AUTHKEY_S = ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValueHex(SUPLA_AUTHKEY_SIZE);
+  GUID_S.reserve(32);
+  AUTHKEY_S.reserve(32);
 
   if (GUID_S.endsWith("0") || AUTHKEY_S.endsWith("0")) {
     setGUIDandAUTHKEY();
