@@ -786,48 +786,22 @@ bool SuplaConfigManager::setElement(uint8_t key, int index, const char *newvalue
 }
 
 void SuplaConfigManager::setGUIDandAUTHKEY() {
-  char mac[6];
-  int a;
-
   char GUID[SUPLA_GUID_SIZE];
   char AUTHKEY[SUPLA_AUTHKEY_SIZE];
 
   memset(GUID, 0, SUPLA_GUID_SIZE);
   memset(AUTHKEY, 0, SUPLA_AUTHKEY_SIZE);
 
-#ifdef ARDUINO_ARCH_ESP8266
   os_get_random((unsigned char *)GUID, SUPLA_GUID_SIZE);
   os_get_random((unsigned char *)AUTHKEY, SUPLA_AUTHKEY_SIZE);
-#elif ARDUINO_ARCH_ESP32
-  esp_fill_random((unsigned char *)GUID, SUPLA_GUID_SIZE);
-  esp_fill_random((unsigned char *)AUTHKEY, SUPLA_AUTHKEY_SIZE);
-#endif
-
-#ifdef ARDUINO_ARCH_ESP8266
-  wifi_get_macaddr(SOFTAP_IF, (unsigned char *)mac);
-#elif ARDUINO_ARCH_ESP32
-  esp_wifi_get_mac(WIFI_IF_AP, (unsigned char *)mac);
-#endif
-
-  for (a = 0; a < 6; a++) GUID[a] = (GUID[a] * mac[a]) % 255;
-
-  for (a = 0; a < SUPLA_GUID_SIZE; a++) {
-#ifdef ARDUINO_ARCH_ESP8266
-    GUID[a] = (GUID[a] + system_get_time() + spi_flash_get_id() + system_get_chip_id() + system_get_rtc_time()) % 255;
-#elif ARDUINO_ARCH_ESP32
-    struct timeval now;
-    gettimeofday(&now, NULL);
-
-    GUID[a] = (GUID[a] + now.tv_usec + ((uint32_t)(clock() * 1000 / CLOCKS_PER_SEC))) % 255;
-#endif
-  }
-
-  a = SUPLA_GUID_SIZE > SUPLA_AUTHKEY_SIZE ? SUPLA_AUTHKEY_SIZE : SUPLA_GUID_SIZE;
-  a--;
-  for (; a > 0; a--) {
-    AUTHKEY[a] += GUID[a];
-  }
 
   this->set(KEY_SUPLA_GUID, GUID);
   this->set(KEY_SUPLA_AUTHKEY, AUTHKEY);
+
+  String GUID_S = ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE);
+  String AUTHKEY_S = ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValueHex(SUPLA_AUTHKEY_SIZE);
+
+  if (GUID_S.endsWith("0") || AUTHKEY_S.endsWith("0")) {
+    setGUIDandAUTHKEY();
+  }
 }
