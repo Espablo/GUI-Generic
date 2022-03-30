@@ -249,6 +249,12 @@ void setup() {
 #endif
 #endif
 
+#ifdef SUPLA_VINDRIKTNING_IKEA
+  if (ConfigESP->getGpio(FUNCTION_VINDRIKTNING_IKEA) != OFF_GPIO) {
+    new Supla::Sensor::VindriktningIkea(ConfigESP->getGpio(FUNCTION_VINDRIKTNING_IKEA));
+  }
+#endif
+
 #ifdef SUPLA_RGBW
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     Supla::GUI::addRGBWLeds(nr);

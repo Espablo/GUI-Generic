@@ -142,6 +142,12 @@ void handleOther(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_VINDRIKTNING_IKEA
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("VINDRIKTNING IKEA"));
+  addListGPIOBox(webContentBuffer, INPUT_VINDRIKTNING_IKEA_RX, F("RX"), FUNCTION_VINDRIKTNING_IKEA);
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
 #ifdef SUPLA_RGBW
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_RGBW_RGB_DIMMER);
   addNumberBox(webContentBuffer, INPUT_RGBW_MAX, S_QUANTITY, KEY_MAX_RGBW, ConfigESP->countFreeGpio());
@@ -271,6 +277,13 @@ void handleOtherSave() {
     return;
   }
   ConfigManager->set(KEY_HC_SR04_MAX_SENSOR_READ, WebServer->httpServer->arg(INPUT_HC_SR04_MAX_SENSOR_READ).c_str());
+#endif
+
+#ifdef SUPLA_VINDRIKTNING_IKEA
+  if (!WebServer->saveGPIO(INPUT_VINDRIKTNING_IKEA_RX, FUNCTION_VINDRIKTNING_IKEA)) {
+    handleOther(6);
+    return;
+  }
 #endif
 
 #ifdef SUPLA_RGBW

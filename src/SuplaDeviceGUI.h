@@ -170,6 +170,10 @@
 #include "src/improv/improv_serial_component.h"
 #include "src/network/SuplaGuiWiFi.h"
 
+#ifdef SUPLA_VINDRIKTNING_IKEA
+#include "src/sensor/VindriktningIkea.h"
+#endif
+
 namespace Supla {
 namespace GUI {
 

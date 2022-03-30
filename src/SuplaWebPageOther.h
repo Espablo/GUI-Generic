@@ -19,7 +19,7 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_HC_SR04)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_VINDRIKTNING_IKEA)
 #define GUI_SENSOR_OTHER
 #endif
 
@@ -79,6 +79,10 @@ void handleCounterCalibrateSave();
 #define INPUT_PZEM_TX "iptx"
 #endif
 
+#ifdef SUPLA_VINDRIKTNING_IKEA
+#define INPUT_VINDRIKTNING_IKEA_RX "ivirx"
+#endif
+
 #ifdef SUPLA_RGBW
 #define INPUT_RGBW_MAX              "rgbwm"
 #define INPUT_RGBW_RED              "rgbwr"
@@ -117,4 +121,5 @@ void handleCounterCalibrateSave();
 
 void receiveCodeRFBridge();
 #endif
+
 #endif  // SuplaWebPageOther_h
