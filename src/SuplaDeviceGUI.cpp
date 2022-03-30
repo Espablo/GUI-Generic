@@ -607,8 +607,8 @@ void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, 
       // client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
-        case CONDITION_TOTAL_POWER_APPARENT:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerApparentVA()));
+        case CONDITION_VOLTAGE:
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmVoltage()));
           break;
         case CONDITION_TOTAL_CURRENT:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmTotalCurrent()));
@@ -617,8 +617,8 @@ void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, 
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerActiveW()));
           break;
 
-        case CONDITION_TOTAL_POWER_APPARENT_OPPOSITE:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerApparentVA()));
+        case CONDITION_VOLTAGE_OPPOSITE:
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, EmVoltage()));
           break;
         case CONDITION_TOTAL_CURRENT_OPPOSITE:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalCurrent()));
@@ -647,7 +647,7 @@ void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client,
       //   client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
-        case CONDITION_TOTAL_POWER_APPARENT:
+        case CONDITION_VOLTAGE:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerApparentVA()));
           break;
         case CONDITION_TOTAL_CURRENT:
@@ -657,7 +657,7 @@ void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client,
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerActiveW()));
           break;
 
-        case CONDITION_TOTAL_POWER_APPARENT_OPPOSITE:
+        case CONDITION_VOLTAGE_OPPOSITE:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerApparentVA()));
           break;
         case CONDITION_TOTAL_CURRENT_OPPOSITE:
