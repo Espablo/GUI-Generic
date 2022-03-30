@@ -648,7 +648,7 @@ void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client,
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
         case CONDITION_VOLTAGE:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerApparentVA()));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmVoltage()));
           break;
         case CONDITION_TOTAL_CURRENT:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalCurrent()));
@@ -658,7 +658,7 @@ void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client,
           break;
 
         case CONDITION_VOLTAGE_OPPOSITE:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerApparentVA()));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, EmVoltage()));
           break;
         case CONDITION_TOTAL_CURRENT_OPPOSITE:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, EmTotalCurrent()));
