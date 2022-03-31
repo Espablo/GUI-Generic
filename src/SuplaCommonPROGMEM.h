@@ -373,18 +373,12 @@ enum sensorList
   SENSOR_CSE7766,
   SENSOR_BINARY,
   SENSOR_MAX31855,
+  SENSOR_VINDRIKTNING_IKEA,
   COUNT_SENSOR_LIST
 };
 
-#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF) || defined(SUPLA_HC_SR04) || \
-    defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_MAX6675) || defined(SUPLA_NTC_10K) ||       \
-    defined(SUPLA_BMP280) || defined(SUPLA_MPX_5XXX) || defined(SUPLA_ANALOG_READING_MAP) || defined(SUPLA_VL53L0X) ||                  \
-    defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_HDC1080)
+#if defined(GUI_SENSOR_SPI) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_OTHER)
 #define GUI_ALL_SENSOR
-#endif
-
-#if defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_CSE7766)
-#define GUI_ALL_ENERGY_COUNTER
 #endif
 
 #ifdef SUPLA_CONDITIONS
@@ -398,7 +392,7 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
     S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
 
-#ifdef GUI_ALL_ENERGY_COUNTER
+#ifdef GUI_OTHER_ENERGY
     "ON > Napięcie[V] > OFF",
     "ON > Natężenie[A] > OFF",
     "ON > Moc czynna[W] > OFF",
@@ -410,7 +404,7 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #else
     S_EMPTY,
 #endif
-#ifdef GUI_ALL_ENERGY_COUNTER
+#ifdef GUI_OTHER_ENERGY
     "ON < Napięcie[V] < OFF",
     "ON < Natężenie[A] < OFF",
     "ON < Moc czynna[W] < OFF",
@@ -524,6 +518,11 @@ const char* const SENSOR_LIST_P[] PROGMEM = {
 #endif
 #ifdef SUPLA_MAX31855
     S_MAX31855,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_VINDRIKTNING_IKEA
+    S_VINDRIKTNING_IKEA,
 #else
     S_EMPTY,
 #endif

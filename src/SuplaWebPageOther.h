@@ -19,12 +19,16 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_VINDRIKTNING_IKEA)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_VINDRIKTNING_IKEA)
 #define GUI_SENSOR_OTHER
 #endif
 
-#if defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER) || \
-    defined(GUI_SENSOR_OTHER) || defined(SUPLA_CSE7766) || defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_RF_BRIDGE)
+#if defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_CSE7766)
+#define GUI_OTHER_ENERGY
+#endif
+
+#if defined(GUI_SENSOR_OTHER) || defined(GUI_OTHER_ENERGY) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER) || \
+    defined(SUPLA_RF_BRIDGE)
 #define GUI_OTHER
 #endif
 

@@ -143,7 +143,7 @@ void handleOther(int save) {
 #endif
 
 #ifdef SUPLA_VINDRIKTNING_IKEA
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("VINDRIKTNING IKEA"));
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_VINDRIKTNING_IKEA);
   addListGPIOBox(webContentBuffer, INPUT_VINDRIKTNING_IKEA_RX, F("RX"), FUNCTION_VINDRIKTNING_IKEA);
   addFormHeaderEnd(webContentBuffer);
 #endif
