@@ -252,8 +252,8 @@ void setup() {
 #ifdef SUPLA_VINDRIKTNING_IKEA
   if (ConfigESP->getGpio(FUNCTION_VINDRIKTNING_IKEA) != OFF_GPIO) {
     auto vindriktningIkea = new Supla::Sensor::VindriktningIkea(ConfigESP->getGpio(FUNCTION_VINDRIKTNING_IKEA));
-    Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX, vindriktningIkea);
-    Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX, vindriktningIkea);
+    Supla::GUI::addConditionsTurnON(SENSOR_VINDRIKTNING_IKEA, vindriktningIkea);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_VINDRIKTNING_IKEA, vindriktningIkea);
   }
 #endif
 
