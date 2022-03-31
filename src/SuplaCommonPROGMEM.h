@@ -374,6 +374,7 @@ enum sensorList
   SENSOR_BINARY,
   SENSOR_MAX31855,
   SENSOR_VINDRIKTNING_IKEA,
+  SENSOR_PMSX003,
   COUNT_SENSOR_LIST
 };
 
@@ -523,6 +524,11 @@ const char* const SENSOR_LIST_P[] PROGMEM = {
 #endif
 #ifdef SUPLA_VINDRIKTNING_IKEA
     S_VINDRIKTNING_IKEA,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_PMSX003
+    S_PMSX003,
 #else
     S_EMPTY,
 #endif

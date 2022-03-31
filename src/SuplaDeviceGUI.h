@@ -174,6 +174,8 @@
 #include "src/sensor/VindriktningIkea.h"
 #endif
 
+#include "src/sensor/PMSx003.h"
+
 namespace Supla {
 namespace GUI {
 

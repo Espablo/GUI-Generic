@@ -31,6 +31,7 @@
 #define S_MPX_5XXX          "MPX 5XXX"
 #define S_MPX_5XXX_PERCENT  "MPX 5XXX - chanel[%]"
 #define S_VINDRIKTNING_IKEA "VINDRIKTNING Ikea"
+#define S_PMSX003           "PMSX003"
 
 //### PIN codes not translated ###
 #define S_D0  "D0"

@@ -257,6 +257,14 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_PMSX003
+  if (ConfigESP->getGpio(FUNCTION_PMSX003_RX) != OFF_GPIO) {
+    auto pms = new Supla::Sensor::PMSx003(ConfigESP->getGpio(FUNCTION_PMSX003_RX));
+    Supla::GUI::addConditionsTurnON(SENSOR_PMSX003, pms);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_PMSX003, pms);
+  }
+#endif
+
 #ifdef SUPLA_RGBW
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     Supla::GUI::addRGBWLeds(nr);

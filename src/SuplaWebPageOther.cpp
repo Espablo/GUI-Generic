@@ -148,6 +148,12 @@ void handleOther(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_PMSX003
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_PMSX003);
+  addListGPIOBox(webContentBuffer, INPUT_PMSX003_RX, F("RX"), FUNCTION_PMSX003_RX);
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
 #ifdef SUPLA_RGBW
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_RGBW_RGB_DIMMER);
   addNumberBox(webContentBuffer, INPUT_RGBW_MAX, S_QUANTITY, KEY_MAX_RGBW, ConfigESP->countFreeGpio());
@@ -281,6 +287,13 @@ void handleOtherSave() {
 
 #ifdef SUPLA_VINDRIKTNING_IKEA
   if (!WebServer->saveGPIO(INPUT_VINDRIKTNING_IKEA_RX, FUNCTION_VINDRIKTNING_IKEA)) {
+    handleOther(6);
+    return;
+  }
+#endif
+
+#ifdef SUPLA_PMSX003
+  if (!WebServer->saveGPIO(INPUT_PMSX003_RX, FUNCTION_PMSX003_RX)) {
     handleOther(6);
     return;
   }
