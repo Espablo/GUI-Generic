@@ -23,18 +23,11 @@ namespace Supla {
 namespace Sensor {
 PMSx003::PMSx003(int8_t pin_rx, int8_t pin_tx) {
   pms = new SerialPM(PLANTOWER_AUTO, pin_rx, pin_tx);
-  Serial.println(F("Booted"));
-
-  Serial.println(F("PMS sensor on SWSerial"));
-  Serial.print(F("  RX:"));
-  Serial.println(pin_rx);
-  Serial.print(F("  TX:"));
-  Serial.println(pin_tx);
   pms->init();
 }
 
 void PMSx003::iterateAlways() {
-  if (millis() - lastReadTime > 10000) {
+  if (millis() - lastReadTime > 30000) {
     lastReadTime = millis();
     pms->read();
 
