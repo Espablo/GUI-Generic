@@ -528,7 +528,7 @@ const char* const SENSOR_LIST_P[] PROGMEM = {
     S_EMPTY,
 #endif
 #ifdef SUPLA_PMSX003
-    S_PMSX003,
+    S_PMSX003_PM25,
 #else
     S_EMPTY,
 #endif

@@ -260,8 +260,12 @@ void setup() {
 #ifdef SUPLA_PMSX003
   if (ConfigESP->getGpio(FUNCTION_PMSX003_RX) != OFF_GPIO) {
     auto pms = new Supla::Sensor::PMSx003(ConfigESP->getGpio(FUNCTION_PMSX003_RX));
-    Supla::GUI::addConditionsTurnON(SENSOR_PMSX003, pms);
-    Supla::GUI::addConditionsTurnOFF(SENSOR_PMSX003, pms);
+    new Supla::Sensor::PMS_PM01(pms);
+    auto pmsPM25 = new Supla::Sensor::PMS_PM25(pms);
+    new Supla::Sensor::PMS_PM10(pms);
+
+    Supla::GUI::addConditionsTurnON(SENSOR_PMSX003, pmsPM25);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_PMSX003, pmsPM25);
   }
 #endif
 

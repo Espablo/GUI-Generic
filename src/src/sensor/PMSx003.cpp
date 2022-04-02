@@ -17,45 +17,43 @@
 
 #include "PMSx003.h"
 
-SerialPM *pms;
-
 namespace Supla {
 namespace Sensor {
 PMSx003::PMSx003(int8_t pin_rx, int8_t pin_tx) {
-  pms = new SerialPM(PLANTOWER_AUTO, pin_rx, pin_tx);
-  pms->init();
+  sensor = new SerialPM(PLANTOWER_AUTO, pin_rx, pin_tx);
+  sensor->init();
 }
 
 void PMSx003::iterateAlways() {
   if (millis() - lastReadTime > 30000) {
     lastReadTime = millis();
-    pms->read();
+    sensor->read();
 
-    switch (pms->status) {
-      case pms->OK:  // should never come here
-        break;       // included to compile without warnings
-      case pms->ERROR_TIMEOUT:
+    switch (sensor->status) {
+      case this->sensor->OK:  // should never come here
+        break;             // included to compile without warnings
+      case this->sensor->ERROR_TIMEOUT:
         Serial.println(F(PMS_ERROR_TIMEOUT));
         break;
-      case pms->ERROR_MSG_UNKNOWN:
+      case this->sensor->ERROR_MSG_UNKNOWN:
         Serial.println(F(PMS_ERROR_MSG_UNKNOWN));
         break;
-      case pms->ERROR_MSG_HEADER:
+      case this->sensor->ERROR_MSG_HEADER:
         Serial.println(F(PMS_ERROR_MSG_HEADER));
         break;
-      case pms->ERROR_MSG_BODY:
+      case this->sensor->ERROR_MSG_BODY:
         Serial.println(F(PMS_ERROR_MSG_BODY));
         break;
-      case pms->ERROR_MSG_START:
+      case this->sensor->ERROR_MSG_START:
         Serial.println(F(PMS_ERROR_MSG_START));
         break;
-      case pms->ERROR_MSG_LENGTH:
+      case this->sensor->ERROR_MSG_LENGTH:
         Serial.println(F(PMS_ERROR_MSG_LENGTH));
         break;
-      case pms->ERROR_MSG_CKSUM:
+      case this->sensor->ERROR_MSG_CKSUM:
         Serial.println(F(PMS_ERROR_MSG_CKSUM));
         break;
-      case pms->ERROR_PMS_TYPE:
+      case this->sensor->ERROR_PMS_TYPE:
         Serial.println(F(PMS_ERROR_PMS_TYPE));
         break;
     }
@@ -63,46 +61,47 @@ void PMSx003::iterateAlways() {
 }
 
 void PMSx003::onInit() {
-  new PMS_PM01();
-  new PMS_PM25();
-  new PMS_PM10();
+  sensor->read();
 }
 
-PMS_PM01::PMS_PM01() {
+PMS_PM01::PMS_PM01(PMSx003 *sensor) {
+  pmsx003 = sensor;
 }
 
 double PMS_PM01::getValue() {
   double value = TEMPERATURE_NOT_AVAILABLE;
-  if (pms->status == pms->OK) {
+  if (pmsx003->sensor->status == pmsx003->sensor->OK) {
     Serial.print(F("PM1.0 "));
-    Serial.println(pms->pm01);
-    value = pms->pm01;
+    Serial.println(pmsx003->sensor->pm01);
+    value = pmsx003->sensor->pm01;
   }
   return value;
 }
 
-PMS_PM25::PMS_PM25() {
+PMS_PM25::PMS_PM25(PMSx003 *sensor) {
+  pmsx003 = sensor;
 }
 
 double PMS_PM25::getValue() {
   double value = TEMPERATURE_NOT_AVAILABLE;
-  if (pms->status == pms->OK) {
+  if (pmsx003->sensor->status == pmsx003->sensor->OK) {
     Serial.print(F("PM2.5"));
-    Serial.println(pms->pm25);
-    value = pms->pm25;
+    Serial.println(pmsx003->sensor->pm25);
+    value = pmsx003->sensor->pm25;
   }
   return value;
 }
 
-PMS_PM10::PMS_PM10() {
+PMS_PM10::PMS_PM10(PMSx003 *sensor) {
+  pmsx003 = sensor;
 }
 
 double PMS_PM10::getValue() {
   double value = TEMPERATURE_NOT_AVAILABLE;
-  if (pms->status == pms->OK) {
-    Serial.print(F("PM1.0"));
-    Serial.println(pms->pm10);
-    value = pms->pm10;
+  if (pmsx003->sensor->status == pmsx003->sensor->OK) {
+    Serial.print(F("PM10"));
+    Serial.println(pmsx003->sensor->pm10);
+    value = pmsx003->sensor->pm10;
   }
   return value;
 }
