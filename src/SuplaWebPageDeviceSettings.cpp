@@ -24,44 +24,11 @@ void createWebPageDeviceSettings() {
 
     if (WebServer->httpServer->method() == HTTP_GET)
       handleDeviceSettings();
-    else
-      handleDeviceSettingsSave();
   });
 }
 
-void handleDeviceSettings(int save) {
+void handleDeviceSettings() {
   WebServer->sendHeaderStart();
-
-  webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_DEVICE_SETTINGS);
-
-#ifdef TEMPLATE_BOARD_JSON
-  addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
-  addFormHeader(webContentBuffer, S_DEFAULT_TEMPLATE_BOARD);
-  addTextBox(webContentBuffer, INPUT_BOARD, F("JSON"), F(""), 0, 200, false);
-  webContentBuffer += F("<style>input[name='board']{padding-left: 48px;width: calc(100% - 52px);}</style>");
-  webContentBuffer += F("<p style='color:#000;'>");
-  webContentBuffer += Supla::TanplateBoard::templateBoardWarning;
-  webContentBuffer += F("</p>");
-  addFormHeaderEnd(webContentBuffer);
-  addButtonSubmit(webContentBuffer, S_LOAD_CONFIGURATION);
-  addFormEnd(webContentBuffer);
-#elif defined(TEMPLATE_BOARD_OLD)
-#if (DEFAULT_TEMPLATE_BOARD == BOARD_OFF)
-  addForm(webContentBuffer, F("post"), PATH_DEVICE_SETTINGS);
-  addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
-  uint8_t selected = ConfigManager->get(KEY_BOARD)->getValueInt();
-  addListBox(webContentBuffer, INPUT_BOARD, S_TYPE, BOARD_P, MAX_MODULE, selected);
-  addFormHeaderEnd(webContentBuffer);
-  addButtonSubmit(webContentBuffer, S_SAVE);
-  addFormEnd(webContentBuffer);
-#else
-  addFormHeader(webContentBuffer, S_DEFAULT_TEMPLATE_BOARD);
-  addLabel(webContentBuffer, FPSTR(BOARD_P[DEFAULT_TEMPLATE_BOARD]));
-  addFormHeaderEnd(webContentBuffer);
-#endif
-#endif
-
   addFormHeader(webContentBuffer, S_DEVICE_SETTINGS);
 #if defined(SUPLA_RELAY)
   addButton(webContentBuffer, S_RELAYS, PATH_RELAY);
@@ -106,24 +73,4 @@ void handleDeviceSettings(int save) {
   addButton(webContentBuffer, S_RETURN, "");
 
   WebServer->sendHeaderEnd();
-}
-
-void handleDeviceSettingsSave() {
-#ifdef TEMPLATE_BOARD_JSON
-  Supla::TanplateBoard::chooseTemplateBoard(WebServer->httpServer->arg(INPUT_BOARD).c_str());
-#elif defined(TEMPLATE_BOARD_OLD)
-  if (strcmp(WebServer->httpServer->arg(INPUT_BOARD).c_str(), "") != 0) {
-    chooseTemplateBoard(WebServer->httpServer->arg(INPUT_BOARD).toInt());
-    Supla::Storage::ScheduleSave(2000);
-  }
-#endif
-
-  switch (ConfigManager->save()) {
-    case E_CONFIG_OK:
-      handleDeviceSettings(1);
-      break;
-    case E_CONFIG_FILE_OPEN:
-      handleDeviceSettings(2);
-      break;
-  }
 }

@@ -131,6 +131,12 @@ void addTextBox(
   return addTextBox(html, input_id, name, value, "", minlength, maxlength, required, readonly, false);
 }
 
+void addTextBox(String& html, const String& value) {
+  html += F("<style><input[name='board']{padding-left: 48px;width: calc(100% - 52px);}</style>");
+  html += F("<p style='color:#000;'>");
+  html += value;
+  html += F("</p>");
+}
 void addTextBoxPassword(String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required) {
   return addTextBox(html, input_id, name, value_key, "", minlength, maxlength, required, false, true);
 }

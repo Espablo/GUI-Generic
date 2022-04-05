@@ -63,6 +63,8 @@ void addTextBox(String& html,
                 bool required,
                 bool readonly = false);
 
+void addTextBox(String& html, const String& value);
+
 void addTextBoxPassword(String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required);
 
 void addCheckBox(String& html, const String& input_id, const String& name, bool checked);
