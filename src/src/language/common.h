@@ -4,6 +4,9 @@
 
 #define S_SPACE " "
 
+#define S_RX "RX"
+#define S_TX "TX"
+
 //### Category codes not translated ###
 #define S_I2C "i2c"
 #define S_SPI "SPI"

@@ -89,6 +89,7 @@ void handleCounterCalibrateSave();
 
 #ifdef SUPLA_PMSX003
 #define INPUT_PMSX003_RX "iprx"
+#define INPUT_PMSX003_TX "iptx"
 #endif
 
 #ifdef SUPLA_RGBW

@@ -110,7 +110,7 @@ void handleOther(int save) {
 
 #ifdef SUPLA_CSE7766
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("CSE7766"));
-  addListGPIOBox(webContentBuffer, INPUT_CSE7766_RX, F("RX"), FUNCTION_CSE7766_RX);
+  addListGPIOBox(webContentBuffer, INPUT_CSE7766_RX, S_RX, FUNCTION_CSE7766_RX);
   if (ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
     float count = Supla::GUI::counterCSE7766->getCounter();
     addNumberBox(webContentBuffer, INPUT_COUNTER_CHANGE_VALUE_CSE7766, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
@@ -144,13 +144,14 @@ void handleOther(int save) {
 
 #ifdef SUPLA_VINDRIKTNING_IKEA
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_VINDRIKTNING_IKEA);
-  addListGPIOBox(webContentBuffer, INPUT_VINDRIKTNING_IKEA_RX, F("RX"), FUNCTION_VINDRIKTNING_IKEA);
+  addListGPIOBox(webContentBuffer, INPUT_VINDRIKTNING_IKEA_RX, S_RX, FUNCTION_VINDRIKTNING_IKEA);
   addFormHeaderEnd(webContentBuffer);
 #endif
 
 #ifdef SUPLA_PMSX003
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_PMSX003);
-  addListGPIOBox(webContentBuffer, INPUT_PMSX003_RX, F("RX"), FUNCTION_PMSX003_RX);
+  addListGPIOBox(webContentBuffer, INPUT_PMSX003_RX, S_RX, FUNCTION_PMSX003_RX);
+  addListGPIOBox(webContentBuffer, INPUT_PMSX003_TX, S_TX, FUNCTION_PMSX003_TX);
   addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -204,8 +205,8 @@ void handleOther(int save) {
 
 #ifdef SUPLA_RF_BRIDGE
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("RF BRIDGE"));
-  addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_TX, F("TX"), FUNCTION_RF_BRIDGE_TRANSMITTER);
-  addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_RX, F("RX"), FUNCTION_RF_BRIDGE_RECEIVE);
+  addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_TX, S_TX, FUNCTION_RF_BRIDGE_TRANSMITTER);
+  addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_RX, S_RX, FUNCTION_RF_BRIDGE_RECEIVE);
   if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE) != OFF_GPIO) {
     addLinkBox(webContentBuffer, String(S_CALIBRATION) + S_SPACE + S_CODES, PATH_BRIDGE);
   }
@@ -293,7 +294,7 @@ void handleOtherSave() {
 #endif
 
 #ifdef SUPLA_PMSX003
-  if (!WebServer->saveGPIO(INPUT_PMSX003_RX, FUNCTION_PMSX003_RX)) {
+  if (!WebServer->saveGPIO(INPUT_PMSX003_RX, FUNCTION_PMSX003_RX) || !WebServer->saveGPIO(INPUT_PMSX003_TX, FUNCTION_PMSX003_TX)) {
     handleOther(6);
     return;
   }

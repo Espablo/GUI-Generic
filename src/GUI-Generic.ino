@@ -258,8 +258,8 @@ void setup() {
 #endif
 
 #ifdef SUPLA_PMSX003
-  if (ConfigESP->getGpio(FUNCTION_PMSX003_RX) != OFF_GPIO) {
-    auto pms = new Supla::Sensor::PMSx003(ConfigESP->getGpio(FUNCTION_PMSX003_RX));
+  if (ConfigESP->getGpio(FUNCTION_PMSX003_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_PMSX003_TX) != OFF_GPIO) {
+    auto pms = new Supla::Sensor::PMSx003(ConfigESP->getGpio(FUNCTION_PMSX003_RX), ConfigESP->getGpio(FUNCTION_PMSX003_TX) != OFF_GPIO);
     new Supla::Sensor::PMS_PM01(pms);
     auto pmsPM25 = new Supla::Sensor::PMS_PM25(pms);
     new Supla::Sensor::PMS_PM10(pms);

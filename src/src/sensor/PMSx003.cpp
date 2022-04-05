@@ -25,13 +25,13 @@ PMSx003::PMSx003(int8_t pin_rx, int8_t pin_tx) {
 }
 
 void PMSx003::iterateAlways() {
-  if (millis() - lastReadTime > 30000) {
+  if (millis() - lastReadTime > 60000) {
     lastReadTime = millis();
     sensor->read();
 
     switch (sensor->status) {
       case this->sensor->OK:  // should never come here
-        break;             // included to compile without warnings
+        break;                // included to compile without warnings
       case this->sensor->ERROR_TIMEOUT:
         Serial.println(F(PMS_ERROR_TIMEOUT));
         break;
