@@ -50,11 +50,16 @@ void handlePageHome(int save) {
   webContentBuffer += SuplaJavaScript();
 
   addForm(webContentBuffer, F("post"));
+
+#ifdef SUPLA_ETH_LAN8720
+
+#else
   addFormHeader(webContentBuffer, S_SETTING_WIFI_SSID);
   addTextBox(webContentBuffer, INPUT_WIFI_SSID, S_WIFI_SSID, KEY_WIFI_SSID, 0, MAX_SSID, true);
   addTextBoxPassword(webContentBuffer, INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, 0, MAX_PASSWORD, false);
   addTextBox(webContentBuffer, INPUT_HOSTNAME, S_HOST_NAME, KEY_HOST_NAME, 0, MAX_HOSTNAME, true);
   addFormHeaderEnd(webContentBuffer);
+#endif
 
   addFormHeader(webContentBuffer, S_SETTING_SUPLA);
   addTextBox(webContentBuffer, INPUT_SERVER, S_SUPLA_SERVER, KEY_SUPLA_SERVER, DEFAULT_SERVER, 0, MAX_SUPLA_SERVER, true);
