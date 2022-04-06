@@ -210,7 +210,13 @@ class ESPETH : public Supla::Network {
       channelState.Fields |= SUPLA_CHANNELSTATE_FIELD_IPV4 |
                              SUPLA_CHANNELSTATE_FIELD_MAC;
       channelState.IPv4 = ETH.localIP();
-      ETH.macAddress(channelState.MAC);      // ESP core 2.0.2
+#if defined(ESP_ARDUINO_VERSION)
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(2, 0, 0)
+      ETH.macAddress(channelState.MAC);
+#endif
+#else
+      esp_eth_get_mac(channelState.MAC);
+#endif
     }
 
   protected:
