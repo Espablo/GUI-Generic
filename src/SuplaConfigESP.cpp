@@ -154,8 +154,8 @@ void SuplaConfigESP::configModeInit(WiFiMode_t m) {
   APConfigured = false;
   ledBlinking(100);
 
-  Supla::GUI::enableWifiSSL(false);
-  Supla::GUI::setupWifi();
+  Supla::GUI::enableConnectionSSL(false);
+  Supla::GUI::setupConnection();
   WiFi.mode(m);
 
   Serial.print(F("Config Mode started: "));

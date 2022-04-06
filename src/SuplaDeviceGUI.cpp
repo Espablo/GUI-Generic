@@ -26,8 +26,8 @@ Supla::Eeprom eeprom(STORAGE_OFFSET);
 namespace Supla {
 namespace GUI {
 void begin() {
-  setupWifi();
-  enableWifiSSL(ConfigESP->checkSSL());
+  setupConnection();
+  enableConnectionSSL(ConfigESP->checkSSL());
 
   SuplaDevice.setName(ConfigManager->get(KEY_HOST_NAME)->getValue());
 
@@ -51,7 +51,12 @@ void begin() {
     crateWebServer();
 }
 
-void setupWifi() {
+void setupConnection() {
+#ifdef SUPLA_ETH_LAN8720
+  if (eth == nullptr) {
+    eth = new Supla::ESPETH(1);  // uint_t ETH_ADDR = I²C-address of Ethernet PHY (0 or 1)
+  }
+#else
   if (wifi) {
     wifi->setSsid(ConfigManager->get(KEY_WIFI_SSID)->getValue());
     wifi->setPassword(ConfigManager->get(KEY_WIFI_PASS)->getValue());
@@ -64,9 +69,23 @@ void setupWifi() {
   String suplaHostname = ConfigManager->get(KEY_HOST_NAME)->getValue();
   suplaHostname.replace(" ", "_");
   wifi->setHostName(suplaHostname.c_str());
+
+#endif
 }
 
-void enableWifiSSL(bool value) {
+void enableConnectionSSL(bool value) {
+#ifdef SUPLA_ETH_LAN8720
+
+  if (eth) {
+    if (ConfigESP->configModeESP == CONFIG_MODE) {
+      eth->enableSSL(false);
+    }
+    else {
+      eth->enableSSL(value);
+    }
+  }
+
+#else
   if (wifi) {
     if (ConfigESP->configModeESP == CONFIG_MODE) {
       wifi->enableSSL(false);
@@ -75,6 +94,7 @@ void enableWifiSSL(bool value) {
       wifi->enableSSL(value);
     }
   }
+#endif
 }
 
 void crateWebServer() {
@@ -746,4 +766,8 @@ Supla::Sensor::AnalogRedingMap **analog = nullptr;
 SuplaConfigManager *ConfigManager = nullptr;
 SuplaConfigESP *ConfigESP = nullptr;
 SuplaWebServer *WebServer = nullptr;
+#ifdef SUPLA_ETH_LAN8720
+Supla::ESPETH *eth = nullptr;
+#else
 Supla::GUIESPWifi *wifi = nullptr;
+#endif

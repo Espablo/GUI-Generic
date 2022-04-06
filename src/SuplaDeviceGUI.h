@@ -176,12 +176,16 @@
 
 #include "src/sensor/PMSx003.h"
 
+#ifdef SUPLA_ETH_LAN8720
+#include <supla/network/esp32eth.h>
+#endif
+
 namespace Supla {
 namespace GUI {
 
 void begin();
-void setupWifi();
-void enableWifiSSL(bool value);
+void setupConnection();
+void enableConnectionSSL(bool value);
 void crateWebServer();
 
 #if defined(SUPLA_RELAY)
@@ -269,6 +273,10 @@ extern Supla::Sensor::AnalogRedingMap **analog;
 extern SuplaConfigManager *ConfigManager;
 extern SuplaConfigESP *ConfigESP;
 extern SuplaWebServer *WebServer;
+#ifdef SUPLA_ETH_LAN8720
+extern Supla::ESPETH *eth;
+#else
 extern Supla::GUIESPWifi *wifi;
+#endif
 
 #endif  // SuplaDeviceGUI_h

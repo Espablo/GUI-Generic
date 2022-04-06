@@ -164,7 +164,7 @@ bool ImprovSerialComponent::parse_improv_payload_(improv::ImprovCommand &command
       ConfigManager->set(KEY_WIFI_PASS, command.password.c_str());
       ConfigManager->save();
 
-      Supla::GUI::setupWifi();
+      Supla::GUI::setupConnection();
 
       this->set_state_(improv::STATE_AUTHORIZED);
       // this->set_state_(improv::STATE_PROVISIONING);
