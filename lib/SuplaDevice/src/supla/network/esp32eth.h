@@ -163,14 +163,30 @@ class ESPETH : public Supla::Network {
         Serial.println(F("Mbps"));
         eth_connected = true;
       },
-      WiFiEvent_t::ARDUINO_EVENT_ETH_GOT_IP);   // ESP core 2.0.2
+      
+#if defined(ESP_ARDUINO_VERSION)
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(2, 0, 0)
+          WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
+#endif
+#else
+          WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
+#endif
+
       (void)(event_gotIP);
       WiFiEventId_t event_disconnected = WiFi.onEvent(
       [](WiFiEvent_t event, WiFiEventInfo_t info) {
         Serial.println(F("Station disconnected"));
         eth_connected = false;
       },
-      WiFiEvent_t::ARDUINO_EVENT_ETH_DISCONNECTED);   // ESP core 2.0.2
+
+#if defined(ESP_ARDUINO_VERSION)
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(2, 0, 0)
+          WiFiEvent_t::ARDUINO_EVENT_WIFI_AP_STADISCONNECTED);
+#endif
+#else
+          WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
+#endif
+
       (void)(event_disconnected);
       Serial.println(F("establishing Lan connection"));
       ETH.begin(ETH_ADDRESS, ETH_POWER_PIN, ETH_MDC_PIN, ETH_MDIO_PIN, ETH_TYPE, ETH_CLK_MODE);
