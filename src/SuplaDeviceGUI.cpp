@@ -54,7 +54,7 @@ void begin() {
 void setupConnection() {
 #ifdef SUPLA_ETH_LAN8720
   if (eth == nullptr) {
-    eth = new Supla::ESPETH(0);  // uint_t ETH_ADDR = I²C-address of Ethernet PHY (0 or 1)
+    eth = new Supla::ESPETH(1);  // uint_t ETH_ADDR = I²C-address of Ethernet PHY (0 or 1)
   }
 #else
   if (wifi) {
