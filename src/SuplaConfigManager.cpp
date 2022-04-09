@@ -792,8 +792,13 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
   memset(GUID, 0, SUPLA_GUID_SIZE);
   memset(AUTHKEY, 0, SUPLA_AUTHKEY_SIZE);
 
+#if defined(ARDUINO_ARCH_ESP32)
   esp_fill_random((unsigned char *)GUID, SUPLA_GUID_SIZE);
   esp_fill_random((unsigned char *)AUTHKEY, SUPLA_AUTHKEY_SIZE);
+#else
+  os_get_random((unsigned char *)GUID, SUPLA_GUID_SIZE);
+  os_get_random((unsigned char *)AUTHKEY, SUPLA_AUTHKEY_SIZE);
+#endif
 
   this->set(KEY_SUPLA_GUID, GUID);
   this->set(KEY_SUPLA_AUTHKEY, AUTHKEY);
