@@ -25,7 +25,7 @@ PMSx003::PMSx003(int8_t pin_rx, int8_t pin_tx) {
 }
 
 void PMSx003::iterateAlways() {
-  if (millis() - lastSleepTime > 3600000) {  // 60min
+  if (millis() - lastSleepTime > 900000) {  // 15min
     lastReadTime = millis();
     Serial.println(F("Turning ON PMS sensor..."));
     sensor->wake();
