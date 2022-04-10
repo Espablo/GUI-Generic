@@ -176,8 +176,8 @@
 
 #include "src/sensor/PMSx003.h"
 
-#ifdef SUPLA_ETH_LAN8720
-#include <supla/network/esp32eth.h>
+#ifdef SUPLA_WT32_ETH01_LAN8720
+#include "src/network/esp32eth.h"
 #endif
 
 namespace Supla {
@@ -273,7 +273,7 @@ extern Supla::Sensor::AnalogRedingMap **analog;
 extern SuplaConfigManager *ConfigManager;
 extern SuplaConfigESP *ConfigESP;
 extern SuplaWebServer *WebServer;
-#ifdef SUPLA_ETH_LAN8720
+#ifdef SUPLA_WT32_ETH01_LAN8720
 extern Supla::ESPETH *eth;
 #else
 extern Supla::GUIESPWifi *wifi;

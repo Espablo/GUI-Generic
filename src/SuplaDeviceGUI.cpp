@@ -52,7 +52,7 @@ void begin() {
 }
 
 void setupConnection() {
-#ifdef SUPLA_ETH_LAN8720
+#ifdef SUPLA_WT32_ETH01_LAN8720
   if (eth == nullptr) {
     eth = new Supla::ESPETH(1);  // uint_t ETH_ADDR = I²C-address of Ethernet PHY (0 or 1)
   }
@@ -74,7 +74,7 @@ void setupConnection() {
 }
 
 void enableConnectionSSL(bool value) {
-#ifdef SUPLA_ETH_LAN8720
+#ifdef SUPLA_WT32_ETH01_LAN8720
 
   if (eth) {
     if (ConfigESP->configModeESP == CONFIG_MODE) {
@@ -766,7 +766,7 @@ Supla::Sensor::AnalogRedingMap **analog = nullptr;
 SuplaConfigManager *ConfigManager = nullptr;
 SuplaConfigESP *ConfigESP = nullptr;
 SuplaWebServer *WebServer = nullptr;
-#ifdef SUPLA_ETH_LAN8720
+#ifdef SUPLA_WT32_ETH01_LAN8720
 Supla::ESPETH *eth = nullptr;
 #else
 Supla::GUIESPWifi *wifi = nullptr;

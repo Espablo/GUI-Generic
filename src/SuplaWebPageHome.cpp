@@ -51,7 +51,7 @@ void handlePageHome(int save) {
 
   addForm(webContentBuffer, F("post"));
 
-#ifdef SUPLA_ETH_LAN8720
+#ifdef SUPLA_WT32_ETH01_LAN8720
 
 #else
   addFormHeader(webContentBuffer, S_SETTING_WIFI_SSID);
