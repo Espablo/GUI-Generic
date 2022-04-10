@@ -25,18 +25,22 @@ PMSx003::PMSx003(int8_t pin_rx, int8_t pin_tx) {
 }
 
 void PMSx003::iterateAlways() {
-  if (millis() - lastReadTime > 60000 || (millis() - lastReadTime > 1000 && retryCount > 0)) {
+  if (millis() - lastSleepTime > 3600000) {  // 60min
     lastReadTime = millis();
+    Serial.println(F("Turning ON PMS sensor..."));
+    sensor->wake();
+  }
+
+  if (millis() - lastReadTime > 30000) {  // 30s
     sensor->read();
 
-    if (!sensor->has_particulate_matter()) {
-      retryCount++;
-      if (retryCount > 3) {
-        retryCount = 0;
-      }
+    if (sensor->has_particulate_matter()) {
+      Serial.println(F("Turning OFF PMS sensor..."));
+      sensor->sleep();
+      lastSleepTime = millis();
     }
     else {
-      retryCount = 0;
+      lastReadTime = millis();
     }
 
     switch (sensor->status) {
