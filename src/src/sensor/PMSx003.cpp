@@ -25,9 +25,19 @@ PMSx003::PMSx003(int8_t pin_rx, int8_t pin_tx) {
 }
 
 void PMSx003::iterateAlways() {
-  if (millis() - lastReadTime > 60000) {
+  if (millis() - lastReadTime > 60000 || (millis() - lastReadTime > 1000 && retryCount > 0)) {
     lastReadTime = millis();
     sensor->read();
+
+    if (!sensor->has_particulate_matter()) {
+      retryCount++;
+      if (retryCount > 3) {
+        retryCount = 0;
+      }
+    }
+    else {
+      retryCount = 0;
+    }
 
     switch (sensor->status) {
       case this->sensor->OK:  // should never come here
@@ -70,7 +80,7 @@ PMS_PM01::PMS_PM01(PMSx003 *sensor) {
 
 double PMS_PM01::getValue() {
   double value = TEMPERATURE_NOT_AVAILABLE;
-  if (pmsx003->sensor->status == pmsx003->sensor->OK) {
+  if (pmsx003->sensor->has_particulate_matter()) {
     Serial.print(F("PM1.0 "));
     Serial.println(pmsx003->sensor->pm01);
     value = pmsx003->sensor->pm01;
@@ -84,7 +94,7 @@ PMS_PM25::PMS_PM25(PMSx003 *sensor) {
 
 double PMS_PM25::getValue() {
   double value = TEMPERATURE_NOT_AVAILABLE;
-  if (pmsx003->sensor->status == pmsx003->sensor->OK) {
+  if (pmsx003->sensor->has_particulate_matter()) {
     Serial.print(F("PM2.5"));
     Serial.println(pmsx003->sensor->pm25);
     value = pmsx003->sensor->pm25;
@@ -98,7 +108,7 @@ PMS_PM10::PMS_PM10(PMSx003 *sensor) {
 
 double PMS_PM10::getValue() {
   double value = TEMPERATURE_NOT_AVAILABLE;
-  if (pmsx003->sensor->status == pmsx003->sensor->OK) {
+  if (pmsx003->sensor->has_particulate_matter()) {
     Serial.print(F("PM10"));
     Serial.println(pmsx003->sensor->pm10);
     value = pmsx003->sensor->pm10;

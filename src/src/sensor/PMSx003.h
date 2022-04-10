@@ -35,6 +35,7 @@ class PMSx003 : public Element {
 
  protected:
   unsigned long lastReadTime;
+  int8_t retryCount = 0;
 };
 
 class PMS_PM01 : public Thermometer {
