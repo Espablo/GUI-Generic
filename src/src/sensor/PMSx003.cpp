@@ -25,19 +25,21 @@ PMSx003::PMSx003(int8_t pin_rx, int8_t pin_tx) {
 }
 
 void PMSx003::iterateAlways() {
-  if (millis() - lastSleepTime > 900000) {  // 15min
+  if (sleepSensor && (millis() - lastSleepTime > 900000)) {  // 15min
     lastReadTime = millis();
-    Serial.println(F("Turning ON PMS sensor..."));
+    Serial.println(F("Turning ON PMS sensor"));
     sensor->wake();
+    sleepSensor = false;
   }
 
-  if (millis() - lastReadTime > 30000) {  // 30s
+  if (!sleepSensor && (millis() - lastReadTime > 30000)) {  // 30s
     sensor->read();
 
     if (sensor->has_particulate_matter()) {
-      Serial.println(F("Turning OFF PMS sensor..."));
+      Serial.println(F("Turning OFF PMS sensor"));
       sensor->sleep();
       lastSleepTime = millis();
+      sleepSensor = true;
     }
     else {
       lastReadTime = millis();
@@ -85,7 +87,7 @@ PMS_PM01::PMS_PM01(PMSx003 *sensor) {
 double PMS_PM01::getValue() {
   double value = TEMPERATURE_NOT_AVAILABLE;
   if (pmsx003->sensor->has_particulate_matter()) {
-    Serial.print(F("PM1.0 "));
+    Serial.print(F("PM1.0 : "));
     Serial.println(pmsx003->sensor->pm01);
     value = pmsx003->sensor->pm01;
   }
@@ -99,7 +101,7 @@ PMS_PM25::PMS_PM25(PMSx003 *sensor) {
 double PMS_PM25::getValue() {
   double value = TEMPERATURE_NOT_AVAILABLE;
   if (pmsx003->sensor->has_particulate_matter()) {
-    Serial.print(F("PM2.5"));
+    Serial.print(F("PM2.5 : "));
     Serial.println(pmsx003->sensor->pm25);
     value = pmsx003->sensor->pm25;
   }
@@ -113,7 +115,7 @@ PMS_PM10::PMS_PM10(PMSx003 *sensor) {
 double PMS_PM10::getValue() {
   double value = TEMPERATURE_NOT_AVAILABLE;
   if (pmsx003->sensor->has_particulate_matter()) {
-    Serial.print(F("PM10"));
+    Serial.print(F("PM10 : "));
     Serial.println(pmsx003->sensor->pm10);
     value = pmsx003->sensor->pm10;
   }

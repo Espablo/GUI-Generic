@@ -36,6 +36,7 @@ class PMSx003 : public Element {
  protected:
   unsigned long lastSleepTime = 0;
   unsigned long lastReadTime = 0;
+  bool sleepSensor = false;
 };
 
 class PMS_PM01 : public Thermometer {
