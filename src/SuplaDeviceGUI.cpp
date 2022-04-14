@@ -767,7 +767,7 @@ SuplaConfigManager *ConfigManager = nullptr;
 SuplaConfigESP *ConfigESP = nullptr;
 SuplaWebServer *WebServer = nullptr;
 #ifdef SUPLA_WT32_ETH01_LAN8720
-Supla::ESPETH *eth = nullptr;
+Supla::WT32_ETH01 *eth = nullptr;
 #else
 Supla::GUIESPWifi *wifi = nullptr;
 #endif

@@ -274,7 +274,7 @@ extern SuplaConfigManager *ConfigManager;
 extern SuplaConfigESP *ConfigESP;
 extern SuplaWebServer *WebServer;
 #ifdef SUPLA_WT32_ETH01_LAN8720
-extern Supla::ESPETH *eth;
+extern Supla::WT32_ETH01 *eth;
 #else
 extern Supla::GUIESPWifi *wifi;
 #endif
