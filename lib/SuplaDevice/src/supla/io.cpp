@@ -126,18 +126,7 @@ void Io::analogWrite(int channelNumber, uint8_t pin, int val) {
     ioInstance->customAnalogWrite(channelNumber, pin, val);
     return;
   }
-
-#if defined(ARDUINO_ARCH_ESP32)
-#if defined(ESP_ARDUINO_VERSION)
-#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(2, 0, 0)
   ::analogWrite(pin, val);
-#endif
-#else
-  ::ledcWrite(pin, val);
- #endif
- #else
-::analogWrite(pin, val);
-#endif
 }
 
 void Io::analogWrite(uint8_t pin, int val) {
@@ -146,17 +135,7 @@ void Io::analogWrite(uint8_t pin, int val) {
 
 void Io::customAnalogWrite(int channelNumber, uint8_t pin, int val) {
   (void)(channelNumber);
-#if defined(ARDUINO_ARCH_ESP32)
-#if defined(ESP_ARDUINO_VERSION)
-#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(2, 0, 0)
   ::analogWrite(pin, val);
-#endif
-#else
-  ::ledcWrite(pin, val);
- #endif
- #else
-  ::analogWrite(pin, val);
-#endif
 }
 
 unsigned int Io::pulseIn(uint8_t pin, uint8_t value,

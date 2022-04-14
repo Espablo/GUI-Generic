@@ -13,25 +13,10 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-/*
-    - for LAN8720 + ESP32 -
-  using as less gpio as possible
-  - 50MHz oscillator disable on LAN8720 by bridging the oscillator pins 1 and 2 -
-  -ESP32 Gpio-        -LAN8720 PIN -
-  GPIO22 - EMAC_TXD1   : TX1
-  GPIO19 - EMAC_TXD0   : TX0
-  GPIO21 - EMAC_TX_EN  : TX_EN
-  GPIO26 - EMAC_RXD1   : RX1
-  GPIO25 - EMAC_RXD0   : RX0
-  GPIO27 - EMAC_RX_DV  : CRS
-  GPIO17 - EMAC_TX_CLK : nINT/REFCLK (50MHz)
-  GPIO23 - SMI_MDC     : MDC
-  GPIO18 - SMI_MDIO    : MDIO
-  GND                  : GND
-  3V3                  : VCC
-*/
-#ifndef esp_eth_h__
-#define esp_eth_h__
+/*  - for WT32-ETH01 - */
+
+#ifndef wt32_eth1_h__
+#define wt32_eth1_h__
 
 #include <Arduino.h>
 
@@ -44,11 +29,10 @@
 #ifdef ETH_CLK_MODE
 #undef ETH_CLK_MODE
 #endif
-#define ETH_CLK_MODE    ETH_CLOCK_GPIO17_OUT
-//#define ETH_CLK_MODE    ETH_CLOCK_GPIO0_OUT  // unstable!!
+#define ETH_CLK_MODE    ETH_CLOCK_GPIO0_IN
 
 // Pin# of the enable signal for the external crystal oscillator (-1 to disable for internal APLL source)
-#define ETH_POWER_PIN   -1
+#define ETH_POWER_PIN   16
 
 // Type of the Ethernet PHY (LAN8720 or TLK110)
 #define ETH_TYPE        ETH_PHY_LAN8720
@@ -67,10 +51,10 @@ static bool eth_connected = false;
 // TODO: change logs to supla_log
 
 namespace Supla {
-class ESPETH : public Supla::Network {
+class WT32_ETH01 : public Supla::Network {
   public:
-    ESPETH(uint8_t ethmode,
-           unsigned char *ip = nullptr)
+    WT32_ETH01(uint8_t ethmode,
+               unsigned char *ip = nullptr)
       : Network(ip), client(nullptr), isSecured(true) {
       if ( ethmode == 0) {
         ETH_ADDRESS = 0;
