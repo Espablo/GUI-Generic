@@ -177,7 +177,7 @@
 #include "src/sensor/PMSx003.h"
 
 #ifdef SUPLA_WT32_ETH01_LAN8720
-#include "src/network/esp32eth.h"
+#include "supla/network/wt32_eth01.h"
 #endif
 
 namespace Supla {
