@@ -534,12 +534,7 @@ void setup() {
         if (gpio != OFF_GPIO)
           mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), false);
       }
-
-#ifdef ARDUINO_ARCH_ESP8266
       Wire.setClock(400000);
-#elif ARDUINO_ARCH_ESP32
-      Wire.setClock(100000);
-#endif
     }
 #endif
   }
