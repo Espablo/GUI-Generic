@@ -77,7 +77,11 @@ void PMSx003::iterateAlways() {
 }
 
 void PMSx003::onInit() {
+  lastReadTime = millis();
+  Serial.println(F("Turning ON PMS sensor"));
+  sensor->wake();
   sensor->read();
+  sleepSensor = false;
 }
 
 PMS_PM01::PMS_PM01(PMSx003 *sensor) {
