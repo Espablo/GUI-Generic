@@ -1,5 +1,5 @@
 {
-	"version": "4.5.19",
+	"version": "4.10.19",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -276,7 +276,6 @@
 			"name": "Wyzwalacze akcji",
 			"desc": "Pozwalają na wykonanie dowolnej akcji na dowolnym posiadanym przez Ciebie urządzeniu.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "Action Trigger"
 			},
@@ -655,7 +654,6 @@
 			"name": "Wyświetlacz LCD HD44780",
 			"desc": "Ustawienia urządzenia->I2C. Umożliwoa obsługę wyświetlacza LCD HD44780.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "LCD HD44780 display",
 				"desc": "Device settings->I2C. It enables the operation of an LCD HD44780 display."
@@ -700,7 +698,6 @@
 			"name": "Termopara MAX6675",
 			"desc": "Ustawienia urządzenia->SPI. Umożliwoa obsługę termopary MAX6675.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "Thermocouple MAX6675",
 				"desc": "Device settings->SPI. Supports MAX6675 thermocouple."
@@ -722,7 +719,6 @@
 			"name": "Termopara MAX31855",
 			"desc": "Ustawienia urządzenia->SPI. Umożliwoa obsługę termopary MAX31855.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "Thermocouple MAX31855",
 				"desc": "Device settings->SPI. Supports MAX31855 thermocouple."
@@ -963,6 +959,74 @@
 				"name": "Liens directs - relevé de température",
 				"desc": "Il vous permet de lire la température à l'aide de liens directs."
 			}
+		},
+		"SUPLA_BH1750": {
+			"name": "BH1750",
+			"desc": "Ustawienia urządzenia->Inne. Czujnik natężenia światła BH1750",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "BH1750",
+				"desc": "Device settings->Other. Light intensity sensor BH1750."
+			},
+			"es": {
+				"name": "BH1750",
+				"desc": "Configuración del dispositivo->Otro. Sensor de intensidad de luz BH1750."
+			},
+			"de": {
+				"name": "BH1750",
+				"desc": "Geräteeinstellungen->Andere. Lichtstärkesensor BH1750."
+			},
+			"fr": {
+				"name": "BH1750",
+				"desc": "Paramètres de l´appareil->Autre. Capteur d'intensité lumineuse BH1750."
+			}
+		}
+	},
+	"AIR_QUALITY_SENSORS": {
+		"SUPLA_VINDRIKTNING_IKEA": {
+			"name": "IKEA VINDRIKTNING",
+			"desc": "Ustawienia urządzenia->Inne. Czujnik cząstek stałych PM1006",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "IKEA VINDRIKTNING",
+				"desc": "Device settings->Other. Particulate Matter Sensor with PM1006 inside."
+			},
+			"es": {
+				"name": "IKEA VINDRIKTNING",
+				"desc": "Configuración del dispositivo->Otro. Sensor de partículas con PM1006 en el interior"
+			},
+			"de": {
+				"name": "IKEA VINDRIKTNING",
+				"desc": "Geräteeinstellungen->Andere. Feinstaubsensor mit PM1006 im Inneren."
+			},
+			"fr": {
+				"name": "IKEA VINDRIKTNING",
+				"desc": "Paramètres de l´appareil->Autre. Capteur de particules avec PM1006 à l'intérieur"
+			}
+		},
+		"SUPLA_PMSX003": {
+			"name": "PMSx003",
+			"desc": "Ustawienia urządzenia->Inne. Czujnik cząstek stałych: PM1.0, PM2.5, PM10. Obsługiwane czujniki PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS7003, PMSA003.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "PMSx003",
+				"desc": "Device settings->Other. Particulate sensor: PM1.0, PM2.5, PM10. Supported sensors PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS7003, PMSA003."
+			},
+			"es": {
+				"name": "PMSx003",
+				"desc": "Configuración del dispositivo->Otro. Sensor de partículas: PM1.0, PM2.5, PM10. Sensores compatibles PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS7003, PMSA003."
+			},
+			"de": {
+				"name": "PMSx003",
+				"desc": "Geräteeinstellungen->Andere. Partikelsensor: PM1.0, PM2.5, PM10. Unterstützte Sensoren PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS7003, PMSA003."
+			},
+			"fr": {
+				"name": "PMSx003",
+				"desc": "Paramètres de l´appareil->Autre. Capteur de particules : PM1.0, PM2.5, PM10. Capteurs pris en charge PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS7003, PMSA003."
+			}
 		}
 	},
 	"SECTIONS": {
@@ -1028,6 +1092,13 @@
 			"es": "Prueba",
 			"de": "Prüfung",
 			"fr": "Test"
+		},
+		"AIR_QUALITY_SENSORS": {
+			"pl": "Czujnik czystości powietrza",
+			"en": "Air quality sensor",
+			"es": "Sensor de calidad del aire",
+			"de": "Luftqualitätssensor",
+			"fr": "Capteur de qualité de l'air"
 		}
 	}
 }
