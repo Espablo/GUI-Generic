@@ -1,5 +1,5 @@
 {
-	"version": "4.10.20",
+	"version": "4.10.21",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -693,24 +693,24 @@
 			}
 		},
 		"SUPLA_BH1750": {
-			"name": "BH1750",
+			"name": "Sensor BH1750",
 			"desc": "Ustawienia urządzenia->Inne. Czujnik natężenia światła BH1750",
 			"defOn": false,
 			"new": true,
 			"en": {
-				"name": "BH1750",
+				"name": "BH1750 sensor",
 				"desc": "Device settings->Other. Light intensity sensor BH1750."
 			},
 			"es": {
-				"name": "BH1750",
+				"name": "Sonda BH1750",
 				"desc": "Configuración del dispositivo->Otro. Sensor de intensidad de luz BH1750."
 			},
 			"de": {
-				"name": "BH1750",
+				"name": "Fühler BH1750",
 				"desc": "Geräteeinstellungen->Andere. Lichtstärkesensor BH1750."
 			},
 			"fr": {
-				"name": "BH1750",
+				"name": "Capteur BH1750",
 				"desc": "Paramètres de l´appareil->Autre. Capteur d'intensité lumineuse BH1750."
 			}
 		}
