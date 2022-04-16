@@ -64,8 +64,7 @@ void handleTools(int save) {
 #ifdef TEMPLATE_BOARD_JSON
   addForm(webContentBuffer, F("post"), PATH_TOOLS);
   addFormHeader(webContentBuffer, S_TEMPLATE_BOARD);
-  addTextBox(webContentBuffer, INPUT_BOARD, F("JSON"), F(""), 0, 200, false);
-  addTextBox(webContentBuffer, Supla::TanplateBoard::templateBoardWarning);
+  addTextBox(webContentBuffer, INPUT_BOARD, F("JSON"), F(""), 0, 600, false);
   addButtonSubmit(webContentBuffer, S_LOAD_CONFIGURATION);
   addTextBox(webContentBuffer, Supla::TanplateBoard::templateBoardWarning);
 #ifdef TEMPLATE_JSON

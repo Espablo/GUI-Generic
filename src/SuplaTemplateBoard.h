@@ -55,6 +55,8 @@ enum FunctionOld
 {
   None = 0,
   SI7021 = 3,
+  I2CSCL = 5,
+  I2CSDA = 6,
   Switch1 = 9,
   Switch2,
   Switch3,
@@ -177,6 +179,8 @@ enum FunctionNew
   NewPWM5i,
   NewLedLink = 544,
   NewLedLinki = 576,
+  NewI2CSCL = 608,
+  NewI2CSDA = 640,
   NewSI7021 = 1248,
   NewHLWBLSELi = 2624,
   NewHLWBLCF1 = 2656,

@@ -140,6 +140,54 @@ void chooseTemplateBoard(String board) {
     }
   }
 
+  // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,604,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[address,function],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
+  // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,604,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
+  // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,640,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[1,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[2,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[3,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
+  //
+  // "address":
+  // 0 - 0x20
+  // 1 - 0x21
+  // 2 - 0x22
+  // 3 - 0x23
+  //
+  // "function":
+  // 1 - FUNCTION_RELAY
+  // 2 - FUNCTION_BUTTON
+  // 3 - FUNCTION_LIMIT_SWITCH
+  //
+  //  OFF - 0 lub 17
+
+  JsonArray& mcp = root["MCP23017"];
+  int key;
+
+  if (mcp.size() != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, 1);
+  }
+
+  for (size_t i = 0; i < mcp.size(); i++) {
+    int address = (int)mcp[i][0][0];
+    int function = (int)mcp[i][0][1];
+
+    switch (function) {
+      case FUNCTION_RELAY:
+        key = KEY_MAX_RELAY;
+        break;
+      case FUNCTION_BUTTON:
+        key = KEY_MAX_BUTTON;
+        break;
+      case FUNCTION_LIMIT_SWITCH:
+        key = KEY_MAX_LIMIT_SWITCH;
+        break;
+    }
+
+    for (size_t ii = 1; ii <= 16; ii++) {
+      if (mcp[i][ii] != 0) {
+        ConfigESP->setGpioMCP23017((int)mcp[i][ii] - 1, address, ConfigManager->get(key)->getValueInt(), function);
+      }
+      ConfigManager->set(key, ConfigManager->get(key)->getValueInt() + 1);
+    }
+  }
+
   String name = root["NAME"];
   ConfigManager->set(KEY_HOST_NAME, name.c_str());
 
@@ -183,6 +231,13 @@ void chooseTemplateBoard(String board) {
       case NewNone:
         break;
       case NewUsers:
+        break;
+
+      case NewI2CSCL:
+        ConfigESP->setGpio(gpio, FUNCTION_SCL);
+        break;
+      case NewI2CSDA:
+        ConfigESP->setGpio(gpio, FUNCTION_SDA);
         break;
 
       case NewRelay1:
@@ -436,6 +491,11 @@ int convert(int gpioJSON) {
       return NewNone;
     case Users:
       return NewUsers;
+
+    case I2CSCL:
+      return NewI2CSCL;
+    case I2CSDA:
+      return NewI2CSDA;
 
     case Relay1:
       return NewRelay1;
