@@ -48,9 +48,6 @@ void setup() {
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
-  if (!ConfigESP->checkBusyGpio(3)) {  // GPIO_RX
-    new ImprovSerialComponent();
-  }
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
@@ -267,7 +264,7 @@ void setup() {
     else {
       pms = new Supla::Sensor::PMSx003(ConfigESP->getGpio(FUNCTION_PMSX003_RX));
     }
-    
+
     new Supla::Sensor::PMS_PM01(pms);
     auto pmsPM25 = new Supla::Sensor::PMS_PM25(pms);
     new Supla::Sensor::PMS_PM10(pms);
@@ -584,9 +581,13 @@ void setup() {
 
   ESP.wdtEnable(WDTO_250MS);
 #endif
+
+  if (!ConfigESP->checkBusyGpio(3)) {  // GPIO_RX
+    new ImprovSerialComponent();
+  }
 }
 
 void loop() {
   SuplaDevice.iterate();
-  delay(25);
+ // delay(25);
 }
