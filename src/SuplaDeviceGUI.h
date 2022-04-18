@@ -167,6 +167,10 @@
 #include <supla/sensor/BH1750.h>
 #endif
 
+#ifdef SUPLA_MAX44009
+#include <src/sensor/MAX_44009.h>
+#endif
+
 #include "src/improv/improv_serial_component.h"
 #include "src/network/SuplaGuiWiFi.h"
 

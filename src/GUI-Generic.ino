@@ -454,6 +454,12 @@ void setup() {
     }
 #endif
 
+#ifdef SUPLA_MAX44009
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MAX44009).toInt()) {
+      new Supla::Sensor::MAX_44009();
+    }
+#endif
+
 #ifdef SUPLA_OLED
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       SuplaOled *oled = new SuplaOled();
