@@ -77,7 +77,7 @@ int GUIESPWifi::connect(const char *server, int port) {
       client = clientSec;
 
 #ifdef ARDUINO_ARCH_ESP8266
-      clientSec->setBufferSizes(2048, 512);  // EXPERIMENTAL
+      clientSec->setBufferSizes(1024, 512);  // EXPERIMENTAL
       if (fingerprint.length() > 0) {
         message += " with certificate matching";
         clientSec->setFingerprint(fingerprint.c_str());
