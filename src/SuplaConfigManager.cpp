@@ -24,8 +24,8 @@
 #include "SuplaConfigManager.h"
 #include "SuplaDeviceGUI.h"
 
-ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version, bool loadKey)
-    : _key(key), _value(nullptr), _maxLength(maxLength), _version(version), _loadKey(loadKey) {
+ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength, bool loadKey)
+    : _key(key), _value(nullptr), _maxLength(maxLength), _loadKey(loadKey) {
   if (maxLength > 0) {
     _maxLength = maxLength + 1;
 
@@ -96,10 +96,6 @@ bool ConfigOption::getLoadKey() {
   return _loadKey;
 }
 
-uint8_t ConfigOption::getVersion() {
-  return _version;
-}
-
 const String ConfigOption::getElement(int index) {
   String data = this->getValue();
   // data.reserve(_maxLength);
@@ -166,8 +162,6 @@ SuplaConfigManager::SuplaConfigManager() {
   if (SPIFFSbegin()) {
     _optionCount = OPTION_COUNT;
 
-    // SPIFFS.format();
-
     this->addKey(KEY_SUPLA_GUID, MAX_GUID);
     this->addKey(KEY_SUPLA_AUTHKEY, MAX_AUTHKEY);
     this->addKey(KEY_WIFI_SSID, MAX_SSID);
@@ -221,195 +215,197 @@ SuplaConfigManager::SuplaConfigManager() {
 #endif
 
 #ifdef SUPLA_CONDITIONS
-    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, 2);
-    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2);
-    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2);
-    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2);
+    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2);
+    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1);
+    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4);
+    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4);
 
 #else
-    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, 2, false);
-    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2, false);
-    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2, false);
-    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2, false);
+    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, false);
+    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, false);
+    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, false);
+    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, false);
 #endif
 
 #ifdef SUPLA_BUTTON
-    this->addKey(KEY_MAX_BUTTON, "0", 2, 2);
-    this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON, 6);
-    this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON, 6);
+    this->addKey(KEY_MAX_BUTTON, "0", 2);
+    this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON);
+    this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON);
 #else
-    this->addKey(KEY_MAX_BUTTON, 2, 2, false);
-    this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON, 6, false);
-    this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON, 6, false);
+    this->addKey(KEY_MAX_BUTTON, 2, false);
+    this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON, false);
+    this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON, false);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-    this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2, 2);
+    this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
 #else
-    this->addKey(KEY_MAX_LIMIT_SWITCH, 2, 2, false);
+    this->addKey(KEY_MAX_LIMIT_SWITCH, 2, false);
 #endif
 
 #ifdef SUPLA_DHT22
-    this->addKey(KEY_MAX_DHT22, "1", 2, 2);
+    this->addKey(KEY_MAX_DHT22, "1", 2);
 #else
-    this->addKey(KEY_MAX_DHT22, 2, 2, false);
+    this->addKey(KEY_MAX_DHT22, 2, false);
 #endif
 
 #ifdef SUPLA_DHT11
-    this->addKey(KEY_MAX_DHT11, "1", 2, 2);
+    this->addKey(KEY_MAX_DHT11, "1", 2);
 #else
-    this->addKey(KEY_MAX_DHT11, 2, 2, false);
+    this->addKey(KEY_MAX_DHT11, 2, false);
 #endif
 
 #ifdef SUPLA_RGBW
-    this->addKey(KEY_MAX_RGBW, "0", 2, 2);
+    this->addKey(KEY_MAX_RGBW, "0", 2);
 #else
-    this->addKey(KEY_MAX_RGBW, 2, 2, false);
+    this->addKey(KEY_MAX_RGBW, 2, false);
 #endif
 
 #ifdef SUPLA_DS18B20
-    this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2, 2);
-    this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20, 2);
+    this->addKey(KEY_MULTI_MAX_DS18B20, "1", 2);
+    this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20);
 #else
-    this->addKey(KEY_MULTI_MAX_DS18B20, 2, 2, false);
-    this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20, 2, false);
+    this->addKey(KEY_MULTI_MAX_DS18B20, 2, false);
+    this->addKey(KEY_ADDR_DS18B20, MAX_DS18B20_ADDRESS_HEX * MAX_DS18B20, false);
 #endif
 
 #if defined(SUPLA_DS18B20) || defined(SUPLA_OLED) || defined(SUPLA_LCD_HD44780)
-    this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, 2);
+    this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20);
 #else
-    this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, 2, false);
+    this->addKey(KEY_NAME_SENSOR, MAX_DS18B20_NAME * MAX_DS18B20, false);
 #endif
 
 #ifdef SUPLA_ROLLERSHUTTER
-    this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2, 2);
+    this->addKey(KEY_MAX_ROLLERSHUTTER, "0", 2);
 #else
-    this->addKey(KEY_MAX_ROLLERSHUTTER, 2, 2, false);
+    this->addKey(KEY_MAX_ROLLERSHUTTER, 2, false);
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_BMP280)
-    this->addKey(KEY_ALTITUDE_BMX280, "0", 4, 2);
+    this->addKey(KEY_ALTITUDE_BMX280, "0", 4);
 #else
-    this->addKey(KEY_ALTITUDE_BMX280, 4, 2, false);
+    this->addKey(KEY_ALTITUDE_BMX280, 4, false);
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-    this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4, 2);
-    this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2, 2);
+    this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, "10", 4);
+    this->addKey(KEY_MAX_IMPULSE_COUNTER, "0", 2);
 #else
-    this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, 4, 2, false);
-    this->addKey(KEY_MAX_IMPULSE_COUNTER, 2, 2, false);
+    this->addKey(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, 4, false);
+    this->addKey(KEY_MAX_IMPULSE_COUNTER, 2, false);
 #endif
 
 #if defined(SUPLA_OLED) || defined(SUPLA_LCD_HD44780)
-    this->addKey(KEY_OLED_ANIMATION, "5", 2, 2);
-    this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2, 2);
-    this->addKey(KEY_OLED_BACK_LIGHT, "20", 2, 2);
+    this->addKey(KEY_OLED_ANIMATION, "5", 2);
+    this->addKey(KEY_OLED_BACK_LIGHT_TIME, "5", 2);
+    this->addKey(KEY_OLED_BACK_LIGHT, "20", 2);
 #else
-    this->addKey(KEY_OLED_ANIMATION, 2, 2, false);
-    this->addKey(KEY_OLED_BACK_LIGHT_TIME, 2, 2, false);
-    this->addKey(KEY_OLED_BACK_LIGHT, 2, 2, false);
+    this->addKey(KEY_OLED_ANIMATION, 2, false);
+    this->addKey(KEY_OLED_BACK_LIGHT_TIME, 2, false);
+    this->addKey(KEY_OLED_BACK_LIGHT, 2, false);
 #endif
 
 #ifdef SUPLA_PUSHOVER
-    this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE, 2);
-    this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE, 2);
-    this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE, 2);
+    this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
+    this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
+    this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);
 #else
-    this->addKey(KEY_PUSHOVER_TOKEN, MAX_TOKEN_SIZE, 2, false);
-    this->addKey(KEY_PUSHOVER_USER, MAX_USER_SIZE, 2, false);
-    this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE, 2, false);
+    this->addKey(KEY_PUSHOVER_TOKEN, MAX_TOKEN_SIZE, false);
+    this->addKey(KEY_PUSHOVER_USER, MAX_USER_SIZE, false);
+    this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE, false);
 #endif
 
 #ifdef SUPLA_HC_SR04
-    this->addKey(KEY_HC_SR04_MAX_SENSOR_READ, 3, 2);
+    this->addKey(KEY_HC_SR04_MAX_SENSOR_READ, 3);
 #else
-    this->addKey(KEY_HC_SR04_MAX_SENSOR_READ, 3, 2, false);
+    this->addKey(KEY_HC_SR04_MAX_SENSOR_READ, 3, false);
 #endif
 
 #ifdef SUPLA_DIRECT_LINKS
-    this->addKey(KEY_DIRECT_LINKS_ON, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 2);
-    this->addKey(KEY_DIRECT_LINKS_OFF, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 2);
+    this->addKey(KEY_DIRECT_LINKS_ON, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
+    this->addKey(KEY_DIRECT_LINKS_OFF, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
 #else
-    this->addKey(KEY_DIRECT_LINKS_ON, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 2, false);
-    this->addKey(KEY_DIRECT_LINKS_OFF, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 2, false);
+    this->addKey(KEY_DIRECT_LINKS_ON, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, false);
+    this->addKey(KEY_DIRECT_LINKS_OFF, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, false);
 #endif
 
 #if defined(GUI_SENSOR_SPI) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_OTHER)
     this->addKey(KEY_CORRECTION_TEMP, 6 * MAX_DS18B20);
-    this->addKey(KEY_CORRECTION_HUMIDITY, 6 * MAX_DS18B20, 2);
+    this->addKey(KEY_CORRECTION_HUMIDITY, 6 * MAX_DS18B20);
 #else
-    this->addKey(KEY_CORRECTION_TEMP, 6 * MAX_DS18B20, 2, false);
-    this->addKey(KEY_CORRECTION_HUMIDITY, 6 * MAX_DS18B20, 2, false);
+    this->addKey(KEY_CORRECTION_TEMP, 6 * MAX_DS18B20, false);
+    this->addKey(KEY_CORRECTION_HUMIDITY, 6 * MAX_DS18B20, false);
 #endif
 
 #if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
-    this->addKey(KEY_ACTIVE_SENSOR, 16, 2);
+    this->addKey(KEY_ACTIVE_SENSOR, 16);
 #else
-    this->addKey(KEY_ACTIVE_SENSOR, 16, 2, false);
+    this->addKey(KEY_ACTIVE_SENSOR, 16, false);
 #endif
 
 #ifdef SUPLA_DEEP_SLEEP
-    this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3, 2);
+    this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3);
 #else
-    this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3, 2, false);
+    this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3, false);
 #endif
 
 #ifdef SUPLA_LCD_HD44780
-    this->addKey(KEY_HD44780_TYPE, "2", 1, 5);
+    this->addKey(KEY_HD44780_TYPE, "2", 1);
 #else
-    this->addKey(KEY_HD44780_TYPE, "2", 1, 5, false);
+    this->addKey(KEY_HD44780_TYPE, "2", 1, false);
 #endif
 
-    this->addKey(KEY_FOR_USE, "", 0, 0, false);  // nieużywane
+    this->addKey(KEY_FOR_USE, "", 0, false);
 
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
-    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2, 3);
-    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 3);
+    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
 #else
-    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2, 3, false);
-    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, 3, false);
+    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2, false);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, false);
 #endif
 
 #ifdef SUPLA_CONDITIONS
-    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3, 3);
+    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3);
 #else
-    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3, 3, false);
+    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3, false);
 #endif
 
 #ifdef SUPLA_RF_BRIDGE
-    this->addKey(KEY_RF_BRIDGE_CODE_ON, MAX_BRIDGE_RF * 10, 4);
-    this->addKey(KEY_RF_BRIDGE_CODE_OFF, MAX_BRIDGE_RF * 10, 4);
-    this->addKey(KEY_RF_BRIDGE_LENGTH, MAX_BRIDGE_RF * 3, 4);
-    this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, 4);
-    this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, 4);
-    this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, 4);
-    this->addKey(KEY_RF_BRIDGE_REPEAT, MAX_BRIDGE_RF * 2, 4);
+    this->addKey(KEY_RF_BRIDGE_CODE_ON, MAX_BRIDGE_RF * 10);
+    this->addKey(KEY_RF_BRIDGE_CODE_OFF, MAX_BRIDGE_RF * 10);
+    this->addKey(KEY_RF_BRIDGE_LENGTH, MAX_BRIDGE_RF * 3);
+    this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2);
+    this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3);
+    this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4);
+    this->addKey(KEY_RF_BRIDGE_REPEAT, MAX_BRIDGE_RF * 2);
 #else
-    this->addKey(KEY_RF_BRIDGE_CODE_ON, MAX_BRIDGE_RF * 10, 4, false);
-    this->addKey(KEY_RF_BRIDGE_CODE_OFF, MAX_BRIDGE_RF * 10, 4, false);
-    this->addKey(KEY_RF_BRIDGE_LENGTH, MAX_BRIDGE_RF * 3, 4, false);
-    this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, 4, false);
-    this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, 4, false);
-    this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, 4, false);
-    this->addKey(KEY_RF_BRIDGE_REPEAT, MAX_BRIDGE_RF * 2, 4, false);
+    this->addKey(KEY_RF_BRIDGE_CODE_ON, MAX_BRIDGE_RF * 10, false);
+    this->addKey(KEY_RF_BRIDGE_CODE_OFF, MAX_BRIDGE_RF * 10, false);
+    this->addKey(KEY_RF_BRIDGE_LENGTH, MAX_BRIDGE_RF * 3, false);
+    this->addKey(KEY_RF_BRIDGE_TYPE, MAX_BRIDGE_RF * 2, false);
+    this->addKey(KEY_RF_BRIDGE_PROTOCOL, MAX_BRIDGE_RF * 3, false);
+    this->addKey(KEY_RF_BRIDGE_PULSE_LENGTHINT, MAX_BRIDGE_RF * 4, false);
+    this->addKey(KEY_RF_BRIDGE_REPEAT, MAX_BRIDGE_RF * 2, false);
 #endif
 
 #ifdef SUPLA_ACTION_TRIGGER
-    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5);
-    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5);
+    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4);
+    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4);
 #else
-    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, 5, false);
-    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, 5, false);
+    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, false);
+    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, false);
 #endif
 
 #if defined(SUPLA_ANALOG_READING_MAP)
-    this->addKey(KEY_MAX_ANALOG_READING, "1", 2, 6);
+    this->addKey(KEY_MAX_ANALOG_READING, "1", 2);
 #else
-    this->addKey(KEY_MAX_ANALOG_READING, "1", 2, 6, false);
+    this->addKey(KEY_MAX_ANALOG_READING, "1", 2, false);
 #endif
 
     this->addKey(KEY_FORCE_RESTART_ESP, "0", 1);
+
+    this->addKey(KEY_VERSION_CONFIG, CURENT_VERSION, 2);
 
     SPIFFS.end();
     switch (this->load()) {
@@ -479,67 +475,53 @@ bool SuplaConfigManager::SPIFFSbegin() {
 
 bool SuplaConfigManager::migrationConfig() {
   bool migration = false;
+  Serial.print(F("migration Config ver:"));
+  Serial.println(this->get(KEY_VERSION_CONFIG)->getValueInt());
 
-#ifdef ARDUINO_ARCH_ESP8266
-  if (this->sizeFile() == ESP8226_CONFIG_V1) {  // pierwsza wersja configa
-    Serial.println(F("migration version 1 -> 2"));
-    uint8_t nr, key;
-    // ustawienie starej długości zmiennej przed wczytaniem starego konfiga
-    for (nr = 0; nr <= MAX_GPIO; nr++) {
-      key = KEY_GPIO + nr;
-      this->get(key)->setLength(16 * 2);
-    }
-    this->get(KEY_FOR_USE)->setLength(MAX_GPIO * 2);
+  if (this->get(KEY_VERSION_CONFIG)->getValueInt() == 0) {
+    Serial.println(F("0 -> 1"));
 
-    // ustawienie nowej długości po wczytaniu starego konfiga
-    if (this->load(2, false) == E_CONFIG_OK) {
-      for (nr = 0; nr <= MAX_GPIO; nr++) {
-        key = KEY_GPIO + nr;
-        this->get(key)->setLength(36);
-      }
-      this->get(KEY_FOR_USE)->setLength(0);
-
+    if (this->load(false) == E_CONFIG_OK) {
+      this->get(KEY_VERSION_CONFIG)->setValue("1");
       migration = true;
     }
   }
 
-  if (this->sizeFile() == 2718) {  // druga wersja configa
-                                   // Serial.println(F("migration version 2 -> 3"));
-    // if (this->load(2, false) == E_CONFIG_OK) // wczytanie kluczy tylko z wersji 2 configa
-    //   migration = true;
-  }
-#elif ARDUINO_ARCH_ESP32
-  if (this->sizeFile() == 3774) {  // wersja 2 configa
-    Serial.println(F("migration version 2 -> 3"));
-    // if (this->load(2, false) == E_CONFIG_OK)
-    //   migration = true;
-  }
-#endif
+  // if (this->get(KEY_VERSION_CONFIG)->getValueInt() == 1) {
+  //   Serial.println(F("1 -> 2"));
+  //   ustawienie starej długości zmiennej przed wczytaniem starego konfiga
+  //   this->get(KEY_VERSION_CONFIG)->setLength(0);
+  //   this->get(KEY_SUPLA_GUID)->setLength(SUPLA_GUID_SIZE);
+  //   this->get(KEY_SUPLA_AUTHKEY)->setLength(SUPLA_GUID_SIZE);
+
+  //   if (this->load(false) == E_CONFIG_OK) {
+  //     po poprawnym wczytaniu konfiga ustawienie poprawnej wartośći zmiennej
+  //     this->get(KEY_VERSION_CONFIG)->setLength(2);
+  //     this->get(KEY_SUPLA_GUID)->setLength(MAX_GUID);
+  //     this->get(KEY_SUPLA_AUTHKEY)->setLength(MAX_AUTHKEY);
+  //     this->get(KEY_VERSION_CONFIG)->setValue("2");
+  //     migration = true;
+  //   }
+  // }
 
   if (migration) {
+    this->get(KEY_VERSION_CONFIG)->setValue(String(CURENT_VERSION).c_str());
     this->save();
     Serial.println(F("successful Config migration"));
-  }
-  else {
-    Serial.println(F("error Config migration"));
-    if (this->load(1, false) == E_CONFIG_OK) {  // jeżeli migracja się nie uda, nastąpi próba wczytania tylko danych podstowych
-      Serial.println(F("load version 1"));
-      this->save();
-    }
   }
 
   return migration;
 }
 
-uint8_t SuplaConfigManager::addKey(uint8_t key, int maxLength, uint8_t version, bool loadKey) {
-  return addKey(key, "", maxLength, version, loadKey);
+uint8_t SuplaConfigManager::addKey(uint8_t key, int maxLength, bool loadKey) {
+  return addKey(key, "", maxLength, loadKey);
 }
 
-uint8_t SuplaConfigManager::addKey(uint8_t key, const char *value, int maxLength, uint8_t version, bool loadKey) {
+uint8_t SuplaConfigManager::addKey(uint8_t key, const char *value, int maxLength, bool loadKey) {
   if (_optionCount == CONFIG_MAX_OPTIONS) {
     return E_CONFIG_MAX;
   }
-  _options[key] = new ConfigOption(key, value, maxLength, version, loadKey);
+  _options[key] = new ConfigOption(key, value, maxLength, loadKey);
   //_optionCount += 1; OPTION_COUNT
 
   return E_CONFIG_OK;
@@ -556,25 +538,7 @@ uint8_t SuplaConfigManager::deleteKey(uint8_t key) {
   return E_CONFIG_OK;
 }
 
-int SuplaConfigManager::sizeFile() {
-  if (SPIFFSbegin()) {
-    if (SPIFFS.exists(CONFIG_FILE_PATH)) {
-      File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
-      return configFile.size();
-    }
-    SPIFFS.end();
-  }
-  return -1;
-}
-
-bool SuplaConfigManager::checkFileConvert(int size) {
-  if (size == ESP8226_CONFIG_V1) {
-    return true;
-  }
-  return false;
-}
-
-uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
+uint8_t SuplaConfigManager::load(bool configParse) {
   if (SPIFFSbegin()) {
     if (SPIFFS.exists(CONFIG_FILE_PATH)) {
       File configFile = SPIFFS.open(CONFIG_FILE_PATH, "r");
@@ -586,9 +550,7 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
         size_t length = 0;
 
         for (i = 0; i < _optionCount; i++) {
-          if (version >= _options[i]->getVersion()) {
-            length += _options[i]->getLength();
-          }
+          length += _options[i]->getLength();
         }
 
 #ifdef ARDUINO_ARCH_ESP8266
@@ -611,11 +573,6 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
         Serial.println(length);
 #endif
 
-        if (checkFileConvert(configFile.size()) && configParse) {
-          if (!this->migrationConfig())
-            return E_CONFIG_PARSE_ERROR;
-        }
-
         uint8_t *content = new uint8_t[length];
         configFile.read(content, length);
 
@@ -627,6 +584,11 @@ uint8_t SuplaConfigManager::load(uint8_t version, bool configParse) {
           }
           offset += _options[i]->getLength();
           delay(0);
+        }
+
+        if (this->get(KEY_VERSION_CONFIG)->getValueInt() != CURENT_VERSION && configParse) {
+          if (!this->migrationConfig())
+            return E_CONFIG_PARSE_ERROR;
         }
 
         configFile.close();
@@ -661,6 +623,8 @@ uint8_t SuplaConfigManager::save() {
     }
 
     File configFile = SPIFFS.open(CONFIG_FILE_PATH, "w");
+    configFile.setTimeout(5000);
+
     if (configFile) {
       uint8_t *content = new uint8_t[length];
       for (i = 0; i < _optionCount; i++) {
@@ -679,6 +643,7 @@ uint8_t SuplaConfigManager::save() {
       }
 
       configFile.write(content, length);
+
       configFile.flush();
       configFile.close();
       SPIFFS.end();
@@ -703,8 +668,6 @@ void SuplaConfigManager::showAllValue() {
     Serial.print(_options[i]->getKey());
     Serial.print(F(" Value: "));
     Serial.println(_options[i]->getValue());
-    // Serial.printf_P(PSTR("Key=%d"), _options[i]->getKey());
-    // Serial.printf_P(PSTR(" value=%s\n"), _options[i]->getValue());
   }
 }
 
