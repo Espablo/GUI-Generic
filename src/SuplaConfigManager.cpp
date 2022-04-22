@@ -162,8 +162,8 @@ SuplaConfigManager::SuplaConfigManager() {
   if (SPIFFSbegin()) {
     _optionCount = OPTION_COUNT;
 
-    this->addKey(KEY_SUPLA_GUID, MAX_GUID);
-    this->addKey(KEY_SUPLA_AUTHKEY, MAX_AUTHKEY);
+    this->addKey(KEY_SUPLA_GUID, SUPLA_GUID_HEXSIZE);
+    this->addKey(KEY_SUPLA_AUTHKEY, SUPLA_AUTHKEY_HEXSIZE);
     this->addKey(KEY_WIFI_SSID, MAX_SSID);
     this->addKey(KEY_WIFI_PASS, MAX_PASSWORD);
     this->addKey(KEY_LOGIN, MAX_MLOGIN);
@@ -355,8 +355,6 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_HD44780_TYPE, "2", 1, false);
 #endif
 
-    this->addKey(KEY_FOR_USE, "", 0, false);
-
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
     this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2);
     this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
@@ -405,7 +403,7 @@ SuplaConfigManager::SuplaConfigManager() {
 
     this->addKey(KEY_FORCE_RESTART_ESP, "0", 1);
 
-    this->addKey(KEY_VERSION_CONFIG, CURENT_VERSION, 2);
+    this->addKey(KEY_VERSION_CONFIG, String(CURENT_VERSION).c_str(), 2);
 
     SPIFFS.end();
     switch (this->load()) {
@@ -487,22 +485,21 @@ bool SuplaConfigManager::migrationConfig() {
     }
   }
 
-  // if (this->get(KEY_VERSION_CONFIG)->getValueInt() == 1) {
-  //   Serial.println(F("1 -> 2"));
-  //   ustawienie starej długości zmiennej przed wczytaniem starego konfiga
-  //   this->get(KEY_VERSION_CONFIG)->setLength(0);
-  //   this->get(KEY_SUPLA_GUID)->setLength(SUPLA_GUID_SIZE);
-  //   this->get(KEY_SUPLA_AUTHKEY)->setLength(SUPLA_GUID_SIZE);
+  if (this->get(KEY_VERSION_CONFIG)->getValueInt() == 1) {
+    Serial.println(F("1 -> 2"));
+    // ustawienie starej długości zmiennej przed wczytaniem starego konfiga
+    this->get(KEY_SUPLA_GUID)->setLength(SUPLA_GUID_SIZE);
+    this->get(KEY_SUPLA_AUTHKEY)->setLength(SUPLA_AUTHKEY_SIZE);
 
-  //   if (this->load(false) == E_CONFIG_OK) {
-  //     po poprawnym wczytaniu konfiga ustawienie poprawnej wartośći zmiennej
-  //     this->get(KEY_VERSION_CONFIG)->setLength(2);
-  //     this->get(KEY_SUPLA_GUID)->setLength(MAX_GUID);
-  //     this->get(KEY_SUPLA_AUTHKEY)->setLength(MAX_AUTHKEY);
-  //     this->get(KEY_VERSION_CONFIG)->setValue("2");
-  //     migration = true;
-  //   }
-  // }
+    if (this->load(false) == E_CONFIG_OK) {
+      // po poprawnym wczytaniu konfiga ustawienie poprawnej wartośći zmiennej
+      this->get(KEY_SUPLA_GUID)->setLength(SUPLA_GUID_HEXSIZE);
+      this->get(KEY_SUPLA_AUTHKEY)->setLength(SUPLA_AUTHKEY_HEXSIZE);
+
+      this->get(KEY_VERSION_CONFIG)->setValue("2");
+      migration = true;
+    }
+  }
 
   if (migration) {
     this->get(KEY_VERSION_CONFIG)->setValue(String(CURENT_VERSION).c_str());
@@ -553,32 +550,32 @@ uint8_t SuplaConfigManager::load(bool configParse) {
           length += _options[i]->getLength();
         }
 
-#ifdef ARDUINO_ARCH_ESP8266
-        FSInfo fs_info;
-        SPIFFS.info(fs_info);
+        // #ifdef ARDUINO_ARCH_ESP8266
+        //         FSInfo fs_info;
+        //         SPIFFS.info(fs_info);
 
-        float fileTotalKB = (float)fs_info.totalBytes / 1024.0;
-        float fileUsedKB = (float)fs_info.usedBytes / 1024.0;
+        //         float fileTotalKB = (float)fs_info.totalBytes / 1024.0;
+        //         float fileUsedKB = (float)fs_info.usedBytes / 1024.0;
 
-        Serial.println(F("File system (SPIFFS): "));
-        Serial.print(F(" Total KB: "));
-        Serial.print(fileTotalKB);
-        Serial.println(F(" KB"));
-        Serial.print(F(" Used KB: "));
-        Serial.print(fileUsedKB);
-        Serial.println(F(" KB"));
-        Serial.print(F("Size file: "));
-        Serial.println(configFile.size());
-        Serial.print(F("Size conf: "));
-        Serial.println(length);
-#endif
+        //         Serial.println(F("File system (SPIFFS): "));
+        //         Serial.print(F(" Total KB: "));
+        //         Serial.print(fileTotalKB);
+        //         Serial.println(F(" KB"));
+        //         Serial.print(F(" Used KB: "));
+        //         Serial.print(fileUsedKB);
+        //         Serial.println(F(" KB"));
+        //         Serial.print(F("Size file: "));
+        //         Serial.println(configFile.size());
+        //         Serial.print(F("Size conf: "));
+        //         Serial.println(length);
+        // #endif
 
         uint8_t *content = new uint8_t[length];
         configFile.read(content, length);
 
         for (i = 0; i < _optionCount; i++) {
           if (_options[i]->getLoadKey()) {
-            if (strcmp((const char *)(content + offset), "") != 0) {
+            if (strcmp((const char *)(content + offset), "") != 0 || i == KEY_VERSION_CONFIG) {
               _options[i]->setValue((const char *)(content + offset));
             }
           }
@@ -766,12 +763,12 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
   this->set(KEY_SUPLA_GUID, GUID);
   this->set(KEY_SUPLA_AUTHKEY, AUTHKEY);
 
-  String GUID_S = ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE);
-  String AUTHKEY_S = ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValueHex(SUPLA_AUTHKEY_SIZE);
-  GUID_S.reserve(32);
-  AUTHKEY_S.reserve(32);
+  // String GUID_S = ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE);
+  // String AUTHKEY_S = ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValueHex(SUPLA_AUTHKEY_SIZE);
+  // GUID_S.reserve(32);
+  // AUTHKEY_S.reserve(32);
 
-  if (GUID_S.endsWith("0") || AUTHKEY_S.endsWith("0")) {
-    setGUIDandAUTHKEY();
-  }
+  // if (GUID_S.endsWith("0") || AUTHKEY_S.endsWith("0")) {
+  //   setGUIDandAUTHKEY();
+  // }
 }

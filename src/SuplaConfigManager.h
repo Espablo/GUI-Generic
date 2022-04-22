@@ -26,7 +26,7 @@
 #include <time.h>
 #endif
 
-#define CURENT_VERSION   1
+#define CURENT_VERSION   2
 #define CONFIG_FILE_PATH "/dat"
 
 #define DEFAULT_HOSTNAME   "GUI Generic"
@@ -34,8 +34,6 @@
 #define DEFAULT_LOGIN_PASS "pass"
 #define DEFAULT_EMAIL      "email@address.com"
 
-#define MAX_GUID                SUPLA_GUID_SIZE
-#define MAX_AUTHKEY             SUPLA_GUID_SIZE
 #define MAX_SSID                32
 #define MAX_PASSWORD            64
 #define MIN_PASSWORD            4
@@ -95,8 +93,6 @@ enum _key
   KEY_OLED_ANIMATION,
   KEY_OLED_BACK_LIGHT_TIME,
   KEY_MAX_RGBW,
-
-  KEY_FOR_USE,
 
   KEY_PUSHOVER_TOKEN,
   KEY_PUSHOVER_USER,
