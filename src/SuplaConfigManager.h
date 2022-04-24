@@ -26,7 +26,7 @@
 #include <time.h>
 #endif
 
-#define CURENT_VERSION   2
+#define CURENT_VERSION   1
 #define CONFIG_FILE_PATH "/dat"
 
 #define DEFAULT_HOSTNAME   "GUI Generic"
@@ -135,7 +135,7 @@ enum _key
 
   KEY_FORCE_RESTART_ESP,
 
-  KEY_VERSION_CONFIG,
+  // KEY_VERSION_CONFIG,
 
   OPTION_COUNT
 };

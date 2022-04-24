@@ -162,8 +162,8 @@ SuplaConfigManager::SuplaConfigManager() {
   if (SPIFFSbegin()) {
     _optionCount = OPTION_COUNT;
 
-    this->addKey(KEY_SUPLA_GUID, SUPLA_GUID_HEXSIZE);
-    this->addKey(KEY_SUPLA_AUTHKEY, SUPLA_AUTHKEY_HEXSIZE);
+    this->addKey(KEY_SUPLA_GUID, SUPLA_GUID_SIZE);
+    this->addKey(KEY_SUPLA_AUTHKEY, SUPLA_AUTHKEY_SIZE);
     this->addKey(KEY_WIFI_SSID, MAX_SSID);
     this->addKey(KEY_WIFI_PASS, MAX_PASSWORD);
     this->addKey(KEY_LOGIN, MAX_MLOGIN);
@@ -173,8 +173,8 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL, MAX_EMAIL);
 
     this->addKey(KEY_CFG_MODE, 2);
-    this->addKey(KEY_ENABLE_GUI, "1", sizeof(bool));
-    this->addKey(KEY_ENABLE_SSL, "0", sizeof(bool));
+    this->addKey(KEY_ENABLE_GUI, "1", 1);
+    this->addKey(KEY_ENABLE_SSL, "0", 1);
 
     this->addKey(KEY_BOARD, 2);
 
@@ -182,35 +182,35 @@ SuplaConfigManager::SuplaConfigManager() {
     uint8_t nr, key;
     for (nr = 0; nr <= MAX_GPIO; nr++) {
       key = KEY_GPIO + nr;
-      this->addKey(key, 36, 2);
+      this->addKey(key, 36);
     }
 #elif ARDUINO_ARCH_ESP32
     uint8_t nr, key;
     for (nr = 0; nr <= MAX_GPIO; nr++) {
       key = KEY_GPIO + nr;
-      this->addKey(key, 36, 2);
+      this->addKey(key, 36);
     }
 #endif
 
 #ifdef SUPLA_RELAY
-    this->addKey(KEY_MAX_RELAY, "0", 2, 2);
-    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, 2);
-    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2);
-    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2);
-    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2);
-    this->addKey(KEY_VIRTUAL_RELAY, MAX_VIRTUAL_RELAY * 2, 4);
-    this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_VIRTUAL_RELAY * 2, 4);
-    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, 6);
+    this->addKey(KEY_MAX_RELAY, "0", 2);
+    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2);
+    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1);
+    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4);
+    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4);
+    this->addKey(KEY_VIRTUAL_RELAY, MAX_VIRTUAL_RELAY * 2);
+    this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_VIRTUAL_RELAY * 2);
+    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2);
 
 #else
-    this->addKey(KEY_MAX_RELAY, 2, 2, false);
-    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, 2, false);
-    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, 2, false);
-    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, 2, false);
-    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, 2, false);
-    this->addKey(KEY_VIRTUAL_RELAY, MAX_GPIO * 2, 4, false);
-    this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_GPIO * 2, 4, false);
-    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, 6, false);
+    this->addKey(KEY_MAX_RELAY, 2, false);
+    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, false);
+    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, false);
+    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, false);
+    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, false);
+    this->addKey(KEY_VIRTUAL_RELAY, MAX_GPIO * 2, false);
+    this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_GPIO * 2, false);
+    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, false);
 
 #endif
 
@@ -346,27 +346,27 @@ SuplaConfigManager::SuplaConfigManager() {
 #ifdef SUPLA_DEEP_SLEEP
     this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3);
 #else
-    this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3, false);
+    this->addKey(KEY_DEEP_SLEEP_TIME, 3, false);
 #endif
 
 #ifdef SUPLA_LCD_HD44780
     this->addKey(KEY_HD44780_TYPE, "2", 1);
 #else
-    this->addKey(KEY_HD44780_TYPE, "2", 1, false);
+    this->addKey(KEY_HD44780_TYPE, 1, false);
 #endif
 
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
     this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2);
     this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
 #else
-    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2, false);
-    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, false);
+    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, 2, false);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, false);
 #endif
 
 #ifdef SUPLA_CONDITIONS
     this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3);
 #else
-    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3, false);
+    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, MAX_GPIO * 3, false);
 #endif
 
 #ifdef SUPLA_RF_BRIDGE
@@ -391,19 +391,19 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4);
     this->addKey(KEY_AT_HOLD_TIME, "0.45", 4);
 #else
-    this->addKey(KEY_AT_MULTICLICK_TIME, "0.45", 4, false);
-    this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, false);
+    this->addKey(KEY_AT_MULTICLICK_TIME, 4, false);
+    this->addKey(KEY_AT_HOLD_TIME, 4, false);
 #endif
 
-#if defined(SUPLA_ANALOG_READING_MAP)
+#ifdef SUPLA_ANALOG_READING_MAP
     this->addKey(KEY_MAX_ANALOG_READING, "1", 2);
 #else
-    this->addKey(KEY_MAX_ANALOG_READING, "1", 2, false);
+    this->addKey(KEY_MAX_ANALOG_READING, 2, false);
 #endif
 
     this->addKey(KEY_FORCE_RESTART_ESP, "0", 1);
 
-    this->addKey(KEY_VERSION_CONFIG, String(CURENT_VERSION).c_str(), 2);
+    //  this->addKey(KEY_VERSION_CONFIG, String(CURENT_VERSION).c_str(), 2);
 
     SPIFFS.end();
     switch (this->load()) {
@@ -473,39 +473,39 @@ bool SuplaConfigManager::SPIFFSbegin() {
 
 bool SuplaConfigManager::migrationConfig() {
   bool migration = false;
-  Serial.print(F("migration Config ver:"));
-  Serial.println(this->get(KEY_VERSION_CONFIG)->getValueInt());
+  // Serial.print(F("migration Config ver:"));
+  // Serial.println(this->get(KEY_VERSION_CONFIG)->getValueInt());
 
-  if (this->get(KEY_VERSION_CONFIG)->getValueInt() == 0) {
-    Serial.println(F("0 -> 1"));
+  // if (this->get(KEY_VERSION_CONFIG)->getValueInt() == 0) {
+  //   Serial.println(F("0 -> 1"));
 
-    if (this->load(false) == E_CONFIG_OK) {
-      this->get(KEY_VERSION_CONFIG)->setValue("1");
-      migration = true;
-    }
-  }
+  //   if (this->load(false) == E_CONFIG_OK) {
+  //     this->get(KEY_VERSION_CONFIG)->setValue("1");
+  //     migration = true;
+  //   }
+  // }
 
-  if (this->get(KEY_VERSION_CONFIG)->getValueInt() == 1) {
-    Serial.println(F("1 -> 2"));
-    // ustawienie starej długości zmiennej przed wczytaniem starego konfiga
-    this->get(KEY_SUPLA_GUID)->setLength(SUPLA_GUID_SIZE);
-    this->get(KEY_SUPLA_AUTHKEY)->setLength(SUPLA_AUTHKEY_SIZE);
+  // if (this->get(KEY_VERSION_CONFIG)->getValueInt() == 1) {
+  //   Serial.println(F("1 -> 2"));
+  //   // ustawienie starej długości zmiennej przed wczytaniem starego konfiga
+  //   this->get(KEY_SUPLA_GUID)->setLength(SUPLA_GUID_SIZE);
+  //   this->get(KEY_SUPLA_AUTHKEY)->setLength(SUPLA_AUTHKEY_SIZE);
 
-    if (this->load(false) == E_CONFIG_OK) {
-      // po poprawnym wczytaniu konfiga ustawienie poprawnej wartośći zmiennej
-      this->get(KEY_SUPLA_GUID)->setLength(SUPLA_GUID_HEXSIZE);
-      this->get(KEY_SUPLA_AUTHKEY)->setLength(SUPLA_AUTHKEY_HEXSIZE);
+  //   if (this->load(false) == E_CONFIG_OK) {
+  //     // po poprawnym wczytaniu konfiga ustawienie poprawnej wartośći zmiennej
+  //     this->get(KEY_SUPLA_GUID)->setLength(SUPLA_GUID_HEXSIZE);
+  //     this->get(KEY_SUPLA_AUTHKEY)->setLength(SUPLA_AUTHKEY_HEXSIZE);
 
-      this->get(KEY_VERSION_CONFIG)->setValue("2");
-      migration = true;
-    }
-  }
+  //     this->get(KEY_VERSION_CONFIG)->setValue("2");
+  //     migration = true;
+  //   }
+  // }
 
-  if (migration) {
-    this->get(KEY_VERSION_CONFIG)->setValue(String(CURENT_VERSION).c_str());
-    this->save();
-    Serial.println(F("successful Config migration"));
-  }
+  // if (migration) {
+  //   this->get(KEY_VERSION_CONFIG)->setValue(String(CURENT_VERSION).c_str());
+  //   this->save();
+  //   Serial.println(F("successful Config migration"));
+  // }
 
   return migration;
 }
@@ -575,7 +575,8 @@ uint8_t SuplaConfigManager::load(bool configParse) {
 
         for (i = 0; i < _optionCount; i++) {
           if (_options[i]->getLoadKey()) {
-            if (strcmp((const char *)(content + offset), "") != 0 || i == KEY_VERSION_CONFIG) {
+            if (strcmp((const char *)(content + offset), "") != 0) {
+              // if (strcmp((const char *)(content + offset), "") != 0 || i == KEY_VERSION_CONFIG) {
               _options[i]->setValue((const char *)(content + offset));
             }
           }
@@ -583,10 +584,10 @@ uint8_t SuplaConfigManager::load(bool configParse) {
           delay(0);
         }
 
-        if (this->get(KEY_VERSION_CONFIG)->getValueInt() != CURENT_VERSION && configParse) {
-          if (!this->migrationConfig())
-            return E_CONFIG_PARSE_ERROR;
-        }
+        // if (this->get(KEY_VERSION_CONFIG)->getValueInt() != CURENT_VERSION && configParse) {
+        //   if (!this->migrationConfig())
+        //     return E_CONFIG_PARSE_ERROR;
+        // }
 
         configFile.close();
         SPIFFS.end();
@@ -763,12 +764,12 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
   this->set(KEY_SUPLA_GUID, GUID);
   this->set(KEY_SUPLA_AUTHKEY, AUTHKEY);
 
-  // String GUID_S = ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE);
-  // String AUTHKEY_S = ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValueHex(SUPLA_AUTHKEY_SIZE);
-  // GUID_S.reserve(32);
-  // AUTHKEY_S.reserve(32);
+  String GUID_S = ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE);
+  String AUTHKEY_S = ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValueHex(SUPLA_AUTHKEY_SIZE);
+  GUID_S.reserve(32);
+  AUTHKEY_S.reserve(32);
 
-  // if (GUID_S.endsWith("0") || AUTHKEY_S.endsWith("0")) {
-  //   setGUIDandAUTHKEY();
-  // }
+  if (GUID_S.endsWith("0") || AUTHKEY_S.endsWith("0")) {
+    setGUIDandAUTHKEY();
+  }
 }
