@@ -99,6 +99,7 @@
 #endif
 #ifdef SUPLA_IMPULSE_COUNTER
 #include <supla/sensor/impulse_counter.h>
+#include <supla/control/internal_pin_output.h>
 #endif
 #ifdef DEBUG_MODE
 #include <supla/sensor/esp_free_heap.h>
@@ -235,7 +236,7 @@ void addRolleShutter(uint8_t nr);
 
 #ifdef SUPLA_IMPULSE_COUNTER
 extern std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
-void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay);
+void addImpulseCounter(uint8_t nr);
 #endif
 
 #ifdef SUPLA_RGBW

@@ -375,29 +375,38 @@ void handleImpulseCounterSet(int save) {
   String nr;
   uint8_t gpio, selected;
 
+  nr.reserve(2);
   nr = WebServer->httpServer->arg(ARG_PARM_NUMBER);
-
   gpio = ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
 
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_OTHER);
+  webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_IMPULSE_COUNTER_SET, ARG_PARM_NUMBER, nr));
 
   if (nr.toInt() <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() && gpio != OFF_GPIO) {
+
     addForm(webContentBuffer, F("post"), getParameterRequest(PATH_IMPULSE_COUNTER_SET, ARG_PARM_NUMBER, nr));
-    addFormHeader(webContentBuffer, S_IMPULSE_COUNTER_SETTINGS_NR + nr);
+    addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_IMPULSE_COUNTER);
 
     selected = ConfigESP->getMemory(gpio);
-    addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_PULL_UP + nr, S_IMPULSE_COUNTER_PULL_UP, selected);
+    addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_PULL_UP, S_IMPULSE_COUNTER_PULL_UP, selected);
 
     selected = ConfigESP->getLevel(gpio);
-    addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_RAISING_EDGE + nr, S_IMPULSE_COUNTER_RAISING_EDGE, selected);
+    addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_RAISING_EDGE, S_IMPULSE_COUNTER_RAISING_EDGE, selected);
 
     addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT);
 
     uint32_t count = Supla::GUI::impulseCounter[nr.toInt()]->getCounter();
     addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_CHANGE_VALUE, S_IMPULSE_COUNTER_CHANGE_VALUE, F(""), false, String(count));
-
     addFormHeaderEnd(webContentBuffer);
+
+    // LED STATUS COUNTER
+    addFormHeader(webContentBuffer, S_STATUS_LED);
+    addListGPIOBox(webContentBuffer, INPUT_LED_IMPULSE_COUNTER, S_LED, FUNCTION_LED, nr.toInt());
+
+    selected = ConfigESP->getInversed(ConfigESP->getGpio(nr.toInt(), FUNCTION_LED));
+    addListBox(webContentBuffer, INPUT_LED_INVERSED_IMPULSE_COUNTER, S_STATE_CONTROL, LEVEL_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
+
     addButtonSubmit(webContentBuffer, S_SAVE);
     addFormEnd(webContentBuffer);
   }
@@ -407,43 +416,45 @@ void handleImpulseCounterSet(int save) {
 }
 
 void handleImpulseCounterSaveSet() {
-  String nr, input;
+  String nr = WebServer->httpServer->arg(ARG_PARM_NUMBER);
+  uint8_t gpio = ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
 
-  nr = WebServer->httpServer->arg(ARG_PARM_NUMBER);
-  uint8_t key = KEY_GPIO + ConfigESP->getGpio(nr.toInt(), FUNCTION_IMPULSE_COUNTER);
-
-  input = INPUT_IMPULSE_COUNTER_PULL_UP;
-  input += nr;
-
-  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(key, MEMORY, 1);
+  if (strcmp(WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_PULL_UP).c_str(), "") != 0) {
+    ConfigESP->setMemory(gpio, 1);
   }
   else {
-    ConfigManager->setElement(key, MEMORY, 0);
+    ConfigESP->setMemory(gpio, 0);
   }
 
-  input = INPUT_IMPULSE_COUNTER_RAISING_EDGE;
-  input += nr;
-  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(key, LEVEL_RELAY, 1);
+  if (strcmp(WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_RAISING_EDGE).c_str(), "") != 0) {
+    ConfigESP->setLevel(gpio, 1);
   }
   else {
-    ConfigManager->setElement(key, LEVEL_RELAY, 0);
+    ConfigESP->setLevel(gpio, 0);
   }
 
   ConfigManager->set(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT).c_str());
+
+  if (!WebServer->saveGPIO(INPUT_LED_IMPULSE_COUNTER, FUNCTION_LED, nr.toInt())) {
+    handleImpulseCounterSet(6);
+    return;
+  }
+  else {
+    ConfigESP->setInversed(ConfigESP->getGpio(nr.toInt(), FUNCTION_LED), WebServer->httpServer->arg(INPUT_LED_INVERSED_IMPULSE_COUNTER).toInt());
+  }
+
   Supla::GUI::impulseCounter[nr.toInt()]->setCounter((unsigned long long)WebServer->httpServer->arg(INPUT_IMPULSE_COUNTER_CHANGE_VALUE).toInt());
   Supla::Storage::ScheduleSave(1000);
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
       //      Serial.println(F("E_CONFIG_OK: Dane zapisane"));
-      handleOther(1);
+      handleImpulseCounterSet(1);
       break;
 
     case E_CONFIG_FILE_OPEN:
       //      Serial.println(F("E_CONFIG_FILE_OPEN: Couldn't open file"));
-      handleOther(2);
+      handleImpulseCounterSet(2);
       break;
   }
 }

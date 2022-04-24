@@ -129,7 +129,6 @@
 #define S_IMPULSE_COUNTER_RAISING_EDGE     "Flanco ascendente"
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Cambia el valor"
-#define S_IMPULSE_COUNTER_SETTINGS_NR      "Configuración contador de impulsos no. "
 #define S_SCREEN_TIME                      "Pantalla [s]"
 #define S_OLED_BUTTON                      "Botón OLED"
 #define S_SCREEN                           "Pantalla"
@@ -155,6 +154,7 @@
 #define S_SENSOR_READING_DISTANCE "distancia de lectura del sensor"
 #define S_ELECTRIC_PHASE          "1/3etapas"
 #define S_OPTIONAL                "(Opcional)"
+#define S_STATUS_LED              "Led de estado"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "Estado de activación del relé"

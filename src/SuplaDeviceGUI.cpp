@@ -471,8 +471,25 @@ void addRolleShutter(uint8_t nr) {
 #ifdef SUPLA_IMPULSE_COUNTER
 std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
 
-void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay) {
+void addImpulseCounter(uint8_t nr) {
+  uint8_t pin, pinLED, debounceDelay;
+  bool lowToHigh, inputPullup, levelLed;
+
+  pin = ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER);
+  lowToHigh = ConfigESP->getLevel(pin);
+  inputPullup = ConfigESP->getMemory(pin);
+  debounceDelay = ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt();
+
+  pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
+  levelLed = ConfigESP->getInversed(pinLED);
+
   impulseCounter.push_back(new Supla::Sensor::ImpulseCounter(pin, lowToHigh, inputPullup, debounceDelay));
+
+  if (pinLED != OFF_GPIO) {
+    auto led = new Supla::Control::InternalPinOutput(pinLED, levelLed);
+    impulseCounter[nr]->addAction(Supla::TOGGLE, led, Supla::ON_CHANGE);
+  }
+
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
 }
 #endif

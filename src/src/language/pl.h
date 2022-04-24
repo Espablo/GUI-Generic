@@ -127,7 +127,6 @@
 #define S_IMPULSE_COUNTER_RAISING_EDGE     "Zbocze rosnące"
 #define S_IMPULSE_COUNTER_PULL_UP          "Podciąganie do VCC"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Zmień wartość"
-#define S_IMPULSE_COUNTER_SETTINGS_NR      "Ustawienia IC nr. "
 #define S_SCREEN_TIME                      "Ekran [s]"
 #define S_OLED_BUTTON                      "Przycisk OLED"
 #define S_SCREEN                           "Ekran"
@@ -153,6 +152,7 @@
 #define S_SENSOR_READING_DISTANCE "maksymalna odległość odczytu czujnika"
 #define S_ELECTRIC_PHASE          "1/3fazy"
 #define S_OPTIONAL                "(Opcjonalny)"
+#define S_STATUS_LED              "Status LED"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "Status załączenia przekaźnika"

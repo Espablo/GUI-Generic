@@ -281,16 +281,11 @@ void setup() {
 #endif
 
 #ifdef SUPLA_IMPULSE_COUNTER
-  if (ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() > 0) {
-    for (nr = 0; nr < ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
-      gpio = ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER);
-      if (gpio != OFF_GPIO) {
-        Supla::GUI::addImpulseCounter(gpio, ConfigESP->getLevel(gpio), ConfigESP->getMemory(gpio),
-                                      ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt());
-      }
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt(); nr++) {
+    if (ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER) != OFF_GPIO) {
+      Supla::GUI::addImpulseCounter(nr);
     }
   }
-
 #endif
 
 #ifdef SUPLA_HLW8012
@@ -595,5 +590,5 @@ void setup() {
 
 void loop() {
   SuplaDevice.iterate();
- // delay(25);
+  // delay(25);
 }

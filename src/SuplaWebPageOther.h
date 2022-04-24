@@ -47,6 +47,8 @@ void handleOtherSave();
 #define INPUT_IMPULSE_COUNTER_RAISING_EDGE     "icre"
 #define INPUT_IMPULSE_COUNTER_CHANGE_VALUE     "iccv"
 #define INPUT_MAX_IMPULSE_COUNTER              "imic"
+#define INPUT_LED_IMPULSE_COUNTER              "ilic"
+#define INPUT_LED_INVERSED_IMPULSE_COUNTER     "iliic"
 
 void handleImpulseCounterSet(int save = 0);
 void handleImpulseCounterSaveSet();

@@ -126,7 +126,6 @@
 #define S_IMPULSE_COUNTER_RAISING_EDGE     "Raising edge"
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Change value"
-#define S_IMPULSE_COUNTER_SETTINGS_NR      "Settings IC nr. "
 #define S_SCREEN_TIME                      "Screen [s]"
 #define S_OLED_BUTTON                      "OLED button"
 #define S_SCREEN                           "Screen"
@@ -152,6 +151,7 @@
 #define S_SENSOR_READING_DISTANCE "sensor reading distance"
 #define S_ELECTRIC_PHASE          "1/3phases"
 #define S_OPTIONAL                "(Optional)"
+#define S_STATUS_LED              "Status LED"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "Relay activation status"
