@@ -383,7 +383,6 @@ void handleImpulseCounterSet(int save) {
   webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_IMPULSE_COUNTER_SET, ARG_PARM_NUMBER, nr));
 
   if (nr.toInt() <= ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt() && gpio != OFF_GPIO) {
-
     addForm(webContentBuffer, F("post"), getParameterRequest(PATH_IMPULSE_COUNTER_SET, ARG_PARM_NUMBER, nr));
     addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_IMPULSE_COUNTER);
 
@@ -394,6 +393,10 @@ void handleImpulseCounterSet(int save) {
     addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_RAISING_EDGE, S_IMPULSE_COUNTER_RAISING_EDGE, selected);
 
     addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT);
+
+    if (Supla::GUI::impulseCounter.size() < ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt()) {
+      Supla::GUI::addImpulseCounter(nr.toInt());
+    }
 
     uint32_t count = Supla::GUI::impulseCounter[nr.toInt()]->getCounter();
     addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_CHANGE_VALUE, S_IMPULSE_COUNTER_CHANGE_VALUE, F(""), false, String(count));

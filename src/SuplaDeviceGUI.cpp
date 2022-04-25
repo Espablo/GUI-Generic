@@ -487,7 +487,8 @@ void addImpulseCounter(uint8_t nr) {
 
   if (pinLED != OFF_GPIO) {
     auto led = new Supla::Control::InternalPinOutput(pinLED, levelLed);
-    impulseCounter[nr]->addAction(Supla::TOGGLE, led, Supla::ON_CHANGE);
+    led->setDurationMs(100);
+    impulseCounter[nr]->addAction(Supla::TURN_ON, led, Supla::ON_CHANGE);
   }
 
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
