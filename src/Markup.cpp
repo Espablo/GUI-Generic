@@ -273,7 +273,7 @@ void addListGPIOBox(
   html += nr;
   html += F("'>");
 
-  if (function == FUNCTION_RELAY)
+  if (function == FUNCTION_RELAY && nr < MAX_VIRTUAL_RELAY)
     addGPIOOptionValue(html, GPIO_VIRTUAL_RELAY, gpio, S_SPACE "VIRTUAL");
 
 #ifdef ARDUINO_ARCH_ESP8266
