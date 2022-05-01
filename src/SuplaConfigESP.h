@@ -103,6 +103,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
     return getGpio(0, function);
   }
 
+  uint8_t getNumberButton(uint8_t nr);
   uint8_t getKeyGpio(uint8_t gpio);
 
   bool getLevel(uint8_t gpio);

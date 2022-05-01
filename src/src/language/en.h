@@ -46,7 +46,7 @@
 #define S_BUTTON                                               "BUTTON"
 #define S_BUTTON_NR_SETTINGS                                   "Setting button nr. "
 #define S_REACTION_TO                                          "Reaction to"
-#define S_NUMBER                                               "Number"
+#define S_RELAY_CONTROL                                        "Relay control"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO settings for limit switch"
 #define S_LIMIT_SWITCH                                         "LIMIT SWITCH"

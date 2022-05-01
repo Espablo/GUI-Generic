@@ -46,7 +46,7 @@
 #define S_BUTTON                                               "TASTE"
 #define S_BUTTON_NR_SETTINGS                                   "Parameter für Tasten Nr. "
 #define S_REACTION_TO                                          "Reaktion auf"
-#define S_NUMBER                                               "Number"
+#define S_RELAY_CONTROL                                        "Relaissteuerung"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO-Einstellungen für Endschalter"
 #define S_LIMIT_SWITCH                                         "ENDSCHALTER"

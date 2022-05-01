@@ -47,7 +47,7 @@
 #define S_BUTTON                                               "BOUTON"
 #define S_BUTTON_NR_SETTINGS                                   "Bouton mettre à jour "
 #define S_REACTION_TO                                          "Réaction à"
-#define S_NUMBER                                               "Number"
+#define S_RELAY_CONTROL                                        "Commande de relais"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Paramètres GPIO pour capteur de limite"
 #define S_LIMIT_SWITCH                                         "Capteur de limite"

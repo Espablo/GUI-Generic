@@ -240,7 +240,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
       if (gpio == GPIO_VIRTUAL_RELAY) {
         ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
       }
-      if (function == FUNCTION_RELAY)
+      if (function == FUNCTION_BUTTON)
         ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
 
 #ifdef SUPLA_ROLLERSHUTTER

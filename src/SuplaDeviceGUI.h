@@ -193,8 +193,11 @@ void setupConnection();
 void enableConnectionSSL(bool value);
 void crateWebServer();
 
-#if defined(SUPLA_RELAY)
+#ifdef SUPLA_RELAY
 void addRelay(uint8_t nr);
+#endif
+
+#ifdef SUPLA_BUTTON
 void addButtonToRelay(uint8_t nr);
 #endif
 

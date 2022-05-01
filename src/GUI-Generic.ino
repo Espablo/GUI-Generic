@@ -102,6 +102,12 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_BUTTON
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+    Supla::GUI::addButtonToRelay(nr);
+  }
+#endif
+
 #ifdef SUPLA_LIMIT_SWITCH
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
     if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != OFF_GPIO) {
@@ -545,12 +551,6 @@ void setup() {
 #ifdef SUPLA_DEEP_SLEEP
   if (ConfigManager->get(KEY_DEEP_SLEEP_TIME)->getValueInt() > 0) {
     new Supla::Control::DeepSleep(ConfigManager->get(KEY_DEEP_SLEEP_TIME)->getValueInt() * 60, 30);
-  }
-#endif
-
-#ifdef SUPLA_ACTION_TRIGGER
-  for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-    Supla::GUI::addButtonActionTrigger(nr);
   }
 #endif
 

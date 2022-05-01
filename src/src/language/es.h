@@ -49,7 +49,7 @@
 #define S_BUTTON                                               "BOTÓN"
 #define S_BUTTON_NR_SETTINGS                                   "Parámetros del botón no. "
 #define S_REACTION_TO                                          "Reacción a"
-#define S_NUMBER                                               "Number"
+#define S_RELAY_CONTROL                                        "Control de relé"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Parámetros GPIO para el sensor de apertura"
 #define S_LIMIT_SWITCH                                         "INTERRUPTOR DE LÍMITE"

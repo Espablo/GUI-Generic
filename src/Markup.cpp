@@ -418,6 +418,27 @@ void addListBox(String& html, const String& input_id, const String& name, const 
   html += F("</select></i>");
 }
 
+void addListNumbersBox(String& html, const String& input_id, const String& name, uint8_t size, uint8_t selected) {
+  html += F("<i><label>");
+  html += name;
+  html += "</label><select name='";
+  html += input_id;
+  html += F("'>");
+
+  for (uint8_t suported = 0; suported < size; suported++) {
+    html += F("<option value='");
+    html += suported;
+    html += F("'");
+    if (selected == suported) {
+      html += F(" selected");
+    }
+    html += F(">");
+    html += (suported + 1);
+    WebServer->sendHeader();
+  }
+  html += F("</select></i>");
+}
+
 void addListLinkBox(String& html,
                     const String& input_id,
                     const String& name,

@@ -679,6 +679,7 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, JsonArray& buttonAction,
     addButtonCFG(gpio);
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
 
+  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
@@ -691,6 +692,7 @@ void addButtonAnalog(uint8_t nr, uint8_t gpio, JsonArray& buttonAction) {
     ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
 
   ConfigESP->setEvent(gpio, Supla::Event::ON_PRESS);
+  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
@@ -701,7 +703,6 @@ void addRelay(uint8_t nr, uint8_t gpio, uint8_t level) {
   ConfigESP->setMemory(gpio, MEMORY_RESTORE);
   ConfigESP->setGpio(gpio, nr, FUNCTION_RELAY);
 
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
   ConfigManager->set(KEY_MAX_RELAY, maxRelay + 1);
 }
 

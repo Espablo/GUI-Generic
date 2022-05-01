@@ -122,43 +122,40 @@ void addRelay(uint8_t nr) {
       relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
     }
 
-    int size = relay.size() - 1;
-
     switch (ConfigESP->getMemory(pinRelay, nr)) {
       case MEMORY_OFF:
-        relay[size]->setDefaultStateOff();
+        relay[nr]->setDefaultStateOff();
         break;
       case MEMORY_ON:
-        relay[size]->setDefaultStateOn();
+        relay[nr]->setDefaultStateOn();
         break;
       case MEMORY_RESTORE:
-        relay[size]->setDefaultStateRestore();
+        relay[nr]->setDefaultStateRestore();
         break;
     }
 
-    relay[size]->keepTurnOnDuration();
-    relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
+    relay[nr]->keepTurnOnDuration();
+    relay[nr]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinLED != OFF_GPIO) {
       new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
     }
-
-    Supla::GUI::addButtonToRelay(nr);
+  }
+  else {
+    relay.push_back(nullptr);
   }
   delay(0);
 }
 
+#ifdef SUPLA_BUTTON
 void addButtonToRelay(uint8_t nr) {
-  uint8_t numberButton = nr;
+  uint8_t pinButton, nrButton, pinRelay;
 
-  if (strcmp(ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0) {
-    numberButton = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).toInt();
-  }
-  uint8_t pinButton = ConfigESP->getGpio(numberButton, FUNCTION_BUTTON);
+  nrButton = ConfigESP->getNumberButton(nr);
+  pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+  pinRelay = ConfigESP->getGpio(nrButton, FUNCTION_RELAY);
 
-  int size = relay.size() - 1;
-
-  if (pinButton != OFF_GPIO) {
+  if (pinButton != OFF_GPIO && pinRelay != OFF_GPIO) {
     Supla::Control::Button *button;
 
     if (pinButton == A0) {
@@ -168,24 +165,27 @@ void addButtonToRelay(uint8_t nr) {
       button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
       button->setSwNoiseFilterDelay(50);
     }
-
-    button->addAction(ConfigESP->getAction(pinButton), relay[size], ConfigESP->getEvent(pinButton));
+    button->addAction(ConfigESP->getAction(pinButton), relay[nrButton], ConfigESP->getEvent(pinButton));
 
 #ifdef SUPLA_ACTION_TRIGGER
-    addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[size]);
+    addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[nrButton]);
 #endif
   }
+  else {
+#ifdef SUPLA_ACTION_TRIGGER
+    Supla::GUI::addButtonActionTrigger(nr);
+#endif
+  }
+  delay(0);
 }
+#endif
 #endif
 
 #ifdef SUPLA_ACTION_TRIGGER
 void addButtonActionTrigger(uint8_t nr) {
-  uint8_t pinRelay, pinButton;
+  uint8_t pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
 
-  pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
-  pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-
-  if (pinRelay == OFF_GPIO && pinButton != OFF_GPIO) {
+  if (pinButton != OFF_GPIO) {
     auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
     button->setSwNoiseFilterDelay(100);
     auto at = new Supla::Control::ActionTrigger();

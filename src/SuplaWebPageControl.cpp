@@ -206,6 +206,9 @@ void handleButtonSaveSet() {
     ConfigManager->setElement(key, PULL_UP_BUTTON, 0);
   }
 
+  input = INPUT_BUTTON_NUMBER;
+  ConfigManager->setElement(KEY_NUMBER_BUTTON, button.toInt(), WebServer->httpServer->arg(input).toInt());
+
   input = INPUT_BUTTON_EVENT;
   ConfigManager->setElement(key, EVENT_BUTTON, WebServer->httpServer->arg(input).toInt());
 
@@ -275,20 +278,21 @@ void handleButtonSet(int save) {
       }
 #endif
     }
-    else if (gpio == A0) {
-      addNumberBox(webContentBuffer, INPUT_ANALOG_EXPECTED, S_CONDITION, "0", false,
-                   ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(button.toInt()));
-
-      selected = ConfigESP->getEvent(gpio);
-      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
-      selected = ConfigESP->getAction(gpio);
-      addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
-    }
     else {
-      selected = ConfigESP->getPullUp(gpio);
-      addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
-      selected = ConfigESP->getInversed(gpio);
-      addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
+      selected = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(button.toInt()).toInt();
+      addListNumbersBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_RELAY_CONTROL, ConfigESP->countFreeGpio(FUNCTION_RELAY), selected);
+
+      if (gpio == A0) {
+        addNumberBox(webContentBuffer, INPUT_ANALOG_EXPECTED, S_CONDITION, "0", false,
+                     ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(button.toInt()));
+      }
+      else {
+        selected = ConfigESP->getPullUp(gpio);
+        addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
+        selected = ConfigESP->getInversed(gpio);
+        addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
+      }
+
       selected = ConfigESP->getEvent(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
       selected = ConfigESP->getAction(gpio);

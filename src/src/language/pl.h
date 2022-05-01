@@ -47,7 +47,7 @@
 #define S_BUTTON                                               "PRZYCISK"
 #define S_BUTTON_NR_SETTINGS                                   "Ustawienia przycisku nr. "
 #define S_REACTION_TO                                          "Reakcja na"
-#define S_NUMBER                                               "Numer"
+#define S_RELAY_CONTROL                                        "Sterowanie przekaźnikiem"
 #define S_ACTION                                               "Akcja"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Ustawienie GPIO dla cz. otwarcia"
 #define S_LIMIT_SWITCH                                         "KRAŃCÓWKA"

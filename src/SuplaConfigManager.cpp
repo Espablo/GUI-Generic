@@ -200,7 +200,6 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4);
     this->addKey(KEY_VIRTUAL_RELAY, MAX_VIRTUAL_RELAY * 2);
     this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_VIRTUAL_RELAY * 2);
-    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2);
 
 #else
     this->addKey(KEY_MAX_RELAY, 2, false);
@@ -210,7 +209,6 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, false);
     this->addKey(KEY_VIRTUAL_RELAY, MAX_GPIO * 2, false);
     this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_GPIO * 2, false);
-    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, false);
 
 #endif
 
@@ -231,10 +229,12 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_MAX_BUTTON, "0", 2);
     this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON);
     this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON);
+    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2);
 #else
     this->addKey(KEY_MAX_BUTTON, 2, false);
     this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON, false);
     this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON, false);
+    this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, false);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH

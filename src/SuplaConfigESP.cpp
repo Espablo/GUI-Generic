@@ -343,15 +343,15 @@ int SuplaConfigESP::getGpio(int nr, int function) {
 
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
+
     if (function == FUNCTION_CFG_BUTTON) {
       if (checkBusyCfg(gpio)) {
         return gpio;
       }
     }
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function) {
-      if (ConfigManager->get(key)->getElement(NR).toInt() == (nr + 1)) {
-        return gpio;
-      }
+
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function && ConfigManager->get(key)->getElement(NR).toInt() == (nr + 1)) {
+      return gpio;
     }
     // return OFF_GPIO;
     //"Pin 100 - 115"
@@ -390,6 +390,24 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     delay(0);
   }
   return OFF_GPIO;
+}
+
+uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {
+#ifdef SUPLA_MCP23017
+  if (strcmp(ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0 && !ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
+    return ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).toInt();
+  }
+  else {
+    return nr;
+  }
+#else
+  if (strcmp(ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0) {
+    return ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).toInt();
+  }
+  else {
+    return nr;
+  }
+#endif
 }
 
 uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
@@ -468,7 +486,7 @@ bool SuplaConfigESP::checkBusyGpio(int gpio) {
   if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF) {
     return true;
   }
-  
+
   return false;
 }
 
@@ -565,6 +583,10 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
     }
     delay(0);
   }
+
+  if (exception == FUNCTION_RELAY)
+    count = count + MAX_VIRTUAL_RELAY;
+
   return count;
 }
 
