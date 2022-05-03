@@ -100,9 +100,12 @@ void handleControlSave() {
   if (strcmp(WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str(), "") != 0)
     ConfigManager->set(KEY_MAX_BUTTON, WebServer->httpServer->arg(INPUT_MAX_BUTTON).c_str());
 
+#ifdef SUPLA_BUTTON
+
 #ifdef SUPLA_ACTION_TRIGGER
   if (strcmp(WebServer->httpServer->arg(INPUT_AT_MULTICLICK_TIME).c_str(), "") != 0)
     ConfigManager->set(KEY_AT_MULTICLICK_TIME, WebServer->httpServer->arg(INPUT_AT_MULTICLICK_TIME).c_str());
+#endif
 
   if (strcmp(WebServer->httpServer->arg(INPUT_AT_HOLD_TIME).c_str(), "") != 0)
     ConfigManager->set(KEY_AT_HOLD_TIME, WebServer->httpServer->arg(INPUT_AT_HOLD_TIME).c_str());
@@ -156,10 +159,13 @@ void handleControl(int save) {
   }
   addFormHeaderEnd(webContentBuffer);
 
-#ifdef SUPLA_ACTION_TRIGGER
+#ifdef SUPLA_BUTTON
   addFormHeader(webContentBuffer, String(S_SETTINGS_FOR) + S_SPACE + S_ACTION_TRIGGER);
+
+#ifdef SUPLA_ACTION_TRIGGER
   String value = ConfigManager->get(KEY_AT_MULTICLICK_TIME)->getValue();
   addNumberBox(webContentBuffer, INPUT_AT_MULTICLICK_TIME, "Multiclick[s]", "", true, value);
+#endif
 
   value = ConfigManager->get(KEY_AT_HOLD_TIME)->getValue();
   addNumberBox(webContentBuffer, INPUT_AT_HOLD_TIME, "Hold[s]", "", true, value);
@@ -267,12 +273,12 @@ void handleButtonSet(int save) {
 
       if (!buttonStop.isEmpty()) {
         selected = ConfigESP->getEvent(gpio);
-        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 2, selected);
+        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
       }
 
       if (button.toInt() % 2 == 0) {
         selected = ConfigESP->getEvent(gpio);
-        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
         selected = ConfigESP->getAction(gpio);
         addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
       }
@@ -294,7 +300,7 @@ void handleButtonSet(int save) {
       }
 
       selected = ConfigESP->getEvent(gpio);
-      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
       selected = ConfigESP->getAction(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
     }
@@ -345,7 +351,7 @@ void handleButtonSetMCP23017(int save) {
 
     if (button.toInt() % 2 == 0) {
       selected = ConfigESP->getEvent(gpio);
-      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
       selected = ConfigESP->getAction(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
     }
@@ -357,7 +363,7 @@ void handleButtonSetMCP23017(int save) {
     selected = ConfigESP->getInversed(gpio);
     addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
     selected = ConfigESP->getEvent(gpio);
-    addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 3, selected);
+    addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
     selected = ConfigESP->getAction(gpio);
     addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
   }

@@ -67,7 +67,8 @@
 #define S_DATA_SAVED_RESTART_MODULE                            "Données enregistrées - redémarrer le module"
 #define S_WRITE_ERROR_BAD_DATA                                 "Erreur d'écriture - données incorrectes"
 #define S_SETTINGS_FOR                                         "Ustawienie dla"
-#define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
+#define S_ACTION_TRIGGER                                       "Déclencheur d'actions"
+#define S_ADDITIONAL                                           "Additionnel"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Déjà lancé"
@@ -104,6 +105,7 @@
 #define S_REACTION_ON_PRESS             "ON PRESSE"
 #define S_REACTION_ON_RELEASE           "EN LIBÉRATION"
 #define S_REACTION_ON_CHANGE            "SUR LE CHANGEMENT"
+#define S_REACTION_ON_HOLD              "EN ATTENTE"
 #define S_CFG_10_PRESSES                "10 FOIS SUR PRESSE"
 #define S_5SEK_HOLD                     "5 SEC TENIR"
 #define S_NORMAL                        "ORDINAIRE"

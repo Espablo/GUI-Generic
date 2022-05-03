@@ -165,6 +165,13 @@ void addButtonToRelay(uint8_t nr) {
       button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
       button->setSwNoiseFilterDelay(50);
     }
+
+    if (ConfigESP->getEvent(pinButton) == Supla::ON_HOLD) {
+      int holdTimeMs = String(ConfigManager->get(KEY_AT_HOLD_TIME)->getValue()).toDouble() * 1000;
+      button->setHoldTime(holdTimeMs);
+      button->repeatOnHoldEvery(2000);
+    }
+
     button->addAction(ConfigESP->getAction(pinButton), relay[nrButton], ConfigESP->getEvent(pinButton));
 
 #ifdef SUPLA_ACTION_TRIGGER

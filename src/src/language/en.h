@@ -67,6 +67,7 @@
 #define S_WRITE_ERROR_BAD_DATA                                 "Write error - bad data"
 #define S_SETTINGS_FOR                                         "Setting for"
 #define S_ACTION_TRIGGER                                       "Action trigger"
+#define S_ADDITIONAL                                           "Additionnel"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Already initiated"
@@ -103,6 +104,7 @@
 #define S_REACTION_ON_PRESS             "ON PRESS"
 #define S_REACTION_ON_RELEASE           "ON RELEASE"
 #define S_REACTION_ON_CHANGE            "ON CHANGE"
+#define S_REACTION_ON_HOLD              "ON HOLD"
 #define S_CFG_10_PRESSES                "10 ON PRESSES"
 #define S_5SEK_HOLD                     "5 SEC HOLD"
 #define S_NORMAL                        "NORMAL"

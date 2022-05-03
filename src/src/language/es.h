@@ -70,6 +70,7 @@
 #define S_WRITE_ERROR_BAD_DATA                                 "Error de escritura: datos incorrectos."
 #define S_SETTINGS_FOR                                         "Ustawienie dla"
 #define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
+#define S_ADDITIONAL                                           "Additionnel"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Ya iniciado"
@@ -106,6 +107,7 @@
 #define S_REACTION_ON_PRESS             "AL PRESIONAR"
 #define S_REACTION_ON_RELEASE           "AL SOLTAR"
 #define S_REACTION_ON_CHANGE            "AL CAMBIAR DE ESTADO"
+#define S_REACTION_ON_HOLD              "EN ESPERA"
 #define S_CFG_10_PRESSES                "AL PRESIONAR 10 VECES"
 #define S_5SEK_HOLD                     "AL MANTENER PRESIONADO 5 SEGUNDOS"
 #define S_NORMAL                        "NORMAL"

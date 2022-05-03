@@ -66,7 +66,8 @@
 #define S_DATA_SAVED_RESTART_MODULE                            "Daten Gespeichert: Modul Neustart."
 #define S_WRITE_ERROR_BAD_DATA                                 "Schreibfehler - falsche Daten."
 #define S_SETTINGS_FOR                                         "Ustawienie dla"
-#define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
+#define S_ACTION_TRIGGER                                       "Action trigger"
+#define S_ADDITIONAL                                           "Additionnel"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Bereits gestartet"
@@ -103,6 +104,7 @@
 #define S_REACTION_ON_PRESS             "WENN GEDRÜCKT"
 #define S_REACTION_ON_RELEASE           "WENN LOSGELASSEN"
 #define S_REACTION_ON_CHANGE            "STATUS ÄNDERUNG"
+#define S_REACTION_ON_HOLD              "IN WARTESTELLUNG"
 #define S_CFG_10_PRESSES                "10 MAL DRÜCKEN"
 #define S_5SEK_HOLD                     "5 SEKUNDEN GEDRÜCKT HALTEN"
 #define S_NORMAL                        "NORMAL"

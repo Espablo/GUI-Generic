@@ -68,6 +68,7 @@
 #define S_WRITE_ERROR_BAD_DATA                                 "Błąd zapisu - złe dane."
 #define S_SETTINGS_FOR                                         "Ustawienie dla"
 #define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
+#define S_ADDITIONAL                                           "Dodatkowe"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Już zainicjalizowane"
@@ -104,6 +105,7 @@
 #define S_REACTION_ON_PRESS             "WCIŚNIĘCIE - monostabilny"
 #define S_REACTION_ON_RELEASE           "ZWOLNIENIE - monostabilny"
 #define S_REACTION_ON_CHANGE            "ZMIANA STANU - bistabilny"
+#define S_REACTION_ON_HOLD              "PRZYTRZYMANIE"
 #define S_CFG_10_PRESSES                "10 WCIŚNIĘĆ"
 #define S_5SEK_HOLD                     "WCIŚNIĘTY 5 SEKUND"
 #define S_NORMAL                        "NORMALNE"
