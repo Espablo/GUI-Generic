@@ -160,8 +160,8 @@ void handleControl(int save) {
   addFormHeaderEnd(webContentBuffer);
 
 #ifdef SUPLA_BUTTON
-  addFormHeader(webContentBuffer, String(S_SETTINGS_FOR) + S_SPACE + S_ACTION_TRIGGER);
-  
+  addFormHeader(webContentBuffer, S_ADDITIONAL);
+
   String value;
 #ifdef SUPLA_ACTION_TRIGGER
   value = ConfigManager->get(KEY_AT_MULTICLICK_TIME)->getValue();
