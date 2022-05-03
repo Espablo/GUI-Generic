@@ -159,7 +159,7 @@ void chooseTemplateBoard(String board) {
   //  OFF - 0 lub 17
 
   JsonArray& mcp = root["MCP23017"];
-  int key;
+  int key = FUNCTION_OFF;
 
   if (mcp.size() != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, 1);
@@ -183,7 +183,21 @@ void chooseTemplateBoard(String board) {
 
     for (size_t ii = 1; ii <= 16; ii++) {
       if (mcp[i][ii] != 0) {
-        ConfigESP->setGpioMCP23017((int)mcp[i][ii] - 1, address, ConfigManager->get(key)->getValueInt(), function);
+        uint8_t gpio = (int)mcp[i][ii] - 1;
+        ConfigESP->setGpioMCP23017(gpio, address, ConfigManager->get(key)->getValueInt(), function);
+
+        switch (function) {
+          case FUNCTION_RELAY:
+            ConfigESP->setLevel(gpio, true);
+            ConfigESP->setMemory(gpio, MEMORY_RESTORE);
+            break;
+          case FUNCTION_BUTTON:
+            ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
+            ConfigESP->setEvent(gpio, Supla::Event::ON_CHANGE);
+            ConfigESP->setPullUp(gpio, true);
+            ConfigESP->setInversed(gpio, true);
+            break;
+        }
       }
       ConfigManager->set(key, ConfigManager->get(key)->getValueInt() + 1);
     }
