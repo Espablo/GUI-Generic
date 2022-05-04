@@ -79,6 +79,12 @@ void setup() {
       Supla::GUI::addRelay(nr);
 #endif
 
+#ifdef SUPLA_BUTTON
+      for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+        Supla::GUI::addButtonToRelay(nr);
+      }
+#endif
+
 #endif
 
 #ifdef SUPLA_RF_BRIDGE
@@ -99,12 +105,6 @@ void setup() {
       Supla::GUI::addDirectLinks(nr);
 #endif
     }
-  }
-#endif
-
-#ifdef SUPLA_BUTTON
-  for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-    Supla::GUI::addButtonToRelay(nr);
   }
 #endif
 

@@ -178,12 +178,12 @@ void addButtonToRelay(uint8_t nr) {
     addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[nrButton]);
 #endif
   }
-  else {
+  else if (pinRelay == OFF_GPIO) {
 #ifdef SUPLA_ACTION_TRIGGER
     Supla::GUI::addButtonActionTrigger(nr);
 #endif
+    delay(0);
   }
-  delay(0);
 }
 #endif
 #endif
