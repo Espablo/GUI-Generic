@@ -265,7 +265,7 @@ void handleButtonSet(int save) {
       addFormHeader(webContentBuffer, String(S_BUTTON_NR_SETTINGS) + (button.toInt() + 1));
     }
 
-    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > button.toInt() && buttonStop.isEmpty()) {
+    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > button.toInt() || !buttonStop.isEmpty()) {
 #ifdef SUPLA_ROLLERSHUTTER
       selected = ConfigESP->getPullUp(gpio);
       addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
@@ -276,8 +276,7 @@ void handleButtonSet(int save) {
         selected = ConfigESP->getEvent(gpio);
         addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
       }
-
-      if (button.toInt() % 2 == 0) {
+      else if (button.toInt() % 2 == 0) {
         selected = ConfigESP->getEvent(gpio);
         addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
         selected = ConfigESP->getAction(gpio);

@@ -80,8 +80,8 @@ void setup() {
 #endif
 
 #ifdef SUPLA_BUTTON
-      for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-        Supla::GUI::addButtonToRelay(nr);
+      for (uint8_t nrButton = 0; nrButton < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nrButton++) {
+        Supla::GUI::addButtonToRelay(nrButton);
       }
 #endif
 
