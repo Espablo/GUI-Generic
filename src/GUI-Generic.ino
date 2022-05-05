@@ -80,9 +80,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_BUTTON
-      for (uint8_t nrButton = 0; nrButton < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nrButton++) {
-        Supla::GUI::addButtonToRelay(nrButton);
-      }
+      Supla::GUI::addButtonToRelay(nr);
 #endif
 
 #endif
@@ -541,6 +539,12 @@ void setup() {
       Wire.setClock(400000);
     }
 #endif
+  }
+#endif
+
+#ifdef SUPLA_ACTION_TRIGGER
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+    Supla::GUI::addButtonActionTrigger(nr);
   }
 #endif
 

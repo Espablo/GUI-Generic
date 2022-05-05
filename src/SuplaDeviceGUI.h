@@ -198,7 +198,7 @@ void addRelay(uint8_t nr);
 #endif
 
 #ifdef SUPLA_BUTTON
-void addButtonToRelay(uint8_t nr);
+void addButtonToRelay(uint8_t nrRelay);
 #endif
 
 #ifdef SUPLA_ACTION_TRIGGER

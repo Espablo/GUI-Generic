@@ -104,7 +104,7 @@ void crateWebServer() {
   }
 }
 
-#if defined(SUPLA_RELAY)
+#ifdef SUPLA_RELAY
 void addRelay(uint8_t nr) {
   uint8_t pinRelay, pinLED;
   bool highIsOn, levelLed;
@@ -146,53 +146,54 @@ void addRelay(uint8_t nr) {
   }
   delay(0);
 }
+#endif
 
 #ifdef SUPLA_BUTTON
-void addButtonToRelay(uint8_t nr) {
+void addButtonToRelay(uint8_t nrRelay) {
   uint8_t pinButton, nrButton, pinRelay;
+
+  for (uint8_t nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+    nrButton = ConfigESP->getNumberButton(nr);
+    pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+    pinRelay = ConfigESP->getGpio(nrButton, FUNCTION_RELAY);
+
+    if (pinButton != OFF_GPIO && pinRelay != OFF_GPIO && nrRelay == nrButton) {
+      Supla::Control::Button *button;
+
+      if (pinButton == A0) {
+        button = new Supla::Control::ButtonAnalog(A0, ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(nr).toInt());
+      }
+      else {
+        button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
+        button->setSwNoiseFilterDelay(50);
+      }
+
+      if (ConfigESP->getEvent(pinButton) == Supla::ON_HOLD) {
+        int holdTimeMs = String(ConfigManager->get(KEY_AT_HOLD_TIME)->getValue()).toDouble() * 1000;
+        button->setHoldTime(holdTimeMs);
+        button->repeatOnHoldEvery(2000);
+      }
+
+      button->addAction(ConfigESP->getAction(pinButton), relay[nrButton], ConfigESP->getEvent(pinButton));
+
+#ifdef SUPLA_ACTION_TRIGGER
+      addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[nrButton]);
+#endif
+    }
+    delay(0);
+  }
+}
+#endif
+
+#ifdef SUPLA_ACTION_TRIGGER
+void addButtonActionTrigger(uint8_t nr) {
+  uint8_t nrButton, pinButton, pinRelay;
 
   nrButton = ConfigESP->getNumberButton(nr);
   pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinRelay = ConfigESP->getGpio(nrButton, FUNCTION_RELAY);
 
-  if (pinButton != OFF_GPIO && pinRelay != OFF_GPIO) {
-    Supla::Control::Button *button;
-
-    if (pinButton == A0) {
-      button = new Supla::Control::ButtonAnalog(A0, ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(nr).toInt());
-    }
-    else {
-      button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
-      button->setSwNoiseFilterDelay(50);
-    }
-
-    if (ConfigESP->getEvent(pinButton) == Supla::ON_HOLD) {
-      int holdTimeMs = String(ConfigManager->get(KEY_AT_HOLD_TIME)->getValue()).toDouble() * 1000;
-      button->setHoldTime(holdTimeMs);
-      button->repeatOnHoldEvery(2000);
-    }
-
-    button->addAction(ConfigESP->getAction(pinButton), relay[nrButton], ConfigESP->getEvent(pinButton));
-
-#ifdef SUPLA_ACTION_TRIGGER
-    addActionTriggerRelatedChannel(button, ConfigESP->getEvent(pinButton), relay[nrButton]);
-#endif
-  }
-  else if (pinRelay == OFF_GPIO) {
-#ifdef SUPLA_ACTION_TRIGGER
-    Supla::GUI::addButtonActionTrigger(nr);
-#endif
-    delay(0);
-  }
-}
-#endif
-#endif
-
-#ifdef SUPLA_ACTION_TRIGGER
-void addButtonActionTrigger(uint8_t nr) {
-  uint8_t pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-
-  if (pinButton != OFF_GPIO) {
+  if (pinButton != OFF_GPIO && pinRelay == OFF_GPIO) {
     auto button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
     button->setSwNoiseFilterDelay(100);
     auto at = new Supla::Control::ActionTrigger();
