@@ -42,10 +42,6 @@ void setup() {
 
   Serial.begin(74880);
 
-#ifdef ARDUINO_ARCH_ESP8266
-  ESP.wdtDisable();
-#endif
-
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
 
@@ -103,6 +99,7 @@ void setup() {
       Supla::GUI::addDirectLinks(nr);
 #endif
     }
+    delay(0);
   }
 #endif
 
@@ -583,8 +580,6 @@ void setup() {
 #ifdef ARDUINO_ARCH_ESP8266
   // https://github.com/esp8266/Arduino/issues/2070#issuecomment-258660760
   wifi_set_sleep_type(NONE_SLEEP_T);
-
-  ESP.wdtEnable(WDTO_250MS);
 #endif
 
   if (!ConfigESP->checkBusyGpio(3)) {  // GPIO_RX
