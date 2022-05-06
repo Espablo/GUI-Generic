@@ -144,7 +144,8 @@ void chooseTemplateBoard(String board) {
   // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,604,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[address,function],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
   // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,604,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
   // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,640,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[1,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[2,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[3,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
-  //
+  // {"NAME":"MCP_ESP8266","GPIO":[0,0,544,0,640,608,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,0,0,0,0,0,0,0,0],[[0,2],9,10,11,12,13,14,15,16,0,0,0,0,0,0,0,17]]}
+
   // "address":
   // 0 - 0x20
   // 1 - 0x21
@@ -182,8 +183,15 @@ void chooseTemplateBoard(String board) {
     }
 
     for (size_t ii = 1; ii <= 16; ii++) {
-      if (mcp[i][ii] != 0) {
-        uint8_t gpio = (int)mcp[i][ii] - 1;
+      int gpio = mcp[i][ii];
+
+      if (gpio == 0)
+        gpio = OFF_GPIO_MCP23017;
+      else if (gpio >= 17)
+        gpio = OFF_GPIO_MCP23017;
+
+      if (gpio != OFF_GPIO_MCP23017) {
+        gpio = (int)mcp[i][ii] - 1;
         ConfigESP->setGpioMCP23017(gpio, address, ConfigManager->get(key)->getValueInt(), function);
 
         switch (function) {
@@ -198,8 +206,8 @@ void chooseTemplateBoard(String board) {
             ConfigESP->setInversed(gpio, true);
             break;
         }
+        ConfigManager->set(key, ConfigManager->get(key)->getValueInt() + 1);
       }
-      ConfigManager->set(key, ConfigManager->get(key)->getValueInt() + 1);
     }
   }
 #endif
