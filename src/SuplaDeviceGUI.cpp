@@ -146,9 +146,7 @@ void addRelay(uint8_t nr) {
   }
   delay(0);
 }
-#endif
 
-#ifdef SUPLA_BUTTON
 void addButtonToRelay(uint8_t nrRelay) {
   uint8_t pinButton, nrButton, pinRelay;
 

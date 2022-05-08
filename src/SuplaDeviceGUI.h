@@ -195,9 +195,6 @@ void crateWebServer();
 
 #ifdef SUPLA_RELAY
 void addRelay(uint8_t nr);
-#endif
-
-#ifdef SUPLA_BUTTON
 void addButtonToRelay(uint8_t nrRelay);
 #endif
 
