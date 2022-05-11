@@ -113,6 +113,7 @@ void handleSensorI2c(int save) {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       String name, sensorName, input;
 
+#ifdef SUPLA_BUTTON
 #ifdef SUPLA_MCP23017
       if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
         addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON, 0);
@@ -122,6 +123,7 @@ void handleSensorI2c(int save) {
       }
 #else
       addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON);
+#endif
 #endif
 
       addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 99);
@@ -278,6 +280,7 @@ void handleSensorI2cSave() {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_OLED, WebServer->httpServer->arg(input).toInt());
   }
 
+#ifdef SUPLA_BUTTON
 #ifdef SUPLA_MCP23017
   if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
     if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
@@ -296,6 +299,7 @@ void handleSensorI2cSave() {
     handleControl(6);
     return;
   }
+#endif
 #endif
 
   input = INPUT_OLED_ANIMATION;

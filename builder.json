@@ -1,5 +1,5 @@
 {
-	"version": "4.10.21",
+	"version": "4.11.20",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -247,7 +247,8 @@
 			"depOn": [
 				"SUPLA_ROLLERSHUTTER",
 				"SUPLA_RGBW",
-				"SUPLA_ACTION_TRIGGER"
+				"SUPLA_ACTION_TRIGGER",
+				"SUPLA_OLED"
 			],
 			"depOff": [
 				"SUPLA_RELAY",

@@ -459,7 +459,9 @@ void setup() {
 #ifdef SUPLA_OLED
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       SuplaOled *oled = new SuplaOled();
+#ifdef SUPLA_BUTTON
       oled->addButtonOled(ConfigESP->getGpio(FUNCTION_BUTTON));
+#endif
     }
 #endif
 
