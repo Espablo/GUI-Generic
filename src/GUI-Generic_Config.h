@@ -79,4 +79,8 @@
 #define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
 #endif
 
+#ifndef TEMPLATE_BOARD_OLD
+#define TEMPLATE_BOARD_JSON
+#endif
+
 #endif  // GUI-Generic_Config_h
