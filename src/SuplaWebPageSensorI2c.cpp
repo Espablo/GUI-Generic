@@ -175,6 +175,18 @@ void handleSensorI2c(int save) {
     addListBox(webContentBuffer, INPUT_MCP23017, S_MCP23017, STATE_P, 2, selected);
     addFormHeaderEnd(webContentBuffer);
 #endif
+
+#ifdef SUPLA_ADE7953
+    addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("ADE7953"));
+    addListGPIOBox(webContentBuffer, INPUT_ADE7953_IRQ, F("IRQ"), FUNCTION_ADE7953_IRQ);
+    if (ConfigESP->getGpio(FUNCTION_ADE7953_IRQ) != OFF_GPIO) {
+      float count = Supla::GUI::couterADE7953->getCounter();
+      addNumberBox(webContentBuffer, INPUT_ADE7953_COUNTER_VALUE, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
+                   String(count / 100 / 1000));
+      // addLinkBox(webContentBuffer, S_CALIBRATION, getParameterRequest(PATH_CALIBRATE, ARG_PARM_URL) + PATH_CSE7766);
+    }
+    addFormHeaderEnd(webContentBuffer);
+#endif
   }
 
   addButtonSubmit(webContentBuffer, S_SAVE);
@@ -365,6 +377,20 @@ void handleSensorI2cSave() {
     //   ConfigESP->clearFunctionGpio(FUNCTION_RELAY);
     //   ConfigESP->clearFunctionGpio(FUNCTION_BUTTON);
     // }
+  }
+#endif
+
+#ifdef SUPLA_ADE7953
+  if (!WebServer->saveGPIO(INPUT_ADE7953_IRQ, FUNCTION_ADE7953_IRQ)) {
+    handleSensorI2c(6);
+    return;
+  }
+  else {
+    Supla::GUI::addADE7953(ConfigESP->getGpio(FUNCTION_ADE7953_IRQ));
+    if (strcmp(WebServer->httpServer->arg(INPUT_ADE7953_COUNTER_VALUE).c_str(), "") != 0) {
+      Supla::GUI::couterADE7953->setCounter(WebServer->httpServer->arg(INPUT_ADE7953_COUNTER_VALUE).toFloat() * 100 * 1000);
+      Supla::Storage::ScheduleSave(1000);
+    }
   }
 #endif
 

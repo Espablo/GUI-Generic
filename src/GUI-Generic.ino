@@ -526,6 +526,12 @@ void setup() {
     }
 #endif
 
+#ifdef SUPLA_ADE7953
+    if (ConfigESP->getGpio(FUNCTION_ADE7953_IRQ) != OFF_GPIO) {
+      Supla::GUI::addADE7953(ConfigESP->getGpio(FUNCTION_ADE7953_IRQ));
+    }
+#endif
+
 #ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();

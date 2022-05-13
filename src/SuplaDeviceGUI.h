@@ -185,6 +185,10 @@
 #include "supla/network/wt32_eth01.h"
 #endif
 
+#ifdef SUPLA_ADE7953
+#include "src/sensor/ADE7953.h"
+#endif
+
 namespace Supla {
 namespace GUI {
 
@@ -262,6 +266,11 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 #ifdef SUPLA_CSE7766
 extern Supla::Sensor::CSE_7766 *counterCSE7766;
 void addCSE7766(int8_t pinRX);
+#endif
+
+#ifdef SUPLA_ADE7953
+extern Supla::Sensor::ADE7953 *couterADE7953;
+void addADE7953(int8_t pinIRQ);
 #endif
 
 #ifdef SUPLA_MPX_5XXX

@@ -112,6 +112,7 @@ enum FunctionOld
   BL0937CF,
   CSE7766Tx = 145,
   CSE7766Rx = 146,
+  ADE7953_IRQ = 156,
   LedLink = 157,
   LedLinki = 158,
   Binary1 = 217,
@@ -188,6 +189,7 @@ enum FunctionNew
   NewBL0937CF = 2720,
   NewCSE7766Tx = 3072,
   NewCSE7766Rx = 3104,
+  NewADE7953_IRQ = 3456,
   NewTemperatureAnalog = 4736,
   NewUsers = 1,
 };

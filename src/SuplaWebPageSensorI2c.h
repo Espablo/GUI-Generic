@@ -21,7 +21,7 @@
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(SUPLA_MCP23017) ||         \
     defined(SUPLA_BMP280) || defined(SUPLA_VL53L0X) || defined(SUPLA_HDC1080) || defined(SUPLA_LCD_HD44780) || defined(SUPLA_BH1750) || \
-    defined(SUPLA_MAX44009)
+    defined(SUPLA_MAX44009) || defined(SUPLA_ADE7953)
 #define GUI_SENSOR_I2C
 #endif
 
@@ -122,6 +122,11 @@ void handleSensorI2cSave();
 
 #ifdef SUPLA_MAX44009
 #define INPUT_MAX44009 "imax"
+#endif
+
+#ifdef SUPLA_ADE7953
+#define INPUT_ADE7953_IRQ           "iai"
+#define INPUT_ADE7953_COUNTER_VALUE "iacv"
 #endif
 
 #endif

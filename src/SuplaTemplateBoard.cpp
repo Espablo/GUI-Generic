@@ -501,6 +501,10 @@ void chooseTemplateBoard(String board) {
         addLimitSwitch(3, gpio);
         break;
 
+      case NewADE7953_IRQ:
+        ConfigESP->setGpio(gpio, FUNCTION_ADE7953_IRQ);
+        break;
+
       default:
         templateBoardWarning += "Brak funkcji: ";
         templateBoardWarning += gpioJSON;
@@ -655,6 +659,9 @@ int convert(int gpioJSON) {
       return NewBinary3;
     case Binary4:
       return NewBinary4;
+
+    case ADE7953_IRQ:
+      return NewADE7953_IRQ;
   }
   return NewNone;
 }

@@ -777,6 +777,20 @@ void addCSE7766(int8_t pinRX) {
 }
 #endif
 
+#ifdef SUPLA_ADE7953
+Supla::Sensor::ADE7953 *couterADE7953;
+
+void addADE7953(int8_t pinIRQ) {
+  if (couterADE7953 == NULL && pinIRQ != OFF_GPIO) {
+    couterADE7953 = new Supla::Sensor::ADE7953(pinIRQ);
+
+    Supla::GUI::addConditionsTurnON(SENSOR_ADE7953, couterADE7953);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_ADE7953, couterADE7953);
+  }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
+
 #ifdef SUPLA_MPX_5XXX
 Supla::Sensor::MPX_5XXX *mpx = nullptr;
 #endif
