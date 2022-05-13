@@ -77,6 +77,8 @@ void ADE7953::readValuesFromDevice() {
     if (Ade7953.current_rms[channel] < 2000) {  // No load threshold (20mA)
       Ade7953.current_rms[channel] = 0;
       Ade7953.active_power[channel] = 0;
+      Ade7953.apparent_power[channel] = 0;
+      Ade7953.reactive_power[channel] = 0;
     }
     else {
       Ade7953.active_power[channel] = abs(reg[channel][1]);
