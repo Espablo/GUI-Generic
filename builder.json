@@ -1,5 +1,5 @@
 {
-	"version": "4.11.20",
+	"version": "4.12.2",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -765,10 +765,6 @@
 			"name": "Pomiar analogowy (ADC Pin)",
 			"desc": "Ustawienia urządzenia->Analog. Umożliwia obsługę pomiaru napięcia na wejściu ADC Pin.",
 			"defOn": false,
-			"depOn": [
-				"SUPLA_NTC_10K",
-				"SUPLA_MPX_5XXX"
-			],
 			"en": {
 				"name": "Analog measurement (ADC Pin)",
 				"desc": "Device settings->Analog. Enables support for voltage measurement at ADC Pin input."
