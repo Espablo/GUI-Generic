@@ -16,7 +16,7 @@
 
 #include "SuplaWebPageSensorI2c.h"
 
-#ifdef GUI_SENSOR_I2C
+#if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
 void createWebPageSensorI2c() {
   WebServer->httpServer->on(getURL(PATH_I2C), [&]() {
     if (!WebServer->isLoggedIn()) {

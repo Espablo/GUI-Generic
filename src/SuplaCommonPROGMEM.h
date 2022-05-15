@@ -383,6 +383,10 @@ enum sensorList
 #define GUI_ALL_SENSOR
 #endif
 
+#if defined(GUI_OTHER_ENERGY) || defined(GUI_SENSOR_I2C_ENERGY_METER)
+#define GUI_ALL_ENERGY
+#endif
+
 #ifdef SUPLA_CONDITIONS
 const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #ifdef GUI_ALL_SENSOR
@@ -394,7 +398,7 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
     S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
 
-#ifdef GUI_OTHER_ENERGY
+#ifdef GUI_ALL_ENERGY
     "ON > Napięcie[V] > OFF",
     "ON > Natężenie[A] > OFF",
     "ON > Moc czynna[W] > OFF",
@@ -406,7 +410,7 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #else
     S_EMPTY,
 #endif
-#ifdef GUI_OTHER_ENERGY
+#ifdef GUI_ALL_ENERGY
     "ON < Napięcie[V] < OFF",
     "ON < Natężenie[A] < OFF",
     "ON < Moc czynna[W] < OFF",

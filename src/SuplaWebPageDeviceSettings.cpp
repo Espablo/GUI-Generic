@@ -46,7 +46,7 @@ void handleDeviceSettings() {
   addButton(webContentBuffer, S_SENSORS_1WIRE, PATH_1WIRE);
 #endif
 
-#ifdef GUI_SENSOR_I2C
+#if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
   addButton(webContentBuffer, S_SENSORS_I2C, PATH_I2C);
 #endif
 
