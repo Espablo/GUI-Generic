@@ -250,7 +250,8 @@ double ADE7953::getPowerFactor(uint8_t channel) {
 }
 
 unsigned long ADE7953::getEnergy(uint8_t channel) {
-  return (double)(Ade7953Read(channel == 0 ? 0x31F : 0x31E)) * Settings.energy_power_calibration / 1000.0 / 36.0 * -1.0;
+  return  (double)(getActivePower(channel) * 10.0 / 36.0);
+ // return (double)(Ade7953Read(channel == 0 ? 0x31F : 0x31E)) * Settings.energy_power_calibration / 1000.0 / 36.0 * -1.0;
 }
 
 void ADE7953::expectedCurrent(double value) {
