@@ -80,7 +80,9 @@
 #endif
 
 #ifndef TEMPLATE_BOARD_OLD
+#ifndef TEMPLATE_BOARD_JSON
 #define TEMPLATE_BOARD_JSON
+#endif
 #endif
 
 #endif  // GUI-Generic_Config_h
