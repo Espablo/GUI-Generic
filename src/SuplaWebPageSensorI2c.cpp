@@ -176,6 +176,13 @@ void handleSensorI2c(int save) {
     addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_PCF8575
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF8575).toInt();
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_PCF8575, F("PCF8575"), STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
 #ifdef SUPLA_ADE7953
     addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("ADE7953"));
     addListGPIOBox(webContentBuffer, INPUT_ADE7953_IRQ, F("IRQ"), FUNCTION_ADE7953_IRQ);
@@ -377,6 +384,14 @@ void handleSensorI2cSave() {
     //   ConfigESP->clearFunctionGpio(FUNCTION_RELAY);
     //   ConfigESP->clearFunctionGpio(FUNCTION_BUTTON);
     // }
+  }
+#endif
+
+#ifdef SUPLA_PCF8575
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_PCF8575;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF8575, WebServer->httpServer->arg(input).toInt());
   }
 #endif
 

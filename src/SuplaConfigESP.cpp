@@ -357,7 +357,8 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     //"Pin 100 - 115"
     // Pin 116 - 131"
 #ifdef SUPLA_MCP23017
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF &&
+    if ((ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF ||
+         ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF8575).toInt() != FUNCTION_OFF) &&
         ((function == FUNCTION_RELAY) || (function == FUNCTION_BUTTON) || (function == FUNCTION_LIMIT_SWITCH))) {
       switch (getAdressMCP23017(nr, function)) {
         case 0:
@@ -725,7 +726,8 @@ void SuplaConfigESP::clearFunctionGpio(uint8_t function) {
 }
 
 bool SuplaConfigESP::checkActiveMCP23017(uint8_t function) {
-  return ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF &&
+  return (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF ||
+          ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF8575).toInt() != FUNCTION_OFF) &&
          ((ConfigESP->getGpio(function) >= 100 || ConfigESP->getGpio(function) == OFF_GPIO));
 }
 

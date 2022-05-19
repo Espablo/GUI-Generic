@@ -85,4 +85,10 @@
 #endif
 #endif
 
+#ifdef SUPLA_PCF8575
+#ifndef SUPLA_MCP23017
+#define SUPLA_MCP23017
+#endif
+#endif
+
 #endif  // GUI-Generic_Config_h

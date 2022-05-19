@@ -43,7 +43,8 @@ enum _sensor
   SENSOR_I2C_HD44780,
   SENSOR_SPI_MAX31855,
   SENSOR_I2C_BH1750,
-  SENSOR_I2C_MAX44009
+  SENSOR_I2C_MAX44009,
+  SENSOR_I2C_PCF8575
 };
 
 #if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
@@ -106,8 +107,6 @@ enum _LCDAdress
 #endif
 #endif
 
-#define INPUT_MCP23017 "mcp"
-
 void createWebPageSensorI2c();
 void handleSensorI2c(int save = 0);
 void handleSensorI2cSave();
@@ -131,6 +130,14 @@ void handleSensorI2cSave();
 #ifdef SUPLA_ADE7953
 #define INPUT_ADE7953_IRQ           "iai"
 #define INPUT_ADE7953_COUNTER_VALUE "iacv"
+#endif
+
+#ifdef SUPLA_MCP23017
+#define INPUT_MCP23017 "imcp"
+#endif
+
+#ifdef SUPLA_PCF8575
+#define INPUT_PCF8575 "ipcf"
 #endif
 
 #endif

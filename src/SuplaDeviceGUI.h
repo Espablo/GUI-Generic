@@ -189,6 +189,10 @@
 #include "src/sensor/ADE7953.h"
 #endif
 
+#ifdef SUPLA_PCF8575
+#include "src/control/PCF_8575.h"
+#endif
+
 namespace Supla {
 namespace GUI {
 

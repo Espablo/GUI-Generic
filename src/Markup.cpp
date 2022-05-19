@@ -319,16 +319,16 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
   if (nr == 0) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
-      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 1"), MCP23017_P, 5, address, url);
+      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, MCP23017_P, 5, address, url);
     else
-      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 1"), MCP23017_P, 5, address);
+      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, MCP23017_P, 5, address);
   }
   if (nr == 16) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
-      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 2"), MCP23017_P, 5, address, url);
+      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, MCP23017_P, 5, address, url);
     else
-      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 2"), MCP23017_P, 5, address);
+      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, MCP23017_P, 5, address);
   }
 
   html += F("<i><label>");
