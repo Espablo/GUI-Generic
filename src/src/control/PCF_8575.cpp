@@ -46,6 +46,7 @@ void PCF_8575::customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val) {
   }
   if ((pin > 115) && (pin < 132)) {
     control2->write(pin - 116, val);
+    return;
   }
   if ((pin > 131) && (pin < 148)) {
     control3->write(pin - 132, val);
