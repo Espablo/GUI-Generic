@@ -69,6 +69,13 @@ void handleSensorI2c(int save) {
     addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_SHT_AUTODETECT
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SHT3x).toInt();
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_SUPLA_SHT_AUTODETECT, F("SHT"), STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
 #ifdef SUPLA_SI7021
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SI7021).toInt();
     addFormHeader(webContentBuffer);
@@ -247,6 +254,14 @@ void handleSensorI2cSave() {
 #ifdef SUPLA_SHT3x
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_SHT3x;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_SHT3x, WebServer->httpServer->arg(input).toInt());
+  }
+#endif
+
+#ifdef SUPLA_SHT_AUTODETECT
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_SUPLA_SHT_AUTODETECT;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_SHT3x, WebServer->httpServer->arg(input).toInt());
   }

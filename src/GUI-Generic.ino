@@ -393,30 +393,35 @@ void setup() {
 #endif
 
 #ifdef SUPLA_SHT3x
-
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SHT3x).toInt()) {
       Supla::Sensor::SHT3x *sht3x;
+
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SHT3x).toInt()) {
         case SHT3x_ADDRESS_0X44:
           sht3x = new Supla::Sensor::SHT3x(0x44);
-
-          Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
-          Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
           break;
         case SHT3x_ADDRESS_0X45:
           sht3x = new Supla::Sensor::SHT3x(0x45);
-
-          Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
-          Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
           break;
         case SHT3x_ADDRESS_0X44_AND_0X45:
           sht3x = new Supla::Sensor::SHT3x(0x44);
           new Supla::Sensor::SHT3x(0x45);
-
-          Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
-          Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
           break;
       }
+
+      if (sht3x) {
+        Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
+        Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
+      }
+    }
+#endif
+
+#ifdef SUPLA_SHT_AUTODETECT
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SHT3x).toInt()) {
+      Supla::Sensor::SHTAutoDetect *shtAutoDetect = new Supla::Sensor::SHTAutoDetect();
+
+      Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, shtAutoDetect);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, shtAutoDetect);
     }
 #endif
 

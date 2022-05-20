@@ -451,7 +451,7 @@ const char* const SENSOR_LIST_P[] PROGMEM = {
 #else
     S_EMPTY,
 #endif
-#ifdef SUPLA_SHT3x
+#if defined(SUPLA_SHT3x) || defined(SUPLA_SHT_AUTODETECT)
     S_SHT3X,
 #else
     S_EMPTY,

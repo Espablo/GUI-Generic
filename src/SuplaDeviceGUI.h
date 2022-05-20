@@ -88,6 +88,9 @@
 #ifdef SUPLA_SHT3x
 #include <supla/sensor/SHT3x.h>
 #endif
+#ifdef SUPLA_SHT_AUTODETECT
+#include "src/sensor/SHTAutoDetect.h"
+#endif
 #ifdef SUPLA_SI7021
 #include <supla/sensor/Si7021.h>
 #endif
