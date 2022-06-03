@@ -1,5 +1,5 @@
 {
-	"version": "4.12.2",
+	"version": "4.13.5",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -417,6 +417,73 @@
 			}
 		}
 	},
+	"EXPANDERS": {
+		"SUPLA_MCP23017": {
+			"name": "MCP23017",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x16 MCP2317.",
+			"defOn": false,
+			"en": {
+				"name": "MCP23017",
+				"desc": "Device settings->I2C. Supports MCP2317 x16 port expansion."
+			},
+			"es": {
+				"name": "MCP23017",
+				"desc": "Configuración del dispositivo->I2C. Admite expansión de puertos MCP2317 x16."
+			},
+			"de": {
+				"name": "MCP23017",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des MCP2317 x16-Ports."
+			},
+			"fr": {
+				"name": "MCP23017",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port MCP2317 x16."
+			}
+		},
+		"SUPLA_PCF8575": {
+			"name": "PCF8575",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x16 PCF8575.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "PCF8575",
+				"desc": "Device settings->I2C. Supports PCF8575 x16 port expansion."
+			},
+			"es": {
+				"name": "PCF8575",
+				"desc": "Configuración del dispositivo->I2C. Admite expansión de puertos PCF8575 x16."
+			},
+			"de": {
+				"name": "PCF8575",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des PCF8575 x16-Ports."
+			},
+			"fr": {
+				"name": "PCF8575",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port PCF8575 x16."
+			}
+		},
+		"SUPLA_PCF8574": {
+			"name": "PCF8574",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x8 PCF8574.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "PCF8574",
+				"desc": "Device settings->I2C. Supports PCF8574 x8 port expansion."
+			},
+			"es": {
+				"name": "PCF8574",
+				"desc": "Configuración del dispositivo->I2C. Admite expansión de puertos PCF8574 x8."
+			},
+			"de": {
+				"name": "PCF8574",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des PCF8574 x8-Ports."
+			},
+			"fr": {
+				"name": "PCF8574",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port PCF8574 x8."
+			}
+		}
+	},
 	"1WIRE": {
 		"SUPLA_DS18B20": {
 			"name": "Sensor DS18B20",
@@ -670,27 +737,6 @@
 			"fr": {
 				"name": "Écran LCD HD44780",
 				"desc": "Paramètres de l´appareil->I2C. Il permet le fonctionnement d´un écran LCD HD44780."
-			}
-		},
-		"SUPLA_MCP23017": {
-			"name": "Ekspander portów x16 MCP23017",
-			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x16 MCP2317.",
-			"defOn": false,
-			"en": {
-				"name": "MCP23017 x16 port expander",
-				"desc": "Device settings->I2C. Supports MCP2317 x16 port expansion."
-			},
-			"es": {
-				"name": "Expansor de puerto MCP23017 x16",
-				"desc": "Configuración del dispositivo->I2C. Admite expansión de puertos MCP2317 x16."
-			},
-			"de": {
-				"name": "MCP23017 x16 Port Expander",
-				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des MCP2317 x16-Ports."
-			},
-			"fr": {
-				"name": "Extension de port x16 MCP23017",
-				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port MCP2317 x16."
 			}
 		},
 		"SUPLA_BH1750": {
@@ -1096,6 +1142,13 @@
 			"es": "Sensor de calidad del aire",
 			"de": "Luftqualitätssensor",
 			"fr": "Capteur de qualité de l'air"
+		},
+		"EXPANDERS": {
+			"pl": "Ekspandery",
+			"en": "Expanders",
+			"es": "Expansores",
+			"de": "Expander",
+			"fr": "Expanseurs"
 		}
 	}
 }
