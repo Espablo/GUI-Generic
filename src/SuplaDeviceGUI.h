@@ -189,15 +189,9 @@
 #include "src/sensor/ADE7953.h"
 #endif
 
-#ifdef SUPLA_PCF8575
+#ifdef GUI_SENSOR_I2C_EXPENDER
 #include "src/control/PCF_8575.h"
-#endif
-
-#ifdef SUPLA_PCF8574
 #include "src/control/PCF_8574.h"
-#endif
-
-#ifdef SUPLA_MCP23017
 #include "src/control/MCP_23017.h"
 #endif
 

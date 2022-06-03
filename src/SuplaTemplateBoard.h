@@ -21,19 +21,8 @@
 #include <supla/events.h>
 #include <supla/actions.h>
 #include <pgmspace.h>
+#include "GUIGenericCommonDefined.h"
 #include "GUIGenericCommon.h"
-
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_ACTION_TRIGGER)
-#if !defined(SUPLA_BUTTON)
-#define SUPLA_BUTTON
-#endif
-#endif
-
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS) || defined(SUPLA_LED)
-#if !defined(SUPLA_RELAY)
-#define SUPLA_RELAY
-#endif
-#endif
 
 namespace Supla {
 namespace TanplateBoard {

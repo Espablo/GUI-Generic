@@ -25,6 +25,18 @@
 #define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
 #endif
 
+#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_ACTION_TRIGGER)
+#if !defined(SUPLA_BUTTON)
+#define SUPLA_BUTTON
+#endif
+#endif
+
+#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS) || defined(SUPLA_LED)
+#if !defined(SUPLA_RELAY)
+#define SUPLA_RELAY
+#endif
+#endif
+
 #ifndef TEMPLATE_BOARD_OLD
 #ifndef TEMPLATE_BOARD_JSON
 #define TEMPLATE_BOARD_JSON
