@@ -176,7 +176,7 @@ void handleSensorI2c(int save) {
     addFormHeaderEnd(webContentBuffer);
 #endif
 
-#ifdef GUI_SENSOR_I2C_EXPENDER
+#ifdef SUPLA_MCP23017
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt();
     addFormHeader(webContentBuffer);
     addListBox(webContentBuffer, INPUT_MCP23017, S_MCP23017, STATE_P, 2, selected);
@@ -389,7 +389,7 @@ void handleSensorI2cSave() {
   }
 #endif
 
-#ifdef GUI_SENSOR_I2C_EXPENDER
+#ifdef SUPLA_MCP23017
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_MCP23017;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
