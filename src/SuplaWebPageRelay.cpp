@@ -33,7 +33,7 @@ void createWebPageRelay() {
     if (!WebServer->isLoggedIn()) {
       return;
     }
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
     if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
       if (WebServer->httpServer->method() == HTTP_GET)
         handleRelaySetMCP23017();
@@ -63,7 +63,7 @@ void handleRelaySave() {
   uint8_t nr;
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
     if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
       if (!WebServer->saveGpioMCP23017(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr, INPUT_MAX_RELAY)) {
         handleRelay(6);
@@ -111,13 +111,8 @@ void handleRelay(int save) {
   addNumberBox(webContentBuffer, INPUT_MAX_RELAY, S_QUANTITY, KEY_MAX_RELAY, ConfigESP->countFreeGpio(FUNCTION_RELAY));
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-#ifdef SUPLA_MCP23017
-    if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
-      addListMCP23017GPIOBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, nr, PATH_RELAY_SET);
-    }
-    else {
-      addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER), FUNCTION_RELAY, nr);
-    }
+#ifdef GUI_SENSOR_I2C_EXPENDER
+    addListExpanderGPIOBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, nr, PATH_RELAY_SET);
 #else
     addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER), FUNCTION_RELAY, nr);
 #endif
@@ -329,7 +324,7 @@ void handleRelaySet(int save) {
 }
 #endif
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
 void handleRelaySetMCP23017(int save) {
   uint8_t gpio, selected;
   String massage, input, nr_relay;

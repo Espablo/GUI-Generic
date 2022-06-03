@@ -173,9 +173,14 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     return true;
   }
 
+#ifdef GUI_SENSOR_I2C_EXPENDER
+  ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, WebServer->httpServer->arg(INPUT_EXPENDER_TYPE).toInt());
+#endif
+
   gpio = ConfigESP->getGpio(nr, function);
   _gpio = WebServer->httpServer->arg(input).toInt();
 
+  // VIRTUAL RELAY
   if (function == FUNCTION_RELAY && _gpio == GPIO_VIRTUAL_RELAY) {
     if (gpio != GPIO_VIRTUAL_RELAY) {
       ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
@@ -195,6 +200,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     return true;
   }
 
+  // ANALOG BUTTON
   if (function == FUNCTION_BUTTON && _gpio == A0) {
     if (gpio != A0) {
       ConfigManager->setElement(KEY_ANALOG_BUTTON, nr, false);
@@ -273,12 +279,20 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   return true;
 }
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
 bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
-  uint8_t key, _address, gpio, _gpio, _function, _nr;
-  String input = _input + nr;
+  uint8_t key, _address, gpio, _gpio, _function, _nr, _type;
+  String input = _input + "mcp" + nr;
 
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") == 0) {
+    return true;
+  }
+
+  _type = WebServer->httpServer->arg(INPUT_EXPENDER_TYPE).toInt();
+  ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, _type);
+
+  if (_type == FUNCTION_OFF) {
+    ConfigESP->clearFunctionGpio(function);
     return true;
   }
 

@@ -14,34 +14,21 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _S_PCF8575_H
-#define _S_PCF8575_H
+#ifndef GUI_GENERIC_COMMON_DEFINED_H
+#define GUI_GENERIC_COMMON_DEFINED_H
 
-#include <Arduino.h>
-#include <functional>
+#if defined(SUPLA_MCP23017) || defined(SUPLA_ADE7953)
+#define GUI_SENSOR_I2C_EXPENDER
+#endif
 
-#include <supla/io.h>
-#include <PCF8575.h>
+#ifndef DEBUG_MODE
+#define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
+#endif
 
-#define EXPENDER_SHIFT_PCF8575     160  // 96 + 64
-#define EXPENDER_SHIFT_PIN_PCF8575 16
+#ifndef TEMPLATE_BOARD_OLD
+#ifndef TEMPLATE_BOARD_JSON
+#define TEMPLATE_BOARD_JSON
+#endif
+#endif
 
-namespace Supla {
-namespace Control {
-class PCF_8575 : public Supla::Io {
- public:
-  PCF_8575();
-  void customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val);
-  int customDigitalRead(int channelNumber, uint8_t pin);
-  // void customPinMode(int channelNumber, uint8_t pin, uint8_t mode);
-  // void setPullup(uint8_t pin, bool pullup, bool inverse);
-
-  PCF8575 *control1;
-  PCF8575 *control2;
-  PCF8575 *control3;
-  PCF8575 *control4;
-};
-
-}  // namespace Control
-}  // namespace Supla
 #endif

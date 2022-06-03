@@ -46,7 +46,7 @@
 // #define SUPLA_SHT3x
 // #define SUPLA_SI7021
 // #define SUPLA_OLED
-// #define SUPLA_MCP23017
+// #define GUI_SENSOR_I2C_EXPENDER
 // #define SUPLA_VL53L0X
 // #define SUPLA_HDC1080
 // #define SUPLA_LCD_HD44780
@@ -74,21 +74,4 @@
 // #define SUPLA_ANALOG_READING_MAP
 
 #endif  // USE_CUSTOM
-
-#ifndef DEBUG_MODE
-#define supla_lib_config_h_  // silences unnecessary debug messages "should be disabled by default"
-#endif
-
-#ifndef TEMPLATE_BOARD_OLD
-#ifndef TEMPLATE_BOARD_JSON
-#define TEMPLATE_BOARD_JSON
-#endif
-#endif
-
-#ifdef SUPLA_PCF8575
-#ifndef SUPLA_MCP23017
-#define SUPLA_MCP23017
-#endif
-#endif
-
 #endif  // GUI-Generic_Config_h

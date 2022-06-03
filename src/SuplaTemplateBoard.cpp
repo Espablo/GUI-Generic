@@ -140,7 +140,7 @@ void chooseTemplateBoard(String board) {
     }
   }
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
   // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,604,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[address,function],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
   // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,604,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
   // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,640,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[1,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[2,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[3,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
@@ -158,6 +158,11 @@ void chooseTemplateBoard(String board) {
   // 3 - FUNCTION_LIMIT_SWITCH
   //
   //  OFF - 0 lub 17
+
+  // type:
+  // 1 - MCP23017
+  // 2 - PCF8575
+  // 3 - PCF8574
 
   JsonArray& mcp = root["MCP23017"];
   int key = FUNCTION_OFF;
@@ -181,6 +186,8 @@ void chooseTemplateBoard(String board) {
         key = KEY_MAX_LIMIT_SWITCH;
         break;
     }
+
+    ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_MCP23017);
 
     for (size_t ii = 1; ii <= 16; ii++) {
       int gpio = mcp[i][ii];

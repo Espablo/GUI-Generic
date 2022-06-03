@@ -353,36 +353,53 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function && ConfigManager->get(key)->getElement(NR).toInt() == (nr + 1)) {
       return gpio;
     }
-    // return OFF_GPIO;
-    //"Pin 100 - 115"
-    // Pin 116 - 131"
-#ifdef SUPLA_MCP23017
+
+#ifdef GUI_SENSOR_I2C_EXPENDER
     if ((ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF ||
-         ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF8575).toInt() != FUNCTION_OFF) &&
+         ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt() != FUNCTION_OFF) &&
         ((function == FUNCTION_RELAY) || (function == FUNCTION_BUTTON) || (function == FUNCTION_LIMIT_SWITCH))) {
+      uint8_t shift = 0;
+      uint8_t shiftPin = 0;
+      switch (ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt()) {
+        case EXPENDER_MCP23017:
+          shift = EXPENDER_SHIFT_MCP23017;
+          shiftPin = EXPENDER_SHIFT_PIN_MCP23017;
+          break;
+
+        case EXPENDER_PCF8575:
+          shift = EXPENDER_SHIFT_PCF8575;
+          shiftPin = EXPENDER_SHIFT_PIN_PCF8575;
+          break;
+
+        case EXPENDER_PCF8574:
+          shift += 64 + 64;
+          shiftPin = 8;
+          break;
+      }
+
       switch (getAdressMCP23017(nr, function)) {
         case 0:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function &&
               ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
-            return gpio + 100;
+            return gpio + shift;
           }
           break;
         case 1:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function &&
               ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
-            return gpio + 100 + 16;
+            return (gpio + shift + shiftPin);
           }
           break;
         case 2:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function &&
               ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
-            return gpio + 100 + 16 + 16;
+            return gpio + shift + (shiftPin * 2);
           }
           break;
         case 3:
           if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_4).toInt() == function &&
               ConfigManager->get(key)->getElement(MCP23017_NR_4).toInt() == nr) {
-            return gpio + 100 + 16 + 16 + 16;
+            return gpio + shift + (shiftPin * 3);
           }
           break;
       }
@@ -394,7 +411,7 @@ int SuplaConfigESP::getGpio(int nr, int function) {
 }
 
 uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
   if (strcmp(ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0 && !ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
     return ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).toInt();
   }
@@ -412,14 +429,45 @@ uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {
 }
 
 uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
-  if ((gpio > 99) && (gpio < 116))
-    return KEY_GPIO + gpio - 100;
-  if ((gpio > 115) && (gpio < 132))
-    return KEY_GPIO + gpio - 116;
-  if ((gpio > 131) && (gpio < 148))
-    return KEY_GPIO + gpio - 132;
-  if ((gpio > 147) && (gpio < 164))
-    return KEY_GPIO + gpio - 148;
+#ifdef GUI_SENSOR_I2C_EXPENDER
+
+  // MCP23017
+  if ((gpio >= EXPENDER_SHIFT_MCP23017) && (gpio < EXPENDER_SHIFT_PIN_MCP23017 + EXPENDER_SHIFT_MCP23017)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_MCP23017;
+  }
+  if ((gpio >= EXPENDER_SHIFT_PIN_MCP23017 + EXPENDER_SHIFT_MCP23017) && (gpio < (EXPENDER_SHIFT_PIN_MCP23017 * 2) + EXPENDER_SHIFT_MCP23017)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_MCP23017 - EXPENDER_SHIFT_PIN_MCP23017;
+  }
+  if ((gpio >= (EXPENDER_SHIFT_PIN_MCP23017 * 2) + EXPENDER_SHIFT_MCP23017) && (gpio < (EXPENDER_SHIFT_PIN_MCP23017 * 3) + EXPENDER_SHIFT_MCP23017)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_MCP23017 - (EXPENDER_SHIFT_PIN_MCP23017 * 2);
+  }
+  if ((gpio >= (EXPENDER_SHIFT_PIN_MCP23017 * 3) + EXPENDER_SHIFT_MCP23017) && (gpio < (EXPENDER_SHIFT_PIN_MCP23017 * 4) + EXPENDER_SHIFT_MCP23017)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_MCP23017 - (EXPENDER_SHIFT_PIN_MCP23017 * 3);
+  }
+
+  // PCF8575
+  if ((gpio >= EXPENDER_SHIFT_PCF8575) && (gpio < EXPENDER_SHIFT_PIN_PCF8575 + EXPENDER_SHIFT_PCF8575)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_PCF8575;
+  }
+  if ((gpio >= EXPENDER_SHIFT_PIN_PCF8575 + EXPENDER_SHIFT_PCF8575) && (gpio < (EXPENDER_SHIFT_PIN_PCF8575 * 2) + EXPENDER_SHIFT_PCF8575)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_PCF8575 - EXPENDER_SHIFT_PIN_PCF8575;
+  }
+  if ((gpio >= (EXPENDER_SHIFT_PIN_PCF8575 * 2) + EXPENDER_SHIFT_PCF8575) && (gpio < (EXPENDER_SHIFT_PIN_PCF8575 * 3) + EXPENDER_SHIFT_PCF8575)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_PCF8575 - (EXPENDER_SHIFT_PIN_PCF8575 * 2);
+  }
+  if ((gpio >= (EXPENDER_SHIFT_PIN_PCF8575 * 3) + EXPENDER_SHIFT_PCF8575) && (gpio < (EXPENDER_SHIFT_PIN_PCF8575 * 4) + EXPENDER_SHIFT_PCF8575)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_PCF8575 - (EXPENDER_SHIFT_PIN_PCF8575 * 3);
+  }
+
+//  if ((gpio > 99) && (gpio < 116))
+//    return KEY_GPIO + gpio - 100;
+//  if ((gpio > 115) && (gpio < 132))
+//    return KEY_GPIO + gpio - 116;
+//  if ((gpio > 131) && (gpio < 148))
+//    return KEY_GPIO + gpio - 132;
+//  if ((gpio > 147) && (gpio < 164))
+//    return KEY_GPIO + gpio - 148;
+#endif
 
   return KEY_GPIO + gpio;
 }
@@ -568,7 +616,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   uint8_t count = 0;
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
   if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
     return 32;
   }
@@ -608,7 +656,7 @@ bool SuplaConfigESP::checkGpio(int gpio) {
   return true;
 }
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
 bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function) {
   if (gpio == OFF_GPIO_MCP23017) {
     return true;
@@ -721,14 +769,21 @@ void SuplaConfigESP::clearFunctionGpio(uint8_t function) {
       ConfigManager->setElement(key, NR, 0);
       ConfigManager->setElement(key, FUNCTION, FUNCTION_OFF);
     }
+
+    clearGpioMCP23017(gpio, gpio, function);
+
     delay(0);
   }
 }
 
 bool SuplaConfigESP::checkActiveMCP23017(uint8_t function) {
+  // return (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF ||
+  //         ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt() != FUNCTION_OFF) &&
+  //        ((ConfigESP->getGpio(function) >= 100 || ConfigESP->getGpio(function) == OFF_GPIO));
+
   return (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF ||
-          ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF8575).toInt() != FUNCTION_OFF) &&
-         ((ConfigESP->getGpio(function) >= 100 || ConfigESP->getGpio(function) == OFF_GPIO));
+          ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt() != FUNCTION_OFF) &&
+         ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 }
 
 uint8_t SuplaConfigESP::getFunctionMCP23017(uint8_t adress) {

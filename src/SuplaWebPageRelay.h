@@ -19,11 +19,10 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_RELAY) || defined(SUPLA_MCP23017)
+#if defined(SUPLA_RELAY) || defined(GUI_SENSOR_I2C_EXPENDER)
 #define GUI_RELAY
 #endif
 
-#define INPUT_ADRESS_MCP23017 "iam"
 #define PATH_RELAY_SET        "setrelay"
 
 #ifdef GUI_RELAY
@@ -61,7 +60,7 @@ void handleRelaySet(int save = 0);
 void handleRelaySaveSet();
 #endif
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
 void handleRelaySetMCP23017(int save = 0);
 void handleRelaySaveSetMCP23017();
 #endif

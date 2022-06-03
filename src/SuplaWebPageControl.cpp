@@ -33,7 +33,7 @@ void createWebPageControl() {
     if (!WebServer->isLoggedIn()) {
       return;
     }
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
     if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
       if (WebServer->httpServer->method() == HTTP_GET)
         handleButtonSetMCP23017();
@@ -65,7 +65,7 @@ void handleControlSave() {
   uint8_t nr;
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
     if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
       if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
         handleControl(6);
@@ -133,20 +133,15 @@ void handleControl(int save) {
   addNumberBox(webContentBuffer, INPUT_MAX_BUTTON, S_QUANTITY, KEY_MAX_BUTTON, ConfigESP->countFreeGpio(FUNCTION_BUTTON));
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-#ifdef SUPLA_MCP23017
-    if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
-      addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, nr, PATH_BUTTON_SET);
-    }
-    else {
-      addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER), FUNCTION_BUTTON, nr);
-    }
+#ifdef GUI_SENSOR_I2C_EXPENDER
+    addListExpanderGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON, nr, PATH_BUTTON_SET);
 #else
     addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER), FUNCTION_BUTTON, nr);
 #endif
 
 #ifdef SUPLA_ROLLERSHUTTER
     if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
         && !ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)
 #endif
     ) {
@@ -315,7 +310,7 @@ void handleButtonSet(int save) {
 }
 #endif
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
 void handleButtonSetMCP23017(int save) {
   uint8_t gpio, selected;
   String button;

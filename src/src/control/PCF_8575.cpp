@@ -40,73 +40,41 @@ PCF_8575::PCF_8575() {
 }
 
 void PCF_8575::customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val) {
-  if ((pin > 99) && (pin < 116)) {
-    control1->write(pin - 100, val);
+  if ((pin >= EXPENDER_SHIFT_PCF8575) && (pin < EXPENDER_SHIFT_PIN_PCF8575 + EXPENDER_SHIFT_PCF8575)) {
+    control1->write(pin - EXPENDER_SHIFT_PCF8575, val);
     return;
   }
-  if ((pin > 115) && (pin < 132)) {
-    control2->write(pin - 116, val);
+  if ((pin >= EXPENDER_SHIFT_PIN_PCF8575 + EXPENDER_SHIFT_PCF8575) && (pin < (EXPENDER_SHIFT_PIN_PCF8575 * 2) + EXPENDER_SHIFT_PCF8575)) {
+    control2->write(pin - EXPENDER_SHIFT_PCF8575 - EXPENDER_SHIFT_PIN_PCF8575, val);
     return;
   }
-  if ((pin > 131) && (pin < 148)) {
-    control3->write(pin - 132, val);
+  if ((pin >= (EXPENDER_SHIFT_PIN_PCF8575 * 2) + EXPENDER_SHIFT_PCF8575) && (pin < (EXPENDER_SHIFT_PIN_PCF8575 * 3) + EXPENDER_SHIFT_PCF8575)) {
+    control3->write(pin - EXPENDER_SHIFT_PCF8575 - (EXPENDER_SHIFT_PIN_PCF8575 * 2), val);
     return;
   }
-  if ((pin > 147) && (pin < 164)) {
-    control4->write(pin - 148, val);
+  if ((pin >= (EXPENDER_SHIFT_PIN_PCF8575 * 3) + EXPENDER_SHIFT_PCF8575) && (pin < (EXPENDER_SHIFT_PIN_PCF8575 * 4) + EXPENDER_SHIFT_PCF8575)) {
+    control4->write(pin - EXPENDER_SHIFT_PCF8575 - (EXPENDER_SHIFT_PIN_PCF8575 * 3), val);
     return;
   }
 
   return ::digitalWrite(pin, val);
 }
+
 int PCF_8575::customDigitalRead(int channelNumber, uint8_t pin) {
-  if ((pin > 99) && (pin < 116)) {
-    return control1->read(pin - 100);
+  if ((pin >= EXPENDER_SHIFT_PCF8575) && (pin < EXPENDER_SHIFT_PIN_PCF8575 + EXPENDER_SHIFT_PCF8575)) {
+    return control1->read(pin - EXPENDER_SHIFT_PCF8575);
   }
-  if ((pin > 115) && (pin < 132)) {
-    return control2->read(pin - 116);
+  if ((pin >= EXPENDER_SHIFT_PIN_PCF8575 + EXPENDER_SHIFT_PCF8575) && (pin < (EXPENDER_SHIFT_PIN_PCF8575 * 2) + EXPENDER_SHIFT_PCF8575)) {
+    return control2->read(pin - EXPENDER_SHIFT_PCF8575 - EXPENDER_SHIFT_PIN_PCF8575);
   }
-  if ((pin > 131) && (pin < 148)) {
-    return control3->read(pin - 132);
+  if ((pin >= (EXPENDER_SHIFT_PIN_PCF8575 * 2) + EXPENDER_SHIFT_PCF8575) && (pin < (EXPENDER_SHIFT_PIN_PCF8575 * 3) + EXPENDER_SHIFT_PCF8575)) {
+    return control3->read(pin - EXPENDER_SHIFT_PCF8575 - (EXPENDER_SHIFT_PIN_PCF8575 * 2));
   }
-  if ((pin > 147) && (pin < 164)) {
-    return control4->read(pin - 148);
+  if ((pin >= (EXPENDER_SHIFT_PIN_PCF8575 * 3) + EXPENDER_SHIFT_PCF8575) && (pin < (EXPENDER_SHIFT_PIN_PCF8575 * 4) + EXPENDER_SHIFT_PCF8575)) {
+    return control4->read(pin - EXPENDER_SHIFT_PCF8575 - (EXPENDER_SHIFT_PIN_PCF8575 * 3));
   }
 
   return ::digitalRead(pin);
 }
-// void PCF_8575::customPinMode(int channelNumber, uint8_t pin, uint8_t mode) {
-//   (void)(channelNumber);
-
-//   if ((pin > 99) && (pin < 116)) {
-//     control1->pinMode(pin - 100, mode);
-//   }
-//   if ((pin > 115) && (pin < 132)) {
-//     control2->pinMode(pin - 116, mode);
-//   }
-//   if ((pin > 131) && (pin < 148)) {
-//     control3->pinMode(pin - 132, mode);
-//   }
-//   if ((pin > 147) && (pin < 164)) {
-//     control4->pinMode(pin - 148, mode);
-//   }
-
-//   return ::pinMode(pin, mode);
-// }
-
-// void PCF_8575::setPullup(uint8_t pin, bool pullup, bool inverse) {
-//   if ((pin > 99) && (pin < 116)) {
-//     control1->setPullup(pin - 100, pullup, inverse);
-//   }
-//   if ((pin > 115) && (pin < 132)) {
-//     control2->setPullup(pin - 116, pullup, inverse);
-//   }
-//   if ((pin > 131) && (pin < 148)) {
-//     control3->setPullup(pin - 132, pullup, inverse);
-//   }
-//   if ((pin > 147) && (pin < 164)) {
-//     control4->setPullup(pin - 148, pullup, inverse);
-//   }
-// }
 }  // namespace Control
 }  // namespace Supla

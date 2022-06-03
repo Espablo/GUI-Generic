@@ -211,7 +211,7 @@ const char* const GPIO_P[] PROGMEM = {GPIO0,  GPIO1,  GPIO2,  GPIO3,  GPIO4,  GP
                                       GPIO33, GPIO34, GPIO35, GPIO36, GPIO37, GPIO38, GPIO39,  OFF};
 #endif
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
 const char GPIO_A0[] PROGMEM = "A0";
 const char GPIO_A1[] PROGMEM = "A1";
 const char GPIO_A2[] PROGMEM = "A2";
@@ -231,6 +231,34 @@ const char GPIO_B7[] PROGMEM = "B7";
 
 const char* const GPIO_MCP23017_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, GPIO_B0,
                                                GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7, S_EMPTY, OFF};
+
+const char* const EXPENDER_LIST_P[] PROGMEM = {
+    OFF,
+#ifdef SUPLA_MCP23017
+    "MCP23017",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_PCF8575
+    "PCF8575",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_PCF8574
+    "PCF8574",
+#else
+    S_EMPTY,
+#endif
+};
+
+enum
+{
+  EXPENDER_OFF,
+  EXPENDER_MCP23017,
+  EXPENDER_PCF8575,
+  EXPENDER_PCF8574
+};
+
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_BMP280)
@@ -247,7 +275,7 @@ const char ADR44_ADR45[] PROGMEM = "0x44 & 0x45";
 const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
 #endif
 
-#if defined(SUPLA_MCP23017) || defined(SUPLA_LCD_HD44780)
+#if defined(GUI_SENSOR_I2C_EXPENDER) || defined(SUPLA_LCD_HD44780)
 const char ADR20[] PROGMEM = "0x20";
 const char ADR21[] PROGMEM = "0x21";
 const char ADR22[] PROGMEM = "0x22";
@@ -262,7 +290,7 @@ const char* const HD44780_P[] PROGMEM = {OFF, ADR20, ADR21, ADR22, ADR23, ADR24,
 const char* const HD44780_TYPE_P[] PROGMEM = {"2x16", "2x20", "4x16", "4x20"};
 #endif
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
 const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, ADR22, ADR23, OFF};
 #endif
 

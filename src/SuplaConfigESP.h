@@ -16,6 +16,7 @@
 #ifndef SuplaConfigESP_h
 #define SuplaConfigESP_h
 
+#include "GUIGenericCommonDefined.h"
 #include "GUI-Generic_Config.h"
 
 #include "Arduino.h"

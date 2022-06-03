@@ -538,11 +538,13 @@ void setup() {
 #endif
 
 #ifdef SUPLA_PCF8575
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF8575).toInt()) {
-      Supla::Control::PCF_8575 *mcp = new Supla::Control::PCF_8575();
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt()) {
+      new Supla::Control::PCF_8575();
       // Wire.setClock(400000);
     }
-#elif SUPLA_MCP23017
+#endif
+
+#ifdef SUPLA_MCP23017
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
       Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
 

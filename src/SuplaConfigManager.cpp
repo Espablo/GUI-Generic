@@ -403,6 +403,12 @@ SuplaConfigManager::SuplaConfigManager() {
 
     this->addKey(KEY_FORCE_RESTART_ESP, "0", 1);
 
+#ifdef GUI_SENSOR_I2C_EXPENDER
+    this->addKey(KEY_ACTIVE_EXPENDER, 20);
+#else
+    this->addKey(KEY_ACTIVE_EXPENDER, 20, false);
+#endif
+
     //  this->addKey(KEY_VERSION_CONFIG, String(CURENT_VERSION).c_str(), 2);
 
     SPIFFS.end();

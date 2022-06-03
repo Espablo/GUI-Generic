@@ -121,7 +121,7 @@ void handleSensorI2c(int save) {
       String name, sensorName, input;
 
 #ifdef SUPLA_BUTTON
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
       if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
         addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON, 0);
       }
@@ -176,7 +176,7 @@ void handleSensorI2c(int save) {
     addFormHeaderEnd(webContentBuffer);
 #endif
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt();
     addFormHeader(webContentBuffer);
     addListBox(webContentBuffer, INPUT_MCP23017, S_MCP23017, STATE_P, 2, selected);
@@ -184,7 +184,7 @@ void handleSensorI2c(int save) {
 #endif
 
 #ifdef SUPLA_PCF8575
-    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF8575).toInt();
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt();
     addFormHeader(webContentBuffer);
     addListBox(webContentBuffer, INPUT_PCF8575, F("PCF8575"), STATE_P, 2, selected);
     addFormHeaderEnd(webContentBuffer);
@@ -315,7 +315,7 @@ void handleSensorI2cSave() {
   }
 
 #ifdef SUPLA_BUTTON
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
   if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
     if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
       handleControl(6);
@@ -389,7 +389,7 @@ void handleSensorI2cSave() {
   }
 #endif
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_MCP23017;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
@@ -406,7 +406,7 @@ void handleSensorI2cSave() {
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_PCF8575;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF8575, WebServer->httpServer->arg(input).toInt());
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, WebServer->httpServer->arg(input).toInt());
   }
 #endif
 

@@ -23,6 +23,7 @@
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
 
+#include "GUIGenericCommonDefined.h"
 #include "GUIGenericCommon.h"
 #include "GUI-Generic_Config.h"
 #include "SuplaTemplateBoard.h"
@@ -126,10 +127,6 @@
 #include <supla/control/pushover.h>
 #include <supla/control/direct_links.h>
 
-#ifdef SUPLA_MCP23017
-#include <supla/control/MCP_23017.h>
-#endif
-
 #ifdef SUPLA_NTC_10K
 #include <supla/sensor/NTC_10K.h>
 #endif
@@ -194,6 +191,10 @@
 
 #ifdef SUPLA_PCF8575
 #include "src/control/PCF_8575.h"
+#endif
+
+#ifdef SUPLA_MCP23017
+#include "src/control/MCP_23017.h"
 #endif
 
 namespace Supla {

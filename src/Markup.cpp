@@ -312,18 +312,46 @@ void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const 
   html += name;
 }
 
-#ifdef SUPLA_MCP23017
-void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
-  uint8_t address;
+#ifdef GUI_SENSOR_I2C_EXPENDER
+
+void addListExpanderGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
+  uint8_t type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 
   if (nr == 0) {
+    addListBox(html, INPUT_EXPENDER_TYPE, "Rodzaj ekspendera", EXPENDER_LIST_P, 4, type);
+  }
+
+  if (ConfigESP->checkActiveMCP23017(function)) {
+    addListMCP23017GPIOBox(webContentBuffer, input_id, name, function, nr, url);
+  }
+  else {
+    addListGPIOLinkBox(webContentBuffer, input_id, name, getParameterRequest(url, ARG_PARM_NUMBER), function, nr);
+  }
+}
+
+void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
+  uint8_t address, type, maxNr;
+
+  type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
+
+  if (nr == 0) {
+    // addListBox(html, INPUT_EXPENDER_TYPE, "Rodzaj", EXPENDER_LIST_P, 4, type);
+
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
       addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, MCP23017_P, 5, address, url);
     else
       addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, MCP23017_P, 5, address);
   }
-  if (nr == 16) {
+
+  if (type == EXPENDER_PCF8574) {
+    maxNr = 8;
+  }
+  else {
+    maxNr = 16;
+  }
+
+  if (nr == maxNr) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
       addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, MCP23017_P, 5, address, url);
@@ -338,12 +366,7 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
     html += getParameterRequest(url, ARG_PARM_NUMBER);
     html += nr;
     html += F("'>");
-
-    if (nr < 16)
-      html += nr + 1;
-    else
-      html += nr - 15;
-
+    html += nr + 1;
     html += F(".");
 
     html += F(" ");
@@ -353,10 +376,7 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
     WebServer->sendHeader();
   }
   else {
-    if (nr < 16)
-      html += nr + 1;
-    else
-      html += nr - 15;
+    html += nr + 1;
     html += F(".");
     html += F(" ");
     html += name;
@@ -365,6 +385,7 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
 
   html += F("<select name='");
   html += input_id;
+  html += "mcp";
   html += nr;
   html += F("'>");
 
