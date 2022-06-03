@@ -141,81 +141,16 @@ void chooseTemplateBoard(String board) {
   }
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
-  // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,604,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[address,function],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
-  // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,604,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
-  // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,640,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[1,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[2,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[3,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
-  // {"NAME":"MCP_ESP8266","GPIO":[0,0,544,0,640,608,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,0,0,0,0,0,0,0,0],[[0,2],9,10,11,12,13,14,15,16,0,0,0,0,0,0,0,17]]}
-
-  // "address":
-  // 0 - 0x20
-  // 1 - 0x21
-  // 2 - 0x22
-  // 3 - 0x23
-  //
-  // "function":
-  // 1 - FUNCTION_RELAY
-  // 2 - FUNCTION_BUTTON
-  // 3 - FUNCTION_LIMIT_SWITCH
-  //
-  //  OFF - 0 lub 17
-
-  // type:
-  // 1 - MCP23017
-  // 2 - PCF8575
-  // 3 - PCF8574
-
-  JsonArray& mcp = root["MCP23017"];
-  int key = FUNCTION_OFF;
-
-  if (mcp.size() != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, 1);
+  if (root["MCP23017"].success()) {
+    addExpander(EXPENDER_MCP23017, root["MCP23017"]);
   }
 
-  for (size_t i = 0; i < mcp.size(); i++) {
-    int address = (int)mcp[i][0][0];
-    int function = (int)mcp[i][0][1];
+  if (root["PCF8575"].success()) {
+    addExpander(EXPENDER_PCF8575, root["PCF8575"]);
+  }
 
-    switch (function) {
-      case FUNCTION_RELAY:
-        key = KEY_MAX_RELAY;
-        break;
-      case FUNCTION_BUTTON:
-        key = KEY_MAX_BUTTON;
-        break;
-      case FUNCTION_LIMIT_SWITCH:
-        key = KEY_MAX_LIMIT_SWITCH;
-        break;
-    }
-
-    ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_MCP23017);
-
-    for (size_t ii = 1; ii <= 16; ii++) {
-      int gpio = mcp[i][ii];
-
-      if (gpio == 0)
-        gpio = OFF_GPIO_MCP23017;
-      else if (gpio >= 17)
-        gpio = OFF_GPIO_MCP23017;
-
-      if (gpio != OFF_GPIO_MCP23017) {
-        gpio = (int)mcp[i][ii] - 1;
-        ConfigESP->setGpioMCP23017(gpio, address, ConfigManager->get(key)->getValueInt(), function);
-
-        switch (function) {
-          case FUNCTION_RELAY:
-            ConfigESP->setLevel(gpio, true);
-            ConfigESP->setMemory(gpio, MEMORY_RESTORE);
-            break;
-          case FUNCTION_BUTTON:
-            ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
-            ConfigESP->setEvent(gpio, Supla::Event::ON_CHANGE);
-            ConfigESP->setPullUp(gpio, true);
-            ConfigESP->setInversed(gpio, true);
-            break;
-        }
-        ConfigManager->set(key, ConfigManager->get(key)->getValueInt() + 1);
-      }
-    }
+  if (root["PCF8574"].success()) {
+    addExpander(EXPENDER_PCF8574, root["PCF8574"]);
   }
 #endif
 
@@ -793,6 +728,108 @@ bool isActiveRGBW(JsonArray& GPIO) {
 
   return isActivRGBW;
 }
+
+#ifdef GUI_SENSOR_I2C_EXPENDER
+void addExpander(uint8_t typeExpander, JsonArray& expander) {
+  // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,604,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[address,function],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
+  // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,604,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
+  // {"NAME":"MCP23017","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,608,640,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[1,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[2,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[3,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
+  //
+  // Doda jeden MCP23017 pod adres 0x20 z funkcjami 1-8 przekaźniki od 9-16 przyciski
+  // {"NAME":"MCP23017x1_ESP8266","GPIO":[0,0,544,0,640,608,0,0,0,0,0,0,0,0],"MCP23017":[[[0,1],1,2,3,4,5,6,7,8,0,0,0,0,0,0,0,0],[[0,2],9,10,11,12,13,14,15,16,0,0,0,0,0,0,0,0]]}
+  // Doda dwa PCF8575 pod adres 0x20 oraz 0x21 z funkcjami 1-16 przekaźniki na adres 0x20 oraz od 1-16 przyciski na adres 0x21
+  // {"NAME":"PCF8575x2_ESP8266","GPIO":[0,0,544,0,640,608,0,0,0,0,0,0,0,0],"PCF8575":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],[[1,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
+  // Doda dwa PCF8574 pod adres 0x20 oraz 0x21 z funkcjami 1-8 przekaźniki na adres 0x20 oraz od 1-8 przyciski na adres 0x21
+  // {"NAME":"PCF8574x2_ESP8266","GPIO":[0,0,544,0,640,608,0,0,0,0,0,0,0,0],"PCF8574":[[[0,1],1,2,3,4,5,6,7,8],[[1,2],1,2,3,4,5,6,7,8]]}
+  // Doda PCF8575 pod adres 0x20 dla przekaźników oraz MCP23017 pod adres 0x021 dla przycisków
+  // {"NAME":"PCF_MCP_ESP8266","GPIO":[0,0,544,0,640,608,0,0,0,0,0,0,0,0],"PCF8575":[[[0,1],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]],"MCP23017":[[[1,2],1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]}
+  //
+  // "address":
+  // 0 - 0x20
+  // 1 - 0x21
+  // 2 - 0x22
+  // 3 - 0x23
+  //
+  // "function":
+  // 1 - FUNCTION_RELAY
+  // 2 - FUNCTION_BUTTON
+  // 3 - FUNCTION_LIMIT_SWITCH
+  //  OFF - 0 lub 17
+
+  // type:
+  // 1 - MCP23017 x16
+  // 2 - PCF8575 x16
+  // 3 - PCF8574 x8
+
+  size_t key = FUNCTION_OFF;
+  size_t sizeExpander = 0;
+
+  for (size_t i = 0; i < expander.size(); i++) {
+    int address = (int)expander[i][0][0];
+    int function = (int)expander[i][0][1];
+
+    switch (function) {
+      case FUNCTION_RELAY:
+        key = KEY_MAX_RELAY;
+        break;
+      case FUNCTION_BUTTON:
+        key = KEY_MAX_BUTTON;
+        break;
+      case FUNCTION_LIMIT_SWITCH:
+        key = KEY_MAX_LIMIT_SWITCH;
+        break;
+    }
+
+    if (typeExpander == EXPENDER_MCP23017) {
+      sizeExpander = 16;
+      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, true);
+      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_MCP23017);
+    }
+    else if (typeExpander == EXPENDER_PCF8575) {
+      sizeExpander = 16;
+      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, true);
+      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8575);
+    }
+    else if (typeExpander == EXPENDER_PCF8574) {
+      sizeExpander = 8;
+      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, true);
+      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8574);
+    }
+    else {
+      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, false);
+      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, false);
+    }
+
+    for (size_t ii = 1; ii <= sizeExpander; ii++) {
+      int gpio = expander[i][ii];
+
+      if (gpio == 0)
+        gpio = OFF_GPIO_EXPENDER;
+      else if (gpio >= 17)
+        gpio = OFF_GPIO_EXPENDER;
+
+      if (gpio != OFF_GPIO_EXPENDER) {
+        gpio = (int)expander[i][ii] - 1;
+        ConfigESP->setGpioMCP23017(gpio, address, ConfigManager->get(key)->getValueInt(), function);
+
+        switch (function) {
+          case FUNCTION_RELAY:
+            ConfigESP->setLevel(gpio, true);
+            ConfigESP->setMemory(gpio, MEMORY_RESTORE);
+            break;
+          case FUNCTION_BUTTON:
+            ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
+            ConfigESP->setEvent(gpio, Supla::Event::ON_CHANGE);
+            ConfigESP->setPullUp(gpio, true);
+            ConfigESP->setInversed(gpio, true);
+            break;
+        }
+        ConfigManager->set(key, ConfigManager->get(key)->getValueInt() + 1);
+      }
+    }
+  }
+}
+#endif
 
 }  // namespace TanplateBoard
 }  // namespace Supla

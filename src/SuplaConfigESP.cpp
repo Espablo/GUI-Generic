@@ -674,7 +674,7 @@ bool SuplaConfigESP::checkGpio(int gpio) {
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
 bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function) {
-  if (gpio == OFF_GPIO_MCP23017) {
+  if (gpio == OFF_GPIO_EXPENDER) {
     return true;
   }
   else if (gpio == 16) {
@@ -689,7 +689,7 @@ bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t fun
     else
       address = ConfigESP->getAdressMCP23017(16, function);
 
-    if (address == OFF_GPIO_MCP23017) {
+    if (address == OFF_GPIO_EXPENDER) {
       return true;
     }
 
@@ -713,11 +713,11 @@ uint8_t SuplaConfigESP::getGpioMCP23017(uint8_t nr, uint8_t function) {
     }
     delay(0);
   }
-  return OFF_GPIO_MCP23017;
+  return OFF_GPIO_EXPENDER;
 }
 
 uint8_t SuplaConfigESP::getAdressMCP23017(uint8_t nr, uint8_t function) {
-  for (uint8_t gpio = 0; gpio <= OFF_GPIO_MCP23017; gpio++) {
+  for (uint8_t gpio = 0; gpio <= OFF_GPIO_EXPENDER; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
 
     if (ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr)
@@ -760,9 +760,9 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
   uint8_t key = KEY_GPIO + gpio;
   uint8_t adress = getAdressMCP23017(nr, function);
 
-  if (getNrMCP23017(adress) != OFF_GPIO_MCP23017)
+  if (getNrMCP23017(adress) != OFF_GPIO_EXPENDER)
     ConfigManager->setElement(key, getNrMCP23017(adress), 0);
-  if (getFunctionMCP23017(adress) != OFF_GPIO_MCP23017)
+  if (getFunctionMCP23017(adress) != OFF_GPIO_EXPENDER)
     ConfigManager->setElement(key, getFunctionMCP23017(adress), FUNCTION_OFF);
 
   if (function == FUNCTION_BUTTON) {
@@ -817,7 +817,7 @@ uint8_t SuplaConfigESP::getFunctionMCP23017(uint8_t adress) {
       return MCP23017_FUNCTION_4;
       break;
   }
-  return OFF_GPIO_MCP23017;
+  return OFF_GPIO_EXPENDER;
 }
 
 uint8_t SuplaConfigESP::getNrMCP23017(uint8_t adress) {
@@ -835,7 +835,7 @@ uint8_t SuplaConfigESP::getNrMCP23017(uint8_t adress) {
       return MCP23017_NR_4;
       break;
   }
-  return OFF_GPIO_MCP23017;
+  return OFF_GPIO_EXPENDER;
 }
 #endif
 

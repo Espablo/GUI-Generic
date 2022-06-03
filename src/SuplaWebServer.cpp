@@ -311,14 +311,14 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
   gpio = ConfigESP->getGpioMCP23017(nr, function);
   _gpio = WebServer->httpServer->arg(input).toInt();
 
-  if ((nr == 0 || nr == shiftAddress) && _gpio == OFF_GPIO_MCP23017 && _address != OFF_ADDRESS_MCP23017)
+  if ((nr == 0 || nr == shiftAddress) && _gpio == OFF_GPIO_EXPENDER && _address != OFF_ADDRESS_MCP23017)
     return false;
 
   key = KEY_GPIO + _gpio;
   _function = ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(_address)).toInt();
   _nr = ConfigManager->get(key)->getElement(ConfigESP->getNrMCP23017(_address)).toInt();
 
-  if (_gpio == OFF_GPIO_MCP23017 || _address == OFF_ADDRESS_MCP23017) {
+  if (_gpio == OFF_GPIO_EXPENDER || _address == OFF_ADDRESS_MCP23017) {
     ConfigESP->clearGpioMCP23017(gpio, nr, function);
   }
   else if (_function == FUNCTION_OFF) {

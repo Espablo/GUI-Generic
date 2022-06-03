@@ -197,6 +197,9 @@ void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addButtonCFG(uint8_t gpio);
 void addLimitSwitch(uint8_t nr, uint8_t gpio);
 bool isActiveRGBW(JsonArray& GPIO);
+#ifdef GUI_SENSOR_I2C_EXPENDER
+void addExpander(uint8_t typeExpander, JsonArray& expander);
+#endif
 
 extern String templateBoardWarning;
 }  // namespace TanplateBoard

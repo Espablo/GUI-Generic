@@ -63,7 +63,7 @@ enum _ConfigMode
 #define OFF_GPIO MAX_GPIO + 1
 #endif
 
-#define OFF_GPIO_MCP23017    17
+#define OFF_GPIO_EXPENDER    17
 #define OFF_ADDRESS_MCP23017 4
 
 #define GPIO_VIRTUAL_RELAY 99
