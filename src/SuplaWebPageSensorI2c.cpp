@@ -183,10 +183,10 @@ void handleSensorI2c(int save) {
     addFormHeaderEnd(webContentBuffer);
 #endif
 
-#ifdef SUPLA_PCF8575
+#if defined(SUPLA_PCF8575) || defined(SUPLA_PCF8574)
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt();
     addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_PCF8575, F("PCF8575"), STATE_P, 2, selected);
+    addListBox(webContentBuffer, INPUT_PCF857x, F("PCF857x"), STATE_P, 2, selected);
     addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -402,9 +402,9 @@ void handleSensorI2cSave() {
   }
 #endif
 
-#ifdef SUPLA_PCF8575
+#if defined(SUPLA_PCF8575) || defined(SUPLA_PCF8574)
   key = KEY_ACTIVE_SENSOR;
-  input = INPUT_PCF8575;
+  input = INPUT_PCF857x;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, WebServer->httpServer->arg(input).toInt());
   }

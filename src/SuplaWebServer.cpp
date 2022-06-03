@@ -281,7 +281,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
 bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
-  uint8_t key, _address, gpio, _gpio, _function, _nr, _type;
+  uint8_t key, _address, gpio, _gpio, _function, _nr, _type, shiftAddress;
   String input = _input + "mcp" + nr;
 
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") == 0) {
@@ -296,15 +296,22 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
     return true;
   }
 
-  if (nr < 16)
+  if (_type == EXPENDER_PCF8574) {
+    shiftAddress = 8;
+  }
+  else {
+    shiftAddress = 16;
+  }
+
+  if (nr < shiftAddress)
     _address = WebServer->httpServer->arg(String(INPUT_ADRESS_MCP23017) + 0).toInt();
   else
-    _address = WebServer->httpServer->arg(String(INPUT_ADRESS_MCP23017) + 16).toInt();
+    _address = WebServer->httpServer->arg(String(INPUT_ADRESS_MCP23017) + shiftAddress).toInt();
 
   gpio = ConfigESP->getGpioMCP23017(nr, function);
   _gpio = WebServer->httpServer->arg(input).toInt();
 
-  if ((nr == 0 || nr == 16) && _gpio == OFF_GPIO_MCP23017 && _address != OFF_ADDRESS_MCP23017)
+  if ((nr == 0 || nr == shiftAddress) && _gpio == OFF_GPIO_MCP23017 && _address != OFF_ADDRESS_MCP23017)
     return false;
 
   key = KEY_GPIO + _gpio;

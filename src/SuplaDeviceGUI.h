@@ -193,6 +193,10 @@
 #include "src/control/PCF_8575.h"
 #endif
 
+#ifdef SUPLA_PCF8574
+#include "src/control/PCF_8574.h"
+#endif
+
 #ifdef SUPLA_MCP23017
 #include "src/control/MCP_23017.h"
 #endif

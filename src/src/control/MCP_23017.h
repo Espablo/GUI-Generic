@@ -6,7 +6,7 @@
 
 #include <supla/io.h>
 
-#define EXPENDER_SHIFT_MCP23017     96
+#define EXPENDER_SHIFT_MCP23017     80
 #define EXPENDER_SHIFT_PIN_MCP23017 16
 
 class MCP23017 {

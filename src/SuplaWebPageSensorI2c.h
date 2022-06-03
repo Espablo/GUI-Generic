@@ -142,8 +142,8 @@ void handleSensorI2cSave();
 #define INPUT_MCP23017 "imcp"
 #endif
 
-#ifdef SUPLA_PCF8575
-#define INPUT_PCF8575 "ipcf"
+#if defined(SUPLA_PCF8575) || defined(SUPLA_PCF8574)
+#define INPUT_PCF857x "ipcf"
 #endif
 
 #ifdef SUPLA_SHT_AUTODETECT

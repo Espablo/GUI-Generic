@@ -44,9 +44,12 @@
 // #define SUPLA_BME280
 // #define SUPLA_BMP280
 // #define SUPLA_SHT3x
+// #define SUPLA_SHT_AUTODETECT
 // #define SUPLA_SI7021
 // #define SUPLA_OLED
-// #define GUI_SENSOR_I2C_EXPENDER
+// #define SUPLA_MCP23017
+// #define SUPLA_PCF8575
+// #define SUPLA_PCF8574
 // #define SUPLA_VL53L0X
 // #define SUPLA_HDC1080
 // #define SUPLA_LCD_HD44780
@@ -67,6 +70,10 @@
 // #define SUPLA_DEEP_SLEEP
 // #define SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
 // #define SUPLA_RF_BRIDGE
+// #define SUPLA_ADE7953
+
+// #define SUPLA_PMSX003 
+// #define SUPLA_VINDRIKTNING_IKEA
 
 // ##### Analog #####
 // #define SUPLA_NTC_10K

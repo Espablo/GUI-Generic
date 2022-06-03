@@ -372,8 +372,8 @@ int SuplaConfigESP::getGpio(int nr, int function) {
           break;
 
         case EXPENDER_PCF8574:
-          shift += 64 + 64;
-          shiftPin = 8;
+          shift = EXPENDER_SHIFT_PCF8574;
+          shiftPin = EXPENDER_SHIFT_PIN_PCF8574;
           break;
       }
 
@@ -431,7 +431,7 @@ uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {
 uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
 #ifdef GUI_SENSOR_I2C_EXPENDER
 
-  // MCP23017
+#ifdef SUPLA_MCP23017
   if ((gpio >= EXPENDER_SHIFT_MCP23017) && (gpio < EXPENDER_SHIFT_PIN_MCP23017 + EXPENDER_SHIFT_MCP23017)) {
     return KEY_GPIO + gpio - EXPENDER_SHIFT_MCP23017;
   }
@@ -444,8 +444,9 @@ uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
   if ((gpio >= (EXPENDER_SHIFT_PIN_MCP23017 * 3) + EXPENDER_SHIFT_MCP23017) && (gpio < (EXPENDER_SHIFT_PIN_MCP23017 * 4) + EXPENDER_SHIFT_MCP23017)) {
     return KEY_GPIO + gpio - EXPENDER_SHIFT_MCP23017 - (EXPENDER_SHIFT_PIN_MCP23017 * 3);
   }
+#endif
 
-  // PCF8575
+#ifdef SUPLA_PCF8575
   if ((gpio >= EXPENDER_SHIFT_PCF8575) && (gpio < EXPENDER_SHIFT_PIN_PCF8575 + EXPENDER_SHIFT_PCF8575)) {
     return KEY_GPIO + gpio - EXPENDER_SHIFT_PCF8575;
   }
@@ -458,7 +459,22 @@ uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
   if ((gpio >= (EXPENDER_SHIFT_PIN_PCF8575 * 3) + EXPENDER_SHIFT_PCF8575) && (gpio < (EXPENDER_SHIFT_PIN_PCF8575 * 4) + EXPENDER_SHIFT_PCF8575)) {
     return KEY_GPIO + gpio - EXPENDER_SHIFT_PCF8575 - (EXPENDER_SHIFT_PIN_PCF8575 * 3);
   }
+#endif
 
+#ifdef SUPLA_PCF8574
+  if ((gpio >= EXPENDER_SHIFT_PCF8574) && (gpio < EXPENDER_SHIFT_PIN_PCF8574 + EXPENDER_SHIFT_PCF8574)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_PCF8574;
+  }
+  if ((gpio >= EXPENDER_SHIFT_PIN_PCF8574 + EXPENDER_SHIFT_PCF8574) && (gpio < (EXPENDER_SHIFT_PIN_PCF8574 * 2) + EXPENDER_SHIFT_PCF8574)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_PCF8574 - EXPENDER_SHIFT_PIN_PCF8574;
+  }
+  if ((gpio >= (EXPENDER_SHIFT_PIN_PCF8574 * 2) + EXPENDER_SHIFT_PCF8574) && (gpio < (EXPENDER_SHIFT_PIN_PCF8574 * 3) + EXPENDER_SHIFT_PCF8574)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_PCF8574 - (EXPENDER_SHIFT_PIN_PCF8574 * 2);
+  }
+  if ((gpio >= (EXPENDER_SHIFT_PIN_PCF8574 * 3) + EXPENDER_SHIFT_PCF8574) && (gpio < (EXPENDER_SHIFT_PIN_PCF8574 * 4) + EXPENDER_SHIFT_PCF8574)) {
+    return KEY_GPIO + gpio - EXPENDER_SHIFT_PCF8574 - (EXPENDER_SHIFT_PIN_PCF8574 * 3);
+  }
+#endif
 //  if ((gpio > 99) && (gpio < 116))
 //    return KEY_GPIO + gpio - 100;
 //  if ((gpio > 115) && (gpio < 132))

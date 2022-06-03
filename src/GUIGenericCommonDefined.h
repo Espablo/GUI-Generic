@@ -17,7 +17,7 @@
 #ifndef GUI_GENERIC_COMMON_DEFINED_H
 #define GUI_GENERIC_COMMON_DEFINED_H
 
-#if defined(SUPLA_MCP23017) || defined(SUPLA_ADE7953)
+#if defined(SUPLA_MCP23017) || defined(SUPLA_PCF8575) || defined(SUPLA_PCF8574)
 #define GUI_SENSOR_I2C_EXPENDER
 #endif
 

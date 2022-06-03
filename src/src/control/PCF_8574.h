@@ -14,30 +14,30 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _S_PCF8575_H
-#define _S_PCF8575_H
+#ifndef _S_PCF8574_H
+#define _S_PCF8574_H
 
 #include <Arduino.h>
 #include <functional>
 
 #include <supla/io.h>
-#include <PCF8575.h>
+#include <PCF8574.h>
 
-#define EXPENDER_SHIFT_PCF8575     144  // 80 + 64
-#define EXPENDER_SHIFT_PIN_PCF8575 16
+#define EXPENDER_SHIFT_PCF8574     208  // 80 + 64 + 64
+#define EXPENDER_SHIFT_PIN_PCF8574 8
 
 namespace Supla {
 namespace Control {
-class PCF_8575 : public Supla::Io {
+class PCF_8574 : public Supla::Io {
  public:
-  PCF_8575();
+  PCF_8574();
   void customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val);
   int customDigitalRead(int channelNumber, uint8_t pin);
 
-  PCF8575 *control1;
-  PCF8575 *control2;
-  PCF8575 *control3;
-  PCF8575 *control4;
+  PCF8574 *control1;
+  PCF8574 *control2;
+  PCF8574 *control3;
+  PCF8574 *control4;
 };
 
 }  // namespace Control
