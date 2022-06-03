@@ -232,10 +232,8 @@ const char GPIO_B7[] PROGMEM = "B7";
 const char* const GPIO_MCP23017_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, GPIO_B0,
                                                GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7, S_EMPTY, OFF};
 
-#ifdef SUPLA_PCF8574
 const char* const GPIO_PCF_8574_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, S_EMPTY,
                                                S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, OFF};
-#endif
 
 const char* const EXPENDER_LIST_P[] PROGMEM = {
     OFF,
