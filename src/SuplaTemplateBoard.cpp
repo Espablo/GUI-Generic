@@ -426,6 +426,11 @@ void chooseTemplateBoard(String board) {
         ConfigESP->setGpio(gpio, FUNCTION_SI7021_SONOFF);
         break;
 
+      case NewDS18x20:
+        ConfigESP->setGpio(gpio, FUNCTION_DS18B20);
+        ConfigManager->set(KEY_MULTI_MAX_DS18B20, 1);
+        break;
+
       case NewCSE7766Rx:
         ConfigESP->setGpio(gpio, FUNCTION_CSE7766_RX);
         break;
@@ -587,6 +592,9 @@ int convert(int gpioJSON) {
 
     case SI7021:
       return NewSI7021;
+
+    case DS18x20:
+      return NewDS18x20;
 
     case CSE7766Tx:
       return NewCSE7766Tx;

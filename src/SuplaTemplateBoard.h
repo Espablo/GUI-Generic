@@ -44,6 +44,7 @@ enum FunctionOld
 {
   None = 0,
   SI7021 = 3,
+  DS18x20 = 4,
   I2CSCL = 5,
   I2CSDA = 6,
   Switch1 = 9,
@@ -172,6 +173,7 @@ enum FunctionNew
   NewI2CSCL = 608,
   NewI2CSDA = 640,
   NewSI7021 = 1248,
+  NewDS18x20 = 1312,
   NewHLWBLSELi = 2624,
   NewHLWBLCF1 = 2656,
   NewHLW8012CF = 2688,
