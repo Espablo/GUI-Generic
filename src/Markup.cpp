@@ -331,32 +331,33 @@ void addListExpanderGPIOBox(String& html, const String& input_id, const String& 
 
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
   uint8_t address, type, maxNr;
+  const char* const* listExpender;
 
   type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 
-  if (nr == 0) {
-    // addListBox(html, INPUT_EXPENDER_TYPE, "Rodzaj", EXPENDER_LIST_P, 4, type);
-
-    address = ConfigESP->getAdressMCP23017(nr, function);
-    if (url != "")
-      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, MCP23017_P, 5, address, url);
-    else
-      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, MCP23017_P, 5, address);
-  }
-
   if (type == EXPENDER_PCF8574) {
     maxNr = 8;
+    listExpender = EXPENDER_PCF8574_P;
   }
   else {
     maxNr = 16;
+    listExpender = EXPENDER_P;
+  }
+
+  if (nr == 0) {
+    address = ConfigESP->getAdressMCP23017(nr, function);
+    if (url != "")
+      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, listExpender, 5, address, url);
+    else
+      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, listExpender, 5, address);
   }
 
   if (nr == maxNr) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
-      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, MCP23017_P, 5, address, url);
+      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, listExpender, 5, address, url);
     else
-      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, MCP23017_P, 5, address);
+      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, listExpender, 5, address);
   }
 
   // html += F("<i><label>");

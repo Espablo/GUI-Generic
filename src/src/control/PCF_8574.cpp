@@ -20,23 +20,38 @@ namespace Supla {
 namespace Control {
 
 PCF_8574::PCF_8574() {
-  control1 = new PCF8574(0x20);
-  control2 = new PCF8574(0x21);
-  control3 = new PCF8574(0x22);
-  control4 = new PCF8574(0x23);
+  control1 = new PCF8574();
+  control2 = new PCF8574();
+  control3 = new PCF8574();
+  control4 = new PCF8574();
 
-  if (!control1->begin()) {
+  control1->setAddress(0x20);
+  if (!control1->begin())
     Serial.println(F("PCF8574 1 not found!"));
-  }
-  if (!control2->begin()) {
+  control1->setAddress(0x38);
+  if (!control1->begin())
+    Serial.println(F("PCF8574A 1 not found!"));
+
+  control2->setAddress(0x21);
+  if (!control2->begin())
     Serial.println(F("PCF8574 2 not found!"));
-  }
-  if (!control3->begin()) {
+  control2->setAddress(0x39);
+  if (!control2->begin())
+    Serial.println(F("PCF8574A 2 not found!"));
+
+  control3->setAddress(0x22);
+  if (!control3->begin())
     Serial.println(F("PCF8574 3 not found!"));
-  }
-  if (!control4->begin()) {
+  control3->setAddress(0x3A);
+  if (!control3->begin())
+    Serial.println(F("PCF8574A 3 not found!"));
+
+  control4->setAddress(0x23);
+  if (!control4->begin())
     Serial.println(F("PCF8574 4 not found!"));
-  }
+  control4->setAddress(0x3B);
+  if (!control4->begin())
+    Serial.println(F("PCF8574A 4 not found!"));
 }
 
 void PCF_8574::customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val) {

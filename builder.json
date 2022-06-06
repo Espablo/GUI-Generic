@@ -462,25 +462,25 @@
 			}
 		},
 		"SUPLA_PCF8574": {
-			"name": "PCF8574",
-			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x8 PCF8574.",
+			"name": "PCF8574/A",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x8 PCF8574/A.",
 			"defOn": false,
 			"new": true,
 			"en": {
-				"name": "PCF8574",
-				"desc": "Device settings->I2C. Supports PCF8574 x8 port expansion."
+				"name": "PCF8574/A",
+				"desc": "Device settings->I2C. Supports PCF8574/A x8 port expansion."
 			},
 			"es": {
-				"name": "PCF8574",
+				"name": "PCF8574/A",
 				"desc": "Configuración del dispositivo->I2C. Admite expansión de puertos PCF8574 x8."
 			},
 			"de": {
-				"name": "PCF8574",
-				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des PCF8574 x8-Ports."
+				"name": "PCF8574/A",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des PCF8574/A x8-Ports."
 			},
 			"fr": {
-				"name": "PCF8574",
-				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port PCF8574 x8."
+				"name": "PCF8574/A",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port PCF8574/A x8."
 			}
 		}
 	},
