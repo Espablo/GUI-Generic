@@ -140,20 +140,6 @@ void chooseTemplateBoard(String board) {
     }
   }
 
-#ifdef GUI_SENSOR_I2C_EXPENDER
-  if (root["MCP23017"].success()) {
-    addExpander(EXPENDER_MCP23017, root["MCP23017"]);
-  }
-
-  if (root["PCF8575"].success()) {
-    addExpander(EXPENDER_PCF8575, root["PCF8575"]);
-  }
-
-  if (root["PCF8574"].success()) {
-    addExpander(EXPENDER_PCF8574, root["PCF8574"]);
-  }
-#endif
-
   String name = root["NAME"];
   ConfigManager->set(KEY_HOST_NAME, name.c_str());
 
@@ -458,6 +444,20 @@ void chooseTemplateBoard(String board) {
         templateBoardWarning += "<br>";
     }
   }
+
+#ifdef GUI_SENSOR_I2C_EXPENDER
+  if (root["MCP23017"].success()) {
+    addExpander(EXPENDER_MCP23017, root["MCP23017"]);
+  }
+
+  if (root["PCF8575"].success()) {
+    addExpander(EXPENDER_PCF8575, root["PCF8575"]);
+  }
+
+  if (root["PCF8574"].success()) {
+    addExpander(EXPENDER_PCF8574, root["PCF8574"]);
+  }
+#endif
 }
 
 int convert(int gpioJSON) {
