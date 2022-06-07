@@ -295,9 +295,6 @@ const char* const HD44780_TYPE_P[] PROGMEM = {"2x16", "2x20", "4x16", "4x20"};
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
 const char* const EXPENDER_P[] PROGMEM = {ADR20, ADR21, ADR22, ADR23, OFF};
-#endif
-
-#ifdef SUPLA_PCF8574
 const char* const EXPENDER_PCF8574_P[] PROGMEM = {"0x20 | 0x38", "0x21 | 0x39", "0x22 | 0x3A", "0x24 | 0x3B", OFF};
 #endif
 
