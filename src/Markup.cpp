@@ -344,20 +344,18 @@ void addListMCP23017GPIOBox(String& html, const String& input_id, const String& 
     listExpender = EXPENDER_P;
   }
 
-  if (nr == 0) {
-    address = ConfigESP->getAdressMCP23017(nr, function);
+  if (nr == 0 || nr == maxNr) {
+    for (uint8_t gpio = nr; gpio <= OFF_GPIO_EXPENDER; gpio++) {
+      address = ConfigESP->getAdressMCP23017(gpio, function);
+      if (address != OFF_ADDRESS_MCP23017) {
+        break;
+      }
+    }
+    
     if (url != "")
       addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, listExpender, 5, address, url);
     else
       addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, listExpender, 5, address);
-  }
-
-  if (nr == maxNr) {
-    address = ConfigESP->getAdressMCP23017(nr, function);
-    if (url != "")
-      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, listExpender, 5, address, url);
-    else
-      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, listExpender, 5, address);
   }
 
   // html += F("<i><label>");
