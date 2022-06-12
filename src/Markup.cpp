@@ -536,16 +536,13 @@ String getParameterRequest(const String& url, const String& param, const String&
 
 const String SuplaJavaScript(const String& java_return) {
   String java_script =
-      F("<script type='text/javascript'>setTimeout(function(){var "
-        "element=document.getElementById('msg');if( element != "
-        "null){element.style.visibility='hidden';location.href='");
+      F("<script type='text/javascript'>setTimeout(function(){var element=document.getElementById('msg');if(element != "
+        "null){element.style.visibility='hidden';if(window.location.pathname != '/");
   java_script += java_return;
-  java_script += F("';}},1600);</script>\n");
-#ifdef SUPLA_OTA
-  java_script +=
-      F("<script type='text/javascript'>if(window.top.location != window.location){"
-        "window.top.location.href = window.location.href;}</script>\n");
-#endif
+  java_script += F("'){location.href='");
+  java_script += java_return;
+  java_script += F("'};}},1600);");
+  java_script += F("if(window.top.location != window.location){window.top.location.href = window.location.href;}</script>\n");
   return java_script;
 }
 
