@@ -674,28 +674,31 @@ bool SuplaConfigESP::checkGpio(int gpio) {
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
 bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function) {
-  if (gpio == OFF_GPIO_EXPENDER) {
-    return true;
-  }
-  else if (gpio == 16) {
-    return false;
+  uint8_t key = KEY_GPIO + gpio;
+  uint8_t address = OFF_ADDRESS_MCP23017, maxNr;
+  uint8_t type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
+
+  if (type == EXPENDER_PCF8574) {
+    maxNr = 8;
   }
   else {
-    uint8_t key = KEY_GPIO + gpio;
-    uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
+    maxNr = 16;
+  }
 
-    if (nr < 16)
-      address = ConfigESP->getAdressMCP23017(0, function);
-    else
-      address = ConfigESP->getAdressMCP23017(16, function);
+  if (nr < maxNr) {
+    maxNr = 0;
+  }
 
-    if (address == OFF_GPIO_EXPENDER) {
-      return true;
+  for (uint8_t gpio = maxNr; gpio <= OFF_GPIO_EXPENDER; gpio++) {
+    address = ConfigESP->getAdressMCP23017(gpio, function);
+
+    if (address != OFF_ADDRESS_MCP23017) {
+      break;
     }
+  }
 
-    if (ConfigManager->get(key)->getElement(getFunctionMCP23017(address)).toInt() != FUNCTION_OFF) {
-      return false;
-    }
+  if (ConfigManager->get(key)->getElement(getFunctionMCP23017(address)).toInt() != FUNCTION_OFF) {
+    return false;
   }
   return true;
 }

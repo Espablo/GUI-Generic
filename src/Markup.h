@@ -95,8 +95,16 @@ void addListNumbersBox(String& html, const String& input_id, const String& name,
 void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const String& name);
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
-void addListExpanderGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url);
-void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0, const String& url = "");
+void addListExpanderBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url);
+void addListExpanderGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0, const String& url = "");
+void addListExpanderGPIO(String& html,
+                         const String& input_id,
+                         const String& name,
+                         uint8_t function,
+                         uint8_t nr,
+                         const char* const* array_P,
+                         uint8_t size,
+                         const String& url);
 #endif
 
 void addListBox(String& html, const String& input_id, const String& name, const char* const* list_P, uint8_t size, uint8_t selected, uint8_t nr = 0);
