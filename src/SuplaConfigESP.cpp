@@ -377,31 +377,24 @@ int SuplaConfigESP::getGpio(int nr, int function) {
           break;
       }
 
-      switch (getAdressMCP23017(nr, function)) {
-        case 0:
-          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function &&
-              ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
-            return gpio + shift;
-          }
-          break;
-        case 1:
-          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function &&
-              ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
-            return (gpio + shift + shiftPin);
-          }
-          break;
-        case 2:
-          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function &&
-              ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
-            return gpio + shift + (shiftPin * 2);
-          }
-          break;
-        case 3:
-          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_4).toInt() == function &&
-              ConfigManager->get(key)->getElement(MCP23017_NR_4).toInt() == nr) {
-            return gpio + shift + (shiftPin * 3);
-          }
-          break;
+      if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function &&
+          ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+        return gpio + shift;
+      }
+
+      if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function &&
+          ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+        return (gpio + shift + shiftPin);
+      }
+
+      if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function &&
+          ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
+        return gpio + shift + (shiftPin * 2);
+      }
+
+      if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_4).toInt() == function &&
+          ConfigManager->get(key)->getElement(MCP23017_NR_4).toInt() == nr) {
+        return gpio + shift + (shiftPin * 3);
       }
     }
 #endif
