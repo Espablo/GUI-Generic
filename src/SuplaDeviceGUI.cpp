@@ -384,7 +384,9 @@ void addRolleShutter(uint8_t nr) {
   bool highIsOn, levelLedUp, levelLedDown;
 
   pinRelayUp = ConfigESP->getGpio(nr, FUNCTION_RELAY);
+  relay.push_back(nullptr);
   pinRelayDown = ConfigESP->getGpio(nr + 1, FUNCTION_RELAY);
+  relay.push_back(nullptr);
 
   pinButtonUp = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
   pinButtonDown = ConfigESP->getGpio(nr + 1, FUNCTION_BUTTON);
