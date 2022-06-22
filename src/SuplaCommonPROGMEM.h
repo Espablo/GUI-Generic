@@ -329,8 +329,8 @@ enum RFBridgeType
 
 }
 }  // namespace Supla
-const char TRANSMITTER[] PROGMEM = "Nadajnik";
-const char RECEIVER[] PROGMEM = "Odbiornik";
+const char TRANSMITTER[] PROGMEM = S_TRANSMITTER;
+const char RECEIVER[] PROGMEM = S_RECEIVER;
 const char* const RF_BRIDGE_TYPE_P[] PROGMEM = {TRANSMITTER, RECEIVER};
 #endif
 

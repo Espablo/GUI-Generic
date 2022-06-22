@@ -205,8 +205,8 @@ void handleOther(int save) {
 
 #ifdef SUPLA_RF_BRIDGE
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("RF BRIDGE"));
-  addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_TX, S_TX, FUNCTION_RF_BRIDGE_TRANSMITTER);
-  addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_RX, S_RX, FUNCTION_RF_BRIDGE_RECEIVE);
+  addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_TX, String(S_TRANSMITTER) + S_SPACE + "-" + S_SPACE + S_TX, FUNCTION_RF_BRIDGE_TRANSMITTER);
+  addListGPIOBox(webContentBuffer, INPUT_RF_BRIDGE_RX, String(S_RECEIVER) + S_SPACE + "-" + S_SPACE + S_RX, FUNCTION_RF_BRIDGE_RECEIVE);
   if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE) != OFF_GPIO) {
     addLinkBox(webContentBuffer, String(S_CALIBRATION) + S_SPACE + S_CODES, PATH_BRIDGE);
   }

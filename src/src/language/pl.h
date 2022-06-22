@@ -188,9 +188,11 @@
 #define S_CH_CORRECTION     "Korekta kanału:"
 
 #ifdef SUPLA_RF_BRIDGE
-#define S_CODES "kodów"
-#define S_NO    "Brak"
-#define S_READ  "Odczytaj"
+#define S_CODES       "kodów"
+#define S_NO          "Brak"
+#define S_READ        "Odczytaj"
+#define S_TRANSMITTER "Nadajnik"
+#define S_RECEIVER    "Odbiornik"
 #endif
 
 #endif  // _LANGUAGE_PL_S_H_

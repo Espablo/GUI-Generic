@@ -29,7 +29,7 @@
 #define S_RESTART                 "Reiniciar"
 #define S_RETURN                  "Volver"
 
-#define S_TEMPLATE_BOARD "Modelos de placas"
+#define S_TEMPLATE_BOARD                                       "Modelos de placas"
 #define S_TYPE                                                 "Tipo"
 #define S_RELAYS                                               "RELÉS"
 #define S_BUTTONS                                              "BOTONES"
@@ -190,9 +190,11 @@
 #define S_CH_CORRECTION     "Corrección de canal:"
 
 #ifdef SUPLA_RF_BRIDGE
-#define S_CODES "kodów"
-#define S_NO    "Brak"
-#define S_READ  "Odczytaj"
+#define S_CODES       "codes"
+#define S_NO          "no"
+#define S_READ        "Read"
+#define S_TRANSMITTER "Transmitter"
+#define S_RECEIVER    "Receiver"
 #endif
 
 #endif  // _LANGUAGE_ES_S_H_
