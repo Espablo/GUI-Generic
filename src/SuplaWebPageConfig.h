@@ -28,9 +28,10 @@
 #define INPUT_CFG_MODE          "cfgm"
 #define INPUT_CFG_SSL           "ics"
 #define INPUT_CFG_AVAILABLE_GUI "icag"
+#define INPUT_FORCE_RESTART_ESP "ifre"
 
 #ifdef SUPLA_DEEP_SLEEP
-#define INPUT_DEEP_SLEEP_TIME    "idst"
+#define INPUT_DEEP_SLEEP_TIME "idst"
 #endif
 
 void createWebPageConfig();

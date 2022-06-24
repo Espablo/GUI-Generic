@@ -26,14 +26,8 @@
 #define S_UPDATE                  "Mettre à jour"
 #define S_RESTART                 "Réinitialisation"
 #define S_RETURN                  "Retour"
-#ifdef ARDUINO_ESP8266_GENERIC
-#define S_TEMPLATE_BOARD "Modèle de la planches (ESP8266)"
-#elif ARDUINO_ESP8266_ESP01
-#define S_TEMPLATE_BOARD "Modèle de la planches (ESP8285)"
-#else
-#define S_TEMPLATE_BOARD "Modèle de la planches"
-#endif
-#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
+
+#define S_TEMPLATE_BOARD                                       "Modèle de la planches"
 #define S_TYPE                                                 "Genre"
 #define S_RELAYS                                               "LES RELAIS"
 #define S_BUTTONS                                              "LES BOUTONS"
@@ -53,7 +47,7 @@
 #define S_BUTTON                                               "BOUTON"
 #define S_BUTTON_NR_SETTINGS                                   "Bouton mettre à jour "
 #define S_REACTION_TO                                          "Réaction à"
-#define S_NUMBER                                               "Number"
+#define S_RELAY_CONTROL                                        "Commande de relais"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Paramètres GPIO pour capteur de limite"
 #define S_LIMIT_SWITCH                                         "Capteur de limite"
@@ -73,7 +67,8 @@
 #define S_DATA_SAVED_RESTART_MODULE                            "Données enregistrées - redémarrer le module"
 #define S_WRITE_ERROR_BAD_DATA                                 "Erreur d'écriture - données incorrectes"
 #define S_SETTINGS_FOR                                         "Ustawienie dla"
-#define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
+#define S_ACTION_TRIGGER                                       "Déclencheur d'actions"
+#define S_ADDITIONAL                                           "Additionnel"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Déjà lancé"
@@ -110,15 +105,16 @@
 #define S_REACTION_ON_PRESS             "ON PRESSE"
 #define S_REACTION_ON_RELEASE           "EN LIBÉRATION"
 #define S_REACTION_ON_CHANGE            "SUR LE CHANGEMENT"
+#define S_REACTION_ON_HOLD              "EN ATTENTE"
 #define S_CFG_10_PRESSES                "10 FOIS SUR PRESSE"
 #define S_5SEK_HOLD                     "5 SEC TENIR"
 #define S_NORMAL                        "ORDINAIRE"
 #define S_SLOW                          "LENT"
 #define S_MANUALLY                      "MANUELLEMENT"
-#define S_ON_CH_VAL_OFF_HEATING         "ON < valeur de canal > OFF - chauffage"
-#define S_ON_CH_VAL_OFF_COOLING         "ON > valeur du canal < OFF - refroidissement"
-#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < Valeur 2ème canal > OFF - humidification"
-#define S_ON_2CH_VAL_OFF_DRYING         "ON > Valeur 2ème canal < OFF - séchage"
+#define S_ON_CH_VAL_OFF_HEATING         "ON > valeur de canal > OFF - chauffage"
+#define S_ON_CH_VAL_OFF_COOLING         "ON < valeur du canal < OFF - refroidissement"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON > Valeur 2ème canal > OFF - humidification"
+#define S_ON_2CH_VAL_OFF_DRYING         "ON < Valeur 2ème canal < OFF - séchage"
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "INTERRUPTEURS DE FIN DE COURSE"
@@ -133,7 +129,6 @@
 #define S_IMPULSE_COUNTER_RAISING_EDGE     "Bord montant"
 #define S_IMPULSE_COUNTER_PULL_UP          "Remonter"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Modifier la valeur"
-#define S_IMPULSE_COUNTER_SETTINGS_NR      "Paramètres Compteur d'impulsions No. "
 #define S_SCREEN_TIME                      "Écran [s]"
 #define S_OLED_BUTTON                      "Bouton OLED"
 #define S_SCREEN                           "Écran"
@@ -159,6 +154,7 @@
 #define S_SENSOR_READING_DISTANCE "distance de lecture du capteur"
 #define S_ELECTRIC_PHASE          "1/3phases"
 #define S_OPTIONAL                "(Optionnel)"
+#define S_STATUS_LED              "Statut LED"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "État d'activation du relais"

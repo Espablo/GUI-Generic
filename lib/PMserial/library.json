@@ -1,0 +1,26 @@
+{
+    "name": "PMSerial",
+    "keywords": "air-quality, particulate-matter, pms3003, pms5003, pms7003, pmsA003",
+    "description": "Arduino library for PM sensors with serial interface",
+    "homepage": "https://github.com/avaldebe/PMserial",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/avaldebe/PMserial"
+    },
+    "version": "1.1.1",
+    "authors": {
+        "name": "Alvaro Valdebenito",
+        "url": "https://github.com/avaldebe"
+    },
+    "frameworks": "arduino",
+    "platforms": "atmelavr, ststm32, espressif8266, espressif32",
+    "export": {
+        "include": [
+            "README.md",
+            "LICENSE",
+            "src/*",
+            "examples/*"
+        ]
+    }
+}

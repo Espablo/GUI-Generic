@@ -1,5 +1,5 @@
 {
-	"version": "4.5.19",
+	"version": "4.13.5",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -247,7 +247,8 @@
 			"depOn": [
 				"SUPLA_ROLLERSHUTTER",
 				"SUPLA_RGBW",
-				"SUPLA_ACTION_TRIGGER"
+				"SUPLA_ACTION_TRIGGER",
+				"SUPLA_OLED"
 			],
 			"depOff": [
 				"SUPLA_RELAY",
@@ -276,7 +277,6 @@
 			"name": "Wyzwalacze akcji",
 			"desc": "Pozwalają na wykonanie dowolnej akcji na dowolnym posiadanym przez Ciebie urządzeniu.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "Action Trigger"
 			},
@@ -414,6 +414,73 @@
 			"fr": {
 				"name": "Liens directs",
 				"desc": ""
+			}
+		}
+	},
+	"EXPANDERS": {
+		"SUPLA_MCP23017": {
+			"name": "MCP23017",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x16 MCP2317.",
+			"defOn": false,
+			"en": {
+				"name": "MCP23017",
+				"desc": "Device settings->I2C. Supports MCP2317 x16 port expansion."
+			},
+			"es": {
+				"name": "MCP23017",
+				"desc": "Configuración del dispositivo->I2C. Admite expansión de puertos MCP2317 x16."
+			},
+			"de": {
+				"name": "MCP23017",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des MCP2317 x16-Ports."
+			},
+			"fr": {
+				"name": "MCP23017",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port MCP2317 x16."
+			}
+		},
+		"SUPLA_PCF8575": {
+			"name": "PCF8575",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x16 PCF8575.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "PCF8575",
+				"desc": "Device settings->I2C. Supports PCF8575 x16 port expansion."
+			},
+			"es": {
+				"name": "PCF8575",
+				"desc": "Configuración del dispositivo->I2C. Admite expansión de puertos PCF8575 x16."
+			},
+			"de": {
+				"name": "PCF8575",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des PCF8575 x16-Ports."
+			},
+			"fr": {
+				"name": "PCF8575",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port PCF8575 x16."
+			}
+		},
+		"SUPLA_PCF8574": {
+			"name": "PCF8574/A",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x8 PCF8574/A.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "PCF8574/A",
+				"desc": "Device settings->I2C. Supports PCF8574/A x8 port expansion."
+			},
+			"es": {
+				"name": "PCF8574/A",
+				"desc": "Configuración del dispositivo->I2C. Admite expansión de puertos PCF8574 x8."
+			},
+			"de": {
+				"name": "PCF8574/A",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des PCF8574/A x8-Ports."
+			},
+			"fr": {
+				"name": "PCF8574/A",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port PCF8574/A x8."
 			}
 		}
 	},
@@ -655,7 +722,6 @@
 			"name": "Wyświetlacz LCD HD44780",
 			"desc": "Ustawienia urządzenia->I2C. Umożliwoa obsługę wyświetlacza LCD HD44780.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "LCD HD44780 display",
 				"desc": "Device settings->I2C. It enables the operation of an LCD HD44780 display."
@@ -673,25 +739,26 @@
 				"desc": "Paramètres de l´appareil->I2C. Il permet le fonctionnement d´un écran LCD HD44780."
 			}
 		},
-		"SUPLA_MCP23017": {
-			"name": "Ekspander portów x16 MCP23017",
-			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę rozszerzenia portów x16 MCP2317.",
+		"SUPLA_BH1750": {
+			"name": "Sensor BH1750",
+			"desc": "Ustawienia urządzenia->Inne. Czujnik natężenia światła BH1750",
 			"defOn": false,
+			"new": true,
 			"en": {
-				"name": "MCP23017 x16 port expander",
-				"desc": "Device settings->I2C. Supports MCP2317 x16 port expansion."
+				"name": "BH1750 sensor",
+				"desc": "Device settings->Other. Light intensity sensor BH1750."
 			},
 			"es": {
-				"name": "Expansor de puerto MCP23017 x16",
-				"desc": "Configuración del dispositivo->I2C. Admite expansión de puertos MCP2317 x16."
+				"name": "Sonda BH1750",
+				"desc": "Configuración del dispositivo->Otro. Sensor de intensidad de luz BH1750."
 			},
 			"de": {
-				"name": "MCP23017 x16 Port Expander",
-				"desc": "Geräteeinstellungen->I2C. Unterstützt die Erweiterung des MCP2317 x16-Ports."
+				"name": "Fühler BH1750",
+				"desc": "Geräteeinstellungen->Andere. Lichtstärkesensor BH1750."
 			},
 			"fr": {
-				"name": "Extension de port x16 MCP23017",
-				"desc": "Paramètres de l´appareil->I2C. Prend en charge l´extension de port MCP2317 x16."
+				"name": "Capteur BH1750",
+				"desc": "Paramètres de l´appareil->Autre. Capteur d'intensité lumineuse BH1750."
 			}
 		}
 	},
@@ -700,7 +767,6 @@
 			"name": "Termopara MAX6675",
 			"desc": "Ustawienia urządzenia->SPI. Umożliwoa obsługę termopary MAX6675.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "Thermocouple MAX6675",
 				"desc": "Device settings->SPI. Supports MAX6675 thermocouple."
@@ -722,7 +788,6 @@
 			"name": "Termopara MAX31855",
 			"desc": "Ustawienia urządzenia->SPI. Umożliwoa obsługę termopary MAX31855.",
 			"defOn": false,
-			"new": true,
 			"en": {
 				"name": "Thermocouple MAX31855",
 				"desc": "Device settings->SPI. Supports MAX31855 thermocouple."
@@ -746,10 +811,6 @@
 			"name": "Pomiar analogowy (ADC Pin)",
 			"desc": "Ustawienia urządzenia->Analog. Umożliwia obsługę pomiaru napięcia na wejściu ADC Pin.",
 			"defOn": false,
-			"depOn": [
-				"SUPLA_NTC_10K",
-				"SUPLA_MPX_5XXX"
-			],
 			"en": {
 				"name": "Analog measurement (ADC Pin)",
 				"desc": "Device settings->Analog. Enables support for voltage measurement at ADC Pin input."
@@ -965,6 +1026,52 @@
 			}
 		}
 	},
+	"AIR_QUALITY_SENSORS": {
+		"SUPLA_VINDRIKTNING_IKEA": {
+			"name": "IKEA VINDRIKTNING",
+			"desc": "Ustawienia urządzenia->Inne. Czujnik cząstek stałych PM1006",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "IKEA VINDRIKTNING",
+				"desc": "Device settings->Other. Particulate Matter Sensor with PM1006 inside."
+			},
+			"es": {
+				"name": "IKEA VINDRIKTNING",
+				"desc": "Configuración del dispositivo->Otro. Sensor de partículas con PM1006 en el interior"
+			},
+			"de": {
+				"name": "IKEA VINDRIKTNING",
+				"desc": "Geräteeinstellungen->Andere. Feinstaubsensor mit PM1006 im Inneren."
+			},
+			"fr": {
+				"name": "IKEA VINDRIKTNING",
+				"desc": "Paramètres de l´appareil->Autre. Capteur de particules avec PM1006 à l'intérieur"
+			}
+		},
+		"SUPLA_PMSX003": {
+			"name": "PMSx003",
+			"desc": "Ustawienia urządzenia->Inne. Czujnik cząstek stałych: PM1.0, PM2.5, PM10. Obsługiwane czujniki PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS7003, PMSA003.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "PMSx003",
+				"desc": "Device settings->Other. Particulate sensor: PM1.0, PM2.5, PM10. Supported sensors PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS7003, PMSA003."
+			},
+			"es": {
+				"name": "PMSx003",
+				"desc": "Configuración del dispositivo->Otro. Sensor de partículas: PM1.0, PM2.5, PM10. Sensores compatibles PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS7003, PMSA003."
+			},
+			"de": {
+				"name": "PMSx003",
+				"desc": "Geräteeinstellungen->Andere. Partikelsensor: PM1.0, PM2.5, PM10. Unterstützte Sensoren PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS7003, PMSA003."
+			},
+			"fr": {
+				"name": "PMSx003",
+				"desc": "Paramètres de l´appareil->Autre. Capteur de particules : PM1.0, PM2.5, PM10. Capteurs pris en charge PMS1003, PMS3003, PMS5003, PMS5003S, PMS5003T, PMS5003ST, PMS7003, PMSA003."
+			}
+		}
+	},
 	"SECTIONS": {
 		"BASIC": {
 			"pl": "Podstawowe",
@@ -1028,6 +1135,20 @@
 			"es": "Prueba",
 			"de": "Prüfung",
 			"fr": "Test"
+		},
+		"AIR_QUALITY_SENSORS": {
+			"pl": "Czujnik czystości powietrza",
+			"en": "Air quality sensor",
+			"es": "Sensor de calidad del aire",
+			"de": "Luftqualitätssensor",
+			"fr": "Capteur de qualité de l'air"
+		},
+		"EXPANDERS": {
+			"pl": "Ekspandery",
+			"en": "Expanders",
+			"es": "Expansores",
+			"de": "Expander",
+			"fr": "Expanseurs"
 		}
 	}
 }

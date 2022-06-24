@@ -63,6 +63,8 @@ void addTextBox(String& html,
                 bool required,
                 bool readonly = false);
 
+void addTextBox(String& html, const String& value);
+
 void addTextBoxPassword(String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required);
 
 void addCheckBox(String& html, const String& input_id, const String& name, bool checked);
@@ -88,9 +90,12 @@ void addListGPIOBox(String& html,
                     const String& url = "",
                     bool no_number = false);
 
+void addListNumbersBox(String& html, const String& input_id, const String& name, uint8_t size, uint8_t selected);
+
 void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const String& name);
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
+void addListExpanderGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url);
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr = 0, const String& url = "");
 #endif
 

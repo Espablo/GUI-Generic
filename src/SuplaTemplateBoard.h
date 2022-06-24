@@ -21,19 +21,8 @@
 #include <supla/events.h>
 #include <supla/actions.h>
 #include <pgmspace.h>
+#include "GUIGenericCommonDefined.h"
 #include "GUIGenericCommon.h"
-
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_ACTION_TRIGGER)
-#if !defined(SUPLA_BUTTON)
-#define SUPLA_BUTTON
-#endif
-#endif
-
-#if defined(SUPLA_ROLLERSHUTTER) || defined(SUPLA_PUSHOVER) || defined(SUPLA_DIRECT_LINKS) || defined(SUPLA_LED)
-#if !defined(SUPLA_RELAY)
-#define SUPLA_RELAY
-#endif
-#endif
 
 namespace Supla {
 namespace TanplateBoard {
@@ -55,6 +44,9 @@ enum FunctionOld
 {
   None = 0,
   SI7021 = 3,
+  DS18x20 = 4,
+  I2CSCL = 5,
+  I2CSDA = 6,
   Switch1 = 9,
   Switch2,
   Switch3,
@@ -110,6 +102,7 @@ enum FunctionOld
   BL0937CF,
   CSE7766Tx = 145,
   CSE7766Rx = 146,
+  ADE7953_IRQ = 156,
   LedLink = 157,
   LedLinki = 158,
   Binary1 = 217,
@@ -177,13 +170,17 @@ enum FunctionNew
   NewPWM5i,
   NewLedLink = 544,
   NewLedLinki = 576,
+  NewI2CSCL = 608,
+  NewI2CSDA = 640,
   NewSI7021 = 1248,
+  NewDS18x20 = 1312,
   NewHLWBLSELi = 2624,
   NewHLWBLCF1 = 2656,
   NewHLW8012CF = 2688,
   NewBL0937CF = 2720,
   NewCSE7766Tx = 3072,
   NewCSE7766Rx = 3104,
+  NewADE7953_IRQ = 3456,
   NewTemperatureAnalog = 4736,
   NewUsers = 1,
 };
@@ -202,12 +199,15 @@ void addLed(uint8_t nr, uint8_t gpio, uint8_t level = HIGH);
 void addButtonCFG(uint8_t gpio);
 void addLimitSwitch(uint8_t nr, uint8_t gpio);
 bool isActiveRGBW(JsonArray& GPIO);
+#ifdef GUI_SENSOR_I2C_EXPENDER
+void addExpander(uint8_t typeExpander, JsonArray& expander);
+#endif
 
 extern String templateBoardWarning;
 }  // namespace TanplateBoard
 }  // namespace Supla
 
-#elif TEMPLATE_BOARD_OLD
+#elif defined(TEMPLATE_BOARD_OLD)
 #define BOARD_OFF              0
 #define BOARD_ELECTRODRAGON    1
 #define BOARD_INCAN3           2

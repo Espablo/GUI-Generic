@@ -17,6 +17,7 @@
 #include "therm_press_meter.h"
 
 #include <supla/events.h>
+#include <Arduino.h>
 
 Supla::Sensor::ThermPressMeter::ThermPressMeter() {
   pressureChannel.setType(SUPLA_CHANNELTYPE_PRESSURESENSOR);

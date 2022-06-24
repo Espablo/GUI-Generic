@@ -28,14 +28,8 @@
 #define S_UPDATE                  "Actualización"
 #define S_RESTART                 "Reiniciar"
 #define S_RETURN                  "Volver"
-#ifdef ARDUINO_ESP8266_GENERIC
-#define S_TEMPLATE_BOARD "Modelos de placas (ESP8266)"
-#elif ARDUINO_ESP8266_ESP01
-#define S_TEMPLATE_BOARD "Modelos de placas (ESP8285)"
-#else
+
 #define S_TEMPLATE_BOARD "Modelos de placas"
-#endif
-#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
 #define S_TYPE                                                 "Tipo"
 #define S_RELAYS                                               "RELÉS"
 #define S_BUTTONS                                              "BOTONES"
@@ -55,7 +49,7 @@
 #define S_BUTTON                                               "BOTÓN"
 #define S_BUTTON_NR_SETTINGS                                   "Parámetros del botón no. "
 #define S_REACTION_TO                                          "Reacción a"
-#define S_NUMBER                                               "Number"
+#define S_RELAY_CONTROL                                        "Control de relé"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Parámetros GPIO para el sensor de apertura"
 #define S_LIMIT_SWITCH                                         "INTERRUPTOR DE LÍMITE"
@@ -76,6 +70,7 @@
 #define S_WRITE_ERROR_BAD_DATA                                 "Error de escritura: datos incorrectos."
 #define S_SETTINGS_FOR                                         "Ustawienie dla"
 #define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
+#define S_ADDITIONAL                                           "Additionnel"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Ya iniciado"
@@ -112,15 +107,16 @@
 #define S_REACTION_ON_PRESS             "AL PRESIONAR"
 #define S_REACTION_ON_RELEASE           "AL SOLTAR"
 #define S_REACTION_ON_CHANGE            "AL CAMBIAR DE ESTADO"
+#define S_REACTION_ON_HOLD              "EN ESPERA"
 #define S_CFG_10_PRESSES                "AL PRESIONAR 10 VECES"
 #define S_5SEK_HOLD                     "AL MANTENER PRESIONADO 5 SEGUNDOS"
 #define S_NORMAL                        "NORMAL"
 #define S_SLOW                          "LENTO"
 #define S_MANUALLY                      "A MANO"
-#define S_ON_CH_VAL_OFF_HEATING         "ON < valor del cana l> OFF - calefacción"
-#define S_ON_CH_VAL_OFF_COOLING         "ON > valor del canal < OFF - refrigeración"
-#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < valor del segundo canal > OFF - humidificación"
-#define S_ON_2CH_VAL_OFF_DRYING         "ON > valor del segundo canal < OFF - secado"
+#define S_ON_CH_VAL_OFF_HEATING         "ON > valor del cana l> OFF - calefacción"
+#define S_ON_CH_VAL_OFF_COOLING         "ON < valor del canal < OFF - refrigeración"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON > valor del segundo canal > OFF - humidificación"
+#define S_ON_2CH_VAL_OFF_DRYING         "ON < valor del segundo canal < OFF - secado"
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "FINALES DE CARRERA"
@@ -135,7 +131,6 @@
 #define S_IMPULSE_COUNTER_RAISING_EDGE     "Flanco ascendente"
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Cambia el valor"
-#define S_IMPULSE_COUNTER_SETTINGS_NR      "Configuración contador de impulsos no. "
 #define S_SCREEN_TIME                      "Pantalla [s]"
 #define S_OLED_BUTTON                      "Botón OLED"
 #define S_SCREEN                           "Pantalla"
@@ -161,6 +156,7 @@
 #define S_SENSOR_READING_DISTANCE "distancia de lectura del sensor"
 #define S_ELECTRIC_PHASE          "1/3etapas"
 #define S_OPTIONAL                "(Opcional)"
+#define S_STATUS_LED              "Led de estado"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "Estado de activación del relé"

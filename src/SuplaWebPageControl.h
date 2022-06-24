@@ -19,7 +19,7 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_MCP23017)
+#if defined(SUPLA_BUTTON) || defined(SUPLA_LIMIT_SWITCH) || defined(GUI_SENSOR_I2C_EXPENDER)
 #define GUI_CONTROL
 #endif
 
@@ -38,6 +38,7 @@
 #define INPUT_BUTTON_ACTION    "bta"
 #define INPUT_MAX_BUTTON       "mbt"
 #define INPUT_ANALOG_EXPECTED  "iae"
+#define INPUT_BUTTON_NUMBER    "ibn"
 
 #define INPUT_AT_MULTICLICK_TIME "iamt"
 #define INPUT_AT_HOLD_TIME       "iaht"
@@ -52,7 +53,7 @@ void handleButtonSet(int save = 0);
 void handleButtonSaveSet();
 #endif
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
 void handleButtonSetMCP23017(int save = 0);
 void handleButtonSaveSetMCP23017();
 #endif

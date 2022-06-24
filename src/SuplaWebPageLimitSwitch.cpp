@@ -43,13 +43,8 @@ void handleLimitSwitch(int save) {
   addNumberBox(webContentBuffer, INPUT_MAX_LIMIT_SWITCH, S_QUANTITY, KEY_MAX_LIMIT_SWITCH, ConfigESP->countFreeGpio(FUNCTION_LIMIT_SWITCH));
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
-#ifdef SUPLA_MCP23017
-    if (ConfigESP->checkActiveMCP23017(FUNCTION_LIMIT_SWITCH)) {
-      addListMCP23017GPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
-    }
-    else {
-      addListGPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
-    }
+#ifdef GUI_SENSOR_I2C_EXPENDER
+    addListExpanderGPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr, PATH_SWITCH);
 #else
     addListGPIOBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr);
 #endif
@@ -68,7 +63,7 @@ void handleLimitSwitchSave() {
 
   last_value = ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt();
   for (nr = 0; nr <= last_value; nr++) {
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
     if (ConfigESP->checkActiveMCP23017(FUNCTION_LIMIT_SWITCH)) {
       if (!WebServer->saveGpioMCP23017(INPUT_LIMIT_SWITCH_GPIO, FUNCTION_LIMIT_SWITCH, nr, INPUT_MAX_LIMIT_SWITCH)) {
         handleLimitSwitch(6);

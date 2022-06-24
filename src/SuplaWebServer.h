@@ -17,6 +17,7 @@
 #ifndef SuplaWebServer_h
 #define SuplaWebServer_h
 
+#include "GUIGenericCommonDefined.h"
 #include "GUI-Generic_Config.h"
 #include "SuplaTemplateBoard.h"
 
@@ -38,7 +39,13 @@
 #define ARG_PARM_URL    "url"
 #define ARG_PARM_NUMBER "number"
 
-#define PATH_START "/"
+#define PATH_START     "/"
+#define PATH_RESET_ESP "?reboot=1"
+
+#ifdef GUI_SENSOR_I2C_EXPENDER
+#define INPUT_ADRESS_MCP23017 "iam"
+#define INPUT_EXPENDER_TYPE   "uet"
+#endif
 
 extern String webContentBuffer;
 
@@ -66,9 +73,9 @@ class SuplaWebServer : public Supla::Element {
 #endif
 #endif
 
-  bool isLoggedIn();
+  bool isLoggedIn(bool force = false);
   bool saveGPIO(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
   bool saveGpioMCP23017(const String& _input, uint8_t function, uint8_t nr = 0, const String& input_max = "\n");
 #endif
 

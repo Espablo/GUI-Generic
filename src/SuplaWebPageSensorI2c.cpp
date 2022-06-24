@@ -16,7 +16,7 @@
 
 #include "SuplaWebPageSensorI2c.h"
 
-#ifdef GUI_SENSOR_I2C
+#if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
 void createWebPageSensorI2c() {
   WebServer->httpServer->on(getURL(PATH_I2C), [&]() {
     if (!WebServer->isLoggedIn()) {
@@ -69,6 +69,13 @@ void handleSensorI2c(int save) {
     addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_SHT_AUTODETECT
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SHT3x).toInt();
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_SUPLA_SHT_AUTODETECT, F("SHT"), STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
 #ifdef SUPLA_SI7021
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SI7021).toInt();
     addFormHeader(webContentBuffer);
@@ -90,6 +97,20 @@ void handleSensorI2c(int save) {
     addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_BH1750
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BH1750).toInt();
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_BH1750, F("BH1750"), STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
+#ifdef SUPLA_MAX44009
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MAX44009).toInt();
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_MAX44009, F("MAX44009"), STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
 #ifdef SUPLA_OLED
     addFormHeader(webContentBuffer);
 
@@ -99,7 +120,19 @@ void handleSensorI2c(int save) {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       String name, sensorName, input;
 
+#ifdef SUPLA_BUTTON
+#ifdef GUI_SENSOR_I2C_EXPENDER
+      if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
+        addListMCP23017GPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON, 0);
+      }
+      else {
+        addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON);
+      }
+#else
       addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON);
+#endif
+#endif
+
       addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 99);
       addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_TIME, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
       addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_LVL, S_BACKLIGHT_PERCENT, KEY_OLED_BACK_LIGHT, 99);
@@ -147,6 +180,25 @@ void handleSensorI2c(int save) {
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt();
     addFormHeader(webContentBuffer);
     addListBox(webContentBuffer, INPUT_MCP23017, S_MCP23017, STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
+#if defined(SUPLA_PCF8575) || defined(SUPLA_PCF8574)
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt();
+    addFormHeader(webContentBuffer);
+    addListBox(webContentBuffer, INPUT_PCF857x, F("PCF857x"), STATE_P, 2, selected);
+    addFormHeaderEnd(webContentBuffer);
+#endif
+
+#ifdef SUPLA_ADE7953
+    addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("ADE7953"));
+    addListGPIOBox(webContentBuffer, INPUT_ADE7953_IRQ, F("IRQ"), FUNCTION_ADE7953_IRQ);
+    if (ConfigESP->getGpio(FUNCTION_ADE7953_IRQ) != OFF_GPIO) {
+      float count = Supla::GUI::couterADE7953->getCounter();
+      addNumberBox(webContentBuffer, INPUT_ADE7953_COUNTER_VALUE, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
+                   String(count / 100 / 1000));
+      // addLinkBox(webContentBuffer, S_CALIBRATION, getParameterRequest(PATH_CALIBRATE, ARG_PARM_URL) + PATH_CSE7766);
+    }
     addFormHeaderEnd(webContentBuffer);
 #endif
   }
@@ -207,6 +259,14 @@ void handleSensorI2cSave() {
   }
 #endif
 
+#ifdef SUPLA_SHT_AUTODETECT
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_SUPLA_SHT_AUTODETECT;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_SHT3x, WebServer->httpServer->arg(input).toInt());
+  }
+#endif
+
 #ifdef SUPLA_SI7021
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_SI7021;
@@ -231,6 +291,22 @@ void handleSensorI2cSave() {
   }
 #endif
 
+#ifdef SUPLA_BH1750
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_BH1750;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_BH1750, WebServer->httpServer->arg(input).toInt());
+  }
+#endif
+
+#ifdef SUPLA_MAX44009
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_MAX44009;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MAX44009, WebServer->httpServer->arg(input).toInt());
+  }
+#endif
+
 #ifdef SUPLA_OLED
   key = KEY_ACTIVE_SENSOR;
   input = INPUT_OLED;
@@ -238,10 +314,27 @@ void handleSensorI2cSave() {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_OLED, WebServer->httpServer->arg(input).toInt());
   }
 
+#ifdef SUPLA_BUTTON
+#ifdef GUI_SENSOR_I2C_EXPENDER
+  if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
+    if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
+      handleControl(6);
+      return;
+    }
+  }
+  else {
+    if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
+      handleControl(6);
+      return;
+    }
+  }
+#else
   if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
-    handleSensorI2c(6);
+    handleControl(6);
     return;
   }
+#endif
+#endif
 
   input = INPUT_OLED_ANIMATION;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0)
@@ -306,6 +399,28 @@ void handleSensorI2cSave() {
     //   ConfigESP->clearFunctionGpio(FUNCTION_RELAY);
     //   ConfigESP->clearFunctionGpio(FUNCTION_BUTTON);
     // }
+  }
+#endif
+
+#if defined(SUPLA_PCF8575) || defined(SUPLA_PCF8574)
+  key = KEY_ACTIVE_SENSOR;
+  input = INPUT_PCF857x;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, WebServer->httpServer->arg(input).toInt());
+  }
+#endif
+
+#ifdef SUPLA_ADE7953
+  if (!WebServer->saveGPIO(INPUT_ADE7953_IRQ, FUNCTION_ADE7953_IRQ)) {
+    handleSensorI2c(6);
+    return;
+  }
+  else {
+    Supla::GUI::addADE7953(ConfigESP->getGpio(FUNCTION_ADE7953_IRQ));
+    if (strcmp(WebServer->httpServer->arg(INPUT_ADE7953_COUNTER_VALUE).c_str(), "") != 0) {
+      Supla::GUI::couterADE7953->setCounter(WebServer->httpServer->arg(INPUT_ADE7953_COUNTER_VALUE).toFloat() * 100 * 1000);
+      Supla::Storage::ScheduleSave(1000);
+    }
   }
 #endif
 

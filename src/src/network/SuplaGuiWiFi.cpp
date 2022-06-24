@@ -4,6 +4,7 @@
 namespace Supla {
 
 GUIESPWifi::GUIESPWifi(const char *wifiSsid, const char *wifiPassword) : ESPWifi(wifiSsid, wifiPassword) {
+  retryCount = 0;
 #ifdef ARDUINO_ARCH_ESP8266
   gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
     (void)(event);
@@ -23,7 +24,7 @@ GUIESPWifi::GUIESPWifi(const char *wifiSsid, const char *wifiPassword) : ESPWifi
     Serial.println(F("WiFi station disconnected"));
   });
 #else
-  WiFi.onEvent(
+  WiFiEventId_t event_gotIP = WiFi.onEvent(
       [](WiFiEvent_t event, WiFiEventInfo_t info) {
         Serial.print(F("local IP: "));
         Serial.println(WiFi.localIP());
@@ -36,10 +37,26 @@ GUIESPWifi::GUIESPWifi(const char *wifiSsid, const char *wifiPassword) : ESPWifi
         Serial.print(rssi);
         Serial.println(F(" dBm"));
       },
+#if defined(ESP_ARDUINO_VERSION)
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(2, 0, 0)
+      WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
+#endif
+#else
       WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
+#endif
 
-  WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) { Serial.println(F("wifi Station disconnected")); },
-               WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
+  (void)(event_gotIP);
+
+  WiFiEventId_t event_disconnected = WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) { Serial.println(F("wifi Station disconnected")); },
+
+#if defined(ESP_ARDUINO_VERSION)
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(2, 0, 0)
+                                                  WiFiEvent_t::ARDUINO_EVENT_WIFI_AP_STADISCONNECTED);
+#endif
+#else
+                                                  WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);
+#endif
+  (void)(event_disconnected);
 #endif
 }
 
@@ -60,7 +77,7 @@ int GUIESPWifi::connect(const char *server, int port) {
       client = clientSec;
 
 #ifdef ARDUINO_ARCH_ESP8266
-      clientSec->setBufferSizes(2048, 512);  // EXPERIMENTAL
+      clientSec->setBufferSizes(1024, 512);  // EXPERIMENTAL
       if (fingerprint.length() > 0) {
         message += " with certificate matching";
         clientSec->setFingerprint(fingerprint.c_str());
@@ -99,16 +116,16 @@ void GUIESPWifi::setup() {
     Serial.println(F("\""));
 
     WiFi.softAPdisconnect(true);
-    WiFi.setAutoConnect(false);
+    WiFi.disconnect(true);
+    WiFi.persistent(false);
+    WiFi.reconnect();
 
     if (ConfigESP->configModeESP == NORMAL_MODE) {
       WiFi.mode(WIFI_STA);
     }
-    else {
-      WiFi.mode(WIFI_AP_STA);
-    }
 
-    WiFi.begin(ssid, password);
+    if (ssid)
+      WiFi.begin(ssid, password);
 
     if (hostname) {
       WiFi.setHostname(hostname);
@@ -121,7 +138,19 @@ void GUIESPWifi::setup() {
         delete client;
         client = nullptr;
       }
-      WiFi.reconnect();
+      WiFi.disconnect();
+      WiFi.reconnect();  // This does not reset dhcp
+
+      delay(200);  // do not remove, need a delay for disconnect to change status()
+
+      retryCount++;
+      if (retryCount > 4) {
+        retryCount = 0;
+        wifiConfigured = false;
+
+        if (ConfigManager->get(KEY_FORCE_RESTART_ESP)->getValueBool())
+          ConfigESP->rebootESP();
+      }
     }
   }
 
@@ -140,6 +169,20 @@ void GUIESPWifi::enableSSL(bool value) {
   if (client) {
     delete client;
     client = nullptr;
+  }
+}
+
+void GUIESPWifi::setSsid(const char *wifiSsid) {
+  if (wifiSsid) {
+    wifiConfigured = false;
+    strncpy(ssid, wifiSsid, MAX_SSID_SIZE);
+  }
+}
+
+void GUIESPWifi::setPassword(const char *wifiPassword) {
+  if (wifiPassword) {
+    wifiConfigured = false;
+    strncpy(password, wifiPassword, MAX_WIFI_PASSWORD_SIZE);
   }
 }
 

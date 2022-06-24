@@ -26,14 +26,8 @@
 #define S_UPDATE                  "Aktualizacja"
 #define S_RESTART                 "Restart"
 #define S_RETURN                  "Powrót"
-#ifdef ARDUINO_ESP8266_GENERIC
-#define S_TEMPLATE_BOARD "Szablony płytek (ESP8266)"
-#elif ARDUINO_ESP8266_ESP01
-#define S_TEMPLATE_BOARD "Szablony płytek (ESP8285)"
-#else
-#define S_TEMPLATE_BOARD "Szablony płytek"
-#endif
-#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
+
+#define S_TEMPLATE_BOARD                                       "Szablon płytek"
 #define S_TYPE                                                 "Rodzaj"
 #define S_RELAYS                                               "PRZEKAŹNIKI"
 #define S_BUTTONS                                              "PRZYCISKI"
@@ -53,7 +47,7 @@
 #define S_BUTTON                                               "PRZYCISK"
 #define S_BUTTON_NR_SETTINGS                                   "Ustawienia przycisku nr. "
 #define S_REACTION_TO                                          "Reakcja na"
-#define S_NUMBER                                               "Sterowany przyciskiem"
+#define S_RELAY_CONTROL                                        "Sterowanie przekaźnikiem"
 #define S_ACTION                                               "Akcja"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "Ustawienie GPIO dla cz. otwarcia"
 #define S_LIMIT_SWITCH                                         "KRAŃCÓWKA"
@@ -74,6 +68,7 @@
 #define S_WRITE_ERROR_BAD_DATA                                 "Błąd zapisu - złe dane."
 #define S_SETTINGS_FOR                                         "Ustawienie dla"
 #define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
+#define S_ADDITIONAL                                           "Dodatkowe"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Już zainicjalizowane"
@@ -110,15 +105,16 @@
 #define S_REACTION_ON_PRESS             "WCIŚNIĘCIE - monostabilny"
 #define S_REACTION_ON_RELEASE           "ZWOLNIENIE - monostabilny"
 #define S_REACTION_ON_CHANGE            "ZMIANA STANU - bistabilny"
+#define S_REACTION_ON_HOLD              "PRZYTRZYMANIE"
 #define S_CFG_10_PRESSES                "10 WCIŚNIĘĆ"
 #define S_5SEK_HOLD                     "WCIŚNIĘTY 5 SEKUND"
 #define S_NORMAL                        "NORMALNE"
 #define S_SLOW                          "WOLNE"
 #define S_MANUALLY                      "RĘCZNE"
-#define S_ON_CH_VAL_OFF_HEATING         "ON < wartość kanału > OFF - ogrzewanie"
-#define S_ON_CH_VAL_OFF_COOLING         "ON > wartość kanału < OFF - chłodzenie"
-#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < 2 wartość kanału > OFF - nawilżanie"
-#define S_ON_2CH_VAL_OFF_DRYING         "ON > 2 wartość kanału < OFF - osuszanie"
+#define S_ON_CH_VAL_OFF_HEATING         "ON > wartość kanału > OFF (ogrzewanie)"
+#define S_ON_CH_VAL_OFF_COOLING         "ON < wartość kanału < OFF (chłodzenie)"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON > 2 wartość kanału > OFF (nawilżanie)"
+#define S_ON_2CH_VAL_OFF_DRYING         "ON < 2 wartość kanału < OFF (osuszanie)"
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "KRAŃCÓWKI"
@@ -133,7 +129,6 @@
 #define S_IMPULSE_COUNTER_RAISING_EDGE     "Zbocze rosnące"
 #define S_IMPULSE_COUNTER_PULL_UP          "Podciąganie do VCC"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Zmień wartość"
-#define S_IMPULSE_COUNTER_SETTINGS_NR      "Ustawienia IC nr. "
 #define S_SCREEN_TIME                      "Ekran [s]"
 #define S_OLED_BUTTON                      "Przycisk OLED"
 #define S_SCREEN                           "Ekran"
@@ -159,6 +154,7 @@
 #define S_SENSOR_READING_DISTANCE "maksymalna odległość odczytu czujnika"
 #define S_ELECTRIC_PHASE          "1/3fazy"
 #define S_OPTIONAL                "(Opcjonalny)"
+#define S_STATUS_LED              "Status LED"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "Status załączenia przekaźnika"

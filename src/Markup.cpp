@@ -131,6 +131,12 @@ void addTextBox(
   return addTextBox(html, input_id, name, value, "", minlength, maxlength, required, readonly, false);
 }
 
+void addTextBox(String& html, const String& value) {
+  html += F("<style><input[name='board']{padding-left: 48px;width: calc(100% - 52px);}</style>");
+  html += F("<p style='color:#000;'>");
+  html += value;
+  html += F("</p>");
+}
 void addTextBoxPassword(String& html, const String& input_id, const String& name, uint8_t value_key, int minlength, int maxlength, bool required) {
   return addTextBox(html, input_id, name, value_key, "", minlength, maxlength, required, false, true);
 }
@@ -267,8 +273,8 @@ void addListGPIOBox(
   html += nr;
   html += F("'>");
 
-  if (function == FUNCTION_RELAY)
-    addGPIOOptionValue(html, GPIO_VIRTUAL_RELAY, gpio, S_SPACE "VIRTUAL");
+  if (function == FUNCTION_RELAY && nr < MAX_VIRTUAL_RELAY)
+    addGPIOOptionValue(html, GPIO_VIRTUAL_RELAY, gpio, String(S_SPACE) + "VIRTUAL");
 
 #ifdef ARDUINO_ARCH_ESP8266
   for (uint8_t suported = 0; suported <= OFF_GPIO; suported++)
@@ -306,79 +312,116 @@ void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const 
   html += name;
 }
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
+
+void addListExpanderGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
+  uint8_t type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
+
+  if (nr == 0) {
+    addListBox(html, INPUT_EXPENDER_TYPE, "Rodzaj ekspendera", EXPENDER_LIST_P, 4, type);
+  }
+
+  if (ConfigESP->checkActiveMCP23017(function)) {
+    addListMCP23017GPIOBox(webContentBuffer, input_id, name, function, nr, url);
+  }
+  else {
+    addListGPIOLinkBox(webContentBuffer, input_id, name, getParameterRequest(url, ARG_PARM_NUMBER), function, nr);
+  }
+}
+
 void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
-  uint8_t address;
+  uint8_t address, type, maxNr;
+  const char* const* listExpender;
+
+  type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
+
+  if (type == EXPENDER_PCF8574) {
+    maxNr = 8;
+    listExpender = EXPENDER_PCF8574_P;
+  }
+  else {
+    maxNr = 16;
+    listExpender = EXPENDER_P;
+  }
 
   if (nr == 0) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
-      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 1"), MCP23017_P, 5, address, url);
+      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, listExpender, 5, address, url);
     else
-      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 1"), MCP23017_P, 5, address);
+      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, listExpender, 5, address);
   }
-  if (nr == 16) {
+
+  if (nr == maxNr) {
     address = ConfigESP->getAdressMCP23017(nr, function);
     if (url != "")
-      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 2"), MCP23017_P, 5, address, url);
+      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, listExpender, 5, address, url);
     else
-      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, F("MCP23017 Adres 2"), MCP23017_P, 5, address);
+      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, listExpender, 5, address);
   }
 
-  html += F("<i><label>");
+  // html += F("<i><label>");
 
-  if (!url.isEmpty()) {
-    html += F("<a href='");
-    html += getParameterRequest(url, ARG_PARM_NUMBER);
-    html += nr;
-    html += F("'>");
+  // if (!url.isEmpty()) {
+  //   html += F("<a href='");
+  //   html += getParameterRequest(url, ARG_PARM_NUMBER);
+  //   html += nr;
+  //   html += F("'>");
+  //   html += nr + 1;
+  //   html += F(".");
 
-    if (nr < 16)
-      html += nr + 1;
-    else
-      html += nr - 15;
-
-    html += F(".");
-
-    html += F(" ");
-    html += name;
-    // html += FPSTR(ICON_EDIT);
-    html += F("</a>");
-    WebServer->sendHeader();
-  }
-  else {
-    if (nr < 16)
-      html += nr + 1;
-    else
-      html += nr - 15;
-    html += F(".");
-    html += F(" ");
-    html += name;
-  }
-  html += F("</label>");
-
-  html += F("<select name='");
-  html += input_id;
-  html += nr;
-  html += F("'>");
+  //   html += F(" ");
+  //   html += name;
+  //   // html += FPSTR(ICON_EDIT);
+  //   html += F("</a>");
+  //   WebServer->sendHeader();
+  // }
+  // else {
+  //   html += nr + 1;
+  //   html += F(".");
+  //   html += F(" ");
+  //   html += name;
+  // }
+  // html += F("</label>");
 
   uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
 
-  for (uint8_t suported = 0; suported < 18; suported++) {
-    if (ConfigESP->checkBusyGpioMCP23017(suported, nr, function) || selected == suported) {
-      html += F("<option value='");
-      html += suported;
-      html += F("'");
-      if (selected == suported) {
-        html += F(" selected");
-      }
-      html += F(">");
-      html += FPSTR(GPIO_MCP23017_P[suported]);
-    }
-    WebServer->sendHeader();
+  if (type == EXPENDER_PCF8574) {
+    addListLinkBox(webContentBuffer, input_id + "mcp" + nr, name + S_SPACE + (nr + 1), GPIO_PCF_8574_P, 18, selected,
+                   getParameterRequest(url, ARG_PARM_NUMBER) + nr);
   }
-  html += F("</select>");
-  html += F("</i>");
+  else {
+    addListLinkBox(webContentBuffer, input_id + "mcp" + nr, name + S_SPACE + (nr + 1), GPIO_MCP23017_P, 18, selected,
+                   getParameterRequest(url, ARG_PARM_NUMBER) + nr);
+  }
+
+  // html += F("<select name='");
+  // html += input_id;
+  // html += "mcp";
+  // html += nr;
+  // html += F("'>");
+
+  // uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
+  // // for (uint8_t suported = 0; suported < 18; suported++) {
+  // //   if (ConfigESP->checkBusyGpioMCP23017(suported, nr, function) || selected == suported) {
+  // //     html += F("<option value='");
+  // //     html += suported;
+  // //     html += F("'");
+  // //     if (selected == suported) {
+  // //       html += F(" selected");
+  // //     }
+  // //     html += F(">");
+  // //     if (type == EXPENDER_PCF8574) {
+  // //       html += FPSTR(GPIO_PCF_8574_P[suported]);
+  // //     }
+  // //     else {
+  // //       html += FPSTR(GPIO_MCP23017_P[suported]);
+  // //     }
+  // //   }
+  // //   WebServer->sendHeader();
+  // // }
+  // html += F("</select>");
+  // html += F("</i>");
 }
 #endif
 
@@ -397,7 +440,7 @@ void addListBox(String& html, const String& input_id, const String& name, const 
   html += F("'>");
 
   for (uint8_t suported = 0; suported < size; suported++) {
-    if (String(FPSTR(array_P[suported])) != "") {
+    if (!String(FPSTR(array_P[suported])).isEmpty()) {
       html += F("<option value='");
       html += suported;
       html += F("'");
@@ -408,6 +451,27 @@ void addListBox(String& html, const String& input_id, const String& name, const 
       html += FPSTR(array_P[suported]);
       WebServer->sendHeader();
     }
+  }
+  html += F("</select></i>");
+}
+
+void addListNumbersBox(String& html, const String& input_id, const String& name, uint8_t size, uint8_t selected) {
+  html += F("<i><label>");
+  html += name;
+  html += "</label><select name='";
+  html += input_id;
+  html += F("'>");
+
+  for (uint8_t suported = 0; suported < size; suported++) {
+    html += F("<option value='");
+    html += suported;
+    html += F("'");
+    if (selected == suported) {
+      html += F(" selected");
+    }
+    html += F(">");
+    html += (suported + 1);
+    WebServer->sendHeader();
   }
   html += F("</select></i>");
 }
@@ -439,14 +503,16 @@ void addListLinkBox(String& html,
   html += F("'>");
 
   for (uint8_t suported = 0; suported < size; suported++) {
-    html += F("<option value='");
-    html += suported;
-    html += F("'");
-    if (selected == suported) {
-      html += F(" selected");
+    if (!String(FPSTR(array_P[suported])).isEmpty()) {
+      html += F("<option value='");
+      html += suported;
+      html += F("'");
+      if (selected == suported) {
+        html += F(" selected");
+      }
+      html += F(">");
+      html += FPSTR(array_P[suported]);
     }
-    html += F(">");
-    html += FPSTR(array_P[suported]);
   }
   WebServer->sendHeader();
   html += F("</select></i>");

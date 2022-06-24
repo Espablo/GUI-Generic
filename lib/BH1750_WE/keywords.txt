@@ -1,0 +1,37 @@
+#######################################
+# Syntax Coloring Map For BH1750_WE
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+BH1750_WE	KEYWORD1
+
+# ENUM TYPES
+BH1750Mode	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+init	KEYWORD2
+setMeasuringTimeFactor	KEYWORD2
+setMode	KEYWORD2
+getLux	KEYWORD2
+resetDataReg	KEYWORD2
+powerOn	KEYWORD2
+powerDown	KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+# ENUM VALUES
+CHM	LITERAL1
+CHM_2	LITERAL1
+CLM	LITERAL1
+OTH	LITERAL1
+OTH2	LITERAL1
+OTL	LITERAL1

@@ -16,6 +16,7 @@
 #ifndef SuplaConfigESP_h
 #define SuplaConfigESP_h
 
+#include "GUIGenericCommonDefined.h"
 #include "GUI-Generic_Config.h"
 
 #include "Arduino.h"
@@ -37,7 +38,7 @@
 #endif
 
 #elif ARDUINO_ARCH_ESP32
-
+#include <WiFi.h>
 #ifdef SUPLA_MDNS
 #include <ESPmDNS.h>
 #endif
@@ -62,7 +63,7 @@ enum _ConfigMode
 #define OFF_GPIO MAX_GPIO + 1
 #endif
 
-#define OFF_GPIO_MCP23017    17
+#define OFF_GPIO_EXPENDER    17
 #define OFF_ADDRESS_MCP23017 4
 
 #define GPIO_VIRTUAL_RELAY 99
@@ -103,6 +104,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
     return getGpio(0, function);
   }
 
+  uint8_t getNumberButton(uint8_t nr);
   uint8_t getKeyGpio(uint8_t gpio);
 
   bool getLevel(uint8_t gpio);
@@ -115,6 +117,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   bool checkBusyCfg(int gpio);
   int checkBusyGpio(int gpio, int function);
+  bool checkBusyGpio(int gpio);
   uint8_t countFreeGpio(uint8_t exception = 0);
   bool checkGpio(int gpio);
 
@@ -136,7 +139,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void factoryReset(bool forceReset = false);
   const String getConfigNameAP();
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
   bool checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function);
   uint8_t getGpioMCP23017(uint8_t nr, uint8_t function);
   uint8_t getAdressMCP23017(uint8_t nr, uint8_t function);
@@ -148,7 +151,8 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   uint8_t getFunctionMCP23017(uint8_t adress);
   uint8_t getNrMCP23017(uint8_t adress);
 #endif
-  void configModeInit();
+
+  void configModeInit(WiFiMode_t m);
   void clearEEPROM();
 
  private:

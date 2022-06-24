@@ -33,7 +33,7 @@ void createWebPageRelay() {
     if (!WebServer->isLoggedIn()) {
       return;
     }
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
     if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
       if (WebServer->httpServer->method() == HTTP_GET)
         handleRelaySetMCP23017();
@@ -63,7 +63,7 @@ void handleRelaySave() {
   uint8_t nr;
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
     if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
       if (!WebServer->saveGpioMCP23017(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr, INPUT_MAX_RELAY)) {
         handleRelay(6);
@@ -108,16 +108,11 @@ void handleRelay(int save) {
 
   addForm(webContentBuffer, F("post"), PATH_RELAY);
   addFormHeader(webContentBuffer, S_GPIO_SETTINGS_FOR_RELAYS);
-  addNumberBox(webContentBuffer, INPUT_MAX_RELAY, S_QUANTITY, KEY_MAX_RELAY, ConfigESP->countFreeGpio(FUNCTION_RELAY) + MAX_VIRTUAL_RELAY);
+  addNumberBox(webContentBuffer, INPUT_MAX_RELAY, S_QUANTITY, KEY_MAX_RELAY, ConfigESP->countFreeGpio(FUNCTION_RELAY));
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
-#ifdef SUPLA_MCP23017
-    if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
-      addListMCP23017GPIOBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, nr, PATH_RELAY_SET);
-    }
-    else {
-      addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER), FUNCTION_RELAY, nr);
-    }
+#ifdef GUI_SENSOR_I2C_EXPENDER
+    addListExpanderGPIOBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, FUNCTION_RELAY, nr, PATH_RELAY_SET);
 #else
     addListGPIOLinkBox(webContentBuffer, INPUT_RELAY_GPIO, S_RELAY, getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER), FUNCTION_RELAY, nr);
 #endif
@@ -140,9 +135,6 @@ void handleRelaySaveSet() {
   nr_relay = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_RELAY);
-
-  input = INPUT_BUTTON_NUMBER;
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr_relay.toInt(), WebServer->httpServer->arg(input).toInt());
 
   input = INPUT_RELAY_MEMORY;
   input += nr_relay;
@@ -245,9 +237,6 @@ void handleRelaySet(int save) {
     addForm(webContentBuffer, F("post"), getParameterRequest(PATH_RELAY_SET, ARG_PARM_NUMBER, nr_relay));
     addFormHeader(webContentBuffer, String(S_RELAY_NR_SETTINGS) + (nr_relay.toInt() + 1));
 
-    selected = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr_relay.toInt()).toInt();
-    addListBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_NUMBER, NUMBER_P, 10, selected);
-
     if (gpio != GPIO_VIRTUAL_RELAY) {
       selected = ConfigESP->getLevel(gpio);
       addListBox(webContentBuffer, INPUT_RELAY_LEVEL + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
@@ -335,7 +324,7 @@ void handleRelaySet(int save) {
 }
 #endif
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
 void handleRelaySetMCP23017(int save) {
   uint8_t gpio, selected;
   String massage, input, nr_relay;
@@ -471,15 +460,15 @@ void conditionsWebPage(int nr) {
     addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_TYPE, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
 
     selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt();
-    addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_NUMBER, S_SENSOR, NUMBER_P, 10, selected);
+    addListNumbersBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_NUMBER, S_SENSOR, 20, selected);
 
     selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt();
     addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_CONDITION, CONDITIONS_TYPE_P, CONDITION_COUNT, selected);
 
     String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr);
-    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
+    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, "ON", S_SWITCH_ON_VALUE, false, value);
     value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr);
-    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
+    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, "OFF", S_SWITCH_OFF_VALUE, false, value);
     addFormHeaderEnd(webContentBuffer);
   }
 }

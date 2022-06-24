@@ -21,9 +21,9 @@ namespace Sensor {
 
 CSE_7766::CSE_7766(int8_t pinRX)
     : pinRX(pinRX),
-      currentMultiplier(0.92),
-      voltageMultiplier(1),
-      powerMultiplier(0.92) {
+      currentMultiplier(0.95),
+      voltageMultiplier(2.37),
+      powerMultiplier(2.52) {
   sensor = new CSE7766();
 }
 
@@ -63,7 +63,34 @@ void CSE_7766::readValuesFromDevice() {
                         36);  // current energy value = value at start
   }
 
-  // voltage in 0.01 V
+  unsigned int _reactive = 0;
+  double _pf = 0;
+  double _current = sensor->getCurrent();
+  unsigned int _voltage = sensor->getVoltage();
+  unsigned int _active = sensor->getActivePower();
+  unsigned int _apparent = _voltage * _current;
+  if (_apparent > _active) {
+    _reactive = sqrt(_apparent * _apparent - _active * _active);
+  } else {
+    _reactive = 0;
+  }
+  if (_active > _apparent) {
+    _pf = 1;
+  }
+  if (_apparent == 0) {
+    _pf = 0;
+  } else {
+    _pf = (double)_active / _apparent;
+  }
+  setVoltage(0, _voltage * 100);            // voltage in 0.01 V
+  setCurrent(0, _current * 1000);           // current in 0.001 A
+  setPowerActive(0, _active * 100000);      // power in 0.00001 kW
+  setFwdActEnergy(0, energy);               // energy in 0.00001 kWh
+  setPowerApparent(0, _apparent * 100000);  // power in 0.00001 kVA
+  setPowerReactive(0, _reactive * 100000);  // power in 0.00001 kvar
+  setPowerFactor(0, _pf * 1000);            // power in 0.001
+
+  /* // voltage in 0.01 V
   setVoltage(0, sensor->getVoltage() * 100);
   // current in 0.001 A
   setCurrent(0, sensor->getCurrent() * 1000);
@@ -76,7 +103,7 @@ void CSE_7766::readValuesFromDevice() {
   // power in 0.00001 kvar
   setPowerReactive(0, sensor->getReactivePower() * 100000);
   // power in 0.001
-  setPowerFactor(0, sensor->getPowerFactor() * 1000);
+  setPowerFactor(0, sensor->getPowerFactor() * 1000); */
 }
 
 void CSE_7766::onSaveState() {

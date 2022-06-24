@@ -26,17 +26,14 @@
 #include <time.h>
 #endif
 
+#define CURENT_VERSION   1
 #define CONFIG_FILE_PATH "/dat"
 
-#define DEFAULT_HOSTNAME "GUI Generic"
-
+#define DEFAULT_HOSTNAME   "GUI Generic"
 #define DEFAULT_LOGIN      "admin"
 #define DEFAULT_LOGIN_PASS "pass"
+#define DEFAULT_EMAIL      "email@address.com"
 
-#define DEFAULT_EMAIL  "email@address.com"
-
-#define MAX_GUID                SUPLA_GUID_SIZE
-#define MAX_AUTHKEY             SUPLA_GUID_SIZE
 #define MAX_SSID                32
 #define MAX_PASSWORD            64
 #define MIN_PASSWORD            4
@@ -96,7 +93,7 @@ enum _key
   KEY_OLED_ANIMATION,
   KEY_OLED_BACK_LIGHT_TIME,
   KEY_MAX_RGBW,
-  KEY_FOR_USE,
+
   KEY_PUSHOVER_TOKEN,
   KEY_PUSHOVER_USER,
   KEY_PUSHOVER_MASSAGE,
@@ -136,10 +133,14 @@ enum _key
 
   KEY_MAX_ANALOG_READING,
 
+  KEY_FORCE_RESTART_ESP,
+  KEY_ACTIVE_EXPENDER,
+
+  // KEY_VERSION_CONFIG,
+
   OPTION_COUNT
 };
 
-//#define GPIO      "GPIO"
 #define SEPARATOR ','
 
 enum _settings
@@ -199,7 +200,11 @@ enum _function
   FUNCTION_ANALOG_READING,
   FUNCTION_BUTTON_STOP,
   FUNCTION_RF_BRIDGE_TRANSMITTER,
-  FUNCTION_RF_BRIDGE_RECEIVE
+  FUNCTION_RF_BRIDGE_RECEIVE,
+  FUNCTION_VINDRIKTNING_IKEA,
+  FUNCTION_PMSX003_RX,
+  FUNCTION_PMSX003_TX,
+  FUNCTION_ADE7953_IRQ
 };
 
 enum _e_onfig
@@ -214,21 +219,19 @@ enum _e_onfig
 
 #define CONFIG_MAX_OPTIONS 200
 
-#define ESP8226_CONFIG_V1 2681
-
 class ConfigOption {
  public:
-  ConfigOption(uint8_t key, const char *value, int maxLength, uint8_t version, bool loadKey);
+  ConfigOption(uint8_t key, const char *value, int maxLength, bool loadKey);
   uint8_t getKey();
   const char *getValue();
   int getValueInt();
+  bool getValueBool();
   const char *getValueHex(size_t size);
   int getValueElement(int element);
 
   int getLength();
   void setLength(int maxLength);
   bool getLoadKey();
-  uint8_t getVersion();
 
   void setValue(const char *value);
   const String getElement(int index);
@@ -239,7 +242,6 @@ class ConfigOption {
   uint8_t _key;
   char *_value;
   uint16_t _maxLength;
-  uint8_t _version;
   bool _loadKey;
 };
 
@@ -248,13 +250,11 @@ class SuplaConfigManager {
   SuplaConfigManager();
   bool SPIFFSbegin();
   bool migrationConfig();
-  uint8_t addKey(uint8_t key, int maxLength, uint8_t version = 1, bool loadKey = true);
-  uint8_t addKey(uint8_t key, const char *value, int maxLength, uint8_t version = 1, bool loadKey = true);
+  uint8_t addKey(uint8_t key, int maxLength, bool loadKey = true);
+  uint8_t addKey(uint8_t key, const char *value, int maxLength, bool loadKey = true);
   uint8_t deleteKey(uint8_t key);
 
-  bool checkFileConvert(int size);
-  int sizeFile();
-  uint8_t load(uint8_t version = 99, bool configParse = true);
+  uint8_t load(bool configParse = true);
   uint8_t save();
   void showAllValue();
   void deleteAllValues();

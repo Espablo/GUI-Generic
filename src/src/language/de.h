@@ -25,14 +25,8 @@
 #define S_UPDATE                  "Aktualisierung"
 #define S_RESTART                 "Neustart"
 #define S_RETURN                  "Zurück"
-#ifdef ARDUINO_ESP8266_GENERIC
-#define S_TEMPLATE_BOARD "Modul Vorlage (ESP8266)"
-#elif ARDUINO_ESP8266_ESP01
-#define S_TEMPLATE_BOARD "Modul Vorlage (ESP8285)"
-#else
-#define S_TEMPLATE_BOARD "Modul Vorlage"
-#endif
-#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
+
+#define S_TEMPLATE_BOARD                                       "Modul Vorlage"
 #define S_TYPE                                                 "Typ"
 #define S_RELAYS                                               "RELAIS"
 #define S_BUTTONS                                              "TASTEN"
@@ -52,7 +46,7 @@
 #define S_BUTTON                                               "TASTE"
 #define S_BUTTON_NR_SETTINGS                                   "Parameter für Tasten Nr. "
 #define S_REACTION_TO                                          "Reaktion auf"
-#define S_NUMBER                                               "Number"
+#define S_RELAY_CONTROL                                        "Relaissteuerung"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO-Einstellungen für Endschalter"
 #define S_LIMIT_SWITCH                                         "ENDSCHALTER"
@@ -72,7 +66,8 @@
 #define S_DATA_SAVED_RESTART_MODULE                            "Daten Gespeichert: Modul Neustart."
 #define S_WRITE_ERROR_BAD_DATA                                 "Schreibfehler - falsche Daten."
 #define S_SETTINGS_FOR                                         "Ustawienie dla"
-#define S_ACTION_TRIGGER                                       "Wyzwalaczy akcji"
+#define S_ACTION_TRIGGER                                       "Action trigger"
+#define S_ADDITIONAL                                           "Additionnel"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Bereits gestartet"
@@ -109,15 +104,16 @@
 #define S_REACTION_ON_PRESS             "WENN GEDRÜCKT"
 #define S_REACTION_ON_RELEASE           "WENN LOSGELASSEN"
 #define S_REACTION_ON_CHANGE            "STATUS ÄNDERUNG"
+#define S_REACTION_ON_HOLD              "IN WARTESTELLUNG"
 #define S_CFG_10_PRESSES                "10 MAL DRÜCKEN"
 #define S_5SEK_HOLD                     "5 SEKUNDEN GEDRÜCKT HALTEN"
 #define S_NORMAL                        "NORMAL"
 #define S_SLOW                          "SCHLEPPEND"
 #define S_MANUALLY                      "MANUELL"
-#define S_ON_CH_VAL_OFF_HEATING         "EIN < Kanalwert > AUS - Heizung"
-#define S_ON_CH_VAL_OFF_COOLING         "EIN > Kanalwert < AUS - Kühlung"
-#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "EIN < 2. Kanalwert > AUS - Befeuchtung"
-#define S_ON_2CH_VAL_OFF_DRYING         "EIN > 2. Kanalwert < AUS - Trocknen"
+#define S_ON_CH_VAL_OFF_HEATING         "EIN > Kanalwert > AUS - Heizung"
+#define S_ON_CH_VAL_OFF_COOLING         "EIN < Kanalwert < AUS - Kühlung"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "EIN > 2. Kanalwert > AUS - Befeuchtung"
+#define S_ON_2CH_VAL_OFF_DRYING         "EIN < 2. Kanalwert < AUS - Trocknen"
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "GRENZSCHALTER"
@@ -132,7 +128,6 @@
 #define S_IMPULSE_COUNTER_RAISING_EDGE     "Steigende Flanke"
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull-up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Wertänderung"
-#define S_IMPULSE_COUNTER_SETTINGS_NR      "Einstellung Impulszähler Nr. "
 #define S_SCREEN_TIME                      "Bildschirm [s]"
 #define S_OLED_BUTTON                      "OLED-Taste"
 #define S_SCREEN                           "Bildschirm"
@@ -158,6 +153,7 @@
 #define S_SENSOR_READING_DISTANCE "Sensorleseabstand"
 #define S_ELECTRIC_PHASE          "1/3phases"
 #define S_OPTIONAL                "(Optional)"
+#define S_STATUS_LED              "Status LED"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "Relaisaktivierungsstatus"

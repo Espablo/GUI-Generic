@@ -19,11 +19,14 @@
 
 #include "SuplaDeviceGUI.h"
 
-#define PATH_TOOLS "tools"
+#define PATH_TOOLS         "tools"
 #define PATH_FACTORY_RESET "factoryreset"
-#define PATH_RESET "reset"
+#define PATH_RESET         "reset"
+
+#define INPUT_BOARD           "board"
 
 void createWebTools();
-void handleTools();
+void handleTools(int save = 0);
+void handleToolsSave();
 
-#endif // ifndef SuplaWebPageTools_h
+#endif  // ifndef SuplaWebPageTools_h

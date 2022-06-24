@@ -23,7 +23,7 @@
 #endif
 
 void handleDownload() {
-  if (!WebServer->isLoggedIn()) {
+  if (!WebServer->isLoggedIn(true)) {
     return;
   }
 

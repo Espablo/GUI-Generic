@@ -25,14 +25,8 @@
 #define S_UPDATE                  "Update"
 #define S_RESTART                 "Restart"
 #define S_RETURN                  "Return"
-#ifdef ARDUINO_ESP8266_GENERIC
-#define S_TEMPLATE_BOARD "Template board (ESP8266)"
-#elif ARDUINO_ESP8266_ESP01
-#define S_TEMPLATE_BOARD "Template board (ESP8285)"
-#else
-#define S_TEMPLATE_BOARD "Template board"
-#endif
-#define S_DEFAULT_TEMPLATE_BOARD                               "Domyślny szablon płytki"
+
+#define S_TEMPLATE_BOARD                                       "Template board"
 #define S_TYPE                                                 "Type"
 #define S_RELAYS                                               "RELAYS"
 #define S_BUTTONS                                              "BUTTONS"
@@ -52,7 +46,7 @@
 #define S_BUTTON                                               "BUTTON"
 #define S_BUTTON_NR_SETTINGS                                   "Setting button nr. "
 #define S_REACTION_TO                                          "Reaction to"
-#define S_NUMBER                                               "Number"
+#define S_RELAY_CONTROL                                        "Relay control"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO settings for limit switch"
 #define S_LIMIT_SWITCH                                         "LIMIT SWITCH"
@@ -73,6 +67,7 @@
 #define S_WRITE_ERROR_BAD_DATA                                 "Write error - bad data"
 #define S_SETTINGS_FOR                                         "Setting for"
 #define S_ACTION_TRIGGER                                       "Action trigger"
+#define S_ADDITIONAL                                           "Additionnel"
 
 //#### SuplaConfigESP.cpp ####
 #define S_STATUS_ALREADY_INITIALIZED     "Already initiated"
@@ -109,15 +104,16 @@
 #define S_REACTION_ON_PRESS             "ON PRESS"
 #define S_REACTION_ON_RELEASE           "ON RELEASE"
 #define S_REACTION_ON_CHANGE            "ON CHANGE"
+#define S_REACTION_ON_HOLD              "ON HOLD"
 #define S_CFG_10_PRESSES                "10 ON PRESSES"
 #define S_5SEK_HOLD                     "5 SEC HOLD"
 #define S_NORMAL                        "NORMAL"
 #define S_SLOW                          "SLOW"
 #define S_MANUALLY                      "MANUALLY"
-#define S_ON_CH_VAL_OFF_HEATING         "ON < channel value > OFF - heating"
-#define S_ON_CH_VAL_OFF_COOLING         "ON > channel value < OFF - cooling"
-#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON < 2nd channel value > OFF - humidification"
-#define S_ON_2CH_VAL_OFF_DRYING         "ON > 2nd channel value < OFF - drying"
+#define S_ON_CH_VAL_OFF_HEATING         "ON > channel value > OFF - heating"
+#define S_ON_CH_VAL_OFF_COOLING         "ON < channel value < OFF - cooling"
+#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON > 2nd channel value > OFF - humidification"
+#define S_ON_2CH_VAL_OFF_DRYING         "ON < 2nd channel value < OFF - drying"
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "LIMIT SWITCHES"
@@ -132,7 +128,6 @@
 #define S_IMPULSE_COUNTER_RAISING_EDGE     "Raising edge"
 #define S_IMPULSE_COUNTER_PULL_UP          "Pull up"
 #define S_IMPULSE_COUNTER_CHANGE_VALUE     "Change value"
-#define S_IMPULSE_COUNTER_SETTINGS_NR      "Settings IC nr. "
 #define S_SCREEN_TIME                      "Screen [s]"
 #define S_OLED_BUTTON                      "OLED button"
 #define S_SCREEN                           "Screen"
@@ -158,6 +153,7 @@
 #define S_SENSOR_READING_DISTANCE "sensor reading distance"
 #define S_ELECTRIC_PHASE          "1/3phases"
 #define S_OPTIONAL                "(Optional)"
+#define S_STATUS_LED              "Status LED"
 
 //#### SuplaWebPageRelay.cpp ####
 #define S_RELAY_ACTIVATION_STATUS "Relay activation status"

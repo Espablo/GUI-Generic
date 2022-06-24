@@ -47,10 +47,21 @@ void handleConfigSave() {
 
   if (strcmp(WebServer->httpServer->arg(INPUT_CFG_MODE).c_str(), "") != 0)
     ConfigManager->set(KEY_CFG_MODE, WebServer->httpServer->arg(INPUT_CFG_MODE).c_str());
+
   if (strcmp(WebServer->httpServer->arg(INPUT_CFG_SSL).c_str(), "") != 0)
-    ConfigManager->set(KEY_ENABLE_SSL, WebServer->httpServer->arg(INPUT_CFG_SSL).c_str());
+    ConfigManager->set(KEY_ENABLE_SSL, 1);
+  else
+    ConfigManager->set(KEY_ENABLE_SSL, 0);
+
   if (strcmp(WebServer->httpServer->arg(INPUT_CFG_AVAILABLE_GUI).c_str(), "") != 0)
-    ConfigManager->set(KEY_ENABLE_GUI, WebServer->httpServer->arg(INPUT_CFG_AVAILABLE_GUI).c_str());
+    ConfigManager->set(KEY_ENABLE_GUI, 1);
+  else
+    ConfigManager->set(KEY_ENABLE_GUI, 0);
+
+  if (strcmp(WebServer->httpServer->arg(INPUT_FORCE_RESTART_ESP).c_str(), "") != 0)
+    ConfigManager->set(KEY_FORCE_RESTART_ESP, 1);
+  else
+    ConfigManager->set(KEY_FORCE_RESTART_ESP, 0);
 
 #ifdef SUPLA_DEEP_SLEEP
   if (strcmp(WebServer->httpServer->arg(INPUT_DEEP_SLEEP_TIME).c_str(), "") != 0)
@@ -89,14 +100,19 @@ void handleConfig(int save) {
 
   addFormHeaderEnd(webContentBuffer);
 
-  addFormHeader(webContentBuffer, F("Połączenie SSL"));
-  selected = ConfigManager->get(KEY_ENABLE_SSL)->getValueInt();
-  addListBox(webContentBuffer, INPUT_CFG_SSL, F("SSL"), STATE_P, 2, selected);
+  addFormHeader(webContentBuffer, F("Połączenie"));
+  selected = ConfigManager->get(KEY_ENABLE_SSL)->getValueBool();
+  addCheckBox(webContentBuffer, INPUT_CFG_SSL, F("SSL"), selected);
   addFormHeaderEnd(webContentBuffer);
 
   addFormHeader(webContentBuffer, F("GUI podczas normalnej pracy"));
-  selected = ConfigManager->get(KEY_ENABLE_GUI)->getValueInt();
-  addListBox(webContentBuffer, INPUT_CFG_AVAILABLE_GUI, F("GUI"), STATE_P, 2, selected);
+  selected = ConfigManager->get(KEY_ENABLE_GUI)->getValueBool();
+  addCheckBox(webContentBuffer, INPUT_CFG_AVAILABLE_GUI, F("GUI"), selected);
+  addFormHeaderEnd(webContentBuffer);
+
+  addFormHeader(webContentBuffer, F("Gdy brak połączenia"));
+  selected = ConfigManager->get(KEY_FORCE_RESTART_ESP)->getValueBool();
+  addCheckBox(webContentBuffer, INPUT_FORCE_RESTART_ESP, F("Wymuś reset ESP"), selected);
   addFormHeaderEnd(webContentBuffer);
 
 #ifdef SUPLA_DEEP_SLEEP

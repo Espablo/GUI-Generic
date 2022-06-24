@@ -37,7 +37,7 @@ const char HTTP_STYLE[] PROGMEM =
     "#00d151;height:42px}i:last-child{border:none}label{position:absolute;display:inline-block;top:0;left:8px;color:#00d151;line-height:41px;}i "
     "input,"
     "select{width:calc(100% - "
-    "166px);border:none;font-size:16px;line-height:40px;border-radius:0;letter-spacing:-.5px;background:#fff;color:#000;padding-left:165px;-webkit-"
+    "180px);border:none;font-size:16px;line-height:40px;border-radius:0;letter-spacing:-.5px;background:#fff;color:#000;padding-left:178px;-webkit-"
     "appearance:none;-moz-appearance:none;appearance:none;outline:0!important;height:40px}select{padding:0;float:right;margin:1px 3px 1px "
     "2px}button{width:100%;border:0;background:#000;padding:5px 10px;font-size:16px;line-height:40px;color:#fff;border-radius:3px;box-shadow:0 1px "
     "3px rgba(0,0,0,.3);cursor:pointer}.c{background:#ffe836;position:fixed;width:100%;line-height:80px;color:#000;top:0;left:0;box-shadow:0 1px 3px "
@@ -51,7 +51,7 @@ const char HTTP_STYLE[] PROGMEM =
     "12px;color:#00d151;font-size:13px;position:relative;line-height:18px}i input,select{width:calc(100% - "
     "10px);font-size:16px;line-height:28px;padding:0 5px;border-bottom:solid 1px "
     "#00d151}select{width:100%;float:none;margin:0}}iframe{margin:auto;display:block;}.formcenter{color:#000;width:50%;margin: 25px auto 25px "
-    "auto;} input[type='checkbox' i]{appearance:auto;margin-top:10px;height:20px;width:calc(100% - 116px);}"
+    "auto;} input[type='checkbox' i]{appearance:auto;margin:15px;width:calc(100% - 116px);transform:scale(2);height:auto;}"
     "@media (max-width: 900px){input[type='checkbox' i]{width:auto;}.difr{margin-left:calc(100% - 190px);}}</style>";
 const char HTTP_SCRIPT[] PROGMEM =
     "<script>"
@@ -94,7 +94,7 @@ const char HTTP_LOGO[] PROGMEM =
     "M167.7,88.5c-1,0-2.1,0.1-3.1,0.3c-9,1.7-14.2,10.6-10.8,18.6c2.9,6.8,11.4,10.3,19,7.8c7.1-2.3,11.1-9.1,9.6-15.9C180.9,93,174.8,88.5,167.7,88.5z'/"
     "></svg></a>";
 const char HTTP_SUMMARY[] PROGMEM =
-    "<h1>{h}</h1><span>LAST STATE: {s}<br>Firmware: SuplaDevice {v}<br>GUID: {g}<br>MAC: {m}<br>Free Mem: {f}KB</span>\n";
+    "<h1>{h}</h1><span>LAST STATE: {s}<br>Firmware: SuplaDevice {v}<br>GUID: {g}<br>MAC: {m}<br>Free Mem: {f}KB<br>Mode: {c}</span>\n";
 const char HTTP_IFRAMES[] PROGMEM =
     "<div class='dif difl dift'><iframe class='iframe' src='https://gui-generic-builder.supla.io/f.php?tl' onload='ifl(this)'></iframe></div>"
     "<div class='dif difr dift'><iframe class='iframe' src='https://gui-generic-builder.supla.io/f.php?tr' onload='ifl(this)'></iframe></div>"
@@ -110,8 +110,6 @@ const char HTTP_FAVICON[] PROGMEM =
     "q3Chk4dgCleJYpAEOmfCkDB+sbsK1886YBRfgWMTBwbi896wR04YZuAyAH6OmzDCbr3RgYsj6A1HEBPXCfgWHONgaG6eUBII0LFTiA7jn+iIF/"
     "MbMTyEu3lphtAJtpvl4BTLPNWgVSySA+y28aWIDdyGtVBgNH5psshVawwHGGO+arLr7MYFoJjZr/"
     "zBPYj85a1sC4ulwAIsIdcJzh2qt1WReYBWBR48gxgd1ziQIi6hTYEsxR45pZwRU9+oWgNAB1F3c/H6bYqgAAAABJRU5ErkJggg==' type='image/x-png' />\n";
-
-const char HTTP_RBT[] PROGMEM = "<a href='/?reboot=1'><button>Restart</button></a>";
 
 const char ICON_EDIT[] PROGMEM =
     "<img "
@@ -213,7 +211,7 @@ const char* const GPIO_P[] PROGMEM = {GPIO0,  GPIO1,  GPIO2,  GPIO3,  GPIO4,  GP
                                       GPIO33, GPIO34, GPIO35, GPIO36, GPIO37, GPIO38, GPIO39,  OFF};
 #endif
 
-#ifdef SUPLA_MCP23017
+#ifdef GUI_SENSOR_I2C_EXPENDER
 const char GPIO_A0[] PROGMEM = "A0";
 const char GPIO_A1[] PROGMEM = "A1";
 const char GPIO_A2[] PROGMEM = "A2";
@@ -233,6 +231,37 @@ const char GPIO_B7[] PROGMEM = "B7";
 
 const char* const GPIO_MCP23017_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, GPIO_B0,
                                                GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7, S_EMPTY, OFF};
+
+const char* const GPIO_PCF_8574_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, S_EMPTY,
+                                               S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, OFF};
+
+const char* const EXPENDER_LIST_P[] PROGMEM = {
+    OFF,
+#ifdef SUPLA_MCP23017
+    "MCP23017",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_PCF8575
+    "PCF8575",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_PCF8574
+    "PCF8574/A",
+#else
+    S_EMPTY,
+#endif
+};
+
+enum
+{
+  EXPENDER_OFF,
+  EXPENDER_MCP23017,
+  EXPENDER_PCF8575,
+  EXPENDER_PCF8574
+};
+
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_BMP280)
@@ -249,7 +278,7 @@ const char ADR44_ADR45[] PROGMEM = "0x44 & 0x45";
 const char* const SHT3x_P[] PROGMEM = {OFF, ADR44, ADR45, ADR44_ADR45};
 #endif
 
-#if defined(SUPLA_MCP23017) || defined(SUPLA_LCD_HD44780)
+#if defined(GUI_SENSOR_I2C_EXPENDER) || defined(SUPLA_LCD_HD44780)
 const char ADR20[] PROGMEM = "0x20";
 const char ADR21[] PROGMEM = "0x21";
 const char ADR22[] PROGMEM = "0x22";
@@ -264,8 +293,9 @@ const char* const HD44780_P[] PROGMEM = {OFF, ADR20, ADR21, ADR22, ADR23, ADR24,
 const char* const HD44780_TYPE_P[] PROGMEM = {"2x16", "2x20", "4x16", "4x20"};
 #endif
 
-#ifdef SUPLA_MCP23017
-const char* const MCP23017_P[] PROGMEM = {ADR20, ADR21, ADR22, ADR23, OFF};
+#ifdef GUI_SENSOR_I2C_EXPENDER
+const char* const EXPENDER_P[] PROGMEM = {ADR20, ADR21, ADR22, ADR23, OFF};
+const char* const EXPENDER_PCF8574_P[] PROGMEM = {"0x20 | 0x38", "0x21 | 0x39", "0x22 | 0x3A", "0x24 | 0x3B", OFF};
 #endif
 
 const char* const STATE_P[] PROGMEM = {OFF, ON};
@@ -280,8 +310,8 @@ const char* const MEMORY_P[] PROGMEM = {OFF, ON, POSITION_MEMORY};
 const char REACTION_ON_PRESS[] PROGMEM = S_REACTION_ON_PRESS;
 const char REACTION_ON_RELEASE[] PROGMEM = S_REACTION_ON_RELEASE;
 const char REACTION_ON_CHANGE[] PROGMEM = S_REACTION_ON_CHANGE;
-const char* const TRIGGER_P[] PROGMEM = {REACTION_ON_PRESS, REACTION_ON_RELEASE, REACTION_ON_CHANGE};
-const char* const NUMBER_P[] PROGMEM = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+const char REACTION_ON_HOLD[] PROGMEM = S_REACTION_ON_HOLD;
+const char* const TRIGGER_P[] PROGMEM = {REACTION_ON_PRESS, REACTION_ON_RELEASE, REACTION_ON_CHANGE, REACTION_ON_HOLD};
 
 const char ACTION_TOGGLE[] PROGMEM = S_TOGGLE;
 
@@ -340,11 +370,11 @@ enum conditioningType
   CONDITION_COOLING,
   CONDITION_MOISTURIZING,
   CONDITION_DRAINGE,
-  CONDITION_TOTAL_POWER_APPARENT,
+  CONDITION_VOLTAGE,
   CONDITION_TOTAL_CURRENT,
   CONDITION_TOTAL_POWER_ACTIVE,
   CONDITION_GPIO,
-  CONDITION_TOTAL_POWER_APPARENT_OPPOSITE,
+  CONDITION_VOLTAGE_OPPOSITE,
   CONDITION_TOTAL_CURRENT_OPPOSITE,
   CONDITION_TOTAL_POWER_ACTIVE_OPPOSITE,
   CONDITION_COUNT
@@ -375,18 +405,18 @@ enum sensorList
   SENSOR_CSE7766,
   SENSOR_BINARY,
   SENSOR_MAX31855,
+  SENSOR_VINDRIKTNING_IKEA,
+  SENSOR_PMSX003,
+  SENSOR_ADE7953,
   COUNT_SENSOR_LIST
 };
 
-#if defined(SUPLA_DS18B20) || defined(SUPLA_DHT11) || defined(SUPLA_DHT22) || defined(SUPLA_SI7021_SONOFF) || defined(SUPLA_HC_SR04) || \
-    defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_MAX6675) || defined(SUPLA_NTC_10K) ||       \
-    defined(SUPLA_BMP280) || defined(SUPLA_MPX_5XXX) || defined(SUPLA_ANALOG_READING_MAP) || defined(SUPLA_VL53L0X) ||                  \
-    defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_HDC1080)
+#if defined(GUI_SENSOR_SPI) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_OTHER) || defined(GUI_SENSOR_ANALOG)
 #define GUI_ALL_SENSOR
 #endif
 
-#if defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_CSE7766)
-#define GUI_ALL_ENERGY_COUNTER
+#if defined(GUI_OTHER_ENERGY) || defined(GUI_SENSOR_I2C_ENERGY_METER)
+#define GUI_ALL_ENERGY
 #endif
 
 #ifdef SUPLA_CONDITIONS
@@ -400,10 +430,10 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
     S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
 
-#ifdef GUI_ALL_ENERGY_COUNTER
-    "ON < Napięcie[V] > OFF",
-    "ON < Natężenie[A] > OFF",
-    "ON < Moc czynna[W] > OFF",
+#ifdef GUI_ALL_ENERGY
+    "ON > Napięcie[V] > OFF",
+    "ON > Natężenie[A] > OFF",
+    "ON > Moc czynna[W] > OFF",
 #else
     S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
@@ -412,10 +442,10 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #else
     S_EMPTY,
 #endif
-#ifdef GUI_ALL_ENERGY_COUNTER
-    "ON > Napięcie[V] < OFF",
-    "ON > Natężenie[A] < OFF",
-    "ON > Moc czynna[W] < OFF",
+#ifdef GUI_ALL_ENERGY
+    "ON < Napięcie[V] < OFF",
+    "ON < Natężenie[A] < OFF",
+    "ON < Moc czynna[W] < OFF",
 #else
     S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
@@ -453,7 +483,7 @@ const char* const SENSOR_LIST_P[] PROGMEM = {
 #else
     S_EMPTY,
 #endif
-#ifdef SUPLA_SHT3x
+#if defined(SUPLA_SHT3x) || defined(SUPLA_SHT_AUTODETECT)
     S_SHT3X,
 #else
     S_EMPTY,
@@ -526,6 +556,21 @@ const char* const SENSOR_LIST_P[] PROGMEM = {
 #endif
 #ifdef SUPLA_MAX31855
     S_MAX31855,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_VINDRIKTNING_IKEA
+    S_VINDRIKTNING_IKEA,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_PMSX003
+    S_PMSX003_PM25,
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_ADE7953
+    "ADE7953",
 #else
     S_EMPTY,
 #endif

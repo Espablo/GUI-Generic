@@ -23,6 +23,7 @@
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
 
+#include "GUIGenericCommonDefined.h"
 #include "GUIGenericCommon.h"
 #include "GUI-Generic_Config.h"
 #include "SuplaTemplateBoard.h"
@@ -88,6 +89,9 @@
 #ifdef SUPLA_SHT3x
 #include <supla/sensor/SHT3x.h>
 #endif
+#ifdef SUPLA_SHT_AUTODETECT
+#include "src/sensor/SHTAutoDetect.h"
+#endif
 #ifdef SUPLA_SI7021
 #include <supla/sensor/Si7021.h>
 #endif
@@ -99,6 +103,7 @@
 #endif
 #ifdef SUPLA_IMPULSE_COUNTER
 #include <supla/sensor/impulse_counter.h>
+#include <supla/control/internal_pin_output.h>
 #endif
 #ifdef DEBUG_MODE
 #include <supla/sensor/esp_free_heap.h>
@@ -121,10 +126,6 @@
 
 #include <supla/control/pushover.h>
 #include <supla/control/direct_links.h>
-
-#ifdef SUPLA_MCP23017
-#include <supla/control/MCP_23017.h>
-#endif
 
 #ifdef SUPLA_NTC_10K
 #include <supla/sensor/NTC_10K.h>
@@ -163,20 +164,48 @@
 #include "SuplaLCD.h"
 #endif
 
+#ifdef SUPLA_BH1750
+#include <supla/sensor/BH1750.h>
+#endif
+
+#ifdef SUPLA_MAX44009
+#include "src/sensor/MAX_44009.h"
+#endif
+
 #include "src/improv/improv_serial_component.h"
 #include "src/network/SuplaGuiWiFi.h"
+
+#ifdef SUPLA_VINDRIKTNING_IKEA
+#include "src/sensor/VindriktningIkea.h"
+#endif
+
+#include "src/sensor/PMSx003.h"
+
+#ifdef SUPLA_WT32_ETH01_LAN8720
+#include "supla/network/wt32_eth01.h"
+#endif
+
+#ifdef SUPLA_ADE7953
+#include "src/sensor/ADE7953.h"
+#endif
+
+#ifdef GUI_SENSOR_I2C_EXPENDER
+#include "src/control/PCF_8575.h"
+#include "src/control/PCF_8574.h"
+#include "src/control/MCP_23017.h"
+#endif
 
 namespace Supla {
 namespace GUI {
 
 void begin();
-void setupWifi();
-void enableWifiSSL(bool value);
+void setupConnection();
+void enableConnectionSSL(bool value);
 void crateWebServer();
 
-#if defined(SUPLA_RELAY)
+#ifdef SUPLA_RELAY
 void addRelay(uint8_t nr);
-void addButtonToRelay(uint8_t nr);
+void addButtonToRelay(uint8_t nrRelay);
 #endif
 
 #ifdef SUPLA_ACTION_TRIGGER
@@ -217,11 +246,13 @@ void addRolleShutter(uint8_t nr);
 
 #ifdef SUPLA_IMPULSE_COUNTER
 extern std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
-void addImpulseCounter(int pin, bool lowToHigh, bool inputPullup, unsigned int debounceDelay);
+void addImpulseCounter(uint8_t nr);
 #endif
 
 #ifdef SUPLA_RGBW
 void addRGBWLeds(uint8_t nr);
+void setRGBWButton(Supla::Control::RGBWBase *rgbw, int buttonPin);
+void setRGBWDefaultState(Supla::Control::RGBWBase *rgbw, uint8_t memory);
 #endif
 
 void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
@@ -243,6 +274,11 @@ extern Supla::Sensor::CSE_7766 *counterCSE7766;
 void addCSE7766(int8_t pinRX);
 #endif
 
+#ifdef SUPLA_ADE7953
+extern Supla::Sensor::ADE7953 *couterADE7953;
+void addADE7953(int8_t pinIRQ);
+#endif
+
 #ifdef SUPLA_MPX_5XXX
 extern Supla::Sensor::MPX_5XXX *mpx;
 #endif
@@ -257,6 +293,10 @@ extern Supla::Sensor::AnalogRedingMap **analog;
 extern SuplaConfigManager *ConfigManager;
 extern SuplaConfigESP *ConfigESP;
 extern SuplaWebServer *WebServer;
+#ifdef SUPLA_WT32_ETH01_LAN8720
+extern Supla::WT32_ETH01 *eth;
+#else
 extern Supla::GUIESPWifi *wifi;
+#endif
 
 #endif  // SuplaDeviceGUI_h
