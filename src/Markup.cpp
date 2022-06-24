@@ -314,114 +314,96 @@ void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const 
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
 
-void addListExpanderGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
+void addListExpanderBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
   uint8_t type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 
   if (nr == 0) {
-    addListBox(html, INPUT_EXPENDER_TYPE, "Rodzaj ekspendera", EXPENDER_LIST_P, 4, type);
+    addListBox(html, INPUT_EXPENDER_TYPE, S_TYPE, EXPENDER_LIST_P, 4, type);
   }
 
   if (ConfigESP->checkActiveMCP23017(function)) {
-    addListMCP23017GPIOBox(webContentBuffer, input_id, name, function, nr, url);
+    addListExpanderGPIOBox(webContentBuffer, input_id, name, function, nr, url);
   }
   else {
     addListGPIOLinkBox(webContentBuffer, input_id, name, getParameterRequest(url, ARG_PARM_NUMBER), function, nr);
   }
 }
 
-void addListMCP23017GPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
+void addListExpanderGPIOBox(String& html, const String& input_id, const String& name, uint8_t function, uint8_t nr, const String& url) {
   uint8_t address, type, maxNr;
+  const char* const* listAdressExpender;
   const char* const* listExpender;
 
   type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 
   if (type == EXPENDER_PCF8574) {
     maxNr = 8;
-    listExpender = EXPENDER_PCF8574_P;
+    listAdressExpender = EXPENDER_PCF8574_P;
+    listExpender = GPIO_PCF_8574_P;
   }
   else {
     maxNr = 16;
-    listExpender = EXPENDER_P;
+    listAdressExpender = EXPENDER_P;
+    listExpender = GPIO_MCP23017_P;
   }
 
-  if (nr == 0) {
-    address = ConfigESP->getAdressMCP23017(nr, function);
+  if (nr == 0 || nr == maxNr) {
+    for (uint8_t gpio = nr; gpio <= OFF_GPIO_EXPENDER; gpio++) {
+      address = ConfigESP->getAdressMCP23017(gpio, function);
+      if (address != OFF_ADDRESS_MCP23017) {
+        break;
+      }
+    }
+
     if (url != "")
-      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, listExpender, 5, address, url);
+      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, listAdressExpender, 5, address, url);
     else
-      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, listExpender, 5, address);
+      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 1, listAdressExpender, 5, address);
   }
 
-  if (nr == maxNr) {
-    address = ConfigESP->getAdressMCP23017(nr, function);
-    if (url != "")
-      addListLinkBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, listExpender, 5, address, url);
-    else
-      addListBox(html, String(INPUT_ADRESS_MCP23017) + nr, String(S_ADDRESS) + S_SPACE + 2, listExpender, 5, address);
-  }
+  addListExpanderGPIO(webContentBuffer, input_id, name, function, nr, listExpender, 18, getParameterRequest(url, ARG_PARM_NUMBER) + nr);
+}
 
-  // html += F("<i><label>");
-
-  // if (!url.isEmpty()) {
-  //   html += F("<a href='");
-  //   html += getParameterRequest(url, ARG_PARM_NUMBER);
-  //   html += nr;
-  //   html += F("'>");
-  //   html += nr + 1;
-  //   html += F(".");
-
-  //   html += F(" ");
-  //   html += name;
-  //   // html += FPSTR(ICON_EDIT);
-  //   html += F("</a>");
-  //   WebServer->sendHeader();
-  // }
-  // else {
-  //   html += nr + 1;
-  //   html += F(".");
-  //   html += F(" ");
-  //   html += name;
-  // }
-  // html += F("</label>");
+void addListExpanderGPIO(String& html,
+                         const String& input_id,
+                         const String& name,
+                         uint8_t function,
+                         uint8_t nr,
+                         const char* const* array_P,
+                         uint8_t size,
+                         const String& url) {
+  html += F("<i><label><a href='");
+  html += PATH_START;
+  html += url;
+  html += F("'>");
+  html += nr + 1;
+  html += F(". ");
+  html += name;
+  html += F("</a>");
+  html += "</label><select name='";
+  html += input_id;
+  html += "mcp";
+  html += nr;
+  html += F("'>");
 
   uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
 
-  if (type == EXPENDER_PCF8574) {
-    addListLinkBox(webContentBuffer, input_id + "mcp" + nr, name + S_SPACE + (nr + 1), GPIO_PCF_8574_P, 18, selected,
-                   getParameterRequest(url, ARG_PARM_NUMBER) + nr);
+  for (uint8_t suported = 0; suported < size; suported++) {
+    if (!String(FPSTR(array_P[suported])).isEmpty()) {
+      if (ConfigESP->checkBusyGpioMCP23017(suported, nr, function) || selected == suported) {
+        html += F("<option value='");
+        html += suported;
+        html += F("'");
+        if (selected == suported) {
+          html += F(" selected");
+        }
+        html += F(">");
+        html += FPSTR(array_P[suported]);
+      }
+    }
   }
-  else {
-    addListLinkBox(webContentBuffer, input_id + "mcp" + nr, name + S_SPACE + (nr + 1), GPIO_MCP23017_P, 18, selected,
-                   getParameterRequest(url, ARG_PARM_NUMBER) + nr);
-  }
-
-  // html += F("<select name='");
-  // html += input_id;
-  // html += "mcp";
-  // html += nr;
-  // html += F("'>");
-
-  // uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
-  // // for (uint8_t suported = 0; suported < 18; suported++) {
-  // //   if (ConfigESP->checkBusyGpioMCP23017(suported, nr, function) || selected == suported) {
-  // //     html += F("<option value='");
-  // //     html += suported;
-  // //     html += F("'");
-  // //     if (selected == suported) {
-  // //       html += F(" selected");
-  // //     }
-  // //     html += F(">");
-  // //     if (type == EXPENDER_PCF8574) {
-  // //       html += FPSTR(GPIO_PCF_8574_P[suported]);
-  // //     }
-  // //     else {
-  // //       html += FPSTR(GPIO_MCP23017_P[suported]);
-  // //     }
-  // //   }
-  // //   WebServer->sendHeader();
-  // // }
-  // html += F("</select>");
-  // html += F("</i>");
+  WebServer->sendHeader();
+  html += F("</select></i>");
 }
 #endif
 
@@ -554,16 +536,13 @@ String getParameterRequest(const String& url, const String& param, const String&
 
 const String SuplaJavaScript(const String& java_return) {
   String java_script =
-      F("<script type='text/javascript'>setTimeout(function(){var "
-        "element=document.getElementById('msg');if( element != "
-        "null){element.style.visibility='hidden';location.href='");
+      F("<script type='text/javascript'>setTimeout(function(){var element=document.getElementById('msg');if(element != "
+        "null){element.style.visibility='hidden';if(window.location.pathname != '/");
   java_script += java_return;
-  java_script += F("';}},1600);</script>\n");
-#ifdef SUPLA_OTA
-  java_script +=
-      F("<script type='text/javascript'>if(window.top.location != window.location){"
-        "window.top.location.href = window.location.href;}</script>\n");
-#endif
+  java_script += F("'){location.href='");
+  java_script += java_return;
+  java_script += F("'};}},1600);");
+  java_script += F("if(window.top.location != window.location){window.top.location.href = window.location.href;}</script>\n");
   return java_script;
 }
 

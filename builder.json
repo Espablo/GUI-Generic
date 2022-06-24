@@ -1,5 +1,5 @@
 {
-	"version": "4.13.5",
+	"version": "4.13.13",
 	"Opis struktury": {
 		"SEKCJA": {
 			"SUPLA_OPTION": {
@@ -634,6 +634,27 @@
 				"desc": "Paramètres de l´appareil->I2C. Prend en charge les capteurs de la série SHT3x."
 			}
 		},
+		"SUPLA_SHT_AUTODETECT": {
+			"name": "Sensor SHTxx",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę sensorów serii SHTxx.",
+			"defOn": false,
+			"en": {
+				"name": "SHTxx sensor",
+				"desc": "Device settings->I2C. Supports SHTxx series sensors."
+			},
+			"es": {
+				"name": "Sensor SHT3x",
+				"desc": "Configuración del dispositivo->I2C. Admite sensores de la serie SHTxx."
+			},
+			"de": {
+				"name": "SHTxx Sensor",
+				"desc": "Geräteeinstellungen->I2C. Unterstützt Sensoren der SHTxx-Serie."
+			},
+			"fr": {
+				"name": "Capteur SHTxx",
+				"desc": "Paramètres de l´appareil->I2C. Prend en charge les capteurs de la série SHTxx."
+			}
+		},
 		"SUPLA_SI7021": {
 			"name": "Sensor Si7021",
 			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę sensorów Si7021.",
@@ -741,24 +762,46 @@
 		},
 		"SUPLA_BH1750": {
 			"name": "Sensor BH1750",
-			"desc": "Ustawienia urządzenia->Inne. Czujnik natężenia światła BH1750",
+			"desc": "Ustawienia urządzenia->I2C. Czujnik natężenia światła BH1750",
 			"defOn": false,
 			"new": true,
 			"en": {
 				"name": "BH1750 sensor",
-				"desc": "Device settings->Other. Light intensity sensor BH1750."
+				"desc": "Device settings->I2C. Light intensity sensor BH1750."
 			},
 			"es": {
 				"name": "Sonda BH1750",
-				"desc": "Configuración del dispositivo->Otro. Sensor de intensidad de luz BH1750."
+				"desc": "Configuración del dispositivo->I2C. Sensor de intensidad de luz BH1750."
 			},
 			"de": {
 				"name": "Fühler BH1750",
-				"desc": "Geräteeinstellungen->Andere. Lichtstärkesensor BH1750."
+				"desc": "Geräteeinstellungen->I2C. Lichtstärkesensor BH1750."
 			},
 			"fr": {
 				"name": "Capteur BH1750",
-				"desc": "Paramètres de l´appareil->Autre. Capteur d'intensité lumineuse BH1750."
+				"desc": "Paramètres de l´appareil->I2C. Capteur d'intensité lumineuse BH1750."
+			}
+		},
+		"SUPLA_MAX44009": {
+			"name": "Sensor MAX44009",
+			"desc": "Ustawienia urządzenia->I2C. Czujnik natężenia światła MAX44009",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "MAX44009 sensor",
+				"desc": "Device settings->I2C. Light intensity sensor MAX44009."
+			},
+			"es": {
+				"name": "Sonda MAX44009",
+				"desc": "Configuración del dispositivo->I2C. Sensor de intensidad de luz MAX44009."
+			},
+			"de": {
+				"name": "Fühler MAX44009",
+				"desc": "Geräteeinstellungen->I2C. Lichtstärkesensor MAX44009."
+			},
+			"fr": {
+				"name": "Capteur MAX44009",
+				"desc": "Paramètres de l´appareil->I2C. Capteur d'intensité lumineuse MAX44009."
 			}
 		}
 	},
@@ -877,49 +920,7 @@
 			}
 		}
 	},
-	"OTHER": {
-		"SUPLA_RGBW": {
-			"name": "RGBW, RGB, Dimmer",
-			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę urządzeń RGBW, RGB i ściemniaczy.",
-			"defOn": false,
-			"en": {
-				"name": "RGBW, RGB, Dimmer",
-				"desc": "Device settings->Other. Enables support for RGBW, RGB devices and dimmers."
-			},
-			"es": {
-				"name": "RGBW, RGB, atenuador",
-				"desc": "Configuración del dispositivo->Otro. Permite la compatibilidad con reguladores y dispositivos RGBW, RGB."
-			},
-			"de": {
-				"name": "RGBW, RGB, Dimmer",
-				"desc": "Geräteeinstellungen->Andere. Aktiviert die Unterstützung für RGBW, RGB-Geräte und Dimmer."
-			},
-			"fr": {
-				"name": "RGBW, RGB, Gradateur",
-				"desc": "Paramètres de l´appareil->Autre. Active la prise en charge des périphériques RGBW, RGB et des gradateurs."
-			}
-		},
-		"SUPLA_HC_SR04": {
-			"name": "Czujnik odległości HC-SR04",
-			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę czujnika odległości HC-SR04.",
-			"defOn": false,
-			"en": {
-				"name": "HC-SR04 distance sensor",
-				"desc": "Device settings->Other. Enables operation of the HC-SR04 distance sensor."
-			},
-			"es": {
-				"name": "Sensor de distancia HC-SR04",
-				"desc": "Configuración del dispositivo->Otro. Habilita el funcionamiento del sensor de distancia HC-SR04."
-			},
-			"de": {
-				"name": "HC-SR04 Abstandssensor",
-				"desc": "Geräteeinstellungen->Andere. Aktiviert den Betrieb des Abstandssensors HC-SR04."
-			},
-			"fr": {
-				"name": "Capteur de distance HC-SR04",
-				"desc": "Paramètres de l´appareil->Autre. Permet le fonctionnement du capteur de distance HC-SR04."
-			}
-		},
+	"ENERGY_METER": {
 		"SUPLA_HLW8012": {
 			"name": "Licznik energii HLW8012, BL0937",
 			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę licznika energii HLW8012, BL0937.",
@@ -981,6 +982,71 @@
 			"fr": {
 				"name": "Compteur d´énergie CSE7766",
 				"desc": "Paramètres de l´appareil->Autre. Il permet le fonctionnement du compteur d´énergie CSE7766."
+			}
+		},
+		"SUPLA_ADE7953": {
+			"name": "Licznik energii ADE7953",
+			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę licznika energii ADE7953.",
+			"defOn": false,
+			"en": {
+				"name": "Energy meter ADE7953",
+				"desc": "Device settings->I2C. It enables the operation of the energy meter ADE7953."
+			},
+			"es": {
+				"name": "Contador de energía ADE7953",
+				"desc": "Configuración del dispositivo->I2C. Permite el funcionamiento del contador de energía ADE7953."
+			},
+			"de": {
+				"name": "Energiezähler ADE7953",
+				"desc": "Geräteeinstellungen->I2C. Es ermöglicht den Betrieb des Energiezählers ADE7953."
+			},
+			"fr": {
+				"name": "Compteur d´énergie ADE7953",
+				"desc": "Paramètres de l´appareil->I2C. Il permet le fonctionnement du compteur d´énergie ADE7953."
+			}
+		}
+	},
+	"OTHER": {
+		"SUPLA_RGBW": {
+			"name": "RGBW, RGB, Dimmer",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę urządzeń RGBW, RGB i ściemniaczy.",
+			"defOn": false,
+			"en": {
+				"name": "RGBW, RGB, Dimmer",
+				"desc": "Device settings->Other. Enables support for RGBW, RGB devices and dimmers."
+			},
+			"es": {
+				"name": "RGBW, RGB, atenuador",
+				"desc": "Configuración del dispositivo->Otro. Permite la compatibilidad con reguladores y dispositivos RGBW, RGB."
+			},
+			"de": {
+				"name": "RGBW, RGB, Dimmer",
+				"desc": "Geräteeinstellungen->Andere. Aktiviert die Unterstützung für RGBW, RGB-Geräte und Dimmer."
+			},
+			"fr": {
+				"name": "RGBW, RGB, Gradateur",
+				"desc": "Paramètres de l´appareil->Autre. Active la prise en charge des périphériques RGBW, RGB et des gradateurs."
+			}
+		},
+		"SUPLA_HC_SR04": {
+			"name": "Czujnik odległości HC-SR04",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę czujnika odległości HC-SR04.",
+			"defOn": false,
+			"en": {
+				"name": "HC-SR04 distance sensor",
+				"desc": "Device settings->Other. Enables operation of the HC-SR04 distance sensor."
+			},
+			"es": {
+				"name": "Sensor de distancia HC-SR04",
+				"desc": "Configuración del dispositivo->Otro. Habilita el funcionamiento del sensor de distancia HC-SR04."
+			},
+			"de": {
+				"name": "HC-SR04 Abstandssensor",
+				"desc": "Geräteeinstellungen->Andere. Aktiviert den Betrieb des Abstandssensors HC-SR04."
+			},
+			"fr": {
+				"name": "Capteur de distance HC-SR04",
+				"desc": "Paramètres de l´appareil->Autre. Permet le fonctionnement du capteur de distance HC-SR04."
 			}
 		},
 		"SUPLA_IMPULSE_COUNTER": {
@@ -1149,6 +1215,14 @@
 			"es": "Expansores",
 			"de": "Expander",
 			"fr": "Expanseurs"
+		},
+		"ENERGY_METER": {
+			"pl": "Licznik Energii Elektrycznej",
+			"en": "Electric energy meter",
+			"es": "Medidor de energía eléctrica",
+			"de": "Stromzähler",
+			"fr": "Compteur d'énergie électrique"
 		}
+
 	}
 }

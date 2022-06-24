@@ -188,9 +188,11 @@
 #define S_CH_CORRECTION     "Correction de canal:"
 
 #ifdef SUPLA_RF_BRIDGE
-#define S_CODES "kodów"
-#define S_NO    "Brak"
-#define S_READ  "Odczytaj"
+#define S_CODES       "codes"
+#define S_NO          "no"
+#define S_READ        "Read"
+#define S_TRANSMITTER "Transmitter"
+#define S_RECEIVER    "Receiver"
 #endif
 
 #endif  // _LANGUAGE_FR_S_H_

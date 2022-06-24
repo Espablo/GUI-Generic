@@ -377,31 +377,24 @@ int SuplaConfigESP::getGpio(int nr, int function) {
           break;
       }
 
-      switch (getAdressMCP23017(nr, function)) {
-        case 0:
-          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function &&
-              ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
-            return gpio + shift;
-          }
-          break;
-        case 1:
-          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function &&
-              ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
-            return (gpio + shift + shiftPin);
-          }
-          break;
-        case 2:
-          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function &&
-              ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
-            return gpio + shift + (shiftPin * 2);
-          }
-          break;
-        case 3:
-          if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_4).toInt() == function &&
-              ConfigManager->get(key)->getElement(MCP23017_NR_4).toInt() == nr) {
-            return gpio + shift + (shiftPin * 3);
-          }
-          break;
+      if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_1).toInt() == function &&
+          ConfigManager->get(key)->getElement(MCP23017_NR_1).toInt() == nr) {
+        return gpio + shift;
+      }
+
+      if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_2).toInt() == function &&
+          ConfigManager->get(key)->getElement(MCP23017_NR_2).toInt() == nr) {
+        return (gpio + shift + shiftPin);
+      }
+
+      if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_3).toInt() == function &&
+          ConfigManager->get(key)->getElement(MCP23017_NR_3).toInt() == nr) {
+        return gpio + shift + (shiftPin * 2);
+      }
+
+      if (ConfigManager->get(key)->getElement(MCP23017_FUNCTION_4).toInt() == function &&
+          ConfigManager->get(key)->getElement(MCP23017_NR_4).toInt() == nr) {
+        return gpio + shift + (shiftPin * 3);
       }
     }
 #endif
@@ -633,7 +626,7 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   uint8_t count = 0;
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
-  if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
+  if (ConfigESP->checkActiveMCP23017(exception)) {
     return 32;
   }
 #endif
@@ -674,28 +667,31 @@ bool SuplaConfigESP::checkGpio(int gpio) {
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
 bool SuplaConfigESP::checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function) {
-  if (gpio == OFF_GPIO_EXPENDER) {
-    return true;
-  }
-  else if (gpio == 16) {
-    return false;
+  uint8_t key = KEY_GPIO + gpio;
+  uint8_t address = OFF_ADDRESS_MCP23017, maxNr;
+  uint8_t type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
+
+  if (type == EXPENDER_PCF8574) {
+    maxNr = 8;
   }
   else {
-    uint8_t key = KEY_GPIO + gpio;
-    uint8_t address = ConfigESP->getAdressMCP23017(nr, function);
+    maxNr = 16;
+  }
 
-    if (nr < 16)
-      address = ConfigESP->getAdressMCP23017(0, function);
-    else
-      address = ConfigESP->getAdressMCP23017(16, function);
+  if (nr < maxNr) {
+    maxNr = 0;
+  }
 
-    if (address == OFF_GPIO_EXPENDER) {
-      return true;
+  for (uint8_t gpio = maxNr; gpio <= OFF_GPIO_EXPENDER; gpio++) {
+    address = ConfigESP->getAdressMCP23017(gpio, function);
+
+    if (address != OFF_ADDRESS_MCP23017) {
+      break;
     }
+  }
 
-    if (ConfigManager->get(key)->getElement(getFunctionMCP23017(address)).toInt() != FUNCTION_OFF) {
-      return false;
-    }
+  if (ConfigManager->get(key)->getElement(getFunctionMCP23017(address)).toInt() != FUNCTION_OFF) {
+    return false;
   }
   return true;
 }
