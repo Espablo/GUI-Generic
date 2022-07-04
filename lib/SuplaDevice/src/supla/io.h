@@ -14,8 +14,8 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef SRC_SUPLA_IO_H_
-#define SRC_SUPLA_IO_H_
+#ifndef _supla_io_h
+#define _supla_io_h
 
 #include <stdint.h>
 
@@ -38,7 +38,7 @@ class Io {
   static void analogWrite(uint8_t pin, int value);
   static unsigned int pulseIn(uint8_t pin,
       uint8_t value,
-      uint64_t timeoutMicro);
+      unsigned long timeoutMicro);
 
   static void pinMode(int channelNumber, uint8_t pin, uint8_t mode);
   static int digitalRead(int channelNumber, uint8_t pin);
@@ -47,7 +47,7 @@ class Io {
   static unsigned int pulseIn(int channelNumber,
       uint8_t pin,
       uint8_t value,
-      uint64_t timeoutMicro);
+      unsigned long timeoutMicro);
 
   static Io *ioInstance;
 
@@ -58,10 +58,10 @@ class Io {
   virtual unsigned int customPulseIn(int channelNumber,
       uint8_t pin,
       uint8_t value,
-      uint64_t timeoutMicro);
+      unsigned long timeoutMicro);
   virtual void customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val);
   virtual void customAnalogWrite(int channelNumber, uint8_t pin, int val);
 };
 };  // namespace Supla
 
-#endif  // SRC_SUPLA_IO_H_
+#endif

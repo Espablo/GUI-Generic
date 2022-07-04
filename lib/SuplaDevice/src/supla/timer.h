@@ -14,11 +14,11 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef SRC_SUPLA_TIMER_H_
-#define SRC_SUPLA_TIMER_H_
+#ifndef _supla_timer_h
+#define _supla_timer_h
 
 namespace Supla {
   void initTimers();
 };
 
-#endif  // SRC_SUPLA_TIMER_H_
+#endif

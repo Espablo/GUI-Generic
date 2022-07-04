@@ -14,32 +14,29 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef SRC_SUPLA_CORRECTION_H_
-#define SRC_SUPLA_CORRECTION_H_
+#ifndef __correction_h
+#define __correction_h
 
 #include <stdint.h>
 
 namespace Supla {
 
-class Correction {
- public:
-  static void add(uint8_t channelNumber,
-       double correction,
-       bool forSecondaryValue = false);
-  static double get(uint8_t channelNumber, bool forSecondaryValue = false);
-  static void clear();
+  class Correction {
+    public:
+      static void add(uint8_t channelNumber, double correction, bool forSecondaryValue = false);
+      static double get(uint8_t channelNumber, bool forSecondaryValue = false);
+      static void clear();
 
- protected:
-  Correction(uint8_t channelNumber, double correction, bool forSecondaryValue);
-  ~Correction();
+    protected:
+      Correction(uint8_t channelNumber, double correction, bool forSecondaryValue);
+      ~Correction();
 
-  static Correction *first;
-  Correction *next;
-  uint8_t channelNumber;
-  double correction;
-  bool forSecondaryValue;
+      static Correction *first;
+      Correction *next;
+      uint8_t channelNumber;
+      double correction;
+      bool forSecondaryValue;
+  };
+
 };
-
-};  // namespace Supla
-
-#endif  // SRC_SUPLA_CORRECTION_H_
+#endif

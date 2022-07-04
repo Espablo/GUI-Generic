@@ -73,7 +73,7 @@ void setup() {
      charge
 
   */
-  Eth.setSSLEnabled(false);  // disable SSL
+  Eth.enableSSL(false);  // disable SSL
   //ETH.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS);   // Static IP address
   
   SuplaDevice.begin(

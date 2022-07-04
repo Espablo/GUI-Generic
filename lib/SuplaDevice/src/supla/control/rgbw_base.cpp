@@ -5,12 +5,10 @@
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
-
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -18,18 +16,19 @@
 
 #include <stdint.h>
 
-#include "../storage/storage.h"
 #include "../time.h"
-#include "../tools.h"
+#include "../storage/storage.h"
 #include "rgbw_base.h"
+#include "../tools.h"
 
 #define RGBW_STATE_ON_INIT_RESTORE -1
-#define RGBW_STATE_ON_INIT_OFF     0
-#define RGBW_STATE_ON_INIT_ON      1
+#define RGBW_STATE_ON_INIT_OFF 0
+#define RGBW_STATE_ON_INIT_ON 1
 
 #ifdef ARDUINO_ARCH_ESP32
-int esp32PwmChannelCouner = 0;
+  int esp32PwmChannelCouner = 0;
 #endif
+
 
 namespace Supla {
 namespace Control {
@@ -288,8 +287,7 @@ void RGBWBase::iterateDimmerRGBW(int rgbStep, int wStep) {
     curBrightness = curColorBrightness;
   }
   if (rgbStep > 0) {
-    if (curColorBrightness <= minIterationBrightness &&
-        dimIterationDirection == true) {
+    if (curColorBrightness <= minIterationBrightness && dimIterationDirection == true) {
       iterationDelayCounter++;
       if (iterationDelayCounter == 5) {
         dimIterationDirection = false;
@@ -307,8 +305,7 @@ void RGBWBase::iterateDimmerRGBW(int rgbStep, int wStep) {
       }
     }
   } else if (wStep > 0) {
-    if (curBrightness <= minIterationBrightness &&
-        dimIterationDirection == true) {
+    if (curBrightness <= minIterationBrightness && dimIterationDirection == true) {
       iterationDelayCounter++;
       if (iterationDelayCounter == 5) {
         dimIterationDirection = false;
@@ -340,7 +337,7 @@ void RGBWBase::iterateDimmerRGBW(int rgbStep, int wStep) {
   if (curBrightness + wStep < minIterationBrightness) {
     wStep = curBrightness - minIterationBrightness;
   }
-
+  
   setRGBW(-1,
           -1,
           -1,
@@ -361,11 +358,11 @@ void RGBWBase::setFadeEffectTime(int timeMs) {
 }
 
 void RGBWBase::onTimer() {
-  uint64_t timeDiff = millis() - lastTick;
+  unsigned long timeDiff = millis() - lastTick;
   lastTick = millis();
 
   if (timeDiff > 0) {
-    double divider = 1.0 * fadeEffect / timeDiff;
+    double divider = 1.0* fadeEffect / timeDiff;
     if (divider <= 0) {
       divider = 1;
     }
@@ -377,10 +374,9 @@ void RGBWBase::onTimer() {
     }
 
     int curRedAdj = adjustRange(curRed, 0, 255, 0, 1023);
-    int curGreenAdj = adjustRange(curGreen, 0, 255, 0, 1023);
+    int curGreenAdj = adjustRange(curGreen, 0, 255, 0 , 1023);
     int curBlueAdj = adjustRange(curBlue, 0, 255, 0, 1023);
-    int curColorBrightnessAdj =
-        adjustRange(curColorBrightness, 0, 100, 0, 1023);
+    int curColorBrightnessAdj = adjustRange(curColorBrightness, 0, 100, 0, 1023);
     int curBrightnessAdj = adjustRange(curBrightness, 0, 100, 0, 1023);
 
     if (curRedAdj > hwRed) {
@@ -454,12 +450,8 @@ void RGBWBase::onTimer() {
     }
 
     if (valueChanged) {
-      uint32_t adjColorBrightness = adjustRange(
-          hwColorBrightness, 0, 1023, minColorBrightness, maxColorBrightness);
-      uint32_t adjBrightness =
-          adjustRange(hwBrightness, 0, 1023, minBrightness, maxBrightness);
       setRGBWValueOnDevice(
-          hwRed, hwGreen, hwBlue, adjColorBrightness, adjBrightness);
+          hwRed, hwGreen, hwBlue, hwColorBrightness, hwBrightness);
     }
   }
 }
@@ -495,8 +487,7 @@ void RGBWBase::onSaveState() {
                              sizeof(curBrightness));
   Supla::Storage::WriteState((unsigned char *)&lastColorBrightness,
                              sizeof(lastColorBrightness));
-  Supla::Storage::WriteState((unsigned char *)&lastBrightness,
-                             sizeof(lastBrightness));
+  Supla::Storage::WriteState((unsigned char *)&lastBrightness, sizeof(lastBrightness));
 }
 
 void RGBWBase::onLoadState() {
@@ -504,13 +495,13 @@ void RGBWBase::onLoadState() {
   Supla::Storage::ReadState((unsigned char *)&curGreen, sizeof(curGreen));
   Supla::Storage::ReadState((unsigned char *)&curBlue, sizeof(curBlue));
   Supla::Storage::ReadState((unsigned char *)&curColorBrightness,
-                            sizeof(curColorBrightness));
+                             sizeof(curColorBrightness));
   Supla::Storage::ReadState((unsigned char *)&curBrightness,
-                            sizeof(curBrightness));
+                             sizeof(curBrightness));
   Supla::Storage::ReadState((unsigned char *)&lastColorBrightness,
-                            sizeof(lastColorBrightness));
-  Supla::Storage::ReadState((unsigned char *)&lastBrightness,
-                            sizeof(lastBrightness));
+                             sizeof(lastColorBrightness));
+  Supla::Storage::ReadState((unsigned char *)&lastBrightness, sizeof(lastBrightness));
+
 }
 
 RGBWBase &RGBWBase::setDefaultStateOn() {
@@ -531,35 +522,5 @@ RGBWBase &RGBWBase::setDefaultStateRestore() {
 void RGBWBase::setMinIterationBrightness(uint8_t minBright) {
   minIterationBrightness = minBright;
 }
-
-RGBWBase &RGBWBase::setBrightnessLimits(int min, int max) {
-  if (min < 0) {
-    min = 0;
-  }
-  if (max > 1023) {
-    max = 1023;
-  }
-  if (min > max) {
-    min = max;
-  }
-  minBrightness = min;
-  maxBrightness = max;
-  return *this;
-}
-RGBWBase &RGBWBase::setColorBrightnessLimits(int min, int max) {
-  if (min < 0) {
-    min = 0;
-  }
-  if (max > 1023) {
-    max = 1023;
-  }
-  if (min > max) {
-    min = max;
-  }
-  minColorBrightness = min;
-  maxColorBrightness = max;
-  return *this;
-}
-
 };  // namespace Control
 };  // namespace Supla

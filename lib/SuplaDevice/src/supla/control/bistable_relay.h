@@ -24,8 +24,8 @@
  * information about status of bistable relay.
  */
 
-#ifndef SRC_SUPLA_CONTROL_BISTABLE_RELAY_H_
-#define SRC_SUPLA_CONTROL_BISTABLE_RELAY_H_
+#ifndef _bistable_relay_h
+#define _bistable_relay_h
 
 #include "relay.h"
 
@@ -56,12 +56,12 @@ class BistableRelay : public Relay {
   int statusPin;
   bool statusPullUp;
   bool statusHighIsOn;
-  uint64_t disarmTimeMs;
-  uint64_t lastReadTime;
+  unsigned long disarmTimeMs;
+  unsigned long lastReadTime;
   bool busy;
 };
 
 };  // namespace Control
 };  // namespace Supla
 
-#endif  // SRC_SUPLA_CONTROL_BISTABLE_RELAY_H_
+#endif

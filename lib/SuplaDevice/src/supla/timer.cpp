@@ -16,8 +16,6 @@
 
 #include <SuplaDevice.h>
 
-#include <supla/log_wrapper.h>
-
 #include "timer.h"
 
 #ifdef ARDUINO
@@ -34,8 +32,6 @@
 #elif defined(ESP_PLATFORM)
 #include "freertos/FreeRTOS.h"
 #include "freertos/timers.h"
-#elif defined(SUPLA_LINUX)
-#include <linux_timers.h>
 #endif
 
 namespace {
@@ -74,11 +70,13 @@ ISR(TIMER2_COMPA_vect) {
 TimerHandle_t slowerTimer;
 TimerHandle_t fasterTimer;
 
-void slowerTimerCb(TimerHandle_t xTimer) {
+void slowerTimerCb(TimerHandle_t xTimer)
+{
   SuplaDevice.onTimer();
 }
 
-void fasterTimerCb(TimerHandle_t xTimer) {
+void fasterTimerCb(TimerHandle_t xTimer)
+{
   SuplaDevice.onFastTimer();
 }
 #endif
@@ -89,15 +87,11 @@ void initTimers() {
 #if defined(ARDUINO_ARCH_ESP8266)
 
   os_timer_disarm(&supla_esp_timer);
-  os_timer_setfn(&supla_esp_timer,
-      reinterpret_cast<os_timer_func_t *>(esp_timer_cb),
-      NULL);
+  os_timer_setfn(&supla_esp_timer, (os_timer_func_t *)esp_timer_cb, NULL);
   os_timer_arm(&supla_esp_timer, 10, 1);
 
   os_timer_disarm(&supla_esp_fastTimer);
-  os_timer_setfn(&supla_esp_fastTimer,
-      reinterpret_cast<os_timer_func_t *>(esp_fastTimer_cb),
-      NULL);
+  os_timer_setfn(&supla_esp_fastTimer, (os_timer_func_t *)esp_fastTimer_cb, NULL);
   os_timer_arm(&supla_esp_fastTimer, 1, 1);
 
 #elif defined(ARDUINO_ARCH_ESP32)
@@ -134,26 +128,26 @@ void initTimers() {
   sei();  // allow interrupts
 #elif defined(ESP_PLATFORM)
   // ESP-IDF and ESP8266 RTOS (non Arduino)
-
   slowerTimer = xTimerCreate(
-      "SuplaSlowerTm", pdMS_TO_TICKS(10), pdTRUE, nullptr, &slowerTimerCb);
+      "SuplaSlowerTm", pdMS_TO_TICKS(10), pdTRUE, (void*)0, &slowerTimerCb);
   if (xTimerStart(slowerTimer, 100) != pdPASS) {
-    SUPLA_LOG_ERROR("Slower Timer start error");
+    supla_log(LOG_ERR, "Slower Timer start error");
   }
 
   fasterTimer = xTimerCreate(
-      "SuplaFasterTm", pdMS_TO_TICKS(1), pdTRUE, nullptr, &fasterTimerCb);
+      "SuplaFasterTm", pdMS_TO_TICKS(1), pdTRUE, (void*)0, &fasterTimerCb);
   if (xTimerStart(fasterTimer, 100) != pdPASS) {
-    SUPLA_LOG_ERROR("Faster Timer start error");
+    supla_log(LOG_ERR, "Faster Timer start error");
   }
 
 #elif defined(SUPLA_LINUX)
-  Supla::Linux::Timers::init();
+  supla_log(LOG_ERR, "Timers initialization: TODO");
 #elif defined(SUPLA_FREERTOS)
-  SUPLA_LOG_ERROR("Timers initialication: TODO");
+  supla_log(LOG_ERR, "Timers initialication: TODO");
 #else
 #error Please implement timers
 #endif
+  // TODO implement timers startup
 }
 
 };  // namespace Supla

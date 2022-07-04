@@ -19,16 +19,15 @@
  * by setting LOW or HIGH output on selected GPIO.
  */
 
-#include <supla/log_wrapper.h>
-#include <supla/time.h>
-
 #include "../actions.h"
 #include "../io.h"
 #include "../storage/storage.h"
 #include "relay.h"
+#include <supla/time.h>
+#include <supla-common/log.h>
 
-namespace Supla {
-namespace Control {
+using namespace Supla;
+using namespace Control;
 
 Relay::Relay(int pin, bool highIsOn, _supla_int_t functions)
     : pin(pin),
@@ -88,10 +87,6 @@ int Relay::handleNewValueFromServer(TSD_SuplaChannelNewValue *newValue) {
 }
 
 void Relay::turnOn(_supla_int_t duration) {
-  SUPLA_LOG_INFO(
-            "Relay[%d] turn ON (duration %d ms)",
-            channel.getChannelNumber(),
-            duration);
   durationMs = duration;
   durationTimestamp = millis();
   if (keepTurnOnDurationMs) {
@@ -106,10 +101,6 @@ void Relay::turnOn(_supla_int_t duration) {
 }
 
 void Relay::turnOff(_supla_int_t duration) {
-  SUPLA_LOG_INFO(
-            "Relay[%d] turn OFF (duration %d ms)",
-            channel.getChannelNumber(),
-            duration);
   durationMs = duration;
   durationTimestamp = millis();
   Supla::Io::digitalWrite(channel.getChannelNumber(), pin, pinOffValue());
@@ -126,10 +117,6 @@ bool Relay::isOn() {
 }
 
 void Relay::toggle(_supla_int_t duration) {
-  SUPLA_LOG_DEBUG(
-            "Relay[%d] toggle (duration %d ms)",
-            channel.getChannelNumber(),
-            duration);
   if (isOn()) {
     turnOff(duration);
   } else {
@@ -169,10 +156,8 @@ void Relay::onLoadState() {
   Supla::Storage::ReadState((unsigned char *)&storedTurnOnDurationMs,
                             sizeof(storedTurnOnDurationMs));
   if (keepTurnOnDurationMs) {
-    SUPLA_LOG_INFO(
-              "Relay[%d]: restored durationMs: %d",
-              channel.getChannelNumber(),
-              storedTurnOnDurationMs);
+    supla_log(LOG_DEBUG, "Relay[%d]: restored durationMs: %d",
+        channel.getChannelNumber(), storedTurnOnDurationMs);
   } else {
     storedTurnOnDurationMs = 0;
   }
@@ -180,10 +165,8 @@ void Relay::onLoadState() {
   bool enabled = false;
   Supla::Storage::ReadState((unsigned char *)&enabled, sizeof(enabled));
   if (stateOnInit < 0) {
-    SUPLA_LOG_INFO(
-              "Relay[%d]: restored relay state: %s",
-              channel.getChannelNumber(),
-              enabled ? "ON" : "OFF");
+    supla_log(LOG_DEBUG, "Relay[%d]: restored relay state: %s",
+        channel.getChannelNumber(), enabled ? "ON" : "OFF");
     if (enabled) {
       stateOnInit = STATE_ON_INIT_RESTORED_ON;
     } else {
@@ -215,6 +198,3 @@ Relay &Relay::keepTurnOnDuration(bool keep) {
 unsigned _supla_int_t Relay::getStoredTurnOnDurationMs() {
   return storedTurnOnDurationMs;
 }
-
-}  // namespace Control
-}  // namespace Supla

@@ -36,7 +36,6 @@ TEST(OnBetweenTests, OnBetweenConditionTests) {
   EXPECT_TRUE(cond->checkConditionFor(29));
   EXPECT_FALSE(cond->checkConditionFor(5));
 
-  delete cond;
 }
 
 

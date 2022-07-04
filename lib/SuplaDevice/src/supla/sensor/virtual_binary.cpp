@@ -43,30 +43,18 @@ void VirtualBinary::handleAction(int event, int action) {
   (void)(event);
   switch (action) {
     case SET: {
-      set();
+      state = true;
       break;
     }
     case CLEAR: {
-      clear();
+      state = false;
       break;
     }
     case TOGGLE: {
-      toggle();
+      state = !state;
       break;
     }
   }
-}
-
-void VirtualBinary::set() {
-  state = true;
-}
-
-void VirtualBinary::clear() {
-  state = false;
-}
-
-void VirtualBinary::toggle() {
-  state = !state;
 }
 
 };  // namespace Sensor

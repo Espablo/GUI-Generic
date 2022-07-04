@@ -107,7 +107,7 @@ void Si7021Sonoff::read() {
 }
 
 bool Si7021Sonoff::waitState(bool state) {
-  uint64_t timeout = micros();
+  unsigned long timeout = micros();
   while (micros() - timeout < 100) {
     if (digitalRead(pin) == state) return true;
     delayMicroseconds(1);

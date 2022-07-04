@@ -26,7 +26,7 @@ Uptime::Uptime()
       acceptConnectionLostCause(false) {
 }
 
-void Uptime::iterate(uint64_t millis) {
+void Uptime::iterate(unsigned long millis) {
   int seconds = (millis - lastMillis) / 1000;
   if (seconds > 0) {
     lastMillis = millis - ((millis - lastMillis) % 1000);

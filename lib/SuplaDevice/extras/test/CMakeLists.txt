@@ -4,10 +4,9 @@ project(supladevice)
 
 enable_testing()
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_BUILD_TYPE Debug)
-set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 include_directories(../../src)
 include_directories(doubles)
@@ -46,12 +45,10 @@ file(GLOB TEST_SRC
   ConditionTests/*.cpp
   RgbwDimmerTests/*.cpp
   ButtonTests/*.cpp
-  StorageTests/*.cpp
   SuplaDeviceTests/*.cpp
   CorrectionTests/*cpp
   ActionTriggerTests/*cpp
   ElectricityMeterTests/*cpp
-  ToolsTests/*cpp
   )
 
 file(GLOB DOUBLE_SRC doubles/*.cpp)
@@ -67,5 +64,3 @@ target_link_libraries(supladevicetests
 
 add_test(NAME supladevicetests
   COMMAND supladevicetests)
-
-target_compile_options(supladevicelib PRIVATE -Werror -Wall -Wextra -DSUPLA_TEST)

@@ -5,28 +5,24 @@
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
-
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include <supla-common/srpc.h>
-#include <supla/log_wrapper.h>
-
-#include "../time.h"
 #include "clock.h"
+#include "../time.h"
+#include <supla-common/srpc.h>
+#include <supla-common/log.h>
 
-namespace Supla {
+using namespace Supla;
 
 Clock::Clock()
-    : localtime(0), lastServerUpdate(0), lastMillis(0), isClockReady(false) {
-}
+  : localtime(0), lastServerUpdate(0), lastMillis(0), isClockReady(false){};
 
 bool Clock::isReady() {
   return isClockReady;
@@ -91,14 +87,8 @@ void Clock::parseLocaltimeFromServer(TSDC_UserLocalTimeResult *result) {
 
   isClockReady = true;
 
-  SUPLA_LOG_DEBUG(
-            "Current local time: %d-%d-%d %d:%d:%d",
-            getYear(),
-            getMonth(),
-            getDay(),
-            getHour(),
-            getMin(),
-            getSec());
+  supla_log(LOG_DEBUG, "Current local time: %d-%d-%d %d:%d:%d",
+      getYear(), getMonth(), getDay(), getHour(), getMin(), getSec());
 
   timeinfo.tm_year = result->year - 1900;
   timeinfo.tm_mon = result->month - 1;
@@ -115,19 +105,13 @@ void Clock::parseLocaltimeFromServer(TSDC_UserLocalTimeResult *result) {
 #elif defined(ARDUINO_ARCH_AVR)
   set_system_time(mktime(&timeinfo));
 #endif
-  SUPLA_LOG_DEBUG(
-            "Received local time from server: %d-%d-%d %d:%d:%d",
-            getYear(),
-            getMonth(),
-            getDay(),
-            getHour(),
-            getMin(),
-            getSec());
+  supla_log(LOG_DEBUG, "Received local time from server: %d-%d-%d %d:%d:%d",
+      getYear(), getMonth(), getDay(), getHour(), getMin(), getSec());
 }
 
 void Clock::onTimer() {
   if (isClockReady) {
-    uint64_t curMillis = millis();
+    unsigned long curMillis = millis();
     int seconds = (curMillis - lastMillis) / 1000;
     if (seconds > 0) {
       lastMillis = curMillis - ((curMillis - lastMillis) % 1000);
@@ -150,5 +134,3 @@ bool Clock::iterateConnected(void *srpc) {
   }
   return true;
 }
-
-};  // namespace Supla

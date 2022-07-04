@@ -14,8 +14,8 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef SRC_SUPLA_CONTROL_BISTABLE_ROLLER_SHUTTER_H_
-#define SRC_SUPLA_CONTROL_BISTABLE_ROLLER_SHUTTER_H_
+#ifndef _bistable_roller_shutter_h
+#define _bistable_roller_shutter_h
 
 #include "roller_shutter.h"
 
@@ -25,22 +25,22 @@ class BistableRollerShutter : public RollerShutter {
  public:
   BistableRollerShutter(int pinUp, int pinDown, bool highIsOn = true);
 
-  void onTimer() override;
+  void onTimer();
 
  protected:
-  void stopMovement() override;
-  void relayDownOn() override;
-  void relayUpOn() override;
-  void relayUpOff() override;
-  void relayDownOff() override;
+  void stopMovement();
+  void relayDownOn();
+  void relayUpOn();
+  void relayUpOff();
+  void relayDownOff();
 
   bool activeBiRelay;
-  uint64_t toggleTime;
+  unsigned long toggleTime;
 };
 
 };  // namespace Control
 };  // namespace Supla
 
+#endif
 
 
-#endif  // SRC_SUPLA_CONTROL_BISTABLE_ROLLER_SHUTTER_H_

@@ -14,18 +14,17 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef SRC_SUPLA_TIME_H_
-#define SRC_SUPLA_TIME_H_
+#ifndef _supla_time_h
+#define _supla_time_h
 
 #ifdef ARDUINO
 #include <Arduino.h>
 #else
-#include <cstdint>
 
-uint64_t millis(void);
-void delay(uint64_t);
-void delayMicroseconds(uint64_t);
+unsigned long millis(void);
+void delay(unsigned long);
+void delayMicroseconds(unsigned long);
 
 #endif
 
-#endif  // SRC_SUPLA_TIME_H_
+#endif /*_supla_time_h*/

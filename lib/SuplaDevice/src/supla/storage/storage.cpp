@@ -5,52 +5,36 @@
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
-
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include <string.h>
-#include <supla/log_wrapper.h>
 #include <supla/time.h>
+#include <supla-common/log.h>
 
-#include "config.h"
 #include "storage.h"
 
 #define SUPLA_STORAGE_VERSION 1
 
-namespace Supla {
+using namespace Supla;
 
 Storage *Storage::instance = nullptr;
-Config *Storage::configInstance = nullptr;
 
 Storage *Storage::Instance() {
   return instance;
 }
 
-Config *Storage::ConfigInstance() {
-  return configInstance;
-}
-
 bool Storage::Init() {
-  bool result = false;
   if (Instance()) {
-    result = Instance()->init();
-  } else {
-    SUPLA_LOG_DEBUG("Main storage not configured");
+    return Instance()->init();
   }
-  if (ConfigInstance()) {
-    result = ConfigInstance()->init();
-  } else {
-    SUPLA_LOG_DEBUG("Config storage not configured");
-  }
-  return result;
+  return false;
 }
 
 bool Storage::ReadState(unsigned char *buf, int size) {
@@ -63,6 +47,20 @@ bool Storage::ReadState(unsigned char *buf, int size) {
 bool Storage::WriteState(const unsigned char *buf, int size) {
   if (Instance()) {
     return Instance()->writeState(buf, size);
+  }
+  return false;
+}
+
+bool Storage::LoadDeviceConfig() {
+  if (Instance()) {
+    return Instance()->loadDeviceConfig();
+  }
+  return false;
+}
+
+bool Storage::LoadElementConfig() {
+  if (Instance()) {
+    return Instance()->loadElementConfig();
   }
   return false;
 }
@@ -81,25 +79,17 @@ bool Storage::FinalizeSaveState() {
   return false;
 }
 
-bool Storage::SaveStateAllowed(uint64_t ms) {
+bool Storage::SaveStateAllowed(unsigned long ms) {
   if (Instance()) {
     return Instance()->saveStateAllowed(ms);
   }
   return false;
 }
 
-void Storage::ScheduleSave(uint64_t delayMs) {
+void Storage::ScheduleSave(unsigned long delayMs) {
   if (Instance()) {
     Instance()->scheduleSave(delayMs);
   }
-}
-
-void Storage::SetConfigInstance(Config *instance) {
-  configInstance = instance;
-}
-
-bool Storage::IsConfigStorageAvailable() {
-  return (ConfigInstance() != nullptr);
 }
 
 Storage::Storage(unsigned int storageStartingOffset)
@@ -114,7 +104,7 @@ Storage::Storage(unsigned int storageStartingOffset)
       newSectionSize(0),
       sectionsCount(0),
       dryRun(false),
-      saveStatePeriod(1000),
+      saveStatePeriod(1000), 
       lastWriteTimestamp(0) {
   instance = this;
 }
@@ -133,8 +123,7 @@ bool Storage::prepareState(bool performDryRun) {
 bool Storage::readState(unsigned char *buf, int size) {
   if (elementStateOffset + sizeof(SectionPreamble) + elementStateSize <
       currentStateOffset + size) {
-    SUPLA_LOG_DEBUG(
-              "Warning! Attempt to read state outside of section size");
+    supla_log(LOG_DEBUG, "Warning! Attempt to read state outside of section size");
     return false;
   }
   currentStateOffset += readStorage(currentStateOffset, buf, size);
@@ -151,9 +140,9 @@ bool Storage::writeState(const unsigned char *buf, int size) {
   if (elementStateSize > 0 &&
       elementStateOffset + sizeof(SectionPreamble) + elementStateSize <
           currentStateOffset + size) {
-    SUPLA_LOG_DEBUG(
-              "Warning! Attempt to write state outside of section size.");
-    SUPLA_LOG_DEBUG(
+    supla_log(LOG_DEBUG,
+        "Warning! Attempt to write state outside of section size.");
+    supla_log(LOG_DEBUG,
         "Storage: rewriting element state section. All data will be lost.");
     elementStateSize = 0;
     elementStateOffset = 0;
@@ -174,16 +163,15 @@ bool Storage::writeState(const unsigned char *buf, int size) {
     if (elementConfigOffset != 0) {
       elementStateOffset += sizeof(SectionPreamble) + elementConfigSize;
     }
-    SUPLA_LOG_DEBUG(
-              "Initialization of elementStateOffset: %d",
-              elementStateOffset);
+    supla_log(LOG_DEBUG, "Initialization of elementStateOffset: %d",
+        elementStateOffset);
 
     currentStateOffset = elementStateOffset + sizeof(SectionPreamble);
 
     sectionsCount++;
 
     // Update Storage preamble with new section count
-    SUPLA_LOG_DEBUG("Updating Storage preamble");
+    supla_log(LOG_DEBUG, "Updating Storage preamble");
     unsigned char suplaTag[] = {'S', 'U', 'P', 'L', 'A'};
     Preamble preamble;
     memcpy(preamble.suplaTag, suplaTag, 5);
@@ -203,9 +191,9 @@ bool Storage::finalizeSaveState() {
   if (dryRun) {
     dryRun = false;
     if (elementStateSize != newSectionSize) {
-      SUPLA_LOG_DEBUG(
-                "Element state section size doesn't match current device "
-                "configuration");
+      supla_log(LOG_DEBUG,
+          "Element state section size doesn't match current device "
+            "configuration");
       elementStateOffset = 0;
       elementStateSize = 0;
       return false;
@@ -218,7 +206,7 @@ bool Storage::finalizeSaveState() {
   preamble.size = newSectionSize;
   preamble.crc1 = 0;
   preamble.crc2 = 0;
-  // TODO(klew): add crc calculation
+  // TODO add crc calculation
 
   updateStorage(
       elementStateOffset, (unsigned char *)&preamble, sizeof(preamble));
@@ -228,7 +216,7 @@ bool Storage::finalizeSaveState() {
 }
 
 bool Storage::init() {
-  SUPLA_LOG_DEBUG("Storage initialization");
+  supla_log(LOG_DEBUG, "Storage initialization");
   unsigned int currentOffset = storageStartingOffset;
   Preamble preamble = {};
   currentOffset +=
@@ -237,7 +225,7 @@ bool Storage::init() {
   unsigned char suplaTag[] = {'S', 'U', 'P', 'L', 'A'};
 
   if (memcmp(suplaTag, preamble.suplaTag, 5)) {
-    SUPLA_LOG_DEBUG("Storage: missing Supla tag. Rewriting...");
+    supla_log(LOG_DEBUG, "Storage: missing Supla tag. Rewriting...");
 
     memcpy(preamble.suplaTag, suplaTag, 5);
     preamble.version = SUPLA_STORAGE_VERSION;
@@ -248,13 +236,14 @@ bool Storage::init() {
     commit();
 
   } else if (preamble.version != SUPLA_STORAGE_VERSION) {
-    SUPLA_LOG_DEBUG(
-              "Storage: storage version [%d] is not supported. Storage not "
-              "initialized",
-              preamble.version);
+    supla_log(
+        LOG_DEBUG,
+        "Storage: storage version [%d] is not supported. Storage not initialized",
+        preamble.version);
     return false;
   } else {
-    SUPLA_LOG_DEBUG("Storage: Number of sections %d", preamble.sectionsCount);
+    supla_log(LOG_DEBUG, "Storage: Number of sections %d",
+        preamble.sectionsCount);
   }
 
   if (preamble.sectionsCount == 0) {
@@ -262,19 +251,17 @@ bool Storage::init() {
   }
 
   for (int i = 0; i < preamble.sectionsCount; i++) {
-    SUPLA_LOG_DEBUG("Reading section: %d", i);
+    supla_log(LOG_DEBUG, "Reading section: %d", i);
     SectionPreamble section;
     unsigned int sectionOffset = currentOffset;
     currentOffset +=
         readStorage(currentOffset, (unsigned char *)&section, sizeof(section));
 
-    SUPLA_LOG_DEBUG(
-              "Section type: %d; size: %d",
-              static_cast<int>(section.type),
-              section.size);
+    supla_log(LOG_DEBUG, "Section type: %d; size: %d",
+        static_cast<int>(section.type), section.size);
 
     if (section.crc1 != section.crc2) {
-      SUPLA_LOG_DEBUG(
+      supla_log(LOG_DEBUG,
           "Warning! CRC copies on section doesn't match. Please check your "
           "storage hardware");
     }
@@ -296,7 +283,7 @@ bool Storage::init() {
         break;
       }
       default: {
-        SUPLA_LOG_DEBUG("Warning! Unknown section type");
+        supla_log(LOG_DEBUG, "Warning! Unknown section type");
         break;
       }
     }
@@ -306,25 +293,29 @@ bool Storage::init() {
   return true;
 }
 
-int Storage::updateStorage(unsigned int offset,
-                           const unsigned char *buf,
-                           int size) {
+bool Storage::loadDeviceConfig() {
+  return true;
+}
+
+bool Storage::loadElementConfig() {
+  return true;
+}
+
+int Storage::updateStorage(unsigned int offset, const unsigned char *buf, int size) {
   if (offset < storageStartingOffset) {
     return 0;
   }
 
-  unsigned char *currentData = new unsigned char[size];
+  unsigned char currentData[size];
   readStorage(offset, currentData, size, false);
 
   if (memcmp(currentData, buf, size)) {
-    delete[] currentData;
     return writeStorage(offset, buf, size);
   }
-  delete[] currentData;
   return size;
 }
 
-void Storage::setStateSavePeriod(uint64_t periodMs) {
+void Storage::setStateSavePeriod(unsigned long periodMs) {
   if (periodMs < 1000) {
     saveStatePeriod = 1000;
   } else {
@@ -332,7 +323,7 @@ void Storage::setStateSavePeriod(uint64_t periodMs) {
   }
 }
 
-bool Storage::saveStateAllowed(uint64_t ms) {
+bool Storage::saveStateAllowed(unsigned long ms) {
   if (ms - lastWriteTimestamp > saveStatePeriod) {
     lastWriteTimestamp = ms;
     return true;
@@ -340,12 +331,11 @@ bool Storage::saveStateAllowed(uint64_t ms) {
   return false;
 }
 
-void Storage::scheduleSave(uint64_t delayMs) {
-  uint64_t currentMs = millis();
-  uint64_t newTimestamp = currentMs - saveStatePeriod - 1 + delayMs;
-  if (currentMs - lastWriteTimestamp < currentMs - newTimestamp) {
+void Storage::scheduleSave(unsigned long delayMs) {
+  unsigned long currentMs = millis();
+  unsigned long newTimestamp = currentMs - saveStatePeriod - 1 + delayMs;
+  
+  if (currentMs - lastWriteTimestamp  < currentMs - newTimestamp) {
     lastWriteTimestamp = newTimestamp;
   }
 }
-
-}  // namespace Supla

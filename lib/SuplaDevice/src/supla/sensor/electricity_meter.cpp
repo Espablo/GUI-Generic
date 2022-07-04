@@ -5,23 +5,22 @@
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
-
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include <string.h>
-#include <supla/time.h>
 
-#include "../condition.h"
-#include "../events.h"
 #include "electricity_meter.h"
+#include "../events.h"
+#include "../condition.h"
+
+#include <supla/time.h>
 
 Supla::Sensor::ElectricityMeter::ElectricityMeter()
     : valueChanged(false), lastReadTime(0), refreshRateSec(5) {
@@ -240,7 +239,7 @@ void Supla::Sensor::ElectricityMeter::onInit() {
 }
 
 void Supla::Sensor::ElectricityMeter::iterateAlways() {
-  if (millis() - lastReadTime > refreshRateSec * 1000) {
+  if (millis() - lastReadTime > refreshRateSec*1000) {
     lastReadTime = millis();
     readValuesFromDevice();
     updateChannelValues();
@@ -263,25 +262,20 @@ void Supla::Sensor::ElectricityMeter::setRefreshRate(unsigned int sec) {
   }
 }
 
-// TODO(klew): move those addAction methods to separate parent
+// TODO: move those addAction methods to separate parent
 // class i.e. ExtChannelElement - similar to ChannelElement
-void Supla::Sensor::ElectricityMeter::addAction(int action,
-                                                ActionHandler &client,
-                                                Supla::Condition *condition) {
+void Supla::Sensor::ElectricityMeter::addAction(int action, ActionHandler &client, Supla::Condition *condition) {
   condition->setClient(client);
   condition->setSource(this);
   LocalAction::addAction(action, condition, Supla::ON_CHANGE);
 }
 
-void Supla::Sensor::ElectricityMeter::addAction(int action,
-                                                ActionHandler *client,
-                                                Supla::Condition *condition) {
+void Supla::Sensor::ElectricityMeter::addAction(int action, ActionHandler *client, Supla::Condition *condition) {
   addAction(action, *client, condition);
 }
 
 // energy 1 == 0.00001 kWh
-unsigned _supla_int64_t
-Supla::Sensor::ElectricityMeter::getFwdActEnergy(int phase) {
+unsigned _supla_int64_t Supla::Sensor::ElectricityMeter::getFwdActEnergy(int phase) {
   if (phase >= 0 && phase < MAX_PHASES) {
     return emValue.total_forward_active_energy[phase];
   }
@@ -289,8 +283,7 @@ Supla::Sensor::ElectricityMeter::getFwdActEnergy(int phase) {
 }
 
 // energy 1 == 0.00001 kWh
-unsigned _supla_int64_t
-Supla::Sensor::ElectricityMeter::getRvrActEnergy(int phase) {
+unsigned _supla_int64_t Supla::Sensor::ElectricityMeter::getRvrActEnergy(int phase) {
   if (phase >= 0 && phase < MAX_PHASES) {
     return emValue.total_reverse_active_energy[phase];
   }
@@ -298,8 +291,7 @@ Supla::Sensor::ElectricityMeter::getRvrActEnergy(int phase) {
 }
 
 // energy 1 == 0.00001 kWh
-unsigned _supla_int64_t
-Supla::Sensor::ElectricityMeter::getFwdReactEnergy(int phase) {
+unsigned _supla_int64_t Supla::Sensor::ElectricityMeter::getFwdReactEnergy(int phase) {
   if (phase >= 0 && phase < MAX_PHASES) {
     return emValue.total_forward_reactive_energy[phase];
   }
@@ -307,8 +299,7 @@ Supla::Sensor::ElectricityMeter::getFwdReactEnergy(int phase) {
 }
 
 // energy 1 == 0.00001 kWh
-unsigned _supla_int64_t
-Supla::Sensor::ElectricityMeter::getRvrReactEnergy(int phase) {
+unsigned _supla_int64_t Supla::Sensor::ElectricityMeter::getRvrReactEnergy(int phase) {
   if (phase >= 0 && phase < MAX_PHASES) {
     return emValue.total_reverse_reactive_energy[phase];
   }

@@ -15,10 +15,8 @@
 */
 
 #include "internal_pin_output.h"
-
-#include <supla/time.h>
-
 #include "../events.h"
+#include <supla/time.h>
 
 Supla::Control::InternalPinOutput::InternalPinOutput(int pin, bool highIsOn)
     : pin(pin),

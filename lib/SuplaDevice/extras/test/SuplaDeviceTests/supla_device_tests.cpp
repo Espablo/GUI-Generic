@@ -26,6 +26,9 @@
 
 using ::testing::Return;
 using ::testing::_;
+using ::testing::DoAll;
+using ::testing::Assign;
+using ::testing::ReturnPointee;
 
 class SuplaDeviceTests : public ::testing::Test {
   protected:
@@ -190,26 +193,26 @@ TEST_F(SuplaDeviceTests, StartWithoutNetworkInterfaceWithElementsWithStorage) {
   EXPECT_EQ(sd.getCurrentStatus(), STATUS_MISSING_NETWORK_INTERFACE);
 }
 
-class NetworkMockWithMac : public Supla::Network {
+class NetworkMock : public Supla::Network {
   public:
-    NetworkMockWithMac() : Supla::Network(nullptr) {};
-    MOCK_METHOD(int, read, (void *, int ), (override));
-    MOCK_METHOD(int, write, (void *, int ), (override));
-    MOCK_METHOD(int, connect, (const char *, int), (override));
-    MOCK_METHOD(bool, connected, (), (override));
-    MOCK_METHOD(void, disconnect, (), (override));
-    MOCK_METHOD(void, setup, (), (override));
-    MOCK_METHOD(void, setTimeout, (int), (override));
+    NetworkMock() : Supla::Network(nullptr) {};
+  MOCK_METHOD(int, read, (void *, int ), (override));
+  MOCK_METHOD(int, write, (void *, int ), (override));
+  MOCK_METHOD(int, connect, (const char *, int), (override));
+  MOCK_METHOD(bool, connected, (), (override));
+  MOCK_METHOD(void, disconnect, (), (override));
+  MOCK_METHOD(void, setup, (), (override));
+  MOCK_METHOD(void, setTimeout, (int), (override));
 
-    MOCK_METHOD(bool, isReady, (), (override));
-    MOCK_METHOD(bool, iterate, (), (override));
-    MOCK_METHOD(bool, ping, (void *), (override));
-    MOCK_METHOD(bool, getMacAddr, (uint8_t*), (override));
+  MOCK_METHOD(bool, isReady, (), (override));
+  MOCK_METHOD(bool, iterate, (), (override));
+  MOCK_METHOD(bool, ping, (void *), (override));
+
 };
 
 TEST_F(SuplaDeviceTests, BeginStopsAtEmptyGUID) {
   ::testing::InSequence seq;
-  NetworkMockWithMac net;
+  NetworkMock net;
   TimerMock timer;
 
   SuplaDeviceClass sd;
@@ -220,24 +223,9 @@ TEST_F(SuplaDeviceTests, BeginStopsAtEmptyGUID) {
   EXPECT_EQ(sd.getCurrentStatus(), STATUS_INVALID_GUID);
 }
 
-TEST_F(SuplaDeviceTests, BeginStopsAtEmptyAuthkey) {
-  ::testing::InSequence seq;
-  NetworkMockWithMac net;
-  TimerMock timer;
-
-  SuplaDeviceClass sd;
-
-  EXPECT_CALL(timer, initTimers());
-
-  char GUID[SUPLA_GUID_SIZE] = {1};
-  sd.setGUID(GUID);
-  EXPECT_FALSE(sd.begin());
-  EXPECT_EQ(sd.getCurrentStatus(), STATUS_INVALID_AUTHKEY);
-}
-
 TEST_F(SuplaDeviceTests, BeginStopsAtEmptyServer) {
   ::testing::InSequence seq;
-  NetworkMockWithMac net;
+  NetworkMock net;
   TimerMock timer;
 
   SuplaDeviceClass sd;
@@ -245,17 +233,31 @@ TEST_F(SuplaDeviceTests, BeginStopsAtEmptyServer) {
   EXPECT_CALL(timer, initTimers());
 
   char GUID[SUPLA_GUID_SIZE] = {1};
-  char AUTHKEY[SUPLA_AUTHKEY_SIZE] = {2};
   sd.setGUID(GUID);
-  sd.setAuthKey(AUTHKEY);
-  sd.setEmail("john@supla");
   EXPECT_FALSE(sd.begin());
   EXPECT_EQ(sd.getCurrentStatus(), STATUS_UNKNOWN_SERVER_ADDRESS);
 }
 
 TEST_F(SuplaDeviceTests, BeginStopsAtEmptyEmail) {
   ::testing::InSequence seq;
-  NetworkMockWithMac net;
+  NetworkMock net;
+  TimerMock timer;
+
+  SuplaDeviceClass sd;
+
+  EXPECT_CALL(timer, initTimers());
+
+  char GUID[SUPLA_GUID_SIZE] = {1};
+  sd.setGUID(GUID);
+  sd.setServer("supla.rulez");
+  EXPECT_FALSE(sd.begin());
+  EXPECT_EQ(sd.getCurrentStatus(), STATUS_MISSING_CREDENTIALS);
+}
+
+
+TEST_F(SuplaDeviceTests, BeginStopsAtEmptyAuthkey) {
+  ::testing::InSequence seq;
+  NetworkMock net;
   TimerMock timer;
 
   SuplaDeviceClass sd;
@@ -265,18 +267,16 @@ TEST_F(SuplaDeviceTests, BeginStopsAtEmptyEmail) {
   char GUID[SUPLA_GUID_SIZE] = {1};
   char AUTHKEY[SUPLA_AUTHKEY_SIZE] = {2};
   sd.setGUID(GUID);
-  sd.setAuthKey(AUTHKEY);
   sd.setServer("supla.rulez");
+  sd.setEmail("john@supla");
   EXPECT_FALSE(sd.begin());
-  EXPECT_EQ(sd.getCurrentStatus(), STATUS_MISSING_CREDENTIALS);
+  EXPECT_EQ(sd.getCurrentStatus(), STATUS_INVALID_AUTHKEY);
 }
-
-
 
 TEST_F(SuplaDeviceTests, SuccessfulBegin) {
   ::testing::InSequence seq;
   SrpcMock srpc;
-  NetworkMockWithMac net;
+  NetworkMock net;
   TimerMock timer;
 
   SuplaDeviceClass sd;
@@ -303,7 +303,7 @@ TEST_F(SuplaDeviceTests, SuccessfulBegin) {
 TEST_F(SuplaDeviceTests, SuccessfulBeginAlternative) {
   ::testing::InSequence seq;
   SrpcMock srpc;
-  NetworkMockWithMac net;
+  NetworkMock net;
   TimerMock timer;
 
   SuplaDeviceClass sd;
@@ -325,7 +325,7 @@ TEST_F(SuplaDeviceTests, SuccessfulBeginAlternative) {
 TEST_F(SuplaDeviceTests, FailedBeginAlternativeOnEmptyAUTHKEY) {
   ::testing::InSequence seq;
   SrpcMock srpc;
-  NetworkMockWithMac net;
+  NetworkMock net;
   TimerMock timer;
 
   SuplaDeviceClass sd;
@@ -341,7 +341,7 @@ TEST_F(SuplaDeviceTests, FailedBeginAlternativeOnEmptyAUTHKEY) {
 
 TEST_F(SuplaDeviceTests, TwoChannelElementsNoNetworkWithStorage) {
   SrpcMock srpc;
-  NetworkMockWithMac net;
+  NetworkMock net;
   StorageMock2 storage;
   TimerMock timer;
   TimeInterfaceStub time;
@@ -385,7 +385,7 @@ TEST_F(SuplaDeviceTests, TwoChannelElementsNoNetworkWithStorage) {
 }
 
 TEST_F(SuplaDeviceTests, OnVersionErrorShouldCallDisconnect) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   TimeInterfaceStub time;
 
   EXPECT_CALL(net, disconnect()).Times(1);
@@ -398,7 +398,7 @@ TEST_F(SuplaDeviceTests, OnVersionErrorShouldCallDisconnect) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultOK) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -417,7 +417,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultOK) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultBadCredentials) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -437,7 +437,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultBadCredentials) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultTemporairlyUnavailable) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -457,7 +457,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultTemporairlyUnavailable) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultLocationConflict) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -477,7 +477,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultLocationConflict) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultChannelConflict) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -497,7 +497,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultChannelConflict) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultDeviceDisabled) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -517,7 +517,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultDeviceDisabled) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultLocationDisabled) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -537,7 +537,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultLocationDisabled) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultDeviceLimitExceeded) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -557,7 +557,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultDeviceLimitExceeded) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultGuidError) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -577,7 +577,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultGuidError) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultAuthKeyError) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -597,7 +597,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultAuthKeyError) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultRegistrationDisabled) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -617,7 +617,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultRegistrationDisabled) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultNoLocationAvailable) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -637,7 +637,7 @@ TEST_F(SuplaDeviceTests, OnRegisterResultNoLocationAvailable) {
 }
 
 TEST_F(SuplaDeviceTests, OnRegisterResultUnknownError) {
-  NetworkMockWithMac net;
+  NetworkMock net;
   SrpcMock srpc;
   TimeInterfaceStub time;
   SuplaDeviceClass sd;
@@ -655,74 +655,3 @@ TEST_F(SuplaDeviceTests, OnRegisterResultUnknownError) {
 
   EXPECT_EQ(sd.getCurrentStatus(), STATUS_UNKNOWN_ERROR);
 }
-
-
-TEST_F(SuplaDeviceTests, GenerateHostnameTests) {
-  NetworkMockWithMac net;
-  SuplaDeviceClass sd;
-  char buf[200];
-  EXPECT_STREQ(Supla::Channel::reg_dev.Name, "");
-  sd.setName("Supla Device");
-
-  EXPECT_CALL(net, getMacAddr(_)).WillRepeatedly(Return(true));
-
-  EXPECT_STREQ(Supla::Channel::reg_dev.Name, "Supla Device");
-
-  sd.generateHostname(buf, 6);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE-000000000000");
-
-  sd.generateHostname(buf, 1);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE-00");
-
-  sd.generateHostname(buf, 2);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE-0000");
-
-  sd.generateHostname(buf, 3);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE-000000");
-
-  sd.generateHostname(buf, 4);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE-00000000");
-
-  sd.generateHostname(buf, 5);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE-0000000000");
-
-  sd.generateHostname(buf, 6);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE-000000000000");
-
-  sd.generateHostname(buf, 7);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE-000000000000");
-
-  sd.generateHostname(buf, 0);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE");
-
-  sd.generateHostname(buf, -1);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE");
-
-  sd.setName("SuPlA Is SuPeR");
-  sd.generateHostname(buf, -1);
-  EXPECT_STREQ(buf, "SUPLA-IS-SUPER");
-
-  sd.setName("SuPlA Is SuPeR Even with a very long device name");
-  sd.generateHostname(buf, 6);
-  EXPECT_STREQ(buf, "SUPLA-IS-SUPER-EVE-000000000000");
-
-  sd.generateHostname(buf, 2);
-  EXPECT_STREQ(buf, "SUPLA-IS-SUPER-EVEN-WITH-A-0000");
-
-
-  memset(&(Supla::Channel::reg_dev), 0, sizeof(Supla::Channel::reg_dev));
-  sd.generateHostname(buf, 2);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE-0000");
-
-  /*
-  sd.setName("SuplaDevice 3.14");
-  sd.generateHostname(buf, 2);
-  EXPECT_STREQ(buf, "SUPLA-DEVICE-3-14-0000");
-
-  sd.setName("My Device 2.54");
-  sd.generateHostname(buf, 2);
-  EXPECT_STREQ(buf, "SUPLA-MY-DEVICE-2-54-0000");
-  */
-}
-
-

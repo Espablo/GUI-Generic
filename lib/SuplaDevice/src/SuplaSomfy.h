@@ -1,6 +1,4 @@
 /*
- Copyright (C) AC SOFTWARE SP. Z O.O.
-
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
@@ -18,8 +16,8 @@
  Using documantation: https://pushstack.wordpress.com/somfy-rts-protocol/
 */
 
-#ifndef SRC_SUPLASOMFY_H_
-#define SRC_SUPLASOMFY_H_
+#ifndef SuplaSomfy_h
+#define SuplaSomfy_h
 
 #include "Arduino.h"
 
@@ -50,20 +48,18 @@ typedef union {
 } somfy_remotesn_t;
 
 enum /*class*/ ControlButtons {
-  STOP = 0x1,  // [My]          Stop or move to favourite position
-  UP = 0x2,    // [Up]          Move Up
-  MYUP = 0x3,  // [My + Up]     Set upper motor limit in initial
-               // programming mode
-  DOWN = 0x4,  // [Down]        Move Down
+  STOP = 0x1,  //[My]          Stop or move to favourite position
+  UP = 0x2,    //[Up]          Move Up
+  MYUP = 0x3,  //[My + Up]     Set upper motor limit in initial programming mode
+  DOWN = 0x4,  //[Down]        Move Down
   MYDOWN =
-      0x5,  // [My + Down]   Set lower motor limit in initial programming mode
-  UPDOWN = 0x6,  // [Up + Down]   Change motor limit and initial
-                 // programming mode
-  PROG = 0x8,    // [Prog]        Registering / Deregistering remotes
-  SUN = 0x9,  // [Sun + Flag]  Enable sun and wind detector (SUN and FLAG
-              // TIME on the Telis Soliris RC)
-  FLAG = 0xA  // [Flag]        Disable sun detector (FLAG TIME on the Telis
-              // Soliris RC)
+      0x5,  //[My + Down]   Set lower motor limit in initial programming mode
+  UPDOWN = 0x6,  //[Up + Down]   Change motor limit and initial programming mode
+  PROG = 0x8,    //[Prog]        Registering / Deregistering remotes
+  SUN = 0x9,  //[Sun + Flag]  Enable sun and wind detector (SUN and FLAG TIME on
+              //the Telis Soliris RC)
+  FLAG = 0xA  //[Flag]        Disable sun detector (FLAG TIME on the Telis
+              //Soliris RC)
 };
 
 struct somfy_remote_t {
@@ -83,7 +79,7 @@ class SuplaSomfy {
   void SendCommand(somfy_frame_t *frame, uint8_t sync);
 
  public:
-  explicit SuplaSomfy(uint8_t dataPin);
+  SuplaSomfy(uint8_t dataPin);
   ~SuplaSomfy(void);
   void SetRemote(somfy_remote_t remote);
   somfy_remote_t GetRemote(void);
@@ -94,4 +90,4 @@ class SuplaSomfy {
 #endif
 };
 
-#endif  // SRC_SUPLASOMFY_H_
+#endif

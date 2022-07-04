@@ -5,24 +5,20 @@
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
-
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include <supla/log_wrapper.h>
+#include "bistable_relay.h"
 #include <supla/time.h>
 
-#include "bistable_relay.h"
-
-namespace Supla {
-namespace Control {
+using namespace Supla;
+using namespace Control;
 
 #define STATE_ON_INIT_KEEP 2
 
@@ -43,10 +39,9 @@ BistableRelay::BistableRelay(int pin,
 }
 
 void BistableRelay::onInit() {
+
   if (statusPin >= 0) {
-    Supla::Io::pinMode(channel.getChannelNumber(),
-                       statusPin,
-                       statusPullUp ? INPUT_PULLUP : INPUT);
+    Supla::Io::pinMode(channel.getChannelNumber(), statusPin, statusPullUp ? INPUT_PULLUP : INPUT);
     channel.setNewValue(isOn());
   } else {
     channel.setNewValue(false);
@@ -141,7 +136,6 @@ bool BistableRelay::isStatusUnknown() {
 }
 
 void BistableRelay::internalToggle() {
-  SUPLA_LOG_INFO("BistableRelay[%d] toggle relay", channel.getChannelNumber());
   busy = true;
   disarmTimeMs = millis();
   Supla::Io::digitalWrite(channel.getChannelNumber(), pin, pinOnValue());
@@ -157,6 +151,3 @@ void BistableRelay::toggle(_supla_int_t duration) {
     turnOn(duration);
   }
 }
-
-}  // namespace Control
-}  // namespace Supla
