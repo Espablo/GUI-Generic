@@ -71,7 +71,7 @@ int GUIESPWifi::connect(const char *server, int port) {
 
   String message;
   if (client == NULL) {
-    if (isSecured) {
+    if (sslEnabled) {
       message = "Secured connection";
       auto clientSec = new WiFiClientSecure();
       client = clientSec;
@@ -96,7 +96,7 @@ int GUIESPWifi::connect(const char *server, int port) {
     }
   }
 
-  int connectionPort = (isSecured ? 2016 : 2015);
+  int connectionPort = (sslEnabled ? 2016 : 2015);
   if (port != -1) {
     connectionPort = port;
   }
@@ -110,48 +110,94 @@ int GUIESPWifi::connect(const char *server, int port) {
 
 void GUIESPWifi::setup() {
   if (!wifiConfigured) {
+    // ESP32 requires setHostname to be called before begin...
+    WiFi.setHostname(hostname);
     wifiConfigured = true;
+#ifdef ARDUINO_ARCH_ESP8266
+    gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
+      (void)(event);
+      Serial.print(F("local IP: "));
+      Serial.println(WiFi.localIP());
+      Serial.print(F("subnetMask: "));
+      Serial.println(WiFi.subnetMask());
+      Serial.print(F("gatewayIP: "));
+      Serial.println(WiFi.gatewayIP());
+      int rssi = WiFi.RSSI();
+      Serial.print(F("Signal strength (RSSI): "));
+      Serial.print(rssi);
+      Serial.println(F(" dBm"));
+    });
+    disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
+      (void)(event);
+      Serial.println(F("WiFi station disconnected"));
+    });
+#else
+    WiFiEventId_t event_gotIP = WiFi.onEvent(
+        [](WiFiEvent_t event, WiFiEventInfo_t info) {
+          Serial.print(F("local IP: "));
+          Serial.println(WiFi.localIP());
+          Serial.print(F("subnetMask: "));
+          Serial.println(WiFi.subnetMask());
+          Serial.print(F("gatewayIP: "));
+          Serial.println(WiFi.gatewayIP());
+          int rssi = WiFi.RSSI();
+          Serial.print(F("Signal Strength (RSSI): "));
+          Serial.print(rssi);
+          Serial.println(F(" dBm"));
+        },
+        WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
+
+    (void)(event_gotIP);
+
+    WiFiEventId_t event_disconnected = WiFi.onEvent(
+        [](WiFiEvent_t event, WiFiEventInfo_t info) {
+          Serial.println(F("WiFi Station disconnected"));
+          // ESP32 doesn't reconnect automatically after lost connection
+          WiFi.reconnect();
+        },
+        WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
+
+    (void)(event_disconnected);
+#endif
+  }
+  else {
+    if (mode == Supla::DEVICE_MODE_CONFIG) {
+      WiFi.mode(WIFI_MODE_AP);
+    }
+    else {
+      WiFi.mode(WIFI_MODE_STA);
+    }
+    Serial.println(F("WiFi: resetting WiFi connection"));
+    if (client) {
+      delete client;
+      client = nullptr;
+    }
+    WiFi.disconnect();
+  }
+
+  if (mode == Supla::DEVICE_MODE_CONFIG) {
+    Serial.print("WiFi: enter config mode with SSID: ");
+    Serial.println(hostname);
+    WiFi.mode(WIFI_MODE_AP);
+    WiFi.softAP(hostname, nullptr, 6);
+  }
+  else {
     Serial.print(F("WiFi: establishing connection with SSID: \""));
     Serial.print(ssid);
     Serial.println(F("\""));
-
-    WiFi.softAPdisconnect(true);
-    WiFi.disconnect(true);
-    WiFi.persistent(false);
-    WiFi.reconnect();
-
-    if (ConfigESP->configModeESP == NORMAL_MODE) {
-      WiFi.mode(WIFI_STA);
-    }
-
-    if (ssid)
-      WiFi.begin(ssid, password);
-
-    if (hostname) {
-      WiFi.setHostname(hostname);
-    }
+    WiFi.mode(WIFI_MODE_STA);
+    WiFi.begin(ssid, password);
+    // ESP8266 requires setHostname to be called after begin...
+    WiFi.setHostname(hostname);
   }
-  else {
-    if (ConfigESP->configModeESP == NORMAL_MODE) {
-      Serial.println(F("WiFi: resetting WiFi connection"));
-      if (client) {
-        delete client;
-        client = nullptr;
-      }
-      WiFi.disconnect();
-      WiFi.reconnect();  // This does not reset dhcp
 
-      delay(200);  // do not remove, need a delay for disconnect to change status()
+  retryCount++;
+  if (retryCount > 4) {
+    retryCount = 0;
+    wifiConfigured = false;
 
-      retryCount++;
-      if (retryCount > 4) {
-        retryCount = 0;
-        wifiConfigured = false;
-
-        if (ConfigManager->get(KEY_FORCE_RESTART_ESP)->getValueBool())
-          ConfigESP->rebootESP();
-      }
-    }
+    if (ConfigManager->get(KEY_FORCE_RESTART_ESP)->getValueBool())
+      ConfigESP->rebootESP();
   }
 
   delay(0);
@@ -164,7 +210,7 @@ void GUIESPWifi::setHostName(const char *wifiHostname) {
 }
 
 void GUIESPWifi::enableSSL(bool value) {
-  isSecured = value;
+  sslEnabled = value;
   wifiConfigured = false;
   if (client) {
     delete client;
@@ -185,5 +231,4 @@ void GUIESPWifi::setPassword(const char *wifiPassword) {
     strncpy(password, wifiPassword, MAX_WIFI_PASSWORD_SIZE);
   }
 }
-
 };  // namespace Supla
