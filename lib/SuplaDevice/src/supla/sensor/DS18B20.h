@@ -5,23 +5,26 @@
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
+
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _ds18b20_h
-#define _ds18b20_h
+#ifndef SRC_SUPLA_SENSOR_DS18B20_H_
+#define SRC_SUPLA_SENSOR_DS18B20_H_
 
 #include <Arduino.h>
 #include <DallasTemperature.h>
 #include <OneWire.h>
 
-#include "supla-common/log.h"
+#include <supla/log_wrapper.h>
+
 #include "supla/sensor/thermometer.h"
 
 namespace Supla {
@@ -29,18 +32,18 @@ namespace Sensor {
 
 class OneWireBus {
  public:
-  OneWireBus(uint8_t pinNumber)
+  explicit OneWireBus(uint8_t pinNumber)
       : pin(pinNumber), nextBus(nullptr), lastReadTime(0), oneWire(pinNumber) {
-    supla_log(LOG_DEBUG, "Initializing OneWire bus at pin %d", pinNumber);
+    SUPLA_LOG_DEBUG("Initializing OneWire bus at pin %d", pinNumber);
     sensors.setOneWire(&oneWire);
     sensors.begin();
     if (sensors.isParasitePowerMode()) {
-      supla_log(LOG_DEBUG, "OneWire(pin %d) Parasite power is ON", pinNumber);
+      SUPLA_LOG_DEBUG("OneWire(pin %d) Parasite power is ON", pinNumber);
     } else {
-      supla_log(LOG_DEBUG, "OneWire(pin %d) Parasite power is OFF", pinNumber);
+      SUPLA_LOG_DEBUG("OneWire(pin %d) Parasite power is OFF", pinNumber);
     }
 
-    supla_log(LOG_DEBUG,
+    SUPLA_LOG_DEBUG(
               "OneWire(pin %d) Found %d devices:",
               pinNumber,
               sensors.getDeviceCount());
@@ -51,10 +54,10 @@ class OneWireBus {
     char strAddr[64];
     for (int i = 0; i < sensors.getDeviceCount(); i++) {
       if (!sensors.getAddress(address, i)) {
-        supla_log(LOG_DEBUG, "Unable to find address for Device %d", i);
+        SUPLA_LOG_DEBUG("Unable to find address for Device %d", i);
       } else {
-        sprintf(
-            strAddr,
+        snprintf(
+            strAddr, sizeof(strAddr),
             "{0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X}",
             address[0],
             address[1],
@@ -64,7 +67,7 @@ class OneWireBus {
             address[5],
             address[6],
             address[7]);
-        supla_log(LOG_DEBUG, "Index %d - address %s", i, strAddr);
+        SUPLA_LOG_DEBUG("Index %d - address %s", i, strAddr);
         sensors.setResolution(address, 12);
       }
       delay(0);
@@ -94,7 +97,7 @@ class OneWireBus {
 
   uint8_t pin;
   OneWireBus *nextBus;
-  unsigned long lastReadTime;
+  uint64_t lastReadTime;
   DallasTemperature sensors;
 
  protected:
@@ -103,7 +106,7 @@ class OneWireBus {
 
 class DS18B20 : public Thermometer {
  public:
-  DS18B20(uint8_t pin, uint8_t *deviceAddress = nullptr) {
+  explicit DS18B20(uint8_t pin, uint8_t *deviceAddress = nullptr) {
     OneWireBus *bus = oneWireBus;
     OneWireBus *prevBus = nullptr;
     address[0] = 0;
@@ -123,7 +126,7 @@ class DS18B20 : public Thermometer {
 
     // There is no OneWire bus created yet for this pin
     if (!bus) {
-      supla_log(LOG_DEBUG, "Creating OneWire bus for pin: %d", pin);
+      SUPLA_LOG_DEBUG("Creating OneWire bus for pin: %d", pin);
       myBus = new OneWireBus(pin);
       if (prevBus) {
         prevBus->nextBus = myBus;
@@ -132,7 +135,7 @@ class DS18B20 : public Thermometer {
       }
     }
     if (deviceAddress == nullptr) {
-      supla_log(LOG_DEBUG,
+      SUPLA_LOG_DEBUG(
                 "Device address not provided. Using device from index 0");
     } else {
       memcpy(address, deviceAddress, 8);
@@ -178,11 +181,6 @@ class DS18B20 : public Thermometer {
     return value;
   }
 
-  void onInit() {
-    channel.setNewValue(getValue());
-  }
-
-
   DallasTemperature &getHwSensors() {
     return myBus->sensors;
   }
@@ -200,4 +198,4 @@ OneWireBus *DS18B20::oneWireBus = nullptr;
 };  // namespace Sensor
 };  // namespace Supla
 
-#endif
+#endif  // SRC_SUPLA_SENSOR_DS18B20_H_

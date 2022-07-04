@@ -116,33 +116,33 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig) {
     buttonConfig->addAction(Supla::TURN_ON, *ConfigESP, Supla::ON_CLICK_1);
 
     if (modeConfigButton == CONFIG_MODE_10_ON_PRESSES) {
-      buttonConfig->addAction(CONFIG_MODE_10_ON_PRESSES, *ConfigESP, Supla::ON_CLICK_10);
+      buttonConfig->addAction(Supla::TOGGLE_CONFIG_MODE, SuplaDevice, Supla::ON_CLICK_10);
     }
     if (modeConfigButton == CONFIG_MODE_5SEK_HOLD) {
       buttonConfig->setHoldTime(5000);
-      buttonConfig->addAction(CONFIG_MODE_5SEK_HOLD, *ConfigESP, Supla::ON_HOLD);
+      buttonConfig->addAction(Supla::TOGGLE_CONFIG_MODE, SuplaDevice, Supla::ON_HOLD);
     }
   }
 }
 
-void SuplaConfigESP::handleAction(int event, int action) {
-  if (action == CONFIG_MODE_10_ON_PRESSES) {
-    if (event == Supla::ON_CLICK_10) {
-      configModeInit(WIFI_AP);
-    }
-  }
-  if (action == CONFIG_MODE_5SEK_HOLD) {
-    if (event == Supla::ON_HOLD) {
-      configModeInit(WIFI_AP);
-    }
-  }
+// void SuplaConfigESP::handleAction(int event, int action) {
+//   if (action == CONFIG_MODE_10_ON_PRESSES) {
+//     if (event == Supla::ON_CLICK_10) {
+//       configModeInit(WIFI_AP);
+//     }
+//   }
+//   if (action == CONFIG_MODE_5SEK_HOLD) {
+//     if (event == Supla::ON_HOLD) {
+//       configModeInit(WIFI_AP);
+//     }
+//   }
 
-  if (configModeESP == CONFIG_MODE) {
-    if (event == Supla::ON_CLICK_1) {
-      rebootESP();
-    }
-  }
-}
+//   if (configModeESP == CONFIG_MODE) {
+//     if (event == Supla::ON_CLICK_1) {
+//       rebootESP();
+//     }
+//   }
+// }
 
 void SuplaConfigESP::rebootESP() {
   WiFi.disconnect(true);

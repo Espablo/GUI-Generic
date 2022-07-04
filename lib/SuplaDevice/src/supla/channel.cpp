@@ -16,8 +16,9 @@
 
 #include <string.h>
 
-#include "supla/channel.h"
-#include "supla-common/log.h"
+#include <supla/log_wrapper.h>
+
+#include "channel.h"
 #include "supla-common/srpc.h"
 #include "tools.h"
 #include "events.h"
@@ -25,7 +26,7 @@
 
 namespace Supla {
 
-unsigned long Channel::lastCommunicationTimeMs = 0;
+uint64_t Channel::lastCommunicationTimeMs = 0;
 TDS_SuplaRegisterDevice_E Channel::reg_dev;
 
 Channel::Channel() : valueChanged(false), channelConfig(false),
@@ -39,7 +40,7 @@ Channel::Channel() : valueChanged(false), channelConfig(false),
 
     reg_dev.channel_count++;
   } else {
-// TODO: add status CHANNEL_LIMIT_EXCEEDED
+// TODO(klew): add status CHANNEL_LIMIT_EXCEEDED
   }
 
   setFlag(SUPLA_CHANNEL_FLAG_CHANNELSTATE);
@@ -57,12 +58,13 @@ void Channel::setNewValue(double dbl) {
   if (sizeof(double) == 8) {
     memcpy(newValue, &dbl, 8);
   } else if (sizeof(double) == 4) {
-    float2DoublePacked(dbl, (uint8_t *)(newValue));
+    float2DoublePacked(dbl, reinterpret_cast<uint8_t *>(newValue));
   }
   if (setNewValue(newValue)) {
     runAction(ON_CHANGE);
     runAction(ON_SECONDARY_CHANNEL_CHANGE);
-    supla_log(LOG_DEBUG, "Channel(%d) value changed to %d.%d", channelNumber, static_cast<int>(dbl), static_cast<int>(dbl*100)%100);
+    SUPLA_LOG_DEBUG("Channel(%d) value changed to %d.%d", channelNumber,
+        static_cast<int>(dbl), static_cast<int>(dbl*100)%100);
   }
 }
 
@@ -81,7 +83,7 @@ void Channel::setNewValue(double temp, double humi) {
   if (setNewValue(newValue)) {
     runAction(ON_CHANGE);
     runAction(ON_SECONDARY_CHANNEL_CHANGE);
-    supla_log(LOG_DEBUG,
+    SUPLA_LOG_DEBUG(
               "Channel(%d) value changed to temp(%f), humi(%f)",
               channelNumber,
               temp,
@@ -98,8 +100,8 @@ void Channel::setNewValue(unsigned _supla_int64_t value) {
   if (setNewValue(newValue)) {
     runAction(ON_CHANGE);
     runAction(ON_SECONDARY_CHANNEL_CHANGE);
-    supla_log(
-        LOG_DEBUG, "Channel(%d) value changed to %d", channelNumber, static_cast<int>(value));
+    SUPLA_LOG_DEBUG("Channel(%d) value changed to %d", channelNumber,
+        static_cast<int>(value));
   }
 }
 
@@ -112,8 +114,7 @@ void Channel::setNewValue(_supla_int_t value) {
   if (setNewValue(newValue)) {
     runAction(ON_CHANGE);
     runAction(ON_SECONDARY_CHANNEL_CHANGE);
-    supla_log(
-        LOG_DEBUG, "Channel(%d) value changed to %d", channelNumber, value);
+    SUPLA_LOG_DEBUG("Channel(%d) value changed to %d", channelNumber, value);
   }
 }
 
@@ -132,15 +133,14 @@ void Channel::setNewValue(bool value) {
     runAction(Supla::ON_CHANGE);
     runAction(ON_SECONDARY_CHANNEL_CHANGE);
 
-    supla_log(
-        LOG_DEBUG, "Channel(%d) value changed to %d", channelNumber, value);
+    SUPLA_LOG_DEBUG("Channel(%d) value changed to %d", channelNumber, value);
   }
 }
 
-void Channel::setNewValue(TElectricityMeter_ExtendedValue_V2 &emValue) {
+void Channel::setNewValue(const TElectricityMeter_ExtendedValue_V2 &emValue) {
   // Prepare standard channel value
   if (sizeof(TElectricityMeter_Value) <= SUPLA_CHANNELVALUE_SIZE) {
-    TElectricityMeter_Measurement *m = nullptr;
+    const TElectricityMeter_Measurement *m = nullptr;
     TElectricityMeter_Value v;
     memset(&v, 0, sizeof(TElectricityMeter_Value));
 
@@ -220,7 +220,8 @@ _supla_int_t Channel::getFuncList() {
 }
 
 void Channel::setActionTriggerCaps(_supla_int_t caps) {
-  supla_log(LOG_DEBUG, "Channel[%d] setting func list: %d", channelNumber, caps);
+  SUPLA_LOG_DEBUG("Channel[%d] setting func list: %d", channelNumber,
+      caps);
   setFuncList(caps);
 }
 
@@ -234,7 +235,7 @@ int Channel::getChannelNumber() {
 
 void Channel::clearUpdateReady() {
   valueChanged = false;
-};
+}
 
 void Channel::sendUpdate(void *srpc) {
   if (valueChanged) {
@@ -246,7 +247,8 @@ void Channel::sendUpdate(void *srpc) {
     // returns null for non-extended channels
     TSuplaChannelExtendedValue *extValue = getExtValue();
     if (extValue) {
-      srpc_ds_async_channel_extendedvalue_changed(srpc, channelNumber, extValue);
+      srpc_ds_async_channel_extendedvalue_changed(srpc, channelNumber,
+          extValue);
     }
   }
 
@@ -266,11 +268,11 @@ TSuplaChannelExtendedValue *Channel::getExtValue() {
 
 void Channel::setUpdateReady() {
   valueChanged = true;
-};
+}
 
 bool Channel::isUpdateReady() {
   return valueChanged || channelConfig;
-};
+}
 
 bool Channel::isExtended() {
   return false;
@@ -283,10 +285,9 @@ void Channel::setNewValue(const TDSC_RollerShutterValue &value) {
   if (setNewValue(newValue)) {
     runAction(ON_CHANGE);
     runAction(ON_SECONDARY_CHANNEL_CHANGE);
-    supla_log(
-        LOG_DEBUG, "Channel(%d) value changed to %d", channelNumber, value.position);
+    SUPLA_LOG_DEBUG("Channel(%d) value changed to %d", channelNumber,
+        value.position);
   }
-
 }
 
 void Channel::setNewValue(uint8_t red,
@@ -304,7 +305,9 @@ void Channel::setNewValue(uint8_t red,
   if (setNewValue(newValue)) {
     runAction(ON_CHANGE);
     runAction(ON_SECONDARY_CHANNEL_CHANGE);
-    supla_log(LOG_DEBUG, "Channel(%d) value changed to RGB(%d, %d, %d), colBr(%d), bright(%d)", channelNumber, red, green, blue, colorBrightness, brightness);
+    SUPLA_LOG_DEBUG(
+        "Channel(%d) value changed to RGB(%d, %d, %d), colBr(%d), bright(%d)",
+        channelNumber, red, green, blue, colorBrightness, brightness);
   }
 }
 
@@ -320,13 +323,14 @@ double Channel::getValueDouble() {
   if (sizeof(double) == 8) {
     memcpy(&value, reg_dev.channels[channelNumber].value, 8);
   } else if (sizeof(double) == 4) {
-    value = doublePacked2float((uint8_t *)(reg_dev.channels[channelNumber].value));
+    value = doublePacked2float(
+        reinterpret_cast<uint8_t *>(reg_dev.channels[channelNumber].value));
   }
-  
+
   return value;
 }
 
-double Channel::getValueDoubleFirst() { 
+double Channel::getValueDoubleFirst() {
   _supla_int_t value;
   memcpy(&value, reg_dev.channels[channelNumber].value, 4);
 
@@ -345,7 +349,7 @@ _supla_int_t Channel::getValueInt32() {
   memcpy(&value, reg_dev.channels[channelNumber].value, sizeof(value));
   return value;
 }
- 
+
 unsigned _supla_int64_t Channel::getValueInt64() {
   unsigned _supla_int64_t value;
   memcpy(&value, reg_dev.channels[channelNumber].value, sizeof(value));
