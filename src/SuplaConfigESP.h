@@ -78,7 +78,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   SuplaConfigESP();
 
   void addConfigESP(int _pinNumberConfig, int _pinLedConfig);
-  // void handleAction(int event, int action);
+  void handleAction(int event, int action);
   void rebootESP();
 
   bool getDefaultEnableSSL();
