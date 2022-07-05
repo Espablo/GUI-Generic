@@ -57,33 +57,33 @@ void setup() {
       nr++;
     }
     else {
-      if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
 #ifdef SUPLA_RF_BRIDGE
-        if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_TRANSMITTER) != OFF_GPIO &&
-            ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER &&
-            (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
-             strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
-          Supla::GUI::addRelayBridge(nr);
-        }
-        else {
-#ifdef SUPLA_RELAY
-          Supla::GUI::addRelay(nr);
-#ifdef SUPLA_BUTTON
-          Supla::GUI::addButtonToRelay(nr);
-#endif
-#endif
-        }
-#else
-
+      if (ConfigESP->getGpio(FUNCTION_RF_BRIDGE_TRANSMITTER) != OFF_GPIO &&
+          ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER &&
+          (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
+           strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0)) {
+        Supla::GUI::addRelayBridge(nr);
+      }
+      else {
 #ifdef SUPLA_RELAY
         Supla::GUI::addRelay(nr);
 #ifdef SUPLA_BUTTON
         Supla::GUI::addButtonToRelay(nr);
 #endif
 #endif
+      }
+#else
+
+#ifdef SUPLA_RELAY
+      Supla::GUI::addRelay(nr);
+#ifdef SUPLA_BUTTON
+      Supla::GUI::addButtonToRelay(nr);
+#endif
+#endif
 
 #endif
 
+      if (ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
 #ifdef SUPLA_RF_BRIDGE
         if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr).toInt() == Supla::GUI::RFBridgeType::RECEIVER &&
             (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 ||
