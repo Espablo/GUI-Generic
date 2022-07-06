@@ -58,7 +58,7 @@ int getQuality() {
     return -1;
 #ifdef ARDUINO_ARCH_ESP32
   int dBm = 100;
-  //WiFi.RSSI() dla ESP32 zawiesza całą pętlę
+  // WiFi.RSSI() dla ESP32 zawiesza całą pętlę
 #else
   int dBm = WiFi.RSSI();
 #endif
@@ -104,17 +104,19 @@ void displayUiRelayState(OLEDDisplay* display) {
   display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   for (size_t i = 0; i < Supla::GUI::relay.size(); i++) {
-    if (Supla::GUI::relay[i]->isOn()) {
-      display->setColor(WHITE);
-      display->fillRect(x, y + 1, 10, 10);
-      display->setColor(BLACK);
-      display->drawString(x + 2, y, String(i + 1));
+    if (Supla::GUI::relay[i] != nullptr) {
+      if (Supla::GUI::relay[i]->isOn()) {
+        display->setColor(WHITE);
+        display->fillRect(x, y + 1, 10, 10);
+        display->setColor(BLACK);
+        display->drawString(x + 2, y, String(i + 1));
+      }
+      else {
+        display->setColor(WHITE);
+        display->drawString(x + 2, y, String(i + 1));
+      }
+      x += 15;
     }
-    else {
-      display->setColor(WHITE);
-      display->drawString(x + 2, y, String(i + 1));
-    }
-    x += 15;
   }
   display->setColor(WHITE);
   display->drawHorizontalLine(0, 14, display->getWidth());
