@@ -623,7 +623,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
 }
 
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
-  uint8_t count = 0;
+  uint8_t count = 1;
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
   if (ConfigESP->checkActiveMCP23017(exception)) {

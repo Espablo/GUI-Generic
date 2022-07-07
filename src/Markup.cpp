@@ -288,8 +288,6 @@ void addListGPIOBox(
       addGPIOOptionValue(html, suported, gpio, FPSTR(GPIO_P[suported]));
 
 #endif
-
-  WebServer->sendHeader();
   html += F("</select>");
 
   html += F("</i>");
@@ -310,6 +308,7 @@ void addGPIOOptionValue(String& html, uint8_t gpio, uint8_t selectedGpio, const 
     html += F("> GPIO");
   }
   html += name;
+  WebServer->sendHeader();
 }
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
@@ -401,8 +400,8 @@ void addListExpanderGPIO(String& html,
         html += FPSTR(array_P[suported]);
       }
     }
+    WebServer->sendHeader();
   }
-  WebServer->sendHeader();
   html += F("</select></i>");
 }
 #endif
@@ -495,8 +494,8 @@ void addListLinkBox(String& html,
       html += F(">");
       html += FPSTR(array_P[suported]);
     }
+    WebServer->sendHeader();
   }
-  WebServer->sendHeader();
   html += F("</select></i>");
 }
 
