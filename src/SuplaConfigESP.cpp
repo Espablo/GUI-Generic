@@ -337,9 +337,11 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     return GPIO_VIRTUAL_RELAY;
   }
 
+#ifdef ARDUINO_ARCH_ESP8266
   if (function == FUNCTION_BUTTON && ConfigManager->get(KEY_ANALOG_BUTTON)->getElement(nr).toInt()) {
     return A0;
   }
+#endif
 
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
