@@ -158,6 +158,7 @@ void addButtonToRelay(uint8_t nrRelay) {
     if (pinButton != OFF_GPIO && pinRelay != OFF_GPIO && nrRelay == nrButton) {
       Supla::Control::Button *button;
 
+#ifdef ARDUINO_ARCH_ESP8266
       if (pinButton == A0) {
         button = new Supla::Control::ButtonAnalog(A0, ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(nr).toInt());
       }
@@ -165,6 +166,10 @@ void addButtonToRelay(uint8_t nrRelay) {
         button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
         button->setSwNoiseFilterDelay(50);
       }
+#else
+    button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
+    button->setSwNoiseFilterDelay(50);
+#endif
 
       if (ConfigESP->getEvent(pinButton) == Supla::ON_HOLD) {
         int holdTimeMs = String(ConfigManager->get(KEY_AT_HOLD_TIME)->getValue()).toDouble() * 1000;
