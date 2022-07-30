@@ -37,7 +37,7 @@
 #include <ESP8266mDNS.h>
 #endif
 
-#elif ARDUINO_ARCH_ESP32
+#elif ESP32
 #include <WiFi.h>
 #ifdef SUPLA_MDNS
 #include <ESPmDNS.h>
@@ -59,7 +59,7 @@ enum _ConfigMode
 
 #ifdef ARDUINO_ARCH_ESP8266
 #define OFF_GPIO MAX_GPIO + 1
-#elif ARDUINO_ARCH_ESP32
+#elif ESP32
 #define OFF_GPIO MAX_GPIO + 1
 #endif
 

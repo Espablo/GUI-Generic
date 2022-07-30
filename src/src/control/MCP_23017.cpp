@@ -28,7 +28,7 @@ static const uint8_t MCP23017_GPIOB = 0x13;
 static const uint8_t MCP23017_OLATA = 0x14;
 static const uint8_t MCP23017_OLATB = 0x15;
 
-#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ESP32)
 void MCP23017::init(uint8_t sda, uint8_t scl, bool fast) {
   Wire.begin(sda, scl);
   if (fast)

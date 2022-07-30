@@ -56,7 +56,7 @@ String getPressureString(double pressure) {
 int getQuality() {
   if (WiFi.status() != WL_CONNECTED)
     return -1;
-#ifdef ARDUINO_ARCH_ESP32
+#ifdef ESP32
   int dBm = 100;
   // WiFi.RSSI() dla ESP32 zawiesza całą pętlę
 #else

@@ -1,7 +1,7 @@
 #ifndef __HTTP_UPDATE_SERVER_ESP32_H
 #define __HTTP_UPDATE_SERVER_ESP32_H
 
-#ifdef ARDUINO_ARCH_ESP32
+#ifdef ESP32
 #include <WebServer.h>
 #include <supla/ESP32WebServer/ESP32WebServer.h>
 #include <Update.h>

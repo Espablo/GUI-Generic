@@ -281,7 +281,7 @@ void addListGPIOBox(
     if (ConfigESP->checkBusyGpio(suported, function) || suported == gpio)
       addGPIOOptionValue(html, suported, gpio, FPSTR(GPIO_P[suported]));
 
-#elif ARDUINO_ARCH_ESP32
+#elif ESP32
 
   for (uint8_t suported = 0; suported <= OFF_GPIO; suported++)
     if ((ConfigESP->checkBusyGpio(suported, function) || suported == gpio))

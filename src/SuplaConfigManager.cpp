@@ -184,7 +184,7 @@ SuplaConfigManager::SuplaConfigManager() {
       key = KEY_GPIO + nr;
       this->addKey(key, 36);
     }
-#elif ARDUINO_ARCH_ESP32
+#elif ESP32
     uint8_t nr, key;
     for (nr = 0; nr <= MAX_GPIO; nr++) {
       key = KEY_GPIO + nr;
@@ -462,7 +462,7 @@ bool SuplaConfigManager::SPIFFSbegin() {
     if (
 #ifdef ARDUINO_ARCH_ESP8266
         !SPIFFS.begin()
-#elif ARDUINO_ARCH_ESP32
+#elif ESP32
         !SPIFFS.begin(true)
 #endif
     ) {
@@ -758,7 +758,7 @@ void SuplaConfigManager::setGUIDandAUTHKEY() {
   memset(GUID, 0, SUPLA_GUID_SIZE);
   memset(AUTHKEY, 0, SUPLA_AUTHKEY_SIZE);
 
-#if defined(ARDUINO_ARCH_ESP32)
+#if defined(ESP32)
   esp_fill_random((unsigned char *)GUID, SUPLA_GUID_SIZE);
   esp_fill_random((unsigned char *)AUTHKEY, SUPLA_AUTHKEY_SIZE);
 #else

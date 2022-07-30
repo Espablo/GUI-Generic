@@ -86,7 +86,7 @@ int GUIESPWifi::connect(const char *server, int port) {
         message += " without certificate matching";
         clientSec->setInsecure();
       }
-#elif ARDUINO_ARCH_ESP32
+#elif ESP32
       clientSec->setInsecure();
 #endif
     }
