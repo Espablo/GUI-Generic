@@ -129,7 +129,7 @@ void handleSensorAnalog(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
-#ifdef ESP32
+#ifdef ARDUINO_ARCH_ESP32
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + "pomiaru Analog");
 
   addNumberBox(webContentBuffer, INPUT_MAX_ANALOG_READING, S_QUANTITY, KEY_MAX_ANALOG_READING, ConfigESP->countFreeGpio(FUNCTION_ANALOG_READING));
@@ -245,7 +245,7 @@ void handleSensorAnalogSave() {
     }
   }
 #endif
-#ifdef ESP32
+#ifdef ARDUINO_ARCH_ESP32
   for (int nr = 0; nr < ConfigManager->get(KEY_MAX_ANALOG_READING)->getValueInt(); nr++) {
     if (!WebServer->saveGPIO(INPUT_ANALOG_READING_MAP, FUNCTION_ANALOG_READING, nr)) {
       handleSensorAnalog(6);

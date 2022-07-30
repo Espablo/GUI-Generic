@@ -27,7 +27,7 @@
 #endif
 #include <ESP8266WebServer.h>
 
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
 #ifdef SUPLA_OTA
 #include "SuplaHTTPUpdateServerESP32.h"
 #endif
@@ -65,7 +65,7 @@ class SuplaWebServer : public Supla::Element {
 #ifdef SUPLA_OTA
   ESP8266HTTPUpdateServer* httpUpdater;
 #endif
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
   ESP32WebServer* httpServer;
 
 #ifdef SUPLA_OTA

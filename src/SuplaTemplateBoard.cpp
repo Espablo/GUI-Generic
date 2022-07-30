@@ -166,7 +166,7 @@ void chooseTemplateBoard(String board) {
   else
     templateBoardWarning += 2;
   templateBoardWarning += F("<br>");
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
 
 #endif
 
@@ -622,7 +622,7 @@ uint8_t getGPIO(uint8_t gpio) {
     gpio = gpio + 3;
   else if (gpio >= 8)
     gpio = gpio + 4;
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
   if (gpio == 6 || gpio == 7)
     gpio = gpio + 3;
   else if (gpio >= 8 && gpio <= 23)

@@ -167,7 +167,7 @@ const char* const GPIO_P[] PROGMEM = {GPIO0,
                                       GPIO16,
                                       GPIO17,
                                       OFF};
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
 const char GPIO0[] PROGMEM = "0-IO";
 const char GPIO1[] PROGMEM = "1-TX";
 const char GPIO2[] PROGMEM = "2-IO";

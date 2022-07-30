@@ -180,7 +180,7 @@ void SuplaConfigESP::iterateAlways() {
       if (!MDNSConfigured) {
 #ifdef ARDUINO_ARCH_ESP8266
         MDNSConfigured = MDNS.begin("supla", WiFi.localIP());
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
         MDNSConfigured = MDNS.begin("supla");
 #endif
         if (MDNSConfigured) {
@@ -201,7 +201,7 @@ const String SuplaConfigESP::getConfigNameAP() {
   String name;
 #ifdef ARDUINO_ARCH_ESP8266
   name = F("SUPLA-ESP8266-");
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
   name = F("SUPLA-ESP32-");
 #endif
   return name += getMacAddress(false);
@@ -657,7 +657,7 @@ bool SuplaConfigESP::checkGpio(int gpio) {
 #ifdef ARDUINO_ESP8266_GENERIC
       || gpio == 9 || gpio == 10
 #endif
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
       gpio == 28 || gpio == 29 || gpio == 30 || gpio == 31
 #endif
   ) {

@@ -25,7 +25,7 @@ VindriktningIkea::VindriktningIkea(int8_t _pin_rx) {
   _serial = new SoftwareSerial(_pin_rx);
   _serial->enableIntTx(false);
   _serial->begin(VINDRIKTNING_IKEA_BAUDRATE);
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
   _serial = new HardwareSerial(_pin_rx);
   _serial->begin(VINDRIKTNING_IKEA_BAUDRATE);
 #endif

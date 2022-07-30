@@ -19,7 +19,7 @@
 
 #ifdef ARDUINO_ARCH_ESP8266
 #include "FS.h"
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
 #include "SPIFFS.h"
 #include <os.h>
 #include <esp_wifi.h>
@@ -58,7 +58,7 @@
 
 #ifdef ARDUINO_ARCH_ESP8266
 #define MAX_GPIO 17
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
 #define MAX_GPIO 39
 #endif
 

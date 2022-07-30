@@ -21,7 +21,7 @@
 
 #ifdef ARDUINO_ARCH_ESP8266
 #include <SoftwareSerial.h>
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
 #include <HardwareSerial.h>
 #endif
 
@@ -45,7 +45,7 @@ class VindriktningIkea : public Thermometer {
  private:
 #ifdef ARDUINO_ARCH_ESP8266
   SoftwareSerial* _serial = NULL;
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
   HardwareSerial* _serial = NULL;
 #endif
 

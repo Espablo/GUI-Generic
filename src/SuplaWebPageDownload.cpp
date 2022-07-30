@@ -18,7 +18,7 @@
 
 #ifdef ARDUINO_ARCH_ESP8266
 #include "FS.h"
-#elif ESP32
+#elif ARDUINO_ARCH_ESP32
 #include "SPIFFS.h"
 #endif
 
