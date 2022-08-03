@@ -48,6 +48,10 @@ uint8_t getCountSensorChannels() {
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_DISTANCESENSOR) {
         maxFrame += 1;
       }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_ELECTRICITY_METER) {
+        maxFrame += 3;
+      }
     }
 
     if (element->getSecondaryChannel()) {
