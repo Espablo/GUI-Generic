@@ -698,7 +698,7 @@ void addLedCFG(uint8_t gpio, uint8_t level) {
 }
 
 void addLed(uint8_t nr, uint8_t gpio, uint8_t level) {
-  ConfigESP->setInversed(gpio, level);
+  ConfigESP->setLevel(gpio, level);
   ConfigESP->setGpio(gpio, nr, FUNCTION_LED);
 }
 

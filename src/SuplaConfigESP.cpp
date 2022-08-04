@@ -522,7 +522,7 @@ bool SuplaConfigESP::checkBusyCfg(int gpio, int function) {
   if (function == FUNCTION_CFG_LED) {
     // Aby nie robić konwersji danych dla nowego typu dla LED CFG, wykorzystałem PULL_UP_BUTTON
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED ||
-        ConfigManager->get(key)->getElement(PULL_UP_BUTTON).toInt() == 1) {
+        ConfigManager->get(key)->getElement(CFG_LED).toInt() == 1) {
       return true;
     }
   }
@@ -602,7 +602,7 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
   }
 
   if (function == FUNCTION_CFG_LED) {
-    ConfigManager->setElement(key, PULL_UP_BUTTON, 1);
+    ConfigManager->setElement(key, CFG_LED, 1);
     return;
   }
 
@@ -627,7 +627,7 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   }
 
   if (function == FUNCTION_CFG_LED) {
-    ConfigManager->setElement(key, PULL_UP_BUTTON, 0);
+    ConfigManager->setElement(key, CFG_LED, 0);
     return;
   }
 

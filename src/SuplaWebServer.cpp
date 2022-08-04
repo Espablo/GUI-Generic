@@ -226,7 +226,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     _function = ConfigManager->get(key)->getElement(CFG).toInt();
   }
   else if (function == FUNCTION_CFG_LED) {
-    _function = ConfigManager->get(key)->getElement(PULL_UP_BUTTON).toInt();
+    _function = ConfigManager->get(key)->getElement(CFG_LED).toInt();
   }
   else {
     _function = ConfigManager->get(key)->getElement(FUNCTION).toInt();
