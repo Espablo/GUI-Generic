@@ -346,11 +346,8 @@ int SuplaConfigESP::getGpio(int nr, int function) {
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
 
-    if (function == FUNCTION_CFG_BUTTON) {
-      if (checkBusyCfg(gpio)) {
-        return gpio;
-      }
-    }
+    if ((function == FUNCTION_CFG_BUTTON || function == FUNCTION_CFG_LED) && checkBusyCfg(gpio, function))
+      return gpio;
 
     if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function && ConfigManager->get(key)->getElement(NR).toInt() == (nr + 1)) {
       return gpio;
@@ -513,11 +510,23 @@ uint8_t SuplaConfigESP::getEvent(uint8_t gpio) {
   return ConfigManager->get(getKeyGpio(gpio))->getElement(EVENT_BUTTON).toInt();
 }
 
-bool SuplaConfigESP::checkBusyCfg(int gpio) {
+bool SuplaConfigESP::checkBusyCfg(int gpio, int function) {
   uint8_t key = KEY_GPIO + gpio;
-  if (ConfigManager->get(key)->getElement(CFG).toInt() == 1) {
-    return true;
+
+  if (function == FUNCTION_CFG_BUTTON) {
+    if (ConfigManager->get(key)->getElement(CFG).toInt() == 1) {
+      return true;
+    }
   }
+
+  if (function == FUNCTION_CFG_LED) {
+    // Aby nie robić konwersji danych dla nowego typu dla LED CFG, wykorzystałem PULL_UP_BUTTON
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED ||
+        ConfigManager->get(key)->getElement(PULL_UP_BUTTON).toInt() == 1) {
+      return true;
+    }
+  }
+
   return false;
 }
 
@@ -528,13 +537,17 @@ int SuplaConfigESP::checkBusyGpio(int gpio, int function) {
   else {
     uint8_t key = KEY_GPIO + gpio;
 
-    if (function == FUNCTION_CFG_BUTTON && ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_BUTTON)
+    if ((function == FUNCTION_CFG_BUTTON && ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_BUTTON) ||
+        (function == FUNCTION_BUTTON && checkBusyCfg(gpio, FUNCTION_CFG_BUTTON) &&
+         ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_BUTTON))
       return true;
 
-    if (function == FUNCTION_BUTTON && checkBusyCfg(gpio) && ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_BUTTON)
+    if ((function == FUNCTION_CFG_LED && ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_LED) ||
+        (function == FUNCTION_LED && checkBusyCfg(gpio, FUNCTION_CFG_LED) && ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_LED))
       return true;
 
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF || checkBusyCfg(gpio))
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() != FUNCTION_OFF || checkBusyCfg(gpio, FUNCTION_CFG_BUTTON) ||
+        checkBusyCfg(gpio, FUNCTION_CFG_LED))
       return false;
 
     return true;
@@ -588,6 +601,11 @@ void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
     return;
   }
 
+  if (function == FUNCTION_CFG_LED) {
+    ConfigManager->setElement(key, PULL_UP_BUTTON, 1);
+    return;
+  }
+
   ConfigManager->setElement(key, NR, nr);
   ConfigManager->setElement(key, FUNCTION, function);
 
@@ -605,6 +623,11 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
 
   if (function == FUNCTION_CFG_BUTTON) {
     ConfigManager->setElement(key, CFG, 0);
+    return;
+  }
+
+  if (function == FUNCTION_CFG_LED) {
+    ConfigManager->setElement(key, PULL_UP_BUTTON, 0);
     return;
   }
 

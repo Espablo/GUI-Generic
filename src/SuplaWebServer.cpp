@@ -225,6 +225,9 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
   if (function == FUNCTION_CFG_BUTTON) {
     _function = ConfigManager->get(key)->getElement(CFG).toInt();
   }
+  else if (function == FUNCTION_CFG_LED) {
+    _function = ConfigManager->get(key)->getElement(PULL_UP_BUTTON).toInt();
+  }
   else {
     _function = ConfigManager->get(key)->getElement(FUNCTION).toInt();
     _nr = ConfigManager->get(key)->getElement(NR).toInt() - 1;
@@ -262,8 +265,8 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
       }
 #endif
     }
-    else if (function == FUNCTION_CFG_BUTTON) {
-      ConfigESP->setGpio(_gpio, FUNCTION_CFG_BUTTON);
+    else if (function == FUNCTION_CFG_BUTTON || function == FUNCTION_CFG_LED) {
+      ConfigESP->setGpio(_gpio, function);
     }
     else if (gpio == _gpio && _function == function && _nr == nr) {
       ConfigESP->setGpio(_gpio, nr, function);
