@@ -19,8 +19,8 @@
 namespace Supla {
 namespace Sensor {
 Percentage::Percentage(Supla::ChannelElement *src,
-                                      int16_t minValue,
-                                      int16_t maxValue,
+                                      double minValue,
+                                      double maxValue,
                                       bool useAlternativeMeasurement)
     : source(src),
       _minValue(minValue),
@@ -66,18 +66,18 @@ double Percentage::getValue() {
   return value;
 }
 
-void Percentage::setMinValue(int16_t minValue) {
+void Percentage::setMinValue(double minValue) {
   _minValue = minValue;
 }
-void Percentage::setMaxValue(int16_t maxValue) {
+void Percentage::setMaxValue(double maxValue) {
   _maxValue = maxValue;
 }
 
-int16_t Percentage::getMinValue() {
+double Percentage::getMinValue() {
   return _minValue;
 }
 
-int16_t Percentage::getMaxValue() {
+double Percentage::getMaxValue() {
   return _maxValue;
 }
 

@@ -28,25 +28,25 @@ namespace Sensor {
 class Percentage : public ChannelElement {
  public:
   Percentage(Supla::ChannelElement *src,
-             int16_t minValue,
-             int16_t maxValue,
+             double minValue,
+             double maxValue,
              bool useAlternativeMeasurement = false);
   virtual double getValue();
   void iterateAlways();
 
-  void setMinValue(int16_t minValue);
-  void setMaxValue(int16_t maxValue);
+  void setMinValue(double minValue);
+  void setMaxValue(double maxValue);
 
-  int16_t getMinValue();
-  int16_t getMaxValue();
+  double getMinValue();
+  double getMaxValue();
 
   double mapDouble(
       double x, double in_min, double in_max, double out_min, double out_max);
 
  protected:
   Supla::ChannelElement *source;
-  int16_t _minValue;
-  int16_t _maxValue;
+  double _minValue;
+  double _maxValue;
   bool useAlternativeMeasurement;
   unsigned long lastReadTime;
 };
