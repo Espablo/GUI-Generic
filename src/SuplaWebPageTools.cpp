@@ -15,6 +15,7 @@
 */
 
 #include "SuplaWebPageTools.h"
+#include "SuplaDeviceGUI.h"
 
 void createWebTools() {
   WebServer->httpServer->on(getURL(PATH_TOOLS), HTTP_GET, [&]() {
