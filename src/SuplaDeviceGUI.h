@@ -23,9 +23,9 @@
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
 
+#include "GUI-Generic_Config.h"
 #include "GUIGenericCommonDefined.h"
 #include "GUIGenericCommon.h"
-#include "GUI-Generic_Config.h"
 #include "SuplaTemplateBoard.h"
 
 #include "SuplaConfigESP.h"
