@@ -114,7 +114,8 @@
 #ifdef SUPLA_CSE7766
 #include <supla/sensor/CSE_7766.h>
 #endif
-#include "src/control/pin_status_led.h"
+
+#include "src/control/PinStatusLed.h"
 
 #ifdef SUPLA_RGBW
 #include <supla/control/rgbw_leds.h>

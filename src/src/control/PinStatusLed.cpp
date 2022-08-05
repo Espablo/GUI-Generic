@@ -15,7 +15,7 @@
 */
 
 #include <supla/io.h>
-#include "pin_status_led.h"
+#include "PinStatusLed.h"
 
 Supla::Control::PinStatusLed::PinStatusLed(uint8_t srcPin,
                                            uint8_t outPin,
