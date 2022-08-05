@@ -138,7 +138,7 @@ void addRelay(uint8_t nr) {
     relay[nr]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinLED != OFF_GPIO) {
-      new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
+      new Supla::Control::PinStatusLedGUI(pinRelay, pinLED, !levelLed);
     }
   }
   else {
@@ -299,7 +299,7 @@ void addRelayBridge(uint8_t nr) {
     relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinLED != OFF_GPIO) {
-      new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
+      new Supla::Control::PinStatusLedGUI(pinRelay, pinLED, !levelLed);
     }
   }
   delay(0);
@@ -472,10 +472,10 @@ void addRolleShutter(uint8_t nr) {
   }
 
   if (pinLedUp != OFF_GPIO) {
-    new Supla::Control::PinStatusLed(pinRelayUp, pinLedUp, !levelLedUp);
+    new Supla::Control::PinStatusLedGUI(pinRelayUp, pinLedUp, !levelLedUp);
   }
   if (pinLedDown != OFF_GPIO) {
-    new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, !levelLedDown);
+    new Supla::Control::PinStatusLedGUI(pinRelayDown, pinLedDown, !levelLedDown);
   }
   delay(0);
 }

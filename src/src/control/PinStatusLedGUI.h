@@ -14,16 +14,16 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _pin_status_led_h
-#define _pin_status_led_h
+#ifndef _pin_status_led_GUI_h
+#define _pin_status_led_GUI_h
 
 #include <supla/element.h>
 
 namespace Supla {
 namespace Control {
-class PinStatusLed : public Element {
+class PinStatusLedGUI : public Element {
  public:
-  PinStatusLed(uint8_t srcPin, uint8_t outPin, bool invert = false);
+  PinStatusLedGUI(uint8_t srcPin, uint8_t outPin, bool invert = false);
 
   void onInit();
   void iterateAlways();

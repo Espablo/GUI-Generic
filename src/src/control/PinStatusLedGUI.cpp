@@ -15,29 +15,29 @@
 */
 
 #include <supla/io.h>
-#include "PinStatusLed.h"
+#include "PinStatusLedGUI.h"
 
-Supla::Control::PinStatusLed::PinStatusLed(uint8_t srcPin,
+Supla::Control::PinStatusLedGUI::PinStatusLedGUI(uint8_t srcPin,
                                            uint8_t outPin,
                                            bool invert)
     : srcPin(srcPin), outPin(outPin), invert(invert) {
 }
 
-void Supla::Control::PinStatusLed::onInit() {
+void Supla::Control::PinStatusLedGUI::onInit() {
   updatePin();
   Supla::Io::pinMode(outPin, OUTPUT);
 }
 
-void Supla::Control::PinStatusLed::iterateAlways() {
+void Supla::Control::PinStatusLedGUI::iterateAlways() {
   updatePin();
 }
 
-void Supla::Control::PinStatusLed::setInvertedLogic(bool invertedLogic) {
+void Supla::Control::PinStatusLedGUI::setInvertedLogic(bool invertedLogic) {
   invert = invertedLogic;
   updatePin();
 }
 
-void Supla::Control::PinStatusLed::updatePin() {
+void Supla::Control::PinStatusLedGUI::updatePin() {
   int value = Supla::Io::digitalRead(srcPin);
     if(value != status) {
       status = value;
