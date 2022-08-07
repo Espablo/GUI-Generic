@@ -39,9 +39,9 @@ void Supla::Control::PinStatusLedGUI::updatePin() {
   int value = Supla::Io::digitalRead(srcPin);
   value = invert ? !value : value;
   if (value != status) {
-    status = value;
     if (value != Supla::Io::digitalRead(outPin)) {
       Supla::Io::digitalWrite(outPin, value);
+      status = value;
     }
   }
 }
