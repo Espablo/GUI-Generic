@@ -111,7 +111,7 @@ void addRelay(uint8_t nr) {
 
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
-  levelLed = ConfigESP->getInversed(pinLED);
+  levelLed = ConfigESP->getLevel(pinLED);
 
   if (pinRelay != OFF_GPIO) {
     if (pinRelay == GPIO_VIRTUAL_RELAY) {
@@ -250,7 +250,7 @@ void addRelayBridge(uint8_t nr) {
 
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
-  levelLed = ConfigESP->getInversed(pinLED);
+  levelLed = ConfigESP->getLevel(pinLED);
 
   if (pinRelay != OFF_GPIO && pinTransmitter != OFF_GPIO) {
     if (pinRelay == GPIO_VIRTUAL_RELAY) {
@@ -413,8 +413,8 @@ void addRolleShutter(uint8_t nr) {
   pinLedUp = ConfigESP->getGpio(nr, FUNCTION_LED);
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
 
-  levelLedUp = ConfigESP->getInversed(pinLedUp);
-  levelLedDown = ConfigESP->getInversed(pinLedDown);
+  levelLedUp = ConfigESP->getLevel(pinLedUp);
+  levelLedDown = ConfigESP->getLevel(pinLedDown);
 
   highIsOn = ConfigESP->getLevel(pinRelayUp);
 
@@ -494,7 +494,7 @@ void addImpulseCounter(uint8_t nr) {
   debounceDelay = ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt();
 
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
-  levelLed = ConfigESP->getInversed(pinLED);
+  levelLed = ConfigESP->getLevel(pinLED);
 
   impulseCounter.push_back(new Supla::Sensor::ImpulseCounter(pin, lowToHigh, inputPullup, debounceDelay));
 
