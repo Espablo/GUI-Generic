@@ -53,6 +53,7 @@ void displayUiSignal(OLEDDisplay* display);
 void displayUiRelayState(OLEDDisplay* display);
 #endif
 void displayUiSuplaStatus(OLEDDisplay* display);
+void displayUiSuplaClock(OLEDDisplay* display);
 void displayUiConfigMode(OLEDDisplay* display);
 void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name = "\n");

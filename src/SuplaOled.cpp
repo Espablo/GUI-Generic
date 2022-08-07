@@ -16,6 +16,7 @@
 
 #include "SuplaOled.h"
 #include "SuplaDeviceGUI.h"
+#include <supla/clock/clock.h>
 
 #ifdef SUPLA_OLED
 
@@ -124,6 +125,7 @@ void displayUiRelayState(OLEDDisplay* display) {
 #endif
 
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state) {
+  displayUiSuplaClock(display);
   displayUiSignal(display);
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
@@ -145,6 +147,19 @@ void displayUiSuplaStatus(OLEDDisplay* display) {
   display->setColor(WHITE);
   display->drawStringMaxWidth(x, y, display->getWidth(), ConfigESP->supla_status.msg);
   display->display();
+}
+
+void displayUiSuplaClock(OLEDDisplay* display) {
+  char clockBuff[6];
+  auto suplaClock = SuplaDevice.getClock();
+
+  if (suplaClock->isReady()) {
+    sprintf_P(clockBuff, PSTR("%02d:%02d"), suplaClock->getHour(), suplaClock->getMin());
+    display->setColor(WHITE);
+    display->setFont(ArialMT_Plain_10);
+    display->setTextAlignment(TEXT_ALIGN_LEFT);
+    display->drawString(0, display->getHeight() - 10, String(clockBuff));
+  }
 }
 
 void displayConfigMode(OLEDDisplay* display) {
@@ -388,6 +403,8 @@ void displayEnergyPowerActive(OLEDDisplay* display, OLEDDisplayUiState* state, i
 
 SuplaOled::SuplaOled() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
+    SuplaDevice.addClock(new Supla::Clock);
+
     switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       case OLED_SSD1306_0_96:
         display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64);
