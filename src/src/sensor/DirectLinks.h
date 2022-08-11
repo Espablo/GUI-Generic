@@ -1,0 +1,77 @@
+/*
+  Copyright (C) krycha88
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+#ifndef _direct_links_multi_h
+#define _direct_links_multi_h
+
+#include "DirectLinksConnect.h"
+#include "pressure_meter.h"
+
+#include <supla/sensor/thermometer.h>
+#include <supla/sensor/therm_hygro_meter.h>
+#include "pressure_meter.h"
+#include <supla/sensor/one_phase_electricity_meter.h>
+
+namespace Supla {
+namespace Sensor {
+
+class DirectLinksThermometer : public DirectLinksConnect, public Thermometer {
+ public:
+  DirectLinksThermometer(const char *url, const char *host, bool isSecured = true);
+  void sendRequest(const String &request);
+  double getValue();
+
+ private:
+  void onInit();
+
+  double temp = TEMPERATURE_NOT_AVAILABLE;
+};
+
+class DirectLinksThermHygroMeter : public DirectLinksConnect, public ThermHygroMeter {
+ public:
+  DirectLinksThermHygroMeter(const char *url, const char *host, bool isSecured = true);
+  void sendRequest(const String &request);
+  double getTemp();
+  double getHumi();
+
+ private:
+  void onInit();
+
+  double temp = TEMPERATURE_NOT_AVAILABLE;
+  double humi = HUMIDITY_NOT_AVAILABLE;
+};
+
+class DirectLinksPressMeter : public DirectLinksConnect, public PressMeter {
+ public:
+  DirectLinksPressMeter(const char *url, const char *host, bool isSecured = true);
+  void sendRequest(const String &request);
+  double getPressure();
+
+ private:
+  void onInit();
+  double press = PRESSURE_NOT_AVAILABLE;
+};
+
+class DirectLinksOnePhaseElectricityMeter : public DirectLinksConnect, public OnePhaseElectricityMeter {
+ public:
+  DirectLinksOnePhaseElectricityMeter(const char *url, const char *host, bool isSecured = true);
+  void sendRequest(const String &request);
+};
+
+};  // namespace Sensor
+};  // namespace Supla
+
+#endif
