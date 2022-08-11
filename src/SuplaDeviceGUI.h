@@ -129,7 +129,7 @@
 #include <supla/control/direct_links.h>
 
 #ifdef SUPLA_NTC_10K
-#include <supla/sensor/NTC_10K.h>
+#include "src/sensor/NTC_10K.h"
 #endif
 
 #ifdef SUPLA_MPX_5XXX

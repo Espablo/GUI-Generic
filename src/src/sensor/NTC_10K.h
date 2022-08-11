@@ -19,20 +19,30 @@
 #include <Arduino.h>
 #include <supla/sensor/thermometer.h>
 
+#define TO_CELSIUS(x) ((x)-273.15)
+#define TO_KELVIN(x)  ((x) + 273.15)
+
+// Parameters for equation
+#define ANALOG_V33 3.3              // ESP8266 Analog voltage
+#define ANALOG_T0  TO_KELVIN(25.0)  // 25 degrees Celcius in Kelvin (= 298.15)
+
+#define ANALOG_NTC_BRIDGE_RESISTANCE 32000  // NTC Voltage bridge resistor
+#define ANALOG_NTC_RESISTANCE        10000  // NTC Resistance
+#define ANALOG_NTC_B_COEFFICIENT     3350   // NTC Beta Coefficient
+
 namespace Supla {
 namespace Sensor {
 class NTC10K : public Thermometer {
  public:
-  NTC10K(int8_t pin, uint32_t rs = 150000, double vcc = 3.3);
+  NTC10K(int8_t pin);
   double getValue();
+  double TaylorLog(double x);
 
  private:
   void onInit();
 
  protected:
   int8_t pin;
-  uint32_t rs;
-  double vcc;
 };
 }  // namespace Sensor
 }  // namespace Supla

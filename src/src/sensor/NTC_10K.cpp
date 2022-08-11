@@ -17,27 +17,33 @@
 
 namespace Supla {
 namespace Sensor {
-NTC10K::NTC10K(int8_t pin, uint32_t rs, double vcc)
-    : pin(pin), rs(rs), vcc(vcc) {
+NTC10K::NTC10K(int8_t pin) : pin(pin) {
 }
 
 double NTC10K::getValue() {
-  int val = 0;
-  for (int i = 0; i < 10; i++) {
-    val += analogRead(pin);
-    delay(1);
+  int adc = analogRead(pin);
+
+  double Rt = (adc * ANALOG_NTC_BRIDGE_RESISTANCE) / (1024.0 * ANALOG_V33 - (double)adc);
+  double BC = (double)ANALOG_NTC_B_COEFFICIENT;
+  double T = BC / (BC / ANALOG_T0 + TaylorLog(Rt / (double)ANALOG_NTC_RESISTANCE));
+
+  return (double)TO_CELSIUS(T);
+}
+
+double NTC10K::TaylorLog(double x) {
+  double z = (x + 1) / (x - 1);                             // We start from power -1, to make sure we get the right power in each iteration;
+  double step = ((x - 1) * (x - 1)) / ((x + 1) * (x + 1));  // Store step to not have to calculate it each time
+  double totalValue = 0;
+  double powe = 1;
+  double y;
+  for (uint32_t count = 0; count < 10; count++) {  // Experimental number of 10 iterations
+    z *= step;
+    y = (1 / powe) * z;
+    totalValue = totalValue + y;
+    powe = powe + 2;
   }
-  val = val / 10;
-
-  double V_NTC = (double)val / 1024;
-  double R_NTC = (rs * V_NTC) / (vcc - V_NTC);
-
-  R_NTC = log(R_NTC);
-  double t = 1 / (0.001129148 +
-                  (0.000234125 + (0.0000000876741 * R_NTC * R_NTC)) * R_NTC);
-
-  t = t - 273.15;  // convert Kelvin to Celcius
-  return t;
+  totalValue *= 2;
+  return totalValue;
 }
 
 void NTC10K::onInit() {
