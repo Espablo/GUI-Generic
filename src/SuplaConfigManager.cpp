@@ -357,14 +357,6 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_HD44780_TYPE, 1, false);
 #endif
 
-#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
-    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2);
-    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
-#else
-    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, 2, false);
-    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, false);
-#endif
-
 #ifdef SUPLA_CONDITIONS
     this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3);
 #else
@@ -407,6 +399,17 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_ACTIVE_EXPENDER, 20);
 #else
     this->addKey(KEY_ACTIVE_EXPENDER, 20, false);
+#endif
+
+#if defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_DIRECT_LINKS_MULTI_SENSOR)
+    this->addKey(KEY_DIRECT_LINKS_TYPE, "0", 3 * MAX_DIRECT_LINK);
+    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR, "0", 2);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
+
+#else
+    this->addKey(KEY_DIRECT_LINKS_TYPE, "0", 3 * MAX_DIRECT_LINK, false);
+    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR, 2, false);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, false);
 #endif
 
     //  this->addKey(KEY_VERSION_CONFIG, String(CURENT_VERSION).c_str(), 2);

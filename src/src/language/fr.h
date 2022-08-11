@@ -195,4 +195,8 @@
 #define S_RECEIVER    "Receiver"
 #endif
 
+#define S_TEMP_HYGR         "Température + Humidité"
+#define S_PRESS             "Pression"
+#define S_ELECTRICITY_METER "Compteur d'énergie électrique"
+
 #endif  // _LANGUAGE_FR_S_H_

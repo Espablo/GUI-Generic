@@ -19,7 +19,8 @@
 
 #include "SuplaDeviceGUI.h"
 
-#if defined(SUPLA_HC_SR04) || defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_VINDRIKTNING_IKEA) || defined(SUPLA_PMSX003)
+#if defined(SUPLA_HC_SR04) || defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_VINDRIKTNING_IKEA) || defined(SUPLA_PMSX003) || \
+    defined(SUPLA_DIRECT_LINKS_MULTI_SENSOR)
 #define GUI_SENSOR_OTHER
 #endif
 
@@ -122,6 +123,12 @@ void handleCounterCalibrateSave();
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
 #define INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR "imdlst"
 #define INPUT_DIRECT_LINKS_SENSOR_THERMOMETR     "idlst"
+#endif
+
+#ifdef SUPLA_DIRECT_LINKS_MULTI_SENSOR
+#define INPUT_DIRECT_LINKS_TYPE       "idlt"
+#define INPUT_MAX_DIRECT_LINKS_SENSOR "imdls"
+#define INPUT_DIRECT_LINKS_SENSOR     "idls"
 #endif
 
 #ifdef SUPLA_RF_BRIDGE
