@@ -361,9 +361,15 @@ void displayEnergyVoltage(OLEDDisplay* display, OLEDDisplayUiState* state, int16
     if (element->getChannel()) {
       auto channel = element->getChannel();
       if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
-        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
         String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+
+        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+        if (extValue == nullptr)
+          return;
+
+        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+        if (emValue->m_count < 1 || emValue == nullptr)
+          return;
 
         displayUiGeneral(display, state, x, y, emValue->m[0].voltage[0] / 100.0, name, "V");
       }
@@ -376,9 +382,15 @@ void displayEnergyCurrent(OLEDDisplay* display, OLEDDisplayUiState* state, int16
     if (element->getChannel()) {
       auto channel = element->getChannel();
       if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
-        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
         String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+
+        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+        if (extValue == nullptr)
+          return;
+
+        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+        if (emValue->m_count < 1 || emValue == nullptr)
+          return;
 
         displayUiGeneral(display, state, x, y, emValue->m[0].current[0] / 1000.0, name, "A");
       }
@@ -391,9 +403,15 @@ void displayEnergyPowerActive(OLEDDisplay* display, OLEDDisplayUiState* state, i
     if (element->getChannel()) {
       auto channel = element->getChannel();
       if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
-        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
         String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+
+        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+        if (extValue == nullptr)
+          return;
+
+        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+        if (emValue->m_count < 1 || emValue == nullptr)
+          return;
 
         displayUiGeneral(display, state, x, y, emValue->m[0].power_active[0] / 100000.0, name, "W");
       }

@@ -20,23 +20,10 @@ namespace Sensor {
 
 DirectLinksThermometer::DirectLinksThermometer(const char *url, const char *host, bool isSecured) : DirectLinksConnect(url, host, isSecured){};
 
-void DirectLinksThermometer::sendRequest(const String &request) {
+void DirectLinksThermometer::sendRequest() {
   if (client) {
-    client->print(String("GET /direct/") + _url + " HTTP/1.1\r\n" + "Host: " + _host + "\r\n" + "User-Agent: BuildFailureDetectorESP8266\r\n" +
-                  "Connection: close\r\n\r\n");
-
-    while (client->connected() || client->available()) {
-      String line = client->readStringUntil('\n');
-      if (line == "\r") {
-        Serial.println(F("Direct links - Headers received"));
-        break;
-      }
-    }
-
-    String line = client->readStringUntil('\r');
-    Serial.println(line);
     DynamicJsonBuffer jsonBuffer;
-    JsonObject &root = jsonBuffer.parseObject(line);
+    JsonObject &root = jsonBuffer.parseObject(getRequest());
 
     if (root.success()) {
       bool connected = root["connected"];
@@ -72,23 +59,10 @@ void DirectLinksThermometer::onInit() {
 DirectLinksThermHygroMeter::DirectLinksThermHygroMeter(const char *url, const char *host, bool isSecured)
     : DirectLinksConnect(url, host, isSecured){};
 
-void DirectLinksThermHygroMeter::sendRequest(const String &request) {
+void DirectLinksThermHygroMeter::sendRequest() {
   if (client) {
-    client->print(String("GET /direct/") + _url + " HTTP/1.1\r\n" + "Host: " + _host + "\r\n" + "User-Agent: BuildFailureDetectorESP8266\r\n" +
-                  "Connection: close\r\n\r\n");
-
-    while (client->connected() || client->available()) {
-      String line = client->readStringUntil('\n');
-      if (line == "\r") {
-        Serial.println(F("Direct links - Headers received"));
-        break;
-      }
-    }
-
-    String line = client->readStringUntil('\r');
-    Serial.println(line);
     DynamicJsonBuffer jsonBuffer;
-    JsonObject &root = jsonBuffer.parseObject(line);
+    JsonObject &root = jsonBuffer.parseObject(getRequest());
 
     if (root.success()) {
       bool connected = root["connected"];
@@ -130,23 +104,10 @@ void DirectLinksThermHygroMeter::onInit() {
 
 DirectLinksPressMeter::DirectLinksPressMeter(const char *url, const char *host, bool isSecured) : DirectLinksConnect(url, host, isSecured){};
 
-void DirectLinksPressMeter::sendRequest(const String &request) {
+void DirectLinksPressMeter::sendRequest() {
   if (client) {
-    client->print(String("GET /direct/") + _url + " HTTP/1.1\r\n" + "Host: " + _host + "\r\n" + "User-Agent: BuildFailureDetectorESP8266\r\n" +
-                  "Connection: close\r\n\r\n");
-
-    while (client->connected() || client->available()) {
-      String line = client->readStringUntil('\n');
-      if (line == "\r") {
-        Serial.println(F("Direct links - Headers received"));
-        break;
-      }
-    }
-
-    String line = client->readStringUntil('\r');
-    Serial.println(line);
     DynamicJsonBuffer jsonBuffer;
-    JsonObject &root = jsonBuffer.parseObject(line);
+    JsonObject &root = jsonBuffer.parseObject(getRequest());
 
     if (root.success()) {
       bool connected = root["connected"];
@@ -182,23 +143,10 @@ void DirectLinksPressMeter::onInit() {
 DirectLinksOnePhaseElectricityMeter::DirectLinksOnePhaseElectricityMeter(const char *url, const char *host, bool isSecured)
     : DirectLinksConnect(url, host, isSecured){};
 
-void DirectLinksOnePhaseElectricityMeter::sendRequest(const String &request) {
+void DirectLinksOnePhaseElectricityMeter::sendRequest() {
   if (client) {
-    client->print(request);
-
-    while (client->connected()) {
-      String line = client->readStringUntil('\n');
-      if (line == "\r") {
-        Serial.println(F("Direct links - Headers received"));
-        break;
-      }
-    }
-
-    String line = client->readStringUntil('\r');
-    Serial.println(line);
-
     DynamicJsonBuffer jsonBuffer;
-    JsonObject &root = jsonBuffer.parseObject(line);
+    JsonObject &root = jsonBuffer.parseObject(getRequest());
 
     if (root.success()) {
       bool connected = root["connected"];

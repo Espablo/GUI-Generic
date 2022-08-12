@@ -85,7 +85,7 @@ void DirectLinksConnect::toggleConnection() {
 #ifdef ARDUINO_ARCH_ESP8266
       ((WiFiClientSecure *)client)->setBufferSizes(1024, 512);
 #endif
-      ((WiFiClientSecure *)client)->setTimeout(10000);
+      ((WiFiClientSecure *)client)->setTimeout(10);
     }
     else {
       client = new WiFiClient();
@@ -102,27 +102,58 @@ void DirectLinksConnect::toggleConnection() {
 
 void DirectLinksConnect::send() {
   toggleConnection();
-
-  String request = String("GET /direct/") + _url + " HTTP/1.1\r\n" + "Host: " + _host + "\r\n" + "User-Agent: BuildFailureDetectorESP8266\r\n" +
-                   "Connection: close\r\n\r\n";
-  // Serial.println(request);
-  sendRequest(request);
-
+  sendRequest();
   toggleConnection();
 
-  if (client) {
-    delete client;
-    client = nullptr;
-  }
+  client->stop();
+
+  // if (client) {
+  //   delete client;
+  //   client = nullptr;
+  // }
 }
 
-void DirectLinksConnect::sendRequest(const String &request) {
+String DirectLinksConnect::getRequest() {
+  String request = String("GET /direct/") + _url + " HTTP/1.1\r\n" + "Host: " + _host + "\r\n" + "User-Agent: BuildFailureDetectorESP8266\r\n" +
+                   "Content-Type: application/json\r\n" + "Connection: close\r\n\r\n";
+
+  client->print(request);
+
+  Serial.println("Response:");
+
+  while (client->connected() || client->available()) {
+    if (client->readStringUntil('\n') == "\r") {
+      Serial.println(F("Direct links - Headers received"));
+      break;
+    }
+  }
+  char result[1024];
+  int i = 0;
+  while (client->connected() || client->available()) {
+    result[i++] = (char)client->read();
+  }
+  result[strlen(result) - 1] = '\0';
+
+  return result;
+}
+
+void DirectLinksConnect::sendRequest() {
 }
 
 void DirectLinksConnect::iterateAlways() {
-  if (millis() - lastReadTime > 30000) {
-    lastReadTime = millis();
+  onInitNetworkConnected();
+
+  if (millis() - lastReadTime > 300000) {
     send();
+    lastReadTime = millis();
+  }
+}
+
+void DirectLinksConnect::onInitNetworkConnected() {
+  if (Supla::Network::Connected() && !initNetworkConnected) {
+    send();
+    lastReadTime = millis();
+    initNetworkConnected = true;
   }
 }
 

@@ -21,6 +21,7 @@
 #include <ArduinoJson.h>
 #include <WiFiClientSecure.h>
 #include <supla/element.h>
+#include <supla/network/network.h>
 
 #define MAX_DIRECT_LINKS_SIZE 32
 #define MAX_HOST_SIZE         32
@@ -43,8 +44,10 @@ class DirectLinksConnect : public Element {
   bool openConnection();
   bool closeConnection();
   void send();
-  virtual void sendRequest(const String &request);
+  String getRequest();
+  virtual void sendRequest();
   void iterateAlways();
+  void onInitNetworkConnected();
 
  protected:
   WiFiClient *client;
@@ -56,6 +59,7 @@ class DirectLinksConnect : public Element {
   uint16_t _port;
 
   int8_t retryCount = 0;
+  bool initNetworkConnected = false;
 };
 
 };  // namespace Sensor

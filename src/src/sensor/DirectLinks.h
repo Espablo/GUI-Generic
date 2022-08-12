@@ -31,7 +31,7 @@ namespace Sensor {
 class DirectLinksThermometer : public DirectLinksConnect, public Thermometer {
  public:
   DirectLinksThermometer(const char *url, const char *host, bool isSecured = true);
-  void sendRequest(const String &request);
+  void sendRequest();
   double getValue();
 
  private:
@@ -43,7 +43,7 @@ class DirectLinksThermometer : public DirectLinksConnect, public Thermometer {
 class DirectLinksThermHygroMeter : public DirectLinksConnect, public ThermHygroMeter {
  public:
   DirectLinksThermHygroMeter(const char *url, const char *host, bool isSecured = true);
-  void sendRequest(const String &request);
+  void sendRequest();
   double getTemp();
   double getHumi();
 
@@ -57,7 +57,7 @@ class DirectLinksThermHygroMeter : public DirectLinksConnect, public ThermHygroM
 class DirectLinksPressMeter : public DirectLinksConnect, public PressMeter {
  public:
   DirectLinksPressMeter(const char *url, const char *host, bool isSecured = true);
-  void sendRequest(const String &request);
+  void sendRequest();
   double getPressure();
 
  private:
@@ -68,7 +68,7 @@ class DirectLinksPressMeter : public DirectLinksConnect, public PressMeter {
 class DirectLinksOnePhaseElectricityMeter : public DirectLinksConnect, public OnePhaseElectricityMeter {
  public:
   DirectLinksOnePhaseElectricityMeter(const char *url, const char *host, bool isSecured = true);
-  void sendRequest(const String &request);
+  void sendRequest();
 };
 
 };  // namespace Sensor
