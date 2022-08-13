@@ -105,21 +105,17 @@ void DirectLinksConnect::send() {
   sendRequest();
   toggleConnection();
 
-  client->stop();
-
-  // if (client) {
-  //   delete client;
-  //   client = nullptr;
-  // }
+  if (client) {
+    delete client;
+    client = nullptr;
+  }
 }
 
 String DirectLinksConnect::getRequest() {
   String request = String("GET /direct/") + _url + " HTTP/1.1\r\n" + "Host: " + _host + "\r\n" + "User-Agent: BuildFailureDetectorESP8266\r\n" +
-                   "Content-Type: application/json\r\n" + "Connection: close\r\n\r\n";
+                   "Connection: close\r\n\r\n";
 
   client->print(request);
-
-  Serial.println("Response:");
 
   while (client->connected() || client->available()) {
     if (client->readStringUntil('\n') == "\r") {
@@ -127,12 +123,14 @@ String DirectLinksConnect::getRequest() {
       break;
     }
   }
-  char result[1024];
+  char result[700];
   int i = 0;
   while (client->connected() || client->available()) {
     result[i++] = (char)client->read();
   }
-  result[strlen(result) - 1] = '\0';
+  result[strlen(result)] = '\0';
+
+  Serial.println(result);
 
   return result;
 }
