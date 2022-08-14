@@ -22,10 +22,6 @@ NTC10K::NTC10K(int8_t pin) : pin(pin) {
 
 double NTC10K::getValue() {
   int adc = analogRead(pin);
-
-  double Rt = (adc * ANALOG_NTC_BRIDGE_RESISTANCE) / (1024.0 * ANALOG_V33 - (double)adc);
-  double BC = (double)ANALOG_NTC_B_COEFFICIENT;
-  double T = BC / (BC / ANALOG_T0 + TaylorLog(Rt / (double)ANALOG_NTC_RESISTANCE));
   // Steinhart-Hart equation for thermistor as temperature sensor:
   // double Rt = (adc * Adc[idx].param1 * MAX_ADC_V) / (ANALOG_RANGE * ANALOG_V33 - (double)adc * MAX_ADC_V);
   // MAX_ADC_V in ESP8266 is 1
