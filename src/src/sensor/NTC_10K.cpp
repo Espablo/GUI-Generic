@@ -53,7 +53,7 @@ double NTC10K::TaylorLog(double x) {
   return totalValue;
 }
 
-uint16_t AdcRead(uint32_t pin, uint32_t factor) {
+uint16_t NTC10K::AdcRead(uint32_t pin, uint32_t factor) {
   // factor 1 = 2 samples
   // factor 2 = 4 samples
   // factor 3 = 8 samples
