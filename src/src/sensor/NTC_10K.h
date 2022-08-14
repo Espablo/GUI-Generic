@@ -58,6 +58,7 @@ class NTC10K : public Thermometer {
   NTC10K(int8_t pin);
   double getValue();
   double TaylorLog(double x);
+  uint16_t AdcRead(uint32_t pin, uint32_t factor);
 
  private:
   void onInit();
