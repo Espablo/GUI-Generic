@@ -62,7 +62,7 @@ void handleDeviceSettings() {
   addButton(webContentBuffer, S_SENSORS_OTHER, PATH_OTHER);
 #endif
 
-#if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
+#if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI) || defined(GUI_SENSOR_ANALOG)
   addButton(webContentBuffer, S_CORRECTION, PATH_CORRECTION);
 #endif
 
