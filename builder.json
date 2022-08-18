@@ -197,7 +197,6 @@
 			"defOn": false,
 			"depOn": [
 				"SUPLA_ROLLERSHUTTER",
-				"SUPLA_PUSHOVER",
 				"SUPLA_DIRECT_LINKS",
 				"SUPLA_LED",
 				"SUPLA_CONDITIONS"
