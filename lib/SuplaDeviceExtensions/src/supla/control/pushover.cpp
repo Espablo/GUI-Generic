@@ -116,7 +116,7 @@ void Pushover::sendRequest() {
     while (client->connected()) {
       String line = client->readStringUntil('\n');
       if (line == "\r") {
-        Serial.println(F("Headers received"));
+        Serial.println(F("Pushover - Headers received"));
         break;
       }
     }

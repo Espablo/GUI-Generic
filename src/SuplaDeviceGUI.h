@@ -224,7 +224,7 @@ extern std::vector<Supla::Control::Relay *> relay;
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-void addPushover(uint8_t nr);
+void addPushover(uint8_t nr, const String& name, Supla::ChannelElement *client);
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)

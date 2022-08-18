@@ -167,8 +167,8 @@ void addButtonToRelay(uint8_t nrRelay) {
         button->setSwNoiseFilterDelay(50);
       }
 #else
-    button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
-    button->setSwNoiseFilterDelay(50);
+      button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
+      button->setSwNoiseFilterDelay(50);
 #endif
 
       if (ConfigESP->getEvent(pinButton) == Supla::ON_HOLD) {
@@ -321,16 +321,17 @@ void addButtonBridge(uint8_t nr) {
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-void addPushover(uint8_t nr) {
+void addPushover(uint8_t nr, const String& name, Supla::ChannelElement *client) {
   if (nr <= MAX_PUSHOVER_MESSAGE) {
     if (strcmp(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str(), "") != 0 &&
         strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 && strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
       auto pushover =
           new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
 
-      pushover->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
+      String title = name + S_SPACE + (nr + 1) + S_SPACE + "-" + S_SPACE + ConfigManager->get(KEY_HOST_NAME)->getValue();
+      pushover->setTitle(title.c_str());
       pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str());
-      relay[nr]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
+      client->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
     }
   }
 }

@@ -19,6 +19,10 @@
 
 #include "SuplaDeviceGUI.h"
 
+#ifdef SUPLA_PUSHOVER
+#define INPUT_PUSHOVER_MESSAGE "pm"
+#endif
+
 #if defined(SUPLA_RELAY) || defined(GUI_SENSOR_I2C_EXPENDER)
 #define GUI_RELAY
 #endif
@@ -63,10 +67,6 @@ void handleRelaySaveSet();
 #ifdef GUI_SENSOR_I2C_EXPENDER
 void handleRelaySetMCP23017(int save = 0);
 void handleRelaySaveSetMCP23017();
-#endif
-
-#ifdef SUPLA_PUSHOVER
-#define INPUT_PUSHOVER_MESSAGE "pm"
 #endif
 
 #ifdef SUPLA_LED

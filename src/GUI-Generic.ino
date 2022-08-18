@@ -97,7 +97,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_PUSHOVER
-        Supla::GUI::addPushover(nr);
+        Supla::GUI::addPushover(nr, S_RELAY, Supla::GUI::relay[nr]);
 #endif
 
 #ifdef SUPLA_DIRECT_LINKS
@@ -111,8 +111,13 @@ void setup() {
 
 #ifdef SUPLA_LIMIT_SWITCH
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
-    if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != OFF_GPIO) {
-      auto binary = new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), true);
+    gpio = ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH);
+
+    if (gpio != OFF_GPIO) {
+      auto binary = new Supla::Sensor::Binary(gpio, ConfigESP->getPullUp(gpio));
+
+      Supla::GUI::addPushover(nr, S_LIMIT_SWITCH, binary);
+
       Supla::GUI::addConditionsTurnON(SENSOR_BINARY, binary, nr);
       Supla::GUI::addConditionsTurnOFF(SENSOR_BINARY, binary, nr);
     }
