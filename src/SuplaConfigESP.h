@@ -157,7 +157,6 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
  private:
   bool MDNSConfigured = false;
-  bool APConfigured = false;
   void iterateAlways();
 
   Ticker led;
