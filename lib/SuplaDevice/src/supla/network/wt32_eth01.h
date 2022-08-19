@@ -26,6 +26,7 @@
 #include <WiFiClientSecure.h>
 #include <supla/network/network.h>
 #include <supla/supla_lib_config.h>
+#include <supla/log_wrapper.h>
 
 #ifdef ETH_CLK_MODE
 #undef ETH_CLK_MODE
@@ -124,7 +125,7 @@ class WT32_ETH01 : public Supla::Network {
       connectionPort = port;
     }
 
-    supla_log(LOG_DEBUG,
+    SUPLA_LOG_DEBUG(
               "Establishing %s with: %s (port: %d)",
               message.c_str(),
               server,

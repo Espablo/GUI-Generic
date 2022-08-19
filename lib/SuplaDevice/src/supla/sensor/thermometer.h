@@ -21,7 +21,7 @@
 
 #include "supla/channel_element.h"
 
-#define TEMPERATURE_NOT_AVAILABLE -275
+#define TEMPERATURE_NOT_AVAILABLE -275.0
 
 namespace Supla {
 namespace Sensor {

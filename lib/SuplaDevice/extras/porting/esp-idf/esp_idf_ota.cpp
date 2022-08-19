@@ -24,6 +24,7 @@
 #include <esp_task_wdt.h>
 #include <stdio.h>
 #include <supla-common/log.h>
+#include <supla/log_wrapper.h>
 #include <supla/rsa_verificator.h>
 #include <supla/sha256.h>
 #include <supla/time.h>
@@ -59,17 +60,9 @@ void Supla::EspIdfOta::start() {
   int v = 0;
 
   while (1) {
-    v = stringAppend(
-        urlWithParams + curPos, "/check_update?name=", URL_SIZE - curPos - 1);
-    if (v == 0) break;
-    curPos += v;
-
-    urlEncode(Supla::Channel::reg_dev.Name, buf, BUF_SIZE);
-    v = stringAppend(urlWithParams + curPos, buf, URL_SIZE - curPos - 1);
-    if (v == 0) break;
-    curPos += v;
-
-    v = stringAppend(urlWithParams + curPos, "&mfr=", URL_SIZE - curPos - 1);
+    v = stringAppend(urlWithParams + curPos,
+                     "/check-updates?manufacturerId=",
+                     URL_SIZE - curPos - 1);
     if (v == 0) break;
     curPos += v;
 
@@ -78,11 +71,21 @@ void Supla::EspIdfOta::start() {
     if (v == 0) break;
     curPos += v;
 
-    v = stringAppend(urlWithParams + curPos, "&prod=", URL_SIZE - curPos - 1);
+    v = stringAppend(
+        urlWithParams + curPos, "&productId=", URL_SIZE - curPos - 1);
     if (v == 0) break;
     curPos += v;
 
     snprintf(buf, sizeof(buf), "%d", Supla::Channel::reg_dev.ProductID);
+    v = stringAppend(urlWithParams + curPos, buf, URL_SIZE - curPos - 1);
+    if (v == 0) break;
+    curPos += v;
+
+    v = stringAppend(urlWithParams + curPos, "&name=", URL_SIZE - curPos - 1);
+    if (v == 0) break;
+    curPos += v;
+
+    urlEncode(Supla::Channel::reg_dev.Name, buf, BUF_SIZE);
     v = stringAppend(urlWithParams + curPos, buf, URL_SIZE - curPos - 1);
     if (v == 0) break;
     curPos += v;
@@ -97,7 +100,8 @@ void Supla::EspIdfOta::start() {
     if (v == 0) break;
     curPos += v;
 
-    v = stringAppend(urlWithParams + curPos, "&sguid=", URL_SIZE - curPos - 1);
+    v = stringAppend(
+        urlWithParams + curPos, "&guidHash=", URL_SIZE - curPos - 1);
     if (v == 0) break;
     curPos += v;
 
@@ -119,7 +123,7 @@ void Supla::EspIdfOta::start() {
 
     if (strlen(Supla::Channel::reg_dev.Email) > 0) {
       v = stringAppend(
-          urlWithParams + curPos, "&smail=", URL_SIZE - curPos - 1);
+          urlWithParams + curPos, "&userEmailHash=", URL_SIZE - curPos - 1);
       if (v == 0) break;
       curPos += v;
 
@@ -148,7 +152,7 @@ void Supla::EspIdfOta::start() {
 
     if (beta) {
       v = stringAppend(
-          urlWithParams + curPos, "&beta=1", URL_SIZE - curPos - 1);
+          urlWithParams + curPos, "&beta=true", URL_SIZE - curPos - 1);
       if (v == 0) break;
       curPos += v;
     }
@@ -159,6 +163,7 @@ void Supla::EspIdfOta::start() {
     fail("SW update: fail - too long request url");
     return;
   }
+  SUPLA_LOG_INFO("SW update: checking updates from url: %s", urlWithParams);
 
   esp_http_client_config_t configCheckUpdate = {};
   configCheckUpdate.url = urlWithParams;
@@ -180,7 +185,7 @@ void Supla::EspIdfOta::start() {
   // Start fetching bin file and perform update
   const esp_partition_t *updatePartition = NULL;
 
-  supla_log(LOG_DEBUG, "Starting OTA");
+  SUPLA_LOG_DEBUG("Starting OTA");
 
   otaBuffer = new uint8_t[BUFFER_SIZE + 1];
   if (otaBuffer == nullptr) {
@@ -196,10 +201,10 @@ void Supla::EspIdfOta::start() {
       return;
     } else if (dataRead > 0) {
       otaBuffer[dataRead] = '\0';
-      supla_log(LOG_DEBUG, "Read: %s", otaBuffer);
+      SUPLA_LOG_DEBUG("Read: %s", otaBuffer);
     } else if (dataRead == 0) {
       if (errno == ECONNRESET || errno == ENOTCONN) {
-        supla_log(LOG_DEBUG, "Connection closed, errno = %d", errno);
+        SUPLA_LOG_DEBUG("Connection closed, errno = %d", errno);
         break;
       }
       if (esp_http_client_is_complete_data_received(client) == true) {
@@ -219,24 +224,31 @@ void Supla::EspIdfOta::start() {
     return;
   }
   cJSON *status = cJSON_GetObjectItemCaseSensitive(json, "status");
-  cJSON *version = cJSON_GetObjectItemCaseSensitive(json, "version");
-  cJSON *url = cJSON_GetObjectItemCaseSensitive(json, "url");
+  cJSON *latestUpdate = cJSON_GetObjectItemCaseSensitive(json, "latestUpdate");
   if (cJSON_IsString(status) && (status->valuestring != NULL)) {
     snprintf(buf, BUF_SIZE, "SW update status: %s", status->valuestring);
-    supla_log(LOG_DEBUG, "%s", buf);
+    SUPLA_LOG_INFO("%s", buf);
     log(buf);
   }
-  if (cJSON_IsString(version) && (version->valuestring != NULL) &&
-      cJSON_IsString(url) && (url->valuestring != NULL)) {
-    snprintf(buf, BUF_SIZE, "SW update new version: %s", version->valuestring);
-    supla_log(LOG_DEBUG, "%s", buf);
-    log(buf);
-    snprintf(buf, BUF_SIZE, "SW update url: \"%s\"", url->valuestring);
-    supla_log(LOG_DEBUG, "%s", buf);
-    log(buf);
-    esp_http_client_set_url(client, url->valuestring);
+  if (cJSON_IsObject(latestUpdate)) {
+    cJSON *version = cJSON_GetObjectItemCaseSensitive(latestUpdate, "version");
+    cJSON *url = cJSON_GetObjectItemCaseSensitive(latestUpdate, "updateUrl");
+    if (cJSON_IsString(version) && (version->valuestring != NULL) &&
+        cJSON_IsString(url) && (url->valuestring != NULL)) {
+      snprintf(
+          buf, BUF_SIZE, "SW update new version: %s", version->valuestring);
+      SUPLA_LOG_INFO("%s", buf);
+      log(buf);
+      snprintf(buf, BUF_SIZE, "SW update url: \"%s\"", url->valuestring);
+      SUPLA_LOG_INFO("%s", buf);
+      log(buf);
+      esp_http_client_set_url(client, url->valuestring);
+    } else {
+      fail("SW update: no url and version received - finishing");
+      return;
+    }
   } else {
-    fail("SW update: no url and version received - finishing");
+    fail("SW update: no new update available");
     return;
   }
 
@@ -246,17 +258,20 @@ void Supla::EspIdfOta::start() {
     fail("SW update: failed to open HTTP connection");
     return;
   }
-  esp_http_client_fetch_headers(client);
+  err = esp_http_client_fetch_headers(client);
+  if (err != ESP_OK) {
+    fail("SW update: failed to read file from url");
+    return;
+  }
 
   updatePartition = esp_ota_get_next_update_partition(NULL);
   if (updatePartition == NULL) {
     fail("SW update: failed to get next update partition");
     return;
   }
-  supla_log(LOG_DEBUG,
-            "Used ota partition subtype %d, offset 0x%x",
-            updatePartition->subtype,
-            updatePartition->address);
+  SUPLA_LOG_DEBUG("Used ota partition subtype %d, offset 0x%x",
+                  updatePartition->subtype,
+                  updatePartition->address);
 
   int binSize = 0;
 
@@ -266,7 +281,7 @@ void Supla::EspIdfOta::start() {
     return;
   }
 
-  supla_log(LOG_DEBUG, "Getting file from server...");
+  SUPLA_LOG_DEBUG("Getting file from server...");
   while (true) {
     int dataRead = esp_http_client_read(
         client, reinterpret_cast<char *>(otaBuffer), BUFFER_SIZE);
@@ -286,7 +301,7 @@ void Supla::EspIdfOta::start() {
       binSize += dataRead;
     } else if (dataRead == 0) {
       if (errno == ECONNRESET || errno == ENOTCONN) {
-        supla_log(LOG_DEBUG, "Connection closed, errno = %d", errno);
+        SUPLA_LOG_DEBUG("Connection closed, errno = %d", errno);
         break;
       }
       if (esp_http_client_is_complete_data_received(client) == true) {
@@ -294,7 +309,7 @@ void Supla::EspIdfOta::start() {
       }
     }
   }
-  supla_log(LOG_DEBUG, "Download complete. Wrote %d bytes", binSize);
+  SUPLA_LOG_INFO("Download complete. Wrote %d bytes", binSize);
   if (esp_http_client_is_complete_data_received(client) != true) {
     fail("SW update: error in receiving complete file");
     return;
@@ -368,7 +383,7 @@ bool Supla::EspIdfOta::verifyRsaSignature(
   Supla::Sha256 hash;
 
   if (binSize < RSA_FOOTER_SIZE + RSA_NUM_BYTES + 1) {
-    supla_log(LOG_DEBUG, "Fail: bin size too small");
+    SUPLA_LOG_ERROR("Fail: bin size too small");
     return false;
   }
 
@@ -383,7 +398,7 @@ bool Supla::EspIdfOta::verifyRsaSignature(
         esp_partition_read(updatePartition, i, otaBuffer, sizeToRead);
 
     if (err != ESP_OK) {
-      supla_log(LOG_DEBUG, "Fail: error reading app");
+      SUPLA_LOG_ERROR("Fail: error reading app");
       return false;
     }
 
@@ -394,12 +409,12 @@ bool Supla::EspIdfOta::verifyRsaSignature(
       updatePartition, binSize - RSA_FOOTER_SIZE, footer, RSA_FOOTER_SIZE);
 
   if (err != ESP_OK) {
-    supla_log(LOG_DEBUG, "Fail: error reading footer");
+    SUPLA_LOG_ERROR("Fail: error reading footer");
     return false;
   }
 
   if (memcmp(footer, expectedFooter, RSA_FOOTER_SIZE) != 0) {
-    supla_log(LOG_DEBUG, "Fail: invalid footer");
+    SUPLA_LOG_ERROR("Fail: invalid footer");
     return false;
   }
 
@@ -409,22 +424,21 @@ bool Supla::EspIdfOta::verifyRsaSignature(
                            RSA_NUM_BYTES);
 
   if (err != ESP_OK) {
-    supla_log(LOG_DEBUG, "Fail: error reading signature");
+    SUPLA_LOG_ERROR("Fail: error reading signature");
     return false;
   }
 
   if (sdc && sdc->getRsaPublicKey()) {
     Supla::RsaVerificator rsa(sdc->getRsaPublicKey());
     if (rsa.verify(&hash, otaBuffer)) {
-      supla_log(LOG_DEBUG, "RSA signature verification successful");
+      SUPLA_LOG_DEBUG("RSA signature verification successful");
       return true;
     } else {
-      supla_log(LOG_DEBUG, "Fail: Incorrect RSA signature");
+      SUPLA_LOG_ERROR("Fail: Incorrect RSA signature");
       return false;
     }
   } else {
-    supla_log(LOG_DEBUG,
-              "Fail: RSA public key not set in SuplaDevice instance");
+    SUPLA_LOG_ERROR("Fail: RSA public key not set in SuplaDevice instance");
     return false;
   }
   return false;

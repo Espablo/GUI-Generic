@@ -45,6 +45,10 @@ set(SUPLA_DEVICE_SRCS
   ../../../src/supla/network/html/sw_update.cpp
   ../../../src/supla/network/html/security_certificate.cpp
 
+  ../../../src/supla/protocol/protocol_layer.cpp
+  ../../../src/supla/protocol/supla_srpc.cpp
+  ../../../src/supla/protocol/mqtt.cpp
+
   ../../../src/supla/clock/clock.cpp
 
   ../../../src/supla/control/action_trigger.cpp
@@ -92,6 +96,7 @@ set(SUPLA_DEVICE_SRCS
   ../../../src/supla/sensor/virtual_binary.cpp
   ../../../src/supla/sensor/distance.cpp
   ../../../src/supla/sensor/HC_SR04.cpp
+  ../../../src/supla/sensor/ntc10k.cpp
 )
 
 set(NETTLE_SRCS
@@ -127,8 +132,17 @@ idf_component_register(SRCS
   ${NETTLE_SRCS}
   ${SUPLA_DEVICE_PORTING_SRCS}
   INCLUDE_DIRS "../../../src/" "../../porting/esp-idf"
-  REQUIRES esp-tls nvs_flash spiffs esp_http_server app_update esp_http_client json
-  EMBED_TXTFILES supla_org_cert.pem
+  REQUIRES
+    esp-tls
+    nvs_flash
+    spiffs
+    esp_http_server
+    app_update
+    esp_http_client
+    json
+    esp_wifi
+    driver
+  EMBED_TXTFILES supla_org_cert.pem supla_3rd_cert.pem
 )
 
 target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DEVICE)
