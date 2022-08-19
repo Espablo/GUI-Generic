@@ -151,11 +151,15 @@ void SuplaConfigESP::rebootESP() {
 
 void SuplaConfigESP::configModeInit(WiFiMode_t m) {
   configModeESP = CONFIG_MODE;
+  APConfigured = false;
   ledBlinking(100);
-  SuplaDevice.enterConfigMode();
 
   Supla::GUI::enableConnectionSSL(false);
   Supla::GUI::setupConnection();
+  WiFi.mode(m);
+
+  Serial.print(F("Config Mode started: "));
+  Serial.println(m);
 }
 
 bool SuplaConfigESP::checkSSL() {
@@ -164,6 +168,13 @@ bool SuplaConfigESP::checkSSL() {
 
 void SuplaConfigESP::iterateAlways() {
   if (configModeESP == CONFIG_MODE) {
+    if (!APConfigured) {
+      APConfigured = WiFi.softAP(getConfigNameAP().c_str(), "");
+      Serial.print(F("AP started IP: "));
+      Serial.println(WiFi.softAPIP());
+      Supla::GUI::crateWebServer();
+    }
+
 #ifdef SUPLA_MDNS
     if (WiFi.status() == WL_CONNECTED) {
       if (!MDNSConfigured) {

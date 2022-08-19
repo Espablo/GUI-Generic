@@ -39,8 +39,6 @@ void begin() {
   auto npos = server.indexOf(":");
   String suplaServer = server.substring(0, npos);
 
-  SuplaDevice.addFlags(SUPLA_DEVICE_FLAG_CALCFG_ENTER_CFG_MODE);
-
   SuplaDevice.begin((char *)ConfigManager->get(KEY_SUPLA_GUID)->getValue(),      // Global Unique Identifier
                     suplaServer.c_str(),                                         // SUPLA server address
                     ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),             // Email address used to login to Supla Cloud
