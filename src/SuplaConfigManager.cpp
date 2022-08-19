@@ -193,7 +193,7 @@ SuplaConfigManager::SuplaConfigManager() {
 #endif
 
 #ifdef SUPLA_RELAY
-    this->addKey(KEY_MAX_RELAY, "0", 2);
+    this->addKey(KEY_MAX_RELAY, "1", 2);
     this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2);
     this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1);
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4);
@@ -226,7 +226,7 @@ SuplaConfigManager::SuplaConfigManager() {
 #endif
 
 #ifdef SUPLA_BUTTON
-    this->addKey(KEY_MAX_BUTTON, "0", 2);
+    this->addKey(KEY_MAX_BUTTON, "1", 2);
     this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON);
     this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON);
     this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2);
@@ -240,7 +240,7 @@ SuplaConfigManager::SuplaConfigManager() {
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
-    this->addKey(KEY_MAX_LIMIT_SWITCH, "0", 2);
+    this->addKey(KEY_MAX_LIMIT_SWITCH, "1", 2);
 #else
     this->addKey(KEY_MAX_LIMIT_SWITCH, 2, false);
 #endif
@@ -357,14 +357,6 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_HD44780_TYPE, 1, false);
 #endif
 
-#ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
-    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, "0", 2);
-    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
-#else
-    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, 2, false);
-    this->addKey(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, false);
-#endif
-
 #ifdef SUPLA_CONDITIONS
     this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3);
 #else
@@ -407,6 +399,17 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_ACTIVE_EXPENDER, 20);
 #else
     this->addKey(KEY_ACTIVE_EXPENDER, 20, false);
+#endif
+
+#if defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_DIRECT_LINKS_MULTI_SENSOR)
+    this->addKey(KEY_DIRECT_LINKS_TYPE, "0", 3 * MAX_DIRECT_LINK);
+    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR, "0", 2);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
+
+#else
+    this->addKey(KEY_DIRECT_LINKS_TYPE, "0", 3 * MAX_DIRECT_LINK, false);
+    this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR, 2, false);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, false);
 #endif
 
     //  this->addKey(KEY_VERSION_CONFIG, String(CURENT_VERSION).c_str(), 2);

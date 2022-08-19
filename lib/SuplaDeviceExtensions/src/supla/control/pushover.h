@@ -19,7 +19,6 @@
 
 #include <Arduino.h>
 #include <WiFiClientSecure.h>
-
 #include <supla/action_handler.h>
 #include <supla/actions.h>
 #include <supla/channel_element.h>
@@ -67,8 +66,8 @@ class Pushover : public Element, public ActionHandler {
   bool _isSecured;
   char _token[MAX_TOKEN_SIZE];
   char _user[MAX_USER_SIZE];
-  char _title[MAX_TITLE_SIZE];
-  char _message[MAX_MESSAGE_SIZE];
+  char _title[MAX_TITLE_SIZE * 2];
+  char _message[MAX_MESSAGE_SIZE * 2];
 };
 
 };  // namespace Control

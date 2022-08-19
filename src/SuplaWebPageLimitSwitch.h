@@ -21,14 +21,19 @@
 
 #ifdef SUPLA_LIMIT_SWITCH
 
-#define PATH_SWITCH "switch"
+#define PATH_SWITCH     "switch"
+#define PATH_SWITCH_SET "switchset"
 
-#define INPUT_MAX_LIMIT_SWITCH  "mls"
-#define INPUT_LIMIT_SWITCH_GPIO "lsg"
+#define INPUT_MAX_LIMIT_SWITCH   "mls"
+#define INPUT_LIMIT_SWITCH_GPIO  "lsg"
+#define INPUT_LIMIT_SWITCH_PULLUP "ilsp"
 
 void createWebPageLimitSwitch();
 void handleLimitSwitch(int save = 0);
 void handleLimitSwitchSave();
+
+void handleLimitSwitchSet(int save = 0);
+void handleLimitSwitchSaveSet();
 
 #endif
 

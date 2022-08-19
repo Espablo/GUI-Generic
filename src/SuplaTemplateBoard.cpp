@@ -698,7 +698,7 @@ void addLedCFG(uint8_t gpio, uint8_t level) {
 }
 
 void addLed(uint8_t nr, uint8_t gpio, uint8_t level) {
-  ConfigESP->setInversed(gpio, level);
+  ConfigESP->setLevel(gpio, level);
   ConfigESP->setGpio(gpio, nr, FUNCTION_LED);
 }
 
@@ -762,7 +762,6 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
   // 1 - FUNCTION_RELAY
   // 2 - FUNCTION_BUTTON
   // 3 - FUNCTION_LIMIT_SWITCH
-  //  OFF - 0 lub 17
 
   // type:
   // 1 - MCP23017 x16
@@ -809,15 +808,12 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
     }
 
     for (size_t ii = 1; ii <= sizeExpander; ii++) {
-      int gpio = expander[i][ii];
+      uint8_t gpio = (int)expander[i][ii];
 
-      if (gpio == 0)
-        gpio = OFF_GPIO_EXPENDER;
-      else if (gpio >= 17)
-        gpio = OFF_GPIO_EXPENDER;
+      if (gpio != 0) {
+        if (gpio != 17)
+          gpio = gpio - 1;
 
-      if (gpio != OFF_GPIO_EXPENDER) {
-        gpio = (int)expander[i][ii] - 1;
         ConfigESP->setGpioMCP23017(gpio, address, ConfigManager->get(key)->getValueInt(), function);
 
         switch (function) {

@@ -113,7 +113,7 @@ void addRelay(uint8_t nr) {
 
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
-  levelLed = ConfigESP->getInversed(pinLED);
+  levelLed = ConfigESP->getLevel(pinLED);
 
   if (pinRelay != OFF_GPIO) {
     if (pinRelay == GPIO_VIRTUAL_RELAY) {
@@ -140,7 +140,7 @@ void addRelay(uint8_t nr) {
     relay[nr]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinLED != OFF_GPIO) {
-      new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
+      new Supla::Control::PinStatusLedGUI(pinRelay, pinLED, !levelLed);
     }
   }
   else {
@@ -160,6 +160,7 @@ void addButtonToRelay(uint8_t nrRelay) {
     if (pinButton != OFF_GPIO && pinRelay != OFF_GPIO && nrRelay == nrButton) {
       Supla::Control::Button *button;
 
+#ifdef ARDUINO_ARCH_ESP8266
       if (pinButton == A0) {
         button = new Supla::Control::ButtonAnalog(A0, ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(nr).toInt());
       }
@@ -167,6 +168,10 @@ void addButtonToRelay(uint8_t nrRelay) {
         button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
         button->setSwNoiseFilterDelay(50);
       }
+#else
+      button = new Supla::Control::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton));
+      button->setSwNoiseFilterDelay(50);
+#endif
 
       if (ConfigESP->getEvent(pinButton) == Supla::ON_HOLD) {
         int holdTimeMs = String(ConfigManager->get(KEY_AT_HOLD_TIME)->getValue()).toDouble() * 1000;
@@ -247,7 +252,7 @@ void addRelayBridge(uint8_t nr) {
 
   pinRelay = ConfigESP->getGpio(nr, FUNCTION_RELAY);
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
-  levelLed = ConfigESP->getInversed(pinLED);
+  levelLed = ConfigESP->getLevel(pinLED);
 
   if (pinRelay != OFF_GPIO && pinTransmitter != OFF_GPIO) {
     if (pinRelay == GPIO_VIRTUAL_RELAY) {
@@ -296,7 +301,7 @@ void addRelayBridge(uint8_t nr) {
     relay[size]->getChannel()->setDefault(SUPLA_CHANNELFNC_POWERSWITCH);
 
     if (pinLED != OFF_GPIO) {
-      new Supla::Control::PinStatusLed(pinRelay, pinLED, !levelLed);
+      new Supla::Control::PinStatusLedGUI(pinRelay, pinLED, !levelLed);
     }
   }
   delay(0);
@@ -318,16 +323,17 @@ void addButtonBridge(uint8_t nr) {
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-void addPushover(uint8_t nr) {
+void addPushover(uint8_t nr, const String& name, Supla::ChannelElement *client) {
   if (nr <= MAX_PUSHOVER_MESSAGE) {
     if (strcmp(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str(), "") != 0 &&
         strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 && strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
       auto pushover =
           new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
 
-      pushover->setTitle(ConfigManager->get(KEY_HOST_NAME)->getValue());
+      String title = name + S_SPACE + (nr + 1) + S_SPACE + "-" + S_SPACE + ConfigManager->get(KEY_HOST_NAME)->getValue();
+      pushover->setTitle(title.c_str());
       pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str());
-      relay[nr]->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
+      client->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
     }
   }
 }
@@ -410,8 +416,8 @@ void addRolleShutter(uint8_t nr) {
   pinLedUp = ConfigESP->getGpio(nr, FUNCTION_LED);
   pinLedDown = ConfigESP->getGpio(nr + 1, FUNCTION_LED);
 
-  levelLedUp = ConfigESP->getInversed(pinLedUp);
-  levelLedDown = ConfigESP->getInversed(pinLedDown);
+  levelLedUp = ConfigESP->getLevel(pinLedUp);
+  levelLedDown = ConfigESP->getLevel(pinLedDown);
 
   highIsOn = ConfigESP->getLevel(pinRelayUp);
 
@@ -469,10 +475,10 @@ void addRolleShutter(uint8_t nr) {
   }
 
   if (pinLedUp != OFF_GPIO) {
-    new Supla::Control::PinStatusLed(pinRelayUp, pinLedUp, !levelLedUp);
+    new Supla::Control::PinStatusLedGUI(pinRelayUp, pinLedUp, !levelLedUp);
   }
   if (pinLedDown != OFF_GPIO) {
-    new Supla::Control::PinStatusLed(pinRelayDown, pinLedDown, !levelLedDown);
+    new Supla::Control::PinStatusLedGUI(pinRelayDown, pinLedDown, !levelLedDown);
   }
   delay(0);
 }
@@ -491,7 +497,7 @@ void addImpulseCounter(uint8_t nr) {
   debounceDelay = ConfigManager->get(KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT)->getValueInt();
 
   pinLED = ConfigESP->getGpio(nr, FUNCTION_LED);
-  levelLed = ConfigESP->getInversed(pinLED);
+  levelLed = ConfigESP->getLevel(pinLED);
 
   impulseCounter.push_back(new Supla::Sensor::ImpulseCounter(pin, lowToHigh, inputPullup, debounceDelay));
 

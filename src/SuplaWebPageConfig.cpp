@@ -35,10 +35,10 @@ void handleConfigSave() {
     handleConfig(6);
     return;
   }
-
-  uint8_t key = KEY_GPIO + ConfigESP->getGpio(FUNCTION_CFG_LED);
-  String input = INPUT_CFG_LED_LEVEL;
-  ConfigManager->setElement(key, LEVEL_RELAY, WebServer->httpServer->arg(input).toInt());
+  else {
+    String input = INPUT_CFG_LED_LEVEL;
+    ConfigESP->setLevel(ConfigESP->getGpio(FUNCTION_CFG_LED), WebServer->httpServer->arg(input).toInt());
+  }
 
   if (!WebServer->saveGPIO(INPUT_CFG_BTN_GPIO, FUNCTION_CFG_BUTTON)) {
     handleConfig(6);

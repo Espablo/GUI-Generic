@@ -115,7 +115,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   uint8_t getAction(uint8_t gpio);
   uint8_t getEvent(uint8_t gpio);
 
-  bool checkBusyCfg(int gpio);
+  bool checkBusyCfg(int gpio, int function);
   int checkBusyGpio(int gpio, int function);
   bool checkBusyGpio(int gpio);
   uint8_t countFreeGpio(uint8_t exception = 0);

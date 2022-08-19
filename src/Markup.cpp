@@ -288,7 +288,6 @@ void addListGPIOBox(
       addGPIOOptionValue(html, suported, gpio, FPSTR(GPIO_P[suported]));
 
 #endif
-
   WebServer->sendHeader();
   html += F("</select>");
 
@@ -431,9 +430,9 @@ void addListBox(String& html, const String& input_id, const String& name, const 
       }
       html += F(">");
       html += FPSTR(array_P[suported]);
-      WebServer->sendHeader();
     }
   }
+  WebServer->sendHeader();
   html += F("</select></i>");
 }
 
@@ -453,8 +452,8 @@ void addListNumbersBox(String& html, const String& input_id, const String& name,
     }
     html += F(">");
     html += (suported + 1);
-    WebServer->sendHeader();
   }
+  WebServer->sendHeader();
   html += F("</select></i>");
 }
 

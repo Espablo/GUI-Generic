@@ -14,41 +14,52 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _percentage_h
-#define _percentage_h
+#ifndef _direct_links_connect_h
+#define _direct_links_connect_h
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
+#include <WiFiClientSecure.h>
+#include <supla/element.h>
+#include <supla/network/network.h>
 
-#include "supla/channel_element.h"
-
-#define HUMIDITY_NOT_AVAILABLE -1
+#define MAX_DIRECT_LINKS_SIZE 32
+#define MAX_HOST_SIZE         32
 
 namespace Supla {
 namespace Sensor {
-class Percentage : public ChannelElement {
+
+class DirectLinksConnect : public Element {
  public:
-  Percentage(Supla::ChannelElement *src,
-             double minValue,
-             double maxValue,
-             bool useAlternativeMeasurement = false);
-  virtual double getValue();
+  DirectLinksConnect(const char *url, const char *host, bool isSecured = true);
+  ~DirectLinksConnect();
+
+  void setHost(const char *host);
+  void setPort(uint16_t port);
+  void setUrl(const char *url);
+  void enableSSL(bool isSecured);
+
+  bool checkConnection();
+  void toggleConnection();
+  bool openConnection();
+  bool closeConnection();
+  void send();
+  String getRequest();
+  virtual void sendRequest();
   void iterateAlways();
-
-  void setMinValue(double minValue);
-  void setMaxValue(double maxValue);
-
-  double getMinValue();
-  double getMaxValue();
-
-  double mapDouble(
-      double x, double in_min, double in_max, double out_min, double out_max);
+  void onInitNetworkConnected();
 
  protected:
-  Supla::ChannelElement *source;
-  double _minValue;
-  double _maxValue;
-  bool useAlternativeMeasurement;
+  WiFiClient *client;
   unsigned long lastReadTime;
+
+  bool _isSecured;
+  char _url[MAX_DIRECT_LINKS_SIZE];
+  char _host[MAX_HOST_SIZE];
+  uint16_t _port;
+
+  int8_t retryCount = 0;
+  bool initNetworkConnected = false;
 };
 
 };  // namespace Sensor

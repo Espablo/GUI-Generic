@@ -17,6 +17,8 @@
 #ifndef GUI_GENERIC_COMMON_DEFINED_H
 #define GUI_GENERIC_COMMON_DEFINED_H
 
+#include "GUI-Generic_Config.h"
+
 #if defined(SUPLA_MCP23017) || defined(SUPLA_PCF8575) || defined(SUPLA_PCF8574)
 #define GUI_SENSOR_I2C_EXPENDER
 #endif

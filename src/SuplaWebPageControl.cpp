@@ -283,6 +283,7 @@ void handleButtonSet(int save) {
       selected = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(button.toInt()).toInt();
       addListNumbersBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_RELAY_CONTROL, ConfigESP->countFreeGpio(FUNCTION_RELAY), selected);
 
+#ifdef ARDUINO_ARCH_ESP8266
       if (gpio == A0) {
         addNumberBox(webContentBuffer, INPUT_ANALOG_EXPECTED, S_CONDITION, "0", false,
                      ConfigManager->get(KEY_ANALOG_INPUT_EXPECTED)->getElement(button.toInt()));
@@ -293,6 +294,12 @@ void handleButtonSet(int save) {
         selected = ConfigESP->getInversed(gpio);
         addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
       }
+#else
+      selected = ConfigESP->getPullUp(gpio);
+      addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
+      selected = ConfigESP->getInversed(gpio);
+      addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
+#endif
 
       selected = ConfigESP->getEvent(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);

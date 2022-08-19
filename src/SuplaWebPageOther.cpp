@@ -157,7 +157,7 @@ void handleOther(int save) {
 
 #ifdef SUPLA_RGBW
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_RGBW_RGB_DIMMER);
-  addNumberBox(webContentBuffer, INPUT_RGBW_MAX, S_QUANTITY, KEY_MAX_RGBW, ConfigESP->countFreeGpio());
+  addNumberBox(webContentBuffer, INPUT_RGBW_MAX, S_QUANTITY, KEY_MAX_RGBW, ConfigESP->countFreeGpio(FUNCTION_RGBW_BRIGHTNESS));
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_RGBW)->getValueInt(); nr++) {
     addListGPIOBox(webContentBuffer, INPUT_RGBW_RED, F("RED"), FUNCTION_RGBW_RED, nr, false);
     addListGPIOBox(webContentBuffer, INPUT_RGBW_GREEN, F("GREEN"), FUNCTION_RGBW_GREEN, nr, false);
@@ -192,13 +192,32 @@ void handleOther(int save) {
   String input;
 
   addFormHeader(webContentBuffer, String(S_DIRECT_LINKS) + S_SPACE + "-" + S_SPACE + S_TEMPERATURE);
-  addNumberBox(webContentBuffer, INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, S_QUANTITY, KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, MAX_DIRECT_LINK);
+  addNumberBox(webContentBuffer, INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, S_QUANTITY, KEY_MAX_DIRECT_LINKS_SENSOR, MAX_DIRECT_LINK);
 
-  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR)->getValueInt(); nr++) {
     input = INPUT_DIRECT_LINKS_SENSOR_THERMOMETR;
     input = input + nr;
-    String massage = ConfigManager->get(KEY_DIRECT_LINKS_SENSOR_THERMOMETR)->getElement(nr).c_str();
+    String massage = ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str();
     addTextBox(webContentBuffer, input, String(S_SENSOR) + S_SPACE + (nr + 1), massage, F("xx/xxxxxxxxx/read"), 0, MAX_DIRECT_LINKS_SIZE, false);
+  }
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
+#ifdef SUPLA_DIRECT_LINKS_MULTI_SENSOR
+  addFormHeader(webContentBuffer, S_DIRECT_LINKS);
+  addNumberBox(webContentBuffer, INPUT_MAX_DIRECT_LINKS_SENSOR, S_QUANTITY, KEY_MAX_DIRECT_LINKS_SENSOR, MAX_DIRECT_LINK);
+
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR)->getValueInt(); nr++) {
+    uint8_t selected = ConfigManager->get(KEY_DIRECT_LINKS_TYPE)->getElement(nr).toInt();
+
+    String input = INPUT_DIRECT_LINKS_TYPE;
+    input += nr;
+    addListBox(webContentBuffer, input, String(S_TYPE) + S_SPACE + (nr + 1), DIRECT_LINKS_TYPE_LIST_P, DIRECT_LINKS_TYPE_COUNT, selected);
+
+    input = INPUT_DIRECT_LINKS_SENSOR;
+    input += nr;
+    addTextBox(webContentBuffer, input, String(S_SENSOR) + S_SPACE + (nr + 1), ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+               F("xx/xxxxxxxxx/read"), 0, MAX_DIRECT_LINKS_SIZE, false);
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -337,14 +356,30 @@ void handleOtherSave() {
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
   String input;
 
-  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR)->getValueInt(); nr++) {
     input = INPUT_DIRECT_LINKS_SENSOR_THERMOMETR;
     input = input + nr;
-    ConfigManager->setElement(KEY_DIRECT_LINKS_SENSOR_THERMOMETR, nr, WebServer->httpServer->arg(input).c_str());
+    ConfigManager->setElement(KEY_DIRECT_LINKS_SENSOR, nr, WebServer->httpServer->arg(input).c_str());
   }
 
   if (strcmp(WebServer->httpServer->arg(INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR).c_str(), "") != 0) {
-    ConfigManager->set(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR, WebServer->httpServer->arg(INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR).c_str());
+    ConfigManager->set(KEY_MAX_DIRECT_LINKS_SENSOR, WebServer->httpServer->arg(INPUT_MAX_DIRECT_LINKS_SENSOR_THERMOMETR).c_str());
+  }
+#endif
+
+#ifdef SUPLA_DIRECT_LINKS_MULTI_SENSOR
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR)->getValueInt(); nr++) {
+    String input = INPUT_DIRECT_LINKS_SENSOR;
+    input += nr;
+    ConfigManager->setElement(KEY_DIRECT_LINKS_SENSOR, nr, WebServer->httpServer->arg(input).c_str());
+
+    input = INPUT_DIRECT_LINKS_TYPE;
+    input += nr;
+    ConfigManager->setElement(KEY_DIRECT_LINKS_TYPE, nr, WebServer->httpServer->arg(input).c_str());
+  }
+
+  if (strcmp(WebServer->httpServer->arg(INPUT_MAX_DIRECT_LINKS_SENSOR).c_str(), "") != 0) {
+    ConfigManager->set(KEY_MAX_DIRECT_LINKS_SENSOR, WebServer->httpServer->arg(INPUT_MAX_DIRECT_LINKS_SENSOR).c_str());
   }
 #endif
 

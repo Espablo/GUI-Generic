@@ -16,6 +16,7 @@
 
 #include "SuplaOled.h"
 #include "SuplaDeviceGUI.h"
+#include <supla/clock/clock.h>
 
 #ifdef SUPLA_OLED
 
@@ -58,7 +59,7 @@ int getQuality() {
     return -1;
 #ifdef ARDUINO_ARCH_ESP32
   int dBm = 100;
-  //WiFi.RSSI() dla ESP32 zawiesza całą pętlę
+  // WiFi.RSSI() dla ESP32 zawiesza całą pętlę
 #else
   int dBm = WiFi.RSSI();
 #endif
@@ -104,17 +105,19 @@ void displayUiRelayState(OLEDDisplay* display) {
   display->setFont(ArialMT_Win1250_Plain_10);
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   for (size_t i = 0; i < Supla::GUI::relay.size(); i++) {
-    if (Supla::GUI::relay[i]->isOn()) {
-      display->setColor(WHITE);
-      display->fillRect(x, y + 1, 10, 10);
-      display->setColor(BLACK);
-      display->drawString(x + 2, y, String(i + 1));
+    if (Supla::GUI::relay[i] != nullptr) {
+      if (Supla::GUI::relay[i]->isOn()) {
+        display->setColor(WHITE);
+        display->fillRect(x, y + 1, 10, 10);
+        display->setColor(BLACK);
+        display->drawString(x + 2, y, String(i + 1));
+      }
+      else {
+        display->setColor(WHITE);
+        display->drawString(x + 2, y, String(i + 1));
+      }
+      x += 15;
     }
-    else {
-      display->setColor(WHITE);
-      display->drawString(x + 2, y, String(i + 1));
-    }
-    x += 15;
   }
   display->setColor(WHITE);
   display->drawHorizontalLine(0, 14, display->getWidth());
@@ -122,6 +125,7 @@ void displayUiRelayState(OLEDDisplay* display) {
 #endif
 
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state) {
+  displayUiSuplaClock(display);
   displayUiSignal(display);
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
@@ -143,6 +147,19 @@ void displayUiSuplaStatus(OLEDDisplay* display) {
   display->setColor(WHITE);
   display->drawStringMaxWidth(x, y, display->getWidth(), ConfigESP->supla_status.msg);
   display->display();
+}
+
+void displayUiSuplaClock(OLEDDisplay* display) {
+  char clockBuff[6];
+  auto suplaClock = SuplaDevice.getClock();
+
+  if (suplaClock->isReady()) {
+    sprintf_P(clockBuff, PSTR("%02d:%02d"), suplaClock->getHour(), suplaClock->getMin());
+    display->setColor(WHITE);
+    display->setFont(ArialMT_Plain_10);
+    display->setTextAlignment(TEXT_ALIGN_LEFT);
+    display->drawString(0, display->getHeight() - 10, String(clockBuff));
+  }
 }
 
 void displayConfigMode(OLEDDisplay* display) {
@@ -249,7 +266,7 @@ void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t 
   display->drawString(x + pressure_width + (getPressureString(pressure).length() * 14), y + drawStringIcon, "hPa");
 }
 
-void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& name) {
+void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& name, const String& unit) {
   display->setColor(WHITE);
   display->setTextAlignment(TEXT_ALIGN_CENTER);
 
@@ -260,6 +277,10 @@ void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x
 
   display->setFont(ArialMT_Win1250_Plain_24);
   display->drawString(x + ((display->getWidth() - String(value).length()) / 2), y + display->getHeight() / 2, String(value));
+  if (unit != NULL) {
+    display->setFont(ArialMT_Win1250_Plain_16);
+    display->drawString(x + display->getWidth() - 10, y + display->getHeight() / 2 + 7, unit);
+  }
 }
 
 void displayTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
@@ -335,8 +356,73 @@ void displayGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, 
   }
 }
 
+void displayEnergyVoltage(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
+        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+
+        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+        if (extValue == nullptr)
+          return;
+
+        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+        if (emValue->m_count < 1 || emValue == nullptr)
+          return;
+
+        displayUiGeneral(display, state, x, y, emValue->m[0].voltage[0] / 100.0, name, "V");
+      }
+    }
+  }
+}
+
+void displayEnergyCurrent(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
+        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+
+        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+        if (extValue == nullptr)
+          return;
+
+        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+        if (emValue->m_count < 1 || emValue == nullptr)
+          return;
+
+        displayUiGeneral(display, state, x, y, emValue->m[0].current[0] / 1000.0, name, "A");
+      }
+    }
+  }
+}
+
+void displayEnergyPowerActive(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
+        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+
+        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+        if (extValue == nullptr)
+          return;
+
+        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+        if (emValue->m_count < 1 || emValue == nullptr)
+          return;
+
+        displayUiGeneral(display, state, x, y, emValue->m[0].power_active[0] / 100000.0, name, "W");
+      }
+    }
+  }
+}
+
 SuplaOled::SuplaOled() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
+    SuplaDevice.addClock(new Supla::Clock);
+
     switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       case OLED_SSD1306_0_96:
         display = new SSD1306Wire(0x3c, ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL), GEOMETRY_128_64);
@@ -389,6 +475,23 @@ SuplaOled::SuplaOled() {
 
         if (channel->getChannelType() == SUPLA_CHANNELTYPE_DISTANCESENSOR) {
           frames[frameCount] = {displayGeneral};
+          oled[frameCount].chanelSensor = channel->getChannelNumber();
+          oled[frameCount].forSecondaryValue = false;
+          frameCount += 1;
+        }
+
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_ELECTRICITY_METER) {
+          frames[frameCount] = {displayEnergyVoltage};
+          oled[frameCount].chanelSensor = channel->getChannelNumber();
+          oled[frameCount].forSecondaryValue = false;
+          frameCount += 1;
+
+          frames[frameCount] = {displayEnergyCurrent};
+          oled[frameCount].chanelSensor = channel->getChannelNumber();
+          oled[frameCount].forSecondaryValue = false;
+          frameCount += 1;
+
+          frames[frameCount] = {displayEnergyPowerActive};
           oled[frameCount].chanelSensor = channel->getChannelNumber();
           oled[frameCount].forSecondaryValue = false;
           frameCount += 1;

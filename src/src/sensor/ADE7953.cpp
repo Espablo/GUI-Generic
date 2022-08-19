@@ -21,14 +21,14 @@ namespace Sensor {
 
 ADE7953::ADE7953(uint8_t pin_irq, uint8_t model) {
   Ade7953.model = model;
-  pinMode(pin_irq, INPUT);  // Related to resetPins() - Must be set to input
+  pinMode(pin_irq, INPUT_PULLUP);  // Related to resetPins() - Must be set to input
 
   if (1 == Ade7953.model) {  // Shelly EM
     pinMode(16, OUTPUT);     // Reset pin ADE7953
     digitalWrite(16, 0);
     delay(1);
     digitalWrite(16, 1);
-    pinMode(16, INPUT);
+    pinMode(16, INPUT_PULLUP);
   }
 
   delay(100);  // Need 100mS to init ADE7953

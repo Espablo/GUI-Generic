@@ -158,14 +158,11 @@ void handleRelaySaveSet() {
       handleRelaySet(6);
       return;
     }
-
-    if (ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED) != OFF_GPIO) {
-      gpio = ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED);
-      uint8_t key = KEY_GPIO + gpio;
+    else {
       input = INPUT_LEVEL_LED;
       input += nr_relay;
 
-      ConfigManager->setElement(key, INVERSED_BUTTON, WebServer->httpServer->arg(input).toInt());
+      ConfigESP->setLevel(ConfigESP->getGpio(FUNCTION_LED), WebServer->httpServer->arg(input).toInt());
     }
   }
 #endif
@@ -290,7 +287,7 @@ void handleRelaySet(int save) {
 
       addListGPIOBox(webContentBuffer, INPUT_LED + nr_relay, S_LED, FUNCTION_LED, nr_relay.toInt());
 
-      selected = ConfigESP->getInversed(ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED));
+      selected = ConfigESP->getLevel(ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED));
       addListBox(webContentBuffer, INPUT_LEVEL_LED + nr_relay, S_STATE_CONTROL, LEVEL_P, 2, selected);
 
       addFormHeaderEnd(webContentBuffer);

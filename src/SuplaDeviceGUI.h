@@ -23,9 +23,9 @@
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
 
+#include "GUI-Generic_Config.h"
 #include "GUIGenericCommonDefined.h"
 #include "GUIGenericCommon.h"
-#include "GUI-Generic_Config.h"
 #include "SuplaTemplateBoard.h"
 
 #include "SuplaConfigESP.h"
@@ -114,7 +114,8 @@
 #ifdef SUPLA_CSE7766
 #include <supla/sensor/CSE_7766.h>
 #endif
-#include <supla/control/pin_status_led.h>
+
+#include "src/control/PinStatusLedGUI.h"
 
 #ifdef SUPLA_RGBW
 #include <supla/control/rgbw_leds.h>
@@ -128,7 +129,7 @@
 #include <supla/control/direct_links.h>
 
 #ifdef SUPLA_NTC_10K
-#include <supla/sensor/NTC_10K.h>
+#include "src/sensor/NTC_10K.h"
 #endif
 
 #ifdef SUPLA_MPX_5XXX
@@ -182,7 +183,7 @@
 #include "src/sensor/PMSx003.h"
 
 #ifdef SUPLA_WT32_ETH01_LAN8720
-#include "supla/network/wt32_eth01.h"
+#include <supla/network/wt32_eth01.h>
 #endif
 
 #ifdef SUPLA_ADE7953
@@ -223,7 +224,7 @@ extern std::vector<Supla::Control::Relay *> relay;
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-void addPushover(uint8_t nr);
+void addPushover(uint8_t nr, const String& name, Supla::ChannelElement *client);
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)

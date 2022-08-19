@@ -13,28 +13,37 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifndef _ntc10k_h
-#define _ntc10k_h
 
-#include <Arduino.h>
-#include <supla/sensor/thermometer.h>
+#ifndef _pressure_meter_h
+#define _pressure_meter_h
+
+#include "supla/channel_element.h"
+#include <supla/element.h>
+
+#define PRESSURE_NOT_AVAILABLE -1
 
 namespace Supla {
 namespace Sensor {
-class NTC10K : public Thermometer {
+class PressMeter : public Element {
  public:
-  NTC10K(int8_t pin, uint32_t rs = 150000, double vcc = 3.3);
-  double getValue();
+  PressMeter();
+  virtual double getPressure();
+  void iterateAlways();
+  bool iterateConnected(void *srpc);
+  Element &disableChannelState();
+  Channel *getSecondaryChannel();
 
- private:
-  void onInit();
+  // Override local action methods in order to delegate execution to Channel and
+  // Secondary Channel
+  void addAction(int action, ActionHandler &client, int event);
+  void addAction(int action, ActionHandler *client, int event);
 
  protected:
-  int8_t pin;
-  uint32_t rs;
-  double vcc;
+  Channel pressureChannel;
+  unsigned long lastReadTime;
 };
-}  // namespace Sensor
-}  // namespace Supla
+
+};  // namespace Sensor
+};  // namespace Supla
 
 #endif

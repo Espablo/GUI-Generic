@@ -38,18 +38,18 @@
 #define S_CFG_MODE                                             "CFG mode"
 #define S_QUANTITY                                             "QUANTITY"
 #define S_GPIO_SETTINGS_FOR_RELAYS                             "GPIO settings for relays"
-#define S_RELAY                                                "RELAYS"
+#define S_RELAY                                                "Relay"
 #define S_RELAY_NR_SETTINGS                                    "Settings relay nr. "
 #define S_STATE_CONTROL                                        "State control"
 #define S_REACTION_AFTER_RESET                                 "Reaction after reset"
 #define S_GPIO_SETTINGS_FOR_BUTTONS                            "GPIO settings for buttons"
-#define S_BUTTON                                               "BUTTON"
+#define S_BUTTON                                               "Button"
 #define S_BUTTON_NR_SETTINGS                                   "Setting button nr. "
 #define S_REACTION_TO                                          "Reaction to"
 #define S_RELAY_CONTROL                                        "Relay control"
 #define S_ACTION                                               "Action"
 #define S_GPIO_SETTINGS_FOR_LIMIT_SWITCH                       "GPIO settings for limit switch"
-#define S_LIMIT_SWITCH                                         "LIMIT SWITCH"
+#define S_LIMIT_SWITCH                                         "Limit switch"
 #define S_GPIO_SETTINGS_FOR                                    "GPIO settings for"
 #define S_FOUND                                                "Found"
 #define S_NO_SENSORS_CONNECTED                                 "No sensor conected"
@@ -193,5 +193,9 @@
 #define S_TRANSMITTER "Transmitter"
 #define S_RECEIVER    "Receiver"
 #endif
+
+#define S_TEMP_HYGR         "Temperature + Humidity"
+#define S_PRESS             "Pressure"
+#define S_ELECTRICITY_METER "Electric energy meter"
 
 #endif  // _LANGUAGE_EN_S_H_

@@ -200,6 +200,7 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     return true;
   }
 
+#ifdef ARDUINO_ARCH_ESP8266
   // ANALOG BUTTON
   if (function == FUNCTION_BUTTON && _gpio == A0) {
     if (gpio != A0) {
@@ -217,11 +218,15 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     }
     return true;
   }
+#endif
 
   key = KEY_GPIO + _gpio;
 
   if (function == FUNCTION_CFG_BUTTON) {
     _function = ConfigManager->get(key)->getElement(CFG).toInt();
+  }
+  else if (function == FUNCTION_CFG_LED) {
+    _function = ConfigManager->get(key)->getElement(CFG_LED).toInt();
   }
   else {
     _function = ConfigManager->get(key)->getElement(FUNCTION).toInt();
@@ -233,9 +238,11 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
     if (gpio == GPIO_VIRTUAL_RELAY) {
       ConfigManager->setElement(KEY_VIRTUAL_RELAY, nr, false);
     }
+#ifdef ARDUINO_ARCH_ESP8266
     if (gpio == A0) {
       ConfigManager->setElement(KEY_ANALOG_BUTTON, nr, false);
     }
+#endif
   }
 
   if (_gpio != OFF_GPIO) {
@@ -258,8 +265,8 @@ bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr
       }
 #endif
     }
-    else if (function == FUNCTION_CFG_BUTTON) {
-      ConfigESP->setGpio(_gpio, FUNCTION_CFG_BUTTON);
+    else if (function == FUNCTION_CFG_BUTTON || function == FUNCTION_CFG_LED) {
+      ConfigESP->setGpio(_gpio, function);
     }
     else if (gpio == _gpio && _function == function && _nr == nr) {
       ConfigESP->setGpio(_gpio, nr, function);
@@ -311,8 +318,8 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
   gpio = ConfigESP->getGpioMCP23017(nr, function);
   _gpio = WebServer->httpServer->arg(input).toInt();
 
-//  if ((nr == 0 || nr == shiftAddress) && _gpio == OFF_GPIO_EXPENDER)
-//    return false;
+  //  if ((nr == 0 || nr == shiftAddress) && _gpio == OFF_GPIO_EXPENDER)
+  //    return false;
 
   key = KEY_GPIO + _gpio;
   _function = ConfigManager->get(key)->getElement(ConfigESP->getFunctionMCP23017(_address)).toInt();

@@ -37,6 +37,10 @@ extern "C" {
 #include <supla/sensor/direct_link_sensor_thermometer.h>
 #endif
 
+#ifdef SUPLA_DIRECT_LINKS_MULTI_SENSOR
+#include "src/sensor/DirectLinks.h"
+#endif
+
 void setup() {
   uint8_t nr, gpio;
 
@@ -93,7 +97,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_PUSHOVER
-        Supla::GUI::addPushover(nr);
+        Supla::GUI::addPushover(nr, S_RELAY, Supla::GUI::relay[nr]);
 #endif
 
 #ifdef SUPLA_DIRECT_LINKS
@@ -107,8 +111,13 @@ void setup() {
 
 #ifdef SUPLA_LIMIT_SWITCH
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
-    if (ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH) != OFF_GPIO) {
-      auto binary = new Supla::Sensor::Binary(ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH), true);
+    gpio = ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH);
+
+    if (gpio != OFF_GPIO) {
+      auto binary = new Supla::Sensor::Binary(gpio, ConfigESP->getPullUp(gpio));
+
+      Supla::GUI::addPushover(nr, S_LIMIT_SWITCH, binary);
+
       Supla::GUI::addConditionsTurnON(SENSOR_BINARY, binary, nr);
       Supla::GUI::addConditionsTurnOFF(SENSOR_BINARY, binary, nr);
     }
@@ -125,11 +134,39 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_DIRECT_LINKS_MULTI_SENSOR
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR)->getValueInt(); nr++) {
+    switch (ConfigManager->get(KEY_DIRECT_LINKS_TYPE)->getElement(nr).toInt()) {
+      case DIRECT_LINKS_TYPE_TEMP:
+        new Supla::Sensor::DirectLinksThermometer(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                  ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+        // Supla::GUI::addConditionsTurnON(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
+        // Supla::GUI::addConditionsTurnOFF(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
+        break;
+
+      case DIRECT_LINKS_TYPE_TEMP_HYGR:
+        new Supla::Sensor::DirectLinksThermHygroMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                      ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+        break;
+
+      case DIRECT_LINKS_TYPE_PRESS:
+        new Supla::Sensor::DirectLinksPressMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                 ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+        break;
+
+      case DIRECT_LINKS_TYPE_ELECTRICITY_METER:
+        new Supla::Sensor::DirectLinksOnePhaseElectricityMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                               ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+        break;
+    }
+  }
+#endif
+
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
-  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR_THERMOMETR)->getValueInt(); nr++) {
-    if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR_THERMOMETR)->getElement(nr).c_str(), "") != 0) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR)->getValueInt(); nr++) {
+    if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(), "") != 0) {
       auto directLinkSensorThermometer = new Supla::Sensor::DirectLinksSensorThermometer(ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-      directLinkSensorThermometer->setUrl(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR_THERMOMETR)->getElement(nr).c_str());
+      directLinkSensorThermometer->setUrl(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str());
 
       Supla::GUI::addConditionsTurnON(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
       Supla::GUI::addConditionsTurnOFF(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
@@ -592,7 +629,7 @@ void setup() {
       mpxPercent = new Supla::Sensor::Percentage(Supla::GUI::mpx, 0, Supla::GUI::mpx->getThankHeight() * 0.01);
     }
     else {
-      mpxPercent = new Supla::Sensor::Percentage(Supla::GUI::mpx, 0, 100);
+      mpxPercent = new Supla::Sensor::Percentage(Supla::GUI::mpx, 0, 100.0);
     }
 
     Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX_PERCENT, mpxPercent);

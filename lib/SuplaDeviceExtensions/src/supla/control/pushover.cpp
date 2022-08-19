@@ -46,13 +46,13 @@ void Pushover::setUser(const char *user) {
 
 void Pushover::setTitle(const char *title) {
   if (title) {
-    strncpy(_title, title, MAX_TITLE_SIZE);
+    strncpy(_title, title, MAX_TITLE_SIZE * 2);
   }
 }
 
 void Pushover::setMessage(const char *message) {
   if (message) {
-    strncpy(_message, message, MAX_MESSAGE_SIZE);
+    strncpy(_message, message, MAX_MESSAGE_SIZE * 2);
   }
 }
 
@@ -116,7 +116,7 @@ void Pushover::sendRequest() {
     while (client->connected()) {
       String line = client->readStringUntil('\n');
       if (line == "\r") {
-        Serial.println(F("Headers received"));
+        Serial.println(F("Pushover - Headers received"));
         break;
       }
     }
