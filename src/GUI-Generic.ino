@@ -116,7 +116,9 @@ void setup() {
     if (gpio != OFF_GPIO) {
       auto binary = new Supla::Sensor::Binary(gpio, ConfigESP->getPullUp(gpio));
 
+#ifdef SUPLA_PUSHOVER
       Supla::GUI::addPushover(nr, S_LIMIT_SWITCH, binary);
+#endif
 
       Supla::GUI::addConditionsTurnON(SENSOR_BINARY, binary, nr);
       Supla::GUI::addConditionsTurnOFF(SENSOR_BINARY, binary, nr);
