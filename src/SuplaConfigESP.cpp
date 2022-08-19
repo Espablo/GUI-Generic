@@ -315,11 +315,6 @@ void status_func(int status, const char *msg) {
     case STATUS_NETWORK_DISCONNECTED:
       ConfigESP->supla_status.msg = S_STATUS_NETWORK_DISCONNECTED;
       break;
-    case STATUS_CONFIG_MODE:
-      ConfigESP->configModeESP = CONFIG_MODE;
-      ConfigESP->ledBlinking(100);
-      // ConfigESP->supla_status.msg = S_STATUS_NETWORK_DISCONNECTED;
-      break;
     default:
       ConfigESP->supla_status.msg = msg;
       break;
