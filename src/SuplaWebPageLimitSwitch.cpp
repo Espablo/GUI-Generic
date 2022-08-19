@@ -53,7 +53,7 @@ void handleLimitSwitch(int save) {
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
 #ifdef GUI_SENSOR_I2C_EXPENDER
-    addListExpanderBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr, PATH_SWITCH);
+    addListExpanderBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, FUNCTION_LIMIT_SWITCH, nr, PATH_SWITCH_SET);
 #else
     addListGPIOLinkBox(webContentBuffer, INPUT_LIMIT_SWITCH_GPIO, S_LIMIT_SWITCH, getParameterRequest(PATH_SWITCH_SET, ARG_PARM_NUMBER),
                        FUNCTION_LIMIT_SWITCH, nr);
