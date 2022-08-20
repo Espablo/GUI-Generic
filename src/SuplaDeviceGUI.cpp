@@ -320,17 +320,18 @@ void addButtonBridge(uint8_t nr) {
 }
 #endif
 
-#if defined(SUPLA_PUSHOVER)
-void addPushover(uint8_t nr, const String& name, Supla::ChannelElement *client) {
+#ifdef SUPLA_PUSHOVER
+void addPushover(uint8_t nr, const String &name, Supla::ChannelElement *client) {
   if (nr <= MAX_PUSHOVER_MESSAGE) {
     if (strcmp(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str(), "") != 0 &&
         strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 && strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
       auto pushover =
           new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
 
-      String title = name + S_SPACE + (nr + 1) + S_SPACE + "-" + S_SPACE + ConfigManager->get(KEY_HOST_NAME)->getValue();
+      String title = String(ConfigManager->get(KEY_HOST_NAME)->getValue()) + S_SPACE + "-" + S_SPACE + name + S_SPACE + (nr + 1);
       pushover->setTitle(title.c_str());
       pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str());
+      pushover->setSound(ConfigManager->get(KEY_PUSHOVER_SOUND)->getElement(nr).toInt());
       client->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
     }
   }

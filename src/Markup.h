@@ -133,4 +133,11 @@ String getParameterRequest(const String& url, const String& param, const String&
 const String SuplaJavaScript(const String& java_return = PATH_START);
 
 const String SuplaSaveResult(int save);
+
+#ifdef SUPLA_PUSHOVER
+namespace Html {
+void addPushover(uint8_t nr);
+}
+#endif
+
 #endif  // Markup_h

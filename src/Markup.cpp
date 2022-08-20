@@ -574,3 +574,20 @@ const String SuplaSaveResult(int save) {
   saveresult += F("</div>");
   return saveresult;
 }
+
+#ifdef SUPLA_PUSHOVER
+namespace Html {
+void addPushover(uint8_t nr) {
+  if (nr <= MAX_PUSHOVER_MESSAGE) {
+    addFormHeader(webContentBuffer, S_PUSHOVER);
+
+    uint8_t selected = ConfigManager->get(KEY_PUSHOVER_SOUND)->getElement(nr).toInt();
+    addListBox(webContentBuffer, INPUT_PUSHOVER_SOUND, S_SOUND, PUSHOVER_SOUND_LIST_P, Supla::PushoverSound::SOUND_COUNT, selected);
+
+    String massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str();
+    addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, S_MESSAGE, massage, 0, MAX_MESSAGE_SIZE, false);
+    addFormHeaderEnd(webContentBuffer);
+  }
+}
+}  // namespace Html
+#endif
