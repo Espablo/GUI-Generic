@@ -77,6 +77,8 @@ void addLinkBox(String& html, const String& name, const String& url);
 
 void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr);
 
+void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr, bool no_number);
+
 void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function);
 
 void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function);

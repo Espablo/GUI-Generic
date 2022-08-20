@@ -147,7 +147,7 @@ void handleControl(int save) {
     ) {
       if (nr % 2 == 0) {
         addListGPIOLinkBox(webContentBuffer, INPUT_BUTTON_GPIO_STOP, String(S_BUTTON) + S_SPACE + " STOP",
-                           getParameterRequest(PATH_BUTTON_SET, "stop"), FUNCTION_BUTTON_STOP, nr);
+                           getParameterRequest(PATH_BUTTON_SET, "stop"), FUNCTION_BUTTON_STOP, nr, true);
       }
     }
 #endif

@@ -214,6 +214,10 @@ void addListGPIOLinkBox(String& html, const String& input_id, const String& name
   addListGPIOBox(html, input_id, name, function, 0, true, url, true);
 }
 
+void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr, bool no_number) {
+  addListGPIOBox(html, input_id, name, function, nr, true, url, no_number);
+}
+
 void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr) {
   addListGPIOBox(html, input_id, name, function, nr, true, url);
 }
@@ -240,9 +244,7 @@ void addListGPIOBox(
     html += F("<a href='");
     html += PATH_START;
     html += url;
-    if (!no_number) {
-      html += nr;
-    }
+    html += nr;
     html += F("'>");
 
     if (!no_number) {
