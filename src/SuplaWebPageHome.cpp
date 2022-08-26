@@ -106,6 +106,10 @@ void handlePageHomeSave() {
 #ifdef SUPLA_ROLLERSHUTTER
   if (strcmp(WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).c_str(), "") != 0) {
     ConfigManager->set(KEY_MAX_ROLLERSHUTTER, WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).toInt());
+
+    if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() > 0) {
+      ConfigManager->set(KEY_MAX_BUTTON, WebServer->httpServer->arg(INPUT_ROLLERSHUTTER).toInt() * 2);
+    }
   }
 #endif
 

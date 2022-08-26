@@ -589,4 +589,11 @@ enum DIRECT_LINKS_TYPE
 const char* const DIRECT_LINKS_TYPE_LIST_P[] PROGMEM = {S_OFF, S_TEMPERATURE, S_TEMP_HYGR, S_PRESS, S_ELECTRICITY_METER};
 #endif
 
+#ifdef SUPLA_PUSHOVER
+const char* const PUSHOVER_SOUND_LIST_P[] PROGMEM = {"Pushover",   "Bike",    "Bugle",      "Cashregister", "Classical", "Cosmic",
+                                                     "Falling",    "Gamelan", "Incoming",   "Intermission", "Magic",     "Mechanical",
+                                                     "Pianobar",   "Siren",   "Spacealarm", "Tugboat",      "Alien",     "Climb",
+                                                     "Persistent", "Echo",    "Updown",     "Vibrate",      "None"};
+#endif
+
 #endif  // SuplaCommonPROGMEM_h

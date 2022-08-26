@@ -123,7 +123,7 @@ String DirectLinksConnect::getRequest() {
       break;
     }
   }
-  char result[700];
+  char result[1200];
   int i = 0;
   while (client->connected() || client->available()) {
     result[i++] = (char)client->read();

@@ -199,4 +199,8 @@
 #define S_PRESS             "Pression"
 #define S_ELECTRICITY_METER "Compteur d'énergie électrique"
 
+#ifdef SUPLA_PUSHOVER
+#define S_SOUND "Sound"
+#endif
+
 #endif  // _LANGUAGE_FR_S_H_

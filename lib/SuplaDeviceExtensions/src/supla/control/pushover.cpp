@@ -56,6 +56,81 @@ void Pushover::setMessage(const char *message) {
   }
 }
 
+void Pushover::setSound(uint8_t sound) {
+  switch (sound) {
+    case Supla::PushoverSound::SOUND_PUSHOVER:
+      strncpy(_sound, "pushover", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_BIKE:
+      strncpy(_sound, "bike", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_BUGLE:
+      strncpy(_sound, "bugle", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_CASHREGISTER:
+      strncpy(_sound, "cashregister", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_CLASSICAL:
+      strncpy(_sound, "classical", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_COSMIC:
+      strncpy(_sound, "cosmic", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_FALLING:
+      strncpy(_sound, "falling", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_GAMELAN:
+      strncpy(_sound, "gamelan", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_INCOMING:
+      strncpy(_sound, "incoming", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_INTERMISSION:
+      strncpy(_sound, "intermission", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_MAGIC:
+      strncpy(_sound, "magic", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_MECHANICAL:
+      strncpy(_sound, "mechanical", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_PIANOBAR:
+      strncpy(_sound, "pianobar", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_SIREN:
+      strncpy(_sound, "siren", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_SPACEALARM:
+      strncpy(_sound, "spacealarm", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_TUGBOAT:
+      strncpy(_sound, "tugboat", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_ALIEN:
+      strncpy(_sound, "alien", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_CLIMB:
+      strncpy(_sound, "climb", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_PERSISTENT:
+      strncpy(_sound, "persistent", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_ECHO:
+      strncpy(_sound, "echo", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_UPDOWN:
+      strncpy(_sound, "updown", MAX_SOUND_SIZE);
+      break;
+    case Supla::PushoverSound::SOUND_VIBRATE:
+      strncpy(_sound, "vibrate", MAX_SOUND_SIZE);
+      break;
+
+    default:
+      strncpy(_sound, "bugle", MAX_SOUND_SIZE);
+      break;
+  }
+}
+
 bool Pushover::openConnection() {
   if (!client->connect(host, _isSecured ? 443 : 80)) {
     return false;
@@ -82,9 +157,9 @@ void Pushover::toggleConnection() {
       client = new WiFiClientSecure();
       ((WiFiClientSecure *)client)->setInsecure();
 #ifdef ARDUINO_ARCH_ESP8266
-      ((WiFiClientSecure *)client)->setBufferSizes(256, 256);
+      ((WiFiClientSecure *)client)->setBufferSizes(1024, 512);
 #endif
-      ((WiFiClientSecure *)client)->setTimeout(200);
+      ((WiFiClientSecure *)client)->setTimeout(1000);
     } else {
       client = new WiFiClient();
     }
@@ -100,7 +175,8 @@ void Pushover::toggleConnection() {
 void Pushover::sendRequest() {
   if (client) {
     String post = String("token=") + _token + "&user=" + _user +
-                  "&title=" + _title + "&message=" + _message;
+                  "&title=" + _title + "&message=" + _message +
+                  "&sound=" + _sound;
 
     /* String("token=") + _token + "&user=" + _user + "&title=" + _title +
      "&message=" + _message + "&device=" + _device + "&url=" + _url +
@@ -109,25 +185,24 @@ void Pushover::sendRequest() {
 
     client->print(String("POST ") + path + " HTTP/1.1\r\n" + "host: " + host +
                   "\r\n" + "Content-length: " + String(post.length(), DEC) +
-                  "\r\n"
+                  "\r\n" +
                   "Content-Type: application/x-www-form-urlencoded\r\n" +
-                  "Connection: close\r\n\r\n" + post);
+                  "Cache-Control: no-cache\r\n\r\n" + post);
 
-    while (client->connected()) {
-      String line = client->readStringUntil('\n');
-      if (line == "\r") {
+    while (client->connected() || client->available()) {
+      if (client->readStringUntil('\n') == "\r") {
         Serial.println(F("Pushover - Headers received"));
         break;
       }
     }
 
-    /* String line = client->readString();
-     if (line.indexOf("\"status\":1") != -1 || line.indexOf("200 OK") != -1) {
-       Serial.println(F("Alert sent successfully!"));
-     } else {
-       Serial.print(F("Alert failure"));
-       Serial.println(line);
-     }*/
+    String line = client->readString();
+    if (line.indexOf("\"status\":1") != -1 || line.indexOf("200 OK") != -1) {
+      Serial.println(F("Alert sent successfully!"));
+    } else {
+      Serial.println(F("Alert failure"));
+      Serial.println(line);
+    }
   }
 }
 

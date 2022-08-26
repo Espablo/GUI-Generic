@@ -132,14 +132,7 @@ void handleLimitSwitchSet(int save) {
     addFormHeaderEnd(webContentBuffer);
 
 #ifdef SUPLA_PUSHOVER
-    if (nr.toInt() <= MAX_PUSHOVER_MESSAGE) {
-      addFormHeader(webContentBuffer, S_PUSHOVER);
-
-      String massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr.toInt()).c_str();
-      input = INPUT_PUSHOVER_MESSAGE;
-      addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, S_MESSAGE, massage, 0, MAX_MESSAGE_SIZE, false);
-      addFormHeaderEnd(webContentBuffer);
-    }
+    Html::addPushover(nr.toInt());
 #endif
   }
 
@@ -166,6 +159,8 @@ void handleLimitSwitchSaveSet() {
 
 #ifdef SUPLA_PUSHOVER
   if (nr.toInt() <= MAX_PUSHOVER_MESSAGE) {
+    input = INPUT_PUSHOVER_SOUND;
+    ConfigManager->setElement(KEY_PUSHOVER_SOUND, (nr.toInt()), WebServer->httpServer->arg(input).c_str());
     input = INPUT_PUSHOVER_MESSAGE;
     ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, (nr.toInt()), WebServer->httpServer->arg(input).c_str());
   }

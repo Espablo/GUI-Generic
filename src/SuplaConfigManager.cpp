@@ -311,10 +311,12 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
     this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
     this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);
+    this->addKey(KEY_PUSHOVER_SOUND, 3 * MAX_PUSHOVER_MESSAGE);
 #else
     this->addKey(KEY_PUSHOVER_TOKEN, MAX_TOKEN_SIZE, false);
     this->addKey(KEY_PUSHOVER_USER, MAX_USER_SIZE, false);
     this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE, false);
+    this->addKey(KEY_PUSHOVER_SOUND, 3 * MAX_PUSHOVER_MESSAGE, false);
 #endif
 
 #ifdef SUPLA_HC_SR04

@@ -27,14 +27,42 @@
 #define MAX_USER_SIZE    32
 #define MAX_TITLE_SIZE   32
 #define MAX_MESSAGE_SIZE 16
+#define MAX_SOUND_SIZE   16
 
 namespace Supla {
 enum Pushover { SEND_NOTIF_1 };
 }  // namespace Supla
 
 namespace Supla {
+namespace PushoverSound {
+enum PushoverSound {
+  SOUND_PUSHOVER,
+  SOUND_BIKE,
+  SOUND_BUGLE,
+  SOUND_CASHREGISTER,
+  SOUND_CLASSICAL,
+  SOUND_COSMIC,
+  SOUND_FALLING,
+  SOUND_GAMELAN,
+  SOUND_INCOMING,
+  SOUND_INTERMISSION,
+  SOUND_MAGIC,
+  SOUND_MECHANICAL,
+  SOUND_PIANOBAR,
+  SOUND_SIREN,
+  SOUND_SPACEALARM,
+  SOUND_TUGBOAT,
+  SOUND_ALIEN,
+  SOUND_CLIMB,
+  SOUND_PERSISTENT,
+  SOUND_ECHO,
+  SOUND_UPDOWN,
+  SOUND_VIBRATE,
+  SOUND_NONE,
+  SOUND_COUNT
+};
+};
 namespace Control {
-
 class Pushover : public Element, public ActionHandler {
  public:
   Pushover(const char *token = nullptr,
@@ -46,6 +74,7 @@ class Pushover : public Element, public ActionHandler {
   void setUser(const char *user);
   void setMessage(const char *message);
   void setTitle(const char *title);
+  void setSound(uint8_t sound);
 
   void iterateAlways();
   void handleAction(int event, int action);
@@ -68,6 +97,7 @@ class Pushover : public Element, public ActionHandler {
   char _user[MAX_USER_SIZE];
   char _title[MAX_TITLE_SIZE * 2];
   char _message[MAX_MESSAGE_SIZE * 2];
+  char _sound[MAX_SOUND_SIZE];
 };
 
 };  // namespace Control

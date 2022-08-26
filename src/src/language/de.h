@@ -198,4 +198,8 @@
 #define S_PRESS             "Druck"
 #define S_ELECTRICITY_METER "Stromzähler"
 
+#ifdef SUPLA_PUSHOVER
+#define S_SOUND "Sound"
+#endif
+
 #endif  // _LANGUAGE_DE_S_H_

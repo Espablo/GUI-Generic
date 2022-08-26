@@ -30,7 +30,7 @@ void createWebPageSensor1Wire() {
   });
 
 #ifdef SUPLA_DS18B20
-  WebServer->httpServer->on(getURL(PATH_MULTI_DS), [&]() {
+  WebServer->httpServer->on(getURL(PATH_MULTI_DS, 0), [&]() {
     if (!WebServer->isLoggedIn()) {
       return;
     }
@@ -74,7 +74,7 @@ void handleSensor1Wire(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
-#ifdef SUPLA_DS18B20
+#ifdef SUPLA_DS18B20 
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_MULTI_DS18B20);
   addNumberBox(webContentBuffer, INPUT_MAX_DS18B20, S_QUANTITY, KEY_MULTI_MAX_DS18B20, MAX_DS18B20);
   if (ConfigManager->get(KEY_MULTI_MAX_DS18B20)->getValueInt() > 1) {
@@ -167,10 +167,10 @@ void handleSensorDs18b20(int save) {
   s_temp.reserve(12);
 
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_MULTI_DS);
+  webContentBuffer += SuplaJavaScript(getURL(PATH_MULTI_DS, 0));
 
   if (ConfigESP->getGpio(FUNCTION_DS18B20) < OFF_GPIO) {
-    addForm(webContentBuffer, F("post"), PATH_MULTI_DS);
+    addForm(webContentBuffer, F("post"), getURL(PATH_MULTI_DS, 0));
 
     if (ConfigESP->getGpio(FUNCTION_DS18B20) != OFF_GPIO) {
       addFormHeader(webContentBuffer, S_TEMPERATURE);
@@ -201,7 +201,7 @@ void handleSensorDs18b20(int save) {
     addBr(webContentBuffer);
   }
 
-  addForm(webContentBuffer, F("post"), PATH_MULTI_DS);
+  addForm(webContentBuffer, F("post"), getURL(PATH_MULTI_DS, 0));
   addFormHeader(webContentBuffer, String(S_FOUND) + S_SPACE + S_DS18B20);
   sensors.setOneWire(&ow);
   sensors.begin();

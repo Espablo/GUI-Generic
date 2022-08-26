@@ -169,6 +169,8 @@ void handleRelaySaveSet() {
 
 #if defined(SUPLA_PUSHOVER)
   if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
+    input = INPUT_PUSHOVER_SOUND;
+    ConfigManager->setElement(KEY_PUSHOVER_SOUND, (nr_relay.toInt()), WebServer->httpServer->arg(input).c_str());
     input = INPUT_PUSHOVER_MESSAGE;
     ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, (nr_relay.toInt()), WebServer->httpServer->arg(input).c_str());
   }
@@ -254,13 +256,13 @@ void handleRelaySet(int save) {
 
       if (ConfigManager->get(KEY_RF_BRIDGE_TYPE)->getElement(nr_relay.toInt()).toInt() == Supla::GUI::RFBridgeType::TRANSMITTER) {
         value = ConfigManager->get(KEY_RF_BRIDGE_PROTOCOL)->getElement(nr_relay.toInt()).c_str();
-        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_PROTOCO, F("PROTOCO"), value, F("1"), 0, 2, true);
+        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_PROTOCO, F("PROTOCO"), value, F("1..."), 0, 2, true);
 
         value = ConfigManager->get(KEY_RF_BRIDGE_PULSE_LENGTHINT)->getElement(nr_relay.toInt()).c_str();
-        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_PULSE_LENGTHIN, F("PULSE LENGTHINT"), value, F("320"), 0, 4, true);
+        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_PULSE_LENGTHIN, F("PULSE LENGTHINT"), value, F("320..."), 0, 4, true);
 
         value = ConfigManager->get(KEY_RF_BRIDGE_LENGTH)->getElement(nr_relay.toInt()).c_str();
-        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_LENGTH, F("LENGTH"), value, F("24"), 0, 3, true);
+        addTextBox(webContentBuffer, INPUT_RF_BRIDGE_LENGTH, F("LENGTH"), value, F("24..."), 0, 3, true);
 
         selected = ConfigManager->get(KEY_RF_BRIDGE_REPEAT)->getElement(nr_relay.toInt()).toInt();
         addCheckBox(webContentBuffer, INPUT_RF_BRIDGE_REPEAT, F("Powtarzaj[10min]"), selected);
@@ -294,14 +296,8 @@ void handleRelaySet(int save) {
     }
 #endif
 
-#if defined(SUPLA_PUSHOVER)
-    if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
-      addFormHeader(webContentBuffer, S_PUSHOVER);
-
-      massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr_relay.toInt()).c_str();
-      addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, S_MESSAGE, massage, 0, MAX_MESSAGE_SIZE, false);
-      addFormHeaderEnd(webContentBuffer);
-    }
+#ifdef SUPLA_PUSHOVER
+    Html::addPushover(nr_relay.toInt());
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
@@ -360,15 +356,7 @@ void handleRelaySetMCP23017(int save) {
   addFormHeaderEnd(webContentBuffer);
 
 #ifdef SUPLA_PUSHOVER
-  if (!nr_relay.isEmpty()) {
-    if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
-      addFormHeader(webContentBuffer, S_PUSHOVER);
-
-      massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr_relay.toInt()).c_str();
-      addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, S_MESSAGE, massage, 0, MAX_MESSAGE_SIZE, false);
-      addFormHeaderEnd(webContentBuffer);
-    }
-  }
+  Html::addPushover(nr_relay.toInt());
 #endif
 
   if (!nr_relay.isEmpty()) {
@@ -416,6 +404,8 @@ void handleRelaySaveSetMCP23017() {
 
 #if defined(SUPLA_PUSHOVER)
     if (nr_relay.toInt() <= MAX_PUSHOVER_MESSAGE) {
+      input = INPUT_PUSHOVER_SOUND;
+      ConfigManager->setElement(KEY_PUSHOVER_SOUND, (nr_relay.toInt()), WebServer->httpServer->arg(input).c_str());
       input = INPUT_PUSHOVER_MESSAGE;
       ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, (nr_relay.toInt()), WebServer->httpServer->arg(input).c_str());
     }

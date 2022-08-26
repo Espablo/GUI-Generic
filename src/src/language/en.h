@@ -198,4 +198,8 @@
 #define S_PRESS             "Pressure"
 #define S_ELECTRICITY_METER "Electric energy meter"
 
+#ifdef SUPLA_PUSHOVER
+#define S_SOUND "Sound"
+#endif
+
 #endif  // _LANGUAGE_EN_S_H_

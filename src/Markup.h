@@ -77,6 +77,8 @@ void addLinkBox(String& html, const String& name, const String& url);
 
 void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr);
 
+void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function, uint8_t nr, bool no_number);
+
 void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function);
 
 void addListGPIOBox(String& html, const String& input_id, const String& name, uint8_t function);
@@ -133,4 +135,11 @@ String getParameterRequest(const String& url, const String& param, const String&
 const String SuplaJavaScript(const String& java_return = PATH_START);
 
 const String SuplaSaveResult(int save);
+
+#ifdef SUPLA_PUSHOVER
+namespace Html {
+void addPushover(uint8_t nr);
+}
+#endif
+
 #endif  // Markup_h
