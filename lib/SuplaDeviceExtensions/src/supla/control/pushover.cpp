@@ -159,7 +159,6 @@ void Pushover::toggleConnection() {
 #ifdef ARDUINO_ARCH_ESP8266
       ((WiFiClientSecure *)client)->setBufferSizes(1024, 512);
 #endif
-      ((WiFiClientSecure *)client)->setTimeout(1000);
     } else {
       client = new WiFiClient();
     }
