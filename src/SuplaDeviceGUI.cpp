@@ -314,8 +314,11 @@ void addButtonBridge(uint8_t nr) {
     receiveBridge->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
     receiveBridge->setCodeOFF(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).toInt());
 
-    receiveBridge->addAction(Supla::TURN_ON, relay[nr], Supla::TURN_ON);
-    receiveBridge->addAction(Supla::TURN_OFF, relay[nr], Supla::TURN_OFF);
+    receiveBridge->addAction(Supla::TOGGLE, relay[nr], Supla::ON_CHANGE);
+
+#ifdef SUPLA_ACTION_TRIGGER
+    addActionTriggerRelatedChannel(receiveBridge, Supla::ON_CHANGE, relay[nr]);
+#endif
   }
 }
 #endif

@@ -21,15 +21,25 @@
 #include <RCSwitch.h>
 #include <supla/actions.h>
 #include <supla/control/RFBridge.h>
+#include <supla/control/button.h>
 #include <supla/local_action.h>
 
 namespace Supla {
 namespace Control {
 
-class RFBridgeReceive : public LocalAction, public RFBridge {
+class RFBridgeReceive : public RFBridge, public Button {
  public:
   RFBridgeReceive(int receivePin);
   void onTimer();
+  int update();
+
+  int currentState = LOW;
+  int8_t newStatusCandidate = LOW;
+  int8_t prevState = LOW;
+  unsigned long debounceTimeMs = 0;
+  unsigned long filterTimeMs = 0;
+  unsigned int debounceDelayMs = 50;
+  unsigned int swNoiseFilterDelayMs = 20;
 };
 
 };  // namespace Control
