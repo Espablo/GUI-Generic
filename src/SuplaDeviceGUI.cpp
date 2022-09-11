@@ -311,14 +311,23 @@ void addButtonBridge(uint8_t nr) {
 
   if (pinButton != OFF_GPIO) {
     auto receiveBridge = new Supla::Control::RFBridgeReceive(pinButton);
+
     receiveBridge->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
     receiveBridge->setCodeOFF(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).toInt());
 
-    receiveBridge->addAction(Supla::TOGGLE, relay[nr], Supla::ON_CHANGE);
-
+    if (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(),
+               ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str()) != 0) {
+      receiveBridge->addAction(Supla::TOGGLE, relay[nr], Supla::ON_CHANGE);
 #ifdef SUPLA_ACTION_TRIGGER
-    addActionTriggerRelatedChannel(receiveBridge, Supla::ON_CHANGE, relay[nr]);
+      addActionTriggerRelatedChannel(receiveBridge, Supla::ON_CHANGE, relay[nr]);
 #endif
+    }
+    else {
+      receiveBridge->addAction(Supla::TOGGLE, relay[nr], Supla::ON_PRESS);
+#ifdef SUPLA_ACTION_TRIGGER
+      addActionTriggerRelatedChannel(receiveBridge, Supla::ON_PRESS, relay[nr]);
+#endif
+    }
   }
 }
 #endif

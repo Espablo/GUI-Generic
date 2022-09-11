@@ -39,6 +39,8 @@ class RFBridgeReceive : public RFBridge,
 
  private:
   bool currentState = LOW;
+  unsigned long debounceTimeMs = 0;
+  unsigned int debounceDelayMs = 50;
 };
 
 };  // namespace Control

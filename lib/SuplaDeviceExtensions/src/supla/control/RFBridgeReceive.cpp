@@ -25,22 +25,28 @@ RFBridgeReceive::RFBridgeReceive(int receivePin)
 
 int RFBridgeReceive::customDigitalRead(int channelNumber, uint8_t pin) {
   if (pin == VIRTUAL_PIN_RF_BRIDGE) {
+    unsigned long curMillis = millis();
+
     if (mySwitch->available()) {
       int code = mySwitch->getReceivedValue();
       if (code == codeON) {
         Serial.print("Received code ON ");
         Serial.println(code);
+        currentState = HIGH;
+        mySwitch->resetAvailable();
+        debounceTimeMs = curMillis;
+      } else if (code == codeOFF) {
+        Serial.print("Received code OFF ");
+        Serial.println(code);
         currentState = LOW;
         mySwitch->resetAvailable();
       }
-
-      if (code == codeOFF) {
-        Serial.print("Received code OFF ");
-        Serial.println(code);
-        currentState = HIGH;
-        mySwitch->resetAvailable();
-      }
     }
+
+    if (codeON == codeOFF && curMillis - debounceTimeMs > debounceDelayMs) {
+      currentState = LOW;
+    }
+
     return currentState;
   }
 
