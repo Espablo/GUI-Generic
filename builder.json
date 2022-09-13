@@ -1070,9 +1070,12 @@
 			}
 		},
 		"SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR": {
-			"name": "Linki bezpośrednie - odczyt temperatury",
+			"name": "Linki bezpośrednie - odczyt temperatury (stare) ",
 			"desc": "Umożliwia odczytywanie temperatury za pomocą linków bezpośrednich.",
 			"defOn": false,
+			"depRel": [
+				"SUPLA_DIRECT_LINKS_MULTI_SENSOR"
+			],
 			"en": {
 				"name": "Direct links - temperature reading",
 				"desc": "It allows you to read the temperature using direct links."
@@ -1087,6 +1090,31 @@
 			},
 			"fr": {
 				"name": "Liens directs - relevé de température",
+				"desc": "Il vous permet de lire la température à l'aide de liens directs."
+			}
+		},
+		"SUPLA_DIRECT_LINKS_MULTI_SENSOR": {
+			"name": "Linki bezpośrednie - odczyt wartości kanału",
+			"desc": "Umożliwia odczytywanie temperatury za pomocą linków bezpośrednich.",
+			"defOn": false,
+			"new": true,
+			"depRel": [
+				"SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR"
+			],
+			"en": {
+				"name": "Direct links - reading the channel value",
+				"desc": "It allows you to read the temperature using direct links."
+			},
+			"es": {
+				"name": "Enlaces directos - leyendo el valor del canal",
+				"desc": "Le permite leer la temperatura mediante enlaces directos."
+			},
+			"de": {
+				"name": "Direkte Links - Lesen des Kanalwertes",
+				"desc": "Es ermöglicht Ihnen, die Temperatur über direkte Links abzulesen."
+			},
+			"fr": {
+				"name": "Liens directs - lecture de la valeur du canal",
 				"desc": "Il vous permet de lire la température à l'aide de liens directs."
 			}
 		}
