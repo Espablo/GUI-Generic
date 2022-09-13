@@ -20,13 +20,12 @@
 
 #include <Arduino.h>
 #include <supla/storage/storage.h>
-
-#include "humidity_meter.h"
+#include <supla/sensor/thermometer.h>
 
 namespace Supla {
 namespace Sensor {
 
-class AnalogRedingMap : public HumidityMeter {
+class AnalogRedingMap : public Thermometer {
  public:
   AnalogRedingMap(uint8_t pin);
 

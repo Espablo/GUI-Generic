@@ -43,7 +43,7 @@ uint16_t AnalogRedingMap::readValuesFromDevice() {
 double AnalogRedingMap::getValue() {
   double value;
 
-  if (min == max || minDesired == maxDesired) return HUMIDITY_NOT_AVAILABLE;
+  if (min == max || minDesired == maxDesired) return TEMPERATURE_NOT_AVAILABLE;
 
   value = mapDouble(readValuesFromDevice(), min, max, minDesired, maxDesired);
   value = constrain(value, minDesired, maxDesired);
