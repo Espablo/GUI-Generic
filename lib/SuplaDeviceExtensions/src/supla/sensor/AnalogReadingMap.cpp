@@ -25,7 +25,7 @@ AnalogRedingMap::AnalogRedingMap(uint8_t pin)
 
 void AnalogRedingMap::onInit() {
   pinMode(pin, INPUT);
-  channel.setNewValue(0, getValue());
+  channel.setNewValue(getValue());
 }
 
 uint16_t AnalogRedingMap::readValuesFromDevice() {
@@ -55,7 +55,7 @@ void AnalogRedingMap::iterateAlways() {
   if (millis() - lastReadTime > 1000) {
     lastReadTime = millis();
 
-    channel.setNewValue(0, getValue());
+    channel.setNewValue(getValue());
   }
 }
 
