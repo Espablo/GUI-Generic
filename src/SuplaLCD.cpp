@@ -59,6 +59,23 @@ SuplaLCD::SuplaLCD(uint8_t lcdAddr, uint8_t lcdCols, uint8_t lcdRows) {
           lcdElement[frameCount].screenNumbers = frameCount / lcdRows;
           frameCount += 1;
           break;
+        case SUPLA_CHANNELTYPE_ELECTRICITY_METER:
+          // EnergyVoltage
+          lcdElement[frameCount].chanelSensor = channel->getChannelNumber();
+          lcdElement[frameCount].screenNumbers = frameCount / lcdRows;
+          lcdElement[frameCount].electricityMeter = ElectricityMeterType::EnergyVoltage;
+          frameCount += 1;
+          // EnergyCurrent
+          lcdElement[frameCount].chanelSensor = channel->getChannelNumber();
+          lcdElement[frameCount].screenNumbers = frameCount / lcdRows;
+          lcdElement[frameCount].electricityMeter = ElectricityMeterType::EnergyCurrent;
+          frameCount += 1;
+          // EnergyPowerActive
+          lcdElement[frameCount].chanelSensor = channel->getChannelNumber();
+          lcdElement[frameCount].screenNumbers = frameCount / lcdRows;
+          lcdElement[frameCount].electricityMeter = ElectricityMeterType::EnergyPowerActive;
+          frameCount += 1;
+          break;
       }
     }
     if (element->getSecondaryChannel()) {
@@ -198,6 +215,33 @@ String SuplaLCD::getValueSensor(uint8_t numberSensor) {
 
         if (channel->getChannelType() == SUPLA_CHANNELTYPE_DISTANCESENSOR) {
           value = String(channel->getValueDouble(), 2);
+        }
+      }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_ELECTRICITY_METER) {
+        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+        if (extValue == nullptr)
+          return S_ERROR;
+
+        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+        if (emValue->m_count < 1 || emValue == nullptr)
+          return S_ERROR;
+
+        switch (lcdElement[numberSensor].electricityMeter) {
+          case ElectricityMeterType::EnergyVoltage:
+            value = String(emValue->m[0].voltage[0] / 100.0, 2);
+            value += "V";
+            break;
+
+          case ElectricityMeterType::EnergyCurrent:
+            value = String(emValue->m[0].current[0] / 1000.0, 2);
+            value += "A";
+            break;
+
+          case ElectricityMeterType::EnergyPowerActive:
+            value = String(emValue->m[0].power_active[0] / 100000.0, 2);
+            value += "W";
+            break;
         }
       }
 
