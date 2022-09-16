@@ -126,6 +126,14 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_WAKE_ON_LAN
+  for (nr = 0; nr < ConfigManager->get(KEY_WAKE_ON_LAN_MAX)->getValueInt(); nr++) {
+    if (strcmp(ConfigManager->get(KEY_WAKE_ON_LAN_MAC)->getElement(nr).c_str(), "") != 0) {
+      new Supla::Control::WakeOnLanRelay(ConfigManager->get(KEY_WAKE_ON_LAN_MAC)->getElement(nr).c_str());
+    }
+  }
+#endif
+
 #ifdef SUPLA_CONFIG
   Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED));
 #endif

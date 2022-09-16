@@ -232,6 +232,19 @@ void handleOther(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_WAKE_ON_LAN
+  addFormHeader(webContentBuffer, "Wake on LAN");
+  addNumberBox(webContentBuffer, INPUT_WAKE_ON_LAN_MAX, S_QUANTITY, KEY_WAKE_ON_LAN_MAX, MAX_WAKE_ON_LAN);
+
+  for (nr = 0; nr < ConfigManager->get(KEY_WAKE_ON_LAN_MAX)->getValueInt(); nr++) {
+    String input = INPUT_WAKE_ON_LAN_MAC;
+    input += nr;
+    addTextBox(webContentBuffer, input, String("MAC") + S_SPACE + (nr + 1), ConfigManager->get(KEY_WAKE_ON_LAN_MAC)->getElement(nr).c_str(),
+               F("XX:XX:XX:XX:XX:XX"), 0, 17, false);
+  }
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
   addButton(webContentBuffer, S_RETURN, PATH_DEVICE_SETTINGS);
@@ -391,6 +404,18 @@ void handleOtherSave() {
   if (!WebServer->saveGPIO(INPUT_RF_BRIDGE_RX, FUNCTION_RF_BRIDGE_RECEIVE)) {
     handleOther(6);
     return;
+  }
+#endif
+
+#ifdef SUPLA_WAKE_ON_LAN
+  for (nr = 0; nr < ConfigManager->get(KEY_WAKE_ON_LAN_MAX)->getValueInt(); nr++) {
+    String input = INPUT_WAKE_ON_LAN_MAC;
+    input += nr;
+    ConfigManager->setElement(KEY_WAKE_ON_LAN_MAC, nr, WebServer->httpServer->arg(input).c_str());
+  }
+
+  if (strcmp(WebServer->httpServer->arg(INPUT_WAKE_ON_LAN_MAX).c_str(), "") != 0) {
+    ConfigManager->set(KEY_WAKE_ON_LAN_MAX, WebServer->httpServer->arg(INPUT_WAKE_ON_LAN_MAX).c_str());
   }
 #endif
 

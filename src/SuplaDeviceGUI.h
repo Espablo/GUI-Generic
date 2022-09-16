@@ -196,6 +196,10 @@
 #include "src/control/MCP_23017.h"
 #endif
 
+#ifdef SUPLA_WAKE_ON_LAN
+#include "src/control/WakeOnLanRelay.h"
+#endif
+
 namespace Supla {
 namespace GUI {
 
@@ -224,7 +228,7 @@ extern std::vector<Supla::Control::Relay *> relay;
 #endif
 
 #if defined(SUPLA_PUSHOVER)
-void addPushover(uint8_t nr, const String& name, Supla::ChannelElement *client);
+void addPushover(uint8_t nr, const String &name, Supla::ChannelElement *client);
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)
