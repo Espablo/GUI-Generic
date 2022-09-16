@@ -77,6 +77,11 @@ SuplaLCD::SuplaLCD(uint8_t lcdAddr, uint8_t lcdCols, uint8_t lcdRows) {
           frameCount += 1;
           break;
       }
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
+        lcdElement[frameCount].chanelSensor = channel->getChannelNumber();
+        lcdElement[frameCount].screenNumbers = frameCount / lcdRows;
+        frameCount += 1;
+      }
     }
     if (element->getSecondaryChannel()) {
       auto channel = element->getSecondaryChannel();
@@ -242,6 +247,13 @@ String SuplaLCD::getValueSensor(uint8_t numberSensor) {
             value = String(emValue->m[0].power_active[0] / 100000.0, 2);
             value += "W";
             break;
+        }
+      }
+
+      if (channel->getChannelNumber() == lcdElement[numberSensor].chanelSensor) {
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
+          value = String(channel->getValueDouble(), 2);
+          value += "hPa";
         }
       }
 

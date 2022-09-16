@@ -18,11 +18,10 @@
 #define _direct_links_multi_h
 
 #include "DirectLinksConnect.h"
-#include "pressure_meter.h"
 
 #include <supla/sensor/thermometer.h>
 #include <supla/sensor/therm_hygro_meter.h>
-#include "pressure_meter.h"
+#include "pressure.h"
 #include <supla/sensor/one_phase_electricity_meter.h>
 
 namespace Supla {
@@ -54,11 +53,11 @@ class DirectLinksThermHygroMeter : public DirectLinksConnect, public ThermHygroM
   double humi = HUMIDITY_NOT_AVAILABLE;
 };
 
-class DirectLinksPressMeter : public DirectLinksConnect, public PressMeter {
+class DirectLinksPressMeter : public DirectLinksConnect, public Supla::Sensor::Pressure {
  public:
   DirectLinksPressMeter(const char *url, const char *host, bool isSecured = true);
   void sendRequest();
-  double getPressure();
+  double getValue();
 
  private:
   void onInit();

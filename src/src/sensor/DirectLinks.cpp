@@ -132,12 +132,12 @@ void DirectLinksPressMeter::sendRequest() {
   }
 }
 
-double DirectLinksPressMeter::getPressure() {
+double DirectLinksPressMeter::getValue() {
   return press;
 }
 
 void DirectLinksPressMeter::onInit() {
-  pressureChannel.setNewValue(getPressure());
+  channel.setNewValue(getValue());
 }
 
 DirectLinksOnePhaseElectricityMeter::DirectLinksOnePhaseElectricityMeter(const char *url, const char *host, bool isSecured)
