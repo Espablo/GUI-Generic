@@ -11,6 +11,7 @@
 				"depOn": "[opcja] tablica SUPLA_OPTION, których włączenie automatycznie włącza daną opcję",
 				"depOff": "[opcja] tablica SUPLA_OPTION, których wyłączenie nie pozwala włączyć danej opcji",
 				"depRel": "[opcja] tablica SULPA_OPTION, które zostaną wyłączone po włączeniu danej opcji",
+				"depOpt": "[opcja] tablica SULPA_OPTION, które zostaną włączone po włączeniu danej opcji",
 				"new": "[opcja] true - oznacz opcję jako nową, false - nie oznaczaj jako nową (domyślnie)",
 				"test": "[opcja] true - oznacz opcję jako testową, false - nie oznaczaj jako testową (domyślnie)",
 				"en": {
