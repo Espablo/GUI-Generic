@@ -20,27 +20,27 @@
 #include <Arduino.h>
 #include <RCSwitch.h>
 #include <supla/actions.h>
+#include <supla/control/RFBridge.h>
 #include <supla/control/button.h>
-#include <supla/io.h>
-
-#include "supla/control/RFBridge.h"
-
-#define VIRTUAL_PIN_RF_BRIDGE 99
+#include <supla/local_action.h>
 
 namespace Supla {
 namespace Control {
 
-class RFBridgeReceive : public RFBridge,
-                        public Supla::Control::Button,
-                        public Supla::Io {
+class RFBridgeReceive : public RFBridge, public Button {
  public:
   RFBridgeReceive(int receivePin);
-  int customDigitalRead(int channelNumber, uint8_t pin);
+  void onTimer();
+  int update();
 
- private:
-  bool currentState = LOW;
+  int currentState = LOW;
+  int8_t newStatusCandidate = LOW;
+  int8_t prevState = LOW;
+  unsigned long durationTimestamp = 0;
   unsigned long debounceTimeMs = 0;
-  unsigned int debounceDelayMs = 50;
+  unsigned long filterTimeMs = 0;
+  unsigned int debounceDelayMs = 100;
+  unsigned int swNoiseFilterDelayMs = 20;
 };
 
 };  // namespace Control
