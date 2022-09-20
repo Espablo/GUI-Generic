@@ -394,6 +394,8 @@ void setup() {
 
 #if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
+    bool force400khz = false;
+
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
 
 #ifdef SUPLA_BME280
@@ -505,6 +507,8 @@ void setup() {
         break;
     }
     if (vl53l0x) {
+      force400khz = true;
+
       Supla::GUI::addConditionsTurnON(SENSOR_VL53L0X, vl53l0x);
       Supla::GUI::addConditionsTurnOFF(SENSOR_VL53L0X, vl53l0x);
     }
@@ -627,9 +631,11 @@ void setup() {
         if (gpio != OFF_GPIO)
           mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), false);
       }
-      Wire.setClock(400000);
+      force400khz = true;
     }
 #endif
+    if (force400khz)
+      Wire.setClock(400000);
   }
 #endif
 
