@@ -26,7 +26,9 @@ namespace Supla {
 namespace Sensor {
 class VL_53L0X : public Distance {
  public:
-  VL_53L0X(int8_t address = VL53L0X_I2C_ADDR);
+  VL_53L0X(int8_t address = VL53L0X_I2C_ADDR,
+           Adafruit_VL53L0X::VL53L0X_Sense_config_t vl_config =
+               Adafruit_VL53L0X::VL53L0X_SENSE_DEFAULT);
 
   void onInit();
   virtual double getValue();

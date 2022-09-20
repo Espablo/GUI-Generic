@@ -17,14 +17,18 @@
 
 namespace Supla {
 namespace Sensor {
-VL_53L0X::VL_53L0X(int8_t address) : address(address), sensorStatus(false) {
+VL_53L0X::VL_53L0X(int8_t address,
+                   Adafruit_VL53L0X::VL53L0X_Sense_config_t vl_config)
+    : address(address), sensorStatus(false) {
   lox = new Adafruit_VL53L0X();
+  sensorStatus = lox->begin(address, false, &Wire, vl_config);
+
+  if (!sensorStatus)
+    Serial.println(F("Failed to detect and initialize sensor!"));
 };
 
 void VL_53L0X::onInit() {
-  sensorStatus = lox->begin(address);
-  if (!sensorStatus)
-    Serial.println(F("Failed to detect and initialize sensor!"));
+  channel.setNewValue(getValue());
 }
 
 double VL_53L0X::getValue() {

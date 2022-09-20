@@ -488,8 +488,23 @@ void setup() {
 #endif
 
 #ifdef SUPLA_VL53L0X
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_VL53L0X).toInt()) {
-      auto vl53l0x = new Supla::Sensor::VL_53L0X();
+    Supla::Sensor::VL_53L0X *vl53l0x = nullptr;
+
+    switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_VL53L0X).toInt()) {
+      case STATE_VL53L0X::STATE_VL53L0X_SENSE_DEFAULT:
+        vl53l0x = new Supla::Sensor::VL_53L0X(VL53L0X_I2C_ADDR, Adafruit_VL53L0X::VL53L0X_SENSE_DEFAULT);
+        break;
+      case STATE_VL53L0X::STATE_VL53L0X_SENSE_LONG_RANGE:
+        vl53l0x = new Supla::Sensor::VL_53L0X(VL53L0X_I2C_ADDR, Adafruit_VL53L0X::VL53L0X_SENSE_LONG_RANGE);
+        break;
+      case STATE_VL53L0X::STATE_VL53L0X_SENSE_HIGH_SPEED:
+        vl53l0x = new Supla::Sensor::VL_53L0X(VL53L0X_I2C_ADDR, Adafruit_VL53L0X::VL53L0X_SENSE_HIGH_SPEED);
+        break;
+      case STATE_VL53L0X::STATE_VL53L0X_SENSE_HIGH_ACCURACY:
+        vl53l0x = new Supla::Sensor::VL_53L0X(VL53L0X_I2C_ADDR, Adafruit_VL53L0X::VL53L0X_SENSE_HIGH_ACCURACY);
+        break;
+    }
+    if (vl53l0x) {
       Supla::GUI::addConditionsTurnON(SENSOR_VL53L0X, vl53l0x);
       Supla::GUI::addConditionsTurnOFF(SENSOR_VL53L0X, vl53l0x);
     }

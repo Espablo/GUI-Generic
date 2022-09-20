@@ -120,7 +120,7 @@ void handleSensorI2c(int save) {
 #ifdef SUPLA_VL53L0X
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_VL53L0X).toInt();
     addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_VL53L0X, F("VL53L0X"), STATE_P, 2, selected);
+    addListBox(webContentBuffer, INPUT_VL53L0X, F("VL53L0X"), STATE_VL53L0X_P, 5, selected);
     addFormHeaderEnd(webContentBuffer);
 #endif
 
