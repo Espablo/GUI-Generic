@@ -517,6 +517,8 @@ void setup() {
 #ifdef SUPLA_HDC1080
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HDC1080).toInt()) {
       auto hdc1080 = new Supla::Sensor::HDC1080();
+      force400khz = true;
+
       Supla::GUI::addConditionsTurnON(SENSOR_HDC1080, hdc1080);
       Supla::GUI::addConditionsTurnOFF(SENSOR_HDC1080, hdc1080);
     }
