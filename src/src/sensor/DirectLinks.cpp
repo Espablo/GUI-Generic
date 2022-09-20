@@ -178,5 +178,43 @@ void DirectLinksOnePhaseElectricityMeter::sendRequest() {
   }
 }
 
+DirectLinksDistance::DirectLinksDistance(const char *url, const char *host, bool isSecured) : DirectLinksConnect(url, host, isSecured){};
+
+void DirectLinksDistance::sendRequest() {
+  if (client) {
+    DynamicJsonBuffer jsonBuffer;
+    JsonObject &root = jsonBuffer.parseObject(getRequest());
+
+    if (root.success()) {
+      bool connected = root["connected"];
+
+      if (!connected) {
+        Serial.println(F("no connected sensor"));
+        retryCount++;
+        if (retryCount > 3) {
+          retryCount = 0;
+          distance = DISTANCE_NOT_AVAILABLE;
+        }
+      }
+      else {
+        retryCount = 0;
+        distance = root["distance"];
+      }
+    }
+    else {
+      Serial.println(F("parseObject - failed"));
+      distance = DISTANCE_NOT_AVAILABLE;
+    }
+  }
+}
+
+double DirectLinksDistance::getValue() {
+  return distance;
+}
+
+void DirectLinksDistance::onInit() {
+  channel.setNewValue(getValue());
+}
+
 };  // namespace Sensor
 };  // namespace Supla

@@ -168,6 +168,11 @@ void setup() {
         new Supla::Sensor::DirectLinksOnePhaseElectricityMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
                                                                ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
         break;
+
+      case DIRECT_LINKS_TYPE_DISTANCE:
+        new Supla::Sensor::DirectLinksDistance(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                               ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+        break;
     }
   }
 #endif

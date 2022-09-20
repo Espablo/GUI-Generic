@@ -23,6 +23,7 @@
 #include <supla/sensor/therm_hygro_meter.h>
 #include "pressure.h"
 #include <supla/sensor/one_phase_electricity_meter.h>
+#include <supla/sensor/distance.h>
 
 namespace Supla {
 namespace Sensor {
@@ -68,6 +69,17 @@ class DirectLinksOnePhaseElectricityMeter : public DirectLinksConnect, public On
  public:
   DirectLinksOnePhaseElectricityMeter(const char *url, const char *host, bool isSecured = true);
   void sendRequest();
+};
+
+class DirectLinksDistance : public DirectLinksConnect, public Supla::Sensor::Distance {
+ public:
+  DirectLinksDistance(const char *url, const char *host, bool isSecured = true);
+  void sendRequest();
+  double getValue();
+
+ private:
+  void onInit();
+  double distance = DISTANCE_NOT_AVAILABLE;
 };
 
 };  // namespace Sensor
