@@ -268,6 +268,11 @@ void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t 
 }
 
 void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& name, const String& unit) {
+  displayUiGeneral(display, state, x, y, String(value), name, unit);
+}
+
+void displayUiGeneral(
+    OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, const String& value, const String& name, const String& unit) {
   display->setColor(WHITE);
   display->setTextAlignment(TEXT_ALIGN_CENTER);
 
@@ -346,6 +351,28 @@ void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x,
 
   String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
   displayUiPressure(display, state, x, y, lastPressure, name);
+}
+
+void displayDistance(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
+        double distance = channel->getValueDouble();
+        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+
+        if (distance == DISTANCE_NOT_AVAILABLE) {
+          displayUiGeneral(display, state, x, y, S_ERROR, name);
+        }
+        else if (distance == 0 || distance <= 1) {
+          displayUiGeneral(display, state, x, y, distance * 100, name, "cm");
+        }
+        else {
+          displayUiGeneral(display, state, x, y, distance, name, "m");
+        }
+      }
+    }
+  }
 }
 
 void displayGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
@@ -487,7 +514,7 @@ SuplaOled::SuplaOled() {
         }
 
         if (channel->getChannelType() == SUPLA_CHANNELTYPE_DISTANCESENSOR) {
-          frames[frameCount] = {displayGeneral};
+          frames[frameCount] = {displayDistance};
           oled[frameCount].chanelSensor = channel->getChannelNumber();
           oled[frameCount].forSecondaryValue = false;
           frameCount += 1;

@@ -60,6 +60,7 @@ void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16
 void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity, const String& name = "\n");
 void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure, const String& name = "\n");
 void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& name = "\n", const String& unit = "\n");
+void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, const String& value, const String& name = "\n", const String& unit = "\n");
 
 void displayTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 void displayDoubleTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
