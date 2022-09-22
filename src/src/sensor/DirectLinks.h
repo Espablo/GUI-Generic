@@ -82,6 +82,17 @@ class DirectLinksDistance : public DirectLinksConnect, public Supla::Sensor::Dis
   double distance = DISTANCE_NOT_AVAILABLE;
 };
 
+class DirectLinksDepth : public DirectLinksConnect, public Supla::Sensor::Distance {
+ public:
+  DirectLinksDepth(const char *url, const char *host, bool isSecured = true);
+  void sendRequest();
+  double getValue();
+
+ private:
+  void onInit();
+  double depth = DISTANCE_NOT_AVAILABLE;
+};
+
 };  // namespace Sensor
 };  // namespace Supla
 

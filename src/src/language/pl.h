@@ -199,6 +199,7 @@
 #define S_PRESS             "Ciśnienie"
 #define S_ELECTRICITY_METER "Licznik energii elektycznej"
 #define S_DISTANCE          "Odległość"
+#define S_DEPTH             "Głębokość"
 
 #ifdef SUPLA_PUSHOVER
 #define S_SOUND "Dźwięk"
