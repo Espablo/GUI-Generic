@@ -18,6 +18,7 @@
 #include "SuplaDeviceGUI.h"
 #include <supla/clock/clock.h>
 #include <supla/sensor/therm_hygro_press_meter.h>
+#include <supla/sensor/distance.h>
 
 #ifdef SUPLA_OLED
 
