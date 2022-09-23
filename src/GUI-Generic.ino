@@ -146,37 +146,39 @@ void setup() {
 
 #ifdef SUPLA_DIRECT_LINKS_MULTI_SENSOR
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR)->getValueInt(); nr++) {
-    switch (ConfigManager->get(KEY_DIRECT_LINKS_TYPE)->getElement(nr).toInt()) {
-      case DIRECT_LINKS_TYPE_TEMP:
-        new Supla::Sensor::DirectLinksThermometer(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
-                                                  ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-        // Supla::GUI::addConditionsTurnON(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
-        // Supla::GUI::addConditionsTurnOFF(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
-        break;
+    if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(), "") != 0) {
+      switch (ConfigManager->get(KEY_DIRECT_LINKS_TYPE)->getElement(nr).toInt()) {
+        case DIRECT_LINKS_TYPE_TEMP:
+          new Supla::Sensor::DirectLinksThermometer(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                    ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          // Supla::GUI::addConditionsTurnON(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
+          // Supla::GUI::addConditionsTurnOFF(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
+          break;
 
-      case DIRECT_LINKS_TYPE_TEMP_HYGR:
-        new Supla::Sensor::DirectLinksThermHygroMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
-                                                      ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-        break;
+        case DIRECT_LINKS_TYPE_TEMP_HYGR:
+          new Supla::Sensor::DirectLinksThermHygroMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                        ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          break;
 
-      case DIRECT_LINKS_TYPE_PRESS:
-        new Supla::Sensor::DirectLinksPressMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+        case DIRECT_LINKS_TYPE_PRESS:
+          new Supla::Sensor::DirectLinksPressMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                   ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          break;
+
+        case DIRECT_LINKS_TYPE_ELECTRICITY_METER:
+          new Supla::Sensor::DirectLinksOnePhaseElectricityMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                                 ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          break;
+
+        case DIRECT_LINKS_TYPE_DISTANCE:
+          new Supla::Sensor::DirectLinksDistance(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
                                                  ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-        break;
-
-      case DIRECT_LINKS_TYPE_ELECTRICITY_METER:
-        new Supla::Sensor::DirectLinksOnePhaseElectricityMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
-                                                               ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-        break;
-
-      case DIRECT_LINKS_TYPE_DISTANCE:
-        new Supla::Sensor::DirectLinksDistance(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
-                                               ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-        break;
-      case DIRECT_LINKS_TYPE_DEPTH:
-        new Supla::Sensor::DirectLinksDepth(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
-                                            ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-        break;
+          break;
+        case DIRECT_LINKS_TYPE_DEPTH:
+          new Supla::Sensor::DirectLinksDepth(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                              ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          break;
+      }
     }
   }
 #endif

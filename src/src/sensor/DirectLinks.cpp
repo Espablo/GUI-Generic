@@ -26,7 +26,7 @@ void DirectLinksThermometer::sendRequest() {
     JsonObject &root = jsonBuffer.parseObject(getRequest());
 
     if (root.success()) {
-      if (!root["connected"] || root["temperature"]) {
+      if (!root["connected"].success() || !root["temperature"].success()) {
         Serial.println(F("no connected sensor"));
         retryCount++;
         if (retryCount > 3) {
@@ -63,7 +63,7 @@ void DirectLinksThermHygroMeter::sendRequest() {
     JsonObject &root = jsonBuffer.parseObject(getRequest());
 
     if (root.success()) {
-      if (!root["connected"] || !root["temperature"] || !root["humidity"]) {
+      if (!root["connected"].success() || !root["temperature"].success() || !root["humidity"].success()) {
         Serial.println(F("no connected sensor"));
         retryCount++;
         if (retryCount > 3) {
@@ -106,7 +106,7 @@ void DirectLinksPressMeter::sendRequest() {
     JsonObject &root = jsonBuffer.parseObject(getRequest());
 
     if (root.success()) {
-      if (!root["connected"] || !root["value"]) {
+      if (!root["connected"].success() || !root["value"].success()) {
         Serial.println(F("no connected sensor"));
         retryCount++;
         if (retryCount > 3) {
@@ -143,9 +143,7 @@ void DirectLinksOnePhaseElectricityMeter::sendRequest() {
     JsonObject &root = jsonBuffer.parseObject(getRequest());
 
     if (root.success()) {
-      bool connected = root["connected"];
-
-      if (!connected) {
+      if (!root["connected"].success() || !root["phases"].success()) {
         Serial.println(F("no connected"));
         retryCount++;
         if (retryCount > 3) {
@@ -180,7 +178,7 @@ void DirectLinksDistance::sendRequest() {
     JsonObject &root = jsonBuffer.parseObject(getRequest());
 
     if (root.success()) {
-      if (!root["connected"] || !root["distance"]) {
+      if (!root["connected"].success() || !root["distance"].success()) {
         Serial.println(F("no connected sensor"));
         retryCount++;
         if (retryCount > 3) {
@@ -220,7 +218,7 @@ void DirectLinksDepth::sendRequest() {
     JsonObject &root = jsonBuffer.parseObject(getRequest());
 
     if (root.success()) {
-      if (!root["connected"] || !root["depth"]) {
+      if (!root["connected"].success() || !root["depth"].success()) {
         Serial.println(F("no connected sensor"));
         retryCount++;
         if (retryCount > 3) {
