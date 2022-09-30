@@ -56,6 +56,23 @@ String getPressureString(double pressure) {
   }
 }
 
+String getDistanceString(double distance) {
+  if (distance == DISTANCE_NOT_AVAILABLE) {
+    return S_ERROR;
+  }
+  else {
+    return String(distance, 2).c_str();
+  }
+}
+
+int getWidthUnit(OLEDDisplay* display, double value) {
+  return getWidthValue(display, value) + (String(value, 3).length() * 7);
+}
+
+int getWidthValue(OLEDDisplay* display, double value) {
+  return ((display->getWidth() - String(value, 3).length()) / 2);
+}
+
 int getQuality() {
   if (WiFi.status() != WL_CONNECTED)
     return -1;
@@ -231,7 +248,7 @@ void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x
 
   if (name != NULL) {
     display->setFont(ArialMT_Win1250_Plain_10);
-    display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
+    display->drawString(x + HUMIDITY_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
   display->setFont(ArialMT_Win1250_Plain_24);
@@ -268,14 +285,26 @@ void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t 
   display->drawString(x + pressure_width + (getPressureString(pressure).length() * 14), y + drawStringIcon, "hPa");
 }
 
-void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& name, const String& unit) {
-  displayUiGeneral(display, state, x, y, String(value), name, unit);
+void displayUiGeneral(
+    OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& name, const String& unit, const uint8_t* xbm) {
+  displayUiGeneral(display, state, x, y, String(value), name, unit, xbm);
 }
 
-void displayUiGeneral(
-    OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, const String& value, const String& name, const String& unit) {
+void displayUiGeneral(OLEDDisplay* display,
+                      OLEDDisplayUiState* state,
+                      int16_t x,
+                      int16_t y,
+                      const String& value,
+                      const String& name,
+                      const String& unit,
+                      const uint8_t* xbm) {
   display->setColor(WHITE);
   display->setTextAlignment(TEXT_ALIGN_CENTER);
+
+  if (xbm != NULL && display->getWidth() > 64) {
+    int drawHeightIcon = display->getHeight() / 2 - 10;
+    display->drawXbm(x + 0, y + drawHeightIcon, 32, 32, xbm);
+  }
 
   if (name != NULL) {
     display->setFont(ArialMT_Win1250_Plain_10);
@@ -283,10 +312,10 @@ void displayUiGeneral(
   }
 
   display->setFont(ArialMT_Win1250_Plain_24);
-  display->drawString(x + ((display->getWidth() - String(value).length()) / 2), y + display->getHeight() / 2, String(value));
+  display->drawString(x + getWidthValue(display, value.toDouble()), y + display->getHeight() / 2, String(value));
   if (unit != NULL) {
     display->setFont(ArialMT_Win1250_Plain_16);
-    display->drawString(x + display->getWidth() - 10, y + display->getHeight() / 2 + 7, unit);
+    display->drawString(x + getWidthUnit(display, value.toDouble()), y + display->getHeight() / 2 + 7, unit);
   }
 }
 
@@ -362,15 +391,7 @@ void displayDistance(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x,
         double distance = channel->getValueDouble();
         String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
 
-        if (distance == DISTANCE_NOT_AVAILABLE) {
-          displayUiGeneral(display, state, x, y, S_ERROR, name);
-        }
-        else if (distance == 0 || distance <= 1) {
-          displayUiGeneral(display, state, x, y, distance * 100, name, "cm");
-        }
-        else {
-          displayUiGeneral(display, state, x, y, distance, name, "m");
-        }
+        displayUiGeneral(display, state, x, y, getDistanceString(distance), name, "m", distance_bits);
       }
     }
   }
