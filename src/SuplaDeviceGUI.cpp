@@ -340,7 +340,12 @@ void addPushover(uint8_t nr, const String &name, Supla::ChannelElement *client) 
       auto pushover =
           new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
 
-      String title = String(ConfigManager->get(KEY_HOST_NAME)->getValue()) + S_SPACE + "-" + S_SPACE + name + S_SPACE + (nr + 1);
+      String title = ConfigManager->get(KEY_HOST_NAME)->getValue();
+
+      if (title.indexOf(" ", title.length() - 1) == -1) {
+        title = String(ConfigManager->get(KEY_HOST_NAME)->getValue()) + S_SPACE + "-" + S_SPACE + name + S_SPACE + (nr + 1);
+      }
+
       pushover->setTitle(title.c_str());
       pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str());
       pushover->setSound(ConfigManager->get(KEY_PUSHOVER_SOUND)->getElement(nr).toInt());
