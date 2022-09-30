@@ -642,6 +642,13 @@ void setup() {
         if (gpio != OFF_GPIO)
           mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), false);
       }
+
+      for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
+        gpio = ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH);
+        if (gpio != OFF_GPIO)
+          mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), false);
+      }
+
       force400khz = true;
     }
 #endif
