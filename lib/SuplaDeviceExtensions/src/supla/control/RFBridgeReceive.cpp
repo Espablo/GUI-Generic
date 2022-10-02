@@ -27,24 +27,39 @@ int RFBridgeReceive::update() {
 
   if (mySwitch->available()) {
     int code = mySwitch->getReceivedValue();
+
     if (code == codeON) {
       Serial.print("Received code ON ");
       Serial.println(code);
       currentState = HIGH;
-      if (codeON == codeOFF) {
+
+      if (monostable) {
         durationTimestamp = curMillis;
+      } else {
+        runAction(ON_PRESS);
       }
+
       mySwitch->resetAvailable();
     } else if (code == codeOFF) {
       Serial.print("Received code OFF ");
       Serial.println(code);
       currentState = LOW;
+
+      if (monostable) {
+        durationTimestamp = curMillis;
+      } else {
+        runAction(ON_RELEASE);
+      }
+
       mySwitch->resetAvailable();
     }
   }
 
-  if (codeON == codeOFF && curMillis - durationTimestamp > debounceDelayMs) {
-    currentState = LOW;
+  if (monostable && curMillis - durationTimestamp > debounceDelayMs) {
+    if (codeON)
+      currentState = LOW;
+    else
+      currentState = HIGH;
   }
 
   if (debounceDelayMs == 0 || curMillis - debounceTimeMs > debounceDelayMs) {
@@ -194,6 +209,10 @@ void RFBridgeReceive::onTimer() {
       }
     }
   }
+}
+
+void RFBridgeReceive::isMonostable() {
+  monostable = true;
 }
 
 }  // namespace Control

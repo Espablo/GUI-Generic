@@ -32,8 +32,9 @@ class RFBridgeReceive : public RFBridge, public Button {
   RFBridgeReceive(int receivePin);
   void onTimer();
   int update();
+  void isMonostable();
 
-  int currentState = LOW;
+  bool currentState = LOW;
   int8_t newStatusCandidate = LOW;
   int8_t prevState = LOW;
   unsigned long durationTimestamp = 0;
@@ -41,6 +42,7 @@ class RFBridgeReceive : public RFBridge, public Button {
   unsigned long filterTimeMs = 0;
   unsigned int debounceDelayMs = 100;
   unsigned int swNoiseFilterDelayMs = 20;
+  bool monostable = false;
 };
 
 };  // namespace Control

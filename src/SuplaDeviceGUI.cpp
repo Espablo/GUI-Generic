@@ -316,14 +316,19 @@ void addButtonBridge(uint8_t nr) {
     receiveBridge->setCodeOFF(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).toInt());
 
     if (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(),
-               ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str()) != 0) {
-      receiveBridge->addAction(Supla::TOGGLE, relay[nr], Supla::ON_CHANGE);
+               ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str()) != 0 &&
+        strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 &&
+        strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0) {
+          
+      receiveBridge->addAction(Supla::TURN_ON, relay[nr], Supla::ON_PRESS);
+      receiveBridge->addAction(Supla::TURN_OFF, relay[nr], Supla::ON_RELEASE);
 #ifdef SUPLA_ACTION_TRIGGER
       addActionTriggerRelatedChannel(receiveBridge, Supla::ON_CHANGE, relay[nr]);
 #endif
     }
     else {
       receiveBridge->addAction(Supla::TOGGLE, relay[nr], Supla::ON_PRESS);
+      receiveBridge->isMonostable();
 #ifdef SUPLA_ACTION_TRIGGER
       addActionTriggerRelatedChannel(receiveBridge, Supla::ON_PRESS, relay[nr]);
 #endif
