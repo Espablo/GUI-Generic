@@ -319,7 +319,6 @@ void addButtonBridge(uint8_t nr) {
                ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str()) != 0 &&
         strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 &&
         strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0) {
-          
       receiveBridge->addAction(Supla::TURN_ON, relay[nr], Supla::ON_PRESS);
       receiveBridge->addAction(Supla::TURN_OFF, relay[nr], Supla::ON_RELEASE);
 #ifdef SUPLA_ACTION_TRIGGER
@@ -354,7 +353,7 @@ void addPushover(uint8_t nr, const String &name, Supla::ChannelElement *client) 
       pushover->setTitle(title.c_str());
       pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str());
       pushover->setSound(ConfigManager->get(KEY_PUSHOVER_SOUND)->getElement(nr).toInt());
-      client->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
+      client->addAction(Supla::TURN_ON, pushover, Supla::ON_TURN_ON);
     }
   }
 }

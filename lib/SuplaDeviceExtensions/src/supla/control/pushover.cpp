@@ -231,7 +231,7 @@ void Pushover::iterateAlways() {
 
 void Pushover::handleAction(int event, int action) {
   (void)(event);
-  if (action == SEND_NOTIF_1) {
+  if (action == Supla::TURN_ON) {
     lastMsgReceivedMs = millis();
   }
 }

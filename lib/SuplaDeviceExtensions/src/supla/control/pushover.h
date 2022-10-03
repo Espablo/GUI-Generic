@@ -29,9 +29,7 @@
 #define MAX_MESSAGE_SIZE 16
 #define MAX_SOUND_SIZE   16
 
-namespace Supla {
-enum Pushover { SEND_NOTIF_1 };
-}  // namespace Supla
+namespace Supla {}  // namespace Supla
 
 namespace Supla {
 namespace PushoverSound {
