@@ -21,7 +21,7 @@ class GUIESPWifi : public Supla::ESPWifi {
 
  protected:
   char hostname[MAX_HOSTNAME];
-  int8_t retryCount;
+  int8_t retryCount = 0;
 };
 };      // namespace Supla
 #endif  // SuplaGuiWiFi_h

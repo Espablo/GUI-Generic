@@ -4,7 +4,6 @@
 namespace Supla {
 
 GUIESPWifi::GUIESPWifi(const char *wifiSsid, const char *wifiPassword) : ESPWifi(wifiSsid, wifiPassword) {
-  retryCount = 0;
 #ifdef ARDUINO_ARCH_ESP8266
   gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
     (void)(event);
@@ -143,10 +142,11 @@ void GUIESPWifi::setup() {
 
       delay(200);  // do not remove, need a delay for disconnect to change status()
 
+      wifiConfigured = false;
+
       retryCount++;
-      if (retryCount > 4) {
+      if (retryCount > 3) {
         retryCount = 0;
-        wifiConfigured = false;
 
         if (ConfigManager->get(KEY_FORCE_RESTART_ESP)->getValueBool())
           ConfigESP->rebootESP();
