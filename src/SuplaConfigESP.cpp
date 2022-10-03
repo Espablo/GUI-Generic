@@ -794,6 +794,11 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
     setAction(gpio, Supla::Action::TOGGLE);
     setEvent(gpio, Supla::Event::ON_CHANGE);
   }
+
+  if (function == FUNCTION_LIMIT_SWITCH) {
+    setPullUp(gpio, true);
+  }
+  
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, true);
     setMemory(gpio, 0);
