@@ -116,6 +116,7 @@ enum _LCDAdress
 void createWebPageSensorI2c();
 void handleSensorI2c(int save = 0);
 void handleSensorI2cSave();
+void webPageI2CScanner();
 
 #ifdef SUPLA_VL53L0X
 #define INPUT_VL53L0X "ilox"

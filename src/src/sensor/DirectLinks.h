@@ -18,12 +18,12 @@
 #define _direct_links_multi_h
 
 #include "DirectLinksConnect.h"
-#include "pressure_meter.h"
 
 #include <supla/sensor/thermometer.h>
 #include <supla/sensor/therm_hygro_meter.h>
-#include "pressure_meter.h"
+#include "pressure.h"
 #include <supla/sensor/one_phase_electricity_meter.h>
+#include <supla/sensor/distance.h>
 
 namespace Supla {
 namespace Sensor {
@@ -54,11 +54,11 @@ class DirectLinksThermHygroMeter : public DirectLinksConnect, public ThermHygroM
   double humi = HUMIDITY_NOT_AVAILABLE;
 };
 
-class DirectLinksPressMeter : public DirectLinksConnect, public PressMeter {
+class DirectLinksPressMeter : public DirectLinksConnect, public Supla::Sensor::Pressure {
  public:
   DirectLinksPressMeter(const char *url, const char *host, bool isSecured = true);
   void sendRequest();
-  double getPressure();
+  double getValue();
 
  private:
   void onInit();
@@ -69,6 +69,28 @@ class DirectLinksOnePhaseElectricityMeter : public DirectLinksConnect, public On
  public:
   DirectLinksOnePhaseElectricityMeter(const char *url, const char *host, bool isSecured = true);
   void sendRequest();
+};
+
+class DirectLinksDistance : public DirectLinksConnect, public Supla::Sensor::Distance {
+ public:
+  DirectLinksDistance(const char *url, const char *host, bool isSecured = true);
+  void sendRequest();
+  double getValue();
+
+ private:
+  void onInit();
+  double distance = DISTANCE_NOT_AVAILABLE;
+};
+
+class DirectLinksDepth : public DirectLinksConnect, public Supla::Sensor::Distance {
+ public:
+  DirectLinksDepth(const char *url, const char *host, bool isSecured = true);
+  void sendRequest();
+  double getValue();
+
+ private:
+  void onInit();
+  double depth = DISTANCE_NOT_AVAILABLE;
 };
 
 };  // namespace Sensor

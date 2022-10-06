@@ -126,6 +126,14 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_WAKE_ON_LAN
+  for (nr = 0; nr < ConfigManager->get(KEY_WAKE_ON_LAN_MAX)->getValueInt(); nr++) {
+    if (strcmp(ConfigManager->get(KEY_WAKE_ON_LAN_MAC)->getElement(nr).c_str(), "") != 0) {
+      new Supla::Control::WakeOnLanRelay(ConfigManager->get(KEY_WAKE_ON_LAN_MAC)->getElement(nr).c_str());
+    }
+  }
+#endif
+
 #ifdef SUPLA_CONFIG
   Supla::GUI::addConfigESP(ConfigESP->getGpio(FUNCTION_CFG_BUTTON), ConfigESP->getGpio(FUNCTION_CFG_LED));
 #endif
@@ -138,28 +146,39 @@ void setup() {
 
 #ifdef SUPLA_DIRECT_LINKS_MULTI_SENSOR
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR)->getValueInt(); nr++) {
-    switch (ConfigManager->get(KEY_DIRECT_LINKS_TYPE)->getElement(nr).toInt()) {
-      case DIRECT_LINKS_TYPE_TEMP:
-        new Supla::Sensor::DirectLinksThermometer(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
-                                                  ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-        // Supla::GUI::addConditionsTurnON(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
-        // Supla::GUI::addConditionsTurnOFF(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
-        break;
+    if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(), "") != 0) {
+      switch (ConfigManager->get(KEY_DIRECT_LINKS_TYPE)->getElement(nr).toInt()) {
+        case DIRECT_LINKS_TYPE_TEMP:
+          new Supla::Sensor::DirectLinksThermometer(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                    ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          // Supla::GUI::addConditionsTurnON(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
+          // Supla::GUI::addConditionsTurnOFF(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
+          break;
 
-      case DIRECT_LINKS_TYPE_TEMP_HYGR:
-        new Supla::Sensor::DirectLinksThermHygroMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
-                                                      ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-        break;
+        case DIRECT_LINKS_TYPE_TEMP_HYGR:
+          new Supla::Sensor::DirectLinksThermHygroMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                        ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          break;
 
-      case DIRECT_LINKS_TYPE_PRESS:
-        new Supla::Sensor::DirectLinksPressMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+        case DIRECT_LINKS_TYPE_PRESS:
+          new Supla::Sensor::DirectLinksPressMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                   ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          break;
+
+        case DIRECT_LINKS_TYPE_ELECTRICITY_METER:
+          new Supla::Sensor::DirectLinksOnePhaseElectricityMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                                                 ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          break;
+
+        case DIRECT_LINKS_TYPE_DISTANCE:
+          new Supla::Sensor::DirectLinksDistance(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
                                                  ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-        break;
-
-      case DIRECT_LINKS_TYPE_ELECTRICITY_METER:
-        new Supla::Sensor::DirectLinksOnePhaseElectricityMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
-                                                               ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-        break;
+          break;
+        case DIRECT_LINKS_TYPE_DEPTH:
+          new Supla::Sensor::DirectLinksDepth(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+                                              ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          break;
+      }
     }
   }
 #endif
@@ -379,8 +398,14 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_SDM630
+  new Supla::Sensor::SDM630();
+#endif
+
 #if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
+    bool force400khz = false;
+
     Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
 
 #ifdef SUPLA_BME280
@@ -475,8 +500,25 @@ void setup() {
 #endif
 
 #ifdef SUPLA_VL53L0X
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_VL53L0X).toInt()) {
-      auto vl53l0x = new Supla::Sensor::VL_53L0X();
+    Supla::Sensor::VL_53L0X *vl53l0x = nullptr;
+
+    switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_VL53L0X).toInt()) {
+      case STATE_VL53L0X::STATE_VL53L0X_SENSE_DEFAULT:
+        vl53l0x = new Supla::Sensor::VL_53L0X(VL53L0X_I2C_ADDR, Adafruit_VL53L0X::VL53L0X_SENSE_DEFAULT);
+        break;
+      case STATE_VL53L0X::STATE_VL53L0X_SENSE_LONG_RANGE:
+        vl53l0x = new Supla::Sensor::VL_53L0X(VL53L0X_I2C_ADDR, Adafruit_VL53L0X::VL53L0X_SENSE_LONG_RANGE);
+        break;
+      case STATE_VL53L0X::STATE_VL53L0X_SENSE_HIGH_SPEED:
+        vl53l0x = new Supla::Sensor::VL_53L0X(VL53L0X_I2C_ADDR, Adafruit_VL53L0X::VL53L0X_SENSE_HIGH_SPEED);
+        break;
+      case STATE_VL53L0X::STATE_VL53L0X_SENSE_HIGH_ACCURACY:
+        vl53l0x = new Supla::Sensor::VL_53L0X(VL53L0X_I2C_ADDR, Adafruit_VL53L0X::VL53L0X_SENSE_HIGH_ACCURACY);
+        break;
+    }
+    if (vl53l0x) {
+      force400khz = true;
+
       Supla::GUI::addConditionsTurnON(SENSOR_VL53L0X, vl53l0x);
       Supla::GUI::addConditionsTurnOFF(SENSOR_VL53L0X, vl53l0x);
     }
@@ -485,6 +527,8 @@ void setup() {
 #ifdef SUPLA_HDC1080
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_HDC1080).toInt()) {
       auto hdc1080 = new Supla::Sensor::HDC1080();
+      force400khz = true;
+
       Supla::GUI::addConditionsTurnON(SENSOR_HDC1080, hdc1080);
       Supla::GUI::addConditionsTurnOFF(SENSOR_HDC1080, hdc1080);
     }
@@ -492,7 +536,10 @@ void setup() {
 
 #ifdef SUPLA_BH1750
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BH1750).toInt()) {
-      new Supla::Sensor::BH1750();
+      auto bh1750 = new Supla::Sensor::BH1750();
+
+      Supla::GUI::addConditionsTurnON(SENSOR_BH1750, bh1750);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_BH1750, bh1750);
     }
 #endif
 
@@ -599,9 +646,18 @@ void setup() {
         if (gpio != OFF_GPIO)
           mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), false);
       }
-      Wire.setClock(400000);
+
+      for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
+        gpio = ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH);
+        if (gpio != OFF_GPIO)
+          mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), true);
+      }
+
+      force400khz = true;
     }
 #endif
+    if (force400khz)
+      Wire.setClock(400000);
   }
 #endif
 

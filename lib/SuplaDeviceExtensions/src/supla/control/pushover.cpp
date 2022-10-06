@@ -157,9 +157,8 @@ void Pushover::toggleConnection() {
       client = new WiFiClientSecure();
       ((WiFiClientSecure *)client)->setInsecure();
 #ifdef ARDUINO_ARCH_ESP8266
-      ((WiFiClientSecure *)client)->setBufferSizes(1024, 512);
+      ((WiFiClientSecure *)client)->setBufferSizes(1024, 256);
 #endif
-      ((WiFiClientSecure *)client)->setTimeout(1000);
     } else {
       client = new WiFiClient();
     }
@@ -184,12 +183,18 @@ void Pushover::sendRequest() {
      "&retry=" + _retry + "&expire=" + _expire + "&sound=" + _sound;*/
 
     client->print(String("POST ") + path + " HTTP/1.1\r\n" + "host: " + host +
-                  "\r\n" + "Content-length: " + String(post.length(), DEC) +
-                  "\r\n" +
+                  "\r\n" + "Content-length: " + String(post.length()) + "\r\n" +
                   "Content-Type: application/x-www-form-urlencoded\r\n" +
-                  "Cache-Control: no-cache\r\n\r\n" + post);
+                  "Connection: close\r\n\r\n" + post);
 
-    while (client->connected() || client->available()) {
+    int timeout_at = millis() + 5000;
+    while (!client->available() && timeout_at - millis() < 0) {
+      Serial.println(F("Pushover - timeout"));
+      client->stop();
+      return;
+    }
+
+    while (client->available()) {
       if (client->readStringUntil('\n') == "\r") {
         Serial.println(F("Pushover - Headers received"));
         break;
@@ -226,7 +231,7 @@ void Pushover::iterateAlways() {
 
 void Pushover::handleAction(int event, int action) {
   (void)(event);
-  if (action == SEND_NOTIF_1) {
+  if (action == Supla::TURN_ON) {
     lastMsgReceivedMs = millis();
   }
 }

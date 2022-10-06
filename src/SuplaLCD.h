@@ -47,10 +47,18 @@ enum typeLCD
   LCD_4X20,
 };
 
+enum ElectricityMeterType
+{
+  EnergyVoltage = 1,
+  EnergyCurrent,
+  EnergyPowerActive,
+};
+
 struct LCDElement {
   uint8_t chanelSensor;
   bool useAlternativeMeasurement = false;
   uint8_t screenNumbers;
+  uint8_t electricityMeter = 0;
 };
 
 class SuplaLCD : public Supla::Element, public Supla::ActionHandler {

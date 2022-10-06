@@ -197,6 +197,7 @@
 #define S_TEMP_HYGR         "Temperature + Humidity"
 #define S_PRESS             "Pressure"
 #define S_ELECTRICITY_METER "Electric energy meter"
+#define S_DISTANCE          "Distance"
 
 #ifdef SUPLA_PUSHOVER
 #define S_SOUND "Sound"

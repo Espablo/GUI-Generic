@@ -56,6 +56,7 @@
 #define MAX_VIRTUAL_RELAY    10
 #define MAX_BRIDGE_RF        10
 #define MAX_ANALOG_BUTTON    5
+#define MAX_WAKE_ON_LAN      5
 
 #ifdef ARDUINO_ARCH_ESP8266
 #define MAX_GPIO 17
@@ -141,6 +142,8 @@ enum _key
 
   KEY_PUSHOVER_SOUND,
 
+  KEY_WAKE_ON_LAN_MAX,
+  KEY_WAKE_ON_LAN_MAC,
   // KEY_VERSION_CONFIG,
 
   OPTION_COUNT

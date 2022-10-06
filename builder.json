@@ -11,6 +11,7 @@
 				"depOn": "[opcja] tablica SUPLA_OPTION, których włączenie automatycznie włącza daną opcję",
 				"depOff": "[opcja] tablica SUPLA_OPTION, których wyłączenie nie pozwala włączyć danej opcji",
 				"depRel": "[opcja] tablica SULPA_OPTION, które zostaną wyłączone po włączeniu danej opcji",
+				"depOpt": "[opcja] tablica SULPA_OPTION, które zostaną włączone po włączeniu danej opcji",
 				"new": "[opcja] true - oznacz opcję jako nową, false - nie oznaczaj jako nową (domyślnie)",
 				"test": "[opcja] true - oznacz opcję jako testową, false - nie oznaczaj jako testową (domyślnie)",
 				"en": {
@@ -253,6 +254,9 @@
 				"SUPLA_RELAY",
 				"SUPLA_ROLLERSHUTTER",
 				"SUPLA_RGBW",
+				"SUPLA_ACTION_TRIGGER"
+			],
+			"depOpt": [
 				"SUPLA_ACTION_TRIGGER"
 			],
 			"en": {
@@ -1070,9 +1074,12 @@
 			}
 		},
 		"SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR": {
-			"name": "Linki bezpośrednie - odczyt temperatury",
+			"name": "Linki bezpośrednie - odczyt temperatury (stare) ",
 			"desc": "Umożliwia odczytywanie temperatury za pomocą linków bezpośrednich.",
 			"defOn": false,
+			"depRel": [
+				"SUPLA_DIRECT_LINKS_MULTI_SENSOR"
+			],
 			"en": {
 				"name": "Direct links - temperature reading",
 				"desc": "It allows you to read the temperature using direct links."
@@ -1087,6 +1094,31 @@
 			},
 			"fr": {
 				"name": "Liens directs - relevé de température",
+				"desc": "Il vous permet de lire la température à l'aide de liens directs."
+			}
+		},
+		"SUPLA_DIRECT_LINKS_MULTI_SENSOR": {
+			"name": "Linki bezpośrednie - odczyt wartości kanału",
+			"desc": "Umożliwia odczytywanie temperatury za pomocą linków bezpośrednich.",
+			"defOn": false,
+			"new": true,
+			"depRel": [
+				"SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR"
+			],
+			"en": {
+				"name": "Direct links - reading the channel value",
+				"desc": "It allows you to read the temperature using direct links."
+			},
+			"es": {
+				"name": "Enlaces directos - leyendo el valor del canal",
+				"desc": "Le permite leer la temperatura mediante enlaces directos."
+			},
+			"de": {
+				"name": "Direkte Links - Lesen des Kanalwertes",
+				"desc": "Es ermöglicht Ihnen, die Temperatur über direkte Links abzulesen."
+			},
+			"fr": {
+				"name": "Liens directs - lecture de la valeur du canal",
 				"desc": "Il vous permet de lire la température à l'aide de liens directs."
 			}
 		}

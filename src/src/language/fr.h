@@ -198,6 +198,8 @@
 #define S_TEMP_HYGR         "Température + Humidité"
 #define S_PRESS             "Pression"
 #define S_ELECTRICITY_METER "Compteur d'énergie électrique"
+#define S_DISTANCE          "Distance"
+
 
 #ifdef SUPLA_PUSHOVER
 #define S_SOUND "Sound"

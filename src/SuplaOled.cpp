@@ -17,6 +17,8 @@
 #include "SuplaOled.h"
 #include "SuplaDeviceGUI.h"
 #include <supla/clock/clock.h>
+#include <supla/sensor/therm_hygro_press_meter.h>
+#include <supla/sensor/distance.h>
 
 #ifdef SUPLA_OLED
 
@@ -28,7 +30,7 @@ struct oledStruct {
 oledStruct* oled;
 
 String getTempString(double temperature) {
-  if (temperature == -275) {
+  if (temperature == TEMPERATURE_NOT_AVAILABLE) {
     return S_ERROR;
   }
   else {
@@ -37,7 +39,7 @@ String getTempString(double temperature) {
 }
 
 String getHumidityString(double humidity) {
-  if (humidity == -1) {
+  if (humidity == HUMIDITY_NOT_AVAILABLE) {
     return S_ERROR;
   }
   else {
@@ -46,12 +48,29 @@ String getHumidityString(double humidity) {
 }
 
 String getPressureString(double pressure) {
-  if (pressure == -1) {
+  if (pressure == PRESSURE_NOT_AVAILABLE) {
     return S_ERROR;
   }
   else {
     return String(pressure, 0);
   }
+}
+
+String getDistanceString(double distance) {
+  if (distance == DISTANCE_NOT_AVAILABLE) {
+    return S_ERROR;
+  }
+  else {
+    return String(distance, 2).c_str();
+  }
+}
+
+int getWidthUnit(OLEDDisplay* display, double value) {
+  return getWidthValue(display, value) + (String(value, 3).length() * 7);
+}
+
+int getWidthValue(OLEDDisplay* display, double value) {
+  return ((display->getWidth() - String(value, 3).length()) / 2);
 }
 
 int getQuality() {
@@ -229,7 +248,7 @@ void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x
 
   if (name != NULL) {
     display->setFont(ArialMT_Win1250_Plain_10);
-    display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
+    display->drawString(x + HUMIDITY_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
   }
 
   display->setFont(ArialMT_Win1250_Plain_24);
@@ -266,9 +285,26 @@ void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t 
   display->drawString(x + pressure_width + (getPressureString(pressure).length() * 14), y + drawStringIcon, "hPa");
 }
 
-void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& name, const String& unit) {
+void displayUiGeneral(
+    OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& name, const String& unit, const uint8_t* xbm) {
+  displayUiGeneral(display, state, x, y, String(value), name, unit, xbm);
+}
+
+void displayUiGeneral(OLEDDisplay* display,
+                      OLEDDisplayUiState* state,
+                      int16_t x,
+                      int16_t y,
+                      const String& value,
+                      const String& name,
+                      const String& unit,
+                      const uint8_t* xbm) {
   display->setColor(WHITE);
   display->setTextAlignment(TEXT_ALIGN_CENTER);
+
+  if (xbm != NULL && display->getWidth() > 64) {
+    int drawHeightIcon = display->getHeight() / 2 - 10;
+    display->drawXbm(x + 0, y + drawHeightIcon, 32, 32, xbm);
+  }
 
   if (name != NULL) {
     display->setFont(ArialMT_Win1250_Plain_10);
@@ -276,10 +312,10 @@ void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x
   }
 
   display->setFont(ArialMT_Win1250_Plain_24);
-  display->drawString(x + ((display->getWidth() - String(value).length()) / 2), y + display->getHeight() / 2, String(value));
+  display->drawString(x + getWidthValue(display, value.toDouble()), y + display->getHeight() / 2, String(value));
   if (unit != NULL) {
     display->setFont(ArialMT_Win1250_Plain_16);
-    display->drawString(x + display->getWidth() - 10, y + display->getHeight() / 2 + 7, unit);
+    display->drawString(x + getWidthUnit(display, value.toDouble()), y + display->getHeight() / 2 + 7, unit);
   }
 }
 
@@ -323,13 +359,39 @@ void displayDoubleHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int1
 }
 
 void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  double lastPressure = PRESSURE_NOT_AVAILABLE;
+
   for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
+        lastPressure = channel->getValueDouble();
+      }
+    }
+
     if (element->getSecondaryChannel()) {
       auto channel = element->getSecondaryChannel();
+
       if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        double lastPressure = channel->getValueDouble();
+        lastPressure = channel->getValueDouble();
+      }
+    }
+  }
+
+  String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+  displayUiPressure(display, state, x, y, lastPressure, name);
+}
+
+void displayDistance(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
+        double distance = channel->getValueDouble();
         String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
-        displayUiPressure(display, state, x, y, lastPressure, name);
+
+        displayUiGeneral(display, state, x, y, getDistanceString(distance), name, "m", distance_bits);
       }
     }
   }
@@ -474,7 +536,7 @@ SuplaOled::SuplaOled() {
         }
 
         if (channel->getChannelType() == SUPLA_CHANNELTYPE_DISTANCESENSOR) {
-          frames[frameCount] = {displayGeneral};
+          frames[frameCount] = {displayDistance};
           oled[frameCount].chanelSensor = channel->getChannelNumber();
           oled[frameCount].forSecondaryValue = false;
           frameCount += 1;
@@ -494,6 +556,11 @@ SuplaOled::SuplaOled() {
           frames[frameCount] = {displayEnergyPowerActive};
           oled[frameCount].chanelSensor = channel->getChannelNumber();
           oled[frameCount].forSecondaryValue = false;
+          frameCount += 1;
+        }
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
+          frames[frameCount] = {displayPressure};
+          oled[frameCount].chanelSensor = channel->getChannelNumber();
           frameCount += 1;
         }
       }

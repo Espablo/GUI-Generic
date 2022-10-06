@@ -313,11 +313,27 @@ void addButtonBridge(uint8_t nr) {
 
   if (pinButton != OFF_GPIO) {
     auto receiveBridge = new Supla::Control::RFBridgeReceive(pinButton);
+
     receiveBridge->setCodeON(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).toInt());
     receiveBridge->setCodeOFF(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).toInt());
 
-    receiveBridge->addAction(Supla::TURN_ON, relay[nr], Supla::TURN_ON);
-    receiveBridge->addAction(Supla::TURN_OFF, relay[nr], Supla::TURN_OFF);
+    if (strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(),
+               ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str()) != 0 &&
+        strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_ON)->getElement(nr).c_str(), "") != 0 &&
+        strcmp(ConfigManager->get(KEY_RF_BRIDGE_CODE_OFF)->getElement(nr).c_str(), "") != 0) {
+      receiveBridge->addAction(Supla::TURN_ON, relay[nr], Supla::ON_PRESS);
+      receiveBridge->addAction(Supla::TURN_OFF, relay[nr], Supla::ON_RELEASE);
+#ifdef SUPLA_ACTION_TRIGGER
+      addActionTriggerRelatedChannel(receiveBridge, Supla::ON_CHANGE, relay[nr]);
+#endif
+    }
+    else {
+      receiveBridge->addAction(Supla::TOGGLE, relay[nr], Supla::ON_PRESS);
+      receiveBridge->isMonostable();
+#ifdef SUPLA_ACTION_TRIGGER
+      addActionTriggerRelatedChannel(receiveBridge, Supla::ON_PRESS, relay[nr]);
+#endif
+    }
   }
 }
 #endif
@@ -330,11 +346,16 @@ void addPushover(uint8_t nr, const String &name, Supla::ChannelElement *client) 
       auto pushover =
           new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
 
-      String title = String(ConfigManager->get(KEY_HOST_NAME)->getValue()) + S_SPACE + "-" + S_SPACE + name + S_SPACE + (nr + 1);
+      String title = ConfigManager->get(KEY_HOST_NAME)->getValue();
+
+      if (title.indexOf(" ", title.length() - 1) == -1) {
+        title = String(ConfigManager->get(KEY_HOST_NAME)->getValue()) + S_SPACE + "-" + S_SPACE + name + S_SPACE + (nr + 1);
+      }
+
       pushover->setTitle(title.c_str());
       pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str());
       pushover->setSound(ConfigManager->get(KEY_PUSHOVER_SOUND)->getElement(nr).toInt());
-      client->addAction(Pushover::SEND_NOTIF_1, pushover, Supla::ON_TURN_ON);
+      client->addAction(Supla::TURN_ON, pushover, Supla::ON_TURN_ON);
     }
   }
 }

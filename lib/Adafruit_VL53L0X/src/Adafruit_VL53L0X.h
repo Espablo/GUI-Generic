@@ -13,7 +13,10 @@
   products from Adafruit!
 
   Written by Limor Fried/Ladyada for Adafruit Industries.
-  BSD license, all text above must be included in any redistribution
+  Updated by Andrew DeVries for Digital Example to include methods needed for
+  Interrupt triggering.
+  BSD license, all text above must be included in any
+  redistribution
  ****************************************************/
 
 #ifndef ADAFRUIT_VL53L0X_H
@@ -38,8 +41,7 @@
 /**************************************************************************/
 class Adafruit_VL53L0X {
 public:
-  // Helper function to configure sensor for the different configurations
-  // shown in ST library example sketches.
+  /** Sensor configurations */
   typedef enum {
     VL53L0X_SENSE_DEFAULT = 0,
     VL53L0X_SENSE_LONG_RANGE,
@@ -52,7 +54,7 @@ public:
                 VL53L0X_Sense_config_t vl_config = VL53L0X_SENSE_DEFAULT);
   boolean setAddress(uint8_t newAddr);
 
-  uint8_t getAddress(void);
+  // uint8_t getAddress(void); // not currently implemented
 
   /**************************************************************************/
   /*!
@@ -76,6 +78,36 @@ public:
   void
   printRangeStatus(VL53L0X_RangingMeasurementData_t *pRangingMeasurementData);
 
+  VL53L0X_Error getRangingMeasurement(
+      VL53L0X_RangingMeasurementData_t *pRangingMeasurementData,
+      boolean debug = false);
+  VL53L0X_Error startMeasurement(boolean debug = false);
+  VL53L0X_Error stopMeasurement(boolean debug = false);
+  VL53L0X_Error getLimitCheckCurrent(uint8_t LimitCheckId,
+                                     FixPoint1616_t *pLimitCheckCurrent,
+                                     boolean debug = false);
+  VL53L0X_Error getDeviceMode(VL53L0X_DeviceModes *pDeviceMode,
+                              boolean debug = false);
+  VL53L0X_Error setDeviceMode(VL53L0X_DeviceModes DeviceMode,
+                              boolean debug = false);
+
+  VL53L0X_Error setInterruptThresholds(FixPoint1616_t ThresholdLow,
+                                       FixPoint1616_t ThresholdHigh,
+                                       boolean debug = false);
+  VL53L0X_Error getInterruptThresholds(FixPoint1616_t *pThresholdLow,
+                                       FixPoint1616_t *pThresholdHigh,
+                                       boolean debug = false);
+  VL53L0X_Error clearInterruptMask(boolean debug = false);
+
+  VL53L0X_Error getGpioConfig(VL53L0X_DeviceModes *pDeviceMode,
+                              VL53L0X_GpioFunctionality *pFunctionality,
+                              VL53L0X_InterruptPolarity *pPolarity,
+                              boolean debug = false);
+  VL53L0X_Error setGpioConfig(VL53L0X_DeviceModes DeviceMode,
+                              VL53L0X_GpioFunctionality Functionality,
+                              VL53L0X_InterruptPolarity Polarity,
+                              boolean debug = false);
+
   VL53L0X_Error Status =
       VL53L0X_ERROR_NONE; ///< indicates whether or not the sensor has
                           ///< encountered an error
@@ -94,6 +126,12 @@ public:
 
   //  void setTimeout(uint16_t timeout) { io_timeout = timeout; }
   // uint16_t getTimeout(void) { return io_timeout; }
+  /**************************************************************************/
+  /*!
+      @brief  timeout status
+      @returns True if timeout has occurred, False otherwise
+  */
+  /**************************************************************************/
   boolean timeoutOccurred(void) { return false; }
 
   boolean configSensor(VL53L0X_Sense_config_t vl_config);

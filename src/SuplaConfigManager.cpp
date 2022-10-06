@@ -406,12 +406,20 @@ SuplaConfigManager::SuplaConfigManager() {
 #if defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_DIRECT_LINKS_MULTI_SENSOR)
     this->addKey(KEY_DIRECT_LINKS_TYPE, "0", 3 * MAX_DIRECT_LINK);
     this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR, "0", 2);
-    this->addKey(KEY_DIRECT_LINKS_SENSOR, "0", MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
+    this->addKey(KEY_DIRECT_LINKS_SENSOR, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE);
 
 #else
     this->addKey(KEY_DIRECT_LINKS_TYPE, "0", 3 * MAX_DIRECT_LINK, false);
     this->addKey(KEY_MAX_DIRECT_LINKS_SENSOR, 2, false);
     this->addKey(KEY_DIRECT_LINKS_SENSOR, MAX_DIRECT_LINK * MAX_DIRECT_LINKS_SIZE, false);
+#endif
+
+#ifdef SUPLA_WAKE_ON_LAN
+    this->addKey(KEY_WAKE_ON_LAN_MAX, 2);
+    this->addKey(KEY_WAKE_ON_LAN_MAC, MAX_WAKE_ON_LAN * 18);
+#else
+    this->addKey(KEY_WAKE_ON_LAN_MAX, 2, false);
+    this->addKey(KEY_WAKE_ON_LAN_MAC, MAX_WAKE_ON_LAN * 18, false);
 #endif
 
     //  this->addKey(KEY_VERSION_CONFIG, String(CURENT_VERSION).c_str(), 2);

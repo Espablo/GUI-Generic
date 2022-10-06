@@ -515,8 +515,7 @@ bool SuplaConfigESP::checkBusyCfg(int gpio, int function) {
 
   if (function == FUNCTION_CFG_LED) {
     // Aby nie robić konwersji danych dla nowego typu dla LED CFG, wykorzystałem PULL_UP_BUTTON
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED ||
-        ConfigManager->get(key)->getElement(CFG_LED).toInt() == 1) {
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == FUNCTION_CFG_LED || ConfigManager->get(key)->getElement(CFG_LED).toInt() == 1) {
       return true;
     }
   }
@@ -638,6 +637,9 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, LOW);
     setMemory(gpio, MEMORY_RESTORE);
+  }
+  if (function == FUNCTION_LIMIT_SWITCH) {
+    setPullUp(gpio, true);
   }
 }
 
@@ -786,6 +788,11 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
     setAction(gpio, Supla::Action::TOGGLE);
     setEvent(gpio, Supla::Event::ON_CHANGE);
   }
+
+  if (function == FUNCTION_LIMIT_SWITCH) {
+    setPullUp(gpio, true);
+  }
+  
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, true);
     setMemory(gpio, 0);

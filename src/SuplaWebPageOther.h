@@ -29,7 +29,7 @@
 #endif
 
 #if defined(GUI_SENSOR_OTHER) || defined(GUI_OTHER_ENERGY) || defined(SUPLA_IMPULSE_COUNTER) || defined(SUPLA_RGBW) || defined(SUPLA_PUSHOVER) || \
-    defined(SUPLA_RF_BRIDGE)
+    defined(SUPLA_RF_BRIDGE) || defined(SUPLA_WAKE_ON_LAN)
 #define GUI_OTHER
 #endif
 
@@ -138,6 +138,11 @@ void handleCounterCalibrateSave();
 #define PATH_BRIDGE "bridge"
 
 void receiveCodeRFBridge();
+#endif
+
+#ifdef SUPLA_WAKE_ON_LAN
+#define INPUT_WAKE_ON_LAN_MAX "iwonmax"
+#define INPUT_WAKE_ON_LAN_MAC "iwonm"
 #endif
 
 #endif  // SuplaWebPageOther_h
