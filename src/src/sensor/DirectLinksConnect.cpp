@@ -148,7 +148,7 @@ void DirectLinksConnect::iterateAlways() {
 }
 
 void DirectLinksConnect::onInitNetworkConnected() {
-  if (Supla::Network::Connected() && !initNetworkConnected) {
+  if (Supla::Network::IsReady() && !initNetworkConnected) {
     send();
     lastReadTime = millis();
     initNetworkConnected = true;

@@ -17,7 +17,7 @@
 #include "SuplaDeviceGUI.h"
 
 SuplaConfigESP::SuplaConfigESP() {
-  configModeESP = NORMAL_MODE;
+  configModeESP = Supla::DEVICE_MODE_NORMAL;
 
   if (ConfigManager->isDeviceConfigured()) {
     if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0) {
@@ -61,7 +61,7 @@ SuplaConfigESP::SuplaConfigESP() {
 
     ConfigManager->save();
 
-    configModeInit(WIFI_AP_STA);
+    configModeInit();
   }
 
   SuplaDevice.setStatusFuncImpl(&status_func);
@@ -128,16 +128,16 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig) {
 void SuplaConfigESP::handleAction(int event, int action) {
   if (action == CONFIG_MODE_10_ON_PRESSES) {
     if (event == Supla::ON_CLICK_10) {
-      configModeInit(WIFI_AP);
+      configModeInit();
     }
   }
   if (action == CONFIG_MODE_5SEK_HOLD) {
     if (event == Supla::ON_HOLD) {
-      configModeInit(WIFI_AP);
+      configModeInit();
     }
   }
 
-  if (configModeESP == CONFIG_MODE) {
+  if (configModeESP == Supla::DEVICE_MODE_CONFIG) {
     if (event == Supla::ON_CLICK_1) {
       rebootESP();
     }
@@ -149,8 +149,8 @@ void SuplaConfigESP::rebootESP() {
   ESP.restart();
 }
 
-void SuplaConfigESP::configModeInit(WiFiMode_t m) {
-  configModeESP = CONFIG_MODE;
+void SuplaConfigESP::configModeInit() {
+  configModeESP = Supla::DEVICE_MODE_CONFIG;
   ledBlinking(100);
   SuplaDevice.enterConfigMode();
 
@@ -163,7 +163,7 @@ bool SuplaConfigESP::checkSSL() {
 }
 
 void SuplaConfigESP::iterateAlways() {
-  if (configModeESP == CONFIG_MODE) {
+  if (configModeESP == Supla::DEVICE_MODE_CONFIG) {
 #ifdef SUPLA_MDNS
     if (WiFi.status() == WL_CONNECTED) {
       if (!MDNSConfigured) {
@@ -305,7 +305,7 @@ void status_func(int status, const char *msg) {
       ConfigESP->supla_status.msg = S_STATUS_NETWORK_DISCONNECTED;
       break;
     case STATUS_CONFIG_MODE:
-      ConfigESP->configModeESP = CONFIG_MODE;
+      ConfigESP->configModeESP = Supla::DEVICE_MODE_CONFIG;
       ConfigESP->ledBlinking(100);
       // ConfigESP->supla_status.msg = S_STATUS_NETWORK_DISCONNECTED;
       break;
@@ -316,11 +316,11 @@ void status_func(int status, const char *msg) {
   ConfigESP->supla_status.status = status;
 
   static int lock;
-  if (status == STATUS_REGISTERED_AND_READY && ConfigESP->configModeESP == NORMAL_MODE) {
+  if (status == STATUS_REGISTERED_AND_READY && ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
     ConfigESP->ledBlinkingStop();
     lock = 0;
   }
-  else if (status != STATUS_REGISTERED_AND_READY && lock == 0 && ConfigESP->configModeESP == NORMAL_MODE) {
+  else if (status != STATUS_REGISTERED_AND_READY && lock == 0 && ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
     ConfigESP->ledBlinking(500);
     lock = 1;
   }
@@ -792,7 +792,7 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
   if (function == FUNCTION_LIMIT_SWITCH) {
     setPullUp(gpio, true);
   }
-  
+
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, true);
     setMemory(gpio, 0);

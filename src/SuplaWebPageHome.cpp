@@ -115,7 +115,7 @@ void handlePageHomeSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      if (ConfigESP->configModeESP == NORMAL_MODE) {
+      if (ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
         handlePageHome(1);
       }
       else {

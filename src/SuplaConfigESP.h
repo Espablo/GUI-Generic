@@ -45,11 +45,6 @@
 
 #endif
 
-enum _configModeESP
-{
-  NORMAL_MODE,
-  CONFIG_MODE
-};
 enum _ConfigMode
 {
   CONFIG_MODE_10_ON_PRESSES,
@@ -96,7 +91,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
   String getMacAddress(bool formating);
 
-  _configModeESP configModeESP;
+  uint8_t configModeESP;
   _supla_status supla_status;
 
   int getGpio(int nr, int function);
@@ -152,7 +147,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   uint8_t getNrMCP23017(uint8_t adress);
 #endif
 
-  void configModeInit(WiFiMode_t m);
+  void configModeInit();
   void clearEEPROM();
 
  private:

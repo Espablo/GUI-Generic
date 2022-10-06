@@ -47,7 +47,7 @@ void begin() {
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
   if (getCountChannels() == 0)
-    ConfigESP->configModeInit(WIFI_AP_STA);
+    ConfigESP->configModeInit();
 
   if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
     crateWebServer();
@@ -79,7 +79,7 @@ void enableConnectionSSL(bool value) {
 #ifdef SUPLA_WT32_ETH01_LAN8720
 
   if (eth) {
-    if (ConfigESP->configModeESP == CONFIG_MODE) {
+    if (ConfigESP->configModeESP == Supla::DEVICE_MODE_CONFIG) {
       eth->enableSSL(false);
     }
     else {
@@ -89,7 +89,7 @@ void enableConnectionSSL(bool value) {
 
 #else
   if (wifi) {
-    if (ConfigESP->configModeESP == CONFIG_MODE) {
+    if (ConfigESP->configModeESP == Supla::DEVICE_MODE_CONFIG) {
       wifi->enableSSL(false);
     }
     else {
