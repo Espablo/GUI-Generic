@@ -20,6 +20,8 @@
 #include <stdint.h>
 #include "simple_button.h"
 
+class SuplaDeviceClass;
+
 namespace Supla {
 namespace Control {
 
@@ -27,11 +29,15 @@ class Button : public SimpleButton {
  public:
   explicit Button(int pin, bool pullUp = false, bool invertLogic = false);
 
-  void onTimer();
+  void onTimer() override;
+  void onLoadConfig() override;
   void setHoldTime(unsigned int timeMs);
   void repeatOnHoldEvery(unsigned int timeMs);
   void setMulticlickTime(unsigned int timeMs, bool bistableButton = false);
   bool isBistable() const;
+
+  virtual void configureAsConfigButton(SuplaDeviceClass *sdc);
+  bool disableActionsInConfigMode() override;
 
  protected:
   unsigned int holdTimeMs;
@@ -41,6 +47,7 @@ class Button : public SimpleButton {
   uint8_t clickCounter;
   unsigned int holdSend;
   bool bistable;
+  bool configButton = false;
 };
 
 };  // namespace Control

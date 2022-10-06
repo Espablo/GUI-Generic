@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include <supla/log_wrapper.h>
+#include <supla/protocol/protocol_layer.h>
 
 #include "channel.h"
 #include "supla-common/srpc.h"
@@ -51,8 +52,17 @@ Channel::~Channel() {
 }
 
 void Channel::setNewValue(double dbl) {
-  // Apply channel value correction
-  dbl += Correction::get(getChannelNumber());
+  bool skipCorrection = false;
+  if (getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
+    if (dbl <= -273) {
+      skipCorrection = true;
+    }
+  }
+
+  if (!skipCorrection) {
+    // Apply channel value correction
+    dbl += Correction::get(getChannelNumber());
+  }
 
   char newValue[SUPLA_CHANNELVALUE_SIZE];
   if (sizeof(double) == 8) {
@@ -69,9 +79,35 @@ void Channel::setNewValue(double dbl) {
 }
 
 void Channel::setNewValue(double temp, double humi) {
-  // Apply channel value corrections
-  temp += Correction::get(getChannelNumber());
-  humi += Correction::get(getChannelNumber(), true);
+  bool skipTempCorrection = false;
+  bool skipHumiCorrection = false;
+  if (getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR
+      || getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYSENSOR) {
+    if (temp <= -273) {
+      skipTempCorrection = true;
+    }
+    if (humi < 0) {
+      skipHumiCorrection = true;
+    }
+  }
+
+  if (!skipTempCorrection) {
+    // Apply channel value corrections
+    temp += Correction::get(getChannelNumber());
+  }
+
+  if (!skipHumiCorrection) {
+    double humiCorr = Correction::get(getChannelNumber(), true);
+    humi += humiCorr;
+    if (humiCorr > 0.01 || humiCorr < -0.01) {
+      if (humi < 0) {
+        humi = 0;
+      }
+      if (humi > 100) {
+        humi = 100;
+      }
+    }
+  }
 
   char newValue[SUPLA_CHANNELVALUE_SIZE];
   _supla_int_t t = temp * 1000.00;
@@ -194,6 +230,13 @@ void Channel::setDefault(_supla_int_t value) {
   }
 }
 
+int32_t Channel::getDefaultFunction() {
+  if (channelNumber >= 0) {
+    return reg_dev.channels[channelNumber].Default;
+  }
+  return 0;
+}
+
 void Channel::setFlag(_supla_int_t flag) {
   if (channelNumber >= 0) {
     reg_dev.channels[channelNumber].Flags |= flag;
@@ -268,6 +311,10 @@ TSuplaChannelExtendedValue *Channel::getExtValue() {
 
 void Channel::setUpdateReady() {
   valueChanged = true;
+  for (auto proto = Supla::Protocol::ProtocolLayer::first(); proto != nullptr;
+       proto = proto->next()) {
+    proto->notifyChannelChange(channelNumber);
+  }
 }
 
 bool Channel::isUpdateReady() {
@@ -382,7 +429,10 @@ uint8_t Channel::getValueBrightness() {
 
 void Channel::setValidityTimeSec(unsigned _supla_int_t timeSec) {
   validityTimeSec = timeSec;
-  if (validityTimeSec > 0) unsetFlag(SUPLA_CHANNEL_FLAG_CHANNELSTATE);
+}
+
+bool Channel::isSleepingEnabled() {
+  return validityTimeSec > 0;
 }
 
 void Channel::setCorrection(double correction, bool forSecondaryValue) {

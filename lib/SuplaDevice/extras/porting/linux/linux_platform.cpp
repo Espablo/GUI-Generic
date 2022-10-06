@@ -16,9 +16,19 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <supla/tools.h>
 #include <cstdlib>
 
 void deviceSoftwareReset() {
   std::exit(1);
 }
 
+bool isLastResetSoft() {
+  // TODO(klew): implement
+  return false;
+}
+
+int Supla::getPlatformId() {
+  // TODO(klew): do we need platfom id for linux SW?
+  return 0;
+}

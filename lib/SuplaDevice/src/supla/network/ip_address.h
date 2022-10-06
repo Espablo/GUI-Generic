@@ -16,27 +16,32 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef SRC_SUPLA_NETWORK_HTML_SECURITY_CERTIFICATE_H_
-#define SRC_SUPLA_NETWORK_HTML_SECURITY_CERTIFICATE_H_
+#ifndef SRC_SUPLA_NETWORK_IP_ADDRESS_H_
+#define SRC_SUPLA_NETWORK_IP_ADDRESS_H_
 
-#include <supla/network/html_element.h>
+#ifdef ARDUINO
+#include <IPAddress.h>
+#else
 
-class SuplaDeviceClass;
+#include <stdint.h>
 
-namespace Supla {
+#include <string>
 
-namespace Html {
-
-class SecurityCertificate : public HtmlElement {
+class IPAddress {
  public:
-  SecurityCertificate();
-  virtual ~SecurityCertificate();
-  void send(Supla::WebSender* sender) override;
-  bool handleResponse(const char* key, const char* value) override;
+  IPAddress();
+  IPAddress(uint8_t ip1, uint8_t ip2, uint8_t ip3, uint8_t ip4);
+  explicit IPAddress(const std::string &ip);
+
+  uint8_t operator[](int index) const;
+  uint8_t& operator[](int index);
+
+ protected:
+  union {
+    uint8_t addr[4] = {};
+    uint32_t full;
+  };
 };
+#endif
 
-};  // namespace Html
-};  // namespace Supla
-
-
-#endif  // SRC_SUPLA_NETWORK_HTML_SECURITY_CERTIFICATE_H_
+#endif  // SRC_SUPLA_NETWORK_IP_ADDRESS_H_

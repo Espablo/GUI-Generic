@@ -282,3 +282,33 @@ TEST(ToolsTest, strncmpInsensitiveTests) {
   }
 }
 
+TEST(ToolsTests, floatStringToIntTests) {
+  EXPECT_EQ(floatStringToInt("10", 2), 1000);
+  EXPECT_EQ(floatStringToInt("3,1415", 3), 3141);
+  EXPECT_EQ(floatStringToInt("3,1415", 4), 31415);
+  EXPECT_EQ(floatStringToInt("-3,1415", 4), -31415);
+  EXPECT_EQ(floatStringToInt("-3,1415", 3), -3141);
+  EXPECT_EQ(floatStringToInt("-100", 2), -10000);
+  EXPECT_EQ(floatStringToInt("-1", 1), -10);
+  EXPECT_EQ(floatStringToInt("-1", 0), -1);
+  EXPECT_EQ(floatStringToInt("0", 0), 0);
+  EXPECT_EQ(floatStringToInt("0", 3), 0);
+  EXPECT_EQ(floatStringToInt("1", 3), 1000);
+
+}
+
+TEST(ToolsTests, stringToIntTests) {
+  EXPECT_EQ(stringToInt("10", 2), 10);
+  EXPECT_EQ(stringToInt("A0", 2), 0);
+  EXPECT_EQ(stringToInt("a5", 2), 0);
+  EXPECT_EQ(stringToInt("-5", 1), 0);
+  EXPECT_EQ(stringToInt("05"), 5);
+  EXPECT_EQ(stringToInt("0-2"), 0);
+  EXPECT_EQ(stringToInt("-1"), -1);
+  EXPECT_EQ(stringToInt(""), 0);
+  EXPECT_EQ(stringToInt("-1234.2"), 0);
+  EXPECT_EQ(stringToInt("-1234"), -1234);
+  EXPECT_EQ(stringToInt("1234"), 1234);
+  EXPECT_EQ(stringToInt("-1-"), 0);
+
+}

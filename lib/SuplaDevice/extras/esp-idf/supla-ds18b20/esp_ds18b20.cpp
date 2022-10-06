@@ -24,8 +24,10 @@
 
 #include "esp_ds18b20.h"
 #include "supla/sensor/one_phase_electricity_meter.h"
+#include "supla/sensor/thermometer.h"
 
 void Supla::Sensor::DS18B20::onLoadConfig() {
+  Supla::Sensor::Thermometer::onLoadConfig();
   auto cfg = Supla::Storage::ConfigInstance();
   if (cfg) {
     char key[SUPLA_CONFIG_MAX_KEY_SIZE] = {};
@@ -33,6 +35,9 @@ void Supla::Sensor::DS18B20::onLoadConfig() {
     if (!cfg->getBlob(
           key, reinterpret_cast<char*>(address), SUPLA_DS_ADDRESS_SIZE)) {
       SUPLA_LOG_DEBUG("Failed to read DS address");
+    }
+    if (address[0] == 0) {
+      getChannel()->setDefault(0);
     }
   }
 }
@@ -73,6 +78,7 @@ void Supla::Sensor::DS18B20::assignAddressIfNeeded() {
             SUPLA_LOG_WARNING("Failed to write DS address to config");
           }
           cfg->saveWithDelay(2000);
+          getChannel()->setDefault(SUPLA_CHANNELFNC_THERMOMETER);
         }
       }
   }
@@ -288,7 +294,7 @@ void Supla::Sensor::OneWireBus::addDsToList(Supla::Sensor::DS18B20 *ptr) {
 }
 
 void Supla::Sensor::DS18B20::iterateAlways() {
-  if (!myBus->lastReadTime || millis() - myBus->lastReadTime > 2000) {
+  if (!myBus->lastReadTime || millis() - myBus->lastReadTime > 10000) {
     myBus->requestTemperatures();
     myBus->lastReadTime = millis();
   }

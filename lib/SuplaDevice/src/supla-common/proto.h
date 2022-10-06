@@ -28,7 +28,6 @@
 #define _supla_int64_t __int64
 #define _supla_timeval timeval
 
-
 #elif defined(__AVR__)
 // *** ARDUINO MEGA ***
 
@@ -69,7 +68,7 @@ struct _supla_timeval {
 #define _supla_int_t int
 #define _supla_int64_t long long
 #elif defined(__arm__)
-// *** ARM - RPI? *** 
+// *** ARM - RPI? ***
 
 struct _supla_timeval {
   long long tv_sec;
@@ -120,12 +119,12 @@ extern char sproto_tag[SUPLA_TAG_SIZE];
 // CS  - client -> server
 // SC  - server -> client
 
-#define SUPLA_PROTO_VERSION 18
+#define SUPLA_PROTO_VERSION 19
 #define SUPLA_PROTO_VERSION_MIN 1
 #if defined(ARDUINO_ARCH_AVR)     // Arduino IDE for Arduino HW
 #define SUPLA_MAX_DATA_SIZE 1248  // Registration header + 32 channels x 21 B
 #elif defined(ARDUINO) || \
-    defined(SUPLA_DEVICE)   // Other Arduino compilations and SUPLA_DEVICE
+    defined(SUPLA_DEVICE)         // Other Arduino compilations and SUPLA_DEVICE
 #define SUPLA_MAX_DATA_SIZE 3264  // Registration header + 128 channels x 21 B
 #elif defined(ESP8266)
 #define SUPLA_MAX_DATA_SIZE 1536
@@ -189,6 +188,7 @@ extern char sproto_tag[SUPLA_TAG_SIZE];
 #define SUPLA_SC_CALL_REGISTER_CLIENT_RESULT 90
 #define SUPLA_SC_CALL_REGISTER_CLIENT_RESULT_B 92  // ver. >= 9
 #define SUPLA_SC_CALL_REGISTER_CLIENT_RESULT_C 94  // ver. >= 17
+#define SUPLA_SC_CALL_REGISTER_CLIENT_RESULT_D 96  // ver. >= 19
 #define SUPLA_DS_CALL_DEVICE_CHANNEL_VALUE_CHANGED 100
 #define SUPLA_DS_CALL_DEVICE_CHANNEL_VALUE_CHANGED_B 102        // ver. >= 12
 #define SUPLA_DS_CALL_DEVICE_CHANNEL_VALUE_CHANGED_C 103        // ver. >= 12
@@ -261,9 +261,9 @@ extern char sproto_tag[SUPLA_TAG_SIZE];
 #define SUPLA_CS_CALL_TIMER_ARM 800                           // ver. >= 17
 #define SUPLA_SC_CALL_SCENE_PACK_UPDATE 900                   // ver. >= 18
 #define SUPLA_SC_CALL_SCENE_STATE_PACK_UPDATE 910             // ver. >= 18
-#define SUPLA_CS_CALL_EXECUTE_ACTION 1000                     // ver. >= 18
-#define SUPLA_CS_CALL_AUTH_AND_EXECUTE_ACTION 1010            // ver. >= 18
-#define SUPLA_SC_CALL_ACTION_EXECUTION_RESULT 1020            // ver. >= 18
+#define SUPLA_CS_CALL_EXECUTE_ACTION 1000                     // ver. >= 19
+#define SUPLA_CS_CALL_AUTH_AND_EXECUTE_ACTION 1010            // ver. >= 19
+#define SUPLA_SC_CALL_ACTION_EXECUTION_RESULT 1020            // ver. >= 19
 
 #define SUPLA_RESULT_CALL_NOT_ALLOWED -5
 #define SUPLA_RESULT_DATA_TOO_LARGE -4
@@ -304,8 +304,14 @@ extern char sproto_tag[SUPLA_TAG_SIZE];
 #define SUPLA_RESULTCODE_DENY_CHANNEL_HAS_SCHEDULE 28              // ver. >= 12
 #define SUPLA_RESULTCODE_DENY_CHANNEL_IS_ASSOCIETED_WITH_SCENE 29  // ver. >= 12
 #define SUPLA_RESULTCODE_DENY_CHANNEL_IS_ASSOCIETED_WITH_ACTION_TRIGGER \
-  30                                           // ver. >= 16
-#define SUPLA_RESULTCODE_ACCESSID_INACTIVE 31  // ver. >= 17
+  30                                              // ver. >= 16
+#define SUPLA_RESULTCODE_ACCESSID_INACTIVE 31     // ver. >= 17
+#define SUPLA_RESULTCODE_CFG_MODE_REQUESTED 32    // ver. >= 18
+#define SUPLA_RESULTCODE_ACTION_UNSUPPORTED 33    // ver. >= 19
+#define SUPLA_RESULTCODE_SUBJECT_NOT_FOUND 34     // ver. >= 19
+#define SUPLA_RESULTCODE_INCORRECT_PARAMETERS 35  // ver. >= 19
+#define SUPLA_RESULTCODE_CLIENT_NOT_EXISTS 36     // ver. >= 19
+#define SUPLA_RESULTCODE_COUNTRY_REJECTED 37
 
 #define SUPLA_OAUTH_RESULTCODE_ERROR 0         // ver. >= 10
 #define SUPLA_OAUTH_RESULTCODE_SUCCESS 1       // ver. >= 10
@@ -486,6 +492,7 @@ extern char sproto_tag[SUPLA_TAG_SIZE];
 #define SUPLA_MFR_COMELIT 14
 
 #define SUPLA_DEVICE_FLAG_CALCFG_ENTER_CFG_MODE 0x0010  // ver. >= 17
+#define SUPLA_DEVICE_FLAG_SLEEP_MODE_ENABLED 0x0020     // ver. >= 18
 
 #define SUPLA_CHANNEL_FLAG_ZWAVE_BRIDGE 0x0001  // ver. >= 12
 #define SUPLA_CHANNEL_FLAG_IR_BRIDGE 0x0002     // ver. >= 12
@@ -512,8 +519,9 @@ extern char sproto_tag[SUPLA_TAG_SIZE];
 #define SUPLA_CHANNEL_FLAG_ZIGBEE_BRIDGE 0x00800000                // ver. >= 12
 #define SUPLA_CHANNEL_FLAG_COUNTDOWN_TIMER_SUPPORTED 0x01000000    // ver. >= 12
 #define SUPLA_CHANNEL_FLAG_LIGHTSOURCELIFESPAN_SETTABLE \
-  0x02000000                                               // ver. >= 12
-#define SUPLA_CHANNEL_FLAG_POSSIBLE_SLEEP_MODE 0x04000000  // ver. >= 12
+  0x02000000  // ver. >= 12
+#define SUPLA_CHANNEL_FLAG_POSSIBLE_SLEEP_MODE_deprecated \
+  0x04000000  // ver. >= 12
 
 #pragma pack(push, 1)
 
@@ -521,7 +529,7 @@ typedef struct {
   char tag[SUPLA_TAG_SIZE];
   unsigned char version;
   unsigned _supla_int_t rr_id;  // Request/Response ID
-  unsigned _supla_int_t call_type;
+  unsigned _supla_int_t call_id;
   unsigned _supla_int_t data_size;
   char data[SUPLA_MAX_DATA_SIZE];  // Last variable in struct!
 } TSuplaDataPacket;
@@ -1116,8 +1124,8 @@ typedef struct {
 
 #define ACTION_SUBJECT_TYPE_UNKNOWN 0
 #define ACTION_SUBJECT_TYPE_CHANNEL 1
-#define ACTION_SUBJECT_TYPE_CHANNEL_GROUP 1
-#define ACTION_SUBJECT_TYPE_SCENE 2
+#define ACTION_SUBJECT_TYPE_CHANNEL_GROUP 2
+#define ACTION_SUBJECT_TYPE_SCENE 3
 
 #define ACTION_OPEN 10
 #define ACTION_CLOSE 20
@@ -1134,16 +1142,34 @@ typedef struct {
 #define ACTION_UP_OR_STOP 140
 #define ACTION_DOWN_OR_STOP 150
 #define ACTION_STEP_BY_STEP 160
+#define ACTION_READ 1000
+#define ACTION_SET 2000
 #define ACTION_EXECUTE 3000
 #define ACTION_INTERRUPT 3001
+#define ACTION_INTERRUPT_AND_EXECUTE 3002
+#define ACTION_COPY 10100
+#define ACTION_FORWARD_OUTSIDE 10000
+
+typedef struct {
+  char Percentage;
+  char Reserved[15];
+} TAction_RS_Parameters;  // ver. >= 19
+
+typedef struct {
+  char Brightness;
+  char ColorBrightness;
+  unsigned int Color;
+  char ColorRandom;
+  char Reserverd[9];
+} TAction_RGBW_Parameters;  // ver. >= 19
 
 typedef struct {
   _supla_int_t ActionId;
   _supla_int_t SubjectId;
-  _supla_int_t SubjectType;
+  unsigned char SubjectType;
   unsigned _supla_int16_t ParamSize;
   char Param[SUPLA_ACTION_PARAM_MAXSIZE];
-} TCS_Action;  // ver. >= 18
+} TCS_Action;  // ver. >= 19
 
 typedef struct {
   _supla_int_t AccessID;
@@ -1152,19 +1178,19 @@ typedef struct {
   char AuthKey[SUPLA_AUTHKEY_SIZE];
   char GUID[SUPLA_GUID_SIZE];
   char ServerName[SUPLA_SERVER_NAME_MAXSIZE];
-} TCS_ClientAuthorizationDetails;  // ver. >= 18
+} TCS_ClientAuthorizationDetails;  // ver. >= 19
 
 typedef struct {
   TCS_ClientAuthorizationDetails Auth;
   TCS_Action Action;
-} TCS_ActionWithAuth;  // ver. >= 18
+} TCS_ActionWithAuth;  // ver. >= 19
 
 typedef struct {
   _supla_int_t ActionId;
   _supla_int_t SubjectId;
   _supla_int_t SubjectType;
   _supla_int_t ResultCode;
-} TSC_ActionExecutionResult;  // ver. >= 18
+} TSC_ActionExecutionResult;  // ver. >= 19
 
 typedef struct {
   // client -> server
@@ -1257,6 +1283,22 @@ typedef struct {
   unsigned char version_min;
   unsigned _supla_int_t serverUnixTimestamp;  // current server time
 } TSC_SuplaRegisterClientResult_C;            // ver. >= 17
+
+typedef struct {
+  // server -> client
+
+  _supla_int_t result_code;
+  _supla_int_t ClientID;
+  short LocationCount;
+  short ChannelCount;
+  short ChannelGroupCount;
+  short SceneCount;
+  _supla_int_t Flags;
+  unsigned char activity_timeout;
+  unsigned char version;
+  unsigned char version_min;
+  unsigned _supla_int_t serverUnixTimestamp;  // current server time
+} TSC_SuplaRegisterClientResult_D;            // ver. >= 19
 
 typedef struct {
   // client -> server
@@ -1358,7 +1400,7 @@ typedef struct {
 #define EM_VAR_REVERSE_ACTIVE_ENERGY_BALANCED 0x4000
 #define EM_VAR_ALL 0xFFFF
 
-#define EM_VAR_POWER_ACTIVE_KWH 0x100000
+#define EM_VAR_POWER_ACTIVE_KW 0x100000
 #define EM_VAR_POWER_REACTIVE_KVAR 0x200000
 #define EM_VAR_POWER_APPARENT_KVA 0x400000
 
@@ -2099,7 +2141,7 @@ void PROTO_ICACHE_FLASH sproto_set_version(void *spd_ptr,
 void PROTO_ICACHE_FLASH sproto_sdp_init(void *spd_ptr, TSuplaDataPacket *sdp);
 char PROTO_ICACHE_FLASH sproto_set_data(TSuplaDataPacket *sdp, char *data,
                                         unsigned _supla_int_t data_size,
-                                        unsigned _supla_int_t call_type);
+                                        unsigned _supla_int_t call_id);
 TSuplaDataPacket *PROTO_ICACHE_FLASH sproto_sdp_malloc(void *spd_ptr);
 void PROTO_ICACHE_FLASH sproto_sdp_free(TSuplaDataPacket *sdp);
 

@@ -62,6 +62,7 @@ class Channel : public LocalAction {
 
   void setType(_supla_int_t type);
   void setDefault(_supla_int_t value);
+  int32_t getDefaultFunction();
   void setFlag(_supla_int_t flag);
   void unsetFlag(_supla_int_t flag);
   void setFuncList(_supla_int_t functions);
@@ -74,6 +75,7 @@ class Channel : public LocalAction {
   virtual void sendUpdate(void *srpc);
   virtual TSuplaChannelExtendedValue *getExtValue();
   void setCorrection(double correction, bool forSecondaryValue = false);
+  bool isSleepingEnabled();
 
   void requestChannelConfig();
 

@@ -16,7 +16,18 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <supla/tools.h>
+
 void deviceSoftwareReset() {
   // TODO(klew): implement device sw reset for freeRTOS
 }
 
+bool isLastResetSoft() {
+  // TODO(klew): implement
+  return false;
+}
+
+int Supla::getPlatformId() {
+  // TODO(klew): implement when needed
+  return 0;
+}

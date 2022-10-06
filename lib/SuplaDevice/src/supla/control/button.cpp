@@ -17,8 +17,16 @@
 */
 
 #include <supla/time.h>
+#include <supla/storage/storage.h>
+#include <supla/storage/config.h>
+#include <supla/network/html/button_multiclick_parameters.h>
+#include <supla/events.h>
+#include <supla/actions.h>
+#include <SuplaDevice.h>
 
 #include "button.h"
+
+#define CFG_MODE_ON_HOLD_TIME 5000
 
 Supla::Control::Button::Button(int pin, bool pullUp, bool invertLogic)
     : SimpleButton(pin, pullUp, invertLogic),
@@ -170,3 +178,32 @@ void Supla::Control::Button::repeatOnHoldEvery(unsigned int timeMs) {
 bool Supla::Control::Button::isBistable() const {
   return bistable;
 }
+
+void Supla::Control::Button::onLoadConfig() {
+  auto cfg = Supla::Storage::ConfigInstance();
+  if (cfg) {
+    uint32_t value = 300;
+    if (cfg->getUInt32(Supla::Html::BtnMulticlickTag, &value)) {
+      if (value >= 300 && value <= 10000) {
+        setMulticlickTime(value, isBistable());
+      }
+    }
+  }
+}
+
+void Supla::Control::Button::configureAsConfigButton(SuplaDeviceClass *sdc) {
+  configButton = true;
+  setHoldTime(CFG_MODE_ON_HOLD_TIME);
+  setMulticlickTime(300, isBistable());
+  addAction(Supla::ENTER_CONFIG_MODE_OR_RESET_TO_FACTORY,
+                sdc,
+                Supla::ON_HOLD,
+                true);
+  addAction(
+      Supla::LEAVE_CONFIG_MODE_AND_RESET, sdc, Supla::ON_CLICK_1, true);
+}
+
+bool Supla::Control::Button::disableActionsInConfigMode() {
+  return configButton;
+}
+

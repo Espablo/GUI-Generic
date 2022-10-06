@@ -35,6 +35,7 @@
 #define STATUS_SERVER_DISCONNECTED       6
 #define STATUS_ITERATE_FAIL              7
 #define STATUS_NETWORK_DISCONNECTED      8
+#define STATUS_ALL_PROTOCOLS_DISABLED    9
 
 #define STATUS_REGISTER_IN_PROGRESS      10  // Don't change
 #define STATUS_REGISTERED_AND_READY      17  // Don't change
@@ -54,15 +55,22 @@
 #define STATUS_INVALID_AUTHKEY           33
 #define STATUS_NO_LOCATION_AVAILABLE     34
 #define STATUS_UNKNOWN_ERROR             35
+#define STATUS_COUNTRY_REJECTED          36
 
 #define STATUS_CONFIG_MODE               40
 #define STATUS_SOFTWARE_RESET            41
 #define STATUS_SW_DOWNLOAD               50
+#define STATUS_SUPLA_PROTOCOL_DISABLED   60
 
 typedef void (*_impl_arduino_status)(int status, const char *msg);
 
 namespace Supla {
 namespace Device {
+  enum RequestConfigModeType {
+    None,
+    WithTimeout,
+    WithoutTimeout
+  };
 class SwUpdate;
 };
 };
@@ -96,6 +104,7 @@ class SuplaDeviceClass : public Supla::ActionHandler {
   void setProductId(_supla_int16_t);
   void addFlags(_supla_int_t);
   void removeFlags(_supla_int_t);
+  bool isSleepingDeviceEnabled();
 
   int generateHostname(char*, int macSize = 6);
 
@@ -120,6 +129,8 @@ class SuplaDeviceClass : public Supla::ActionHandler {
   void saveStateToStorage();
   void disableCfgModeTimeout();
   void resetToFactorySettings();
+  void disableLocalActionsIfNeeded();
+  void requestCfgMode(Supla::Device::RequestConfigModeType);
 
   int getCurrentStatus();
   bool loadDeviceConfig();
@@ -131,6 +142,7 @@ class SuplaDeviceClass : public Supla::ActionHandler {
   enum Supla::DeviceMode getDeviceMode();
 
   void setActivityTimeout(_supla_int_t newActivityTimeout);
+  uint32_t getActivityTimeout();
 
   void handleAction(int event, int action) override;
 
@@ -151,23 +163,29 @@ class SuplaDeviceClass : public Supla::ActionHandler {
 
   void setCustomHostnamePrefix(const char *prefix);
 
+  void enableNetwork();
+  void disableNetwork();
+
  protected:
   int networkIsNotReadyCounter = 0;
 
   uint64_t deviceRestartTimeoutTimestamp = 0;
   uint64_t waitForIterate = 0;
   uint64_t lastIterateTime = 0;
+  uint64_t enterConfigModeTimestamp = 0;
   unsigned int forceRestartTimeMs = 0;
   unsigned int resetOnConnectionFailTimeoutSec = 0;
 
   enum Supla::DeviceMode deviceMode = Supla::DEVICE_MODE_NOT_SET;
   int currentStatus = STATUS_UNKNOWN;
-  bool goToConfigModeAsap = false;
+  Supla::Device::RequestConfigModeType goToConfigModeAsap = Supla::Device::None;
   bool triggerResetToFacotrySettings = false;
   bool triggerStartLocalWebServer = false;
   bool triggerStopLocalWebServer = false;
   bool triggerCheckSwUpdate = false;
   bool requestNetworkLayerRestart = false;
+  bool isNetworkSetupOk = false;
+  bool skipNetwork = false;
   Supla::Protocol::SuplaSrpc *srpcLayer = nullptr;
   Supla::Device::SwUpdate *swUpdate = nullptr;
   const uint8_t *rsaPublicKey = nullptr;

@@ -17,7 +17,8 @@
  */
 
 #include "tools.h"
-#include "string.h"
+#include <string.h>
+#include <supla-common/proto.h>
 
 void float2DoublePacked(float number, uint8_t *bar, int byteOrder) {
   (void)(byteOrder);
@@ -148,6 +149,36 @@ uint32_t stringToUInt(const char *str, int len) {
   return result;
 }
 
+int32_t stringToInt(const char *str, int len) {
+  if (len == -1) {
+    len = strlen(str);
+  }
+
+  int32_t result = 0;
+  bool minusFound = false;
+
+  for (int i = 0; i < len; i++) {
+    if (str[i] == '-') {
+      if (i == 0) {
+        minusFound = true;
+        continue;
+      } else {
+        return 0;
+      }
+    }
+    if (str[i] < '0' || str[i] > '9') {
+      return 0;
+    }
+    if (i) {
+      result *= 10;
+    }
+
+    result += static_cast<uint8_t>(str[i]-'0');
+  }
+
+  return minusFound ? -result : result;
+}
+
 void urlDecodeInplace(char *buffer, int size) {
   auto insertPtr = buffer;
   auto parserPtr = buffer;
@@ -248,3 +279,91 @@ int strncmpInsensitive(const char *s1, const char *s2, int size) {
   return 0;
 }
 
+// Converts float with the precision specified by decLimit to int multiplied by
+// 10 raised to the power of decLimit, so if decLimit == 2 then "3.1415" -> 314
+int32_t floatStringToInt(const char *str, int precision) {
+  int32_t result = 0;
+  bool minusFound = false;
+  int decimalPlaces = -1;
+  for (int i = 0; str[i] != 0; i++) {
+    if (str[i] == '-') {
+      if (i == 0) {
+        minusFound = true;
+        continue;
+      } else {
+        return 0;
+      }
+    }
+    if (str[i] >= '0' && str[i] <= '9') {
+      result = result * 10 + str[i] - '0';
+      if (decimalPlaces >= 0) {
+        decimalPlaces++;
+      }
+    } else if (str[i] == '.' || str[i] == ',') {
+      decimalPlaces++;
+    }
+    if (decimalPlaces >= precision) {
+      break;
+    }
+  }
+
+  if (decimalPlaces < 0) {
+    decimalPlaces = 0;
+  }
+
+  while (decimalPlaces < precision) {
+    result *= 10;
+    decimalPlaces++;
+  }
+
+  return minusFound ? -result : result;
+}
+
+const char *getManufacturer(int16_t id) {
+  switch (id) {
+    case SUPLA_MFR_ACSOFTWARE: {
+      return "AC Software";
+    }
+    case SUPLA_MFR_TRANSCOM: {
+      return "Transcom";
+    }
+    case SUPLA_MFR_LOGI: {
+      return "Logi";
+    }
+    case SUPLA_MFR_ZAMEL: {
+      return "Zamel";
+    }
+    case SUPLA_MFR_NICE: {
+      return "Nice";
+    }
+    case SUPLA_MFR_ITEAD: {
+      return "ITEAD";
+    }
+    case SUPLA_MFR_DOYLETRATT: {
+      return "Varilight";
+    }
+    case SUPLA_MFR_HEATPOL: {
+      return "Heatpol";
+    }
+    case SUPLA_MFR_FAKRO: {
+      return "Fakro";
+    }
+    case SUPLA_MFR_PEVEKO: {
+      return "Peveko";
+    }
+    case SUPLA_MFR_WEKTA: {
+      return "Wekta";
+    }
+    case SUPLA_MFR_STA_SYSTEM: {
+      return "STA System";
+    }
+    case SUPLA_MFR_DGF: {
+      return "DGF";
+    }
+    case SUPLA_MFR_COMELIT: {
+      return "Comelit";
+    }
+  }
+
+  return "Unknown";
+}

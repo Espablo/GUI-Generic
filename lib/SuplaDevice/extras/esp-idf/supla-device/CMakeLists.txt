@@ -43,11 +43,18 @@ set(SUPLA_DEVICE_SRCS
   ../../../src/supla/network/html/custom_sw_update.cpp
   ../../../src/supla/network/html/sw_update_beta.cpp
   ../../../src/supla/network/html/sw_update.cpp
-  ../../../src/supla/network/html/security_certificate.cpp
+  ../../../src/supla/network/html/button_multiclick_parameters.cpp
+  ../../../src/supla/network/html/custom_parameter.cpp
+  ../../../src/supla/network/html/channel_correction.cpp
+  ../../../src/supla/network/html/hide_show_container.cpp
+  ../../../src/supla/network/html/div.cpp
+  ../../../src/supla/network/client.cpp
+  ../../../src/supla/network/ip_address.cpp
 
   ../../../src/supla/protocol/protocol_layer.cpp
   ../../../src/supla/protocol/supla_srpc.cpp
   ../../../src/supla/protocol/mqtt.cpp
+  ../../../src/supla/protocol/mqtt_topic.cpp
 
   ../../../src/supla/clock/clock.cpp
 
@@ -97,6 +104,7 @@ set(SUPLA_DEVICE_SRCS
   ../../../src/supla/sensor/distance.cpp
   ../../../src/supla/sensor/HC_SR04.cpp
   ../../../src/supla/sensor/ntc10k.cpp
+  ../../../src/supla/pv/fronius.cpp
 )
 
 set(NETTLE_SRCS
@@ -123,6 +131,8 @@ set(SUPLA_DEVICE_PORTING_SRCS
   ../../porting/esp-idf/esp_idf_web_server.cpp
   ../../porting/esp-idf/esp_idf_mutex.cpp
   ../../porting/esp-idf/esp_idf_ota.cpp
+  ../../porting/esp-idf/esp_idf_client.cpp
+  ../../porting/esp-idf/esp_mqtt.cpp
 )
 
 
@@ -142,8 +152,22 @@ idf_component_register(SRCS
     json
     esp_wifi
     driver
+    mqtt
+    esp_timer
   EMBED_TXTFILES supla_org_cert.pem supla_3rd_cert.pem
 )
 
 target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DEVICE)
 target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DEVICE_ESP32)
+if (CONFIG_SUPLA_DEBUG_BUILD)
+  target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DEBUG)
+  #add_definitions( -DSUPLA_DEBUG )
+  if (CONFIG_SUPLA_DISABLE_LOGS)
+    target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DISALBE_LOGS)
+    #add_definitions( -DSUPLA_DISABLE_LOGS )
+  endif()
+else()
+  target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DISALBE_LOGS)
+  #add_definitions( -DSUPLA_DISABLE_LOGS )
+endif()
+

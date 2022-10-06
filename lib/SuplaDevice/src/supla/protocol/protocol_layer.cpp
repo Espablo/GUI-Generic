@@ -25,6 +25,21 @@ namespace Protocol {
 
 ProtocolLayer *ProtocolLayer::firstPtr = nullptr;
 
+bool ProtocolLayer::IsAnyUpdatePending() {
+  auto *proto = first();
+  while (proto != nullptr) {
+    if (proto->isEnabled() && proto->isUpdatePending()) {
+      return true;
+    }
+    proto = proto->next();
+  }
+  return false;
+}
+
+bool ProtocolLayer::isUpdatePending() {
+  return false;
+}
+
 ProtocolLayer::ProtocolLayer(SuplaDeviceClass *sdc) : sdc(sdc) {
   if (firstPtr == nullptr) {
     firstPtr = this;
@@ -65,6 +80,18 @@ ProtocolLayer *ProtocolLayer::next() {
 
 SuplaDeviceClass *ProtocolLayer::getSdc() {
   return sdc;
+}
+
+bool ProtocolLayer::isConnectionError() {
+  return false;
+}
+
+bool ProtocolLayer::isConnecting() {
+  return false;
+}
+
+void ProtocolLayer::notifyChannelChange(int channel) {
+  (void)(channel);
 }
 
 }  // namespace Protocol

@@ -35,42 +35,10 @@ Network *Network::Instance() {
   return netIntf;
 }
 
-bool Network::Connected() {
-  if (Instance() != nullptr) {
-    return Instance()->connected();
-  }
-  return false;
-}
-
-int Network::Read(void *buf, int count) {
-  if (Instance() != nullptr) {
-    return Instance()->read(buf, count);
-  }
-  return -1;
-}
-
-int Network::Write(void *buf, int count) {
-  if (Instance() != nullptr) {
-    return Instance()->write(buf, count);
-  }
-  return -1;
-}
-
-int Network::Connect(const char *server, int port) {
-  if (Instance() != nullptr) {
-    Instance()->clearTimeCounters();
-    return Instance()->connect(server, port);
-  }
-  return 0;
-}
-
-void Network::Disconnect() {
+void Network::DisconnectProtocols() {
   for (auto proto = Supla::Protocol::ProtocolLayer::first(); proto != nullptr;
       proto = proto->next()) {
     proto->disconnect();
-  }
-  if (Instance() != nullptr) {
-    return Instance()->disconnect();
   }
   return;
 }
@@ -78,6 +46,13 @@ void Network::Disconnect() {
 void Network::Setup() {
   if (Instance() != nullptr) {
     return Instance()->setup();
+  }
+  return;
+}
+
+void Network::Disable() {
+  if (Instance() != nullptr) {
+    return Instance()->disable();
   }
   return;
 }
@@ -117,6 +92,19 @@ void Network::SetNormalMode() {
   return;
 }
 
+void Network::SetSetupNeeded() {
+  if (Instance() != nullptr) {
+    Instance()->setSetupNeeded();
+  }
+}
+
+bool Network::PopSetupNeeded() {
+  if (Instance() != nullptr) {
+    return Instance()->popSetupNeeded();
+  }
+  return false;
+}
+
 bool Network::GetMacAddr(uint8_t *buf) {
   if (Instance() != nullptr) {
     return Instance()->getMacAddr(buf);
@@ -131,6 +119,12 @@ void Network::SetHostname(const char *buf) {
   return;
 }
 
+bool Network::IsSuplaSSLEnabled() {
+  if (Instance() != nullptr) {
+    return Instance()->isSuplaSSLEnabled();
+  }
+  return false;
+}
 
 Network::Network(unsigned char *ip) {
   netIntf = this;
@@ -152,11 +146,6 @@ bool Network::iterate() {
 }
 
 void Network::clearTimeCounters() {
-}
-
-void Network::setTimeout(int timeoutMs) {
-  (void)(timeoutMs);
-  SUPLA_LOG_DEBUG("setTimeout is not implemented for this interface");
 }
 
 void Network::fillStateData(TDSC_ChannelState *channelState) {
@@ -191,12 +180,12 @@ void Network::setPassword(const char *wifiPassword) {
 
 void Network::setConfigMode() {
   mode = Supla::DEVICE_MODE_CONFIG;
-  modeChanged = true;
+  setupNeeded = true;
 }
 
 void Network::setNormalMode() {
   mode = Supla::DEVICE_MODE_NORMAL;
-  modeChanged = true;
+  setupNeeded = true;
 }
 
 void Network::uninit() {
@@ -225,8 +214,23 @@ void Network::setSSLEnabled(bool enabled) {
 }
 
 void Network::setCACert(const char *rootCA) {
-  (void)(rootCA);
   rootCACert = rootCA;
+}
+
+bool Network::popSetupNeeded() {
+  if (setupNeeded) {
+    setupNeeded = false;
+    return true;
+  }
+  return false;
+}
+
+void Network::setSetupNeeded() {
+  setupNeeded = true;
+}
+
+bool Network::isSuplaSSLEnabled() {
+  return sslEnabled;
 }
 
 };  // namespace Supla

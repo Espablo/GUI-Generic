@@ -20,8 +20,7 @@
 
 #include <string.h>
 
-#include <supla-common/log.h>
-#include <supla/network/html/device_info.h>
+#include <supla/network/html_element.h>
 #include <SuplaDevice.h>
 
 #include "web_sender.h"
@@ -65,11 +64,12 @@ const char styles[] =
       "fill:#000"
     "}"
     ".w{"
-      "margin:3px 0 16px;"
+      "margin:3px auto 16px;"
       "padding:5px 0;"
       "border-radius:10px;"
       "background:#fff;"
-      "box-shadow:0 5px 6px rgba(0,0,0,.3)"
+      "box-shadow:0 5px 6px rgba(0,0,0,.3);"
+      "max-width: 640px"
     "}"
     "h1,h3{"
       "margin:10px 8px;"
@@ -94,7 +94,10 @@ const char styles[] =
       "font-style:normal;"
       "position:relative;"
       "border-bottom: solid 1px #00d151;"
-      "height:42px"
+      "height:42px;"
+      "margin-left:auto;"
+      "margin-right:auto;"
+      "max-width:640px;"
     "}"
     "i:last-child{"
       "border:none"
@@ -159,7 +162,7 @@ const char styles[] =
         "margin-top:80px"
       "}"
     "}"
-    "@media all and (max-width:640px){"
+    "@media all {"  // and (max-width:640px){"
       ".s{"
         "width:calc(100% - 20px);"
         "margin-top:40px;"
@@ -203,9 +206,6 @@ const char styles[] =
     "#proto_supla{"
       "display:none"
     "}"
-    ".proto_mqtt{"
-      "display:none"
-    "}"
     "textarea{"
       "resize:none;"
       "font-size:12px;"
@@ -220,10 +220,21 @@ const char javascript[] =
     "var e=document.getElementById(\"protocol\"),"
          "t=document.getElementById(\"proto_supla\"),"
          "n=document.getElementsByClassName(\"mqtt\"),"
-         "l=\"1\"==e.value?\"block\":\"none\";"
+         "show_supla=true,"
+         "show_mqtt=true;"
+    "if(e==null){"
+      "e=document.getElementById(\"protocol_supla\");"
+      "show_supla=\"1\"==e.value;"
+      "e=document.getElementById(\"protocol_mqtt\");"
+      "show_mqtt=\"1\"==e.value;"
+    "}else if(e.value==\"1\"){"
+      "show_supla=false;"
+    "}else{"
+      "show_mqtt=false;"
+    "}"
     "for(i=0;i<n.length;i++)"
-       "n[i].style.display=l;"
-    "t.style.display=\"1\"==e.value?\"none\":\"block\""
+       "n[i].style.display=show_mqtt?\"block\":\"none\";"
+    "t.style.display=show_supla?\"block\":\"none\";"
   "}"
 
   "function mAuthChanged(){"
@@ -245,7 +256,6 @@ const char javascript[] =
       "null!=e&&(e.style.visibility=\"hidden\")"
     "},"
   "3200)"
-
   "</script>";
 
 const char headerEnd[] = "</head>";

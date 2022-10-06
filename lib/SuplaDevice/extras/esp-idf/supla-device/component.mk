@@ -43,10 +43,17 @@ COMPONENT_OBJS := \
   ../../../src/supla/network/html/custom_sw_update.o \
   ../../../src/supla/network/html/sw_update_beta.o \
   ../../../src/supla/network/html/sw_update.o \
-  ../../../src/supla/network/html/security_certificate.o \
+  ../../../src/supla/network/html/button_multiclick_parameters.o \
+  ../../../src/supla/network/html/custom_parameter.o \
+  ../../../src/supla/network/html/channel_correction.o \
+  ../../../src/supla/network/html/hide_show_container.o \
+  ../../../src/supla/network/html/div.o \
+  ../../../src/supla/network/client.o \
+  ../../../src/supla/network/ip_address.o \
   \
   ../../../src/supla/protocol/protocol_layer.o \
   ../../../src/supla/protocol/mqtt.o \
+  ../../../src/supla/protocol/mqtt_topic.o \
   ../../../src/supla/protocol/supla_srpc.o \
   \
   ../../../src/supla/clock/clock.o \
@@ -116,6 +123,7 @@ COMPONENT_OBJS := \
   ../../porting/esp-idf/esp_idf_web_server.o \
   ../../porting/esp-idf/esp_idf_mutex.o \
   ../../porting/esp-idf/esp_idf_ota.o \
+  ../../porting/esp-idf/esp_idf_client.o \
 
 
 COMPONENT_SRCDIRS := ../../../src/supla-common \

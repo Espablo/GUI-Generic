@@ -44,6 +44,29 @@ ActionHandlerClient::~ActionHandlerClient() {
   ptr->next = ptr->next->next;
 }
 
+bool ActionHandlerClient::isEnabled() {
+  return enabled;
+}
+
+void ActionHandlerClient::enable() {
+  enabled = true;
+}
+
+void ActionHandlerClient::disable() {
+  if (!alwaysEnabled) {
+    enabled = false;
+  }
+}
+
+void ActionHandlerClient::setAlwaysEnabled() {
+  alwaysEnabled = true;
+  enabled = true;
+}
+
+bool ActionHandlerClient::isAlwaysEnabled() {
+  return alwaysEnabled;
+}
+
 ActionHandlerClient *ActionHandlerClient::begin = nullptr;
 
 LocalAction::~LocalAction() {
@@ -62,23 +85,28 @@ LocalAction::~LocalAction() {
   }
 }
 
-void LocalAction::addAction(int action, ActionHandler &client, int event) {
+void LocalAction::addAction(int action, ActionHandler &client, int event,
+    bool alwaysEnabled) {
   auto ptr = new ActionHandlerClient;
   ptr->trigger = this;
   ptr->client = &client;
   ptr->onEvent = event;
   ptr->action = action;
   ptr->client->activateAction(action);
+  if (alwaysEnabled) {
+    ptr->setAlwaysEnabled();
+  }
 }
 
-void LocalAction::addAction(int action, ActionHandler *client, int event) {
-  addAction(action, *client, event);
+void LocalAction::addAction(int action, ActionHandler *client, int event,
+    bool alwaysEnabled) {
+  addAction(action, *client, event, alwaysEnabled);
 }
 
 void LocalAction::runAction(int event) {
   auto ptr = ActionHandlerClient::begin;
   while (ptr) {
-    if (ptr->trigger == this && ptr->onEvent == event && ptr->enabled) {
+    if (ptr->trigger == this && ptr->onEvent == event && ptr->isEnabled()) {
       ptr->client->handleAction(event, ptr->action);
     }
     ptr = ptr->next;
@@ -113,7 +141,7 @@ void LocalAction::disableOtherClients(const ActionHandler *client, int event) {
   while (ptr) {
     if (ptr->trigger == this && ptr->onEvent == event &&
         ptr->client != client) {
-      ptr->enabled = false;
+      ptr->disable();
     }
     ptr = ptr->next;
   }
@@ -124,7 +152,7 @@ void LocalAction::enableOtherClients(const ActionHandler *client, int event) {
   while (ptr) {
     if (ptr->trigger == this && ptr->onEvent == event &&
         ptr->client != client) {
-      ptr->enabled = true;
+      ptr->enable();
     }
     ptr = ptr->next;
   }
@@ -139,6 +167,23 @@ ActionHandlerClient *LocalAction::getHandlerForFirstClient(int event) {
     ptr = ptr->next;
   }
   return nullptr;
+}
+
+ActionHandlerClient *LocalAction::getHandlerForClient(ActionHandler *client,
+                                                   int event) {
+  auto ptr = ActionHandlerClient::begin;
+  while (ptr) {
+    if (ptr->trigger == this && ptr->client == client
+        && ptr->onEvent == event) {
+      return ptr;
+    }
+    ptr = ptr->next;
+  }
+  return nullptr;
+}
+
+bool LocalAction::disableActionsInConfigMode() {
+  return false;
 }
 
 };  // namespace Supla

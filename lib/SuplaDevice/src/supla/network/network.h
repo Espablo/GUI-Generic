@@ -21,7 +21,6 @@
 
 #include <stdint.h>
 
-#include "supla-common/log.h"
 #include "supla-common/proto.h"
 #include "supla/storage/config.h"
 
@@ -31,36 +30,32 @@ namespace Supla {
 class Network {
  public:
   static Network *Instance();
-  static bool Connected();
-  static int Read(void *buf, int count);
-  static int Write(void *buf, int count);
-  static int Connect(const char *server, int port = -1);
-  static void Disconnect();
+  static void DisconnectProtocols();
   static void Setup();
+  static void Disable();
   static void Uninit();
   static bool IsReady();
   static bool Iterate();
   static void SetConfigMode();
   static void SetNormalMode();
+  static void SetSetupNeeded();
+  static bool PopSetupNeeded();
   static bool GetMacAddr(uint8_t *);
   static void SetHostname(const char *);
+  static bool IsSuplaSSLEnabled();
 
   static void printData(const char *prefix, const void *buf, const int count);
 
   explicit Network(uint8_t ip[4]);
   virtual ~Network();
-  virtual int read(void *buf, int count) = 0;
-  virtual int write(void *buf, int count) = 0;
-  virtual int connect(const char *server, int port = -1) = 0;
-  virtual bool connected() = 0;
-  virtual void disconnect() = 0;
   virtual void setup() = 0;
+  virtual void disable() = 0;
   virtual void uninit();
-  virtual void setTimeout(int);
   virtual void setConfigMode();
   virtual void setNormalMode();
   virtual bool getMacAddr(uint8_t *);
   virtual void setHostname(const char *);
+  virtual bool isSuplaSSLEnabled();
 
   virtual bool isReady() = 0;
   virtual bool iterate();
@@ -74,17 +69,21 @@ class Network {
 
   // SSL configuration
   virtual void setSSLEnabled(bool enabled);
+  bool isSSLEnabled();
   void setCACert(const char *rootCA);
 
   void clearTimeCounters();
   void setSuplaDeviceClass(SuplaDeviceClass *);
+
+  void setSetupNeeded();
+  bool popSetupNeeded();
 
  protected:
   static Network *netIntf;
   SuplaDeviceClass *sdc = nullptr;
 
   enum DeviceMode mode = DEVICE_MODE_NORMAL;
-  bool modeChanged = false;
+  bool setupNeeded = false;
   bool useLocalIp;
   unsigned char localIp[4];
   char hostname[32] = {};

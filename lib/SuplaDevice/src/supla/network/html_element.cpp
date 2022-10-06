@@ -64,6 +64,10 @@ const char *HtmlElement::selected(bool isSelected) {
   return isSelected ? " selected" : "";
 }
 
+const char *HtmlElement::checked(bool isChecked) {
+  return isChecked ? " checked" : "";
+}
+
 bool HtmlElement::handleResponse(const char *key, const char *value) {
   (void)(key);
   (void)(value);
