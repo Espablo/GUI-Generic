@@ -398,6 +398,10 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_SDM630
+  new Supla::Sensor::SDM630();
+#endif
+
 #if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     bool force400khz = false;

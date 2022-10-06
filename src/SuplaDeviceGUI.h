@@ -200,6 +200,10 @@
 #include "src/control/WakeOnLanRelay.h"
 #endif
 
+#ifdef SUPLA_SDM630
+#include "src/sensor/SDM_630.h"
+#endif
+
 namespace Supla {
 namespace GUI {
 
