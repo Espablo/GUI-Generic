@@ -8,7 +8,7 @@
 #define SDM_h
 //------------------------------------------------------------------------------
 #include <Arduino.h>
-#include "SDM_Config_User.h"
+#include <SDM_Config_User.h>
 #if defined ( USE_HARDWARESERIAL )
   #include <HardwareSerial.h>
 #else
