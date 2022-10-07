@@ -133,6 +133,13 @@ void handleOther(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
+#ifdef SUPLA_SDM630
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + "SDM630");
+  addListGPIOBox(webContentBuffer, INPUT_SDM630_RX, S_RX, FUNCTION_SDM_RX);
+  addListGPIOBox(webContentBuffer, INPUT_SDM630_TX, S_TX, FUNCTION_SDM_TX);
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
 #ifdef SUPLA_HC_SR04
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_HC_SR04);
   addListGPIOBox(webContentBuffer, INPUT_TRIG_GPIO, F("TRIG"), FUNCTION_TRIG);
@@ -307,6 +314,13 @@ void handleOtherSave() {
       handleOther(6);
       return;
     }
+  }
+#endif
+
+#ifdef SUPLA_SDM630
+  if (!WebServer->saveGPIO(INPUT_SDM630_RX, FUNCTION_SDM_RX) || !WebServer->saveGPIO(INPUT_SDM630_TX, FUNCTION_SDM_TX)) {
+    handleOther(6);
+    return;
   }
 #endif
 
