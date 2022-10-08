@@ -68,6 +68,7 @@ void GUIESPWifi::setup() {
     else {
       WiFi.mode(WIFI_MODE_STA);
     }
+
     Serial.println(F("WiFi: resetting WiFi connection"));
     DisconnectProtocols();
     WiFi.disconnect();
@@ -85,6 +86,8 @@ void GUIESPWifi::setup() {
       WiFi.mode(WIFI_MODE_AP);
     }
     WiFi.softAP(hostname, nullptr, 6);
+
+    Supla::GUI::crateWebServer();
   }
   else {
     SUPLA_LOG_INFO("WiFi: establishing connection with SSID: \"%s\"", ssid);

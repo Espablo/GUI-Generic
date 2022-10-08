@@ -49,7 +49,7 @@ void begin() {
   if (getCountChannels() == 0)
     ConfigESP->configModeInit();
 
-  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
+  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt() && ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL)
     crateWebServer();
 }
 
