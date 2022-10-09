@@ -55,7 +55,7 @@ unsigned _supla_int64_t ReadValuesSDM::getFwdActEnergy(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // energy 1 == 0.00001 kWh
@@ -74,7 +74,7 @@ unsigned _supla_int64_t ReadValuesSDM::getRvrActEnergy(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // energy 1 == 0.00001 kWh
@@ -93,7 +93,7 @@ unsigned _supla_int64_t ReadValuesSDM::getFwdReactEnergy(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // energy 1 == 0.00001 kWh
@@ -112,7 +112,7 @@ unsigned _supla_int64_t ReadValuesSDM::getRvrReactEnergy(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // voltage 1 == 0.01 V
@@ -131,7 +131,7 @@ unsigned _supla_int16_t ReadValuesSDM::getVoltage(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // current 1 == 0.001 A
@@ -150,12 +150,12 @@ unsigned _supla_int_t ReadValuesSDM::getCurrent(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // Frequency 1 == 0.01 Hz
 unsigned _supla_int16_t ReadValuesSDM::getFreq() {
-  return sdm.readVal(SDM_FREQUENCY);
+  return sdmRead(SDM_FREQUENCY);
 }
 
 // power 1 == 0.00001 W
@@ -174,7 +174,7 @@ _supla_int_t ReadValuesSDM::getPowerActive(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // power 1 == 0.00001 var
@@ -193,7 +193,7 @@ _supla_int_t ReadValuesSDM::getPowerReactive(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // power 1 == 0.00001 VA
@@ -212,7 +212,7 @@ _supla_int_t ReadValuesSDM::getPowerApparent(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // power 1 == 0.001
@@ -231,7 +231,7 @@ _supla_int_t ReadValuesSDM::getPowerFactor(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // phase angle 1 == 0.1 degree
@@ -250,7 +250,16 @@ _supla_int_t ReadValuesSDM::getPhaseAngle(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
+}
+
+float ReadValuesSDM::sdmRead(uint16_t reg) {
+  float tmpval = sdm.readVal(reg);
+
+  if (isnan(tmpval))
+    tmpval = 0.00;
+
+  return tmpval;
 }
 
 };  // namespace Sensor

@@ -27,10 +27,6 @@ void SDM630::onInit() {
 }
 
 void SDM630::readValuesFromDevice() {
-  if (isnan(sdm.getVoltage(0)) && isnan(sdm.getVoltage(1)) && isnan(sdm.getVoltage(2))) {
-    return;
-  }
-
   for (int i = 0; i < 3; i++) {
     setFwdActEnergy(i, sdm.getFwdActEnergy(i) * 100000);
     setRvrActEnergy(i, sdm.getRvrActEnergy(i) * 100000);

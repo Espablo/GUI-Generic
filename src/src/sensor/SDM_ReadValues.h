@@ -65,6 +65,8 @@ class ReadValuesSDM {
   // phase angle 1 == 0.1 degree
   _supla_int_t getPhaseAngle(int phase = 0);
 
+  float sdmRead(uint16_t reg);
+
  protected:
   SoftwareSerial swSerSDM;  // config SoftwareSerial
   SDM sdm;                  // config SDM
