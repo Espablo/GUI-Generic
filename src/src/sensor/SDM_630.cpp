@@ -19,7 +19,7 @@
 namespace Supla {
 namespace Sensor {
 
-SDM630::SDM630(int8_t pinRX, int8_t pinTX) : sdm(pinRX, pinTX){};
+SDM630::SDM630(int8_t pinRX, int8_t pinTX) : sdm(pinRX, pinTX, 9600){};
 
 void SDM630::onInit() {
   readValuesFromDevice();
@@ -27,6 +27,10 @@ void SDM630::onInit() {
 }
 
 void SDM630::readValuesFromDevice() {
+  if (isnan(sdm.getVoltage(0)) && isnan(sdm.getVoltage(1)) && isnan(sdm.getVoltage(2))) {
+    return;
+  }
+
   for (int i = 0; i < 3; i++) {
     setFwdActEnergy(i, sdm.getFwdActEnergy(i) * 100000);
     setRvrActEnergy(i, sdm.getRvrActEnergy(i) * 100000);

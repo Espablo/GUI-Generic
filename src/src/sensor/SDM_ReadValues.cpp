@@ -35,7 +35,7 @@
 namespace Supla {
 namespace Sensor {
 
-ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX) : sdm(swSerSDM, SDM_UART_BAUD, NOT_A_PIN, SWSERIAL_8N1, pinRX, pinTX) {
+ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud) : sdm(swSerSDM, baud, NOT_A_PIN, SWSERIAL_8N1, pinRX, pinTX) {
   sdm.begin();
 }
 

@@ -27,7 +27,7 @@ namespace Sensor {
 
 class ReadValuesSDM {
  public:
-  ReadValuesSDM(int8_t pinRX = SDM_RX_PIN, int8_t pinTX = SDM_TX_PIN);
+  ReadValuesSDM(int8_t pinRX = SDM_RX_PIN, int8_t pinTX = SDM_TX_PIN, long baud = SDM_UART_BAUD);
 
   // energy 1 == 0.00001 kWh
   unsigned _supla_int64_t getFwdActEnergy(int phase = 0);
