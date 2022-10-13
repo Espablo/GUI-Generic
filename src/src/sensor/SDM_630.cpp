@@ -27,7 +27,7 @@ void SDM630::onInit() {
 }
 
 void SDM630::readValuesFromDevice() {
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < MAX_PHASES; i++) {
     setFwdActEnergy(i, sdm.getFwdActEnergy(i) * 100000);
     setRvrActEnergy(i, sdm.getRvrActEnergy(i) * 100000);
     setFwdReactEnergy(i, sdm.getFwdReactEnergy(i) * 100000);
