@@ -622,7 +622,7 @@ void SuplaOled::setupAnimate() {
 
 void SuplaOled::iterateAlways() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
-    if (ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
+    if (ConfigESP->configModeESP == Supla::DEVICE_MODE_CONFIG) {
       displayConfigMode(display);
       return;
     }

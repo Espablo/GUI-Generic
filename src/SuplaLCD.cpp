@@ -113,7 +113,7 @@ void SuplaLCD::setup(SuplaConfigManager* configManager, SuplaConfigESP* configES
 }
 
 void SuplaLCD::iterateAlways() {
-  if (ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
+  if (ConfigESP->configModeESP == Supla::DEVICE_MODE_CONFIG) {
     if (millis() - timeLastChange > 2000) {
       timeLastChange = millis();
 
