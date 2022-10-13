@@ -85,6 +85,7 @@ class SuplaWebServer : public Supla::Element {
   void handleNotFound();
 
   bool chunkedSendHeader = false;
+  bool isRunningWebServer = false;
 };
 
 #if defined(ESP8266)

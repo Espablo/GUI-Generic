@@ -20,6 +20,13 @@
 String webContentBuffer;
 
 SuplaWebServer::SuplaWebServer() {
+}
+
+void SuplaWebServer::begin() {
+  if (isRunningWebServer) {
+    return;
+  }
+
 #ifdef ARDUINO_ARCH_ESP8266
   httpServer = new ESP8266WebServer(80);
 #ifdef SUPLA_OTA
@@ -33,16 +40,16 @@ SuplaWebServer::SuplaWebServer() {
   httpUpdater->setup(httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());
 #endif
 #endif
-}
 
-void SuplaWebServer::begin() {
   this->createWebServer();
   httpServer->onNotFound(std::bind(&SuplaWebServer::handleNotFound, this));
   httpServer->begin();
+  isRunningWebServer = true;
 }
 
 void SuplaWebServer::iterateAlways() {
-  httpServer->handleClient();
+  if (isRunningWebServer)
+    httpServer->handleClient();
 }
 
 void SuplaWebServer::createWebServer() {
