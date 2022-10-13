@@ -19,9 +19,15 @@
 namespace Supla {
 namespace Sensor {
 
+#if defined(ESP8266)
 ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud) : sdm(swSerSDM, baud, NOT_A_PIN, SWSERIAL_8N1, pinRX, pinTX) {
   sdm.begin();
 }
+#else
+ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud) : sdm(Serial, SDM_UART_BAUD, NOT_A_PIN, SERIAL_8N1, pinRX, pinTX) {
+  sdm.begin();
+}
+#endif
 
 // energy 1 == 0.00001 kWh
 unsigned _supla_int64_t ReadValuesSDM::getFwdActEnergy(int phase) {

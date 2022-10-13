@@ -20,7 +20,6 @@
 #include <Arduino.h>
 #include <SDM.h>
 #include <supla/sensor/electricity_meter.h>
-#include <SoftwareSerial.h>
 
 #include "SDM_ReadValues.h"
 

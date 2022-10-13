@@ -20,7 +20,10 @@
 #include <Arduino.h>
 #include <SDM.h>
 #include <supla/element.h>
+
+#if defined(ESP8266)
 #include <SoftwareSerial.h>
+#endif
 
 namespace Supla {
 namespace Sensor {
@@ -68,8 +71,10 @@ class ReadValuesSDM {
   float sdmRead(uint16_t reg);
 
  protected:
+#if defined(ESP8266)
   SoftwareSerial swSerSDM;  // config SoftwareSerial
-  SDM sdm;                  // config SDM
+#endif
+  SDM sdm;  // config SDM
 };
 
 };  // namespace Sensor

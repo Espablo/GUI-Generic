@@ -10,6 +10,10 @@
 
 //------------------------------------------------------------------------------
 
+#if defined(ESP32)
+#define USE_HARDWARESERIAL
+#endif
+
 /*
 *  define or undefine USE_HARDWARESERIAL (uncomment only one or none)
 */
