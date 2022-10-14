@@ -66,11 +66,11 @@ String getDistanceString(double distance) {
 }
 
 int getWidthUnit(OLEDDisplay* display, double value) {
-  return getWidthValue(display, value) + (String(value, 3).length() * 7);
+  return (display->getWidth() / 2) + (String(value, 2).length() * 3) + 15;
 }
 
 int getWidthValue(OLEDDisplay* display, double value) {
-  return ((display->getWidth() - String(value, 3).length()) / 2);
+  return ((display->getWidth() - String(value, 2).length()) / 2);
 }
 
 int getQuality() {
@@ -200,273 +200,113 @@ void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, 
   display->drawString(10, display->getHeight() / 2, F("SUPLA"));
 }
 
-void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name) {
-  uint8_t temp_width;
-
-  int drawHeightIcon = display->getHeight() / 2 - 10;
-  int drawStringIcon = display->getHeight() / 2 - 6;
-
-  display->setColor(WHITE);
-  display->setTextAlignment(TEXT_ALIGN_LEFT);
-
-  if (display->getWidth() <= 64 || display->getHeight() <= 48) {
-    temp_width = 0;
-  }
-  else {
-    display->drawXbm(x + 0, y + drawHeightIcon, TEMP_WIDTH, TEMP_HEIGHT, temp_bits);
-
-    temp_width = TEMP_WIDTH + 10;
-  }
-
-  if (name != NULL) {
-    display->setFont(ArialMT_Win1250_Plain_10);
-    display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
-  }
-
-  display->setFont(ArialMT_Win1250_Plain_24);
-  display->drawString(x + temp_width, y + drawStringIcon, getTempString(temp));
-  display->setFont(ArialMT_Win1250_Plain_16);
-  display->drawString(x + temp_width + (getTempString(temp).length() * 12), y + drawStringIcon, "°C");
-}
-
-void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity, const String& name) {
-  uint8_t humidity_width;
-
-  int drawHeightIcon = display->getHeight() / 2 - 10;
-  int drawStringIcon = display->getHeight() / 2 - 6;
-
-  display->setColor(WHITE);
-  display->setTextAlignment(TEXT_ALIGN_LEFT);
-
-  if (display->getWidth() <= 64 || display->getHeight() <= 48) {
-    humidity_width = 0;
-  }
-  else {
-    display->drawXbm(x + 0, y + drawHeightIcon, HUMIDITY_WIDTH, HUMIDITY_HEIGHT, humidity_bits);
-    humidity_width = HUMIDITY_WIDTH + 20;
-  }
-
-  if (name != NULL) {
-    display->setFont(ArialMT_Win1250_Plain_10);
-    display->drawString(x + HUMIDITY_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
-  }
-
-  display->setFont(ArialMT_Win1250_Plain_24);
-  display->drawString(x + humidity_width, y + drawStringIcon, getHumidityString(humidity));
-  display->setFont(ArialMT_Win1250_Plain_16);
-  display->drawString(x + humidity_width + (getHumidityString(humidity).length() * 12), y + drawStringIcon, "%");
-}
-
-void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure, const String& name) {
-  uint8_t pressure_width;
-
-  int drawHeightIcon = display->getHeight() / 2 - 10;
-  int drawStringIcon = display->getHeight() / 2 - 6;
-
-  display->setColor(WHITE);
-  display->setTextAlignment(TEXT_ALIGN_LEFT);
-
-  if (display->getWidth() <= 64 || display->getHeight() <= 48) {
-    pressure_width = 0;
-  }
-  else {
-    display->drawXbm(x + 0, y + drawHeightIcon, PRESSURE_WIDTH, PRESSURE_HEIGHT, pressure_bits);
-    pressure_width = PRESSURE_WIDTH + 10;
-  }
-
-  if (name != NULL) {
-    display->setFont(ArialMT_Win1250_Plain_10);
-    display->drawString(x + TEMP_WIDTH + 20, y + display->getHeight() / 2 - 15, name);
-  }
-
-  display->setFont(ArialMT_Win1250_Plain_24);
-  display->drawString(x + pressure_width, y + drawStringIcon, getPressureString(pressure));
-  display->setFont(ArialMT_Win1250_Plain_16);
-  display->drawString(x + pressure_width + (getPressureString(pressure).length() * 14), y + drawStringIcon, "hPa");
+void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& unit, const uint8_t* xbm) {
+  displayUiGeneral(display, state, x, y, String(value), unit, xbm);
 }
 
 void displayUiGeneral(
-    OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& name, const String& unit, const uint8_t* xbm) {
-  displayUiGeneral(display, state, x, y, String(value), name, unit, xbm);
-}
+    OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, const String& value, const String& unit, const uint8_t* xbm) {
+  uint8_t heightIcon = 0;
 
-void displayUiGeneral(OLEDDisplay* display,
-                      OLEDDisplayUiState* state,
-                      int16_t x,
-                      int16_t y,
-                      const String& value,
-                      const String& name,
-                      const String& unit,
-                      const uint8_t* xbm) {
   display->setColor(WHITE);
   display->setTextAlignment(TEXT_ALIGN_CENTER);
 
   if (xbm != NULL && display->getWidth() > 64) {
     int drawHeightIcon = display->getHeight() / 2 - 10;
+    heightIcon = 32;
     display->drawXbm(x + 0, y + drawHeightIcon, 32, 32, xbm);
   }
 
-  if (name != NULL) {
+  String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+  if (!name.isEmpty()) {
     display->setFont(ArialMT_Win1250_Plain_10);
-    display->drawString(x + ((display->getWidth() - String(name).length()) / 2), y + display->getHeight() / 2 - 15, name);
+    display->drawString(x + ((display->getWidth() - String(name).length() + heightIcon) / 2), y + display->getHeight() / 2 - 12, name);
   }
 
   display->setFont(ArialMT_Win1250_Plain_24);
-  display->drawString(x + getWidthValue(display, value.toDouble()), y + display->getHeight() / 2, String(value));
+  display->drawString(x + getWidthValue(display, value.toDouble()), y + display->getHeight() / 2 - 2, String(value));
   if (unit != NULL) {
     display->setFont(ArialMT_Win1250_Plain_16);
-    display->drawString(x + getWidthUnit(display, value.toDouble()), y + display->getHeight() / 2 + 7, unit);
+    display->drawString(x + getWidthUnit(display, value.toDouble()), y + display->getHeight() / 2 + 6, unit);
   }
 }
 
 void displayTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    if (element->getChannel()) {
-      auto channel = element->getChannel();
-      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        double lastTemperature = channel->getValueDouble();
-        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
-        displayUiTemperature(display, state, x, y, lastTemperature, name);
-      }
-    }
-  }
+  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
+  double lastTemperature = channel->getValueDouble();
+  displayUiGeneral(display, state, x, y, getTempString(lastTemperature), "°C", temp_bits);
 }
 
 void displayDoubleTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    if (element->getChannel()) {
-      auto channel = element->getChannel();
-      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        double lastTemperature = channel->getValueDoubleFirst();
-        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
-        displayUiTemperature(display, state, x, y, lastTemperature, name);
-      }
-    }
-  }
+  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
+  double lastTemperature = channel->getValueDoubleFirst();
+
+  displayUiGeneral(display, state, x, y, getTempString(lastTemperature), "°C", temp_bits);
 }
 
 void displayDoubleHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    if (element->getChannel()) {
-      auto channel = element->getChannel();
-      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        double lastHumidit = channel->getValueDoubleSecond();
-        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
-        displaUiHumidity(display, state, x, y, lastHumidit, name);
-      }
-    }
-  }
+  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
+  double lastHumidit = channel->getValueDoubleSecond();
+
+  displayUiGeneral(display, state, x, y, getHumidityString(lastHumidit), "%", humidity_bits);
 }
 
 void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  double lastPressure = PRESSURE_NOT_AVAILABLE;
+  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
+  double lastPressure = lastPressure = channel->getValueDouble();
 
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    if (element->getChannel()) {
-      auto channel = element->getChannel();
-
-      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        lastPressure = channel->getValueDouble();
-      }
-    }
-
-    if (element->getSecondaryChannel()) {
-      auto channel = element->getSecondaryChannel();
-
-      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        lastPressure = channel->getValueDouble();
-      }
-    }
-  }
-
-  String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
-  displayUiPressure(display, state, x, y, lastPressure, name);
+  displayUiGeneral(display, state, x, y, getPressureString(lastPressure), "hPa", pressure_bits);
 }
 
 void displayDistance(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    if (element->getChannel()) {
-      auto channel = element->getChannel();
-      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        double distance = channel->getValueDouble();
-        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
+  double distance = channel->getValueDouble();
 
-        displayUiGeneral(display, state, x, y, getDistanceString(distance), name, "m", distance_bits);
-      }
-    }
-  }
+  displayUiGeneral(display, state, x, y, getDistanceString(distance), "m", distance_bits);
 }
 
 void displayGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  double lastValue;
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    if (element->getChannel()) {
-      auto channel = element->getChannel();
-      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        if (oled[state->currentFrame].forSecondaryValue) {
-          lastValue = channel->getValueDoubleSecond();
-        }
-        else {
-          lastValue = channel->getValueDouble();
-        }
+  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
 
-        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
-
-        displayUiGeneral(display, state, x, y, lastValue, name);
-      }
-    }
+  if (oled[state->currentFrame].forSecondaryValue) {
+    displayUiGeneral(display, state, x, y, channel->getValueDoubleSecond());
+  }
+  else {
+    displayUiGeneral(display, state, x, y, channel->getValueDouble());
+    channel->getValueDouble();
   }
 }
 
 void displayEnergyVoltage(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    if (element->getChannel()) {
-      auto channel = element->getChannel();
-      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
 
-        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
-        if (extValue == nullptr)
-          return;
+  TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+  if (extValue == nullptr)
+    return;
 
-        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
-        if (emValue->m_count < 1 || emValue == nullptr)
-          return;
+  TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+  if (emValue->m_count < 1 || emValue == nullptr)
+    return;
 
-        displayUiGeneral(display, state, x, y, emValue->m[0].voltage[0] / 100.0, name, "V");
-      }
-    }
-  }
+  displayUiGeneral(display, state, x, y, String(emValue->m[0].voltage[0] / 100.0, 1), "V");
 }
 
 void displayEnergyCurrent(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    if (element->getChannel()) {
-      auto channel = element->getChannel();
-      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
+  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
 
-        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
-        if (extValue == nullptr)
-          return;
+  TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+  if (extValue == nullptr)
+    return;
 
-        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
-        if (emValue->m_count < 1 || emValue == nullptr)
-          return;
+  TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+  if (emValue->m_count < 1 || emValue == nullptr)
+    return;
 
-        displayUiGeneral(display, state, x, y, emValue->m[0].current[0] / 1000.0, name, "A");
-      }
-    }
-  }
+  displayUiGeneral(display, state, x, y, emValue->m[0].current[0] / 1000.0, "A");
 }
 
 void displayEnergyPowerActive(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    if (element->getChannel()) {
-      auto channel = element->getChannel();
-      if (channel->getChannelNumber() == oled[state->currentFrame].chanelSensor) {
-        String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
-
+    auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
         TSuplaChannelExtendedValue* extValue = channel->getExtValue();
         if (extValue == nullptr)
           return;
@@ -475,10 +315,8 @@ void displayEnergyPowerActive(OLEDDisplay* display, OLEDDisplayUiState* state, i
         if (emValue->m_count < 1 || emValue == nullptr)
           return;
 
-        displayUiGeneral(display, state, x, y, emValue->m[0].power_active[0] / 100000.0, name, "W");
-      }
-    }
-  }
+        displayUiGeneral(display, state, x, y, String(emValue->m[0].power_active[0] / 100000.0, 1), "W");
+
 }
 
 SuplaOled::SuplaOled() {

@@ -60,15 +60,11 @@ void displayUiSuplaStatus(OLEDDisplay* display);
 void displayUiSuplaClock(OLEDDisplay* display);
 void displayUiConfigMode(OLEDDisplay* display);
 void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name = "\n");
-void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity, const String& name = "\n");
-void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure, const String& name = "\n");
 void displayUiGeneral(OLEDDisplay* display,
                       OLEDDisplayUiState* state,
                       int16_t x,
                       int16_t y,
                       double value,
-                      const String& name = "\n",
                       const String& unit = "\n",
                       const uint8_t* xbm = NULL);
 void displayUiGeneral(OLEDDisplay* display,
@@ -76,7 +72,6 @@ void displayUiGeneral(OLEDDisplay* display,
                       int16_t x,
                       int16_t y,
                       const String& value,
-                      const String& name = "\n",
                       const String& unit = "\n",
                       const uint8_t* xbm = NULL);
 
