@@ -65,12 +65,20 @@ String getDistanceString(double distance) {
   }
 }
 
-int getWidthUnit(OLEDDisplay* display, double value) {
-  return (display->getWidth() / 2) + (String(value, 2).length() * 3) + 15;
+int getWidthUnit(OLEDDisplay* display, const String& value) {
+  if (value == S_ERROR) {
+    return (display->getWidth() / 2) + (display->getStringWidth(value) / 4.5);
+  }
+
+  return (display->getWidth() / 2) + (display->getStringWidth(value) / 2);
 }
 
-int getWidthValue(OLEDDisplay* display, double value) {
-  return ((display->getWidth() - String(value, 2).length()) / 2);
+int getWidthValue(OLEDDisplay* display, const String& value) {
+  if (value == S_ERROR) {
+    return (display->getWidth() / 2) - (display->getStringWidth(value) / 5);
+  }
+
+  return (display->getWidth() / 2) - (display->getStringWidth(value) / 2);
 }
 
 int getQuality() {
@@ -206,28 +214,28 @@ void displayUiGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x
 
 void displayUiGeneral(
     OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, const String& value, const String& unit, const uint8_t* xbm) {
-  uint8_t heightIcon = 0;
-
   display->setColor(WHITE);
-  display->setTextAlignment(TEXT_ALIGN_CENTER);
+  display->setTextAlignment(TEXT_ALIGN_LEFT);
 
   if (xbm != NULL && display->getWidth() > 64) {
     int drawHeightIcon = display->getHeight() / 2 - 10;
-    heightIcon = 32;
     display->drawXbm(x + 0, y + drawHeightIcon, 32, 32, xbm);
   }
 
   String name = ConfigManager->get(KEY_NAME_SENSOR)->getElement(state->currentFrame);
   if (!name.isEmpty()) {
     display->setFont(ArialMT_Win1250_Plain_10);
-    display->drawString(x + ((display->getWidth() - String(name).length() + heightIcon) / 2), y + display->getHeight() / 2 - 12, name);
+    display->drawString(x + getWidthValue(display, name), y + display->getHeight() / 2 - 12, name);
   }
 
   display->setFont(ArialMT_Win1250_Plain_24);
-  display->drawString(x + getWidthValue(display, value.toDouble()), y + display->getHeight() / 2 - 2, String(value));
-  if (unit != NULL) {
+  display->drawString(x + getWidthValue(display, value), y + display->getHeight() / 2 - 2, value);
+
+  if (!unit.isEmpty()) {
+    uint8_t widthUnit = getWidthUnit(display, value);
+
     display->setFont(ArialMT_Win1250_Plain_16);
-    display->drawString(x + getWidthUnit(display, value.toDouble()), y + display->getHeight() / 2 + 6, unit);
+    display->drawString(x + widthUnit, y + display->getHeight() / 2 + 5, unit);
   }
 }
 
@@ -306,17 +314,16 @@ void displayEnergyCurrent(OLEDDisplay* display, OLEDDisplayUiState* state, int16
 }
 
 void displayEnergyPowerActive(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-    auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
-        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
-        if (extValue == nullptr)
-          return;
+  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
+  TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+  if (extValue == nullptr)
+    return;
 
-        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
-        if (emValue->m_count < 1 || emValue == nullptr)
-          return;
+  TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+  if (emValue->m_count < 1 || emValue == nullptr)
+    return;
 
-        displayUiGeneral(display, state, x, y, String(emValue->m[0].power_active[0] / 100000.0, 1), "W");
-
+  displayUiGeneral(display, state, x, y, String(emValue->m[0].power_active[0] / 100000.0, 1), "W");
 }
 
 SuplaOled::SuplaOled() {

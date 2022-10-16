@@ -41,8 +41,8 @@ enum _OLED
   OLED_SSD1306_0_66
 };
 
-int getWidthUnit(OLEDDisplay* display, double value);
-int getWidthValue(OLEDDisplay* display, double value);
+int getWidthUnit(OLEDDisplay* display, const String& value);
+int getWidthValue(OLEDDisplay* display, const String& value);
 
 String getTempString(double temperature);
 String getHumidityString(double humidity);
