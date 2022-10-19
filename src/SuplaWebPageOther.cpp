@@ -616,6 +616,13 @@ void handleCounterCalibrateSave() {
     if (couter == PATH_CSE7766)
       Supla::GUI::counterCSE7766->calibrate(calibPower, calibVoltage);
 #endif
+
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+    for (size_t i = 0; i < Supla::GUI::relay.size(); i++) {
+      Supla::GUI::relay[i]->turnOff();
+    }
+#endif
+
     handleCounterCalibrate(1);
   }
   else {
