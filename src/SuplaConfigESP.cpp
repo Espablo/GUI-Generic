@@ -471,14 +471,14 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
   }
 #else
   // toggle between use of GPIO13/GPIO15 or GPIO3/GPIO(1/2) as RX and TX
-  if (rxPin == 3 || txPin == 1 || txPin == 2) {
+  if (rxPin == 3 && txPin == 1 || txPin == 2) {
     return Serial;
   }
   else if (rxPin == 13 || txPin == 15) {
     Serial.swap();
     return Serial;
   }
-  else if (rxPin == 2 || txPin == -1) {
+  else if (rxPin == 2 && txPin == -1) {
     return Serial1;
   }
 #endif
