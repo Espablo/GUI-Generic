@@ -797,7 +797,7 @@ Supla::Sensor::CSE_7766 *counterCSE7766 = nullptr;
 
 void addCSE7766(int8_t pinRX) {
   if (counterCSE7766 == NULL && pinRX != OFF_GPIO) {
-    counterCSE7766 = new Supla::Sensor::CSE_7766(pinRX);
+    counterCSE7766 = new Supla::Sensor::CSE_7766(ConfigESP->getHardwareSerial(pinRX), pinRX);
 
     Supla::GUI::addConditionsTurnON(SENSOR_CSE7766, counterCSE7766);
     Supla::GUI::addConditionsTurnOFF(SENSOR_CSE7766, counterCSE7766);

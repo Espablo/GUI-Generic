@@ -19,12 +19,9 @@
 namespace Supla {
 namespace Sensor {
 
-CSE_7766::CSE_7766(int8_t pinRX)
-    : pinRX(pinRX),
-      currentMultiplier(0.95),
-      voltageMultiplier(2.37),
-      powerMultiplier(2.52) {
-  sensor = new CSE7766();
+CSE_7766::CSE_7766(HardwareSerial &serial, int8_t pin_rx)
+    : currentMultiplier(0.95), voltageMultiplier(2.37), powerMultiplier(2.52) {
+  sensor = new CSE7766(serial, pin_rx);
 }
 
 void CSE_7766::onInit() {
@@ -32,7 +29,6 @@ void CSE_7766::onInit() {
   sensor->setVoltageRatio(voltageMultiplier);
   sensor->setPowerRatio(powerMultiplier);
 
-  sensor->setRX(pinRX);
   sensor->begin();
 
   readValuesFromDevice();
@@ -49,16 +45,12 @@ void CSE_7766::readValuesFromDevice() {
       auto channel = element->getChannel();
 
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_RELAY) {
-        currentChanelRelay = true;
-        if (channel->getValueBool()) {
-          energy = _energy + (sensor->getEnergy() /
-                              36);  // current energy value = value at start
-        }
+        if (channel->getValueBool()) currentChanelRelay = true;
       }
     }
   }
 
-  if (!currentChanelRelay) {
+  if (currentChanelRelay) {
     energy = _energy + (sensor->getEnergy() /
                         36);  // current energy value = value at start
   }

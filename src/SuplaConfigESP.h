@@ -99,6 +99,8 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
     return getGpio(0, function);
   }
 
+  HardwareSerial &getHardwareSerial(int8_t rxPin, int8_t txPin = -1);
+
   uint8_t getNumberButton(uint8_t nr);
   uint8_t getKeyGpio(uint8_t gpio);
 

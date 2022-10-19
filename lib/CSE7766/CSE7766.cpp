@@ -6,38 +6,17 @@
 
 #include "CSE7766.h"
 
-// Constructor
-CSE7766::CSE7766() {
+#ifdef ARDUINO_ARCH_ESP32
+CSE7766::CSE7766(HardwareSerial& serial, int8_t pin_rx, bool inverted) {
+  serial.begin(CSE7766_BAUDRATE, SERIAL_8N1, pin_rx, -1, inverted);
+  this->_serial = &serial;
 }
-// Destructor
-CSE7766::~CSE7766() {
-  if (_serial)
-    delete _serial;
-  // end();
+#else
+CSE7766::CSE7766(HardwareSerial& serial, int8_t pin_rx, bool inverted) {
+  serial.begin(CSE7766_BAUDRATE, SERIAL_8N1, SERIAL_FULL, pin_rx, inverted);
+  this->_serial = &serial;
 }
-
-void CSE7766::setRX(unsigned char pin_rx) {
-  if (_pin_rx == pin_rx)
-    return;
-  _pin_rx = pin_rx;
-  _dirty = true;
-}
-
-void CSE7766::setInverted(bool inverted) {
-  if (_inverted == inverted)
-    return;
-  _inverted = inverted;
-  _dirty = true;
-}
-
-unsigned char CSE7766::getRX() {
-  return _pin_rx;
-}
-
-bool CSE7766::getInverted() {
-  return _inverted;
-}
-
+#endif
 void CSE7766::expectedCurrent(double expected) {
   if ((expected > 0) && (_current > 0)) {
     _ratioC = _ratioC * (expected / _current);
@@ -126,30 +105,6 @@ double CSE7766::getEnergy() {
 void CSE7766::begin() {
   if (!_dirty)
     return;
-
-  if (_serial)
-    delete _serial;
-
-  if (3 == _pin_rx) {
-    Serial.begin(CSE7766_BAUDRATE);
-  }
-  else if (13 == _pin_rx) {
-    Serial.begin(CSE7766_BAUDRATE);
-    Serial.flush();
-#ifdef ARDUINO_ARCH_ESP8266
-    Serial.swap();
-#endif
-  }
-  else {
-#ifdef ARDUINO_ARCH_ESP8266
-    _serial = new SoftwareSerial(_pin_rx, -1, _inverted);
-    _serial->enableIntTx(false);
-    _serial->begin(CSE7766_BAUDRATE);
-#elif ARDUINO_ARCH_ESP32
-    _serial = new HardwareSerial(_pin_rx);
-    _serial->begin(CSE7766_BAUDRATE, SERIAL_8N1, _pin_rx, -1, _inverted);
-#endif
-  }
 
   _ready = true;
   _dirty = false;
@@ -317,33 +272,14 @@ void CSE7766::_read() {
   }
 }
 
-bool CSE7766::_serial_is_hardware() {
-  return (3 == _pin_rx) || (13 == _pin_rx);
-}
-
-bool CSE7766::_serial_available() {
-  if (_serial_is_hardware()) {
-    return Serial.available();
-  }
-  else {
-    return _serial->available();
-  }
+int CSE7766::_serial_available() {
+  return this->_serial->available();
 }
 
 void CSE7766::_serial_flush() {
-  if (_serial_is_hardware()) {
-    return Serial.flush();
-  }
-  else {
-    return _serial->flush();
-  }
+  return this->_serial->flush();
 }
 
 uint8_t CSE7766::_serial_read() {
-  if (_serial_is_hardware()) {
-    return Serial.read();
-  }
-  else {
-    return _serial->read();
-  }
+  return this->_serial->read();
 }

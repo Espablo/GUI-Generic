@@ -15,6 +15,7 @@
 */
 #include "SuplaConfigESP.h"
 #include "SuplaDeviceGUI.h"
+#include <HardwareSerial.h>
 
 SuplaConfigESP::SuplaConfigESP() {
   configModeESP = Supla::DEVICE_MODE_NORMAL;
@@ -394,6 +395,88 @@ int SuplaConfigESP::getGpio(int nr, int function) {
     delay(0);
   }
   return OFF_GPIO;
+}
+
+HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
+#ifdef ARDUINO_ARCH_ESP32
+
+#ifndef SOC_RX0
+#if CONFIG_IDF_TARGET_ESP32
+#define SOC_RX0 3
+#elif CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+#define SOC_RX0 44
+#elif CONFIG_IDF_TARGET_ESP32C3
+#define SOC_RX0 20
+#endif
+#endif
+
+#ifndef SOC_TX0
+#if CONFIG_IDF_TARGET_ESP32
+#define SOC_TX0 1
+#elif CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+#define SOC_TX0 43
+#elif CONFIG_IDF_TARGET_ESP32C3
+#define SOC_TX0 21
+#endif
+#endif
+
+#ifndef RX1
+#if CONFIG_IDF_TARGET_ESP32
+#define RX1 9
+#elif CONFIG_IDF_TARGET_ESP32S2
+#define RX1 18
+#elif CONFIG_IDF_TARGET_ESP32C3
+#define RX1 18
+#elif CONFIG_IDF_TARGET_ESP32S3
+#define RX1 15
+#endif
+#endif
+
+#ifndef TX1
+#if CONFIG_IDF_TARGET_ESP32
+#define TX1 10
+#elif CONFIG_IDF_TARGET_ESP32S2
+#define TX1 17
+#elif CONFIG_IDF_TARGET_ESP32C3
+#define TX1 19
+#elif CONFIG_IDF_TARGET_ESP32S3
+#define TX1 16
+#endif
+#endif
+
+#ifndef RX2
+#if CONFIG_IDF_TARGET_ESP32
+#define RX2 16
+#elif CONFIG_IDF_TARGET_ESP32S3
+#define RX2 19
+#endif
+#endif
+
+#ifndef TX2
+#if CONFIG_IDF_TARGET_ESP32
+#define TX2 17
+#elif CONFIG_IDF_TARGET_ESP32S3
+#define TX2 20
+#endif
+#endif
+
+  if (rxPin == RX1 || txPin == RX1) {
+    return Serial1;
+  }
+  else if (rxPin == RX2 || txPin == TX2) {
+    return Serial2;
+  }
+#else
+  // toggle between use of GPIO13/GPIO15 or GPIO3/GPIO(1/2) as RX and TX
+  if (rxPin == 13 || txPin == 15) {
+    Serial.swap();
+    return Serial;
+  }
+  else if (rxPin == 2 || txPin == -1) {
+    return Serial1;
+  }
+#endif
+  return Serial;
 }
 
 uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {
