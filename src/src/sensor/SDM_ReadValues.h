@@ -21,16 +21,12 @@
 #include <SDM.h>
 #include <supla/element.h>
 
-#if defined(ESP8266)
-#include <SoftwareSerial.h>
-#endif
-
 namespace Supla {
 namespace Sensor {
 
 class ReadValuesSDM {
  public:
-  ReadValuesSDM(int8_t pinRX = SDM_RX_PIN, int8_t pinTX = SDM_TX_PIN, long baud = SDM_UART_BAUD);
+  ReadValuesSDM(HardwareSerial& serial, long baud = SDM_UART_BAUD);
 
   // energy 1 == 0.00001 kWh
   unsigned _supla_int64_t getFwdActEnergy(int phase = 0);
@@ -71,9 +67,6 @@ class ReadValuesSDM {
   float sdmRead(uint16_t reg);
 
  protected:
-#if defined(ESP8266)
-  SoftwareSerial swSerSDM;  // config SoftwareSerial
-#endif
   SDM sdm;  // config SDM
 };
 

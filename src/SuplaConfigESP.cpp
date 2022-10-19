@@ -460,7 +460,10 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
 #endif
 #endif
 
-  if (rxPin == RX1 || txPin == RX1) {
+  if (rxPin == SOC_RX0 || txPin == SOC_TX0) {
+    return Serial;
+  }
+  else if (rxPin == RX1 || txPin == RX1) {
     return Serial1;
   }
   else if (rxPin == RX2 || txPin == TX2) {
@@ -468,7 +471,10 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
   }
 #else
   // toggle between use of GPIO13/GPIO15 or GPIO3/GPIO(1/2) as RX and TX
-  if (rxPin == 13 || txPin == 15) {
+  if (rxPin == 3 || txPin == 1 || txPin == 2) {
+    return Serial;
+  }
+  else if (rxPin == 13 || txPin == 15) {
     Serial.swap();
     return Serial;
   }
