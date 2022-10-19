@@ -464,9 +464,11 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
     return Serial;
   }
   else if (rxPin == RX1 || txPin == RX1) {
+    Serial1.begin(74880);
     return Serial1;
   }
   else if (rxPin == RX2 || txPin == TX2) {
+    Serial2.begin(74880);
     return Serial2;
   }
 #else
