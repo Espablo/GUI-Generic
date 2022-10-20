@@ -162,29 +162,29 @@ void CSE_7766::setCounter(_supla_int64_t value) {
   setFwdActEnergy(0, value);
 }
 
+void CSE_7766::unblockingDelay(unsigned long mseconds) {
+  unsigned long timeout = millis();
+  while ((millis() - timeout) < mseconds) delay(1);
+}
+
 void CSE_7766::calibrate(double calibPower, double calibVoltage) {
   sensor.handle();
-  unsigned long timeout1 = millis();
-  while ((millis() - timeout1) < 10000) {
-    delay(10);
-  }
-
   Serial.print(F("Active Power (W)    : "));
   Serial.println(sensor.getActivePower());
-  Serial.print(F("Voltage (V)         : "));
-  Serial.println(sensor.getVoltage());
+
+  unblockingDelay(2000);
+  sensor.handle();
   Serial.print(F("Current (A)         : "));
   Serial.println(sensor.getCurrent());
 
+  unblockingDelay(2000);
   sensor.handle();
+  Serial.print(F("Voltage (V)         : "));
+  Serial.println(sensor.getVoltage());
+
   sensor.expectedPower(calibPower);
   sensor.expectedVoltage(calibVoltage);
   sensor.expectedCurrent(calibPower / calibVoltage);
-
-  unsigned long timeout2 = millis();
-  while ((millis() - timeout2) < 2000) {
-    delay(10);
-  }
 
   currentMultiplier = sensor.getCurrentRatio();
   voltageMultiplier = sensor.getVoltageRatio();
