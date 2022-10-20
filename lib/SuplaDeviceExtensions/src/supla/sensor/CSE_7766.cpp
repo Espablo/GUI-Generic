@@ -168,7 +168,7 @@ void CSE_7766::unblockingDelay(unsigned long mseconds) {
 }
 
 void CSE_7766::calibrate(double calibPower, double calibVoltage) {
-  unblockingDelay(2000);
+  unblockingDelay(6000);
   sensor.handle();
   Serial.print(F("Active Power (W)    : "));
   Serial.println(sensor.getActivePower());
