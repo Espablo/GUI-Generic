@@ -46,6 +46,7 @@ class CSE_7766 : public OnePhaseElectricityMeter {
   void setPowerMultiplier(double value);
   void setCounter(_supla_int64_t value);
 
+  void iterateAlways();
   void unblockingDelay(unsigned long mseconds);
   void calibrate(double calibPower, double calibVoltage);
 

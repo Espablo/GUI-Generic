@@ -162,6 +162,11 @@ void CSE_7766::setCounter(_supla_int64_t value) {
   setFwdActEnergy(0, value);
 }
 
+void CSE_7766::iterateAlways() {
+  sensor.handle();
+  Supla::Sensor::ElectricityMeter::iterateAlways();
+}
+
 void CSE_7766::unblockingDelay(unsigned long mseconds) {
   unsigned long timeout = millis();
   while ((millis() - timeout) < mseconds) {
