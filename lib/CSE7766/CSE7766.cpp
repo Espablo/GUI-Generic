@@ -224,20 +224,18 @@ void CSE7766::_process() {
 
 void CSE7766::_read() {
   _error = SENSOR_ERROR_OK;
-
-  static unsigned char index = 0;
-  static unsigned long last = millis();
+  const uint32_t now = millis();
 
   // A 24 bytes message takes ~55ms to go through at 4800 bps
   // Reset counter if more than 1000ms have passed since last byte.
-  if (millis() - last > CSE7766_SYNC_INTERVAL)
+  if (now - this->last_transmission > CSE7766_SYNC_INTERVAL)
     index = 0;
 
   if (_serial_available() == 0) {
     return;
   }
 
-  last = millis();
+  this->last_transmission = now;
 
   while (_serial_available() != 0) {
     uint8_t byte = _serial_read();

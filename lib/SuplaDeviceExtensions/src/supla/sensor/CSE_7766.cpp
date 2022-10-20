@@ -164,14 +164,15 @@ void CSE_7766::setCounter(_supla_int64_t value) {
 
 void CSE_7766::unblockingDelay(unsigned long mseconds) {
   unsigned long timeout = millis();
-  while ((millis() - timeout) < mseconds) delay(1);
+  while ((millis() - timeout) < mseconds) {
+    sensor.handle();
+    delay(1);
+  };
 }
 
 void CSE_7766::calibrate(double calibPower, double calibVoltage) {
   unblockingDelay(5000);
-  sensor.handle();
-  unblockingDelay(5000);
-  
+
   Serial.print(F("Active Power (W)    : "));
   Serial.println(sensor.getActivePower());
 
