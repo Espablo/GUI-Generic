@@ -8,7 +8,6 @@
 #define CSE7766_h
 
 #include "Arduino.h"
-#include "debug.h"
 
 #include <HardwareSerial.h>
 
@@ -46,7 +45,7 @@ class CSE7766 {
   // ---------------------------------------------------------------------
 
 
-  CSE7766(HardwareSerial& serial, int8_t pin_rx = CSE7766_RX_PIN, bool inverted = CSE7766_PIN_INVERSE);
+  CSE7766(HardwareSerial& serial);
 
   void expectedCurrent(double expected);
   void expectedVoltage(unsigned int expected);

@@ -19,9 +19,9 @@
 namespace Supla {
 namespace Sensor {
 
-CSE_7766::CSE_7766(HardwareSerial &serial, int8_t pin_rx)
+CSE_7766::CSE_7766(HardwareSerial &serial)
     : currentMultiplier(0.95), voltageMultiplier(2.37), powerMultiplier(2.52) {
-  sensor = new CSE7766(serial, pin_rx);
+  sensor = new CSE7766(serial);
 }
 
 void CSE_7766::onInit() {

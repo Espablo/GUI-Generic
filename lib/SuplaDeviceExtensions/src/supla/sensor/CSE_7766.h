@@ -29,7 +29,7 @@ namespace Sensor {
 
 class CSE_7766 : public OnePhaseElectricityMeter {
  public:
-  CSE_7766(HardwareSerial& serial, int8_t pin_rx);
+  CSE_7766(HardwareSerial& serial);
 
 
   void onInit();

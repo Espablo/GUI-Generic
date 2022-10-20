@@ -7,8 +7,8 @@
 #include "CSE7766.h"
 
 #ifdef ARDUINO_ARCH_ESP32
-CSE7766::CSE7766(HardwareSerial& serial, int8_t pin_rx, bool inverted) {
-  serial.begin(CSE7766_BAUDRATE, SERIAL_8N1, pin_rx, -1, inverted);
+CSE7766::CSE7766(HardwareSerial& serial) {
+  serial.begin(CSE7766_BAUDRATE);
   this->_serial = &serial;
 }
 #else
