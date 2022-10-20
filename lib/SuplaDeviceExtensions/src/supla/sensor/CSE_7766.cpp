@@ -20,16 +20,18 @@ namespace Supla {
 namespace Sensor {
 
 CSE_7766::CSE_7766(HardwareSerial &serial)
-    : currentMultiplier(0.95), voltageMultiplier(2.37), powerMultiplier(2.52) {
-  sensor = new CSE7766(serial);
+    : sensor(serial),
+      currentMultiplier(0.95),
+      voltageMultiplier(2.37),
+      powerMultiplier(2.52) {
 }
 
 void CSE_7766::onInit() {
-  sensor->setCurrentRatio(currentMultiplier);
-  sensor->setVoltageRatio(voltageMultiplier);
-  sensor->setPowerRatio(powerMultiplier);
+  sensor.setCurrentRatio(currentMultiplier);
+  sensor.setVoltageRatio(voltageMultiplier);
+  sensor.setPowerRatio(powerMultiplier);
 
-  sensor->begin();
+  sensor.begin();
 
   readValuesFromDevice();
   updateChannelValues();
@@ -37,7 +39,7 @@ void CSE_7766::onInit() {
 
 void CSE_7766::readValuesFromDevice() {
   bool currentChanelRelay = false;
-  sensor->handle();
+  sensor.handle();
 
   for (auto element = Supla::Element::begin(); element != nullptr;
        element = element->next()) {
@@ -51,15 +53,15 @@ void CSE_7766::readValuesFromDevice() {
   }
 
   if (currentChanelRelay) {
-    energy = _energy + (sensor->getEnergy() /
+    energy = _energy + (sensor.getEnergy() /
                         36);  // current energy value = value at start
   }
 
   unsigned int _reactive = 0;
   double _pf = 0;
-  double _current = sensor->getCurrent();
-  unsigned int _voltage = sensor->getVoltage();
-  unsigned int _active = sensor->getActivePower();
+  double _current = sensor.getCurrent();
+  unsigned int _voltage = sensor.getVoltage();
+  unsigned int _active = sensor.getActivePower();
   unsigned int _apparent = _voltage * _current;
   if (_apparent > _active) {
     _reactive = sqrt(_apparent * _apparent - _active * _active);
@@ -83,19 +85,19 @@ void CSE_7766::readValuesFromDevice() {
   setPowerFactor(0, _pf * 1000);            // power in 0.001
 
   /* // voltage in 0.01 V
-  setVoltage(0, sensor->getVoltage() * 100);
+  setVoltage(0, sensor.getVoltage() * 100);
   // current in 0.001 A
-  setCurrent(0, sensor->getCurrent() * 1000);
+  setCurrent(0, sensor.getCurrent() * 1000);
   // power in 0.00001 kW
-  setPowerActive(0, sensor->getActivePower() * 100000);
+  setPowerActive(0, sensor.getActivePower() * 100000);
   // energy in 0.00001 kWh
   setFwdActEnergy(0, energy);
   // power in 0.00001 kVA
-  setPowerApparent(0, sensor->getApparentPower() * 100000);
+  setPowerApparent(0, sensor.getApparentPower() * 100000);
   // power in 0.00001 kvar
-  setPowerReactive(0, sensor->getReactivePower() * 100000);
+  setPowerReactive(0, sensor.getReactivePower() * 100000);
   // power in 0.001
-  setPowerFactor(0, sensor->getPowerFactor() * 1000); */
+  setPowerFactor(0, sensor.getPowerFactor() * 1000); */
 }
 
 void CSE_7766::onSaveState() {
@@ -141,17 +143,17 @@ _supla_int64_t CSE_7766::getCounter() {
 
 void CSE_7766::setCurrentMultiplier(double value) {
   currentMultiplier = value;
-  sensor->setCurrentRatio(value);
+  sensor.setCurrentRatio(value);
 }
 
 void CSE_7766::setVoltageMultiplier(double value) {
   voltageMultiplier = value;
-  sensor->setVoltageRatio(value);
+  sensor.setVoltageRatio(value);
 }
 
 void CSE_7766::setPowerMultiplier(double value) {
   powerMultiplier = value;
-  sensor->setPowerRatio(value);
+  sensor.setPowerRatio(value);
 }
 
 void CSE_7766::setCounter(_supla_int64_t value) {
@@ -161,32 +163,32 @@ void CSE_7766::setCounter(_supla_int64_t value) {
 }
 
 void CSE_7766::calibrate(double calibPower, double calibVoltage) {
-  sensor->handle();
+  sensor.handle();
   unsigned long timeout1 = millis();
   while ((millis() - timeout1) < 10000) {
     delay(10);
   }
 
   Serial.print(F("Active Power (W)    : "));
-  Serial.println(sensor->getActivePower());
+  Serial.println(sensor.getActivePower());
   Serial.print(F("Voltage (V)         : "));
-  Serial.println(sensor->getVoltage());
+  Serial.println(sensor.getVoltage());
   Serial.print(F("Current (A)         : "));
-  Serial.println(sensor->getCurrent());
+  Serial.println(sensor.getCurrent());
 
-  sensor->handle();
-  sensor->expectedPower(calibPower);
-  sensor->expectedVoltage(calibVoltage);
-  sensor->expectedCurrent(calibPower / calibVoltage);
+  sensor.handle();
+  sensor.expectedPower(calibPower);
+  sensor.expectedVoltage(calibVoltage);
+  sensor.expectedCurrent(calibPower / calibVoltage);
 
   unsigned long timeout2 = millis();
   while ((millis() - timeout2) < 2000) {
     delay(10);
   }
 
-  currentMultiplier = sensor->getCurrentRatio();
-  voltageMultiplier = sensor->getVoltageRatio();
-  powerMultiplier = sensor->getPowerRatio();
+  currentMultiplier = sensor.getCurrentRatio();
+  voltageMultiplier = sensor.getVoltageRatio();
+  powerMultiplier = sensor.getPowerRatio();
 
   Serial.print(F("New current multiplier : "));
   Serial.println(currentMultiplier);
@@ -197,7 +199,5 @@ void CSE_7766::calibrate(double calibPower, double calibVoltage) {
   Supla::Storage::ScheduleSave(2000);
   delay(0);
 }
-
-CSE7766 *CSE_7766::sensor = nullptr;
 };  // namespace Sensor
 };  // namespace Supla

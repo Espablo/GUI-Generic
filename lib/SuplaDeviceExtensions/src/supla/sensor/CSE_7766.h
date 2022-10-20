@@ -31,7 +31,6 @@ class CSE_7766 : public OnePhaseElectricityMeter {
  public:
   CSE_7766(HardwareSerial& serial);
 
-
   void onInit();
   void readValuesFromDevice();
   void onSaveState();
@@ -50,7 +49,7 @@ class CSE_7766 : public OnePhaseElectricityMeter {
   void calibrate(double calibPower, double calibVoltage);
 
  protected:
-  static CSE7766* sensor;
+  CSE7766 sensor;
 
   double currentMultiplier;
   double voltageMultiplier;
