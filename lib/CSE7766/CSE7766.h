@@ -21,7 +21,7 @@
 #define CSE7766_PIN_INVERSE 0  // Signal is inverted
 #endif
 
-#define CSE7766_SYNC_INTERVAL 300   // Safe time between transmissions (ms)
+#define CSE7766_SYNC_INTERVAL 500   // Safe time between transmissions (ms)
 #define CSE7766_BAUDRATE      4800  // UART baudrate
 
 #define CSE7766_V1R 1.0  // 1mR current resistor
