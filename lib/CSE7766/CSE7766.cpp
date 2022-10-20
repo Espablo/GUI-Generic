@@ -6,17 +6,11 @@
 
 #include "CSE7766.h"
 
-#ifdef ARDUINO_ARCH_ESP32
 CSE7766::CSE7766(HardwareSerial& serial) {
   serial.begin(CSE7766_BAUDRATE);
   this->_serial = &serial;
 }
-#else
-CSE7766::CSE7766(HardwareSerial& serial, int8_t pin_rx, bool inverted) {
-  serial.begin(CSE7766_BAUDRATE, SERIAL_8N1, SERIAL_FULL, pin_rx, inverted);
-  this->_serial = &serial;
-}
-#endif
+
 void CSE7766::expectedCurrent(double expected) {
   if ((expected > 0) && (_current > 0)) {
     _ratioC = _ratioC * (expected / _current);
