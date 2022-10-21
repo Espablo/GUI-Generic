@@ -19,7 +19,7 @@
 namespace Supla {
 namespace Sensor {
 
-SDM630::SDM630(HardwareSerial& serial) : sdm(serial, 9600){};
+SDM630::SDM630(int8_t pinRX, int8_t pinTX) : sdm(pinRX, pinTX, 9600){};
 
 void SDM630::onInit() {
   readValuesFromDevice();

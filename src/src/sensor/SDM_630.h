@@ -28,7 +28,7 @@ namespace Sensor {
 
 class SDM630 : public ElectricityMeter {
  public:
-  SDM630(HardwareSerial& serial);
+  SDM630(int8_t pinRX = SDM_RX_PIN, int8_t pinTX = SDM_TX_PIN);
   void onInit();
   virtual void readValuesFromDevice();
 
