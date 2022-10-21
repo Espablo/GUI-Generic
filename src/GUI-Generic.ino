@@ -400,7 +400,8 @@ void setup() {
 
 #ifdef SUPLA_SDM630
   if (ConfigESP->getGpio(FUNCTION_SDM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SDM_TX) != OFF_GPIO) {
-    new Supla::Sensor::SDM630(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
+    auto sdm = new Supla::Sensor::SDM630(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
+    sdm->setRefreshRate(10000);
   }
 #endif
 

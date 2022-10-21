@@ -28,9 +28,11 @@
 namespace Supla {
 namespace Sensor {
 
-class ReadValuesSDM {
+class ReadValuesSDM : public Element {
  public:
   ReadValuesSDM(int8_t pinRX = SDM_RX_PIN, int8_t pinTX = SDM_TX_PIN, long baud = SDM_UART_BAUD);
+
+  void onInit() override;
 
   // energy 1 == 0.00001 kWh
   unsigned _supla_int64_t getFwdActEnergy(int phase = 0);
