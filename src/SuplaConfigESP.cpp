@@ -328,25 +328,11 @@ void status_func(int status, const char *msg) {
 }
 
 int SuplaConfigESP::getGpio(int nr, int function) {
-  if (function == FUNCTION_RELAY && ConfigManager->get(KEY_VIRTUAL_RELAY)->getElement(nr).toInt()) {
-    return GPIO_VIRTUAL_RELAY;
-  }
-
-#ifdef ARDUINO_ARCH_ESP8266
-  if (function == FUNCTION_BUTTON && ConfigManager->get(KEY_ANALOG_BUTTON)->getElement(nr).toInt()) {
-    return A0;
-  }
-#endif
-
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
 
     if ((function == FUNCTION_CFG_BUTTON || function == FUNCTION_CFG_LED) && checkBusyCfg(gpio, function))
       return gpio;
-
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function && ConfigManager->get(key)->getElement(NR).toInt() == (nr + 1)) {
-      return gpio;
-    }
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
     if ((ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF ||
@@ -392,8 +378,23 @@ int SuplaConfigESP::getGpio(int nr, int function) {
       }
     }
 #endif
+
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function && ConfigManager->get(key)->getElement(NR).toInt() == (nr + 1)) {
+      return gpio;
+    }
     delay(0);
   }
+
+  if (function == FUNCTION_RELAY && ConfigManager->get(KEY_VIRTUAL_RELAY)->getElement(nr).toInt()) {
+    return GPIO_VIRTUAL_RELAY;
+  }
+
+#ifdef ARDUINO_ARCH_ESP8266
+  if (function == FUNCTION_BUTTON && ConfigManager->get(KEY_ANALOG_BUTTON)->getElement(nr).toInt()) {
+    return A0;
+  }
+#endif
+
   return OFF_GPIO;
 }
 
