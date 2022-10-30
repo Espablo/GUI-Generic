@@ -827,6 +827,10 @@ Supla::Sensor::MPX_5XXX *mpx = nullptr;
 #ifdef SUPLA_ANALOG_READING_MAP
 Supla::Sensor::AnalogRedingMap **analog = nullptr;
 #endif
+
+#ifdef SUPLA_SDM630
+Supla::Sensor::SDM630 *smd;
+#endif
 }  // namespace GUI
 }  // namespace Supla
 

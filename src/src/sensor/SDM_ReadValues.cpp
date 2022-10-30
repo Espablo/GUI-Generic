@@ -23,12 +23,14 @@ namespace Sensor {
 ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud) : sdm(swSerSDM, baud, NOT_A_PIN, SWSERIAL_8N1, pinRX, pinTX) {
 }
 #else
-ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud) : sdm(Serial, SDM_UART_BAUD, NOT_A_PIN, SERIAL_8N1, pinRX, pinTX) {
+ReadValuesSDM::ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud)
+    : sdm(serial, SDM_UART_BAUD, NOT_A_PIN, SERIAL_8N1, pinRX, pinTX) {
 }
 #endif
 
 void ReadValuesSDM::onInit() {
-  //sdm.setMsTimeout(500);
+  sdm.setMsTimeout();
+  sdm.setMsTurnaround();
   sdm.begin();
 }
 

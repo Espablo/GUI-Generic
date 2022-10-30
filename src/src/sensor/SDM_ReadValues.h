@@ -30,7 +30,11 @@ namespace Sensor {
 
 class ReadValuesSDM : public Element {
  public:
-  ReadValuesSDM(int8_t pinRX = SDM_RX_PIN, int8_t pinTX = SDM_TX_PIN, long baud = SDM_UART_BAUD);
+#if defined(ESP8266)
+  ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud);
+#else
+  ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud);
+#endif
 
   void onInit() override;
 
@@ -72,11 +76,12 @@ class ReadValuesSDM : public Element {
 
   float sdmRead(uint16_t reg);
 
+  SDM sdm;  // config SDM
+
  protected:
 #if defined(ESP8266)
   SoftwareSerial swSerSDM;  // config SoftwareSerial
 #endif
-  SDM sdm;  // config SDM
 };
 
 };  // namespace Sensor

@@ -400,8 +400,15 @@ void setup() {
 
 #ifdef SUPLA_SDM630
   if (ConfigESP->getGpio(FUNCTION_SDM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SDM_TX) != OFF_GPIO) {
-    auto sdm = new Supla::Sensor::SDM630(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
-    sdm->setRefreshRate(10000);
+#ifdef ARDUINO_ARCH_ESP32
+    Supla::GUI::smd =
+        new Supla::Sensor::SDM630(ConfigESP->getHardwareSerial(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX)),
+                                  ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
+#else
+    Supla::GUI::smd = new Supla::Sensor::SDM630(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
+
+#endif
+    Supla::GUI::smd->setRefreshRate(20);
   }
 #endif
 
