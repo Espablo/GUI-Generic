@@ -638,12 +638,14 @@ void setup() {
 #ifdef SUPLA_PCF8574
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt()) {
       new Supla::Control::PCF_8574();
+      force400khz = true;
     }
 #endif
 
 #ifdef SUPLA_PCF8575
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt()) {
       new Supla::Control::PCF_8575();
+      force400khz = true;
     }
 #endif
 
