@@ -53,8 +53,10 @@ void handlePageHome(int save) {
 
   addFormHeader(webContentBuffer);
 #ifdef SUPLA_SDM630
-  addLabel(webContentBuffer, "ErrCode: " + String(Supla::GUI::smd->sdm.getErrCode()));
-  addLabel(webContentBuffer, "ErrCount: " + String(Supla::GUI::smd->sdm.getErrCount()));
+  if (Supla::GUI::smd) {
+    addLabel(webContentBuffer, "ErrCode: " + String(Supla::GUI::smd->sdm.getErrCode()));
+    addLabel(webContentBuffer, "ErrCount: " + String(Supla::GUI::smd->sdm.getErrCount()));
+  }
 #endif
 
   for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
