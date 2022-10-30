@@ -60,20 +60,10 @@ void displayUiSuplaStatus(OLEDDisplay* display);
 void displayUiSuplaClock(OLEDDisplay* display);
 void displayUiConfigMode(OLEDDisplay* display);
 void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displayUiGeneral(OLEDDisplay* display,
-                      OLEDDisplayUiState* state,
-                      int16_t x,
-                      int16_t y,
-                      double value,
-                      const String& unit = "\n",
-                      const uint8_t* xbm = NULL);
-void displayUiGeneral(OLEDDisplay* display,
-                      OLEDDisplayUiState* state,
-                      int16_t x,
-                      int16_t y,
-                      const String& value,
-                      const String& unit = "\n",
-                      const uint8_t* xbm = NULL);
+void displayUiGeneral(
+    OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& unit = "\n", const uint8_t* xbm = NULL);
+void displayUiGeneral(
+    OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, const String& value, const String& unit = "\n", const uint8_t* xbm = NULL);
 
 void displayTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 void displayDoubleTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
@@ -85,12 +75,15 @@ void displayEnergyVoltage(OLEDDisplay* display, OLEDDisplayUiState* state, int16
 void displayEnergyCurrent(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 void displayEnergyPowerActive(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 
+Supla::Channel* getChanelByChannelNumber(int channelNumber);
+
 class SuplaOled : public Supla::ActionHandler, public Supla::Element {
  public:
   SuplaOled();
   void addButtonOled(uint8_t pin);
 
  private:
+  void onInit();
   void iterateAlways();
   void handleAction(int event, int action);
   void setupAnimate();

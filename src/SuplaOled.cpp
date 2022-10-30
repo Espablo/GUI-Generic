@@ -240,93 +240,145 @@ void displayUiGeneral(
 }
 
 void displayTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
-  double lastTemperature = channel->getValueDouble();
-  displayUiGeneral(display, state, x, y, getTempString(lastTemperature), "°C", temp_bits);
+  auto channel = getChanelByChannelNumber(oled[state->currentFrame].chanelSensor);
+
+  if (channel) {
+    double lastTemperature = channel->getValueDouble();
+
+    displayUiGeneral(display, state, x, y, getTempString(lastTemperature), "°C", temp_bits);
+  }
 }
 
 void displayDoubleTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
-  double lastTemperature = channel->getValueDoubleFirst();
+  auto channel = getChanelByChannelNumber(oled[state->currentFrame].chanelSensor);
 
-  displayUiGeneral(display, state, x, y, getTempString(lastTemperature), "°C", temp_bits);
+  if (channel) {
+    double lastTemperature = channel->getValueDoubleFirst();
+
+    displayUiGeneral(display, state, x, y, getTempString(lastTemperature), "°C", temp_bits);
+  }
 }
 
 void displayDoubleHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
-  double lastHumidit = channel->getValueDoubleSecond();
+  auto channel = getChanelByChannelNumber(oled[state->currentFrame].chanelSensor);
 
-  displayUiGeneral(display, state, x, y, getHumidityString(lastHumidit), "%", humidity_bits);
+  if (channel) {
+    double lastHumidit = channel->getValueDoubleSecond();
+
+    displayUiGeneral(display, state, x, y, getHumidityString(lastHumidit), "%", humidity_bits);
+  }
 }
 
 void displayPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
-  double lastPressure = lastPressure = channel->getValueDouble();
+  auto channel = getChanelByChannelNumber(oled[state->currentFrame].chanelSensor);
 
-  displayUiGeneral(display, state, x, y, getPressureString(lastPressure), "hPa", pressure_bits);
+  if (channel) {
+    double lastPressure = channel->getValueDouble();
+
+    displayUiGeneral(display, state, x, y, getPressureString(lastPressure), "hPa", pressure_bits);
+  }
 }
 
 void displayDistance(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
-  double distance = channel->getValueDouble();
+  auto channel = getChanelByChannelNumber(oled[state->currentFrame].chanelSensor);
 
-  displayUiGeneral(display, state, x, y, getDistanceString(distance), "m", distance_bits);
+  if (channel) {
+    double distance = channel->getValueDouble();
+
+    displayUiGeneral(display, state, x, y, getDistanceString(distance), "m", distance_bits);
+  }
 }
 
 void displayGeneral(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
+  auto channel = getChanelByChannelNumber(oled[state->currentFrame].chanelSensor);
 
-  if (oled[state->currentFrame].forSecondaryValue) {
-    displayUiGeneral(display, state, x, y, channel->getValueDoubleSecond());
-  }
-  else {
-    displayUiGeneral(display, state, x, y, channel->getValueDouble());
-    channel->getValueDouble();
+  if (channel) {
+    if (oled[state->currentFrame].forSecondaryValue) {
+      displayUiGeneral(display, state, x, y, channel->getValueDoubleSecond());
+    }
+    else {
+      displayUiGeneral(display, state, x, y, channel->getValueDouble());
+      channel->getValueDouble();
+    }
   }
 }
 
 void displayEnergyVoltage(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
+  auto channel = getChanelByChannelNumber(oled[state->currentFrame].chanelSensor);
 
-  TSuplaChannelExtendedValue* extValue = channel->getExtValue();
-  if (extValue == nullptr)
-    return;
+  if (channel) {
+    TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+    if (extValue == nullptr)
+      return;
 
-  TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
-  if (emValue->m_count < 1 || emValue == nullptr)
-    return;
+    TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+    if (emValue->m_count < 1 || emValue == nullptr)
+      return;
 
-  displayUiGeneral(display, state, x, y, String(emValue->m[0].voltage[0] / 100.0, 1), "V");
+    displayUiGeneral(display, state, x, y, String(emValue->m[0].voltage[0] / 100.0, 1), "V");
+  }
 }
 
 void displayEnergyCurrent(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
+  auto channel = getChanelByChannelNumber(oled[state->currentFrame].chanelSensor);
 
-  TSuplaChannelExtendedValue* extValue = channel->getExtValue();
-  if (extValue == nullptr)
-    return;
+  if (channel) {
+    TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+    if (extValue == nullptr)
+      return;
 
-  TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
-  if (emValue->m_count < 1 || emValue == nullptr)
-    return;
+    TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+    if (emValue->m_count < 1 || emValue == nullptr)
+      return;
 
-  displayUiGeneral(display, state, x, y, emValue->m[0].current[0] / 1000.0, "A");
+    displayUiGeneral(display, state, x, y, emValue->m[0].current[0] / 1000.0, "A");
+  }
 }
 
 void displayEnergyPowerActive(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y) {
-  auto channel = Supla::Element::getElementByChannelNumber(oled[state->currentFrame].chanelSensor)->getChannel();
-  TSuplaChannelExtendedValue* extValue = channel->getExtValue();
-  if (extValue == nullptr)
-    return;
+  auto channel = getChanelByChannelNumber(oled[state->currentFrame].chanelSensor);
 
-  TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
-  if (emValue->m_count < 1 || emValue == nullptr)
-    return;
+  if (channel) {
+    TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+    if (extValue == nullptr)
+      return;
 
-  displayUiGeneral(display, state, x, y, String(emValue->m[0].power_active[0] / 100000.0, 1), "W");
+    TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+    if (emValue->m_count < 1 || emValue == nullptr)
+      return;
+
+    displayUiGeneral(display, state, x, y, String(emValue->m[0].power_active[0] / 100000.0, 1), "W");
+  }
+}
+
+Supla::Channel* getChanelByChannelNumber(int channelNumber) {
+  Supla::Channel* channel = nullptr;
+
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+
+      if (channel->getChannelNumber() == channelNumber) {
+        return channel;
+      }
+    }
+
+    if (element->getSecondaryChannel()) {
+      auto channel = element->getSecondaryChannel();
+
+      if (channel->getChannelNumber() == channelNumber) {
+        return channel;
+      }
+    }
+  }
+
+  return channel;
 }
 
 SuplaOled::SuplaOled() {
+}
+
+void SuplaOled::onInit() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     SuplaDevice.addClock(new Supla::Clock);
 
