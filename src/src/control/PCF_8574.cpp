@@ -26,48 +26,44 @@ PCF_8574::PCF_8574() {
   control4 = new PCF8574();
 
   control1->setAddress(0x20);
-  if (!control1->begin())
-    Serial.println(F("PCF8574 1 not found!"));
-  else
+  if (control1->begin()) {
     Serial.println(F("PCF8574 1 found!"));
-  control1->setAddress(0x38);
-  if (!control1->begin())
-    Serial.println(F("PCF8574A 1 not found!"));
-  else
-    Serial.println(F("PCF8574A 1 found!"));
+  }
+  else {
+    control1->setAddress(0x38);
+    if (control1->begin())
+      Serial.println(F("PCF8574A 1 found!"));
+  }
 
   control2->setAddress(0x21);
-  if (!control2->begin())
-    Serial.println(F("PCF8574 2 not found!"));
-  else
+  if (control2->begin()) {
     Serial.println(F("PCF8574 2 found!"));
-  control2->setAddress(0x39);
-  if (!control2->begin())
-    Serial.println(F("PCF8574A 2 not found!"));
-  else
-    Serial.println(F("PCF8574A 2 found!"));
+  }
+  else {
+    control2->setAddress(0x39);
+    if (control2->begin())
+      Serial.println(F("PCF8574A 2 found!"));
+  }
 
   control3->setAddress(0x22);
-  if (!control3->begin())
-    Serial.println(F("PCF8574 3 not found!"));
-  else
+  if (control3->begin()) {
     Serial.println(F("PCF8574 3 found!"));
-  control3->setAddress(0x3A);
-  if (!control3->begin())
-    Serial.println(F("PCF8574A 3 not found!"));
-  else
-    Serial.println(F("PCF8574A 3 found!"));
+  }
+  else {
+    control3->setAddress(0x3A);
+    if (control3->begin())
+      Serial.println(F("PCF8574A 3 found!"));
+  }
 
   control4->setAddress(0x23);
-  if (!control4->begin())
-    Serial.println(F("PCF8574 4 not found!"));
-  else
+  if (control4->begin()) {
     Serial.println(F("PCF8574 4 found!"));
-  control4->setAddress(0x3B);
-  if (!control4->begin())
-    Serial.println(F("PCF8574A 4 not found!"));
-  else
-    Serial.println(F("PCF8574A 4 found!"));
+  }
+  else {
+    control4->setAddress(0x3B);
+    if (control4->begin())
+      Serial.println(F("PCF8574A 4 found!"));
+  }
 }
 
 void PCF_8574::customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val) {
