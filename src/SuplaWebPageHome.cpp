@@ -82,14 +82,14 @@ void handlePageHome(int save) {
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_ELECTRICITY_METER) {
         TSuplaChannelExtendedValue* extValue = channel->getExtValue();
         if (extValue == nullptr)
-          break;
+          continue;
 
         TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
         if (emValue->m_count < 1 || emValue == nullptr)
-          break;
+          continue;
 
-        for (size_t i = 0; i < 3; i++) {
-          if (isnan(emValue->m[0].voltage[i])) {
+        for (size_t i = 0; i < MAX_PHASES; i++) {
+          if (emValue->m[0].voltage[i] > 0) {
             addLabel(webContentBuffer, String(emValue->m[0].voltage[i] / 100.0) + "V");
             addLabel(webContentBuffer, String(emValue->m[0].power_active[i] / 100000.0) + "W");
             addLabel(webContentBuffer, String(emValue->m[0].current[i] / 1000.0) + "A");
