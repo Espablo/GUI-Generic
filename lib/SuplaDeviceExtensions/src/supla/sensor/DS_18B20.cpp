@@ -34,7 +34,7 @@ OneWireBus::OneWireBus(uint8_t pinNumberConfig)
         address[6],
         address[7]);
         supla_log(LOG_DEBUG, "Index %d - address %s", i, strAddr);*/
-      //sensors.setResolution(address, 10);
+      sensors.setResolution(address, 12);
     }
     delay(0);
   }
