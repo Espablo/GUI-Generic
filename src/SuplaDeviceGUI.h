@@ -296,6 +296,10 @@ extern Supla::Sensor::MPX_5XXX *mpx;
 extern Supla::Sensor::AnalogRedingMap **analog;
 #endif
 
+#ifdef SUPLA_SDM630
+extern Supla::Sensor::SDM630 *smd;
+#endif
+
 };  // namespace GUI
 };  // namespace Supla
 

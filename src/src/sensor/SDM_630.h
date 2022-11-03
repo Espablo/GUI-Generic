@@ -20,21 +20,21 @@
 #include <Arduino.h>
 #include <SDM.h>
 #include <supla/sensor/electricity_meter.h>
-#include <SoftwareSerial.h>
 
 #include "SDM_ReadValues.h"
 
 namespace Supla {
 namespace Sensor {
 
-class SDM630 : public ElectricityMeter {
+class SDM630 : public ReadValuesSDM, public ElectricityMeter {
  public:
-  SDM630(int8_t pinRX = SDM_RX_PIN, int8_t pinTX = SDM_TX_PIN);
+#if defined(ESP8266)
+  SDM630(int8_t pinRX, int8_t pinTX);
+#else
+  SDM630(HardwareSerial& serial, int8_t pinRX, int8_t pinTX);
+#endif
   void onInit();
   virtual void readValuesFromDevice();
-
- protected:
-  ReadValuesSDM sdm;
 };
 
 };  // namespace Sensor

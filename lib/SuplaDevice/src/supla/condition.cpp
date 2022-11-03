@@ -18,18 +18,20 @@
 #include "events.h"
 #include "element.h"
 
-Supla::Condition::Condition(double threshold, bool useAlternativeMeasurement)
+Supla::Condition::Condition(double threshold, bool useAlternativeValue)
   : threshold(threshold),
-  useAlternativeMeasurement(useAlternativeMeasurement)
-{
-}
+  useAlternativeValue(useAlternativeValue) {
+  }
 
 Supla::Condition::Condition(double threshold, Supla::ConditionGetter *getter)
-  : threshold(threshold), getter(getter)
-{
-}
+  : threshold(threshold), getter(getter) {
+  }
 
 Supla::Condition::~Condition() {
+  if (getter) {
+    delete getter;
+    getter = nullptr;
+  }
 }
 
 void Supla::Condition::handleAction(int event, int action) {
@@ -40,13 +42,13 @@ void Supla::Condition::handleAction(int event, int action) {
     }
 
     int channelType = source->getChannel()->getChannelType();
-    
+
     // Read channel value
     double value = 0;
     bool isValid = true;
 
     if (getter) {
-      value = getter->getValue(source, isValid);
+      value = getter->getValue(source, &isValid);
     } else {
       switch (channelType) {
         case SUPLA_CHANNELTYPE_DISTANCESENSOR:
@@ -62,9 +64,20 @@ void Supla::Condition::handleAction(int event, int action) {
           break;
         case SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR:
         case SUPLA_CHANNELTYPE_HUMIDITYSENSOR:
-          value = useAlternativeMeasurement
+          value = useAlternativeValue
             ? source->getChannel()->getValueDoubleSecond()
             : source->getChannel()->getValueDoubleFirst();
+          break;
+        case SUPLA_CHANNELTYPE_DIMMER:
+          value = source->getChannel()->getValueBrightness();
+          break;
+        case SUPLA_CHANNELTYPE_RGBLEDCONTROLLER:
+          value = source->getChannel()->getValueColorBrightness();
+          break;
+        case SUPLA_CHANNELTYPE_DIMMERANDRGBLED:
+          value = useAlternativeValue
+            ? source->getChannel()->getValueColorBrightness()
+            : source->getChannel()->getValueBrightness();
           break;
           /* case SUPLA_CHANNELTYPE_ELECTRICITY_METER: */
 
@@ -86,7 +99,7 @@ void Supla::Condition::handleAction(int event, int action) {
           break;
         case SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR:
         case SUPLA_CHANNELTYPE_HUMIDITYSENSOR:
-          isValid = useAlternativeMeasurement ? value >= 0 : value >= -273;
+          isValid = useAlternativeValue ? value >= 0 : value >= -273;
           break;
       }
     }

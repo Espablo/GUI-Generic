@@ -20,6 +20,13 @@
 String webContentBuffer;
 
 SuplaWebServer::SuplaWebServer() {
+}
+
+void SuplaWebServer::begin() {
+  if (isRunningWebServer) {
+    return;
+  }
+
 #ifdef ARDUINO_ARCH_ESP8266
   httpServer = new ESP8266WebServer(80);
 #ifdef SUPLA_OTA
@@ -33,16 +40,16 @@ SuplaWebServer::SuplaWebServer() {
   httpUpdater->setup(httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());
 #endif
 #endif
-}
 
-void SuplaWebServer::begin() {
   this->createWebServer();
   httpServer->onNotFound(std::bind(&SuplaWebServer::handleNotFound, this));
   httpServer->begin();
+  isRunningWebServer = true;
 }
 
 void SuplaWebServer::iterateAlways() {
-  httpServer->handleClient();
+  if (isRunningWebServer)
+    httpServer->handleClient();
 }
 
 void SuplaWebServer::createWebServer() {
@@ -99,7 +106,7 @@ void SuplaWebServer::sendHeaderStart() {
     summary.replace(F("{g}"), ConfigManager->get(KEY_SUPLA_GUID)->getValueHex(SUPLA_GUID_SIZE));
     summary.replace(F("{m}"), ConfigESP->getMacAddress(true));
     summary.replace(F("{f}"), String(ESP.getFreeHeap() / 1024.0));
-    if (ConfigESP->configModeESP == NORMAL_MODE) {
+    if (ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
       summary.replace(F("{c}"), "NORMAL");
     }
     else {
@@ -154,7 +161,7 @@ void SuplaWebServer::handleNotFound() {
 }
 
 bool SuplaWebServer::isLoggedIn(bool force) {
-  if (ConfigESP->configModeESP == NORMAL_MODE || force) {
+  if (ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL || force) {
     if (strcmp(ConfigManager->get(KEY_LOGIN)->getValue(), "") != 0 && strcmp(ConfigManager->get(KEY_LOGIN_PASS)->getValue(), "") != 0 &&
         !httpServer->authenticate(ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue())) {
       httpServer->requestAuthentication();

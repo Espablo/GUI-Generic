@@ -235,54 +235,28 @@ float PZEM004Tv30::pf()
 }
 
 /*!
- * PZEM004Tv30::sendCmd8
+ * PZEM004Tv30::resetEnergy
  *
- * Prepares the 8 byte command buffer and sends
- *
- * @param[in] cmd - Command to send (position 1)
- * @param[in] rAddr - Register address (postion 2-3)
- * @param[in] val - Register value to write (positon 4-5)
- * @param[in] check - perform a simple read check after write
+ * Reset the Energy counter on the device
  *
  * @return success
 */
-bool PZEM004Tv30::sendCmd8(uint8_t cmd, uint16_t rAddr, uint16_t val, bool check, uint16_t slave_addr){
-    uint8_t sendBuffer[8]; // Send buffer
-    uint8_t respBuffer[8]; // Response buffer (only used when check is true)
+bool PZEM004Tv30::resetEnergy(){
+    uint8_t buffer[] = {0x00, CMD_REST, 0x00, 0x00};
+    uint8_t reply[5];
+    buffer[0] = _addr;
 
-    if((slave_addr == 0xFFFF) ||
-       (slave_addr < 0x01) ||
-       (slave_addr > 0xF7)){
-        slave_addr = _addr;
+    setCRC(buffer, 4);
+    _serial->write(buffer, 4);
+
+    uint16_t length = receive(reply, 5);
+
+    if(length == 0 || length == 5){
+        return false;
     }
 
-    sendBuffer[0] = slave_addr;                   // Set slave address
-    sendBuffer[1] = cmd;                     // Set command
-
-    sendBuffer[2] = (rAddr >> 8) & 0xFF;     // Set high byte of register address
-    sendBuffer[3] = (rAddr) & 0xFF;          // Set low byte =//=
-
-    sendBuffer[4] = (val >> 8) & 0xFF;       // Set high byte of register value
-    sendBuffer[5] = (val) & 0xFF;            // Set low byte =//=
-
-    setCRC(sendBuffer, 8);                   // Set CRC of frame
-
-    _serial->write(sendBuffer, 8); // send frame
-
-    if(check) {
-        if(!receive(respBuffer, 8)){ // if check enabled, read the response
-            return false;
-        }
-
-        // Check if response is same as send
-        for(uint8_t i = 0; i < 8; i++){
-            if(sendBuffer[i] != respBuffer[i])
-                return false;
-        }
-    }
     return true;
 }
-
 
 /*!
  * PZEM004Tv30::setAddress
@@ -310,7 +284,7 @@ bool PZEM004Tv30::setAddress(uint8_t addr)
 }
 
 /*! 
- * PZEM004Tv30::readAddress()
+ * PZEM004Tv30::readAddress
  * 
  * Read address from the device memory
  * @return success
@@ -407,8 +381,7 @@ void PZEM004Tv30::init(Stream* port, bool isSoft, uint8_t addr){
     this->_isSoft = isSoft;
 
     // Set initial lastRed time so that we read right away
-    _lastRead = 0;
-    _lastRead -= UPDATE_TIME;
+    _lastRead = -1;
 
     _isConnected = false; // We have not received anything yet...
 }
@@ -427,7 +400,10 @@ bool PZEM004Tv30::updateValues()
     static uint8_t response[25];
 
     // If we read before the update time limit, do not update
-    if(_lastRead + UPDATE_TIME > millis()){
+    if( (unsigned long)(millis() - _lastRead)  >  UPDATE_TIME){
+        // Record current time as _lastRead
+        _lastRead = millis();
+    } else {
         return true;
     }
 
@@ -472,36 +448,61 @@ bool PZEM004Tv30::updateValues()
     _currentValues.alarms =  ((uint32_t)response[21] << 8 | // Raw alarm value
                               (uint32_t)response[22]);
 
-    // Record current time as _lastRead
-    _lastRead = millis();
+    
 
     return true;
 }
 
 
 /*!
- * PZEM004Tv30::resetEnergy
+ * PZEM004Tv30::sendCmd8
  *
- * Reset the Energy counter on the device
+ * Prepares the 8 byte command buffer and sends
+ *
+ * @param[in] cmd - Command to send (position 1)
+ * @param[in] rAddr - Register address (postion 2-3)
+ * @param[in] val - Register value to write (positon 4-5)
+ * @param[in] check - perform a simple read check after write
  *
  * @return success
 */
-bool PZEM004Tv30::resetEnergy(){
-    uint8_t buffer[] = {0x00, CMD_REST, 0x00, 0x00};
-    uint8_t reply[5];
-    buffer[0] = _addr;
+bool PZEM004Tv30::sendCmd8(uint8_t cmd, uint16_t rAddr, uint16_t val, bool check, uint16_t slave_addr){
+    uint8_t sendBuffer[8]; // Send buffer
+    uint8_t respBuffer[8]; // Response buffer (only used when check is true)
 
-    setCRC(buffer, 4);
-    _serial->write(buffer, 4);
-
-    uint16_t length = receive(reply, 5);
-
-    if(length == 0 || length == 5){
-        return false;
+    if((slave_addr == 0xFFFF) ||
+       (slave_addr < 0x01) ||
+       (slave_addr > 0xF7)){
+        slave_addr = _addr;
     }
 
+    sendBuffer[0] = slave_addr;                   // Set slave address
+    sendBuffer[1] = cmd;                     // Set command
+
+    sendBuffer[2] = (rAddr >> 8) & 0xFF;     // Set high byte of register address
+    sendBuffer[3] = (rAddr) & 0xFF;          // Set low byte =//=
+
+    sendBuffer[4] = (val >> 8) & 0xFF;       // Set high byte of register value
+    sendBuffer[5] = (val) & 0xFF;            // Set low byte =//=
+
+    setCRC(sendBuffer, 8);                   // Set CRC of frame
+
+    _serial->write(sendBuffer, 8); // send frame
+
+    if(check) {
+        if(!receive(respBuffer, 8)){ // if check enabled, read the response
+            return false;
+        }
+
+        // Check if response is same as send
+        for(uint8_t i = 0; i < 8; i++){
+            if(sendBuffer[i] != respBuffer[i])
+                return false;
+        }
+    }
     return true;
 }
+
 
 /*!
  * PZEM004Tv30::receive
@@ -516,7 +517,7 @@ bool PZEM004Tv30::resetEnergy(){
 uint16_t PZEM004Tv30::receive(uint8_t *resp, uint16_t len)
 {
       //* This has to only be enabled for Software serial
-    #if (defined(PZEM004_SOFTSERIAL) && (defined(__AVR__)) || defined(ESP8266))
+    #if defined(PZEM004_SOFTSERIAL)
         if(_isSoft)
             ((SoftwareSerial *)_serial)->listen(); // Start software serial listen
     #endif

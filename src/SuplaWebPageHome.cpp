@@ -51,6 +51,65 @@ void handlePageHome(int save) {
 
   addForm(webContentBuffer, F("post"));
 
+  addFormHeader(webContentBuffer);
+#ifdef SUPLA_SDM630
+  if (Supla::GUI::smd) {
+    addLabel(webContentBuffer, "ErrCode: " + String(Supla::GUI::smd->sdm.getErrCode()));
+    addLabel(webContentBuffer, "ErrCount: " + String(Supla::GUI::smd->sdm.getErrCount()));
+  }
+#endif
+
+  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+    if (element->getChannel()) {
+      auto channel = element->getChannel();
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
+        addLabel(webContentBuffer, String(channel->getValueDouble(), 2) + "°C");
+      }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
+        addLabel(webContentBuffer, String(channel->getValueDoubleFirst(), 2) + "°C" + S_SPACE + String(channel->getValueDoubleSecond(), 2) + "%");
+      }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYSENSOR) {
+        addLabel(webContentBuffer, String(channel->getValueDoubleSecond(), 2) + "%");
+      }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_DISTANCESENSOR) {
+        addLabel(webContentBuffer, String(channel->getValueDouble(), 2) + "m");
+      }
+
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_ELECTRICITY_METER) {
+        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+        if (extValue == nullptr)
+          continue;
+
+        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+        if (emValue->m_count < 1 || emValue == nullptr)
+          continue;
+
+        for (size_t i = 0; i < MAX_PHASES; i++) {
+          if (emValue->m[0].voltage[i] > 0) {
+            addLabel(webContentBuffer, String(emValue->m[0].voltage[i] / 100.0) + "V");
+            addLabel(webContentBuffer, String(emValue->m[0].power_active[i] / 100000.0) + "W");
+            addLabel(webContentBuffer, String(emValue->m[0].current[i] / 1000.0) + "A");
+          }
+        }
+      }
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
+        addLabel(webContentBuffer, String(channel->getValueDouble()) + "hPa");
+      }
+    }
+
+    if (element->getSecondaryChannel()) {
+      auto channel = element->getSecondaryChannel();
+      if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
+        addLabel(webContentBuffer, String(channel->getValueDouble()) + "hPa");
+      }
+    }
+  }
+  addFormHeaderEnd(webContentBuffer);
+
 #ifdef SUPLA_WT32_ETH01_LAN8720
 
 #else
@@ -115,7 +174,7 @@ void handlePageHomeSave() {
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:
-      if (ConfigESP->configModeESP == NORMAL_MODE) {
+      if (ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
         handlePageHome(1);
       }
       else {

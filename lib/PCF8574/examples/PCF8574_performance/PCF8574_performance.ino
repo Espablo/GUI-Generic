@@ -22,7 +22,7 @@ void setup()
   PCF.begin();
   Serial.println(PCF.isConnected());
 
-  for (long clk = 100000; clk < 500000; clk += 50000)
+  for (long clk = 100000; clk < 800000; clk += 100000)
   {
     Serial.println(clk);
     Wire.setClock(clk);
@@ -30,7 +30,9 @@ void setup()
     int x = PCF.read8();
     stop = micros();
     Serial.print("Read:\t");
-    Serial.println(stop - start);
+    Serial.print(stop - start);
+    Serial.print("\t");
+    Serial.println(x);             //  keep build CI compiler happy
     delay(1000);
 
     start = micros();
@@ -49,4 +51,3 @@ void loop()
 
 
 // -- END OF FILE --
-

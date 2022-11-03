@@ -5,147 +5,94 @@
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
+
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _network_interface_h
-#define _network_interface_h
+#ifndef SRC_SUPLA_NETWORK_NETWORK_H_
+#define SRC_SUPLA_NETWORK_NETWORK_H_
 
 #include <stdint.h>
 
-#include "supla-common/log.h"
 #include "supla-common/proto.h"
+#include "supla/storage/config.h"
+
+class SuplaDeviceClass;
 
 namespace Supla {
 class Network {
  public:
-  static Network *Instance() {
-    return netIntf;
-  }
-
-  static bool Connected() {
-    if (Instance() != nullptr) {
-      return Instance()->connected();
-    }
-    return false;
-  }
-
-  static int Read(void *buf, int count) {
-    if (Instance() != nullptr) {
-      return Instance()->read(buf, count);
-    }
-    return -1;
-  }
-
-  static int Write(void *buf, int count) {
-    if (Instance() != nullptr) {
-      return Instance()->write(buf, count);
-    }
-    return -1;
-  }
-
-  static int Connect(const char *server, int port = -1) {
-    if (Instance() != nullptr) {
-      Instance()->clearTimeCounters();
-      return Instance()->connect(server, port);
-    }
-    return 0;
-  }
-
-  static void Disconnect() {
-    if (Instance() != nullptr) {
-      return Instance()->disconnect();
-    }
-    return;
-  }
-
-  static void Setup() {
-    if (Instance() != nullptr) {
-      return Instance()->setup();
-    }
-    return;
-  }
-
-  static bool IsReady() {
-    if (Instance() != nullptr) {
-      return Instance()->isReady();
-    }
-    return false;
-  }
-
-  static bool Iterate() {
-    if (Instance() != nullptr) {
-      return Instance()->iterate();
-    }
-    return false;
-  }
-
-  static void SetSrpc(void *_srpc) {
-    if (Instance() != nullptr) {
-      Instance()->setSrpc(_srpc);
-    }
-  }
-
-  static bool Ping(void *srpc) {
-    if (Instance() != nullptr) {
-      return Instance()->ping(srpc);
-    }
-    return false;
-  }
+  static Network *Instance();
+  static void DisconnectProtocols();
+  static void Setup();
+  static void Disable();
+  static void Uninit();
+  static bool IsReady();
+  static bool Iterate();
+  static void SetConfigMode();
+  static void SetNormalMode();
+  static void SetSetupNeeded();
+  static bool PopSetupNeeded();
+  static bool GetMacAddr(uint8_t *);
+  static void SetHostname(const char *);
+  static bool IsSuplaSSLEnabled();
 
   static void printData(const char *prefix, const void *buf, const int count);
 
-  Network(uint8_t ip[4]);
+  explicit Network(uint8_t ip[4]);
   virtual ~Network();
-  virtual int read(void *buf, int count) = 0;
-  virtual int write(void *buf, int count) = 0;
-  virtual int connect(const char *server, int port = -1) = 0;
-  virtual bool connected() = 0;
-  virtual void disconnect() = 0;
   virtual void setup() = 0;
-  virtual void setTimeout(int);
+  virtual void disable() = 0;
+  virtual void uninit();
+  virtual void setConfigMode();
+  virtual void setNormalMode();
+  virtual bool getMacAddr(uint8_t *);
+  virtual void setHostname(const char *);
+  virtual bool isSuplaSSLEnabled();
 
   virtual bool isReady() = 0;
   virtual bool iterate();
-  virtual bool ping(void *);
 
-  virtual void fillStateData(TDSC_ChannelState &channelState);
+  virtual void fillStateData(TDSC_ChannelState *channelState);
 
-  void setSrpc(void *_srpc);
-  void updateLastSent();
-  void updateLastResponse();
+  // WiFi specific part
+  virtual bool isWifiConfigRequired();
+  virtual void setSsid(const char *wifiSsid);
+  virtual void setPassword(const char *wifiPassword);
+
+  // SSL configuration
+  virtual void setSSLEnabled(bool enabled);
+  bool isSSLEnabled();
+  void setCACert(const char *rootCA);
+
   void clearTimeCounters();
-  void setActivityTimeout(_supla_int_t activityTimeoutSec);
+  void setSuplaDeviceClass(SuplaDeviceClass *);
+
+  void setSetupNeeded();
+  bool popSetupNeeded();
 
  protected:
   static Network *netIntf;
-  _supla_int64_t lastSentMs;
-  _supla_int64_t lastResponseMs;
-  _supla_int64_t lastPingTimeMs;
-  _supla_int_t serverActivityTimeoutS;
-  void *srpc;
+  SuplaDeviceClass *sdc = nullptr;
 
+  enum DeviceMode mode = DEVICE_MODE_NORMAL;
+  bool setupNeeded = false;
   bool useLocalIp;
   unsigned char localIp[4];
-};
+  char hostname[32] = {};
 
-// Method passed to SRPC as a callback to read raw data from network interface
-_supla_int_t data_read(void *buf, _supla_int_t count, void *sdc);
-// Method passed to SRPC as a callback to write raw data to network interface
-_supla_int_t data_write(void *buf, _supla_int_t count, void *sdc);
-// Method passed to SRPC as a callback to handle response from Supla server
-void message_received(void *_srpc,
-                      unsigned _supla_int_t rr_id,
-                      unsigned _supla_int_t call_type,
-                      void *_sdc,
-                      unsigned char proto_version);
+  bool sslEnabled = true;
+  const char *rootCACert = nullptr;
+  unsigned int rootCACertSize = 0;
+};
 
 };  // namespace Supla
 
-#endif
+#endif  // SRC_SUPLA_NETWORK_NETWORK_H_

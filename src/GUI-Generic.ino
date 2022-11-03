@@ -400,7 +400,15 @@ void setup() {
 
 #ifdef SUPLA_SDM630
   if (ConfigESP->getGpio(FUNCTION_SDM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SDM_TX) != OFF_GPIO) {
-    new Supla::Sensor::SDM630(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
+#ifdef ARDUINO_ARCH_ESP32
+    Supla::GUI::smd =
+        new Supla::Sensor::SDM630(ConfigESP->getHardwareSerial(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX)),
+                                  ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
+#else
+    Supla::GUI::smd = new Supla::Sensor::SDM630(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
+
+#endif
+    Supla::GUI::smd->setRefreshRate(20);
   }
 #endif
 
@@ -630,12 +638,14 @@ void setup() {
 #ifdef SUPLA_PCF8574
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt()) {
       new Supla::Control::PCF_8574();
+      force400khz = true;
     }
 #endif
 
 #ifdef SUPLA_PCF8575
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt()) {
       new Supla::Control::PCF_8575();
+      force400khz = true;
     }
 #endif
 

@@ -41,8 +41,8 @@ enum _OLED
   OLED_SSD1306_0_66
 };
 
-int getWidthUnit(OLEDDisplay* display, double value);
-int getWidthValue(OLEDDisplay* display, double value);
+int getWidthUnit(OLEDDisplay* display, const String& value);
+int getWidthValue(OLEDDisplay* display, const String& value);
 
 String getTempString(double temperature);
 String getHumidityString(double humidity);
@@ -60,25 +60,10 @@ void displayUiSuplaStatus(OLEDDisplay* display);
 void displayUiSuplaClock(OLEDDisplay* display);
 void displayUiConfigMode(OLEDDisplay* display);
 void displayUiBlank(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
-void displayUiTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double temp, const String& name = "\n");
-void displaUiHumidity(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double humidity, const String& name = "\n");
-void displayUiPressure(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double pressure, const String& name = "\n");
-void displayUiGeneral(OLEDDisplay* display,
-                      OLEDDisplayUiState* state,
-                      int16_t x,
-                      int16_t y,
-                      double value,
-                      const String& name = "\n",
-                      const String& unit = "\n",
-                      const uint8_t* xbm = NULL);
-void displayUiGeneral(OLEDDisplay* display,
-                      OLEDDisplayUiState* state,
-                      int16_t x,
-                      int16_t y,
-                      const String& value,
-                      const String& name = "\n",
-                      const String& unit = "\n",
-                      const uint8_t* xbm = NULL);
+void displayUiGeneral(
+    OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, double value, const String& unit = "\n", const uint8_t* xbm = NULL);
+void displayUiGeneral(
+    OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y, const String& value, const String& unit = "\n", const uint8_t* xbm = NULL);
 
 void displayTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 void displayDoubleTemperature(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
@@ -90,12 +75,15 @@ void displayEnergyVoltage(OLEDDisplay* display, OLEDDisplayUiState* state, int16
 void displayEnergyCurrent(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 void displayEnergyPowerActive(OLEDDisplay* display, OLEDDisplayUiState* state, int16_t x, int16_t y);
 
+Supla::Channel* getChanelByChannelNumber(int channelNumber);
+
 class SuplaOled : public Supla::ActionHandler, public Supla::Element {
  public:
   SuplaOled();
   void addButtonOled(uint8_t pin);
 
  private:
+  void onInit();
   void iterateAlways();
   void handleAction(int event, int action);
   void setupAnimate();

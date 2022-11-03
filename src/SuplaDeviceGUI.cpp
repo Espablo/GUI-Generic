@@ -39,16 +39,15 @@ void begin() {
   auto npos = server.indexOf(":");
   String suplaServer = server.substring(0, npos);
 
+  SuplaDevice.addFlags(SUPLA_DEVICE_FLAG_CALCFG_ENTER_CFG_MODE);
+
   SuplaDevice.begin((char *)ConfigManager->get(KEY_SUPLA_GUID)->getValue(),      // Global Unique Identifier
                     suplaServer.c_str(),                                         // SUPLA server address
                     ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),             // Email address used to login to Supla Cloud
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
   if (getCountChannels() == 0)
-    ConfigESP->configModeInit(WIFI_AP_STA);
-
-  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
-    crateWebServer();
+    ConfigESP->configModeInit();
 }
 
 void setupConnection() {
@@ -77,7 +76,7 @@ void enableConnectionSSL(bool value) {
 #ifdef SUPLA_WT32_ETH01_LAN8720
 
   if (eth) {
-    if (ConfigESP->configModeESP == CONFIG_MODE) {
+    if (ConfigESP->configModeESP == Supla::DEVICE_MODE_CONFIG) {
       eth->enableSSL(false);
     }
     else {
@@ -87,7 +86,7 @@ void enableConnectionSSL(bool value) {
 
 #else
   if (wifi) {
-    if (ConfigESP->configModeESP == CONFIG_MODE) {
+    if (ConfigESP->configModeESP == Supla::DEVICE_MODE_CONFIG) {
       wifi->enableSSL(false);
     }
     else {
@@ -798,7 +797,7 @@ Supla::Sensor::CSE_7766 *counterCSE7766 = nullptr;
 
 void addCSE7766(int8_t pinRX) {
   if (counterCSE7766 == NULL && pinRX != OFF_GPIO) {
-    counterCSE7766 = new Supla::Sensor::CSE_7766(pinRX);
+    counterCSE7766 = new Supla::Sensor::CSE_7766(ConfigESP->getHardwareSerial(pinRX));
 
     Supla::GUI::addConditionsTurnON(SENSOR_CSE7766, counterCSE7766);
     Supla::GUI::addConditionsTurnOFF(SENSOR_CSE7766, counterCSE7766);
@@ -827,6 +826,10 @@ Supla::Sensor::MPX_5XXX *mpx = nullptr;
 
 #ifdef SUPLA_ANALOG_READING_MAP
 Supla::Sensor::AnalogRedingMap **analog = nullptr;
+#endif
+
+#ifdef SUPLA_SDM630
+Supla::Sensor::SDM630 *smd;
 #endif
 }  // namespace GUI
 }  // namespace Supla

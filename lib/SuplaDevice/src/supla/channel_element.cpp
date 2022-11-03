@@ -21,25 +21,37 @@ Supla::Channel *Supla::ChannelElement::getChannel() {
   return &channel;
 }
 
-void Supla::ChannelElement::addAction(int action, ActionHandler &client, int event) {
-  channel.addAction(action, client, event);
+void Supla::ChannelElement::addAction(int action,
+    ActionHandler &client,
+    int event,
+    bool alwaysEnabled) {
+  channel.addAction(action, client, event, alwaysEnabled);
 }
 
-void Supla::ChannelElement::addAction(int action, ActionHandler *client, int event) {
-  addAction(action, *client, event);
+void Supla::ChannelElement::addAction(int action,
+    ActionHandler *client,
+    int event,
+    bool alwaysEnabled) {
+  addAction(action, *client, event, alwaysEnabled);
 }
 
 bool Supla::ChannelElement::isEventAlreadyUsed(int event) {
   return channel.isEventAlreadyUsed(event);
 }
 
-void Supla::ChannelElement::addAction(int action, ActionHandler &client, Supla::Condition *condition) {
+void Supla::ChannelElement::addAction(int action,
+    ActionHandler &client,
+    Supla::Condition *condition,
+    bool alwaysEnabled) {
   condition->setClient(client);
   condition->setSource(this);
-  channel.addAction(action, condition, Supla::ON_CHANGE);
+  channel.addAction(action, condition, Supla::ON_CHANGE, alwaysEnabled);
 }
 
-void Supla::ChannelElement::addAction(int action, ActionHandler *client, Supla::Condition *condition) {
-  addAction(action, *client, condition);
+void Supla::ChannelElement::addAction(int action,
+    ActionHandler *client,
+    Supla::Condition *condition,
+    bool alwaysEnabled) {
+  addAction(action, *client, condition, alwaysEnabled);
 }
 

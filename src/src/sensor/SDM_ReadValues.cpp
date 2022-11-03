@@ -14,28 +14,23 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/*
-  Copyright (C) krycha88
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
 #include "SDM_ReadValues.h"
 
 namespace Supla {
 namespace Sensor {
 
-ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX) : sdm(swSerSDM, SDM_UART_BAUD, NOT_A_PIN, SWSERIAL_8N1, pinRX, pinTX) {
+#if defined(ESP8266)
+ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud) : sdm(swSerSDM, baud, NOT_A_PIN, SWSERIAL_8N1, pinRX, pinTX) {
+}
+#else
+ReadValuesSDM::ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud)
+    : sdm(serial, SDM_UART_BAUD, NOT_A_PIN, SERIAL_8N1, pinRX, pinTX) {
+}
+#endif
+
+void ReadValuesSDM::onInit() {
+  sdm.setMsTimeout();
+  sdm.setMsTurnaround();
   sdm.begin();
 }
 
@@ -55,7 +50,7 @@ unsigned _supla_int64_t ReadValuesSDM::getFwdActEnergy(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // energy 1 == 0.00001 kWh
@@ -74,7 +69,7 @@ unsigned _supla_int64_t ReadValuesSDM::getRvrActEnergy(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // energy 1 == 0.00001 kWh
@@ -93,7 +88,7 @@ unsigned _supla_int64_t ReadValuesSDM::getFwdReactEnergy(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // energy 1 == 0.00001 kWh
@@ -112,7 +107,7 @@ unsigned _supla_int64_t ReadValuesSDM::getRvrReactEnergy(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // voltage 1 == 0.01 V
@@ -131,7 +126,7 @@ unsigned _supla_int16_t ReadValuesSDM::getVoltage(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // current 1 == 0.001 A
@@ -150,12 +145,12 @@ unsigned _supla_int_t ReadValuesSDM::getCurrent(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // Frequency 1 == 0.01 Hz
 unsigned _supla_int16_t ReadValuesSDM::getFreq() {
-  return sdm.readVal(SDM_FREQUENCY);
+  return sdmRead(SDM_FREQUENCY);
 }
 
 // power 1 == 0.00001 W
@@ -174,7 +169,7 @@ _supla_int_t ReadValuesSDM::getPowerActive(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // power 1 == 0.00001 var
@@ -193,7 +188,7 @@ _supla_int_t ReadValuesSDM::getPowerReactive(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // power 1 == 0.00001 VA
@@ -212,7 +207,7 @@ _supla_int_t ReadValuesSDM::getPowerApparent(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // power 1 == 0.001
@@ -231,7 +226,7 @@ _supla_int_t ReadValuesSDM::getPowerFactor(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
 }
 
 // phase angle 1 == 0.1 degree
@@ -250,7 +245,27 @@ _supla_int_t ReadValuesSDM::getPhaseAngle(int phase) {
       break;
   }
 
-  return sdm.readVal(reg);
+  return sdmRead(reg);
+}
+
+float ReadValuesSDM::sdmRead(uint16_t reg) {
+  uint8_t retry_count = 3;
+  bool success = false;
+  float tmpval = NAN;
+
+  while (retry_count > 0 && !success) {
+    sdm.clearErrCode();
+    tmpval = sdm.readVal(reg);
+    --retry_count;
+    if (sdm.getErrCode() == SDM_ERR_NO_ERROR) {
+      success = true;
+    }
+  }
+
+  if (isnan(tmpval))
+    tmpval = 0.00;
+
+  return tmpval;
 }
 
 };  // namespace Sensor

@@ -36,6 +36,8 @@ void webPageI2CScanner() {
 
   Serial.println("Scanning...");
 
+  Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
+
   nDevices = 0;
   for (address = 1; address < 127; address++) {
     Wire.beginTransmission(address);

@@ -14,8 +14,10 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _element_h
-#define _element_h
+#ifndef SRC_SUPLA_ELEMENT_H_
+#define SRC_SUPLA_ELEMENT_H_
+
+#include <supla/protocol/supla_srpc.h>
 
 #include "channel.h"
 
@@ -28,22 +30,30 @@ class Element {
   static Element *begin();
   static Element *last();
   static Element *getElementByChannelNumber(int channelNumber);
+  static bool IsAnyUpdatePending();
   Element *next();
 
-  // method called during SuplaDevice initialization. I.e. load initial state,
-  // initialize pins etc.
-  virtual void onInit();
+  // First method called on element in SuplaDevice.begin()
+  // Called only if Config Storage class is configured
+  // Element should read its configration in this method
+  virtual void onLoadConfig();
 
+  // Second method called on element in SuplaDevice.begin()
   // method called during Config initialization (i.e. read from EEPROM, FRAM).
   // Called only if Storage class is configured
   virtual void onLoadState();
+
+  // Third method called on element in SuplaDevice.begin()
+  // method called during SuplaDevice initialization. I.e. load initial state,
+  // initialize pins etc.
+  virtual void onInit();
 
   // method called periodically during SuplaDevice iteration
   // Called only if Storage class is configured
   virtual void onSaveState();
 
   // method called each time when device successfully registers to server
-  virtual void onRegistered();
+  virtual void onRegistered(Supla::Protocol::SuplaSrpc *suplaSrpc = nullptr);
 
   // method called on each SuplaDevice iteration (before Network layer
   // iteration). When Device is connected, both iterateAlways() and
@@ -70,9 +80,11 @@ class Element {
   //  1 - success==true
   virtual int handleNewValueFromServer(TSD_SuplaChannelNewValue *newValue);
 
+  virtual void fillSuplaChannelNewValue(TSD_SuplaChannelNewValue *value);
+
   // Handles "get channel state" request from server
   // channelState is prefilled with network and device status informations
-  virtual void handleGetChannelState(TDSC_ChannelState &channelState);
+  virtual void handleGetChannelState(TDSC_ChannelState *channelState);
 
   virtual int handleCalcfgFromServer(TSD_DeviceCalCfgRequest *request);
   virtual void handleChannelConfig(TSD_ChannelConfig *result);
@@ -80,6 +92,8 @@ class Element {
   int getChannelNumber();
   virtual Channel *getChannel();
   virtual Channel *getSecondaryChannel();
+
+  virtual void generateKey(char *, const char *);
 
   Element &disableChannelState();
 
@@ -90,4 +104,4 @@ class Element {
 
 };  // namespace Supla
 
-#endif
+#endif  // SRC_SUPLA_ELEMENT_H_

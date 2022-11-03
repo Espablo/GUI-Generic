@@ -34,7 +34,7 @@ class DeepSleep : public Element {
 
   void iterateAlways() {
     if (millis() - lastReadTime > iterateTimeSec * 1000 &&
-        ConfigESP->configModeESP == NORMAL_MODE) {
+        ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
       Serial.println(F("ESP8266 to Sleep mode"));
       lastReadTime = millis();
       ESP.deepSleep(sleepTimeSec * 1000000);

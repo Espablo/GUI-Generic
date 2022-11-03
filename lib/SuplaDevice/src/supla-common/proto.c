@@ -17,9 +17,12 @@
  */
 
 #include "proto.h"
+
 #include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "log.h"
 
 #if defined(ESP8266) || defined(ESP32)
@@ -32,6 +35,7 @@
 
 #if !defined(ARDUINO)
 #include <user_interface.h>
+
 #include "espmissingincludes.h"
 #endif
 
@@ -109,6 +113,7 @@ unsigned char PROTO_ICACHE_FLASH sproto_buffer_append(
     void *spd_ptr, char **buffer, unsigned _supla_int_t *buffer_size,
     unsigned _supla_int_t *buffer_data_size, char *data,
     unsigned _supla_int_t data_size) {
+  (void)(spd_ptr);
   unsigned _supla_int_t size = *buffer_size;
 
   if (size < BUFFER_MIN_SIZE) {
@@ -216,6 +221,7 @@ unsigned _supla_int_t PROTO_ICACHE_FLASH sproto_pop_out_data(
 #endif /*SPROTO_WITHOUT_OUT_BUFFER*/
 
 char PROTO_ICACHE_FLASH sproto_out_dataexists(void *spd_ptr) {
+  (void)(spd_ptr);
 #ifdef SPROTO_WITHOUT_OUT_BUFFER
   return SUPLA_RESULT_FALSE;
 #else
@@ -232,7 +238,7 @@ char PROTO_ICACHE_FLASH sproto_in_dataexists(void *spd_ptr) {
 void PROTO_ICACHE_FLASH sproto_shrink_in_buffer(TSuplaProtoInBuffer *in,
                                                 unsigned _supla_int_t size) {
   unsigned _supla_int_t old_size = in->size;
-  _supla_int_t a, b;
+  unsigned _supla_int_t a, b;
 
   in->begin_tag = 0;
 
@@ -359,14 +365,14 @@ void PROTO_ICACHE_FLASH sproto_sdp_free(TSuplaDataPacket *sdp) { free(sdp); }
 
 char PROTO_ICACHE_FLASH sproto_set_data(TSuplaDataPacket *sdp, char *data,
                                         unsigned _supla_int_t data_size,
-                                        unsigned _supla_int_t call_type) {
+                                        unsigned _supla_int_t call_id) {
   if (data_size > SUPLA_MAX_DATA_SIZE || (data_size > 0 && data == 0))
     return SUPLA_RESULT_FALSE;
 
   if (data_size > 0) memcpy(sdp->data, data, data_size);
 
   sdp->data_size = data_size;
-  sdp->call_type = call_type;
+  sdp->call_id = call_id;
   return SUPLA_RESULT_TRUE;
 }
 
@@ -408,4 +414,42 @@ void PROTO_ICACHE_FLASH sproto_buffer_dump(void *spd_ptr, unsigned char in) {
 
   for (a = 0; a < size; a++)
     supla_log(LOG_DEBUG, "%c [%i]", buffer[a], buffer[a]);
+}
+
+void PROTO_ICACHE_FLASH sproto_set_null_terminated_string(
+    const char *src, char *dest, unsigned _supla_int_t *dest_size,
+    unsigned int max_size) {
+  unsigned _supla_int16_t _dest_size = 0;
+  sproto__set_null_terminated_string(src, dest, &_dest_size, max_size);
+  *dest_size = _dest_size;
+}
+
+void PROTO_ICACHE_FLASH sproto__set_null_terminated_string(
+    const char *src, char *dest, unsigned _supla_int16_t *dest_size,
+    unsigned int max_size) {
+  if (max_size == 0) {
+    return;
+  }
+
+  if (!dest || !dest_size) {
+    if (dest) {
+      dest[0] = 0;
+    }
+
+    if (dest_size) {
+      *dest_size = 0;
+    }
+    return;
+  }
+  if (src) {
+#if defined(ESP8266)
+    ets_snprintf(dest, max_size, "%s", src);
+#else
+    snprintf(dest, max_size, "%s", src);
+#endif
+    *dest_size = strnlen(dest, max_size - 1) + 1;
+  } else {
+    *dest_size = 1;
+    dest[0] = 0;
+  }
 }

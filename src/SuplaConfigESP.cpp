@@ -15,9 +15,10 @@
 */
 #include "SuplaConfigESP.h"
 #include "SuplaDeviceGUI.h"
+#include <HardwareSerial.h>
 
 SuplaConfigESP::SuplaConfigESP() {
-  configModeESP = NORMAL_MODE;
+  configModeESP = Supla::DEVICE_MODE_NORMAL;
 
   if (ConfigManager->isDeviceConfigured()) {
     if (strcmp(ConfigManager->get(KEY_SUPLA_GUID)->getValue(), "") == 0 || strcmp(ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue(), "") == 0) {
@@ -61,7 +62,7 @@ SuplaConfigESP::SuplaConfigESP() {
 
     ConfigManager->save();
 
-    configModeInit(WIFI_AP_STA);
+    configModeInit();
   }
 
   SuplaDevice.setStatusFuncImpl(&status_func);
@@ -128,16 +129,16 @@ void SuplaConfigESP::addConfigESP(int _pinNumberConfig, int _pinLedConfig) {
 void SuplaConfigESP::handleAction(int event, int action) {
   if (action == CONFIG_MODE_10_ON_PRESSES) {
     if (event == Supla::ON_CLICK_10) {
-      configModeInit(WIFI_AP);
+      configModeInit();
     }
   }
   if (action == CONFIG_MODE_5SEK_HOLD) {
     if (event == Supla::ON_HOLD) {
-      configModeInit(WIFI_AP);
+      configModeInit();
     }
   }
 
-  if (configModeESP == CONFIG_MODE) {
+  if (configModeESP == Supla::DEVICE_MODE_CONFIG) {
     if (event == Supla::ON_CLICK_1) {
       rebootESP();
     }
@@ -149,17 +150,13 @@ void SuplaConfigESP::rebootESP() {
   ESP.restart();
 }
 
-void SuplaConfigESP::configModeInit(WiFiMode_t m) {
-  configModeESP = CONFIG_MODE;
-  APConfigured = false;
+void SuplaConfigESP::configModeInit() {
+  configModeESP = Supla::DEVICE_MODE_CONFIG;
   ledBlinking(100);
+  SuplaDevice.enterConfigMode();
 
   Supla::GUI::enableConnectionSSL(false);
   Supla::GUI::setupConnection();
-  WiFi.mode(m);
-
-  Serial.print(F("Config Mode started: "));
-  Serial.println(m);
 }
 
 bool SuplaConfigESP::checkSSL() {
@@ -167,14 +164,7 @@ bool SuplaConfigESP::checkSSL() {
 }
 
 void SuplaConfigESP::iterateAlways() {
-  if (configModeESP == CONFIG_MODE) {
-    if (!APConfigured) {
-      APConfigured = WiFi.softAP(getConfigNameAP().c_str(), "");
-      Serial.print(F("AP started IP: "));
-      Serial.println(WiFi.softAPIP());
-      Supla::GUI::crateWebServer();
-    }
-
+  if (configModeESP == Supla::DEVICE_MODE_CONFIG) {
 #ifdef SUPLA_MDNS
     if (WiFi.status() == WL_CONNECTED) {
       if (!MDNSConfigured) {
@@ -315,6 +305,11 @@ void status_func(int status, const char *msg) {
     case STATUS_NETWORK_DISCONNECTED:
       ConfigESP->supla_status.msg = S_STATUS_NETWORK_DISCONNECTED;
       break;
+    case STATUS_CONFIG_MODE:
+      ConfigESP->configModeESP = Supla::DEVICE_MODE_CONFIG;
+      ConfigESP->ledBlinking(100);
+      // ConfigESP->supla_status.msg = S_STATUS_NETWORK_DISCONNECTED;
+      break;
     default:
       ConfigESP->supla_status.msg = msg;
       break;
@@ -322,36 +317,22 @@ void status_func(int status, const char *msg) {
   ConfigESP->supla_status.status = status;
 
   static int lock;
-  if (status == STATUS_REGISTERED_AND_READY && ConfigESP->configModeESP == NORMAL_MODE) {
+  if (status == STATUS_REGISTERED_AND_READY && ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
     ConfigESP->ledBlinkingStop();
     lock = 0;
   }
-  else if (status != STATUS_REGISTERED_AND_READY && lock == 0 && ConfigESP->configModeESP == NORMAL_MODE) {
+  else if (status != STATUS_REGISTERED_AND_READY && lock == 0 && ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
     ConfigESP->ledBlinking(500);
     lock = 1;
   }
 }
 
 int SuplaConfigESP::getGpio(int nr, int function) {
-  if (function == FUNCTION_RELAY && ConfigManager->get(KEY_VIRTUAL_RELAY)->getElement(nr).toInt()) {
-    return GPIO_VIRTUAL_RELAY;
-  }
-
-#ifdef ARDUINO_ARCH_ESP8266
-  if (function == FUNCTION_BUTTON && ConfigManager->get(KEY_ANALOG_BUTTON)->getElement(nr).toInt()) {
-    return A0;
-  }
-#endif
-
   for (uint8_t gpio = 0; gpio <= OFF_GPIO; gpio++) {
     uint8_t key = KEY_GPIO + gpio;
 
     if ((function == FUNCTION_CFG_BUTTON || function == FUNCTION_CFG_LED) && checkBusyCfg(gpio, function))
       return gpio;
-
-    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function && ConfigManager->get(key)->getElement(NR).toInt() == (nr + 1)) {
-      return gpio;
-    }
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
     if ((ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt() != FUNCTION_OFF ||
@@ -397,9 +378,109 @@ int SuplaConfigESP::getGpio(int nr, int function) {
       }
     }
 #endif
+
+    if (ConfigManager->get(key)->getElement(FUNCTION).toInt() == function && ConfigManager->get(key)->getElement(NR).toInt() == (nr + 1)) {
+      return gpio;
+    }
     delay(0);
   }
+
+  if (function == FUNCTION_RELAY && ConfigManager->get(KEY_VIRTUAL_RELAY)->getElement(nr).toInt()) {
+    return GPIO_VIRTUAL_RELAY;
+  }
+
+#ifdef ARDUINO_ARCH_ESP8266
+  if (function == FUNCTION_BUTTON && ConfigManager->get(KEY_ANALOG_BUTTON)->getElement(nr).toInt()) {
+    return A0;
+  }
+#endif
+
   return OFF_GPIO;
+}
+
+HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
+#ifdef ARDUINO_ARCH_ESP32
+
+#ifndef SOC_RX0
+#if CONFIG_IDF_TARGET_ESP32
+#define SOC_RX0 3
+#elif CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+#define SOC_RX0 44
+#elif CONFIG_IDF_TARGET_ESP32C3
+#define SOC_RX0 20
+#endif
+#endif
+
+#ifndef SOC_TX0
+#if CONFIG_IDF_TARGET_ESP32
+#define SOC_TX0 1
+#elif CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+#define SOC_TX0 43
+#elif CONFIG_IDF_TARGET_ESP32C3
+#define SOC_TX0 21
+#endif
+#endif
+
+#ifndef RX1
+#if CONFIG_IDF_TARGET_ESP32
+#define RX1 9
+#elif CONFIG_IDF_TARGET_ESP32S2
+#define RX1 18
+#elif CONFIG_IDF_TARGET_ESP32C3
+#define RX1 18
+#elif CONFIG_IDF_TARGET_ESP32S3
+#define RX1 15
+#endif
+#endif
+
+#ifndef TX1
+#if CONFIG_IDF_TARGET_ESP32
+#define TX1 10
+#elif CONFIG_IDF_TARGET_ESP32S2
+#define TX1 17
+#elif CONFIG_IDF_TARGET_ESP32C3
+#define TX1 19
+#elif CONFIG_IDF_TARGET_ESP32S3
+#define TX1 16
+#endif
+#endif
+
+#ifndef RX2
+#if CONFIG_IDF_TARGET_ESP32
+#define RX2 16
+#elif CONFIG_IDF_TARGET_ESP32S3
+#define RX2 19
+#endif
+#endif
+
+#ifndef TX2
+#if CONFIG_IDF_TARGET_ESP32
+#define TX2 17
+#elif CONFIG_IDF_TARGET_ESP32S3
+#define TX2 20
+#endif
+#endif
+
+  if (rxPin == RX1 || txPin == RX1) {
+    return Serial1;
+  }
+  else if (rxPin == RX2 || txPin == TX2) {
+    return Serial2;
+  }
+#else
+  // toggle between use of GPIO13/GPIO15 or GPIO3/GPIO(1/2) as RX and TX
+  if (rxPin == 13 || txPin == 15) {
+    Serial.swap();
+    return Serial;
+  }
+  else if (rxPin == 2 && txPin == -1) {
+    return Serial1;
+  }
+#endif
+
+  // ESP8266 rxPin == 3 || txPin == 1 || txPin == 2
+  // ESP32 rxPin == SOC_RX0 || txPin == SOC_TX0
+  return Serial;
 }
 
 uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {
@@ -798,7 +879,7 @@ void SuplaConfigESP::clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t functio
   if (function == FUNCTION_LIMIT_SWITCH) {
     setPullUp(gpio, true);
   }
-  
+
   if (function == FUNCTION_RELAY) {
     setLevel(gpio, true);
     setMemory(gpio, 0);

@@ -18,15 +18,43 @@ set(SUPLA_DEVICE_SRCS
   ../../../src/supla/io.cpp
   ../../../src/supla/local_action.cpp
   ../../../src/supla/log_wrapper.cpp
-  ../../../src/supla/status.cpp
   ../../../src/supla/time.cpp
   ../../../src/supla/timer.cpp
   ../../../src/supla/tools.cpp
   ../../../src/supla/uptime.cpp
+  ../../../src/supla/mutex.cpp
+  ../../../src/supla/auto_lock.cpp
+  ../../../src/supla/sha256.cpp
+  ../../../src/supla/rsa_verificator.cpp
 
   ../../../src/supla/storage/storage.cpp
+  ../../../src/supla/storage/config.cpp
 
   ../../../src/supla/network/network.cpp
+  ../../../src/supla/network/netif_wifi.cpp
+  ../../../src/supla/network/web_server.cpp
+  ../../../src/supla/network/web_sender.cpp
+  ../../../src/supla/network/html_generator.cpp
+  ../../../src/supla/network/html_element.cpp
+  ../../../src/supla/network/html/device_info.cpp
+  ../../../src/supla/network/html/wifi_parameters.cpp
+  ../../../src/supla/network/html/protocol_parameters.cpp
+  ../../../src/supla/network/html/status_led_parameters.cpp
+  ../../../src/supla/network/html/custom_sw_update.cpp
+  ../../../src/supla/network/html/sw_update_beta.cpp
+  ../../../src/supla/network/html/sw_update.cpp
+  ../../../src/supla/network/html/button_multiclick_parameters.cpp
+  ../../../src/supla/network/html/custom_parameter.cpp
+  ../../../src/supla/network/html/channel_correction.cpp
+  ../../../src/supla/network/html/hide_show_container.cpp
+  ../../../src/supla/network/html/div.cpp
+  ../../../src/supla/network/client.cpp
+  ../../../src/supla/network/ip_address.cpp
+
+  ../../../src/supla/protocol/protocol_layer.cpp
+  ../../../src/supla/protocol/supla_srpc.cpp
+  ../../../src/supla/protocol/mqtt.cpp
+  ../../../src/supla/protocol/mqtt_topic.cpp
 
   ../../../src/supla/clock/clock.cpp
 
@@ -61,6 +89,9 @@ set(SUPLA_DEVICE_SRCS
   ../../../src/supla/conditions/on_invalid.cpp
 
   ../../../src/supla/device/status_led.cpp
+  ../../../src/supla/device/last_state_logger.cpp
+  ../../../src/supla/device/sw_update.cpp
+  ../../../src/supla/device/factory_test.cpp
 # not all files from sensor folder are compiled here. Some still require
 # porting from ARDUINO
   ../../../src/supla/sensor/binary.cpp
@@ -73,23 +104,71 @@ set(SUPLA_DEVICE_SRCS
   ../../../src/supla/sensor/virtual_binary.cpp
   ../../../src/supla/sensor/distance.cpp
   ../../../src/supla/sensor/HC_SR04.cpp
+  ../../../src/supla/sensor/ntc10k.cpp
+  ../../../src/supla/pv/fronius.cpp
 )
 
+set(NETTLE_SRCS
+  ../../../src/nettle/bignum.c
+  ../../../src/nettle/gmp-glue.c
+  ../../../src/nettle/mini-gmp.c
+  ../../../src/nettle/pkcs1-rsa-sha256.c
+  ../../../src/nettle/pkcs1.c
+  ../../../src/nettle/rsa-sha256-verify.c
+  ../../../src/nettle/rsa-verify.c
+  ../../../src/nettle/rsa.c
+  ../../../src/nettle/sha256-compress.c
+  ../../../src/nettle/sha256.c
+  ../../../src/nettle/write-be32.c
+  )
+
+
 set(SUPLA_DEVICE_PORTING_SRCS
+  ../../porting/esp-idf/esp_platform.cpp
   ../../porting/esp-idf/esp_idf_wifi.cpp
   ../../porting/esp-idf/esp_idf_gpio.cpp
   ../../porting/esp-idf/spiffs_storage.cpp
+  ../../porting/esp-idf/nvs_config.cpp
+  ../../porting/esp-idf/esp_idf_web_server.cpp
+  ../../porting/esp-idf/esp_idf_mutex.cpp
+  ../../porting/esp-idf/esp_idf_ota.cpp
+  ../../porting/esp-idf/esp_idf_client.cpp
+  ../../porting/esp-idf/esp_mqtt.cpp
 )
 
 
 idf_component_register(SRCS
   ${SUPLA_COMMONM_SRCS}
   ${SUPLA_DEVICE_SRCS}
+  ${NETTLE_SRCS}
   ${SUPLA_DEVICE_PORTING_SRCS}
   INCLUDE_DIRS "../../../src/" "../../porting/esp-idf"
-  REQUIRES esp-tls nvs_flash spiffs
-  EMBED_TXTFILES supla_org_cert.pem
+  REQUIRES
+    esp-tls
+    nvs_flash
+    spiffs
+    esp_http_server
+    app_update
+    esp_http_client
+    json
+    esp_wifi
+    driver
+    mqtt
+    esp_timer
+  EMBED_TXTFILES supla_org_cert.pem supla_3rd_cert.pem
 )
 
 target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DEVICE)
 target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DEVICE_ESP32)
+if (CONFIG_SUPLA_DEBUG_BUILD)
+  target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DEBUG)
+  #add_definitions( -DSUPLA_DEBUG )
+  if (CONFIG_SUPLA_DISABLE_LOGS)
+    target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DISALBE_LOGS)
+    #add_definitions( -DSUPLA_DISABLE_LOGS )
+  endif()
+else()
+  target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DISALBE_LOGS)
+  #add_definitions( -DSUPLA_DISABLE_LOGS )
+endif()
+

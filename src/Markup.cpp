@@ -69,7 +69,7 @@ void addTextBox(String& html,
   html += F("<input name='");
   html += input_id;
   if (password) {
-    if (ConfigESP->configModeESP != NORMAL_MODE) {
+    if (ConfigESP->configModeESP != Supla::DEVICE_MODE_NORMAL) {
       html += F("' type='password");
     }
   }

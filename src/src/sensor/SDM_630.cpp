@@ -19,7 +19,11 @@
 namespace Supla {
 namespace Sensor {
 
-SDM630::SDM630(int8_t pinRX, int8_t pinTX) : sdm(pinRX, pinTX){};
+#if defined(ESP8266)
+SDM630::SDM630(int8_t pinRX, int8_t pinTX) : ReadValuesSDM(pinRX, pinTX, 9600){};
+#else
+SDM630::SDM630(HardwareSerial& serial, int8_t pinRX, int8_t pinTX) : ReadValuesSDM(serial, pinRX, pinTX, 9600){};
+#endif
 
 void SDM630::onInit() {
   readValuesFromDevice();
@@ -27,20 +31,20 @@ void SDM630::onInit() {
 }
 
 void SDM630::readValuesFromDevice() {
-  for (int i = 0; i < 3; i++) {
-    setFwdActEnergy(i, sdm.getFwdActEnergy(i) * 100000);
-    setRvrActEnergy(i, sdm.getRvrActEnergy(i) * 100000);
-    setFwdReactEnergy(i, sdm.getFwdReactEnergy(i) * 100000);
-    setRvrReactEnergy(i, sdm.getRvrReactEnergy(i) * 100000);
+  for (int i = 0; i < MAX_PHASES; i++) {
+    setFwdActEnergy(i, ReadValuesSDM::getFwdActEnergy(i) * 100000);
+    setRvrActEnergy(i, ReadValuesSDM::getRvrActEnergy(i) * 100000);
+    setFwdReactEnergy(i, ReadValuesSDM::getFwdReactEnergy(i) * 100000);
+    setRvrReactEnergy(i, ReadValuesSDM::getRvrReactEnergy(i) * 100000);
 
-    setVoltage(i, sdm.getVoltage(i) * 100);
-    setCurrent(i, sdm.getCurrent(i) * 1000);
-    setFreq(sdm.getFreq() * 100);
-    setPowerActive(i, sdm.getPowerActive(i) * 100000);
-    setPowerReactive(i, sdm.getPowerReactive(i) * 10000);
-    setPowerApparent(i, sdm.getPowerApparent(i) * 100000);
-    setPowerFactor(i, sdm.getPowerFactor(i) * 1000);
-    setPhaseAngle(i, sdm.getPhaseAngle(i) * 10);
+    setVoltage(i, ReadValuesSDM::getVoltage(i) * 100);
+    setCurrent(i, ReadValuesSDM::getCurrent(i) * 1000);
+    setFreq(ReadValuesSDM::getFreq() * 100);
+    setPowerActive(i, ReadValuesSDM::getPowerActive(i) * 100000);
+    setPowerReactive(i, ReadValuesSDM::getPowerReactive(i) * 10000);
+    setPowerApparent(i, ReadValuesSDM::getPowerApparent(i) * 100000);
+    setPowerFactor(i, ReadValuesSDM::getPowerFactor(i) * 1000);
+    setPhaseAngle(i, ReadValuesSDM::getPhaseAngle(i) * 10);
   }
 }
 

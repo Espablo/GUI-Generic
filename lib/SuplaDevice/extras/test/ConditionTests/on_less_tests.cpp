@@ -42,8 +42,8 @@ TEST(ConditionTests, handleActionTestsForDouble) {
   const int action2 = 16;
   const int action3 = 17;
 
-  EXPECT_CALL(ahMock, handleAction(Supla::ON_CHANGE, action1)).Times(4);
-  EXPECT_CALL(ahMock, handleAction(Supla::ON_CHANGE, action3)).Times(4);
+  EXPECT_CALL(ahMock, handleAction(Supla::ON_CHANGE, action1)).Times(6);
+  EXPECT_CALL(ahMock, handleAction(Supla::ON_CHANGE, action3)).Times(6);
 
   Supla::ChannelElement channelElement;
   auto channel = channelElement.getChannel();
@@ -83,7 +83,7 @@ TEST(ConditionTests, handleActionTestsForDouble) {
   cond->handleAction(Supla::ON_CHANGE, action1);
 
   channel->setNewValue(100.0);
-  
+
   // 100 is not less than 15.1, so nothing should happen
   cond->handleAction(Supla::ON_CHANGE, action2);
 
@@ -107,7 +107,7 @@ TEST(ConditionTests, handleActionTestsForDouble) {
   cond->handleAction(Supla::ON_CHANGE, action1);
 
   channel->setNewValue(100.0);
-  
+
   // 100 is not less than 15.1, so nothing should happen
   cond->handleAction(Supla::ON_CHANGE, action2);
 
@@ -122,7 +122,54 @@ TEST(ConditionTests, handleActionTestsForDouble) {
   // nothing should happen
   channel->setNewValue(25.0);
   cond->handleAction(Supla::ON_CHANGE, action1);
+  
+  // DIMMER use int type on channel value
+  channel->setType(SUPLA_CHANNELTYPE_DIMMER);
 
+  channel->setNewValue(-1, -1, -1, -1, 0);
+  // channel should be initialized to 0, so condition should be met
+  cond->handleAction(Supla::ON_CHANGE, action1);
+
+  channel->setNewValue(-1, -1, -1, -1, 100);
+
+  // 100 is not less than 15.1, so nothing should happen
+  cond->handleAction(Supla::ON_CHANGE, action2);
+
+  // Values below 0 should be ignored
+  channel->setNewValue(-1, -1, -1, -1, -1);
+  cond->handleAction(Supla::ON_CHANGE, action2);
+
+  channel->setNewValue(-1, -1, -1, -1, 15);
+  // 15 is less than 15.1
+  cond->handleAction(Supla::ON_CHANGE, action3);
+
+  // nothing should happen
+  channel->setNewValue(-1, -1, -1, -1, 25);
+  cond->handleAction(Supla::ON_CHANGE, action1);
+  
+  // RGB use int type on channel value
+  channel->setType(SUPLA_CHANNELTYPE_RGBLEDCONTROLLER);
+
+  channel->setNewValue(-1, -1, -1, 0, -1);
+  // channel should be initialized to 0, so condition should be met
+  cond->handleAction(Supla::ON_CHANGE, action1);
+
+  channel->setNewValue(-1, -1, -1, 100, -1);
+
+  // 100 is not less than 15, so nothing should happen
+  cond->handleAction(Supla::ON_CHANGE, action2);
+
+  // RGBW values -1 doesn't change actual value on channel, so it won't trigger action
+  channel->setNewValue(-1, -1, -1, -1, -1);
+  cond->handleAction(Supla::ON_CHANGE, action2);
+
+  channel->setNewValue(-1, -1, -1, 15, -1);
+  // 15 is less than 16
+  cond->handleAction(Supla::ON_CHANGE, action3);
+
+  // nothing should happen
+  channel->setNewValue(-1, -1, -1, 25, -1);
+  cond->handleAction(Supla::ON_CHANGE, action1);
 
   // WEIGHT sensor use int type on channel value
   channel->setType(SUPLA_CHANNELTYPE_WEIGHTSENSOR);
@@ -132,7 +179,7 @@ TEST(ConditionTests, handleActionTestsForDouble) {
   cond->handleAction(Supla::ON_CHANGE, action1);
 
   channel->setNewValue(100.0);
-  
+
   // 100 is not less than 15.1, so nothing should happen
   cond->handleAction(Supla::ON_CHANGE, action2);
 
@@ -144,6 +191,7 @@ TEST(ConditionTests, handleActionTestsForDouble) {
   // 15 is less than 15.1
   cond->handleAction(Supla::ON_CHANGE, action3);
 
+  delete cond;
 }
 
 TEST(ConditionTests, handleActionTestsForInt64) {
@@ -167,9 +215,9 @@ TEST(ConditionTests, handleActionTestsForInt64) {
   // channel should be initialized to 0, so condition should be met
   cond->handleAction(Supla::ON_CHANGE, action1);
 
-  unsigned _supla_int64_t newValue = 10000344422234; 
+  unsigned _supla_int64_t newValue = 10000344422234;
   channel->setNewValue(newValue);
-  
+
   // newValue is not less than 15.1, so nothing should happen
   cond->handleAction(Supla::ON_CHANGE, action2);
 
@@ -177,6 +225,8 @@ TEST(ConditionTests, handleActionTestsForInt64) {
   channel->setNewValue(newValue);
   // newValue is less than 15.1
   cond->handleAction(Supla::ON_CHANGE, action3);
+
+  delete cond;
 }
 
 TEST(ConditionTests, handleActionTestsForDouble2) {
@@ -201,10 +251,10 @@ TEST(ConditionTests, handleActionTestsForDouble2) {
   cond->handleAction(Supla::ON_CHANGE, action1);
 
   channel->setNewValue(15.1);
-  
+
   // 15.1 is not less than 15.1, so nothing should happen
   cond->handleAction(Supla::ON_CHANGE, action2);
-  
+
   // Values below -273 should be ignored
   channel->setNewValue(-275.0);
   cond->handleAction(Supla::ON_CHANGE, action2);
@@ -217,7 +267,7 @@ TEST(ConditionTests, handleActionTestsForDouble2) {
   channel->setType(SUPLA_CHANNELTYPE_DISTANCESENSOR);
 
   channel->setNewValue(100);
-  
+
   // 100 is not less than 15.1, so nothing should happen
   cond->handleAction(Supla::ON_CHANGE, action2);
 
@@ -232,6 +282,8 @@ TEST(ConditionTests, handleActionTestsForDouble2) {
   // nothing should happen
   channel->setNewValue(25);
   cond->handleAction(Supla::ON_CHANGE, action1);
+
+  delete cond;
 }
 
 TEST(ConditionTests, handleActionTestsForNotSupportedChannel) {
@@ -255,11 +307,13 @@ TEST(ConditionTests, handleActionTestsForNotSupportedChannel) {
   cond->handleAction(Supla::ON_CHANGE, action1);
 
   channel->setNewValue(15.1);
-  
+
   cond->handleAction(Supla::ON_CHANGE, action2);
 
   channel->setNewValue(15.01);
   cond->handleAction(Supla::ON_CHANGE, action3);
+
+  delete cond;
 }
 
 TEST(ConditionTests, handleActionTestsForFirstDouble) {
@@ -284,7 +338,7 @@ TEST(ConditionTests, handleActionTestsForFirstDouble) {
   cond->handleAction(Supla::ON_CHANGE, action1);
 
   channel->setNewValue(15.1, 10.5);
-  
+
   // nothing should happen
   cond->handleAction(Supla::ON_CHANGE, action2);
 
@@ -293,7 +347,7 @@ TEST(ConditionTests, handleActionTestsForFirstDouble) {
   cond->handleAction(Supla::ON_CHANGE, action2);
 
   channel->setNewValue(15.1, 100.5);
-  
+
   // nothing should happen
   cond->handleAction(Supla::ON_CHANGE, action2);
 
@@ -301,6 +355,8 @@ TEST(ConditionTests, handleActionTestsForFirstDouble) {
   // ahMock should be called
   channel->setNewValue(15.01, 25.1);
   cond->handleAction(Supla::ON_CHANGE, action3);
+
+  delete cond;
 }
 
 TEST(ConditionTests, handleActionTestsForSecondDouble) {
@@ -326,7 +382,7 @@ TEST(ConditionTests, handleActionTestsForSecondDouble) {
   cond->handleAction(Supla::ON_CHANGE, action1);
 
   channel->setNewValue(0.1, 15.1);
-  
+
   // nothing should happen
   cond->handleAction(Supla::ON_CHANGE, action2);
 
@@ -335,7 +391,7 @@ TEST(ConditionTests, handleActionTestsForSecondDouble) {
   cond->handleAction(Supla::ON_CHANGE, action2);
 
   channel->setNewValue(15.1, 100.5);
-  
+
   // nothing should happen
   cond->handleAction(Supla::ON_CHANGE, action2);
 
@@ -343,6 +399,8 @@ TEST(ConditionTests, handleActionTestsForSecondDouble) {
   // ahMock should be called
   channel->setNewValue(16.01, 5.1);
   cond->handleAction(Supla::ON_CHANGE, action3);
+
+  delete cond;
 }
 
 TEST(OnLessTests, OnLessConditionTests) {
@@ -363,6 +421,7 @@ TEST(OnLessTests, OnLessConditionTests) {
   EXPECT_FALSE(cond->checkConditionFor(50));
   EXPECT_TRUE(cond->checkConditionFor(5));
 
+  delete cond;
 }
 
 TEST(ConditionTests, handleActionTestsWithCustomGetter) {

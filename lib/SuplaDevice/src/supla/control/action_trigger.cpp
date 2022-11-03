@@ -5,24 +5,29 @@
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
+
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include <supla/log_wrapper.h>
+#include <supla/storage/storage.h>
+
 #include "action_trigger.h"
-#include <supla-common/log.h>
 
 Supla::Control::ActionTrigger::ActionTrigger() {
   channel.setType(SUPLA_CHANNELTYPE_ACTIONTRIGGER);
   channel.setDefault(SUPLA_CHANNELFNC_ACTIONTRIGGER);
 }
 
-Supla::Control::ActionTrigger::~ActionTrigger() {}
+Supla::Control::ActionTrigger::~ActionTrigger() {
+}
 
 void Supla::Control::ActionTrigger::attach(Supla::Control::Button *button) {
   attachedButton = button;
@@ -130,13 +135,55 @@ int Supla::Control::ActionTrigger::actionTriggerCapToButtonEvent(
   return 0;
 }
 
-
-void Supla::Control::ActionTrigger::onRegistered() {
+void Supla::Control::ActionTrigger::onRegistered(
+    Supla::Protocol::SuplaSrpc *suplaSrpc) {
+  Supla::Element::onRegistered(suplaSrpc);
   // cleanup actions to be send
-  while (channel.popAction());
+  while (channel.popAction()) {
+  }
 
   channel.requestChannelConfig();
+}
 
+void Supla::Control::ActionTrigger::parseActiveActionsFromServer() {
+  uint32_t actionsToDisable =
+    activeActionsFromServer & disablesLocalOperation;
+  if (attachedButton) {
+    bool makeSureThatOnClick1IsDisabled = false;
+
+    if (activeActionsFromServer) {
+      // disable on_press, on_release, on_change local actions and enable
+      // on_click_1
+      if (localHandlerForDisabledAt && localHandlerForEnabledAt) {
+        localHandlerForDisabledAt->disable();
+        localHandlerForEnabledAt->enable();
+      }
+    } else {
+      // enable on_press, on_release, on_change local actions and
+      // disable on_click_1
+      if (localHandlerForDisabledAt && localHandlerForEnabledAt) {
+        localHandlerForDisabledAt->enable();
+        localHandlerForEnabledAt->disable();
+        makeSureThatOnClick1IsDisabled = true;
+      }
+    }
+
+    for (int i = 0; i < 32; i++) {
+      uint32_t actionCap = (1 << i);
+      if (actionsToDisable & actionCap) {
+        int eventToDisable = actionTriggerCapToButtonEvent(actionCap);
+        attachedButton->disableOtherClients(this, eventToDisable);
+      } else if (disablesLocalOperation & actionCap) {
+        int eventToEnable = actionTriggerCapToButtonEvent(actionCap);
+        attachedButton->enableOtherClients(this, eventToEnable);
+        if (makeSureThatOnClick1IsDisabled &&
+            eventToEnable == Supla::ON_CLICK_1) {
+          makeSureThatOnClick1IsDisabled = false;
+          localHandlerForEnabledAt->disable();
+        }
+      }
+    }
+  }
 }
 
 void Supla::Control::ActionTrigger::handleChannelConfig(
@@ -146,45 +193,14 @@ void Supla::Control::ActionTrigger::handleChannelConfig(
     TSD_ChannelConfig_ActionTrigger *config =
       reinterpret_cast<TSD_ChannelConfig_ActionTrigger *>(result->Config);
     activeActionsFromServer = config->ActiveActions;
-    supla_log(LOG_DEBUG, "AT[%d] received config with active actions: %d",
-        channel.getChannelNumber(), activeActionsFromServer);
-    uint32_t actionsToDisable =
-      activeActionsFromServer & disablesLocalOperation;
-    if (attachedButton) {
-      bool makeSureThatOnClick1IsDisabled = false;
-
-      if (activeActionsFromServer) {
-        // disable on_press, on_release, on_change local actions and enable
-        // on_click_1
-        if (localHandlerForDisabledAt && localHandlerForEnabledAt) {
-          localHandlerForDisabledAt->enabled = false;
-          localHandlerForEnabledAt->enabled = true;
-        }
-      } else {
-        // enable on_press, on_release, on_change local actions and
-        // disable on_click_1
-        if (localHandlerForDisabledAt && localHandlerForEnabledAt) {
-          localHandlerForDisabledAt->enabled = true;
-          localHandlerForEnabledAt->enabled = false;
-          makeSureThatOnClick1IsDisabled = true;
-        }
-      }
-
-      for (int i = 0; i < 32; i++) {
-        uint32_t actionCap = (1 << i);
-        if (actionsToDisable & actionCap) {
-          int eventToDisable = actionTriggerCapToButtonEvent(actionCap);
-          attachedButton->disableOtherClients(this, eventToDisable);
-        } else if (disablesLocalOperation & actionCap) {
-          int eventToEnable = actionTriggerCapToButtonEvent(actionCap);
-          attachedButton->enableOtherClients(this, eventToEnable);
-          if (makeSureThatOnClick1IsDisabled &&
-              eventToEnable == Supla::ON_CLICK_1) {
-            makeSureThatOnClick1IsDisabled = false;
-            localHandlerForEnabledAt->enabled = false;
-          }
-        }
-      }
+    SUPLA_LOG_DEBUG(
+        "AT[%d] received config with active actions: 0x%X",
+        channel.getChannelNumber(),
+        activeActionsFromServer);
+    parseActiveActionsFromServer();
+    if (storageEnabled) {
+      // Schedule save in 2 s after state change
+      Supla::Storage::ScheduleSave(2000);
     }
   }
 }
@@ -212,18 +228,18 @@ void Supla::Control::ActionTrigger::setRelatedChannel(Channel &relatedChannel) {
 void Supla::Control::ActionTrigger::onInit() {
   // handle automatic switch from on_press, on_release, on_change
   // events to on_click_1 for local actions on relays, roller shutters, etc.
-  if (attachedButton &&
-      !attachedButton->isEventAlreadyUsed(Supla::ON_CLICK_1)) {
+  if (attachedButton) {
     if (attachedButton->isBistable() &&
         attachedButton->isEventAlreadyUsed(Supla::ON_CHANGE)) {
-        // for bistable button use on_change <-> on_click_1
-        localHandlerForDisabledAt = attachedButton->getHandlerForFirstClient(
-            Supla::ON_CHANGE);
+      // for bistable button use on_change <-> on_click_1
+      localHandlerForDisabledAt =
+          attachedButton->getHandlerForFirstClient(Supla::ON_CHANGE);
     }
     if (!attachedButton->isBistable()) {
       // for monostable button use on_press/on_release <-> on_click_1
-      bool onPress   = attachedButton->isEventAlreadyUsed(Supla::ON_PRESS);
+      bool onPress = attachedButton->isEventAlreadyUsed(Supla::ON_PRESS);
       bool onRelease = attachedButton->isEventAlreadyUsed(Supla::ON_RELEASE);
+
       if (onPress != onRelease) {
         localHandlerForDisabledAt = attachedButton->getHandlerForFirstClient(
             onPress ? Supla::ON_PRESS : Supla::ON_RELEASE);
@@ -231,11 +247,13 @@ void Supla::Control::ActionTrigger::onInit() {
     }
 
     if (localHandlerForDisabledAt) {
-        attachedButton->addAction(localHandlerForDisabledAt->action,
-            localHandlerForDisabledAt->client, Supla::ON_CLICK_1);
-        localHandlerForEnabledAt =
-          attachedButton->getHandlerForFirstClient(Supla::ON_CLICK_1);
-        localHandlerForEnabledAt->enabled = false;
+      attachedButton->addAction(localHandlerForDisabledAt->action,
+                                localHandlerForDisabledAt->client,
+                                Supla::ON_CLICK_1);
+      localHandlerForEnabledAt =
+          attachedButton->getHandlerForClient(
+              localHandlerForDisabledAt->client, Supla::ON_CLICK_1);
+      localHandlerForEnabledAt->disable();
     }
   }
 
@@ -263,18 +281,33 @@ void Supla::Control::ActionTrigger::onInit() {
       disablesLocalOperation |= SUPLA_ACTION_CAP_TOGGLE_x5;
     }
 
-    attachedButton->addAction(Supla::SEND_AT_TURN_ON, this, Supla::ON_PRESS);
-    attachedButton->addAction(Supla::SEND_AT_TURN_OFF, this, Supla::ON_RELEASE);
-    attachedButton->addAction(
-        Supla::SEND_AT_TOGGLE_x1, this, Supla::ON_CLICK_1);
-    attachedButton->addAction(
-        Supla::SEND_AT_TOGGLE_x2, this, Supla::ON_CLICK_2);
-    attachedButton->addAction(
-        Supla::SEND_AT_TOGGLE_x3, this, Supla::ON_CLICK_3);
-    attachedButton->addAction(
-        Supla::SEND_AT_TOGGLE_x4, this, Supla::ON_CLICK_4);
-    attachedButton->addAction(
-        Supla::SEND_AT_TOGGLE_x5, this, Supla::ON_CLICK_5);
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_TURN_ON)) {
+      attachedButton->addAction(Supla::SEND_AT_TURN_ON, this, Supla::ON_PRESS);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_TURN_OFF)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_TURN_OFF, this, Supla::ON_RELEASE);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_TOGGLE_x1)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_TOGGLE_x1, this, Supla::ON_CLICK_1);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_TOGGLE_x2)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_TOGGLE_x2, this, Supla::ON_CLICK_2);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_TOGGLE_x3)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_TOGGLE_x3, this, Supla::ON_CLICK_3);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_TOGGLE_x4)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_TOGGLE_x4, this, Supla::ON_CLICK_4);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_TOGGLE_x5)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_TOGGLE_x5, this, Supla::ON_CLICK_5);
+    }
   }
 
   // Configure default actions for monostable button
@@ -298,18 +331,60 @@ void Supla::Control::ActionTrigger::onInit() {
       disablesLocalOperation |= SUPLA_ACTION_CAP_SHORT_PRESS_x5;
     }
 
-    attachedButton->addAction(Supla::SEND_AT_HOLD, this, Supla::ON_HOLD);
-    attachedButton->addAction(
-        Supla::SEND_AT_SHORT_PRESS_x1, this, Supla::ON_CLICK_1);
-    attachedButton->addAction(
-        Supla::SEND_AT_SHORT_PRESS_x2, this, Supla::ON_CLICK_2);
-    attachedButton->addAction(
-        Supla::SEND_AT_SHORT_PRESS_x3, this, Supla::ON_CLICK_3);
-    attachedButton->addAction(
-        Supla::SEND_AT_SHORT_PRESS_x4, this, Supla::ON_CLICK_4);
-    attachedButton->addAction(
-        Supla::SEND_AT_SHORT_PRESS_x5, this, Supla::ON_CLICK_5);
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_HOLD)) {
+      attachedButton->addAction(Supla::SEND_AT_HOLD, this, Supla::ON_HOLD);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_SHORT_PRESS_x1)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_SHORT_PRESS_x1, this, Supla::ON_CLICK_1);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_SHORT_PRESS_x2)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_SHORT_PRESS_x2, this, Supla::ON_CLICK_2);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_SHORT_PRESS_x3)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_SHORT_PRESS_x3, this, Supla::ON_CLICK_3);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_SHORT_PRESS_x4)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_SHORT_PRESS_x4, this, Supla::ON_CLICK_4);
+    }
+    if (!(disabledCapabilities & SUPLA_ACTION_CAP_SHORT_PRESS_x5)) {
+      attachedButton->addAction(
+          Supla::SEND_AT_SHORT_PRESS_x5, this, Supla::ON_CLICK_5);
+    }
   }
 
   channel.setDisablesLocalOperation(disablesLocalOperation);
+  parseActiveActionsFromServer();
+}
+
+void Supla::Control::ActionTrigger::disableATCapability(uint32_t capToDisable) {
+  disabledCapabilities |= capToDisable;
+}
+
+void Supla::Control::ActionTrigger::onSaveState() {
+  if (storageEnabled) {
+    Supla::Storage::WriteState(
+        reinterpret_cast<unsigned char *>(&activeActionsFromServer),
+                             sizeof(activeActionsFromServer));
+  }
+}
+
+void Supla::Control::ActionTrigger::onLoadState() {
+  if (storageEnabled) {
+    Supla::Storage::ReadState((unsigned char *)&activeActionsFromServer,
+        sizeof(activeActionsFromServer));
+    if (activeActionsFromServer) {
+      SUPLA_LOG_INFO(
+          "AT[%d]: restored activeActionsFromServer: 0x%X",
+          channel.getChannelNumber(),
+          activeActionsFromServer);
+    }
+  }
+}
+
+void Supla::Control::ActionTrigger::enableStateStorage() {
+  storageEnabled = true;
 }

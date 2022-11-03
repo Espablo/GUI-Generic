@@ -20,14 +20,23 @@
 #include <Arduino.h>
 #include <SDM.h>
 #include <supla/element.h>
+
+#if defined(ESP8266)
 #include <SoftwareSerial.h>
+#endif
 
 namespace Supla {
 namespace Sensor {
 
-class ReadValuesSDM {
+class ReadValuesSDM : public Element {
  public:
-  ReadValuesSDM(int8_t pinRX = SDM_RX_PIN, int8_t pinTX = SDM_TX_PIN);
+#if defined(ESP8266)
+  ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud);
+#else
+  ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud);
+#endif
+
+  void onInit() override;
 
   // energy 1 == 0.00001 kWh
   unsigned _supla_int64_t getFwdActEnergy(int phase = 0);
@@ -65,9 +74,14 @@ class ReadValuesSDM {
   // phase angle 1 == 0.1 degree
   _supla_int_t getPhaseAngle(int phase = 0);
 
+  float sdmRead(uint16_t reg);
+
+  SDM sdm;  // config SDM
+
  protected:
+#if defined(ESP8266)
   SoftwareSerial swSerSDM;  // config SoftwareSerial
-  SDM sdm;                  // config SDM
+#endif
 };
 
 };  // namespace Sensor

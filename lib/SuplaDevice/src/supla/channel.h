@@ -14,8 +14,8 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _channel_h
-#define _channel_h
+#ifndef SRC_SUPLA_CHANNEL_H_
+#define SRC_SUPLA_CHANNEL_H_
 
 #include <stdint.h>
 
@@ -33,7 +33,7 @@ class Channel : public LocalAction {
   void setNewValue(double temp, double humi);
   void setNewValue(_supla_int_t value);
   void setNewValue(bool value);
-  void setNewValue(TElectricityMeter_ExtendedValue_V2 &emValue);
+  void setNewValue(const TElectricityMeter_ExtendedValue_V2 &emValue);
   void setNewValue(uint8_t red,
                    uint8_t green,
                    uint8_t blue,
@@ -62,6 +62,7 @@ class Channel : public LocalAction {
 
   void setType(_supla_int_t type);
   void setDefault(_supla_int_t value);
+  int32_t getDefaultFunction();
   void setFlag(_supla_int_t flag);
   void unsetFlag(_supla_int_t flag);
   void setFuncList(_supla_int_t functions);
@@ -74,10 +75,11 @@ class Channel : public LocalAction {
   virtual void sendUpdate(void *srpc);
   virtual TSuplaChannelExtendedValue *getExtValue();
   void setCorrection(double correction, bool forSecondaryValue = false);
+  bool isSleepingEnabled();
 
   void requestChannelConfig();
 
-  static unsigned long lastCommunicationTimeMs;
+  static uint64_t lastCommunicationTimeMs;
   static TDS_SuplaRegisterDevice_E reg_dev;
 
  protected:
@@ -91,4 +93,4 @@ class Channel : public LocalAction {
 
 };  // namespace Supla
 
-#endif
+#endif  // SRC_SUPLA_CHANNEL_H_

@@ -2,7 +2,7 @@
 //    FILE: PCF8574.cpp
 //  AUTHOR: Rob Tillaart
 //    DATE: 02-febr-2013
-// VERSION: 0.3.4
+// VERSION: 0.3.6
 // PURPOSE: Arduino library for PCF8574 - 8 channel I2C IO expander
 //     URL: https://github.com/RobTillaart/PCF8574
 //          http://forum.arduino.cc/index.php?topic=184800
@@ -27,7 +27,7 @@ PCF8574::PCF8574(const uint8_t deviceAddress, TwoWire *wire)
 #if defined (ESP8266) || defined(ESP32)
 bool PCF8574::begin(int dataPin, int clockPin, uint8_t value)
 {
-  _wire      = &Wire;
+  _wire = &Wire;
   if ((dataPin < 255) && (clockPin < 255))
   {
     _wire->begin(dataPin, clockPin);
@@ -70,17 +70,17 @@ uint8_t PCF8574::getAddress()
 }
 
 
-// removed _wire->beginTransmission(_address);
-// with    @100 KHz -> 265 micros()
-// without @100 KHz -> 132 micros()
-// without @400 KHz -> 52 micros()
-// TODO    @800 KHz -> ??
+//  removed _wire->beginTransmission(_address);
+//  with    @100 KHz -> 265 micros()
+//  without @100 KHz -> 132 micros()
+//  without @400 KHz -> 52 micros()
+//  TODO    @800 KHz -> ??
 uint8_t PCF8574::read8()
 {
   if (_wire->requestFrom(_address, (uint8_t)1) != 1)
   {
     _error = PCF8574_I2C_ERROR;
-    return _dataIn; // last value
+    return _dataIn;  //  last value
   }
   _dataIn = _wire->read();
   return _dataIn;
@@ -148,8 +148,8 @@ void PCF8574::toggleMask(const uint8_t mask)
 void PCF8574::shiftRight(const uint8_t n)
 {
   if ((n == 0) || (_dataOut == 0)) return;
-  if (n > 7)         _dataOut = 0;     // shift 8++ clears all, valid...
-  if (_dataOut != 0) _dataOut >>= n;   // only shift if there are bits set
+  if (n > 7)         _dataOut = 0;     //  shift 8++ clears all, valid...
+  if (_dataOut != 0) _dataOut >>= n;   //  only shift if there are bits set
   PCF8574::write8(_dataOut);
 }
 
@@ -157,8 +157,8 @@ void PCF8574::shiftRight(const uint8_t n)
 void PCF8574::shiftLeft(const uint8_t n)
 {
   if ((n == 0) || (_dataOut == 0)) return;
-  if (n > 7)         _dataOut = 0;    // shift 8++ clears all, valid...
-  if (_dataOut != 0) _dataOut <<= n;  // only shift if there are bits set
+  if (n > 7)         _dataOut = 0;    //  shift 8++ clears all, valid...
+  if (_dataOut != 0) _dataOut <<= n;  //  only shift if there are bits set
   PCF8574::write8(_dataOut);
 }
 
@@ -166,7 +166,7 @@ void PCF8574::shiftLeft(const uint8_t n)
 int PCF8574::lastError()
 {
   int e = _error;
-  _error = PCF8574_OK;  // reset error after read, is this wise?
+  _error = PCF8574_OK;  //  reset error after read, is this wise?
   return e;
 }
 
@@ -186,7 +186,7 @@ void PCF8574::rotateLeft(const uint8_t n)
 }
 
 
-void PCF8574::reverse() // quite fast: 14 shifts, 3 or, 3 assignment.
+void PCF8574::reverse()  //  quite fast: 14 shifts, 3 or, 3 assignment.
 {
   uint8_t x = _dataOut;
   x = (((x & 0xAA) >> 1) | ((x & 0x55) << 1));
@@ -196,18 +196,18 @@ void PCF8574::reverse() // quite fast: 14 shifts, 3 or, 3 assignment.
 }
 
 
-//added 0.1.07/08 Septillion
+//  added 0.1.07/08 Septillion
 uint8_t PCF8574::readButton8(const uint8_t mask)
 {
   uint8_t temp = _dataOut;
-  PCF8574::write8(mask | _dataOut);  // read only selected lines
+  PCF8574::write8(mask | _dataOut);  //  read only selected lines
   PCF8574::read8();
-  PCF8574::write8(temp);             // restore
+  PCF8574::write8(temp);             //  restore
   return _dataIn;
 }
 
 
-//added 0.1.07 Septillion
+//  added 0.1.07 Septillion
 uint8_t PCF8574::readButton(const uint8_t pin)
 {
   if (pin > 7)
@@ -222,6 +222,23 @@ uint8_t PCF8574::readButton(const uint8_t pin)
   PCF8574::write8(temp);
   return value;
 }
+
+
+void PCF8574::select(const uint8_t pin)
+{
+  uint8_t n = 0x00;
+  if (pin < 8) n = 1 << pin;
+  write8(n);
+};
+
+
+void PCF8574::selectN(const uint8_t pin) 
+{
+  uint8_t n = 0xFF;
+  if (pin < 8) n = (2 << pin) - 1;
+  write8(n);
+};
+
 
 
 // -- END OF FILE --

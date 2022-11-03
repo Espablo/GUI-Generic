@@ -56,16 +56,12 @@ void HLW_8012::readValuesFromDevice() {
       auto channel = element->getChannel();
 
       if (channel->getChannelType() == SUPLA_CHANNELTYPE_RELAY) {
-        currentChanelRelay = true;
-        if (channel->getValueBool()) {
-          energy = _energy + (sensor->getEnergy() /
-                              36);  // current energy value = value at start
-        }
+        if (channel->getValueBool()) currentChanelRelay = true;
       }
     }
   }
 
-  if (!currentChanelRelay) {
+  if (currentChanelRelay) {
     energy = _energy + (sensor->getEnergy() /
                         36);  // current energy value = value at start
   }

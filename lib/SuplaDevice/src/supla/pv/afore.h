@@ -5,26 +5,23 @@
  modify it under the terms of the GNU General Public License
  as published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
+
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef __afore_h
-#define __afore_h
+#ifndef SRC_SUPLA_PV_AFORE_H_
+#define SRC_SUPLA_PV_AFORE_H_
 
 #include <IPAddress.h>
 #include <supla/sensor/one_phase_electricity_meter.h>
-
-#if defined(ARDUINO_ARCH_AVR)
-#include <Ethernet.h>
-#else
-#include <WiFiClient.h>
-#endif
+#include <supla/network/client.h>
 
 #define LOGIN_AND_PASSOWORD_MAX_LENGTH 100
 
@@ -38,11 +35,7 @@ class Afore : public Supla::Sensor::OnePhaseElectricityMeter {
   bool iterateConnected(void *srpc);
 
  protected:
-#if defined(ARDUINO_ARCH_AVR)
-  EthernetClient pvClient;
-#else
-  WiFiClient pvClient;
-#endif
+  ::Supla::Client *client = nullptr;
   IPAddress ip;
   int port;
   char loginAndPassword[LOGIN_AND_PASSOWORD_MAX_LENGTH];
@@ -55,9 +48,9 @@ class Afore : public Supla::Sensor::OnePhaseElectricityMeter {
   bool varFound;
   bool dataIsReady;
   bool dataFetchInProgress;
-  unsigned long connectionTimeoutMs;
+  uint64_t connectionTimeoutMs;
 };
 };  // namespace PV
 };  // namespace Supla
 
-#endif
+#endif  // SRC_SUPLA_PV_AFORE_H_

@@ -14,9 +14,12 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include <supla/log_wrapper.h>
+#include <supla/storage/config.h>
+
+#include "supla/network/network.h"
 #include "time.h"
 #include "element.h"
-#include <supla-common/log.h>
 
 namespace Supla {
 Element *Element::firstPtr = nullptr;
@@ -64,23 +67,50 @@ Element *Element::getElementByChannelNumber(int channelNumber) {
   return element;
 }
 
+bool Element::IsAnyUpdatePending() {
+  Element *element = begin();
+  while (element != nullptr) {
+    auto ch = element->getChannel();
+    if (ch && ch->isUpdateReady()) {
+      return true;
+    }
+    element = element->next();
+  }
+  return false;
+}
+
 Element *Element::next() {
   return nextPtr;
 }
 
-void Element::onInit(){};
+void Element::onInit() {}
 
-void Element::onLoadState(){};
+void Element::onLoadConfig() {}
 
-void Element::onSaveState(){};
+void Element::onLoadState() {}
 
-void Element::onRegistered(){};
+void Element::onSaveState() {}
 
-void Element::iterateAlways(){};
+void Element::onRegistered(Supla::Protocol::SuplaSrpc *suplaSrpc) {
+  if (suplaSrpc == nullptr) {
+    return;
+  }
+  auto ch = getChannel();
+
+  if (ch != nullptr && ch->isSleepingEnabled()) {
+      suplaSrpc->sendChannelStateResult(0, ch->getChannelNumber());
+  }
+  ch = getSecondaryChannel();
+  if (ch != nullptr && ch->isSleepingEnabled()) {
+      suplaSrpc->sendChannelStateResult(0, ch->getChannelNumber());
+  }
+}
+
+void Element::iterateAlways() {}
 
 bool Element::iterateConnected(void *srpc) {
   bool response = true;
-  unsigned long timestamp = millis();
+  uint64_t timestamp = millis();
   Channel *secondaryChannel = getSecondaryChannel();
   if (secondaryChannel && secondaryChannel->isUpdateReady() &&
       timestamp - secondaryChannel->lastCommunicationTimeMs > 100) {
@@ -99,13 +129,17 @@ bool Element::iterateConnected(void *srpc) {
   return response;
 }
 
-void Element::onTimer(){};
+void Element::onTimer() {}
 
-void Element::onFastTimer(){};
+void Element::onFastTimer() {}
 
 int Element::handleNewValueFromServer(TSD_SuplaChannelNewValue *newValue) {
   (void)(newValue);
   return -1;
+}
+
+void Element::fillSuplaChannelNewValue(TSD_SuplaChannelNewValue *value) {
+  (void)(value);
 }
 
 int Element::getChannelNumber() {
@@ -125,7 +159,7 @@ Channel *Element::getSecondaryChannel() {
   return nullptr;
 }
 
-void Element::handleGetChannelState(TDSC_ChannelState &channelState) {
+void Element::handleGetChannelState(TDSC_ChannelState *channelState) {
   (void)(channelState);
   return;
 }
@@ -144,8 +178,12 @@ Element & Element::disableChannelState() {
 
 void Element::handleChannelConfig(TSD_ChannelConfig *result) {
   (void)(result);
-  supla_log(LOG_DEBUG,
-      "Channel[%d]: received channel config reply, but handling is missing");
+  SUPLA_LOG_DEBUG(
+      "Element: received channel config reply, but handling is missing");
+}
+
+void Element::generateKey(char *output, const char *key) {
+  Supla::Config::generateKey(output, getChannelNumber(), key);
 }
 
 };  // namespace Supla

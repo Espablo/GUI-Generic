@@ -19,6 +19,7 @@
 
 #ifdef ARDUINO_ARCH_ESP8266
 #include "FS.h"
+#include <LittleFS.h>
 #elif ARDUINO_ARCH_ESP32
 #include "SPIFFS.h"
 #include <os.h>

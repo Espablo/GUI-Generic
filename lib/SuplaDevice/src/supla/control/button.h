@@ -14,36 +14,43 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _button_h
-#define _button_h
+#ifndef SRC_SUPLA_CONTROL_BUTTON_H_
+#define SRC_SUPLA_CONTROL_BUTTON_H_
 
 #include <stdint.h>
 #include "simple_button.h"
+
+class SuplaDeviceClass;
 
 namespace Supla {
 namespace Control {
 
 class Button : public SimpleButton {
  public:
-  Button(int pin, bool pullUp = false, bool invertLogic = false);
+  explicit Button(int pin, bool pullUp = false, bool invertLogic = false);
 
-  void onTimer();
+  void onTimer() override;
+  void onLoadConfig() override;
   void setHoldTime(unsigned int timeMs);
   void repeatOnHoldEvery(unsigned int timeMs);
   void setMulticlickTime(unsigned int timeMs, bool bistableButton = false);
   bool isBistable() const;
 
+  virtual void configureAsConfigButton(SuplaDeviceClass *sdc);
+  bool disableActionsInConfigMode() override;
+
  protected:
   unsigned int holdTimeMs;
   unsigned int repeatOnHoldMs;
   unsigned int multiclickTimeMs;
-  unsigned long lastStateChangeMs;
+  uint64_t lastStateChangeMs;
   uint8_t clickCounter;
   unsigned int holdSend;
   bool bistable;
+  bool configButton = false;
 };
 
 };  // namespace Control
 };  // namespace Supla
 
-#endif
+#endif  // SRC_SUPLA_CONTROL_BUTTON_H_
