@@ -1,5 +1,6 @@
 #include "SuplaGuiWiFi.h"
 #include "../../SuplaDeviceGUI.h"
+#include <supla/tools.h>
 
 namespace Supla {
 
@@ -85,7 +86,14 @@ void GUIESPWifi::setup() {
     else {
       WiFi.mode(WIFI_MODE_AP);
     }
-    WiFi.softAP(hostname, nullptr, 6);
+
+    uint8_t mac[6] = {};
+    char macStr[12 + 6] = {};
+    if (Supla::Network::GetMacAddr(mac)) {
+      generateHexString(mac, macStr, 6);
+    }
+
+    WiFi.softAP(String("SUPLA-GUI-Generic-") + macStr, "", 6);
 
     Supla::GUI::crateWebServer();
   }
