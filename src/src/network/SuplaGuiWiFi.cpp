@@ -92,8 +92,12 @@ void GUIESPWifi::setup() {
     if (Supla::Network::GetMacAddr(mac)) {
       generateHexString(mac, macStr, 6);
     }
+    
+    String cstr = "SUPLA-GUI-Generic-";
+    cstr.reserve(32);
+    cstr += macStr;
 
-    WiFi.softAP(String("SUPLA-GUI-Generic-") + macStr, "", 6);
+    WiFi.softAP(cstr.c_str(), "", 6);
 
     Supla::GUI::crateWebServer();
   }
