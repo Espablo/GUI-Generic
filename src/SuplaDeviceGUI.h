@@ -183,7 +183,7 @@
 #include "src/sensor/PMSx003.h"
 
 #ifdef SUPLA_WT32_ETH01_LAN8720
-#include <supla/network/wt32_eth01.h>
+#include "src/network/SuplaGuiWt32_eth01.h"
 #endif
 
 #ifdef SUPLA_ADE7953

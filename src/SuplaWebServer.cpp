@@ -24,7 +24,7 @@ SuplaWebServer::SuplaWebServer() {
 }
 
 void SuplaWebServer::begin() {
-  if (isRunningWebServer || !Supla::Network::IsReady()) {
+  if (isRunningWebServer) {
     return;
   }
 
@@ -51,9 +51,6 @@ void SuplaWebServer::begin() {
 void SuplaWebServer::iterateAlways() {
   if (isRunningWebServer) {
     httpServer->handleClient();
-  }
-  else {
-    this->begin();
   }
 }
 

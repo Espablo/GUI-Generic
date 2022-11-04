@@ -151,14 +151,14 @@ void SuplaConfigESP::rebootESP() {
 }
 
 void SuplaConfigESP::configModeInit() {
-#ifndef SUPLA_WT32_ETH01_LAN8720
   configModeESP = Supla::DEVICE_MODE_CONFIG;
   ledBlinking(100);
+
   SuplaDevice.enterConfigMode();
 
   Supla::GUI::enableConnectionSSL(false);
   Supla::GUI::setupConnection();
-#endif
+
 }
 
 bool SuplaConfigESP::checkSSL() {

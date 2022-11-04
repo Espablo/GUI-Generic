@@ -49,14 +49,12 @@ void begin() {
   if (getCountChannels() == 0)
     ConfigESP->configModeInit();
 
-  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
-    crateWebServer();
 }
 
 void setupConnection() {
 #ifdef SUPLA_WT32_ETH01_LAN8720
   if (eth == nullptr) {
-    eth = new Supla::WT32_ETH01(1);  // uint_t ETH_ADDR = I²C-address of Ethernet PHY (0 or 1)
+    eth = new Supla::GUI_WT32_ETH01(1);  // uint_t ETH_ADDR = I²C-address of Ethernet PHY (0 or 1)
   }
 #else
   if (wifi) {
