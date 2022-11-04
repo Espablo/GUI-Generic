@@ -6,9 +6,12 @@
 #include <WiFiUdp.h>
 #include <flash_hal.h>
 #include <FS.h>
+#include <ESP8266httpUpdate.h>
 #include "StreamString.h"
 
 #include "SuplaHTTPUpdateServer.h"
+#include <WiFiClientSecure.h>
+
 #include "SuplaDeviceGUI.h"
 
 static const char serverIndex[] PROGMEM =
@@ -129,7 +132,58 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
             twoStep.replace("{o}", S_ONLY_2_STEP_OTA);
             _server->send(200, F("text/html"), twoStep.c_str());
 
-            _setUpdaterError();
+            const char* host = "raw.githubusercontent.com";
+            const int httpsPort = 443;
+            const char* url = "krycha88/GUI-Generic/master/tools/GUI-GenericUploader.bin";
+
+            // https://raw.githubusercontent.com/krycha88/GUI-Generic/master/tools/GUI-GenericUploader.bin
+
+            WiFiClientSecure client;
+            client.setInsecure();
+            client.probeMaxFragmentLength(host, httpsPort, 1024);
+            client.setBufferSizes(1024, 1024);
+            client.setTimeout(10000);
+
+            Serial.print("connecting to ");
+            Serial.println(host);
+
+            if (!client.connect(host, httpsPort)) {
+              Serial.println("connection failed");
+              return;
+            }
+
+            Serial.print("Starting OTA from: ");
+            Serial.println(url);
+
+            ESPhttpUpdate.rebootOnUpdate(false);
+            ESPhttpUpdate.closeConnectionsOnUpdate(false);
+            ESPhttpUpdate.
+            ESPhttpUpdate.setLedPin(2, LOW);
+            auto ret = ESPhttpUpdate.update(client, host, httpsPort, url);
+
+            switch (ret) {
+              case HTTP_UPDATE_FAILED:
+                Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                break;
+
+              case HTTP_UPDATE_NO_UPDATES:
+                Serial.println("HTTP_UPDATE_NO_UPDATES");
+                break;
+
+              case HTTP_UPDATE_OK:
+                Serial.println("HTTP_UPDATE_OK");
+
+                String succes = FPSTR(successResponse);
+                succes.replace("{m}", S_UPDATE_SUCCESS_REBOOTING);
+                _server->client().setNoDelay(true);
+                _server->send(200, F("text/html"), succes.c_str());
+                delay(2000);
+                _server->client().stop();
+                ESP.restart();
+                break;
+            }
+
+            //_setUpdaterError();
           }
         }
         else if (_authenticated && upload.status == UPLOAD_FILE_END && !_updaterError.length()) {
