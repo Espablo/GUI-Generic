@@ -48,7 +48,6 @@ void begin() {
 
   if (getCountChannels() == 0)
     ConfigESP->configModeInit();
-
 }
 
 void setupConnection() {
@@ -100,6 +99,8 @@ void enableConnectionSSL(bool value) {
 void crateWebServer() {
   if (WebServer == NULL) {
     WebServer = new SuplaWebServer();
+  }
+  else {
     WebServer->begin();
   }
 }
