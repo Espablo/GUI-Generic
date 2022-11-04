@@ -157,7 +157,6 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
 
             ESPhttpUpdate.rebootOnUpdate(false);
             ESPhttpUpdate.closeConnectionsOnUpdate(false);
-            ESPhttpUpdate.
             ESPhttpUpdate.setLedPin(2, LOW);
             auto ret = ESPhttpUpdate.update(client, host, httpsPort, url);
 
