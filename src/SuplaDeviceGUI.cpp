@@ -77,10 +77,10 @@ void enableConnectionSSL(bool value) {
 
   if (eth) {
     if (ConfigESP->configModeESP == Supla::DEVICE_MODE_CONFIG) {
-      eth->enableSSL(false);
+      eth->setSSLEnabled(false);
     }
     else {
-      eth->enableSSL(value);
+      eth->setSSLEnabled(value);
     }
   }
 
