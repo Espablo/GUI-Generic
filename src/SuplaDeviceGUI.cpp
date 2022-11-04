@@ -48,6 +48,9 @@ void begin() {
 
   if (getCountChannels() == 0)
     ConfigESP->configModeInit();
+
+  if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
+    crateWebServer();
 }
 
 void setupConnection() {

@@ -20,10 +20,11 @@
 String webContentBuffer;
 
 SuplaWebServer::SuplaWebServer() {
+  isRunningWebServer = false;
 }
 
 void SuplaWebServer::begin() {
-  if (isRunningWebServer) {
+  if (isRunningWebServer || !Supla::Network::IsReady()) {
     return;
   }
 
@@ -48,8 +49,12 @@ void SuplaWebServer::begin() {
 }
 
 void SuplaWebServer::iterateAlways() {
-  if (isRunningWebServer)
+  if (isRunningWebServer) {
     httpServer->handleClient();
+  }
+  else {
+    this->begin();
+  }
 }
 
 void SuplaWebServer::createWebServer() {

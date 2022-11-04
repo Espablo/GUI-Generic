@@ -107,9 +107,6 @@ void GUIESPWifi::setup() {
     WiFi.begin(ssid, password);
     // ESP8266 requires setHostname to be called after begin...
     WiFi.setHostname(hostname);
-
-    if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
-      Supla::GUI::crateWebServer();
   }
 
   delay(0);
