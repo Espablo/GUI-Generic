@@ -31,12 +31,12 @@ static const char serverIndex[] PROGMEM =
          </br>
          <input type='submit' value='{b}'>
      </form>
-     <a href='update2step'><br><button>GUI-GenericUpdater.bin</button></a>
      </body>
      </html>)";
 static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='5'>{m}";
 static const char twoStepResponse[] PROGMEM =
-    "<META http-equiv='refresh' content='5'><b>{w}</b> {o} GUI-GenericUpdater.bin";
+    "<META http-equiv='refresh' content='5'><b>{w}</b> {o} GUI-GenericUpdater.bin <a "
+    "href='update2step'><br><button>GUI-GenericUpdater.bin</button></a>";
 
 ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
