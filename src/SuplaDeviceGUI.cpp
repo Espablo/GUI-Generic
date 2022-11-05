@@ -100,9 +100,7 @@ void crateWebServer() {
   if (WebServer == NULL) {
     WebServer = new SuplaWebServer();
   }
-  else {
-    WebServer->begin();
-  }
+  WebServer->begin();
 }
 
 #ifdef SUPLA_RELAY
