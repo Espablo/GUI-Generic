@@ -35,6 +35,8 @@ HLW_8012::HLW_8012(int8_t pinCF,
 }
 
 void HLW_8012::onInit() {
+  extChannel.setFlag(SUPLA_CHANNEL_FLAG_CALCFG_RESET_COUNTERS);
+
   sensor->begin(pinCF, pinCF1, pinSEL, currentWhen, useInterrupts);
   sensor->setCurrentMultiplier(currentMultiplier);
   sensor->setVoltageMultiplier(voltageMultiplier);
@@ -163,6 +165,15 @@ void HLW_8012::setCounter(_supla_int64_t newEnergy) {
   _energy = newEnergy;  // ------- energy value read from memory at startup
   energy = newEnergy;
   setFwdActEnergy(0, newEnergy);
+  Supla::Storage::ScheduleSave(1000);
+}
+
+int HLW_8012::handleCalcfgFromServer(TSD_DeviceCalCfgRequest *request) {
+  if (request && request->Command == SUPLA_CALCFG_CMD_RESET_COUNTERS) {
+    setCounter(0);
+    return SUPLA_CALCFG_RESULT_DONE;
+  }
+  return SUPLA_CALCFG_RESULT_NOT_SUPPORTED;
 }
 
 // When using interrupts we have to call the library entry point

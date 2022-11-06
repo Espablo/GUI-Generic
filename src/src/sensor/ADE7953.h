@@ -75,6 +75,8 @@ class ADE7953 : public OnePhaseElectricityMeter {
 
   void setMode(bool value);
   void setCounter(_supla_int64_t value);
+  int handleCalcfgFromServer(TSD_DeviceCalCfgRequest* request);
+
   void calibrate(double calibPower, double calibVoltage);
 
   double getVoltage();

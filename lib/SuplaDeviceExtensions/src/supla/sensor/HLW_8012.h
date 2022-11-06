@@ -50,6 +50,7 @@ class HLW_8012 : public OnePhaseElectricityMeter {
   void setPowerMultiplier(double value);
   void setMode(bool value);
   void setCounter(_supla_int64_t value);
+  int handleCalcfgFromServer(TSD_DeviceCalCfgRequest *request);
 
   static IRAM_ATTR void hjl01_cf1_interrupt();
   static IRAM_ATTR void hjl01_cf_interrupt();

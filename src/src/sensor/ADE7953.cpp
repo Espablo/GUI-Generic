@@ -35,6 +35,8 @@ ADE7953::ADE7953(uint8_t pin_irq, uint8_t model) {
 }
 
 void ADE7953::onInit() {
+  extChannel.setFlag(SUPLA_CHANNEL_FLAG_CALCFG_RESET_COUNTERS);
+
   Ade7953Write(0x102, 0x0004);  // Locking the communication interface (Clear bit COMM_LOCK), Enable HPF
   Ade7953Write(0x0FE, 0x00AD);  // Unlock register 0x120
   Ade7953Write(0x120, 0x0030);  // Configure optimum setting
@@ -203,6 +205,16 @@ void ADE7953::setCounter(_supla_int64_t newEnergy) {
   setFwdActEnergy(0, newEnergy);
 }
 
+int ADE7953::handleCalcfgFromServer(TSD_DeviceCalCfgRequest *request) {
+  if (request && request->Command == SUPLA_CALCFG_CMD_RESET_COUNTERS) {
+    setCounter(0);
+    Supla::Storage::ScheduleSave(1000);
+
+    return SUPLA_CALCFG_RESULT_DONE;
+  }
+  return SUPLA_CALCFG_RESULT_NOT_SUPPORTED;
+}
+
 double ADE7953::getVoltage() {
   return (double)Ade7953.voltage_rms / Settings.energy_voltage_calibration;
 }
@@ -250,8 +262,8 @@ double ADE7953::getPowerFactor(uint8_t channel) {
 }
 
 unsigned long ADE7953::getEnergy(uint8_t channel) {
-  return  (double)(getActivePower(channel) * 10.0 / 36.0);
- // return (double)(Ade7953Read(channel == 0 ? 0x31F : 0x31E)) * Settings.energy_power_calibration / 1000.0 / 36.0 * -1.0;
+  return (double)(getActivePower(channel) * 10.0 / 36.0);
+  // return (double)(Ade7953Read(channel == 0 ? 0x31F : 0x31E)) * Settings.energy_power_calibration / 1000.0 / 36.0 * -1.0;
 }
 
 void ADE7953::expectedCurrent(double value) {

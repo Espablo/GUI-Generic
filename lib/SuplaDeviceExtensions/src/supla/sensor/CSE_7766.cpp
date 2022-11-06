@@ -27,6 +27,8 @@ CSE_7766::CSE_7766(HardwareSerial &serial)
 }
 
 void CSE_7766::onInit() {
+  extChannel.setFlag(SUPLA_CHANNEL_FLAG_CALCFG_RESET_COUNTERS);
+
   sensor.setCurrentRatio(currentMultiplier);
   sensor.setVoltageRatio(voltageMultiplier);
   sensor.setPowerRatio(powerMultiplier);
@@ -160,6 +162,15 @@ void CSE_7766::setCounter(_supla_int64_t value) {
   _energy = value;  // ------- energy value read from memory at startup
   energy = value;
   setFwdActEnergy(0, value);
+}
+
+int CSE_7766::handleCalcfgFromServer(TSD_DeviceCalCfgRequest *request) {
+  if (request && request->Command == SUPLA_CALCFG_CMD_RESET_COUNTERS) {
+    setCounter(0);
+    Supla::Storage::ScheduleSave(1000);
+    return SUPLA_CALCFG_RESULT_DONE;
+  }
+  return SUPLA_CALCFG_RESULT_NOT_SUPPORTED;
 }
 
 void CSE_7766::iterateAlways() {

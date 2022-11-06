@@ -16,8 +16,8 @@
 #include "SuplaDeviceGUI.h"
 
 #ifdef SUPLA_PZEM_V_3
-#include <supla/sensor/PzemV3.h>
-#include <supla/sensor/three_phase_PzemV3.h>
+#include "src/sensor/PzemV3.h"
+#include "src/sensor/three_phase_PzemV3.h"
 #endif
 #ifdef SUPLA_DEEP_SLEEP
 #include <supla/control/deepSleep.h>
