@@ -592,15 +592,19 @@ void setRGBWDefaultState(Supla::Control::RGBWBase *rgbw, uint8_t memory) {
 #endif
 
 void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t sensorNumber) {
+  if (client == nullptr)
+    return;
+
 #if defined(SUPLA_RELAY) && defined(SUPLA_CONDITIONS)
   for (uint8_t nr = 0; nr <= OFF_GPIO; nr++) {
     if (ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt() == function &&
         strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-      // Serial.println("addConditionsTurnON");
-      // Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-      // Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
+
+      Serial.println("addConditionsTurnON");
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
 
@@ -608,16 +612,16 @@ void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t se
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
         case CONDITION_HEATING:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold));
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLessEq(threshold));
           break;
         case CONDITION_COOLING:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold));
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreaterEq(threshold));
           break;
         case CONDITION_MOISTURIZING:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, true));
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLessEq(threshold, true));
           break;
         case CONDITION_DRAINGE:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, true));
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreaterEq(threshold, true));
           break;
         case CONDITION_GPIO:
           client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], Supla::ON_TURN_ON);
@@ -629,15 +633,18 @@ void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t se
 }
 
 void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t sensorNumber) {
+  if (client == nullptr)
+    return;
 #if defined(SUPLA_RELAY) && defined(SUPLA_CONDITIONS)
   for (uint8_t nr = 0; nr <= OFF_GPIO; nr++) {
     if (ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt() == function &&
         strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-      // Serial.println("addConditionsTurnOFF");
-      // Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-      // Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
+
+      Serial.println("addConditionsTurnOFF");
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
 
@@ -645,16 +652,16 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t s
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
         case CONDITION_HEATING:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreaterEq(threshold));
           break;
         case CONDITION_COOLING:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLessEq(threshold));
           break;
         case CONDITION_MOISTURIZING:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, true));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreaterEq(threshold, true));
           break;
         case CONDITION_DRAINGE:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, true));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLessEq(threshold, true));
           break;
         case CONDITION_GPIO:
           client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], Supla::ON_TURN_OFF);
@@ -666,38 +673,41 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t s
 }
 
 void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber) {
+  if (client == nullptr)
+    return;
 #if defined(SUPLA_RELAY) && defined(SUPLA_CONDITIONS)
   for (uint8_t nr = 0; nr <= OFF_GPIO; nr++) {
     if (ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt() == function &&
         strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-      // Serial.println("addConditionsTurnON - ElectricityMeter");
-      // Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-      // Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
+
+      Serial.println("addConditionsTurnON - ElectricityMeter");
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
       // client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
         case CONDITION_VOLTAGE:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmVoltage()));
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLessEq(threshold, EmVoltage()));
           break;
         case CONDITION_TOTAL_CURRENT:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmTotalCurrent()));
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLessEq(threshold, EmTotalCurrent()));
           break;
         case CONDITION_TOTAL_POWER_ACTIVE:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerActiveW()));
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnLessEq(threshold, EmTotalPowerActiveW()));
           break;
 
         case CONDITION_VOLTAGE_OPPOSITE:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, EmVoltage()));
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreaterEq(threshold, EmVoltage()));
           break;
         case CONDITION_TOTAL_CURRENT_OPPOSITE:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalCurrent()));
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreaterEq(threshold, EmTotalCurrent()));
           break;
         case CONDITION_TOTAL_POWER_ACTIVE_OPPOSITE:
-          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerActiveW()));
+          client->addAction(Supla::TURN_ON, Supla::GUI::relay[nr], OnGreaterEq(threshold, EmTotalPowerActiveW()));
           break;
       }
     }
@@ -706,38 +716,41 @@ void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, 
 }
 
 void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber) {
+  if (client == nullptr)
+    return;
 #if defined(SUPLA_RELAY) && defined(SUPLA_CONDITIONS)
   for (uint8_t nr = 0; nr <= OFF_GPIO; nr++) {
     if (ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt() == function &&
         strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-      // Serial.println("addConditionsTurnOFF - ElectricityMeter");
-      // Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-      // Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
+
+      Serial.println("addConditionsTurnOFF - ElectricityMeter");
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
       //   client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
 
       switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
         case CONDITION_VOLTAGE:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmVoltage()));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreaterEq(threshold, EmVoltage()));
           break;
         case CONDITION_TOTAL_CURRENT:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalCurrent()));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreaterEq(threshold, EmTotalCurrent()));
           break;
         case CONDITION_TOTAL_POWER_ACTIVE:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreater(threshold, EmTotalPowerActiveW()));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnGreaterEq(threshold, EmTotalPowerActiveW()));
           break;
 
         case CONDITION_VOLTAGE_OPPOSITE:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, EmVoltage()));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLessEq(threshold, EmVoltage()));
           break;
         case CONDITION_TOTAL_CURRENT_OPPOSITE:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, EmTotalCurrent()));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLessEq(threshold, EmTotalCurrent()));
           break;
         case CONDITION_TOTAL_POWER_ACTIVE_OPPOSITE:
-          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLess(threshold, EmTotalPowerActiveW()));
+          client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnLessEq(threshold, EmTotalPowerActiveW()));
           break;
       }
     }

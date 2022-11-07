@@ -288,8 +288,8 @@ void setup() {
   if (gpio != OFF_GPIO) {
     for (nr = 0; nr < ConfigManager->get(KEY_MAX_ANALOG_READING)->getValueInt(); nr++) {
       Supla::GUI::analog[nr] = new Supla::Sensor::AnalogRedingMap(gpio);
-      Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr]);
-      Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr]);
+      Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr], nr);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr], nr);
     }
   }
 #endif
@@ -420,7 +420,8 @@ void setup() {
 
 #ifdef SUPLA_BME280
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt()) {
-      Supla::Sensor::BME280 *bme280;
+      Supla::Sensor::BME280 *bme280 = nullptr;
+
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt()) {
         case BMx280_ADDRESS_0X76:
           bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
@@ -430,15 +431,18 @@ void setup() {
           break;
         case BMx280_ADDRESS_0X77:
           bme280 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+
           Supla::GUI::addConditionsTurnON(SENSOR_BME280, bme280);
           Supla::GUI::addConditionsTurnOFF(SENSOR_BME280, bme280);
           break;
         case BMx280_ADDRESS_0X76_AND_0X77:
           bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
-          new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          Supla::Sensor::BME280 *bme280_1 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
 
           Supla::GUI::addConditionsTurnON(SENSOR_BME280, bme280);
           Supla::GUI::addConditionsTurnOFF(SENSOR_BME280, bme280);
+          Supla::GUI::addConditionsTurnON(SENSOR_BME280, bme280_1, 1);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_BME280, bme280_1, 1);
           break;
       }
     }
@@ -446,23 +450,29 @@ void setup() {
 
 #ifdef SUPLA_BMP280
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt()) {
-      Supla::Sensor::BMP280 *bmp280;
+      Supla::Sensor::BMP280 *bmp280 = nullptr;
+
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BMP280).toInt()) {
         case BMx280_ADDRESS_0X76:
           bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+
           Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280);
           Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280);
           break;
         case BMx280_ADDRESS_0X77:
           bmp280 = new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+
           Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280);
           Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280);
           break;
         case BMx280_ADDRESS_0X76_AND_0X77:
           bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
-          new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+          Supla::Sensor::BMP280 *bmp280_1 = new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
+
           Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280);
           Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280);
+          Supla::GUI::addConditionsTurnON(SENSOR_BMP280, bmp280_1, 1);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_BMP280, bmp280_1, 1);
           break;
       }
     }
@@ -470,24 +480,30 @@ void setup() {
 
 #ifdef SUPLA_SHT3x
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SHT3x).toInt()) {
-      Supla::Sensor::SHT3x *sht3x;
+      Supla::Sensor::SHT3x *sht3x = nullptr;
 
       switch (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SHT3x).toInt()) {
         case SHT3x_ADDRESS_0X44:
           sht3x = new Supla::Sensor::SHT3x(0x44);
+
+          Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
           break;
         case SHT3x_ADDRESS_0X45:
           sht3x = new Supla::Sensor::SHT3x(0x45);
+
+          Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
           break;
         case SHT3x_ADDRESS_0X44_AND_0X45:
           sht3x = new Supla::Sensor::SHT3x(0x44);
-          new Supla::Sensor::SHT3x(0x45);
-          break;
-      }
+          Supla::Sensor::SHT3x *sht3x_1 = new Supla::Sensor::SHT3x(0x45);
 
-      if (sht3x) {
-        Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
-        Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
+          Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x);
+          Supla::GUI::addConditionsTurnON(SENSOR_SHT3x, sht3x_1, 1);
+          Supla::GUI::addConditionsTurnOFF(SENSOR_SHT3x, sht3x_1, 1);
+          break;
       }
     }
 #endif
