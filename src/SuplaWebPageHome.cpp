@@ -49,9 +49,7 @@ void handlePageHome(int save) {
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript();
 
-  addForm(webContentBuffer, F("post"));
-
-  if (getCountChannels() > 0) {
+  if (getCountSensorChannels() > 0) {
     addFormHeader(webContentBuffer);
 #ifdef SUPLA_SDM630
     if (Supla::GUI::smd) {
@@ -108,8 +106,10 @@ void handlePageHome(int save) {
         }
       }
     }
+    addFormHeaderEnd(webContentBuffer);
   }
-  addFormHeaderEnd(webContentBuffer);
+
+  addForm(webContentBuffer, F("post"));
 
 #ifdef SUPLA_WT32_ETH01_LAN8720
 
