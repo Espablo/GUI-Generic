@@ -277,6 +277,17 @@ void setup() {
     Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(ConfigESP->getGpio(FUNCTION_MPX_5XXX));
     Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX, Supla::GUI::mpx);
     Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX, Supla::GUI::mpx);
+
+    Supla::Sensor::Percentage *mpxPercent;
+    if (Supla::GUI::mpx->getThankHeight() != 0) {
+      mpxPercent = new Supla::Sensor::Percentage(Supla::GUI::mpx, 0, Supla::GUI::mpx->getThankHeight() * 0.01);
+    }
+    else {
+      mpxPercent = new Supla::Sensor::Percentage(Supla::GUI::mpx, 0, 100.0);
+    }
+
+    Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX_PERCENT, mpxPercent);
+    Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX_PERCENT, mpxPercent);
   }
 #endif
 
@@ -706,22 +717,6 @@ void setup() {
 #endif
 
   Supla::GUI::begin();
-
-#ifdef SUPLA_MPX_5XXX
-  if (ConfigESP->getGpio(FUNCTION_MPX_5XXX) != OFF_GPIO) {
-    Supla::Sensor::Percentage *mpxPercent;
-
-    if (Supla::GUI::mpx->getThankHeight() != 0) {
-      mpxPercent = new Supla::Sensor::Percentage(Supla::GUI::mpx, 0, Supla::GUI::mpx->getThankHeight() * 0.01);
-    }
-    else {
-      mpxPercent = new Supla::Sensor::Percentage(Supla::GUI::mpx, 0, 100.0);
-    }
-
-    Supla::GUI::addConditionsTurnON(SENSOR_MPX_5XXX_PERCENT, mpxPercent);
-    Supla::GUI::addConditionsTurnOFF(SENSOR_MPX_5XXX_PERCENT, mpxPercent);
-  }
-#endif
 
 #if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
   Supla::GUI::addCorrectionSensor();
