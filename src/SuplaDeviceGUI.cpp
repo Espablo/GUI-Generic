@@ -601,10 +601,13 @@ void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t se
         strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-
-      Serial.println("addConditionsTurnON");
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
+      Serial.print("addConditionsTurnON: ");
+      Serial.print(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      Serial.print(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
+      Serial.print(" Typ: ");
+      Serial.print(function);
+      Serial.print(" Sensor: ");
+      Serial.println(sensorNumber);
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
 
@@ -641,10 +644,13 @@ void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t s
         strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-
-      Serial.println("addConditionsTurnOFF");
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
+      Serial.print("addConditionsTurnOFF: ");
+      Serial.print(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      Serial.print(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
+      Serial.print(" Typ: ");
+      Serial.print(function);
+      Serial.print(" Sensor: ");
+      Serial.println(sensorNumber);
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
 
@@ -681,10 +687,13 @@ void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, 
         strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-
-      Serial.println("addConditionsTurnON - ElectricityMeter");
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
+      Serial.print("addConditionsTurnON - ElectricityMeter: ");
+      Serial.print(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      Serial.print(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
+      Serial.print(" Typ: ");
+      Serial.print(function);
+      Serial.print(" Sensor: ");
+      Serial.println(sensorNumber);
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
       // client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());
@@ -724,10 +733,13 @@ void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client,
         strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0 &&
         ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt() == sensorNumber &&
         ConfigESP->getGpio(nr, FUNCTION_RELAY) != OFF_GPIO) {
-
-      Serial.println("addConditionsTurnOFF - ElectricityMeter");
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
-      Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
+      Serial.print("addConditionsTurnOFF - ElectricityMeter: ");
+      Serial.print(ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt());
+      Serial.print(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
+      Serial.print(" Typ: ");
+      Serial.print(function);
+      Serial.print(" Sensor: ");
+      Serial.println(sensorNumber);
 
       double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
       //   client->addAction(Supla::TURN_OFF, Supla::GUI::relay[nr], OnInvalid());

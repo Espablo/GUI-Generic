@@ -311,8 +311,8 @@ void setup() {
     gpio = ConfigESP->getGpio(nr, FUNCTION_ANALOG_READING);
     if (gpio != OFF_GPIO) {
       Supla::GUI::analog[nr] = new Supla::Sensor::AnalogRedingMap(gpio);
-      Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr]);
-      Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr]);
+      Supla::GUI::addConditionsTurnON(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr], nr);
+      Supla::GUI::addConditionsTurnOFF(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr], nr);
     }
   }
 #endif

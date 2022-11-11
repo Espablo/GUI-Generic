@@ -23,19 +23,55 @@ AnalogRedingMap::AnalogRedingMap(uint8_t pin)
     : pin(pin), min(0), max(0), minDesired(0), maxDesired(0) {
 }
 
+#ifdef ARDUINO_ARCH_ESP32
+adc1_channel_t AnalogRedingMap::get_adc1_chanel(uint8_t pin) {
+  adc1_channel_t chan;
+  switch (pin) {
+    case 32:
+      chan = ADC1_CHANNEL_4;
+      break;
+    case 33:
+      chan = ADC1_CHANNEL_5;
+      break;
+    case 34:
+      chan = ADC1_CHANNEL_6;
+      break;
+    case 35:
+      chan = ADC1_CHANNEL_7;
+      break;
+    case 36:
+      chan = ADC1_CHANNEL_0;
+      break;
+    case 37:
+      chan = ADC1_CHANNEL_1;
+      break;
+    case 38:
+      chan = ADC1_CHANNEL_2;
+      break;
+    case 39:
+      chan = ADC1_CHANNEL_3;
+      break;
+  }
+  return chan;
+}
+#endif
+
 void AnalogRedingMap::onInit() {
   pinMode(pin, INPUT);
   channel.setNewValue(getValue());
 }
 
 uint16_t AnalogRedingMap::readValuesFromDevice() {
-  uint16_t average = 0;
+#ifdef ARDUINO_ARCH_ESP32
+  adc1_config_channel_atten(get_adc1_chanel(pin), ADC_ATTEN_DB_11);
+#endif
 
-  for (int i = 0; i < 10; i++) {
+  uint16_t average = 0;
+  for (int i = 0; i < NO_OF_SAMPLES; i++) {
     average += analogRead(pin);
-    delay(1);
   }
-  average = average / 10;
+
+  average /= NO_OF_SAMPLES;
 
   return average;
 }
