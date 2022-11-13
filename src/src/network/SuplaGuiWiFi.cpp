@@ -116,6 +116,8 @@ void GUIESPWifi::setup() {
 }
 
 void GUIESPWifi::forceRestartESP() {
+  retryCount++;
+
   if (retryCount > 3) {
     retryCount = 0;
 
