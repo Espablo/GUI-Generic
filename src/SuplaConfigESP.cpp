@@ -154,11 +154,14 @@ void SuplaConfigESP::configModeInit() {
   configModeESP = Supla::DEVICE_MODE_CONFIG;
   ledBlinking(100);
 
-  SuplaDevice.enterConfigMode();
+  Supla::Network::SetConfigMode();
 
   Supla::GUI::enableConnectionSSL(false);
   Supla::GUI::setupConnection();
 
+  if (getCountChannels() > 0) {
+    SuplaDevice.enterConfigMode();
+  }
 }
 
 bool SuplaConfigESP::checkSSL() {

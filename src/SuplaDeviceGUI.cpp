@@ -59,7 +59,7 @@ void setupConnection() {
   if (wifi) {
     wifi->setSsid(ConfigManager->get(KEY_WIFI_SSID)->getValue());
     wifi->setPassword(ConfigManager->get(KEY_WIFI_PASS)->getValue());
-    Supla::Network::Setup();
+    SuplaDevice.enableNetwork();
   }
   else {
     wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
