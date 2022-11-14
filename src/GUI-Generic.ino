@@ -19,9 +19,6 @@
 #include "src/sensor/PzemV3.h"
 #include "src/sensor/three_phase_PzemV3.h"
 #endif
-#ifdef SUPLA_DEEP_SLEEP
-#include <supla/control/deepSleep.h>
-#endif
 
 #ifdef SUPLA_MPX_5XXX
 #include <supla/sensor/percentage.h>

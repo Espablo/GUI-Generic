@@ -204,6 +204,10 @@
 #include "src/sensor/SDM_630.h"
 #endif
 
+#ifdef SUPLA_DEEP_SLEEP
+#include "src/control/deepSleep.h"
+#endif
+
 namespace Supla {
 namespace GUI {
 
