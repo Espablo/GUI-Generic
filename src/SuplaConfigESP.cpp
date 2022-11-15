@@ -313,7 +313,6 @@ void status_func(int status, const char *msg) {
     case STATUS_CONFIG_MODE:
       ConfigESP->configModeESP = Supla::DEVICE_MODE_CONFIG;
       ConfigESP->ledBlinking(100);
-      // ConfigESP->supla_status.msg = S_STATUS_NETWORK_DISCONNECTED;
       break;
     default:
       ConfigESP->supla_status.msg = msg;
@@ -321,14 +320,11 @@ void status_func(int status, const char *msg) {
   }
   ConfigESP->supla_status.status = status;
 
-  static int lock;
-  if (status == STATUS_REGISTERED_AND_READY && ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
-    ConfigESP->ledBlinkingStop();
-    lock = 0;
-  }
-  else if (status != STATUS_REGISTERED_AND_READY && lock == 0 && ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
-    ConfigESP->ledBlinking(500);
-    lock = 1;
+  if (ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
+    if (status == STATUS_REGISTERED_AND_READY)
+      ConfigESP->ledBlinkingStop();
+    else
+      ConfigESP->ledBlinking(500);
   }
 }
 
