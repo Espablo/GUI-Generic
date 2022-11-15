@@ -15,6 +15,8 @@ void GUIESPWifi::setup() {
 #ifdef ARDUINO_ARCH_ESP8266
     gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
       (void)(event);
+      Serial.print(F("Connected BSSID: "));
+      Serial.println(WiFi.BSSIDstr());
       Serial.print(F("local IP: "));
       Serial.println(WiFi.localIP());
       Serial.print(F("subnetMask: "));
@@ -33,6 +35,8 @@ void GUIESPWifi::setup() {
 #else
     WiFiEventId_t event_gotIP = WiFi.onEvent(
         [](WiFiEvent_t event, WiFiEventInfo_t info) {
+          Serial.print(F("Connected BSSID: "));
+          Serial.println(WiFi.BSSIDstr());
           Serial.print(F("local IP: "));
           Serial.println(WiFi.localIP());
           Serial.print(F("subnetMask: "));
@@ -40,7 +44,7 @@ void GUIESPWifi::setup() {
           Serial.print(F("gatewayIP: "));
           Serial.println(WiFi.gatewayIP());
           int rssi = WiFi.RSSI();
-          Serial.print(F("Signal Strength (RSSI): "));
+          Serial.print(F("Signal strength (RSSI): "));
           Serial.print(rssi);
           Serial.println(F(" dBm"));
         },
