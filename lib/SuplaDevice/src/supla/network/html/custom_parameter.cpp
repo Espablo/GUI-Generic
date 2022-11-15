@@ -62,26 +62,18 @@ void CustomParameter::send(Supla::WebSender* sender) {
   auto cfg = Supla::Storage::ConfigInstance();
   if (cfg) {
     cfg->getInt32(tag, &parameterValue);
-    sender->send(
-        "<i>"
-        "<input type=\"number\" step=\"1\" name=\"");
-    if (tag != nullptr) {
-      sender->send(tag);
-    }
-
-    sender->send("\" value=\"");
+    // form-field BEGIN
+    sender->send("<div class=\"form-field\">");
+    sender->sendLabelFor(tag, label);
+    sender->send("<input type=\"number\" step=\"1\" ");
+    sender->sendNameAndId(tag);
+    sender->send(" value=\"");
     char buf[100] = {};
     snprintf(buf, sizeof(buf), "%d", static_cast<int>(parameterValue));
     sender->send(buf);
-    sender->send(
-      "\">"
-      "<label>");
-    if (label != nullptr) {
-      sender->send(label);
-    }
-    sender->send(
-      "</label>"
-      "</i>");
+    sender->send("\">");
+    sender->send("</div>");
+    // form-field END
   }
 }
 
