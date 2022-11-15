@@ -19,10 +19,9 @@
 #ifndef SRC_SUPLA_SENSOR_PRESSURE_H_
 #define SRC_SUPLA_SENSOR_PRESSURE_H_
 
-#include <supla/channel_element.h>
-#include <supla/time.h>
+#include "supla/channel_element.h"
 
-#define PRESSURE_NOT_AVAILABLE -1.0
+#define PRESSURE_NOT_AVAILABLE -1
 
 namespace Supla {
 namespace Sensor {

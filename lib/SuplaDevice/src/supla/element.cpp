@@ -108,19 +108,14 @@ void Element::onRegistered(Supla::Protocol::SuplaSrpc *suplaSrpc) {
 
 void Element::iterateAlways() {}
 
-bool Element::iterateConnected(void *ptr) {
-  (void)(ptr);
-  return iterateConnected();
-}
-
-bool Element::iterateConnected() {
+bool Element::iterateConnected(void *srpc) {
   bool response = true;
   uint64_t timestamp = millis();
   Channel *secondaryChannel = getSecondaryChannel();
   if (secondaryChannel && secondaryChannel->isUpdateReady() &&
       timestamp - secondaryChannel->lastCommunicationTimeMs > 100) {
     secondaryChannel->lastCommunicationTimeMs = timestamp;
-    secondaryChannel->sendUpdate();
+    secondaryChannel->sendUpdate(srpc);
     response = false;
   }
 
@@ -128,7 +123,7 @@ bool Element::iterateConnected() {
   if (channel && channel->isUpdateReady() &&
       timestamp - channel->lastCommunicationTimeMs > 100) {
     channel->lastCommunicationTimeMs = timestamp;
-    channel->sendUpdate();
+    channel->sendUpdate(srpc);
     response = false;
   }
   return response;

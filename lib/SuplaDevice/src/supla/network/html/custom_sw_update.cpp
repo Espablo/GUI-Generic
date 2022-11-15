@@ -40,19 +40,12 @@ void CustomSwUpdate::send(Supla::WebSender* sender) {
   if (cfg) {
     char url[SUPLA_MAX_URL_LENGTH] = {};
 
-    // form-field BEGIN
-    sender->send("<div class=\"form-field\">");
-    const char key[] = "swupdateurl";
-    sender->sendLabelFor(key, "Update server address");
-    sender->send("<input ");
-    sender->sendNameAndId(key);
+    sender->send("<i><input name=\"swupdateurl\" ");
     if (cfg->getSwUpdateServer(url)) {
-      sender->send(" value=\"");
+      sender->send("value=\"");
       sender->send(url);
     }
-    sender->send("\">");
-    sender->send("</div>");
-    // form-field END
+    sender->send("\"><label>Update server address</label></i>");
   }
 }
 

@@ -37,16 +37,16 @@ void Supla::Sensor::ThermHygroPressMeter::iterateAlways() {
   ThermHygroMeter::iterateAlways();
 }
 
-bool Supla::Sensor::ThermHygroPressMeter::iterateConnected() {
+bool Supla::Sensor::ThermHygroPressMeter::iterateConnected(void *srpc) {
   bool response = true;
   if (pressureChannel.isUpdateReady() &&
       millis() - pressureChannel.lastCommunicationTimeMs > 100) {
     pressureChannel.lastCommunicationTimeMs = millis();
-    pressureChannel.sendUpdate();
+    pressureChannel.sendUpdate(srpc);
     response = false;
   }
 
-  if (!Element::iterateConnected()) {
+  if (!Element::iterateConnected(srpc)) {
     response = false;
   }
   return response;

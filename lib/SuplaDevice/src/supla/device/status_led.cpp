@@ -88,7 +88,6 @@ void Supla::Device::StatusLed::iterateAlways() {
       currentSequence = REGISTERED_AND_READY;
       break;
 
-    case STATUS_OFFLINE_MODE:
     case STATUS_REGISTERED_AND_READY:
       currentSequence = REGISTERED_AND_READY;
       checkProtocolsStatus = true;

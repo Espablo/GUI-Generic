@@ -115,7 +115,7 @@ void Afore::iterateAlways() {
   }
 }
 
-bool Afore::iterateConnected() {
+bool Afore::iterateConnected(void *srpc) {
   if (!dataFetchInProgress) {
     if (lastReadTime == 0 || millis() - lastReadTime > refreshRateSec * 1000) {
       lastReadTime = millis();
@@ -141,7 +141,7 @@ bool Afore::iterateConnected() {
       }
     }
   }
-  return Element::iterateConnected();
+  return Element::iterateConnected(srpc);
 }
 
 void Afore::readValuesFromDevice() {

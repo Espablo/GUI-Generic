@@ -53,21 +53,6 @@ class ESPWifi : public Supla::Wifi {
     return WiFi.status() == WL_CONNECTED;
   }
 
-  static void printConnectionDetails() {
-    Serial.print(F("Connected BSSID: "));
-    Serial.println(WiFi.BSSIDstr());
-    Serial.print(F("local IP: "));
-    Serial.println(WiFi.localIP());
-    Serial.print(F("subnetMask: "));
-    Serial.println(WiFi.subnetMask());
-    Serial.print(F("gatewayIP: "));
-    Serial.println(WiFi.gatewayIP());
-    int rssi = WiFi.RSSI();
-    Serial.print(F("Signal strength (RSSI): "));
-    Serial.print(rssi);
-    Serial.println(F(" dBm"));
-  }
-
   // TODO(klew): add handling of custom local ip
   void setup() override {
     if (!wifiConfigured) {
@@ -78,7 +63,16 @@ class ESPWifi : public Supla::Wifi {
       gotIpEventHandler =
         WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
             (void)(event);
-            ESPWifi::printConnectionDetails();
+            Serial.print(F("local IP: "));
+            Serial.println(WiFi.localIP());
+            Serial.print(F("subnetMask: "));
+            Serial.println(WiFi.subnetMask());
+            Serial.print(F("gatewayIP: "));
+            Serial.println(WiFi.gatewayIP());
+            int rssi = WiFi.RSSI();
+            Serial.print(F("Signal strength (RSSI): "));
+            Serial.print(rssi);
+            Serial.println(F(" dBm"));
             });
       disconnectedEventHandler = WiFi.onStationModeDisconnected(
           [](const WiFiEventStationModeDisconnected &event) {
@@ -88,7 +82,16 @@ class ESPWifi : public Supla::Wifi {
 #else
       WiFiEventId_t event_gotIP = WiFi.onEvent(
           [](WiFiEvent_t event, WiFiEventInfo_t info) {
-          ESPWifi::printConnectionDetails();
+          Serial.print(F("local IP: "));
+          Serial.println(WiFi.localIP());
+          Serial.print(F("subnetMask: "));
+          Serial.println(WiFi.subnetMask());
+          Serial.print(F("gatewayIP: "));
+          Serial.println(WiFi.gatewayIP());
+          int rssi = WiFi.RSSI();
+          Serial.print(F("Signal Strength (RSSI): "));
+          Serial.print(rssi);
+          Serial.println(F(" dBm"));
           },
           WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
 

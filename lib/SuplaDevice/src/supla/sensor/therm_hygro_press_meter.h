@@ -21,7 +21,7 @@
 
 #include "therm_hygro_meter.h"
 
-#define PRESSURE_NOT_AVAILABLE -1.0
+#define PRESSURE_NOT_AVAILABLE -1
 
 namespace Supla {
 namespace Sensor {
@@ -31,7 +31,7 @@ class ThermHygroPressMeter : public ThermHygroMeter {
   virtual ~ThermHygroPressMeter();
   virtual double getPressure();
   void iterateAlways();
-  bool iterateConnected();
+  bool iterateConnected(void *srpc);
   Element &disableChannelState();
   Channel *getSecondaryChannel();
 
