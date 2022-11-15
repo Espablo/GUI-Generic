@@ -5,87 +5,79 @@
 namespace Supla {
 
 GUIESPWifi::GUIESPWifi(const char *wifiSsid, const char *wifiPassword) : ESPWifi(wifiSsid, wifiPassword) {
+#ifdef ARDUINO_ARCH_ESP8266
+  gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
+    (void)(event);
+    Serial.print(F("Connected BSSID: "));
+    Serial.println(WiFi.BSSIDstr());
+    Serial.print(F("local IP: "));
+    Serial.println(WiFi.localIP());
+    Serial.print(F("subnetMask: "));
+    Serial.println(WiFi.subnetMask());
+    Serial.print(F("gatewayIP: "));
+    Serial.println(WiFi.gatewayIP());
+    int rssi = WiFi.RSSI();
+    Serial.print(F("Signal strength (RSSI): "));
+    Serial.print(rssi);
+    Serial.println(F(" dBm"));
+  });
+  disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
+    (void)(event);
+    Serial.println(F("WiFi station disconnected"));
+  });
+#else
+  WiFiEventId_t event_gotIP = WiFi.onEvent(
+      [](WiFiEvent_t event, WiFiEventInfo_t info) {
+        Serial.print(F("Connected BSSID: "));
+        Serial.println(WiFi.BSSIDstr());
+        Serial.print(F("local IP: "));
+        Serial.println(WiFi.localIP());
+        Serial.print(F("subnetMask: "));
+        Serial.println(WiFi.subnetMask());
+        Serial.print(F("gatewayIP: "));
+        Serial.println(WiFi.gatewayIP());
+        int rssi = WiFi.RSSI();
+        Serial.print(F("Signal strength (RSSI): "));
+        Serial.print(rssi);
+        Serial.println(F(" dBm"));
+      },
+      WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
+
+  (void)(event_gotIP);
+
+  WiFiEventId_t event_disconnected = WiFi.onEvent(
+      [](WiFiEvent_t event, WiFiEventInfo_t info) {
+        Serial.println(F("WiFi Station disconnected"));
+        // ESP32 doesn't reconnect automatically after lost connection
+        WiFi.reconnect();
+      },
+      WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
+
+  (void)(event_disconnected);
+#endif
 }
 
 void GUIESPWifi::setup() {
   if (!wifiConfigured) {
-    // ESP32 requires setHostname to be called before begin...
-    WiFi.setHostname(hostname);
+    WiFi.setHostname(hostname);  // ESP32 requires setHostname to be called before begin...
     WiFi.softAPdisconnect(true);
     WiFi.setAutoConnect(false);
+    WiFi.persistent(false);
 
     wifiConfigured = true;
-#ifdef ARDUINO_ARCH_ESP8266
-    gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
-      (void)(event);
-      Serial.print(F("Connected BSSID: "));
-      Serial.println(WiFi.BSSIDstr());
-      Serial.print(F("local IP: "));
-      Serial.println(WiFi.localIP());
-      Serial.print(F("subnetMask: "));
-      Serial.println(WiFi.subnetMask());
-      Serial.print(F("gatewayIP: "));
-      Serial.println(WiFi.gatewayIP());
-      int rssi = WiFi.RSSI();
-      Serial.print(F("Signal strength (RSSI): "));
-      Serial.print(rssi);
-      Serial.println(F(" dBm"));
-    });
-    disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
-      (void)(event);
-      Serial.println(F("WiFi station disconnected"));
-    });
-#else
-    WiFiEventId_t event_gotIP = WiFi.onEvent(
-        [](WiFiEvent_t event, WiFiEventInfo_t info) {
-          Serial.print(F("Connected BSSID: "));
-          Serial.println(WiFi.BSSIDstr());
-          Serial.print(F("local IP: "));
-          Serial.println(WiFi.localIP());
-          Serial.print(F("subnetMask: "));
-          Serial.println(WiFi.subnetMask());
-          Serial.print(F("gatewayIP: "));
-          Serial.println(WiFi.gatewayIP());
-          int rssi = WiFi.RSSI();
-          Serial.print(F("Signal strength (RSSI): "));
-          Serial.print(rssi);
-          Serial.println(F(" dBm"));
-        },
-        WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
-
-    (void)(event_gotIP);
-
-    WiFiEventId_t event_disconnected = WiFi.onEvent(
-        [](WiFiEvent_t event, WiFiEventInfo_t info) {
-          Serial.println(F("WiFi Station disconnected"));
-          // ESP32 doesn't reconnect automatically after lost connection
-          WiFi.reconnect();
-        },
-        WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
-
-    (void)(event_disconnected);
-#endif
   }
   else {
-    if (mode == Supla::DEVICE_MODE_CONFIG) {
-      if (getCountChannels() == 0)
-        WiFi.mode(WIFI_AP_STA);
-      else
-        WiFi.mode(WIFI_MODE_AP);
-    }
-    else {
-      WiFi.mode(WIFI_MODE_STA);
-    }
-
     Serial.println(F("WiFi: resetting WiFi connection"));
     DisconnectProtocols();
     WiFi.disconnect();
+    WiFi.reconnect();  // This does not reset dhcp
+    delay(200);        // do not remove, need a delay for disconnect to change status()
 
     forceRestartESP();
   }
 
   if (mode == Supla::DEVICE_MODE_CONFIG) {
-    SUPLA_LOG_INFO("WiFi: enter config mode with SSID: \"%s\"", hostname);
+    SUPLA_LOG_INFO("WiFi: enter config mode with SSID: \"%s\"", getAPName().c_str());
     if (getCountChannels() == 0) {
       WiFi.mode(WIFI_AP_STA);
       WiFi.begin(ssid, password);
@@ -94,17 +86,7 @@ void GUIESPWifi::setup() {
       WiFi.mode(WIFI_MODE_AP);
     }
 
-    uint8_t mac[6] = {};
-    char macStr[12 + 6] = {};
-    if (Supla::Network::GetMacAddr(mac)) {
-      generateHexString(mac, macStr, 6);
-    }
-
-    String cstr = "SUPLA-GUI-Generic-";
-    cstr.reserve(32);
-    cstr += macStr;
-
-    WiFi.softAP(cstr.c_str(), "", 6);
+    WiFi.softAP(getAPName().c_str(), "", 6);
 
     Supla::GUI::crateWebServer();
   }
@@ -112,8 +94,7 @@ void GUIESPWifi::setup() {
     SUPLA_LOG_INFO("WiFi: establishing connection with SSID: \"%s\"", ssid);
     WiFi.mode(WIFI_MODE_STA);
     WiFi.begin(ssid, password);
-    // ESP8266 requires setHostname to be called after begin...
-    WiFi.setHostname(hostname);
+    WiFi.setHostname(hostname);  // ESP8266 requires setHostname to be called after begin...
 
     if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
       Supla::GUI::crateWebServer();
@@ -153,6 +134,20 @@ void GUIESPWifi::setPassword(const char *wifiPassword) {
     wifiConfigured = false;
     strncpy(password, wifiPassword, MAX_WIFI_PASSWORD_SIZE);
   }
+}
+
+const String GUIESPWifi::getAPName() {
+  uint8_t mac[6] = {};
+  char macStr[12 + 6] = {};
+  if (Supla::Network::GetMacAddr(mac)) {
+    generateHexString(mac, macStr, 6);
+  }
+
+  String cstr = "SUPLA-GUI-Generic-";
+  cstr.reserve(32);
+  cstr += macStr;
+
+  return cstr.c_str();
 }
 
 };  // namespace Supla

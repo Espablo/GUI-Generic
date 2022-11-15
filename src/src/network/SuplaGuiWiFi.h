@@ -19,6 +19,7 @@ class GUIESPWifi : public Supla::ESPWifi {
   void setSsid(const char *wifiSsid);
   void setPassword(const char *wifiPassword);
   void forceRestartESP();
+  const String getAPName();
 
  protected:
   char hostname[MAX_HOSTNAME];

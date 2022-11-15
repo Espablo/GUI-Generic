@@ -46,6 +46,9 @@ void begin() {
                     ConfigManager->get(KEY_SUPLA_EMAIL)->getValue(),             // Email address used to login to Supla Cloud
                     (char *)ConfigManager->get(KEY_SUPLA_AUTHKEY)->getValue());  // Authorization key
 
+  if (ConfigESP->configModeESP == Supla::DEVICE_MODE_CONFIG)
+    Supla::Network::SetConfigMode();
+
   if (getCountChannels() == 0)
     ConfigESP->configModeInit();
 }
