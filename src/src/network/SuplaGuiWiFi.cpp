@@ -11,6 +11,9 @@ void GUIESPWifi::setup() {
   if (!wifiConfigured) {
     // ESP32 requires setHostname to be called before begin...
     WiFi.setHostname(hostname);
+    WiFi.softAPdisconnect(true);
+    WiFi.setAutoConnect(false);
+
     wifiConfigured = true;
 #ifdef ARDUINO_ARCH_ESP8266
     gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event) {
