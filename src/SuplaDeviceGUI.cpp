@@ -572,7 +572,8 @@ void setRGBWButton(Supla::Control::RGBWBase *rgbw, int buttonPin) {
     auto button = new Supla::Control::Button(buttonPin, pullupButton, inversedButton);
     button->setMulticlickTime(200);
     button->setHoldTime(400);
-    button->repeatOnHoldEvery(200);
+    button->repeatOnHoldEvery(35);
+    rgbw->setStep(1);
 
     button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
     button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);
