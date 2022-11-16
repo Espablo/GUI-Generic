@@ -36,16 +36,16 @@ void Supla::Sensor::DistanceHumidityMeter::iterateAlways() {
   Distance::iterateAlways();
 }
 
-bool Supla::Sensor::DistanceHumidityMeter::iterateConnected(void *srpc) {
+bool Supla::Sensor::DistanceHumidityMeter::iterateConnected() {
   bool response = true;
   if (humidityChannel.isUpdateReady() &&
       millis() - humidityChannel.lastCommunicationTimeMs > 100) {
     humidityChannel.lastCommunicationTimeMs = millis();
-    humidityChannel.sendUpdate(srpc);
+    humidityChannel.sendUpdate();
     response = false;
   }
 
-  if (!Element::iterateConnected(srpc)) {
+  if (!Element::iterateConnected()) {
     response = false;
   }
   return response;

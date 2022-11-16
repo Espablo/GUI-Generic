@@ -33,6 +33,7 @@ Supla::Protocol::SuplaSrpc::SuplaSrpc(SuplaDeviceClass *sdc, int version)
     : Supla::Protocol::ProtocolLayer(sdc), version(version) {
   client = Supla::ClientBuilder();
   client->setDebugLogs(true);
+  client->setSdc(sdc);
 }
 
 Supla::Protocol::SuplaSrpc::~SuplaSrpc() {
@@ -56,6 +57,7 @@ bool Supla::Protocol::SuplaSrpc::onLoadConfig() {
     memset(buf, 0, sizeof(buf));
     if (cfg->getSuplaServer(buf) && strlen(buf) > 0) {
       sdc->setServer(buf);
+      configEmpty = false;
     } else {
       SUPLA_LOG_INFO("Config incomplete: missing server");
       configComplete = false;
@@ -65,6 +67,7 @@ bool Supla::Protocol::SuplaSrpc::onLoadConfig() {
     memset(buf, 0, sizeof(buf));
     if (cfg->getEmail(buf) && strlen(buf) > 0) {
       sdc->setEmail(buf);
+      configEmpty = false;
     } else {
       SUPLA_LOG_INFO("Config incomplete: missing email");
       configComplete = false;
@@ -497,14 +500,14 @@ bool Supla::Protocol::SuplaSrpc::ping() {
   return true;
 }
 
-void Supla::Protocol::SuplaSrpc::iterate(uint64_t _millis) {
+bool Supla::Protocol::SuplaSrpc::iterate(uint64_t _millis) {
   if (!isEnabled()) {
-    return;
+    return false;
   }
 
   requestNetworkRestart = false;
   if (waitForIterate != 0 && _millis - lastIterateTime < waitForIterate) {
-    return;
+    return false;
   }
 
   waitForIterate = 0;
@@ -545,7 +548,7 @@ void Supla::Protocol::SuplaSrpc::iterate(uint64_t _millis) {
       if (connectionFailCounter % 6 == 0) {
         requestNetworkRestart = true;
       }
-      return;
+      return false;
     }
   }
 
@@ -555,7 +558,7 @@ void Supla::Protocol::SuplaSrpc::iterate(uint64_t _millis) {
 
     lastIterateTime = _millis;
     waitForIterate = 5000;
-    return;
+    return false;
   }
 
   if (registered == 0) {
@@ -565,7 +568,7 @@ void Supla::Protocol::SuplaSrpc::iterate(uint64_t _millis) {
     if (!srpc_ds_async_registerdevice_e(srpc, &Supla::Channel::reg_dev)) {
       SUPLA_LOG_WARNING("Fatal SRPC failure!");
     }
-    return;
+    return false;
   } else if (registered == -1) {
     // Handle registration timeout (in case of no reply received)
     if (_millis - lastIterateTime > 10 * 1000) {
@@ -577,7 +580,7 @@ void Supla::Protocol::SuplaSrpc::iterate(uint64_t _millis) {
       lastIterateTime = _millis;
       waitForIterate = 2000;
     }
-    return;
+    return false;
   } else if (registered == 1) {
     // Device is registered and everything is correct
 
@@ -589,22 +592,14 @@ void Supla::Protocol::SuplaSrpc::iterate(uint64_t _millis) {
       disconnect();
     }
 
-    // Iterate all elements
-    for (auto element = Supla::Element::begin(); element != nullptr;
-         element = element->next()) {
-      if (!element->iterateConnected(srpc)) {
-        break;
-      }
-      delay(0);
-    }
-    return;
+    return true;
   } else if (registered == 2) {
     // Server rejected registration
     registered = 0;
     lastIterateTime = millis();
     waitForIterate = 10000;
   }
-  return;
+  return false;
 }
 
 void Supla::Protocol::SuplaSrpc::disconnect() {
@@ -737,4 +732,60 @@ bool Supla::Protocol::SuplaSrpc::isSuplaPublicServerConfigured() {
     }
   }
   return false;
+}
+
+bool Supla::Protocol::SuplaSrpc::isRegisteredAndReady() {
+  return registered == 1;
+}
+
+void Supla::Protocol::SuplaSrpc::sendActionTrigger(
+    uint8_t channelNumber, uint32_t actionId) {
+  if (!isRegisteredAndReady()) {
+    return;
+  }
+
+  TDS_ActionTrigger at = {};
+  at.ChannelNumber = channelNumber;
+  at.ActionTrigger = actionId;
+
+  srpc_ds_async_action_trigger(srpc, &at);
+}
+
+void Supla::Protocol::SuplaSrpc::getUserLocaltime() {
+  if (!isRegisteredAndReady()) {
+    return;
+  }
+
+  srpc_dcs_async_get_user_localtime(srpc);
+}
+
+void Supla::Protocol::SuplaSrpc::sendChannelValueChanged(
+    uint8_t channelNumber,
+    char *value,
+    unsigned char offline,
+    uint32_t validityTimeSec) {
+  if (!isRegisteredAndReady()) {
+    return;
+  }
+  srpc_ds_async_channel_value_changed_c(srpc, channelNumber, value,
+      offline, validityTimeSec);
+}
+
+void Supla::Protocol::SuplaSrpc::sendExtendedChannelValueChanged(
+    uint8_t channelNumber,
+    TSuplaChannelExtendedValue *value) {
+  if (!isRegisteredAndReady()) {
+    return;
+  }
+  srpc_ds_async_channel_extendedvalue_changed(srpc, channelNumber,
+      value);
+}
+
+void Supla::Protocol::SuplaSrpc::getChannelConfig(uint8_t channelNumber) {
+  if (!isRegisteredAndReady()) {
+    return;
+  }
+  TDS_GetChannelConfigRequest request = {};
+  request.ChannelNumber = channelNumber;
+  srpc_ds_async_get_channel_config(srpc, &request);
 }

@@ -34,16 +34,16 @@ void Supla::Sensor::PressMeter::iterateAlways() {
   }
 }
 
-bool Supla::Sensor::PressMeter::iterateConnected(void *srpc) {
+bool Supla::Sensor::PressMeter::iterateConnected() {
   bool response = true;
   if (pressureChannel.isUpdateReady() &&
       millis() - pressureChannel.lastCommunicationTimeMs > 100) {
     pressureChannel.lastCommunicationTimeMs = millis();
-    pressureChannel.sendUpdate(srpc);
+    pressureChannel.sendUpdate();
     response = false;
   }
 
-  if (!Element::iterateConnected(srpc)) {
+  if (!Element::iterateConnected()) {
     response = false;
   }
   return response;
