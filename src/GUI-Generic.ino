@@ -416,7 +416,7 @@ void setup() {
     Supla::GUI::smd = new Supla::Sensor::SDM630(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
 
 #endif
-    Supla::GUI::smd->setRefreshRate(20);
+    Supla::GUI::smd->setRefreshRate(60);
   }
 #endif
 

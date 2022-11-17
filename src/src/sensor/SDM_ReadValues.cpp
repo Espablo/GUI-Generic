@@ -249,23 +249,31 @@ _supla_int_t ReadValuesSDM::getPhaseAngle(int phase) {
 }
 
 float ReadValuesSDM::sdmRead(uint16_t reg) {
-  uint8_t retry_count = 3;
-  bool success = false;
   float tmpval = NAN;
 
-  while (retry_count > 0 && !success) {
-    sdm.clearErrCode();
-    tmpval = sdm.readVal(reg);
-    --retry_count;
-    if (sdm.getErrCode() == SDM_ERR_NO_ERROR) {
-      success = true;
-    }
-  }
+  tmpval = sdm.readVal(reg);
 
   if (isnan(tmpval))
     tmpval = 0.00;
 
   return tmpval;
+  // uint8_t retry_count = 3;
+  // bool success = false;
+  // float tmpval = NAN;
+
+  // while (retry_count > 0 && !success) {
+  //   sdm.clearErrCode();
+  //   tmpval = sdm.readVal(reg);
+  //   --retry_count;
+  //   if (sdm.getErrCode() == SDM_ERR_NO_ERROR) {
+  //     success = true;
+  //   }
+  // }
+
+  // if (isnan(tmpval))
+  //   tmpval = 0.00;
+
+  // return tmpval;
 }
 
 };  // namespace Sensor
