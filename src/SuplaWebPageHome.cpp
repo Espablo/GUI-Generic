@@ -53,8 +53,8 @@ void handlePageHome(int save) {
     addFormHeader(webContentBuffer);
 #ifdef SUPLA_SDM630
     if (Supla::GUI::smd) {
-      addLabel(webContentBuffer, "ErrCode: " + String(Supla::GUI::smd->sdm.getErrCode()));
-      addLabel(webContentBuffer, "ErrCount: " + String(Supla::GUI::smd->sdm.getErrCount()));
+      addLabel(webContentBuffer, "SuccCount:" + String(Supla::GUI::smd->getSuccCount()) + " ErrCount:" + String(Supla::GUI::smd->getErrCount()) +
+                                     " ErrCode:" + String(Supla::GUI::smd->getErrCode()));
     }
 #endif
     for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
@@ -77,6 +77,7 @@ void handlePageHome(int save) {
           addLabel(webContentBuffer, String(channel->getValueDouble(), 2) + "m");
         }
 
+#ifdef GUI_ALL_ENERGY
         if (channel->getChannelType() == SUPLA_CHANNELTYPE_ELECTRICITY_METER) {
           TSuplaChannelExtendedValue* extValue = channel->getExtValue();
           if (extValue == nullptr)
@@ -86,14 +87,28 @@ void handlePageHome(int save) {
           if (emValue->m_count < 1 || emValue == nullptr)
             continue;
 
+          String voltage = "";
+          String power_active = "";
+          String current = "";
+
           for (size_t i = 0; i < MAX_PHASES; i++) {
             if (emValue->m[0].voltage[i] > 0) {
-              addLabel(webContentBuffer, String(emValue->m[0].voltage[i] / 100.0) + "V");
-              addLabel(webContentBuffer, String(emValue->m[0].power_active[i] / 100000.0) + "W");
-              addLabel(webContentBuffer, String(emValue->m[0].current[i] / 1000.0) + "A");
+              voltage += String(emValue->m[0].voltage[i] / 100.0) + " | ";
+              power_active += String(emValue->m[0].power_active[i] / 100000.0) + " | ";
+              current += String(emValue->m[0].current[i] / 1000.0) + " | ";
             }
           }
+
+          voltage.setCharAt(voltage.length() - 2, 'V');
+          power_active.setCharAt(power_active.length() - 2, 'W');
+          current.setCharAt(current.length() - 2, 'A');
+
+          addLabel(webContentBuffer, voltage);
+          addLabel(webContentBuffer, power_active);
+          addLabel(webContentBuffer, current);
         }
+#endif
+
         if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
           addLabel(webContentBuffer, String(channel->getValueDouble()) + "hPa");
         }
