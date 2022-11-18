@@ -21,18 +21,14 @@ namespace Sensor {
 
 #if defined(ESP8266)
 ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud) : sdm(swSerSDM, baud, NOT_A_PIN, SWSERIAL_8N1, pinRX, pinTX) {
+  sdm.begin();
 }
 #else
 ReadValuesSDM::ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud)
     : sdm(serial, SDM_UART_BAUD, NOT_A_PIN, SERIAL_8N1, pinRX, pinTX) {
-}
-#endif
-
-void ReadValuesSDM::onInit() {
-  sdm.setMsTimeout();
-  sdm.setMsTurnaround();
   sdm.begin();
 }
+#endif
 
 // energy 1 == 0.00001 kWh
 unsigned _supla_int64_t ReadValuesSDM::getFwdActEnergy(int phase) {
@@ -45,7 +41,7 @@ unsigned _supla_int64_t ReadValuesSDM::getFwdActEnergy(int phase) {
     case 1:
       reg = SDM_L2_EXPORT_ACTIVE_ENERGY;
       break;
-    case 3:
+    case 2:
       reg = SDM_L3_EXPORT_ACTIVE_ENERGY;
       break;
   }
@@ -64,7 +60,7 @@ unsigned _supla_int64_t ReadValuesSDM::getRvrActEnergy(int phase) {
     case 1:
       reg = SDM_L2_IMPORT_ACTIVE_ENERGY;
       break;
-    case 3:
+    case 2:
       reg = SDM_L3_IMPORT_ACTIVE_ENERGY;
       break;
   }
@@ -83,7 +79,7 @@ unsigned _supla_int64_t ReadValuesSDM::getFwdReactEnergy(int phase) {
     case 1:
       reg = SDM_L2_EXPORT_REACTIVE_ENERGY;
       break;
-    case 3:
+    case 2:
       reg = SDM_L3_EXPORT_REACTIVE_ENERGY;
       break;
   }
@@ -102,7 +98,7 @@ unsigned _supla_int64_t ReadValuesSDM::getRvrReactEnergy(int phase) {
     case 1:
       reg = SDM_L2_IMPORT_REACTIVE_ENERGY;
       break;
-    case 3:
+    case 2:
       reg = SDM_L3_IMPORT_REACTIVE_ENERGY;
       break;
   }
@@ -121,7 +117,7 @@ unsigned _supla_int16_t ReadValuesSDM::getVoltage(int phase) {
     case 1:
       reg = SDM_PHASE_2_VOLTAGE;
       break;
-    case 3:
+    case 2:
       reg = SDM_PHASE_3_VOLTAGE;
       break;
   }
@@ -140,7 +136,7 @@ unsigned _supla_int_t ReadValuesSDM::getCurrent(int phase) {
     case 1:
       reg = SDM_PHASE_2_CURRENT;
       break;
-    case 3:
+    case 2:
       reg = SDM_PHASE_3_CURRENT;
       break;
   }
@@ -164,7 +160,7 @@ _supla_int_t ReadValuesSDM::getPowerActive(int phase) {
     case 1:
       reg = SDM_PHASE_2_POWER;
       break;
-    case 3:
+    case 2:
       reg = SDM_PHASE_3_POWER;
       break;
   }
@@ -183,7 +179,7 @@ _supla_int_t ReadValuesSDM::getPowerReactive(int phase) {
     case 1:
       reg = SDM_PHASE_2_REACTIVE_POWER;
       break;
-    case 3:
+    case 2:
       reg = SDM_PHASE_3_REACTIVE_POWER;
       break;
   }
@@ -202,7 +198,7 @@ _supla_int_t ReadValuesSDM::getPowerApparent(int phase) {
     case 1:
       reg = SDM_PHASE_2_APPARENT_POWER;
       break;
-    case 3:
+    case 2:
       reg = SDM_PHASE_3_APPARENT_POWER;
       break;
   }
@@ -221,7 +217,7 @@ _supla_int_t ReadValuesSDM::getPowerFactor(int phase) {
     case 1:
       reg = SDM_PHASE_2_POWER_FACTOR;
       break;
-    case 3:
+    case 2:
       reg = SDM_PHASE_3_POWER_FACTOR;
       break;
   }
@@ -240,7 +236,7 @@ _supla_int_t ReadValuesSDM::getPhaseAngle(int phase) {
     case 1:
       reg = SDM_PHASE_2_ANGLE;
       break;
-    case 3:
+    case 2:
       reg = SDM_PHASE_3_ANGLE;
       break;
   }

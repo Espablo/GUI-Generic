@@ -31,6 +31,10 @@ void SDM630::onInit() {
 }
 
 void SDM630::readValuesFromDevice() {
+  clearSuccCount();
+  clearErrCount();
+  clearErrCode();
+
   for (int i = 0; i < MAX_PHASES; i++) {
     setFwdActEnergy(i, ReadValuesSDM::getFwdActEnergy(i) * 100000);
     setRvrActEnergy(i, ReadValuesSDM::getRvrActEnergy(i) * 100000);
@@ -39,8 +43,9 @@ void SDM630::readValuesFromDevice() {
 
     setVoltage(i, ReadValuesSDM::getVoltage(i) * 100);
     setCurrent(i, ReadValuesSDM::getCurrent(i) * 1000);
-    setFreq(ReadValuesSDM::getFreq() * 100);
     setPowerActive(i, ReadValuesSDM::getPowerActive(i) * 100000);
+
+    setFreq(ReadValuesSDM::getFreq() * 100);
     setPowerReactive(i, ReadValuesSDM::getPowerReactive(i) * 10000);
     setPowerApparent(i, ReadValuesSDM::getPowerApparent(i) * 100000);
     setPowerFactor(i, ReadValuesSDM::getPowerFactor(i) * 1000);
