@@ -36,25 +36,6 @@ unsigned _supla_int64_t ReadValuesSDM::getFwdActEnergy(int phase) {
 
   switch (phase) {
     case 0:
-      reg = SDM_L1_EXPORT_ACTIVE_ENERGY;
-      break;
-    case 1:
-      reg = SDM_L2_EXPORT_ACTIVE_ENERGY;
-      break;
-    case 2:
-      reg = SDM_L3_EXPORT_ACTIVE_ENERGY;
-      break;
-  }
-
-  return sdmRead(reg);
-}
-
-// energy 1 == 0.00001 kWh
-unsigned _supla_int64_t ReadValuesSDM::getRvrActEnergy(int phase) {
-  uint16_t reg = SDM_ERR_NO_ERROR;
-
-  switch (phase) {
-    case 0:
       reg = SDM_L1_IMPORT_ACTIVE_ENERGY;
       break;
     case 1:
@@ -69,18 +50,37 @@ unsigned _supla_int64_t ReadValuesSDM::getRvrActEnergy(int phase) {
 }
 
 // energy 1 == 0.00001 kWh
+unsigned _supla_int64_t ReadValuesSDM::getRvrActEnergy(int phase) {
+  uint16_t reg = SDM_ERR_NO_ERROR;
+
+  switch (phase) {
+    case 0:
+      reg = SDM_L1_EXPORT_ACTIVE_ENERGY;
+      break;
+    case 1:
+      reg = SDM_L2_EXPORT_ACTIVE_ENERGY;
+      break;
+    case 2:
+      reg = SDM_L3_EXPORT_ACTIVE_ENERGY;
+      break;
+  }
+
+  return sdmRead(reg);
+}
+
+// energy 1 == 0.00001 kWh
 unsigned _supla_int64_t ReadValuesSDM::getFwdReactEnergy(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
     case 0:
-      reg = SDM_L1_EXPORT_REACTIVE_ENERGY;
+      reg = SDM_L1_IMPORT_REACTIVE_ENERGY;
       break;
     case 1:
-      reg = SDM_L2_EXPORT_REACTIVE_ENERGY;
+      reg = SDM_L2_IMPORT_REACTIVE_ENERGY;
       break;
     case 2:
-      reg = SDM_L3_EXPORT_REACTIVE_ENERGY;
+      reg = SDM_L3_IMPORT_REACTIVE_ENERGY;
       break;
   }
 
@@ -93,13 +93,13 @@ unsigned _supla_int64_t ReadValuesSDM::getRvrReactEnergy(int phase) {
 
   switch (phase) {
     case 0:
-      reg = SDM_L1_IMPORT_REACTIVE_ENERGY;
+      reg = SDM_L1_EXPORT_REACTIVE_ENERGY;
       break;
     case 1:
-      reg = SDM_L2_IMPORT_REACTIVE_ENERGY;
+      reg = SDM_L2_EXPORT_REACTIVE_ENERGY;
       break;
     case 2:
-      reg = SDM_L3_IMPORT_REACTIVE_ENERGY;
+      reg = SDM_L3_EXPORT_REACTIVE_ENERGY;
       break;
   }
 

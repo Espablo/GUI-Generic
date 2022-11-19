@@ -36,10 +36,11 @@ void SDM630::readValuesFromDevice() {
   clearErrCode();
 
   for (int i = 0; i < MAX_PHASES; i++) {
-    setFwdActEnergy(i, ReadValuesSDM::getFwdActEnergy(i) * 100000);
-    setRvrActEnergy(i, ReadValuesSDM::getRvrActEnergy(i) * 100000);
-    setFwdReactEnergy(i, ReadValuesSDM::getFwdReactEnergy(i) * 100000);
-    setRvrReactEnergy(i, ReadValuesSDM::getRvrReactEnergy(i) * 100000);
+    setFwdActEnergy(i, ReadValuesSDM::getFwdActEnergy(i) * 100000); //energia czynna pobrana
+    setRvrActEnergy(i, ReadValuesSDM::getRvrActEnergy(i) * 100000); //energia czynna zwrócona
+
+     setFwdReactEnergy(i, ReadValuesSDM::getFwdReactEnergy(i) * 100000);
+     setRvrReactEnergy(i, ReadValuesSDM::getRvrReactEnergy(i) * 100000);
 
     setVoltage(i, ReadValuesSDM::getVoltage(i) * 100);
     setCurrent(i, ReadValuesSDM::getCurrent(i) * 1000);
@@ -50,6 +51,7 @@ void SDM630::readValuesFromDevice() {
     setPowerApparent(i, ReadValuesSDM::getPowerApparent(i) * 100000);
     setPowerFactor(i, ReadValuesSDM::getPowerFactor(i) * 1000);
     setPhaseAngle(i, ReadValuesSDM::getPhaseAngle(i) * 10);
+    delay(0);
   }
 }
 
