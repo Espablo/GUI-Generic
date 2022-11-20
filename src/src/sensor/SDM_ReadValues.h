@@ -37,40 +37,46 @@ class ReadValuesSDM : public Element {
 #endif
 
   // energy 1 == 0.00001 kWh
-  unsigned _supla_int64_t getFwdActEnergy(int phase = 0);
+  float getFwdActEnergy(int phase = 0);
+
+    // energy 1 == 0.00001 kWh
+  float getFwdActEnergyTotal();
 
   // energy 1 == 0.00001 kWh
-  unsigned _supla_int64_t getRvrActEnergy(int phase = 0);
+  float getRvrActEnergy(int phase = 0);
 
   // energy 1 == 0.00001 kWh
-  unsigned _supla_int64_t getFwdReactEnergy(int phase = 0);
+  float getFwdReactEnergy(int phase = 0);
+
+    // energy 1 == 0.00001 kWh
+  float getFwdReactEnergyTotal();
 
   // energy 1 == 0.00001 kWh
-  unsigned _supla_int64_t getRvrReactEnergy(int phase = 0);
+  float getRvrReactEnergy(int phase = 0);
 
   // voltage 1 == 0.01 V
-  unsigned _supla_int16_t getVoltage(int phase = 0);
+  float getVoltage(int phase = 0);
 
   // current 1 == 0.001 A
-  unsigned _supla_int_t getCurrent(int phase = 0);
+  float getCurrent(int phase = 0);
 
   // Frequency 1 == 0.01 Hz
-  unsigned _supla_int16_t getFreq();
+  float getFreq();
 
   // power 1 == 0.00001 W
-  _supla_int_t getPowerActive(int phase = 0);
+  float getPowerActive(int phase = 0);
 
   // power 1 == 0.00001 var
-  _supla_int_t getPowerReactive(int phase = 0);
+  float getPowerReactive(int phase = 0);
 
   // power 1 == 0.00001 VA
-  _supla_int_t getPowerApparent(int phase = 0);
+  float getPowerApparent(int phase = 0);
 
   // power 1 == 0.001
-  _supla_int_t getPowerFactor(int phase = 0);
+  float getPowerFactor(int phase = 0);
 
   // phase angle 1 == 0.1 degree
-  _supla_int_t getPhaseAngle(int phase = 0);
+  float getPhaseAngle(int phase = 0);
 
   float sdmRead(uint16_t reg);
 

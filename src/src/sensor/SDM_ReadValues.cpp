@@ -22,6 +22,8 @@ namespace Sensor {
 #if defined(ESP8266)
 ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud) : sdm(swSerSDM, baud, NOT_A_PIN, SWSERIAL_8N1, pinRX, pinTX) {
   sdm.begin();
+  // sdm.setMsTurnaround(100);
+  // sdm.setMsTimeout(250);
 }
 #else
 ReadValuesSDM::ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud)
@@ -31,7 +33,7 @@ ReadValuesSDM::ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX,
 #endif
 
 // energy 1 == 0.00001 kWh
-unsigned _supla_int64_t ReadValuesSDM::getFwdActEnergy(int phase) {
+float ReadValuesSDM::getFwdActEnergy(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -50,7 +52,12 @@ unsigned _supla_int64_t ReadValuesSDM::getFwdActEnergy(int phase) {
 }
 
 // energy 1 == 0.00001 kWh
-unsigned _supla_int64_t ReadValuesSDM::getRvrActEnergy(int phase) {
+float ReadValuesSDM::getFwdActEnergyTotal() {
+  return sdmRead(SDM_TOTAL_ACTIVE_ENERGY);
+}
+
+// energy 1 == 0.00001 kWh
+float ReadValuesSDM::getRvrActEnergy(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -69,7 +76,7 @@ unsigned _supla_int64_t ReadValuesSDM::getRvrActEnergy(int phase) {
 }
 
 // energy 1 == 0.00001 kWh
-unsigned _supla_int64_t ReadValuesSDM::getFwdReactEnergy(int phase) {
+float ReadValuesSDM::getFwdReactEnergy(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -88,7 +95,12 @@ unsigned _supla_int64_t ReadValuesSDM::getFwdReactEnergy(int phase) {
 }
 
 // energy 1 == 0.00001 kWh
-unsigned _supla_int64_t ReadValuesSDM::getRvrReactEnergy(int phase) {
+float ReadValuesSDM::getFwdReactEnergyTotal() {
+  return sdmRead(SDM_TOTAL_REACTIVE_ENERGY);
+}
+
+// energy 1 == 0.00001 kWh
+float ReadValuesSDM::getRvrReactEnergy(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -107,7 +119,7 @@ unsigned _supla_int64_t ReadValuesSDM::getRvrReactEnergy(int phase) {
 }
 
 // voltage 1 == 0.01 V
-unsigned _supla_int16_t ReadValuesSDM::getVoltage(int phase) {
+float ReadValuesSDM::getVoltage(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -126,7 +138,7 @@ unsigned _supla_int16_t ReadValuesSDM::getVoltage(int phase) {
 }
 
 // current 1 == 0.001 A
-unsigned _supla_int_t ReadValuesSDM::getCurrent(int phase) {
+float ReadValuesSDM::getCurrent(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -145,12 +157,12 @@ unsigned _supla_int_t ReadValuesSDM::getCurrent(int phase) {
 }
 
 // Frequency 1 == 0.01 Hz
-unsigned _supla_int16_t ReadValuesSDM::getFreq() {
+float ReadValuesSDM::getFreq() {
   return sdmRead(SDM_FREQUENCY);
 }
 
 // power 1 == 0.00001 W
-_supla_int_t ReadValuesSDM::getPowerActive(int phase) {
+float ReadValuesSDM::getPowerActive(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -169,7 +181,7 @@ _supla_int_t ReadValuesSDM::getPowerActive(int phase) {
 }
 
 // power 1 == 0.00001 var
-_supla_int_t ReadValuesSDM::getPowerReactive(int phase) {
+float ReadValuesSDM::getPowerReactive(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -188,7 +200,7 @@ _supla_int_t ReadValuesSDM::getPowerReactive(int phase) {
 }
 
 // power 1 == 0.00001 VA
-_supla_int_t ReadValuesSDM::getPowerApparent(int phase) {
+float ReadValuesSDM::getPowerApparent(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -207,7 +219,7 @@ _supla_int_t ReadValuesSDM::getPowerApparent(int phase) {
 }
 
 // power 1 == 0.001
-_supla_int_t ReadValuesSDM::getPowerFactor(int phase) {
+float ReadValuesSDM::getPowerFactor(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -226,7 +238,7 @@ _supla_int_t ReadValuesSDM::getPowerFactor(int phase) {
 }
 
 // phase angle 1 == 0.1 degree
-_supla_int_t ReadValuesSDM::getPhaseAngle(int phase) {
+float ReadValuesSDM::getPhaseAngle(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
 
   switch (phase) {
@@ -250,7 +262,7 @@ float ReadValuesSDM::sdmRead(uint16_t reg) {
   tmpval = sdm.readVal(reg);
 
   if (isnan(tmpval))
-    tmpval = 0.00;
+    tmpval = 0.0f;
 
   return tmpval;
   // uint8_t retry_count = 3;
