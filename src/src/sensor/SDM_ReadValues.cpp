@@ -26,8 +26,7 @@ ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud) : sdm(swSerS
   // sdm.setMsTimeout(250);
 }
 #else
-ReadValuesSDM::ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud)
-    : sdm(serial, SDM_UART_BAUD, NOT_A_PIN, SERIAL_8N1, pinRX, pinTX) {
+ReadValuesSDM::ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud) : sdm(serial, baud, NOT_A_PIN, SERIAL_8N1, pinRX, pinTX) {
   sdm.begin();
 }
 #endif
