@@ -51,7 +51,7 @@ void handlePageHome(int save) {
 
   if (getCountSensorChannels() > 0) {
     addFormHeader(webContentBuffer);
-#ifdef SUPLA_SDM630
+#ifdef SUPLA_MODBUS_SDM
     if (Supla::GUI::smd) {
       addLabel(webContentBuffer, "SuccCount:" + String(Supla::GUI::smd->getSuccCount()) + " ErrCount:" + String(Supla::GUI::smd->getErrCount()) +
                                      " ErrCode:" + String(Supla::GUI::smd->getErrCode()));

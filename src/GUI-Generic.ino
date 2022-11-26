@@ -406,7 +406,7 @@ void setup() {
   }
 #endif
 
-#ifdef SUPLA_SDM630
+#ifdef SUPLA_MODBUS_SDM
   if (ConfigESP->getGpio(FUNCTION_SDM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SDM_TX) != OFF_GPIO) {
 #ifdef ARDUINO_ARCH_ESP32
     Supla::GUI::smd =

@@ -133,7 +133,7 @@ void handleOther(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
-#ifdef SUPLA_SDM630
+#ifdef SUPLA_MODBUS_SDM
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + "SDM630");
   addListGPIOBox(webContentBuffer, INPUT_SDM630_RX, S_RX, FUNCTION_SDM_RX);
   addListGPIOBox(webContentBuffer, INPUT_SDM630_TX, S_TX, FUNCTION_SDM_TX);
@@ -317,7 +317,7 @@ void handleOtherSave() {
   }
 #endif
 
-#ifdef SUPLA_SDM630
+#ifdef SUPLA_MODBUS_SDM
   if (!WebServer->saveGPIO(INPUT_SDM630_RX, FUNCTION_SDM_RX) || !WebServer->saveGPIO(INPUT_SDM630_TX, FUNCTION_SDM_TX)) {
     handleOther(6);
     return;

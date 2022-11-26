@@ -24,7 +24,7 @@
 #define GUI_SENSOR_OTHER
 #endif
 
-#if defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_CSE7766) || defined(SUPLA_SDM630)
+#if defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_CSE7766) || defined(SUPLA_MODBUS_SDM)
 #define GUI_OTHER_ENERGY
 #endif
 
@@ -145,7 +145,7 @@ void receiveCodeRFBridge();
 #define INPUT_WAKE_ON_LAN_MAC "iwonm"
 #endif
 
-#ifdef SUPLA_SDM630
+#ifdef SUPLA_MODBUS_SDM
 #define INPUT_SDM630_RX "isrx"
 #define INPUT_SDM630_TX "istx"
 #endif

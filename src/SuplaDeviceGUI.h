@@ -200,7 +200,7 @@
 #include "src/control/WakeOnLanRelay.h"
 #endif
 
-#ifdef SUPLA_SDM630
+#ifdef SUPLA_MODBUS_SDM
 #include "src/sensor/SDM_630.h"
 #endif
 
@@ -300,7 +300,7 @@ extern Supla::Sensor::MPX_5XXX *mpx;
 extern Supla::Sensor::AnalogRedingMap **analog;
 #endif
 
-#ifdef SUPLA_SDM630
+#ifdef SUPLA_MODBUS_SDM
 extern Supla::Sensor::SDM630 *smd;
 #endif
 
