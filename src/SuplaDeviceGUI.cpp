@@ -510,7 +510,8 @@ void addRolleShutter(uint8_t nr) {
 std::vector<Supla::Sensor::ImpulseCounter *> impulseCounter;
 
 void addImpulseCounter(uint8_t nr) {
-  uint8_t pin, pinLED, debounceDelay;
+  uint8_t pin, pinLED;
+  unsigned int debounceDelay;
   bool lowToHigh, inputPullup, levelLed;
 
   pin = ConfigESP->getGpio(nr, FUNCTION_IMPULSE_COUNTER);
