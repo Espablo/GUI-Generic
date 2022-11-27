@@ -466,7 +466,8 @@ void handleImpulseCounterSet(int save) {
     selected = ConfigESP->getLevel(gpio);
     addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_RAISING_EDGE, S_IMPULSE_COUNTER_RAISING_EDGE, selected);
 
-    addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT);
+    addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, String(S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT) + S_SPACE + S_UNIT_MS,
+                 KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT);
 
     if (Supla::GUI::impulseCounter.size() < ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt()) {
       Supla::GUI::addImpulseCounter(nr.toInt());
