@@ -67,7 +67,7 @@ void GUIESPWifi::setup() {
     wifiConfigured = true;
   }
   else {
-    if (Supla::DEVICE_MODE_NORMAL) {
+    if (mode == Supla::DEVICE_MODE_NORMAL) {
       Serial.println(F("WiFi: resetting WiFi connection"));
       DisconnectProtocols();
       WiFi.disconnect();
