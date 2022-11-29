@@ -67,13 +67,15 @@ void GUIESPWifi::setup() {
     wifiConfigured = true;
   }
   else {
-    Serial.println(F("WiFi: resetting WiFi connection"));
-    DisconnectProtocols();
-    WiFi.disconnect();
-    WiFi.reconnect();  // This does not reset dhcp
-    delay(200);        // do not remove, need a delay for disconnect to change status()
+    if (Supla::DEVICE_MODE_NORMAL) {
+      Serial.println(F("WiFi: resetting WiFi connection"));
+      DisconnectProtocols();
+      WiFi.disconnect();
+      WiFi.reconnect();  // This does not reset dhcp
+      delay(200);        // do not remove, need a delay for disconnect to change status()
 
-    forceRestartESP();
+      forceRestartESP();
+    }
   }
 
   if (mode == Supla::DEVICE_MODE_CONFIG) {
