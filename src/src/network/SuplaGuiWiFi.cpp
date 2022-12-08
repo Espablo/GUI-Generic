@@ -63,6 +63,7 @@ void GUIESPWifi::setup() {
     WiFi.softAPdisconnect(true);
     WiFi.setAutoConnect(false);
     WiFi.persistent(false);
+    WiFi.setSleepMode(WIFI_NONE_SLEEP);
 
     wifiConfigured = true;
   }
