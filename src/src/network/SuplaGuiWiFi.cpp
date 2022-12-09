@@ -63,7 +63,9 @@ void GUIESPWifi::setup() {
     WiFi.softAPdisconnect(true);
     WiFi.setAutoConnect(false);
     WiFi.persistent(false);
+#ifdef ARDUINO_ARCH_ESP8266
     WiFi.setSleepMode(WIFI_NONE_SLEEP);
+#endif
 
     wifiConfigured = true;
   }
