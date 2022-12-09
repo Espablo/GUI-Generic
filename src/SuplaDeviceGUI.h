@@ -268,10 +268,8 @@ void setRGBWButton(Supla::Control::RGBWBase *rgbw, int buttonPin);
 void setRGBWDefaultState(Supla::Control::RGBWBase *rgbw, uint8_t memory);
 #endif
 
-void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
-void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
-void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
-void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
+void addConditionsRelay(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
+void addConditionsRelay(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
 
 #if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
 void addCorrectionSensor();
