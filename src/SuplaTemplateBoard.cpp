@@ -41,6 +41,17 @@ String templateBoardWarning;
 bool oldVersion = false;
 
 void chooseTemplateBoard(String board) {
+  const size_t capacity = JSON_ARRAY_SIZE(14) + JSON_OBJECT_SIZE(4) + 200;
+  DynamicJsonBuffer jsonBuffer(capacity);
+
+  JsonObject& root = jsonBuffer.parseObject(board);
+  JsonArray& GPIO = root["GPIO"];
+
+  if (GPIO.size() == 0) {
+    templateBoardWarning += "Błąd wczytania<br>";
+    return;
+  }
+
   ConfigESP->clearEEPROM();
   ConfigManager->deleteGPIODeviceValues();
   templateBoardWarning = "";
@@ -59,12 +70,6 @@ void chooseTemplateBoard(String board) {
   ConfigManager->set(KEY_CONDITIONS_TYPE, "");
   ConfigManager->set(KEY_CONDITIONS_MIN, "");
   ConfigManager->set(KEY_CONDITIONS_MAX, "");
-
-  const size_t capacity = JSON_ARRAY_SIZE(14) + JSON_OBJECT_SIZE(4) + 200;
-  DynamicJsonBuffer jsonBuffer(capacity);
-
-  JsonObject& root = jsonBuffer.parseObject(board);
-  JsonArray& GPIO = root["GPIO"];
 
   //"BTNACTION":[0,1,2]
   // 0 - Supla::Action::TURN_ON
@@ -113,13 +118,13 @@ void chooseTemplateBoard(String board) {
   // 20 - SENSOR_BINARY
 
   //"condition"
-  //  0 - CONDITION_HEATING
-  //  1 - CONDITION_COOLING
-  //  2 - CONDITION_MOISTURIZING
-  //  3 - CONDITION_DRAINGE
-  //  4 - CONDITION_VOLTAGE
-  //  5 - CONDITION_TOTAL_CURRENT
-  //  6 - CONDITION_TOTAL_POWER_ACTIVE
+  //  0 - CONDITION_ON_LESS
+  //  1 - CONDITION_ON_GREATER
+  //  2 - CONDITION_ON_LESS_HUMIDITY
+  //  3 - CONDITION_ON_GREATER_HUMIDITY
+  //  4 - CONDITION_ON_LESS_VOLTAGE
+  //  5 - CONDITION_ON_LESS_CURRENT
+  //  6 - CONDITION_ON_LESS_POWER_ACTIVE
   //  7 - CONDITION_GPIO
 
   JsonArray& conditions = root["COND"];
@@ -142,11 +147,6 @@ void chooseTemplateBoard(String board) {
 
   String name = root["NAME"];
   ConfigManager->set(KEY_HOST_NAME, name.c_str());
-
-  if (GPIO.size() == 0) {
-    templateBoardWarning += "Błąd wczytania<br>";
-    return;
-  }
 
 #ifdef ARDUINO_ARCH_ESP8266
   if (GPIO.size() == 13) {
