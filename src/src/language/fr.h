@@ -115,7 +115,6 @@
 
 #ifdef SUPLA_CONDITIONS
 #define S_CONDITIONING     "Conditionnement"
-#define S_SENSOR           "Capteur"
 #define S_TURN_ON_WHEN     "ON si valeur"
 #define S_SWITCH_ON_VALUE  "Valeur de commutation"
 #define S_SWITCH_OFF_VALUE "Valeur désactivée"
@@ -175,10 +174,7 @@
 #define S_STATE                   "État"
 #define S_MESSAGE                 "Un message"
 #define S_DIRECT_LINKS            "Liens directs"
-#define S_CONDITIONING            "Conditionnement"
 #define S_SENSOR                  "Capteur"
-#define S_SWITCH_ON_VALUE         "valeur d'enclenchement"
-#define S_SWITCH_OFF_VALUE        "valeur de coupure"
 #define S_SETTINGS_FOR_RELAYS     "Paramètres des relais"
 
 //#### SuplaHTTPUpdateServer.cpp ####

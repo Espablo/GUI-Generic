@@ -114,7 +114,6 @@
 
 #ifdef SUPLA_CONDITIONS
 #define S_CONDITIONING     "Conditioning"
-#define S_SENSOR           "Sensor"
 #define S_TURN_ON_WHEN     "ON if value"
 #define S_SWITCH_ON_VALUE  "Switch on value"
 #define S_SWITCH_OFF_VALUE "Off value"
@@ -174,10 +173,7 @@
 #define S_STATE                   "State"
 #define S_MESSAGE                 "Message"
 #define S_DIRECT_LINKS            "Direct links"
-#define S_CONDITIONING            "Conditioning"
 #define S_SENSOR                  "Sensor"
-#define S_SWITCH_ON_VALUE         "switch-on value"
-#define S_SWITCH_OFF_VALUE        "switch-off value"
 #define S_SETTINGS_FOR_RELAYS     "Settings for relays"
 
 //#### SuplaHTTPUpdateServer.cpp ####
