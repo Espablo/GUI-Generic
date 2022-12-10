@@ -28,6 +28,7 @@
 #define S_UPDATE                  "Actualización"
 #define S_RESTART                 "Reiniciar"
 #define S_RETURN                  "Volver"
+#define S_CONDITION               "Condición"
 
 #define S_TEMPLATE_BOARD                                       "Modelos de placas"
 #define S_TYPE                                                 "Tipo"
@@ -113,10 +114,23 @@
 #define S_NORMAL                        "NORMAL"
 #define S_SLOW                          "LENTO"
 #define S_MANUALLY                      "A MANO"
-#define S_ON_CH_VAL_OFF_HEATING         "ON > valor del cana l> OFF - calefacción"
-#define S_ON_CH_VAL_OFF_COOLING         "ON < valor del canal < OFF - refrigeración"
-#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON > valor del segundo canal > OFF - humidificación"
-#define S_ON_2CH_VAL_OFF_DRYING         "ON < valor del segundo canal < OFF - secado"
+
+#ifdef SUPLA_CONDITIONS
+#define S_CONDITIONING "Acondicionamiento"
+#define S_SENSOR "Sensor"
+#define S_TURN_ON_WHEN "ON si valor"
+#define S_SWITCH_ON_VALUE "Valor de conmutación"
+#define S_SWITCH_OFF_VALUE "Valor desactivado"
+
+#define S_ON_LESS "más pequeño"
+#define S_ON_GREATER "más grande"
+
+#define S_CHANNEL_VALUE "canal"
+#define S_HUMIDITY "humedad"
+#define S_VOLTAGE "voltaje [V]"
+#define S_CURRENT "actual [A]"
+#define S_POWER "potencia activa [W]"
+#endif
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "FINALES DE CARRERA"
@@ -165,7 +179,6 @@
 #define S_DIRECT_LINKS            "Enlaces directos"
 #define S_CONDITIONING            "Acondicionamiento"
 #define S_SENSOR                  "Sensor"
-#define S_CONDITION               "Condición"
 #define S_SWITCH_ON_VALUE         "valor de encendido"
 #define S_SWITCH_OFF_VALUE        "valor de desconexión"
 #define S_SETTINGS_FOR_RELAYS     "Configuraciones para relés"

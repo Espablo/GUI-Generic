@@ -26,6 +26,7 @@
 #define S_UPDATE                  "Aktualizacja"
 #define S_RESTART                 "Restart"
 #define S_RETURN                  "Powrót"
+#define S_CONDITION               "Warunek"
 
 #define S_TEMPLATE_BOARD                                       "Szablon płytek"
 #define S_TYPE                                                 "Rodzaj"
@@ -115,7 +116,6 @@
 #ifdef SUPLA_CONDITIONS
 #define S_CONDITIONING     "Warunkowanie"
 #define S_SENSOR           "Czujnik"
-#define S_CONDITION        "Warunek"
 #define S_TURN_ON_WHEN     "ZAŁĄCZ, jeżeli wartość"
 #define S_SWITCH_ON_VALUE  "Wartość załączenia"
 #define S_SWITCH_OFF_VALUE "Wartość wyłączenia"

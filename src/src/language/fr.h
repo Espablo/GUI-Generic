@@ -26,6 +26,7 @@
 #define S_UPDATE                  "Mettre à jour"
 #define S_RESTART                 "Réinitialisation"
 #define S_RETURN                  "Retour"
+#define S_CONDITION               "Condition"
 
 #define S_TEMPLATE_BOARD                                       "Modèle de la planches"
 #define S_TYPE                                                 "Genre"
@@ -96,25 +97,38 @@
 #define S_STATUS_NETWORK_DISCONNECTED    "Pas de connexion au réseau"
 
 // #### SuplaCommonPROGMEM.h ####
-#define S_OFF                           "ÉTEINDRE"
-#define S_ON                            "ALLUMER"
-#define S_TOGGLE                        "TOGGLE"
-#define S_LOW                           "BASSE"
-#define S_HIGH                          "HAUT"
-#define S_POSITION_MEMORY               "MEMOIRE DE POSITION"
-#define S_REACTION_ON_PRESS             "ON PRESSE"
-#define S_REACTION_ON_RELEASE           "EN LIBÉRATION"
-#define S_REACTION_ON_CHANGE            "SUR LE CHANGEMENT"
-#define S_REACTION_ON_HOLD              "EN ATTENTE"
-#define S_CFG_10_PRESSES                "10 FOIS SUR PRESSE"
-#define S_5SEK_HOLD                     "5 SEC TENIR"
-#define S_NORMAL                        "ORDINAIRE"
-#define S_SLOW                          "LENT"
-#define S_MANUALLY                      "MANUELLEMENT"
-#define S_ON_CH_VAL_OFF_HEATING         "ON > valeur de canal > OFF - chauffage"
-#define S_ON_CH_VAL_OFF_COOLING         "ON < valeur du canal < OFF - refroidissement"
-#define S_ON_2CH_VAL_OFF_HUMIDIFICATION "ON > Valeur 2ème canal > OFF - humidification"
-#define S_ON_2CH_VAL_OFF_DRYING         "ON < Valeur 2ème canal < OFF - séchage"
+#define S_OFF                 "ÉTEINDRE"
+#define S_ON                  "ALLUMER"
+#define S_TOGGLE              "TOGGLE"
+#define S_LOW                 "BASSE"
+#define S_HIGH                "HAUT"
+#define S_POSITION_MEMORY     "MEMOIRE DE POSITION"
+#define S_REACTION_ON_PRESS   "ON PRESSE"
+#define S_REACTION_ON_RELEASE "EN LIBÉRATION"
+#define S_REACTION_ON_CHANGE  "SUR LE CHANGEMENT"
+#define S_REACTION_ON_HOLD    "EN ATTENTE"
+#define S_CFG_10_PRESSES      "10 FOIS SUR PRESSE"
+#define S_5SEK_HOLD           "5 SEC TENIR"
+#define S_NORMAL              "ORDINAIRE"
+#define S_SLOW                "LENT"
+#define S_MANUALLY            "MANUELLEMENT"
+
+#ifdef SUPLA_CONDITIONS
+#define S_CONDITIONING     "Conditionnement"
+#define S_SENSOR           "Capteur"
+#define S_TURN_ON_WHEN     "ON si valeur"
+#define S_SWITCH_ON_VALUE  "Valeur de commutation"
+#define S_SWITCH_OFF_VALUE "Valeur désactivée"
+
+#define S_ON_LESS    "plus petit"
+#define S_ON_GREATER "plus grand"
+
+#define S_CHANNEL_VALUE "canal"
+#define S_HUMIDITY      "humidité"
+#define S_VOLTAGE       "tension[V]"
+#define S_CURRENT       "courant[A]"
+#define S_POWER         "puissance active[W]"
+#endif
 
 //#### SuplaWebServer.cpp ####
 #define S_LIMIT_SWITCHES "INTERRUPTEURS DE FIN DE COURSE"
@@ -163,7 +177,6 @@
 #define S_DIRECT_LINKS            "Liens directs"
 #define S_CONDITIONING            "Conditionnement"
 #define S_SENSOR                  "Capteur"
-#define S_CONDITION               "Condition"
 #define S_SWITCH_ON_VALUE         "valeur d'enclenchement"
 #define S_SWITCH_OFF_VALUE        "valeur de coupure"
 #define S_SETTINGS_FOR_RELAYS     "Paramètres des relais"
@@ -199,7 +212,6 @@
 #define S_PRESS             "Pression"
 #define S_ELECTRICITY_METER "Compteur d'énergie électrique"
 #define S_DISTANCE          "Distance"
-
 
 #ifdef SUPLA_PUSHOVER
 #define S_SOUND "Sound"
