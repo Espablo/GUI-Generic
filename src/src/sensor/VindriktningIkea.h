@@ -38,7 +38,12 @@ namespace Supla {
 namespace Sensor {
 class VindriktningIkea : public Thermometer {
  public:
+#ifdef ARDUINO_ARCH_ESP32
+  VindriktningIkea(HardwareSerial& serial);
+#else
   VindriktningIkea(int8_t rxPin);
+#endif
+
   double getValue();
   void iterateAlways();
 
