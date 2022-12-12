@@ -215,4 +215,6 @@
 #define S_SOUND "Sound"
 #endif
 
+#define S_BAUDRATE "Baudrate"
+
 #endif  // _LANGUAGE_ES_S_H_

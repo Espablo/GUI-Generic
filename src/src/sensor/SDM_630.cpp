@@ -20,9 +20,9 @@ namespace Supla {
 namespace Sensor {
 
 #if defined(ESP8266)
-SDM630::SDM630(int8_t pinRX, int8_t pinTX) : ReadValuesSDM(pinRX, pinTX, 9600){};
+SDM630::SDM630(int8_t pinRX, int8_t pinTX, long baud) : ReadValuesSDM(pinRX, pinTX, baud){};
 #else
-SDM630::SDM630(HardwareSerial& serial, int8_t pinRX, int8_t pinTX) : ReadValuesSDM(serial, pinRX, pinTX, 9600){};
+SDM630::SDM630(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud) : ReadValuesSDM(serial, pinRX, pinTX, baud){};
 #endif
 
 void SDM630::onInit() {

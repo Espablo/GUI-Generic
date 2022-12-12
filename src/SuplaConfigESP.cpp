@@ -495,6 +495,24 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
   return Serial;
 }
 
+int SuplaConfigESP::getBaudrateUart(uint8_t nr) {
+  switch (nr) {
+    case BAUDRATE_1200:
+      return 1200;
+    case BAUDRATE_2400:
+      return 2400;
+    case BAUDRATE_4800:
+      return 4800;
+    case BAUDRATE_9600:
+      return 9600;
+    case BAUDRATE_19200:
+      return 19200;
+    case BAUDRATE_38400:
+      return 38400;
+  }
+  return 9600;
+}
+
 uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {
 #ifdef GUI_SENSOR_I2C_EXPENDER
   if (strcmp(ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0 && !ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {

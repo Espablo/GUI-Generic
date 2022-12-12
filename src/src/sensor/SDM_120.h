@@ -29,9 +29,9 @@ namespace Sensor {
 class SDM120 : public ReadValuesSDM, public OnePhaseElectricityMeter {
  public:
 #if defined(ESP8266)
-  SDM120(int8_t pinRX, int8_t pinTX);
+  SDM120(int8_t pinRX, int8_t pinTX, long baud = 9600);
 #else
-  SDM120(HardwareSerial& serial, int8_t pinRX, int8_t pinTX);
+  SDM120(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud = 9600);
 #endif
   void onInit();
   virtual void readValuesFromDevice();

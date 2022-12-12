@@ -133,10 +133,16 @@ void handleOther(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
-#ifdef SUPLA_MODBUS_SDM
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + "SDM630");
+#if defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE)
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + "MODBUS SDM");
   addListGPIOBox(webContentBuffer, INPUT_SDM630_RX, S_RX, FUNCTION_SDM_RX);
   addListGPIOBox(webContentBuffer, INPUT_SDM630_TX, S_TX, FUNCTION_SDM_TX);
+
+  if (ConfigESP->getGpio(FUNCTION_SDM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SDM_TX) != OFF_GPIO) {
+    selected = ConfigManager->get(KEY_BAUDRATE_SDM)->getValueInt();
+    addListBox(webContentBuffer, INPUT_SDM630_BAUDRATE, S_BAUDRATE, BAUDRATE_UART_LIST_P, 6, selected);
+  }
+
   addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -317,10 +323,13 @@ void handleOtherSave() {
   }
 #endif
 
-#ifdef SUPLA_MODBUS_SDM
+#if defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE)
   if (!WebServer->saveGPIO(INPUT_SDM630_RX, FUNCTION_SDM_RX) || !WebServer->saveGPIO(INPUT_SDM630_TX, FUNCTION_SDM_TX)) {
     handleOther(6);
     return;
+  }
+  else {
+    ConfigManager->set(KEY_BAUDRATE_SDM, WebServer->httpServer->arg(INPUT_SDM630_BAUDRATE).c_str());
   }
 #endif
 

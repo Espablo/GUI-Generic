@@ -214,4 +214,6 @@
 #define S_SOUND "Dźwięk"
 #endif
 
+#define S_BAUDRATE "Prędkość komunikacji"
+
 #endif  // _LANGUAGE_PL_S_H_
