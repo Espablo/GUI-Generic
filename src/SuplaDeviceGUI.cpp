@@ -837,6 +837,10 @@ Supla::Sensor::AnalogRedingMap **analog = nullptr;
 #ifdef SUPLA_MODBUS_SDM
 Supla::Sensor::SDM630 *smd;
 #endif
+
+#ifdef SUPLA_MODBUS_SDM_ONE_PHASE
+Supla::Sensor::SDM120 *smd120;
+#endif
 }  // namespace GUI
 }  // namespace Supla
 

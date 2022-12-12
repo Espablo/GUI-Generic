@@ -394,8 +394,9 @@ void setup() {
   }
 #endif
 
-#ifdef SUPLA_MODBUS_SDM
+#if defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE)
   if (ConfigESP->getGpio(FUNCTION_SDM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SDM_TX) != OFF_GPIO) {
+#if defined(SUPLA_MODBUS_SDM)
 #ifdef ARDUINO_ARCH_ESP32
     Supla::GUI::smd =
         new Supla::Sensor::SDM630(ConfigESP->getHardwareSerial(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX)),
@@ -405,6 +406,19 @@ void setup() {
 
 #endif
     Supla::GUI::smd->setRefreshRate(60);
+#endif
+
+#if defined(SUPLA_MODBUS_SDM_ONE_PHASE)
+#ifdef ARDUINO_ARCH_ESP32
+    Supla::GUI::smd120 =
+        new Supla::Sensor::SDM120(ConfigESP->getHardwareSerial(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX)),
+                                  ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
+#else
+    Supla::GUI::smd120 = new Supla::Sensor::SDM120(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX));
+
+#endif
+    Supla::GUI::smd120->setRefreshRate(60);
+#endif
   }
 #endif
 

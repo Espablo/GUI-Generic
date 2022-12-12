@@ -57,6 +57,12 @@ void handlePageHome(int save) {
                                      " ErrCode:" + String(Supla::GUI::smd->getErrCode()));
     }
 #endif
+#ifdef SUPLA_MODBUS_SDM_ONE_PHASE
+    if (Supla::GUI::smd120) {
+      addLabel(webContentBuffer, "SuccCount:" + String(Supla::GUI::smd120->getSuccCount()) + " ErrCount:" +
+                                     String(Supla::GUI::smd120->getErrCount()) + " ErrCode:" + String(Supla::GUI::smd120->getErrCode()));
+    }
+#endif
     for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
       if (element->getChannel()) {
         auto channel = element->getChannel();
