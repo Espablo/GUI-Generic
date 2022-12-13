@@ -611,7 +611,6 @@ const char* const PUSHOVER_SOUND_LIST_P[] PROGMEM = {"Pushover",   "Bike",    "B
                                                      "Persistent", "Echo",    "Updown",     "Vibrate",      "None"};
 #endif
 
-#if defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE)
 enum BAUDRATE_UART
 {
   BAUDRATE_1200,
@@ -622,6 +621,7 @@ enum BAUDRATE_UART
   BAUDRATE_38400
 };
 
+#if defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE)
 const char* const BAUDRATE_UART_LIST_P[] PROGMEM = {"1200", "2400", "4800", "9600", "19200", "38400"};
 #endif
 
