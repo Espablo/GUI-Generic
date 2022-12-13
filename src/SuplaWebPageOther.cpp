@@ -139,7 +139,7 @@ void handleOther(int save) {
   addListGPIOBox(webContentBuffer, INPUT_SDM630_TX, S_TX, FUNCTION_SDM_TX);
 
   if (ConfigESP->getGpio(FUNCTION_SDM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SDM_TX) != OFF_GPIO) {
-    selected = ConfigManager->get(KEY_BAUDRATE_SDM)->getValueInt();
+    selected = ConfigESP->getBaudRate(ConfigESP->getGpio(FUNCTION_SDM_RX));
     addListBox(webContentBuffer, INPUT_SDM630_BAUDRATE, S_BAUDRATE, BAUDRATE_UART_LIST_P, 6, selected);
   }
 
@@ -329,7 +329,7 @@ void handleOtherSave() {
     return;
   }
   else {
-    ConfigManager->set(KEY_BAUDRATE_SDM, WebServer->httpServer->arg(INPUT_SDM630_BAUDRATE).c_str());
+    ConfigESP->setBaudRate(ConfigESP->getGpio(FUNCTION_SDM_RX), WebServer->httpServer->arg(INPUT_SDM630_BAUDRATE).toInt());
   }
 #endif
 

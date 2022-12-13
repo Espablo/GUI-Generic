@@ -422,13 +422,6 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_WAKE_ON_LAN_MAC, MAX_WAKE_ON_LAN * 18, false);
 #endif
 
-#if defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE)
-    this->addKey(KEY_BAUDRATE_SDM, "3", 2);
-#else
-    this->addKey(KEY_BAUDRATE_SDM, 2, false);
-
-#endif
-
     //  this->addKey(KEY_VERSION_CONFIG, String(CURENT_VERSION).c_str(), 2);
 
     SPIFFS.end();

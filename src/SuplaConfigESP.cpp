@@ -495,8 +495,16 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
   return Serial;
 }
 
-int SuplaConfigESP::getBaudrateUart(uint8_t nr) {
-  switch (nr) {
+uint8_t SuplaConfigESP::getBaudRate(uint8_t gpio) {
+  return ConfigManager->get(getKeyGpio(gpio))->getElement(ACTION_BUTTON).toInt();
+}
+
+void SuplaConfigESP::setBaudRate(uint8_t gpio, int baudRate) {
+  ConfigManager->setElement(getKeyGpio(gpio), ACTION_BUTTON, baudRate);
+}
+
+int SuplaConfigESP::getBaudRateSpeed(uint8_t gpio) {
+  switch (getBaudRate(gpio)) {
     case BAUDRATE_1200:
       return 1200;
     case BAUDRATE_2400:

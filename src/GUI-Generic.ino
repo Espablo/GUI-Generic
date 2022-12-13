@@ -400,26 +400,37 @@ void setup() {
 #ifdef ARDUINO_ARCH_ESP32
     Supla::GUI::smd = new Supla::Sensor::SDM630(
         ConfigESP->getHardwareSerial(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX)), ConfigESP->getGpio(FUNCTION_SDM_RX),
-        ConfigESP->getGpio(FUNCTION_SDM_TX), ConfigESP->getBaudrateUart(ConfigManager->get(KEY_BAUDRATE_SDM)->getValueInt()));
+        ConfigESP->getGpio(FUNCTION_SDM_TX), ConfigESP->getBaudRateSpeed(ConfigESP->getGpio(FUNCTION_SDM_RX)));
 #else
     Supla::GUI::smd = new Supla::Sensor::SDM630(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX),
-                                                ConfigESP->getBaudrateUart(ConfigManager->get(KEY_BAUDRATE_SDM)->getValueInt()));
+                                                ConfigESP->getBaudRateSpeed(ConfigESP->getGpio(FUNCTION_SDM_RX)));
 
 #endif
-    Supla::GUI::smd->setRefreshRate(60);
+    if (ConfigESP->getBaudRate(ConfigESP->getGpio(FUNCTION_SDM_RX)) == BAUDRATE_38400) {
+      Supla::GUI::smd120->setRefreshRate(10);
+    }
+    else {
+      Supla::GUI::smd120->setRefreshRate(60);
+    }
 #endif
 
 #if defined(SUPLA_MODBUS_SDM_ONE_PHASE)
 #ifdef ARDUINO_ARCH_ESP32
     Supla::GUI::smd120 = new Supla::Sensor::SDM120(
         ConfigESP->getHardwareSerial(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX)), ConfigESP->getGpio(FUNCTION_SDM_RX),
-        ConfigESP->getGpio(FUNCTION_SDM_TX), ConfigESP->getBaudrateUart(ConfigManager->get(KEY_BAUDRATE_SDM)->getValueInt()));
+        ConfigESP->getGpio(FUNCTION_SDM_TX), ConfigESP->getBaudRateSpeed(ConfigESP->getGpio(FUNCTION_SDM_RX)));
 #else
     Supla::GUI::smd120 = new Supla::Sensor::SDM120(ConfigESP->getGpio(FUNCTION_SDM_RX), ConfigESP->getGpio(FUNCTION_SDM_TX),
-                                                   ConfigESP->getBaudrateUart(ConfigManager->get(KEY_BAUDRATE_SDM)->getValueInt()));
+                                                   ConfigESP->getBaudRateSpeed(ConfigESP->getGpio(FUNCTION_SDM_RX)));
 
 #endif
-    Supla::GUI::smd120->setRefreshRate(60);
+    if (ConfigESP->getBaudRate(ConfigESP->getGpio(FUNCTION_SDM_RX)) == BAUDRATE_38400) {
+      Supla::GUI::smd120->setRefreshRate(10);
+    }
+    else {
+      Supla::GUI::smd120->setRefreshRate(60);
+    }
+
 #endif
   }
 #endif
