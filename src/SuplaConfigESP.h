@@ -81,7 +81,6 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   uint8_t getDefaultTamplateBoard();
 
   bool checkSSL();
-  bool checkAvailableGUI();
 
   const char *getLastStatusMessageSupla();
   int getLastStatusSupla();

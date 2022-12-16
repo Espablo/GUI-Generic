@@ -29,8 +29,8 @@ void DeepSleep::iterateAlways() {
     Serial.println(F("ESP to Sleep mode"));
     lastReadTime = millis();
 
+    delay(200);
     ESP.deepSleep(sleepTimeSec * 1000000);
-    delay(100);
   }
 }
 
