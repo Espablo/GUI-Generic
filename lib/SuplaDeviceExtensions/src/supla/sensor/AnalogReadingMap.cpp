@@ -24,6 +24,7 @@ AnalogRedingMap::AnalogRedingMap(uint8_t pin)
 }
 
 #ifdef ARDUINO_ARCH_ESP32
+#ifndef CONFIG_IDF_TARGET_ESP32S3
 adc1_channel_t AnalogRedingMap::get_adc1_chanel(uint8_t pin) {
   adc1_channel_t chan;
   switch (pin) {
@@ -55,6 +56,7 @@ adc1_channel_t AnalogRedingMap::get_adc1_chanel(uint8_t pin) {
   return chan;
 }
 #endif
+#endif
 
 void AnalogRedingMap::onInit() {
   pinMode(pin, INPUT);
@@ -63,7 +65,9 @@ void AnalogRedingMap::onInit() {
 
 uint16_t AnalogRedingMap::readValuesFromDevice() {
 #ifdef ARDUINO_ARCH_ESP32
+#ifndef CONFIG_IDF_TARGET_ESP32S3
   adc1_config_channel_atten(get_adc1_chanel(pin), ADC_ATTEN_DB_11);
+#endif
 #endif
 
   uint16_t average = 0;

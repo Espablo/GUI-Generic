@@ -37,9 +37,11 @@ class AnalogRedingMap : public Thermometer {
   AnalogRedingMap(uint8_t pin);
 
   void onInit();
-  
+
 #ifdef ARDUINO_ARCH_ESP32
+#ifndef CONFIG_IDF_TARGET_ESP32S3
   adc1_channel_t get_adc1_chanel(uint8_t pin);
+#endif
 #endif
 
   uint16_t readValuesFromDevice();
