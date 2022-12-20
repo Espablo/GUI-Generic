@@ -86,11 +86,13 @@ void GUIESPWifi::setup() {
 
   if (mode == Supla::DEVICE_MODE_CONFIG) {
     SUPLA_LOG_INFO("WiFi: enter config mode with SSID: \"%s\"", getAPName().c_str());
-    if (getCountChannels() == 0) {
+    if (getCountChannels() == 0 || strcmp(Supla::Channel::reg_dev.ServerName, DEFAULT_SERVER) == 0) {
+      SUPLA_LOG_INFO("WiFi: WIFI_AP_STA");
       WiFi.mode(WIFI_AP_STA);
       WiFi.begin(ssid, password);
     }
     else {
+      SUPLA_LOG_INFO("WiFi: WIFI_MODE_AP");
       WiFi.mode(WIFI_MODE_AP);
     }
 
