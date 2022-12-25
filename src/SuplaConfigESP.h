@@ -61,7 +61,7 @@ enum _ConfigMode
 #define OFF_GPIO_EXPENDER    17
 #define OFF_ADDRESS_MCP23017 4
 
-#define GPIO_VIRTUAL_RELAY 99
+#define GPIO_VIRTUAL_RELAY 77
 
 typedef struct {
   int status;
