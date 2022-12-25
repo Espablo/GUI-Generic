@@ -30,7 +30,7 @@ class DistanceHumidityMeter : public Distance {
   DistanceHumidityMeter();
   virtual double getHumi();
   void iterateAlways();
-  bool iterateConnected(void *srpc);
+  bool iterateConnected();
   Element &disableChannelState();
   Channel *getSecondaryChannel();
 

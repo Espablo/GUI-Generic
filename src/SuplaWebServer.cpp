@@ -20,6 +20,7 @@
 String webContentBuffer;
 
 SuplaWebServer::SuplaWebServer() {
+  isRunningWebServer = false;
 }
 
 void SuplaWebServer::begin() {
@@ -48,8 +49,9 @@ void SuplaWebServer::begin() {
 }
 
 void SuplaWebServer::iterateAlways() {
-  if (isRunningWebServer)
+  if (isRunningWebServer) {
     httpServer->handleClient();
+  }
 }
 
 void SuplaWebServer::createWebServer() {

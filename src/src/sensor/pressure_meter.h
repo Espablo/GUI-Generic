@@ -29,7 +29,7 @@ class PressMeter : public Element {
   PressMeter();
   virtual double getPressure();
   void iterateAlways();
-  bool iterateConnected(void *srpc);
+  bool iterateConnected();
   Element &disableChannelState();
   Channel *getSecondaryChannel();
 

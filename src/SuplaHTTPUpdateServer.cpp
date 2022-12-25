@@ -6,9 +6,12 @@
 #include <WiFiUdp.h>
 #include <flash_hal.h>
 #include <FS.h>
+#include <ESP8266httpUpdate.h>
 #include "StreamString.h"
 
 #include "SuplaHTTPUpdateServer.h"
+#include <WiFiClientSecure.h>
+
 #include "SuplaDeviceGUI.h"
 
 static const char serverIndex[] PROGMEM =
@@ -30,8 +33,10 @@ static const char serverIndex[] PROGMEM =
      </form>
      </body>
      </html>)";
-static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='10'>{m}";
-static const char twoStepResponse[] PROGMEM = "<META http-equiv='refresh' content='5'><b>{w}</b> {o} GUI-GenericUpdater.bin";
+static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='5'>{m}";
+static const char twoStepResponse[] PROGMEM =
+    "<META http-equiv='refresh' content='5'><b>{w}</b> {o} GUI-GenericUpdater.bin <a "
+    "href='update2step'><br><button>GUI-GenericUpdater.bin</button></a>";
 
 ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
@@ -65,6 +70,11 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
     index.replace("{b}", S_UPDATE_FIRMWARE);
     _server->send(200, PSTR("text/html"), index.c_str());
   });
+
+  _server->on(getURL(PATH_UPDATE_HENDLE), std::bind(&ESP8266HTTPUpdateServer::handleFirmwareUp, this));
+  // handler for the /update form page
+
+  _server->on(getURL(PATH_UPDATE_HENDLE_2STEP), [&]() { update2step(); });
 
   // handler for the /update form POST (once file upload finishes)
   _server->on(
@@ -187,5 +197,59 @@ void ESP8266HTTPUpdateServer::_setUpdaterError() {
   Update.printError(str);
   Serial.println(str.c_str());
   _updaterError = str.c_str();
+}
+
+void ESP8266HTTPUpdateServer::update2step() {
+  if (_username != emptyString && _password != emptyString && !_server->authenticate(_username.c_str(), _password.c_str()))
+    return _server->requestAuthentication();
+
+  const char* host = "raw.githubusercontent.com";
+  const int httpsPort = 443;
+  const char* url = "krycha88/GUI-Generic/master/tools/GUI-Generic_OTA.bin";
+
+  // https://gui-generic-builder.supla.io/files/GUI-Generic_OTA.bin
+  // https://raw.githubusercontent.com/krycha88/GUI-Generic/master/tools/GUI-GenericUploader.bin
+
+  WiFiClientSecure client;
+  client.setInsecure();
+  client.setBufferSizes(1024, 1024);
+
+  Serial.print("connecting to ");
+  Serial.println(host);
+
+  if (!client.connect(host, httpsPort)) {
+    Serial.println("connection failed");
+    return;
+  }
+
+  Serial.print("Starting OTA from: ");
+  Serial.println(url);
+
+  ESPhttpUpdate.rebootOnUpdate(false);
+  ESPhttpUpdate.closeConnectionsOnUpdate(false);
+  ESPhttpUpdate.setLedPin(ConfigESP->getGpio(FUNCTION_CFG_LED), LOW);
+  auto ret = ESPhttpUpdate.update(client, host, httpsPort, url);
+
+  switch (ret) {
+    case HTTP_UPDATE_FAILED:
+      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+      break;
+
+    case HTTP_UPDATE_NO_UPDATES:
+      Serial.println("HTTP_UPDATE_NO_UPDATES");
+      break;
+
+    case HTTP_UPDATE_OK:
+      Serial.println("HTTP_UPDATE_OK");
+
+      String succes = FPSTR(successResponse);
+      succes.replace("{m}", S_UPDATE_SUCCESS_REBOOTING);
+      _server->client().setNoDelay(true);
+      _server->send(200, F("text/html"), succes.c_str());
+      delay(100);
+      _server->client().stop();
+      ESP.restart();
+      break;
+  }
 }
 #endif

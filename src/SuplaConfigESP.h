@@ -61,7 +61,7 @@ enum _ConfigMode
 #define OFF_GPIO_EXPENDER    17
 #define OFF_ADDRESS_MCP23017 4
 
-#define GPIO_VIRTUAL_RELAY 99
+#define GPIO_VIRTUAL_RELAY 77
 
 typedef struct {
   int status;
@@ -81,7 +81,6 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   uint8_t getDefaultTamplateBoard();
 
   bool checkSSL();
-  bool checkAvailableGUI();
 
   const char *getLastStatusMessageSupla();
   int getLastStatusSupla();
@@ -100,6 +99,10 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   }
 
   HardwareSerial &getHardwareSerial(int8_t rxPin, int8_t txPin = -1);
+
+  uint8_t getBaudRate(uint8_t gpio);
+  void setBaudRate(uint8_t gpio, int baudRate);
+  int getBaudRateSpeed(uint8_t gpio);
 
   uint8_t getNumberButton(uint8_t nr);
   uint8_t getKeyGpio(uint8_t gpio);

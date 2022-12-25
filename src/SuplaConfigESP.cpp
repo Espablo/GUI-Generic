@@ -153,10 +153,15 @@ void SuplaConfigESP::rebootESP() {
 void SuplaConfigESP::configModeInit() {
   configModeESP = Supla::DEVICE_MODE_CONFIG;
   ledBlinking(100);
-  SuplaDevice.enterConfigMode();
+
+  Supla::Network::SetConfigMode();
 
   Supla::GUI::enableConnectionSSL(false);
   Supla::GUI::setupConnection();
+
+  if (getCountChannels() > 0) {
+    SuplaDevice.enterConfigMode();
+  }
 }
 
 bool SuplaConfigESP::checkSSL() {
@@ -308,7 +313,6 @@ void status_func(int status, const char *msg) {
     case STATUS_CONFIG_MODE:
       ConfigESP->configModeESP = Supla::DEVICE_MODE_CONFIG;
       ConfigESP->ledBlinking(100);
-      // ConfigESP->supla_status.msg = S_STATUS_NETWORK_DISCONNECTED;
       break;
     default:
       ConfigESP->supla_status.msg = msg;
@@ -316,14 +320,11 @@ void status_func(int status, const char *msg) {
   }
   ConfigESP->supla_status.status = status;
 
-  static int lock;
-  if (status == STATUS_REGISTERED_AND_READY && ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
-    ConfigESP->ledBlinkingStop();
-    lock = 0;
-  }
-  else if (status != STATUS_REGISTERED_AND_READY && lock == 0 && ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
-    ConfigESP->ledBlinking(500);
-    lock = 1;
+  if (ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
+    if (status == STATUS_REGISTERED_AND_READY)
+      ConfigESP->ledBlinkingStop();
+    else
+      ConfigESP->ledBlinking(500);
   }
 }
 
@@ -421,6 +422,7 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
 #endif
 #endif
 
+#if SOC_UART_NUM > 1
 #ifndef RX1
 #if CONFIG_IDF_TARGET_ESP32
 #define RX1 9
@@ -444,7 +446,9 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
 #define TX1 16
 #endif
 #endif
+#endif /* SOC_UART_NUM > 1 */
 
+#if SOC_UART_NUM > 2
 #ifndef RX2
 #if CONFIG_IDF_TARGET_ESP32
 #define RX2 16
@@ -460,20 +464,28 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
 #define TX2 20
 #endif
 #endif
+#endif /* SOC_UART_NUM > 2 */
 
+#if SOC_UART_NUM > 1
   if (rxPin == RX1 || txPin == RX1) {
     return Serial1;
   }
-  else if (rxPin == RX2 || txPin == TX2) {
+#endif
+
+#if SOC_UART_NUM > 2
+  if (rxPin == RX2 || txPin == TX2) {
     return Serial2;
   }
+#endif
+
 #else
   // toggle between use of GPIO13/GPIO15 or GPIO3/GPIO(1/2) as RX and TX
   if (rxPin == 13 || txPin == 15) {
     Serial.swap();
     return Serial;
   }
-  else if (rxPin == 2 && txPin == -1) {
+
+  if (rxPin == 2 && txPin == -1) {
     return Serial1;
   }
 #endif
@@ -481,6 +493,32 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
   // ESP8266 rxPin == 3 || txPin == 1 || txPin == 2
   // ESP32 rxPin == SOC_RX0 || txPin == SOC_TX0
   return Serial;
+}
+
+uint8_t SuplaConfigESP::getBaudRate(uint8_t gpio) {
+  return ConfigManager->get(getKeyGpio(gpio))->getElement(ACTION_BUTTON).toInt();
+}
+
+void SuplaConfigESP::setBaudRate(uint8_t gpio, int baudRate) {
+  ConfigManager->setElement(getKeyGpio(gpio), ACTION_BUTTON, baudRate);
+}
+
+int SuplaConfigESP::getBaudRateSpeed(uint8_t gpio) {
+  switch (getBaudRate(gpio)) {
+    case BAUDRATE_1200:
+      return 1200;
+    case BAUDRATE_2400:
+      return 2400;
+    case BAUDRATE_4800:
+      return 4800;
+    case BAUDRATE_9600:
+      return 9600;
+    case BAUDRATE_19200:
+      return 19200;
+    case BAUDRATE_38400:
+      return 38400;
+  }
+  return 9600;
 }
 
 uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {

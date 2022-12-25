@@ -49,66 +49,88 @@ void handlePageHome(int save) {
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript();
 
-  addForm(webContentBuffer, F("post"));
+  if (getCountSensorChannels() > 0) {
+    addFormHeader(webContentBuffer);
+#ifdef SUPLA_MODBUS_SDM
+    if (Supla::GUI::smd) {
+      addLabel(webContentBuffer, "SuccCount:" + String(Supla::GUI::smd->getSuccCount()) + " ErrCount:" + String(Supla::GUI::smd->getErrCount()) +
+                                     " ErrCode:" + String(Supla::GUI::smd->getErrCode()));
+    }
+#endif
+#ifdef SUPLA_MODBUS_SDM_ONE_PHASE
+    if (Supla::GUI::smd120) {
+      addLabel(webContentBuffer, "SuccCount:" + String(Supla::GUI::smd120->getSuccCount()) + " ErrCount:" +
+                                     String(Supla::GUI::smd120->getErrCount()) + " ErrCode:" + String(Supla::GUI::smd120->getErrCode()));
+    }
+#endif
+    for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
+      if (element->getChannel()) {
+        auto channel = element->getChannel();
 
-  addFormHeader(webContentBuffer);
-#ifdef SUPLA_SDM630
-  if (Supla::GUI::smd) {
-    addLabel(webContentBuffer, "ErrCode: " + String(Supla::GUI::smd->sdm.getErrCode()));
-    addLabel(webContentBuffer, "ErrCount: " + String(Supla::GUI::smd->sdm.getErrCount()));
-  }
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
+          addLabel(webContentBuffer, String(channel->getValueDouble(), 2) + "°C");
+        }
+
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
+          addLabel(webContentBuffer, String(channel->getValueDoubleFirst(), 2) + "°C" + S_SPACE + String(channel->getValueDoubleSecond(), 2) + "%");
+        }
+
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYSENSOR) {
+          addLabel(webContentBuffer, String(channel->getValueDoubleSecond(), 2) + "%");
+        }
+
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_DISTANCESENSOR) {
+          addLabel(webContentBuffer, String(channel->getValueDouble(), 2) + "m");
+        }
+
+#ifdef GUI_ALL_ENERGY
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_ELECTRICITY_METER) {
+          TSuplaChannelExtendedValue* extValue = channel->getExtValue();
+          if (extValue == nullptr)
+            continue;
+
+          TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
+          if (emValue->m_count < 1 || emValue == nullptr)
+            continue;
+
+          String voltage = "";
+          String power_active = "";
+          String current = "";
+
+          for (size_t i = 0; i < MAX_PHASES; i++) {
+            if (emValue->m[0].voltage[i] > 0) {
+              voltage += String(emValue->m[0].voltage[i] / 100.0) + " | ";
+              power_active += String(emValue->m[0].power_active[i] / 100000.0) + " | ";
+              current += String(emValue->m[0].current[i] / 1000.0) + " | ";
+            }
+          }
+
+          voltage.setCharAt(voltage.length() - 2, 'V');
+          power_active.setCharAt(power_active.length() - 2, 'W');
+          current.setCharAt(current.length() - 2, 'A');
+
+          addLabel(webContentBuffer, voltage);
+          addLabel(webContentBuffer, power_active);
+          addLabel(webContentBuffer, current);
+        }
 #endif
 
-  for (auto element = Supla::Element::begin(); element != nullptr; element = element->next()) {
-    if (element->getChannel()) {
-      auto channel = element->getChannel();
-
-      if (channel->getChannelType() == SUPLA_CHANNELTYPE_THERMOMETER) {
-        addLabel(webContentBuffer, String(channel->getValueDouble(), 2) + "°C");
-      }
-
-      if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYANDTEMPSENSOR) {
-        addLabel(webContentBuffer, String(channel->getValueDoubleFirst(), 2) + "°C" + S_SPACE + String(channel->getValueDoubleSecond(), 2) + "%");
-      }
-
-      if (channel->getChannelType() == SUPLA_CHANNELTYPE_HUMIDITYSENSOR) {
-        addLabel(webContentBuffer, String(channel->getValueDoubleSecond(), 2) + "%");
-      }
-
-      if (channel->getChannelType() == SUPLA_CHANNELTYPE_DISTANCESENSOR) {
-        addLabel(webContentBuffer, String(channel->getValueDouble(), 2) + "m");
-      }
-
-      if (channel->getChannelType() == SUPLA_CHANNELTYPE_ELECTRICITY_METER) {
-        TSuplaChannelExtendedValue* extValue = channel->getExtValue();
-        if (extValue == nullptr)
-          continue;
-
-        TElectricityMeter_ExtendedValue_V2* emValue = reinterpret_cast<TElectricityMeter_ExtendedValue_V2*>(extValue->value);
-        if (emValue->m_count < 1 || emValue == nullptr)
-          continue;
-
-        for (size_t i = 0; i < MAX_PHASES; i++) {
-          if (emValue->m[0].voltage[i] > 0) {
-            addLabel(webContentBuffer, String(emValue->m[0].voltage[i] / 100.0) + "V");
-            addLabel(webContentBuffer, String(emValue->m[0].power_active[i] / 100000.0) + "W");
-            addLabel(webContentBuffer, String(emValue->m[0].current[i] / 1000.0) + "A");
-          }
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
+          addLabel(webContentBuffer, String(channel->getValueDouble()) + "hPa");
         }
       }
-      if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
-        addLabel(webContentBuffer, String(channel->getValueDouble()) + "hPa");
-      }
-    }
 
-    if (element->getSecondaryChannel()) {
-      auto channel = element->getSecondaryChannel();
-      if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
-        addLabel(webContentBuffer, String(channel->getValueDouble()) + "hPa");
+      if (element->getSecondaryChannel()) {
+        auto channel = element->getSecondaryChannel();
+        if (channel->getChannelType() == SUPLA_CHANNELTYPE_PRESSURESENSOR) {
+          addLabel(webContentBuffer, String(channel->getValueDouble()) + "hPa");
+        }
       }
     }
+    addFormHeaderEnd(webContentBuffer);
   }
-  addFormHeaderEnd(webContentBuffer);
+
+  addForm(webContentBuffer, F("post"));
 
 #ifdef SUPLA_WT32_ETH01_LAN8720
 

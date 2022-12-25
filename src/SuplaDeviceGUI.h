@@ -183,7 +183,7 @@
 #include "src/sensor/PMSx003.h"
 
 #ifdef SUPLA_WT32_ETH01_LAN8720
-#include <supla/network/wt32_eth01.h>
+#include "src/network/SuplaGuiWt32_eth01.h"
 #endif
 
 #ifdef SUPLA_ADE7953
@@ -200,8 +200,16 @@
 #include "src/control/WakeOnLanRelay.h"
 #endif
 
-#ifdef SUPLA_SDM630
+#ifdef SUPLA_MODBUS_SDM
 #include "src/sensor/SDM_630.h"
+#endif
+
+#ifdef SUPLA_MODBUS_SDM_ONE_PHASE
+#include "src/sensor/SDM_120.h"
+#endif
+
+#ifdef SUPLA_DEEP_SLEEP
+#include "src/control/deepSleep.h"
 #endif
 
 namespace Supla {
@@ -264,10 +272,8 @@ void setRGBWButton(Supla::Control::RGBWBase *rgbw, int buttonPin);
 void setRGBWDefaultState(Supla::Control::RGBWBase *rgbw, uint8_t memory);
 #endif
 
-void addConditionsTurnON(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
-void addConditionsTurnOFF(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
-void addConditionsTurnON(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
-void addConditionsTurnOFF(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
+void addConditionsRelay(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
+void addConditionsRelay(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
 
 #if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
 void addCorrectionSensor();
@@ -296,8 +302,12 @@ extern Supla::Sensor::MPX_5XXX *mpx;
 extern Supla::Sensor::AnalogRedingMap **analog;
 #endif
 
-#ifdef SUPLA_SDM630
+#ifdef SUPLA_MODBUS_SDM
 extern Supla::Sensor::SDM630 *smd;
+#endif
+
+#ifdef SUPLA_MODBUS_SDM_ONE_PHASE
+extern Supla::Sensor::SDM120 *smd120;
 #endif
 
 };  // namespace GUI

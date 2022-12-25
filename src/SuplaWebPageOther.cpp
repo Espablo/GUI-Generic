@@ -133,10 +133,16 @@ void handleOther(int save) {
   addFormHeaderEnd(webContentBuffer);
 #endif
 
-#ifdef SUPLA_SDM630
-  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + "SDM630");
+#if defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE)
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + "MODBUS SDM");
   addListGPIOBox(webContentBuffer, INPUT_SDM630_RX, S_RX, FUNCTION_SDM_RX);
   addListGPIOBox(webContentBuffer, INPUT_SDM630_TX, S_TX, FUNCTION_SDM_TX);
+
+  if (ConfigESP->getGpio(FUNCTION_SDM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SDM_TX) != OFF_GPIO) {
+    selected = ConfigESP->getBaudRate(ConfigESP->getGpio(FUNCTION_SDM_RX));
+    addListBox(webContentBuffer, INPUT_SDM630_BAUDRATE, S_BAUDRATE, BAUDRATE_UART_LIST_P, 6, selected);
+  }
+
   addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -317,10 +323,13 @@ void handleOtherSave() {
   }
 #endif
 
-#ifdef SUPLA_SDM630
+#if defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE)
   if (!WebServer->saveGPIO(INPUT_SDM630_RX, FUNCTION_SDM_RX) || !WebServer->saveGPIO(INPUT_SDM630_TX, FUNCTION_SDM_TX)) {
     handleOther(6);
     return;
+  }
+  else {
+    ConfigESP->setBaudRate(ConfigESP->getGpio(FUNCTION_SDM_RX), WebServer->httpServer->arg(INPUT_SDM630_BAUDRATE).toInt());
   }
 #endif
 
@@ -466,7 +475,8 @@ void handleImpulseCounterSet(int save) {
     selected = ConfigESP->getLevel(gpio);
     addCheckBox(webContentBuffer, INPUT_IMPULSE_COUNTER_RAISING_EDGE, S_IMPULSE_COUNTER_RAISING_EDGE, selected);
 
-    addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT);
+    addNumberBox(webContentBuffer, INPUT_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT, String(S_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT) + S_SPACE + S_UNIT_MS,
+                 KEY_IMPULSE_COUNTER_DEBOUNCE_TIMEOUT);
 
     if (Supla::GUI::impulseCounter.size() < ConfigManager->get(KEY_MAX_IMPULSE_COUNTER)->getValueInt()) {
       Supla::GUI::addImpulseCounter(nr.toInt());

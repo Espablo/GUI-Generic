@@ -19,17 +19,29 @@
 #define _analog_reding_map_h
 
 #include <Arduino.h>
-#include <supla/storage/storage.h>
 #include <supla/sensor/thermometer.h>
+#include <supla/storage/storage.h>
+
+#ifdef ARDUINO_ARCH_ESP32
+#include <driver/adc.h>
+#include <esp_adc_cal.h>
+#endif
 
 namespace Supla {
 namespace Sensor {
+
+#define NO_OF_SAMPLES 10
 
 class AnalogRedingMap : public Thermometer {
  public:
   AnalogRedingMap(uint8_t pin);
 
   void onInit();
+  
+#ifdef ARDUINO_ARCH_ESP32
+  adc1_channel_t get_adc1_chanel(uint8_t pin);
+#endif
+
   uint16_t readValuesFromDevice();
   virtual double getValue();
 

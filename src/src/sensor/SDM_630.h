@@ -29,9 +29,9 @@ namespace Sensor {
 class SDM630 : public ReadValuesSDM, public ElectricityMeter {
  public:
 #if defined(ESP8266)
-  SDM630(int8_t pinRX, int8_t pinTX);
+  SDM630(int8_t pinRX, int8_t pinTX, long baud = 9600);
 #else
-  SDM630(HardwareSerial& serial, int8_t pinRX, int8_t pinTX);
+  SDM630(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud = 9600);
 #endif
   void onInit();
   virtual void readValuesFromDevice();

@@ -20,42 +20,17 @@
 #include <Arduino.h>
 #include <supla/channel_element.h>
 
+#include "../../SuplaDeviceGUI.h"
+
 namespace Supla {
 namespace Control {
 
 class DeepSleep : public Element {
  public:
-  DeepSleep(unsigned _supla_int_t sleepTimeSec,
-            unsigned _supla_int_t iterateTimeSec)
-      : sleepTimeSec(sleepTimeSec),
-        iterateTimeSec(iterateTimeSec),
-        lastReadTime(0) {
-  }
+  DeepSleep(unsigned _supla_int_t sleepTimeSec, unsigned _supla_int_t iterateTimeSec);
 
-  void iterateAlways() {
-    if (millis() - lastReadTime > iterateTimeSec * 1000 &&
-        ConfigESP->configModeESP == Supla::DEVICE_MODE_NORMAL) {
-      Serial.println(F("ESP8266 to Sleep mode"));
-      lastReadTime = millis();
-      ESP.deepSleep(sleepTimeSec * 1000000);
-      delay(100);
-    }
-  }
-
-  void onInit() {
-    for (auto element = Supla::Element::begin(); element != nullptr;
-         element = element->next()) {
-      if (element->getChannel()) {
-        auto channel = element->getChannel();
-        channel->setValidityTimeSec(sleepTimeSec);
-      }
-
-      if (element->getSecondaryChannel()) {
-        auto channel = element->getSecondaryChannel();
-        channel->setValidityTimeSec(sleepTimeSec);
-      }
-    }
-  }
+  void iterateAlways();
+  void onInit();
 
  protected:
   unsigned _supla_int_t sleepTimeSec;

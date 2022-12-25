@@ -36,49 +36,77 @@ class ReadValuesSDM : public Element {
   ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud);
 #endif
 
-  void onInit() override;
+  // energy 1 == 0.00001 kWh
+  float getFwdActEnergy(int phase = 0);
+
+    // energy 1 == 0.00001 kWh
+  float getFwdActEnergyTotal();
 
   // energy 1 == 0.00001 kWh
-  unsigned _supla_int64_t getFwdActEnergy(int phase = 0);
+  float getRvrActEnergy(int phase = 0);
 
   // energy 1 == 0.00001 kWh
-  unsigned _supla_int64_t getRvrActEnergy(int phase = 0);
+  float getFwdReactEnergy(int phase = 0);
+
+    // energy 1 == 0.00001 kWh
+  float getFwdReactEnergyTotal();
 
   // energy 1 == 0.00001 kWh
-  unsigned _supla_int64_t getFwdReactEnergy(int phase = 0);
-
-  // energy 1 == 0.00001 kWh
-  unsigned _supla_int64_t getRvrReactEnergy(int phase = 0);
+  float getRvrReactEnergy(int phase = 0);
 
   // voltage 1 == 0.01 V
-  unsigned _supla_int16_t getVoltage(int phase = 0);
+  float getVoltage(int phase = 0);
 
   // current 1 == 0.001 A
-  unsigned _supla_int_t getCurrent(int phase = 0);
+  float getCurrent(int phase = 0);
 
   // Frequency 1 == 0.01 Hz
-  unsigned _supla_int16_t getFreq();
+  float getFreq();
 
   // power 1 == 0.00001 W
-  _supla_int_t getPowerActive(int phase = 0);
+  float getPowerActive(int phase = 0);
 
   // power 1 == 0.00001 var
-  _supla_int_t getPowerReactive(int phase = 0);
+  float getPowerReactive(int phase = 0);
 
   // power 1 == 0.00001 VA
-  _supla_int_t getPowerApparent(int phase = 0);
+  float getPowerApparent(int phase = 0);
 
   // power 1 == 0.001
-  _supla_int_t getPowerFactor(int phase = 0);
+  float getPowerFactor(int phase = 0);
 
   // phase angle 1 == 0.1 degree
-  _supla_int_t getPhaseAngle(int phase = 0);
+  float getPhaseAngle(int phase = 0);
 
   float sdmRead(uint16_t reg);
 
-  SDM sdm;  // config SDM
+  uint16_t getErrCode(bool _clear = false) {
+    return sdm.getErrCode(_clear);
+  }
+
+  uint32_t getErrCount(bool _clear = false) {
+    return sdm.getErrCount(_clear);
+  }
+
+  uint32_t getSuccCount(bool _clear = false) {
+    return sdm.getSuccCount(_clear);
+  }
+
+  void clearErrCode() {
+    sdm.clearErrCode();
+  }
+
+  void clearErrCount() {
+    sdm.clearErrCount();
+  }
+
+  void clearSuccCount() {
+    sdm.clearSuccCount();
+  }
 
  protected:
+  SDM sdm;  // config SDM
+
 #if defined(ESP8266)
   SoftwareSerial swSerSDM;  // config SoftwareSerial
 #endif
