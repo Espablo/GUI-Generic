@@ -205,14 +205,14 @@ void ESP8266HTTPUpdateServer::update2step() {
 
   const char* host = "raw.githubusercontent.com";
   const int httpsPort = 443;
-  const char* url = "krycha88/GUI-Generic/master/tools/GUI-Generic_OTA.bin";
+  const char* url = "/krycha88/GUI-Generic/master/tools/GUI-Generic_OTA.bin";
 
   // https://gui-generic-builder.supla.io/files/GUI-Generic_OTA.bin
-  // https://raw.githubusercontent.com/krycha88/GUI-Generic/master/tools/GUI-GenericUploader.bin
+  // https://raw.githubusercontent.com/krycha88/GUI-Generic/master/tools/GUI-Generic_OTA.bin
 
   WiFiClientSecure client;
   client.setInsecure();
-  client.setBufferSizes(1024, 1024);
+  client.setBufferSizes(1024, 512);
 
   Serial.print("connecting to ");
   Serial.println(host);
@@ -246,7 +246,7 @@ void ESP8266HTTPUpdateServer::update2step() {
       succes.replace("{m}", S_UPDATE_SUCCESS_REBOOTING);
       _server->client().setNoDelay(true);
       _server->send(200, F("text/html"), succes.c_str());
-      delay(100);
+     delay(1000);
       _server->client().stop();
       ESP.restart();
       break;
