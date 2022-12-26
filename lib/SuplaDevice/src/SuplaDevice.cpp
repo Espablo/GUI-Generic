@@ -29,7 +29,7 @@
 #include "supla/events.h"
 #include "supla/io.h"
 #include "supla/network/network.h"
-#include "supla/network/web_server.h"
+//#include "supla/network/web_server.h"
 #include "supla/storage/config.h"
 #include "supla/storage/storage.h"
 #include "supla/time.h"
@@ -216,9 +216,9 @@ bool SuplaDeviceClass::begin(unsigned char protoVersion) {
   }
 
   Supla::Network::Instance()->setSuplaDeviceClass(this);
-  if (Supla::WebServer::Instance()) {
-    Supla::WebServer::Instance()->setSuplaDeviceClass(this);
-  }
+  // if (Supla::WebServer::Instance()) {
+  //   Supla::WebServer::Instance()->setSuplaDeviceClass(this);
+  // }
 
   bool generateGuidAndAuthkey = false;
   if (isArrayEmpty(Supla::Channel::reg_dev.GUID, SUPLA_GUID_SIZE)) {
@@ -711,9 +711,9 @@ void SuplaDeviceClass::enterConfigMode() {
     Supla::Network::Setup();
   }
 
-  if (Supla::WebServer::Instance()) {
-    Supla::WebServer::Instance()->start();
-  }
+  // if (Supla::WebServer::Instance()) {
+  //   Supla::WebServer::Instance()->start();
+  // }
   status(STATUS_CONFIG_MODE, "Config mode", true);
 }
 
@@ -728,9 +728,9 @@ void SuplaDeviceClass::softRestart() {
 
   // TODO(klew): stop supla timers
 
-  if (Supla::WebServer::Instance()) {
-    Supla::WebServer::Instance()->stop();
-  }
+  // if (Supla::WebServer::Instance()) {
+  //   Supla::WebServer::Instance()->stop();
+  // }
 
   Supla::Network::Uninit();
   SUPLA_LOG_INFO("Resetting in 0.5s...");
@@ -963,19 +963,19 @@ void SuplaDeviceClass::handleLocalActionTriggers() {
     softRestart();
   }
 
-  if (triggerStartLocalWebServer) {
-    triggerStartLocalWebServer = false;
-    if (Supla::WebServer::Instance()) {
-      Supla::WebServer::Instance()->start();
-    }
-  }
+  // if (triggerStartLocalWebServer) {
+  //   triggerStartLocalWebServer = false;
+  //   if (Supla::WebServer::Instance()) {
+  //     Supla::WebServer::Instance()->start();
+  //   }
+  // }
 
-  if (triggerStopLocalWebServer) {
-    triggerStopLocalWebServer = false;
-    if (Supla::WebServer::Instance()) {
-      Supla::WebServer::Instance()->stop();
-    }
-  }
+  // if (triggerStopLocalWebServer) {
+  //   triggerStopLocalWebServer = false;
+  //   if (Supla::WebServer::Instance()) {
+  //     Supla::WebServer::Instance()->stop();
+  //   }
+  // }
 
   if (triggerCheckSwUpdate) {
     triggerCheckSwUpdate = false;
