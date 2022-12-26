@@ -720,11 +720,6 @@ void setup() {
   Supla::GUI::addCorrectionSensor();
 #endif
 
-#ifdef ARDUINO_ARCH_ESP8266
-  // https://github.com/esp8266/Arduino/issues/2070#issuecomment-258660760
-  wifi_set_sleep_type(NONE_SLEEP_T);
-#endif
-
   if (!ConfigESP->checkBusyGpio(3)) {  // GPIO_RX
     new ImprovSerialComponent();
   }
