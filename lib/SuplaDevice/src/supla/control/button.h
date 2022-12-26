@@ -30,7 +30,7 @@ class Button : public SimpleButton {
   explicit Button(int pin, bool pullUp = false, bool invertLogic = false);
 
   void onTimer() override;
-  void onLoadConfig() override;
+  // void onLoadConfig() override;
   void setHoldTime(unsigned int timeMs);
   void repeatOnHoldEvery(unsigned int timeMs);
   void setMulticlickTime(unsigned int timeMs, bool bistableButton = false);
