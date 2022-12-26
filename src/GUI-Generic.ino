@@ -38,6 +38,9 @@ extern "C" {
 #include "src/sensor/DirectLinks.h"
 #endif
 
+uint32_t last_loop{0};
+#define LOOP_INTERVAL 16
+
 void setup() {
   uint8_t nr, gpio;
 
@@ -728,6 +731,14 @@ void setup() {
 }
 
 void loop() {
+  const uint32_t now = millis();
   SuplaDevice.iterate();
-  delay(25);
+
+  uint32_t delay_time = LOOP_INTERVAL;
+  if (now - last_loop < LOOP_INTERVAL)
+    delay_time = LOOP_INTERVAL - (now - last_loop);
+
+  delay(delay_time);
+
+  last_loop = now;
 }
