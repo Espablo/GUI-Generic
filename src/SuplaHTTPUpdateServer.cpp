@@ -31,12 +31,12 @@ static const char serverIndex[] PROGMEM =
          </br>
          <input type='submit' value='{b}'>
      </form>
+     {g}
      </body>
      </html>)";
 static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='5'>{m}";
-static const char twoStepResponse[] PROGMEM =
-    "<META http-equiv='refresh' content='5'><b>{w}</b> {o} GUI-GenericUpdater.bin <a "
-    "href='update2step'><br><button>GUI-GenericUpdater.bin</button></a>";
+static const char twoStepResponse[] PROGMEM = "<META http-equiv='refresh' content='5'><b>{w}</b> {o} {gg}";
+static const char twoStepButton[] PROGMEM = "<a href='update2step'><br><button>{gg}</button></a>";
 
 ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
@@ -68,6 +68,10 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
     index.replace("{S}", S_SKETCH_UPLOAD_MAX_SIZE);
     index.replace("{U}", S_SKETCH_LOADED_SIZE);
     index.replace("{b}", S_UPDATE_FIRMWARE);
+    if ((ESP.getFlashChipSize() / 1024) == 1024) {
+      index.replace("{g}", twoStepButton);
+    }
+    index.replace("{gg}", "GUI-GenericUpdater.bin");
     _server->send(200, PSTR("text/html"), index.c_str());
   });
 
@@ -205,7 +209,7 @@ void ESP8266HTTPUpdateServer::update2step() {
 
   const char* host = "raw.githubusercontent.com";
   const int httpsPort = 443;
-  const char* url = "/krycha88/GUI-Generic/master/tools/GUI-Generic_OTA.bin";
+  const char* url = "krycha88/GUI-Generic/master/tools/GUI-GenericUploader.bin.gz";
 
   // https://gui-generic-builder.supla.io/files/GUI-Generic_OTA.bin
   // https://raw.githubusercontent.com/krycha88/GUI-Generic/master/tools/GUI-Generic_OTA.bin
@@ -246,7 +250,6 @@ void ESP8266HTTPUpdateServer::update2step() {
       succes.replace("{m}", S_UPDATE_SUCCESS_REBOOTING);
       _server->client().setNoDelay(true);
       _server->send(200, F("text/html"), succes.c_str());
-     delay(1000);
       _server->client().stop();
       ESP.restart();
       break;
