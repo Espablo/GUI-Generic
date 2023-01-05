@@ -410,10 +410,10 @@ void setup() {
 
 #endif
     if (ConfigESP->getBaudRate(ConfigESP->getGpio(FUNCTION_SDM_RX)) == BAUDRATE_38400) {
-      Supla::GUI::smd120->setRefreshRate(10);
+      Supla::GUI::smd->setRefreshRate(10);
     }
     else {
-      Supla::GUI::smd120->setRefreshRate(60);
+      Supla::GUI::smd->setRefreshRate(60);
     }
 #endif
 
