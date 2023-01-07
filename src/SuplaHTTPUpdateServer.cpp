@@ -71,6 +71,9 @@ void ESP8266HTTPUpdateServer::setup(ESP8266WebServer* server, const String& path
     if ((ESP.getFlashChipSize() / 1024) == 1024) {
       index.replace("{g}", twoStepButton);
     }
+    else {
+      index.replace("{g}", "");
+    }
     index.replace("{gg}", "GUI-GenericUpdater.bin");
     _server->send(200, PSTR("text/html"), index.c_str());
   });
