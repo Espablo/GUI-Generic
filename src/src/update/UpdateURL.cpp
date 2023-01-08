@@ -14,7 +14,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 #include "UpdateURL.h"
-#include "SuplaDeviceGUI.h"
+#include "../../SuplaDeviceGUI.h"
 
 UpdateURL::UpdateURL(const String& url) : url(url) {
 }

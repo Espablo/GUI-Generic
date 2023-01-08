@@ -5,7 +5,7 @@
 #include "SuplaHTTPUpdateServer.h"
 #include "UpdateURL.h"
 
-#include "SuplaDeviceGUI.h"
+#include "../../SuplaDeviceGUI.h"
 #include "SuplaUpdateCommon.h"
 
 ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
