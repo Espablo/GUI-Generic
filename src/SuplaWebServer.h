@@ -23,13 +23,13 @@
 
 #ifdef ARDUINO_ARCH_ESP8266
 #ifdef SUPLA_OTA
-#include "SuplaHTTPUpdateServer.h"
+#include "src/update/SuplaHTTPUpdateServer.h"
 #endif
 #include <ESP8266WebServer.h>
 
 #elif ARDUINO_ARCH_ESP32
 #ifdef SUPLA_OTA
-#include "SuplaHTTPUpdateServerESP32.h"
+#include "src/update/SuplaHTTPUpdateServerESP32.h"
 #endif
 #include <supla/ESP32WebServer/ESP32WebServer.h>
 #endif

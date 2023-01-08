@@ -146,6 +146,9 @@ void SuplaConfigESP::handleAction(int event, int action) {
 }
 
 void SuplaConfigESP::rebootESP() {
+  // WebServer->httpServer->send(302, "text/plain", "");
+  // WebServer->sendContent();
+
   WiFi.disconnect(true);
   ESP.restart();
 }

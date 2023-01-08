@@ -32,7 +32,7 @@ void SuplaWebServer::begin() {
   httpServer = new ESP8266WebServer(80);
 #ifdef SUPLA_OTA
   httpUpdater = new ESP8266HTTPUpdateServer();
-  httpUpdater->setup(httpServer, ConfigManager->get(KEY_LOGIN)->getValue(), ConfigManager->get(KEY_LOGIN_PASS)->getValue());
+  httpUpdater->setup();
 #endif
 #elif ARDUINO_ARCH_ESP32
   httpServer = new ESP32WebServer(80);

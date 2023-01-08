@@ -547,32 +547,45 @@ const String SuplaJavaScript(const String& java_return) {
   return java_script;
 }
 
+// TODO: @krycha88 Usunąć z SuplaSaveResult nieużywany status WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING```
 const String SuplaSaveResult(int save) {
-  if (save == 0)
-    return F("");
   String saveresult = "";
   saveresult += F("<div id=\"msg\" class=\"c\">");
-  if (save == 1) {
-    saveresult += S_DATA_SAVED;
+
+  switch (save) {
+    case SaveResult::DATA_SAVE:
+      saveresult += S_DATA_SAVED;
+      break;
+    case SaveResult::RESTART_MODULE:
+      saveresult += S_RESTART_MODULE;
+      break;
+    case SaveResult::DATA_ERASED_RESTART_DEVICE:
+      saveresult += S_DATA_ERASED_RESTART_DEVICE;
+      break;
+    case SaveResult::WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING:
+      saveresult += S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING;
+      break;
+    case SaveResult::DATA_SAVED_RESTART_MODULE:
+      saveresult += S_DATA_SAVED_RESTART_MODULE;
+      break;
+    case SaveResult::WRITE_ERROR_BAD_DATA:
+      saveresult += S_WRITE_ERROR_BAD_DATA;
+      break;
+    case SaveResult::DATA_SAVE_MODE_CONFIG:
+      saveresult += F("data saved");
+      break;
+    case SaveResult::UPDATE_SUCCESS:
+      saveresult += F("Aktualizacja zakończona.");
+      break;
+    case SaveResult::UPDATE_ERROR:
+      saveresult += F("Błąd aktualizacji.");
+      break;
+
+    default:
+      return F("");
+      break;
   }
-  else if (save == 2) {
-    saveresult += S_RESTART_MODULE;
-  }
-  else if (save == 3) {
-    saveresult += S_DATA_ERASED_RESTART_DEVICE;
-  }
-  else if (save == 4) {
-    saveresult += S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING;
-  }
-  else if (save == 5) {
-    saveresult += S_DATA_SAVED_RESTART_MODULE;
-  }
-  else if (save == 6) {
-    saveresult += S_WRITE_ERROR_BAD_DATA;
-  }
-  else if (save == 7) {
-    saveresult += F("data saved");
-  }
+
   saveresult += F("</div>");
   return saveresult;
 }
