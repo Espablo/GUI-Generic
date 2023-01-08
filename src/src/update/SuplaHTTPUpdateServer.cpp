@@ -78,7 +78,7 @@ void ESP8266HTTPUpdateServer::handleFirmwareUp() {
       switch (update->update()) {
         case HTTP_UPDATE_FAILED:
           Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-          suplaWebPageUpddate(SaveResult::UPDATE_ERROR);
+          suplaWebPageUpddate(SaveResult::UPDATE_ERROR, PATH_UPDATE_HENDLE);
           break;
 
         case HTTP_UPDATE_NO_UPDATES:
@@ -92,9 +92,7 @@ void ESP8266HTTPUpdateServer::handleFirmwareUp() {
             successUpdateManualRefresh();
           }
           else {
-            WebServer->httpServer->sendHeader("Location", PATH_START, true);
-            WebServer->httpServer->send(302, "text/plain", "");
-            suplaWebPageUpddate(SaveResult::UPDATE_SUCCESS);
+            suplaWebPageUpddate(SaveResult::UPDATE_SUCCESS, PATH_START);
             ConfigESP->rebootESP();
           }
           break;
@@ -105,9 +103,11 @@ void ESP8266HTTPUpdateServer::handleFirmwareUp() {
   suplaWebPageUpddate();
 }
 
-void ESP8266HTTPUpdateServer::suplaWebPageUpddate(int save) {
+void ESP8266HTTPUpdateServer::suplaWebPageUpddate(int save, const String& location) {
+  WebServer->sendHeaderStart();
+
   webContentBuffer += SuplaSaveResult(save);
-  webContentBuffer += SuplaJavaScript(PATH_UPDATE_HENDLE);
+  webContentBuffer += SuplaJavaScript(location);
 
   addFormHeader(webContentBuffer, S_UPDATE_FIRMWARE);
   webContentBuffer += F("<iframe src='");
@@ -124,7 +124,7 @@ void ESP8266HTTPUpdateServer::suplaWebPageUpddate(int save) {
   addFormHeaderEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_RETURN, PATH_TOOLS);
-  WebServer->sendContent();
+  WebServer->sendHeaderEnd();
 }
 
 void ESP8266HTTPUpdateServer::setUpdaterError() {

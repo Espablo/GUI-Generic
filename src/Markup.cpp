@@ -538,7 +538,7 @@ String getParameterRequest(const String& url, const String& param, const String&
 const String SuplaJavaScript(const String& java_return) {
   String java_script =
       F("<script type='text/javascript'>setTimeout(function(){var element=document.getElementById('msg');if(element != "
-        "null){element.style.visibility='hidden';if(window.location.pathname != '/");
+        "null){element.style.visibility='hidden';var url = window.location.pathname + window.location.search;if(url != '/");
   java_script += java_return;
   java_script += F("'){location.href='");
   java_script += java_return;

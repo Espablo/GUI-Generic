@@ -25,7 +25,7 @@ class ESP8266HTTPUpdateServer {
   String _updaterError;
 
   void handleFirmwareUp();
-  void suplaWebPageUpddate(int save = 0);
+  void suplaWebPageUpddate(int save = 0, const String& location = PATH_UPDATE_HENDLE);
 
   void updateManual();
 };
