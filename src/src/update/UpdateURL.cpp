@@ -117,11 +117,11 @@ void UpdateURL::parseURL(URL* url) {
   }
 
   if (url->port.isEmpty()) {
-    if (url->protocol == "http") {
+    if (url->protocol == "http" || url->protocol == "https") {
       url->port = "80";
     }
-    if (url->protocol == "https") {
-      url->port = "443";
-    }
+    // if (url->protocol == "https") {
+    //   url->port = "443";
+    // }
   }
 }
