@@ -117,7 +117,7 @@ void ESP8266HTTPUpdateServer::suplaWebPageUpddate(int save, const String& locati
 
   addForm(webContentBuffer, F("post"), getParameterRequest(PATH_UPDATE_HENDLE, ARG_PARM_URL, PATH_UPDATE_URL));
   addFormHeader(webContentBuffer, S_EMPTY);
-  addTextBox(webContentBuffer, INPUT_UPDATE_URL, F("URL"), F(""), 0, 600, false);
+  addTextBox(webContentBuffer, INPUT_UPDATE_URL, F("URL OTA"), F(""), 0, 600, false);
   addButtonSubmit(webContentBuffer, S_UPDATE_FIRMWARE);
   addFormEnd(webContentBuffer);
 
