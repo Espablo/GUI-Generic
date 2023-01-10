@@ -9,7 +9,7 @@
 #include "StreamString.h"
 
 #include "SuplaHTTPUpdateServerESP32.h"
-#include "SuplaDeviceGUI.h"
+#include "../../SuplaDeviceGUI.h"
 
 static const char serverIndex[] PROGMEM =
     R"(<!DOCTYPE html>
