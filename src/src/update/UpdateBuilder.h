@@ -13,26 +13,30 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifndef _UPDATE_URL_H
-#define _UPDATE_URL_H
+#ifndef _UPDATE_BUILDER_H
+#define _UPDATE_BUILDER_H
 
 #include <Arduino.h>
 
-#ifdef ARDUINO_ARCH_ESP8266
-#include <ESP8266httpUpdate.h>
-#elif ARDUINO_ARCH_ESP32
-#include <Update.h>
-#include <HTTPUpdate.h>
-#include <HTTPClient.h>
-#endif
-
 #include "ParseURL.h"
 
-class UpdateURL {
- public:
-  UpdateURL(const String& url);
+// NONE - jeśli wersja modułu jest zgodna z wersją GG buildera (brak nowszej wersji,)
+// WAIT - jeśli wersja modułu jest inna niż wersja GG buildera, ale builder nie ma jeszcze skompilowanego nowego GG; to inicjuje skompilowanie nowej
+// wersji GG, która powinna być dostępna maksymalnie po 5 minutach
+// READY - jeśli wersja modułu jest inna niż wersja GG buildera, ale builder ma gotowy skompilowany nowy GG i można go pobrać przez GET
+// UNKNOWN - jeśli builder nie zna jeszcze takiego hasha.
+enum UpdateBuilderResult
+{
+  BUILDER_UPDATE_FAILED,
+  BUILDER_UPDATE_NO_UPDATES,
+  BUILDER_UPDATE_WAIT,
+  BUILDER_UPDATE_READY,
+};
 
-  int update();
+class UpdateBuilder {
+ public:
+  UpdateBuilder(const String& url);
+  int check();
 
  private:
   ParseURL* parseURL;

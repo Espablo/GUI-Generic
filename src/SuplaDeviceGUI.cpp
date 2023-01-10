@@ -32,7 +32,9 @@ void begin() {
   SuplaDevice.setName(ConfigManager->get(KEY_HOST_NAME)->getValue());
 
 #ifdef BUILD_VERSION
-  SuplaDevice.setSwVersion(BUILD_VERSION);
+  String ver = "GG v" + String(BUILD_VERSION);
+  ver.reserve(16);
+  SuplaDevice.setSwVersion(ver.c_str());
 #endif
 
   String server = ConfigManager->get(KEY_SUPLA_SERVER)->getValue();

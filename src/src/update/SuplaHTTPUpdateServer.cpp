@@ -1,19 +1,20 @@
-#ifdef ARDUINO_ARCH_ESP8266
-#include <Arduino.h>
-#include <ESP8266httpUpdate.h>
-
 #include "SuplaHTTPUpdateServer.h"
 #include "UpdateURL.h"
-
+#include "UpdateBuilder.h"
 #include "../../SuplaDeviceGUI.h"
 #include "SuplaUpdateCommon.h"
 
-ESP8266HTTPUpdateServer::ESP8266HTTPUpdateServer(bool serial_debug) {
+#include <WiFiUdp.h>
+
+#include <FS.h>
+#include "StreamString.h"
+
+HTTPUpdateServer::HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
 }
 
-void ESP8266HTTPUpdateServer::setup() {
-  WebServer->httpServer->on(getURL(PATH_UPDATE_HENDLE), std::bind(&ESP8266HTTPUpdateServer::handleFirmwareUp, this));
+void HTTPUpdateServer::setup() {
+  WebServer->httpServer->on(getURL(PATH_UPDATE_HENDLE), std::bind(&HTTPUpdateServer::handleFirmwareUp, this));
 
   WebServer->httpServer->on(getURL(PATH_UPDATE), HTTP_GET, [&]() {
     if (!WebServer->isLoggedIn())
@@ -21,11 +22,9 @@ void ESP8266HTTPUpdateServer::setup() {
 
     String index = FPSTR(serverIndex);
     index.replace("{l}", S_LANG);
-    index.replace("{f}", String(ESP.getFlashChipRealSize() / 1024));
     index.replace("{m}", String(ESP.getFlashChipSize() / 1024));
     index.replace("{s}", String(ESP.getFreeSketchSpace() / 1024));
     index.replace("{u}", String(ESP.getSketchSize() / 1024));
-    index.replace("{F}", S_FLASH_MEMORY_SIZE);
     index.replace("{M}", S_SKETCH_MEMORY_SIZE);
     index.replace("{S}", S_SKETCH_UPLOAD_MAX_SIZE);
     index.replace("{U}", S_SKETCH_LOADED_SIZE);
@@ -41,7 +40,7 @@ void ESP8266HTTPUpdateServer::setup() {
     WebServer->httpServer->send(200, PSTR("text/html"), index.c_str());
   });
 
-  WebServer->httpServer->on(getURL(PATH_UPDATE_HENDLE), std::bind(&ESP8266HTTPUpdateServer::handleFirmwareUp, this));
+  WebServer->httpServer->on(getURL(PATH_UPDATE_HENDLE), std::bind(&HTTPUpdateServer::handleFirmwareUp, this));
 
   // handler for the /update form POST (once file upload finishes)
   WebServer->httpServer->on(
@@ -55,29 +54,49 @@ void ESP8266HTTPUpdateServer::setup() {
       [&]() { updateManual(); });
 }
 
-void ESP8266HTTPUpdateServer::handleFirmwareUp() {
+void HTTPUpdateServer::handleFirmwareUp() {
   if (!WebServer->isLoggedIn())
     return;
 
+  String host = "http://gui-generic-builder.supla.io/";
   String sCommand = WebServer->httpServer->arg(ARG_PARM_URL);
 
   if (!sCommand.isEmpty()) {
     UpdateURL* update = nullptr;
 
-    if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_URL) == 0) {
+    if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_BUILDER) == 0) {
+      String url = host + "?firmware=" + String(OPTIONS_HASH);
+
+      UpdateBuilder* updateBuilder = new UpdateBuilder(url);
+
+      switch (updateBuilder->check()) {
+        case BUILDER_UPDATE_FAILED:
+          suplaWebPageUpddate(SaveResult::UPDATE_ERROR, PATH_UPDATE_HENDLE);
+          break;
+        case BUILDER_UPDATE_NO_UPDATES:
+          suplaWebPageUpddate(SaveResult::UPDATE_NO_UPDATES, PATH_UPDATE_HENDLE);
+          break;
+        case BUILDER_UPDATE_WAIT:
+          suplaWebPageUpddate(SaveResult::UPDATE_WAIT, PATH_UPDATE_HENDLE);
+          break;
+        case BUILDER_UPDATE_READY:
+          update = new UpdateURL(url + "&type=gz");
+          break;
+      }
+    }
+    else if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_URL) == 0) {
       if (strcmp(WebServer->httpServer->arg(INPUT_UPDATE_URL).c_str(), "") != 0) {
         update = new UpdateURL(WebServer->httpServer->arg(INPUT_UPDATE_URL).c_str());
       }
     }
-
-    if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_HENDLE_2STEP) == 0) {
-      update = new UpdateURL("http://gui-generic-builder.supla.io/files/GUI-GenericUploader.bin.gz");
+    else if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_HENDLE_2STEP) == 0) {
+      update = new UpdateURL(host + "files/GUI-GenericUploader.bin.gz");
     }
 
     if (update) {
       switch (update->update()) {
         case HTTP_UPDATE_FAILED:
-          Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+          // Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
           suplaWebPageUpddate(SaveResult::UPDATE_ERROR, PATH_UPDATE_HENDLE);
           break;
 
@@ -99,44 +118,37 @@ void ESP8266HTTPUpdateServer::handleFirmwareUp() {
       }
     }
   }
-
   suplaWebPageUpddate();
 }
 
-void ESP8266HTTPUpdateServer::suplaWebPageUpddate(int save, const String& location) {
+void HTTPUpdateServer::suplaWebPageUpddate(int save, const String& location) {
   WebServer->sendHeaderStart();
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(location);
 
-  addFormHeader(webContentBuffer, S_UPDATE_FIRMWARE);
+  addFormHeader(webContentBuffer, "Aktualizacja ręczna");
   webContentBuffer += F("<iframe src='");
   webContentBuffer += getURL(PATH_UPDATE);
-  webContentBuffer += F("' frameborder='0' height='200'></iframe>");
+  webContentBuffer += F("' frameborder='0'></iframe>");
   addFormHeaderEnd(webContentBuffer);
 
   addForm(webContentBuffer, F("post"), getParameterRequest(PATH_UPDATE_HENDLE, ARG_PARM_URL, PATH_UPDATE_URL));
-  addFormHeader(webContentBuffer, S_EMPTY);
-  addTextBox(webContentBuffer, INPUT_UPDATE_URL, F("URL OTA"), F(""), 0, 600, false);
+  addFormHeader(webContentBuffer, "Aktualizacja URL OTA");
+  addTextBox(webContentBuffer, INPUT_UPDATE_URL, F("URL"), F(""), 0, 600, false);
   addButtonSubmit(webContentBuffer, S_UPDATE_FIRMWARE);
   addFormEnd(webContentBuffer);
+  addFormHeaderEnd(webContentBuffer);
 
+  addFormHeader(webContentBuffer, "Aktualizacja automatyczna");
+  addButton(webContentBuffer, S_UPDATE_FIRMWARE, getParameterRequest(PATH_UPDATE_HENDLE, ARG_PARM_URL, PATH_UPDATE_BUILDER));
   addFormHeaderEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_RETURN, PATH_TOOLS);
   WebServer->sendHeaderEnd();
 }
 
-void ESP8266HTTPUpdateServer::setUpdaterError() {
-  if (_serial_output)
-    Update.printError(Serial);
-  StreamString str;
-  Update.printError(str);
-  Serial.println(str.c_str());
-  _updaterError = str.c_str();
-}
-
-void ESP8266HTTPUpdateServer::successUpdateManualRefresh() {
+void HTTPUpdateServer::successUpdateManualRefresh() {
   String succes = FPSTR(successResponse);
   succes.replace("{m}", S_UPDATE_SUCCESS_REBOOTING);
   WebServer->httpServer->client().setNoDelay(true);
@@ -147,7 +159,17 @@ void ESP8266HTTPUpdateServer::successUpdateManualRefresh() {
   ESP.restart();
 }
 
-void ESP8266HTTPUpdateServer::updateManual() {
+#ifdef ARDUINO_ARCH_ESP8266
+void HTTPUpdateServer::setUpdaterError() {
+  if (_serial_output)
+    Update.printError(Serial);
+  StreamString str;
+  Update.printError(str);
+  Serial.println(str.c_str());
+  _updaterError = str.c_str();
+}
+
+void HTTPUpdateServer::updateManual() {
   if (!WebServer->isLoggedIn()) {
     return;
   }
@@ -210,5 +232,35 @@ void ESP8266HTTPUpdateServer::updateManual() {
   }
   delay(0);
 }
+#elif ARDUINO_ARCH_ESP32
 
+void HTTPUpdateServer::updateManual() {
+  if (!WebServer->isLoggedIn()) {
+    return;
+  }
+
+  HTTPUpload& upload = WebServer->httpServer->upload();
+  if (upload.status == UPLOAD_FILE_START) {
+    Serial.printf("Update: %s\n", upload.filename.c_str());
+    if (!Update.begin(UPDATE_SIZE_UNKNOWN, U_FLASH, ConfigESP->getGpio(FUNCTION_CFG_LED),
+                      ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)))) {  // start with max available size
+      Update.printError(Serial);
+    }
+  }
+  else if (upload.status == UPLOAD_FILE_WRITE) {
+    /* flashing firmware to ESP*/
+    if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+      Update.printError(Serial);
+    }
+  }
+  else if (upload.status == UPLOAD_FILE_END) {
+    if (Update.end(true)) {  // true to set the size to the current progress
+      Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+    }
+    else {
+      Update.printError(Serial);
+    }
+  }
+  delay(0);
+}
 #endif

@@ -16,7 +16,8 @@
 #include "UpdateURL.h"
 #include "../../SuplaDeviceGUI.h"
 
-UpdateURL::UpdateURL(const String& url) : url(url) {
+UpdateURL::UpdateURL(const String& url) {
+  parseURL = new ParseURL(url);
 }
 
 int UpdateURL::update() {
@@ -24,104 +25,29 @@ int UpdateURL::update() {
     return HTTP_UPDATE_FAILED;
   }
 
-  parseURL(&_url);
-
   WiFiClient client;
 
   Serial.print("connecting to ");
-  Serial.println(_url.host.c_str());
-  Serial.println(_url.port.toInt());
-  Serial.println(_url.version.c_str());
+  Serial.println(parseURL->getHost());
+  Serial.println(parseURL->getPort());
 
-  if (!client.connect(_url.host.c_str(), _url.port.toInt())) {
+  if (!client.connect(parseURL->getHost().c_str(), parseURL->getPort())) {
     Serial.println("connection failed");
     return HTTP_UPDATE_FAILED;
   }
 
   Serial.print("Starting OTA from: ");
-  Serial.println(_url.path.c_str());
+  Serial.println(parseURL->getPath());
 
+#ifdef ARDUINO_ARCH_ESP8266
   ESPhttpUpdate.rebootOnUpdate(false);
-  ESPhttpUpdate.closeConnectionsOnUpdate(false);
   ESPhttpUpdate.setLedPin(ConfigESP->getGpio(FUNCTION_CFG_LED), ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)));
-  auto ret = ESPhttpUpdate.update(client, _url.host.c_str(), _url.port.toInt(), _url.path.c_str());
+  auto ret = ESPhttpUpdate.update(client, parseURL->getHost().c_str(), parseURL->getPort(), parseURL->getPath().c_str());
+#elif ARDUINO_ARCH_ESP32
+  httpUpdate.rebootOnUpdate(false);
+  httpUpdate.setLedPin(ConfigESP->getGpio(FUNCTION_CFG_LED), ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)));
+  auto ret = httpUpdate.update(client, parseURL->getHost().c_str(), parseURL->getPort(), parseURL->getPath().c_str());
+#endif
 
   return ret;
-}
-
-void UpdateURL::parseURL(URL* url) {
-  // Assume a valid URL
-  enum URLParseState
-  {
-    PROTOCOL,
-    SEPERATOR,
-    HOST,
-    PORT,
-    PATH,
-    VERSION,
-  } state = PROTOCOL;
-
-  url->protocol = "";
-  url->host = "";
-  url->port = "";
-  url->path = "/";
-  url->version = "";
-
-  for (unsigned int i = 0; i < this->url.length(); i++) {
-    switch (state) {
-      case PROTOCOL:
-        if (this->url[i] == ':')
-          state = SEPERATOR;
-        else
-          url->protocol += this->url[i];
-        break;
-      case SEPERATOR:
-        if (this->url[i] != '/') {
-          state = HOST;
-          url->host += this->url[i];
-        }
-        break;
-      case HOST:
-        if (this->url[i] == ':')
-          state = PORT;
-        else {
-          if (this->url[i] == '/')
-            state = PATH;
-          else
-            url->host += this->url[i];
-        }
-        break;
-      case PORT:
-        if (this->url[i] == '/')
-          state = PATH;
-        else
-          url->port += this->url[i];
-        break;
-
-      case VERSION:
-        url->path += this->url[i];
-
-        if (this->url[i] == '/')
-          state = PATH;
-        else
-          url->version += this->url[i];
-        break;
-
-      case PATH:
-        url->path += this->url[i];
-
-        if (this->url[i - 1] == 'g' && this->url[i] == 'v') {
-          state = VERSION;
-        }
-    }
-  }
-
-  if (url->port.isEmpty()) {
-    if (url->protocol == "http" || url->protocol == "https") {
-      url->port = "80";
-    }
-    // if (url->protocol == "https") {
-    //   url->port = "443";
-    // }
-  }
 }

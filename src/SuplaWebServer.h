@@ -22,16 +22,13 @@
 #include "SuplaTemplateBoard.h"
 
 #ifdef ARDUINO_ARCH_ESP8266
+#include <ESP8266WebServer.h>
+#elif ARDUINO_ARCH_ESP32
+#include <supla/ESP32WebServer/ESP32WebServer.h>
+#endif
+
 #ifdef SUPLA_OTA
 #include "src/update/SuplaHTTPUpdateServer.h"
-#endif
-#include <ESP8266WebServer.h>
-
-#elif ARDUINO_ARCH_ESP32
-#ifdef SUPLA_OTA
-#include "src/update/SuplaHTTPUpdateServerESP32.h"
-#endif
-#include <supla/ESP32WebServer/ESP32WebServer.h>
 #endif
 
 #include <supla/element.h>
@@ -61,16 +58,12 @@ class SuplaWebServer : public Supla::Element {
 
 #ifdef ARDUINO_ARCH_ESP8266
   ESP8266WebServer* httpServer;
-
-#ifdef SUPLA_OTA
-  ESP8266HTTPUpdateServer* httpUpdater;
-#endif
 #elif ARDUINO_ARCH_ESP32
   ESP32WebServer* httpServer;
+#endif
 
 #ifdef SUPLA_OTA
-  ESP32HTTPUpdateServer* httpUpdater;
-#endif
+  HTTPUpdateServer* httpUpdater;
 #endif
 
   bool isLoggedIn(bool force = false);

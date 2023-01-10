@@ -538,7 +538,7 @@ String getParameterRequest(const String& url, const String& param, const String&
 const String SuplaJavaScript(const String& java_return) {
   String java_script =
       F("<script type='text/javascript'>setTimeout(function(){var element=document.getElementById('msg');if(element != "
-        "null){element.style.visibility='hidden';var url = window.location.pathname + window.location.search;if(url != '/");
+        "null){element.style.visibility='hidden';var url = window.location.pathname + window.location.search; if(url != '/");
   java_script += java_return;
   java_script += F("'){location.href='");
   java_script += java_return;
@@ -579,6 +579,12 @@ const String SuplaSaveResult(int save) {
       break;
     case SaveResult::UPDATE_ERROR:
       saveresult += F("Błąd aktualizacji.");
+      break;
+    case SaveResult::UPDATE_WAIT:
+      saveresult += F("Zostanie wygenerowana nowa wersja. Spróbuj ponownie za 5min.");
+      break;
+    case SaveResult::UPDATE_NO_UPDATES:
+      saveresult += F("Brak aktualizacji.");
       break;
 
     default:

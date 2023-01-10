@@ -145,7 +145,8 @@ enum SaveResult
   DATA_SAVE_MODE_CONFIG,
   UPDATE_SUCCESS,
   UPDATE_ERROR,
-  UPDATE_CHECK
+  UPDATE_WAIT,
+  UPDATE_NO_UPDATES
 };
 
 const String SuplaSaveResult(int save);

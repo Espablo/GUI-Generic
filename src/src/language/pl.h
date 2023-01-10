@@ -182,7 +182,7 @@
 #define S_SKETCH_MEMORY_SIZE       "Rozmiar pamięci w szkicu"
 #define S_SKETCH_LOADED_SIZE       "Rozmiar wczytanego szkicu"
 #define S_SKETCH_UPLOAD_MAX_SIZE   "Maks. rozmiar przesyłanego szkicu"
-#define S_UPDATE_FIRMWARE          "Aktualizacja oprogramowania"
+#define S_UPDATE_FIRMWARE          "Aktualizuj"
 #define S_UPDATE_SUCCESS_REBOOTING "Aktualizacja udana! Ponowne uruchamianie ..."
 #define S_WARNING                  "OSTRZEŻENIE"
 #define S_ONLY_2_STEP_OTA          "używaj tylko dwuetapowej aktualizacji OTA. Najpierw załaduj"

@@ -13,28 +13,39 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifndef _UPDATE_URL_H
-#define _UPDATE_URL_H
-
+#ifndef _PARSER_URL_H
+#define _PARSER_URL_H
 #include <Arduino.h>
 
-#ifdef ARDUINO_ARCH_ESP8266
-#include <ESP8266httpUpdate.h>
-#elif ARDUINO_ARCH_ESP32
-#include <Update.h>
-#include <HTTPUpdate.h>
-#include <HTTPClient.h>
-#endif
+class ParseURL {
+  struct URL {
+    String protocol = "";
+    String host = "";
+    String port = "";
+    String path = "";
+  } _url;
 
-#include "ParseURL.h"
-
-class UpdateURL {
  public:
-  UpdateURL(const String& url);
+  ParseURL(const String& url);
 
-  int update();
+  const String& getProtocol() {
+    return _url.protocol;
+  }
+
+  const String& getHost() {
+    return _url.host;
+  }
+
+  uint16_t getPort() {
+    return _url.port.toInt();
+  }
+
+  const String& getPath() {
+    return _url.path;
+  }
 
  private:
-  ParseURL* parseURL;
+  String url;
+  void parse(URL* url);
 };
 #endif
