@@ -48,4 +48,6 @@
 #define S_IP_AP "IP: 192.168.4.1"
 
 #define S_UNIT_MS "[ms]"
+
+#define S_GG_UPDATER "GUI-GenericUpdater.bin"
 #endif /* LANGUAGE_COMMON_H_ */

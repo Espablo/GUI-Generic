@@ -32,33 +32,26 @@ void HTTPUpdateServer::setup() {
     if ((ESP.getFlashChipSize() / 1024) == 1024) {
       index.replace("{g}", twoStepButton);
       index.replace("{gu}", PATH_UPDATE_HENDLE_2STEP);
+      index.replace("{gg}", S_GG_UPDATER);
     }
     else {
       index.replace("{g}", "");
     }
-    index.replace("{gg}", "GUI-GenericUpdater.bin");
     WebServer->httpServer->send(200, PSTR("text/html"), index.c_str());
   });
 
-  WebServer->httpServer->on(getURL(PATH_UPDATE_HENDLE), std::bind(&HTTPUpdateServer::handleFirmwareUp, this));
-
-  // handler for the /update form POST (once file upload finishes)
   WebServer->httpServer->on(
-      getURL(PATH_UPDATE), HTTP_POST,
-      [&]() {
-        if (!WebServer->isLoggedIn())
-          return;
+      getURL(PATH_UPDATE), HTTP_POST, [&]() { successUpdateManualRefresh(); }, [&]() { updateManual(); });
+}
 
-        successUpdateManualRefresh();
-      },
-      [&]() { updateManual(); });
+String HTTPUpdateServer::getUpdateBuilderUrl() {
+  return String(HOST_BUILDER) + "?firmware=" + String(OPTIONS_HASH);
 }
 
 void HTTPUpdateServer::handleFirmwareUp() {
   if (!WebServer->isLoggedIn())
     return;
 
-  String host = "http://gui-generic-builder.supla.io/";
   String sCommand = WebServer->httpServer->arg(ARG_PARM_URL);
 
   if (!sCommand.isEmpty()) {
@@ -66,9 +59,7 @@ void HTTPUpdateServer::handleFirmwareUp() {
 
 #ifdef OPTIONS_HASH
     if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_BUILDER) == 0) {
-      String url = host + "?firmware=" + String(OPTIONS_HASH).c_str();
-
-      UpdateBuilder* updateBuilder = new UpdateBuilder(url);
+      UpdateBuilder* updateBuilder = new UpdateBuilder(getUpdateBuilderUrl());
 
       switch (updateBuilder->check()) {
         case BUILDER_UPDATE_FAILED:
@@ -81,7 +72,7 @@ void HTTPUpdateServer::handleFirmwareUp() {
           suplaWebPageUpddate(SaveResult::UPDATE_WAIT, PATH_UPDATE_HENDLE);
           break;
         case BUILDER_UPDATE_READY:
-          update = new UpdateURL(url + "&type=gz");
+          update = new UpdateURL(getUpdateBuilderUrl() + "&type=gz");
           break;
       }
     }
@@ -90,15 +81,23 @@ void HTTPUpdateServer::handleFirmwareUp() {
       if (strcmp(WebServer->httpServer->arg(INPUT_UPDATE_URL).c_str(), "") != 0) {
         update = new UpdateURL(WebServer->httpServer->arg(INPUT_UPDATE_URL).c_str());
       }
+      else {
+        suplaWebPageUpddate(SaveResult::UPDATE_ERROR, PATH_UPDATE_HENDLE);
+      }
     }
     if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_HENDLE_2STEP) == 0) {
-      update = new UpdateURL(host + "files/GUI-GenericUploader.bin.gz");
+      update = new UpdateURL(String(HOST_BUILDER) + "files/GUI-GenericUploader.bin.gz");
     }
 
     if (update) {
       switch (update->update()) {
         case HTTP_UPDATE_FAILED:
-          // Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+#ifdef ARDUINO_ARCH_ESP8266
+          Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+
+#elif ARDUINO_ARCH_ESP32
+          Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
+#endif
           suplaWebPageUpddate(SaveResult::UPDATE_ERROR, PATH_UPDATE_HENDLE);
           break;
 
@@ -120,37 +119,37 @@ void HTTPUpdateServer::handleFirmwareUp() {
       }
     }
   }
-  suplaWebPageUpddate();
+  else {
+    suplaWebPageUpddate();
+  }
 }
 
 void HTTPUpdateServer::suplaWebPageUpddate(int save, const String& location) {
-  WebServer->sendHeaderStart();
-
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(location);
 
-  addFormHeader(webContentBuffer, "Aktualizacja ręczna");
-  webContentBuffer += F("<iframe src='");
-  webContentBuffer += getURL(PATH_UPDATE);
-  webContentBuffer += F("' frameborder='0'></iframe>");
+#ifdef OPTIONS_HASH
+  addFormHeader(webContentBuffer, String(S_UPDATE) + S_SPACE + "automatyczna");
+  addButton(webContentBuffer, S_UPDATE_FIRMWARE, getParameterRequest(PATH_UPDATE_HENDLE, ARG_PARM_URL, PATH_UPDATE_BUILDER));
+  addHyperlink(webContentBuffer, "Pobierz", getUpdateBuilderUrl());
   addFormHeaderEnd(webContentBuffer);
+#endif
 
   addForm(webContentBuffer, F("post"), getParameterRequest(PATH_UPDATE_HENDLE, ARG_PARM_URL, PATH_UPDATE_URL));
-  addFormHeader(webContentBuffer, "Aktualizacja URL OTA");
-  addTextBox(webContentBuffer, INPUT_UPDATE_URL, F("URL"), F(""), 0, 600, false);
+  addFormHeader(webContentBuffer, String(S_UPDATE) + S_SPACE + "OTA url");
+  addTextBox(webContentBuffer, INPUT_UPDATE_URL, String(S_ADDRESS) + S_SPACE + "url", S_EMPTY, 0, 600, false);
   addButtonSubmit(webContentBuffer, S_UPDATE_FIRMWARE);
   addFormEnd(webContentBuffer);
   addFormHeaderEnd(webContentBuffer);
 
-#ifdef OPTIONS_HASH
-  addFormHeader(webContentBuffer, "Aktualizacja automatyczna");
-  addButton(webContentBuffer, S_UPDATE_FIRMWARE, getParameterRequest(PATH_UPDATE_HENDLE, ARG_PARM_URL, PATH_UPDATE_BUILDER));
-#endif
-
+  addFormHeader(webContentBuffer, String(S_UPDATE) + S_SPACE + "ręczna");
+  webContentBuffer += F("<iframe src='");
+  webContentBuffer += getURL(PATH_UPDATE);
+  webContentBuffer += F("' frameborder='0' width='330' height='200'></iframe>");
   addFormHeaderEnd(webContentBuffer);
-
   addButton(webContentBuffer, S_RETURN, PATH_TOOLS);
-  WebServer->sendHeaderEnd();
+
+  WebServer->sendContent();
 }
 
 void HTTPUpdateServer::successUpdateManualRefresh() {
@@ -160,7 +159,6 @@ void HTTPUpdateServer::successUpdateManualRefresh() {
   WebServer->httpServer->send(200, F("text/html"), succes.c_str());
   delay(100);
   WebServer->httpServer->client().stop();
-
   ESP.restart();
 }
 
@@ -214,6 +212,7 @@ void HTTPUpdateServer::updateManual() {
       String twoStep = FPSTR(twoStepResponse);
       twoStep.replace("{w}", S_WARNING);
       twoStep.replace("{o}", S_ONLY_2_STEP_OTA);
+      twoStep.replace("{gg}", S_GG_UPDATER);
       WebServer->httpServer->send(200, F("text/html"), twoStep.c_str());
 
       setUpdaterError();

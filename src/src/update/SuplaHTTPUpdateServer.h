@@ -10,6 +10,8 @@
 #define INPUT_UPDATE_URL         "iuu"
 #define PATH_UPDATE              "updateOTA"
 
+#define HOST_BUILDER "http://gui-generic-builder.supla.io/"
+
 class HTTPUpdateServer {
  public:
   HTTPUpdateServer(bool serial_debug = false);
@@ -22,6 +24,8 @@ class HTTPUpdateServer {
  private:
   bool _serial_output;
   String _updaterError;
+
+  String getUpdateBuilderUrl();
 
   void handleFirmwareUp();
   void suplaWebPageUpddate(int save = 0, const String& location = PATH_UPDATE_HENDLE);

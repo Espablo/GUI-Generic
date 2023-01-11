@@ -32,7 +32,7 @@ int UpdateBuilder::check() {
     return BUILDER_UPDATE_FAILED;
   }
 
-  client.print(String("GET ") + parseURL->getPath().c_str() + " HTTP/1.1\r\n" + "Host: " + parseURL->getHost().c_str() + "\r\n" + "User-Agent: ESP\r\n" +
+  client.print(String("GET ") + parseURL->getPath().c_str() + " HTTP/1.1\r\n" + "Host: " + parseURL->getHost().c_str() + "\r\n" +
                "Connection: close\r\n\r\n");
 
   String result = "";
@@ -67,6 +67,11 @@ int UpdateBuilder::check() {
 
   if (result.endsWith("UNKNOWN")) {
     Serial.println("UNKNOWN");
+    return BUILDER_UPDATE_FAILED;
+  }
+
+  if (result.endsWith("ERROR")) {
+    Serial.println("ERROR");
     return BUILDER_UPDATE_FAILED;
   }
 

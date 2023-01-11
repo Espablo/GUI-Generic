@@ -210,6 +210,19 @@ void addLinkBox(String& html, const String& name, const String& url) {
   WebServer->sendHeader();
 }
 
+void addHyperlink(String& html, const String& name, const String& url) {
+  html += F("<i>");
+  html += F("<label>");
+  html += F("<a href='");
+  html += url;
+  html += F("' target='_self'>");
+  html += name;
+  html += F("</a>");
+  html += F("</label>");
+  html += F("</i>");
+  WebServer->sendHeader();
+}
+
 void addListGPIOLinkBox(String& html, const String& input_id, const String& name, const String& url, uint8_t function) {
   addListGPIOBox(html, input_id, name, function, 0, true, url, true);
 }
@@ -542,7 +555,7 @@ const String SuplaJavaScript(const String& java_return) {
   java_script += java_return;
   java_script += F("'){location.href='");
   java_script += java_return;
-  java_script += F("'};}},1600);");
+  java_script += F("'};}},4000);");
   java_script += F("if(window.top.location != window.location){window.top.location.href = window.location.href;}</script>\n");
   return java_script;
 }

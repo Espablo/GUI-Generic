@@ -185,7 +185,7 @@
 #define S_UPDATE_FIRMWARE          "Aktualizuj"
 #define S_UPDATE_SUCCESS_REBOOTING "Aktualizacja udana! Ponowne uruchamianie ..."
 #define S_WARNING                  "OSTRZEŻENIE"
-#define S_ONLY_2_STEP_OTA          "używaj tylko dwuetapowej aktualizacji OTA. Najpierw załaduj"
+#define S_ONLY_2_STEP_OTA          "użyj dwuetapowej aktualizacji. Najpierw wgraj"
 
 //#### SuplaOled.cpp ####
 #define S_CONFIGURATION_MODE "Tryb konfiguracji"

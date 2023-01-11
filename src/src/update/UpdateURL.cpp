@@ -42,6 +42,8 @@ int UpdateURL::update() {
 #ifdef ARDUINO_ARCH_ESP8266
   ESPhttpUpdate.rebootOnUpdate(false);
   ESPhttpUpdate.setLedPin(ConfigESP->getGpio(FUNCTION_CFG_LED), ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)));
+  ESPhttpUpdate.closeConnectionsOnUpdate(false);
+  
   auto ret = ESPhttpUpdate.update(client, parseURL->getHost().c_str(), parseURL->getPort(), parseURL->getPath().c_str());
 #elif ARDUINO_ARCH_ESP32
   httpUpdate.rebootOnUpdate(false);

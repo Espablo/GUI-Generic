@@ -19,14 +19,7 @@
 #include <pgmspace.h>
 
 static const char serverIndex[] PROGMEM =
-    R"(<!DOCTYPE html>
-     <html lang='{l}'>
-     <head>
-         <meta charset='utf-8'>
-         <meta name='viewport' content='width=device-width,initial-scale=1'/>
-     </head>
-     <body>
-     <div>{M}: {m}kB</div>
+    R"(<div>{M}: {m}kB</div>
      <div>{U}: {u}kB</div>
      <div>{S}: {s}kB</div>
      <form method='POST' action='' enctype='multipart/form-data'>
@@ -34,12 +27,9 @@ static const char serverIndex[] PROGMEM =
          </br>
          <input type='submit' value='{b}'>
      </form>
-     {g}
-     </body>
-     </html>)";
+     {g})";
 static const char successResponse[] PROGMEM = "<META http-equiv='refresh' content='5'>{m}";
 static const char twoStepResponse[] PROGMEM = "<META http-equiv='refresh' content='5'><b>{w}</b> {o} {gg}";
 static const char twoStepButton[] PROGMEM = "<a href='update?url={gu}'><br><button>{gg}</button></a>";
 
 #endif
-
