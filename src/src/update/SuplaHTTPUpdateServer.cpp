@@ -66,7 +66,7 @@ void HTTPUpdateServer::handleFirmwareUp() {
 
 #ifdef OPTIONS_HASH
     if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_BUILDER) == 0) {
-      String url = host + "?firmware=" + String(OPTIONS_HASH);
+      String url = host + "?firmware=" + String(OPTIONS_HASH).c_str();
 
       UpdateBuilder* updateBuilder = new UpdateBuilder(url);
 
