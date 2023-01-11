@@ -64,6 +64,7 @@ void HTTPUpdateServer::handleFirmwareUp() {
   if (!sCommand.isEmpty()) {
     UpdateURL* update = nullptr;
 
+#ifdef OPTIONS_HASH
     if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_BUILDER) == 0) {
       String url = host + "?firmware=" + String(OPTIONS_HASH);
 
@@ -84,12 +85,13 @@ void HTTPUpdateServer::handleFirmwareUp() {
           break;
       }
     }
-    else if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_URL) == 0) {
+#endif
+    if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_URL) == 0) {
       if (strcmp(WebServer->httpServer->arg(INPUT_UPDATE_URL).c_str(), "") != 0) {
         update = new UpdateURL(WebServer->httpServer->arg(INPUT_UPDATE_URL).c_str());
       }
     }
-    else if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_HENDLE_2STEP) == 0) {
+    if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_HENDLE_2STEP) == 0) {
       update = new UpdateURL(host + "files/GUI-GenericUploader.bin.gz");
     }
 
@@ -140,8 +142,11 @@ void HTTPUpdateServer::suplaWebPageUpddate(int save, const String& location) {
   addFormEnd(webContentBuffer);
   addFormHeaderEnd(webContentBuffer);
 
+#ifdef OPTIONS_HASH
   addFormHeader(webContentBuffer, "Aktualizacja automatyczna");
   addButton(webContentBuffer, S_UPDATE_FIRMWARE, getParameterRequest(PATH_UPDATE_HENDLE, ARG_PARM_URL, PATH_UPDATE_BUILDER));
+#endif
+
   addFormHeaderEnd(webContentBuffer);
 
   addButton(webContentBuffer, S_RETURN, PATH_TOOLS);
