@@ -35,19 +35,32 @@ int UpdateBuilder::check() {
   client.print(String("GET ") + parseURL->getPath().c_str() + " HTTP/1.1\r\n" + "Host: " + parseURL->getHost().c_str() + "\r\n" +
                "Connection: close\r\n\r\n");
 
-  String result = "";
-  while (client.connected()) {
-    if (client.available()) {
-      char c = client.read();
-      // Serial.write(c);
-      if (c == '\n') {  // Headers received
-        result = "";
-      }
-      else if (c != '\r') {
-        result += c;
-      }
+  while (client.connected() || client.available()) {
+    if (client.readStringUntil('\n') == "\r") {
+      Serial.println(F("Direct links - Headers received"));
+      break;
     }
   }
+
+  String result = "";
+  while (client.connected() || client.available()) {
+    char c = client.read();
+    result += c;
+  }
+
+  // String result = "";
+  // while (client.connected()) {
+  //   if (client.available()) {
+  //     char c = client.read();
+  //     // Serial.write(c);
+  //     if (c == '\n') {  // Headers received
+  //       result = "";
+  //     }
+  //     else if (c != '\r') {
+  //       result += c;
+  //     }
+  //   }
+  // }
 
   Serial.print("Update status: ");
 
