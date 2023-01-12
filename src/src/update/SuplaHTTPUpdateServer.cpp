@@ -72,11 +72,7 @@ void HTTPUpdateServer::handleFirmwareUp() {
           suplaWebPageUpddate(SaveResult::UPDATE_WAIT, PATH_UPDATE_HENDLE);
           break;
         case BUILDER_UPDATE_READY:
-#ifdef ARDUINO_ARCH_ESP8266
           update = new UpdateURL(getUpdateBuilderUrl() + "&type=gz");
-#elif ARDUINO_ARCH_ESP32
-          update = new UpdateURL(getUpdateBuilderUrl());
-#endif
           break;
       }
     }
