@@ -37,7 +37,7 @@ int UpdateBuilder::check() {
 
   while (client.connected() || client.available()) {
     if (client.readStringUntil('\n') == "\r") {
-      Serial.println(F("Direct links - Headers received"));
+      Serial.println(F("UpdateBuilder - Headers received"));
       break;
     }
   }
