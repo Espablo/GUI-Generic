@@ -91,6 +91,7 @@ bool Supla::Protocol::SuplaSrpc::onLoadConfig() {
       }
 
       SUPLA_LOG_DEBUG("Security level: %d", securityLevel);
+      static const char wrongCert[] = "SUPLA";
       switch (securityLevel) {
         default:
         case 0: {
@@ -103,9 +104,7 @@ bool Supla::Protocol::SuplaSrpc::onLoadConfig() {
             SUPLA_LOG_ERROR(
                 "Supla CA ceritificate is selected, but it is not set. "
                 "Connection will fail");
-            auto cert = new char[6];
-            strncpy(cert, "SUPLA", 6);  // Some dummy value for CA cert
-            certificate = cert;
+            certificate = wrongCert;
           }
           client->setCACert(certificate);
           break;
@@ -123,9 +122,7 @@ bool Supla::Protocol::SuplaSrpc::onLoadConfig() {
             SUPLA_LOG_ERROR(
                 "Custom CA is selected, but certificate is"
                 " missing in config. Connect will fail");
-            auto cert = new char[6];
-            strncpy(cert, "SUPLA", 6);  // some dummy value
-            client->setCACert(cert);
+            client->setCACert(wrongCert);
           }
           break;
         }
@@ -285,25 +282,21 @@ void Supla::messageReceived(void *srpc,
             rd.data.sd_device_calcfg_request->DataType,
             rd.data.sd_device_calcfg_request->DataSize);
 
-        if (rd.data.sd_device_calcfg_request->SuperUserAuthorized != 1) {
-          result.Result = SUPLA_CALCFG_RESULT_UNAUTHORIZED;
+        if (rd.data.sd_device_calcfg_request->ChannelNumber == -1) {
+          // calcfg with channel == -1 are for whole device, so we route
+          // it to SuplaDeviceClass instance
+          result.Result = suplaSrpc->getSdc()->handleCalcfgFromServer(
+              rd.data.sd_device_calcfg_request);
         } else {
-          if (rd.data.sd_device_calcfg_request->ChannelNumber == -1) {
-            // calcfg with channel == -1 are for whole device, so we route
-            // it to SuplaDeviceClass instance
-            result.Result = suplaSrpc->getSdc()->handleCalcfgFromServer(
+          auto element = Supla::Element::getElementByChannelNumber(
+              rd.data.sd_device_calcfg_request->ChannelNumber);
+          if (element) {
+            result.Result = element->handleCalcfgFromServer(
                 rd.data.sd_device_calcfg_request);
           } else {
-            auto element = Supla::Element::getElementByChannelNumber(
-                rd.data.sd_device_calcfg_request->ChannelNumber);
-            if (element) {
-              result.Result = element->handleCalcfgFromServer(
-                  rd.data.sd_device_calcfg_request);
-            } else {
-              SUPLA_LOG_ERROR(
-                  "Error: couldn't find element for a requested channel [%d]",
-                  rd.data.sd_channel_new_value->ChannelNumber);
-            }
+            SUPLA_LOG_ERROR(
+                "Error: couldn't find element for a requested channel [%d]",
+                rd.data.sd_channel_new_value->ChannelNumber);
           }
         }
         srpc_ds_async_device_calcfg_result(srpc, &result);

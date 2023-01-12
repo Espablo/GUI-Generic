@@ -574,7 +574,11 @@ void setRGBWButton(Supla::Control::RGBWBase *rgbw, int buttonPin) {
     button->setMulticlickTime(200);
     button->setHoldTime(400);
     button->repeatOnHoldEvery(35);
+
     rgbw->setStep(1);
+    // rgbw->setMinMaxIterationDelay(750);  // delay between dimming direction
+    // change, 750 ms (default)
+    // rgbw->setMinIterationBrightness(1);  // 1 is default value
 
     button->addAction(Supla::ITERATE_DIM_ALL, rgbw, Supla::ON_HOLD);
     button->addAction(Supla::TOGGLE, rgbw, Supla::ON_CLICK_1);

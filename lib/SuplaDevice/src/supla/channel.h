@@ -65,6 +65,7 @@ class Channel : public LocalAction {
   int32_t getDefaultFunction();
   void setFlag(_supla_int_t flag);
   void unsetFlag(_supla_int_t flag);
+  _supla_int_t getFlags();
   void setFuncList(_supla_int_t functions);
   _supla_int_t getFuncList();
   void setActionTriggerCaps(_supla_int_t caps);
@@ -74,8 +75,20 @@ class Channel : public LocalAction {
   void clearUpdateReady();
   virtual void sendUpdate();
   virtual TSuplaChannelExtendedValue *getExtValue();
+  // Returns true when value was properly converted to EM value.
+  // "out" has to be valid pointer to allocated structure.
+  virtual bool getExtValueAsElectricityMeter(
+      TElectricityMeter_ExtendedValue_V2 *out);
   void setCorrection(double correction, bool forSecondaryValue = false);
   bool isSleepingEnabled();
+
+  // Returns true if channel is battery powered (for channel state info)
+  bool isBatteryPowered();
+  // Returns battery level
+  unsigned char getBatteryLevel();
+  // Sets battery level. Setting to 0..100 range will make isBatteryPowered
+  // return true
+  void setBatteryLevel(unsigned char level);
 
   void requestChannelConfig();
 
@@ -89,6 +102,7 @@ class Channel : public LocalAction {
   bool channelConfig;
   int channelNumber;
   unsigned _supla_int_t validityTimeSec;
+  unsigned char batteryLevel = 255;    // 0 - 100%; 255 - not used
 };
 
 };  // namespace Supla

@@ -18,7 +18,7 @@
 
 #include <supla/log_wrapper.h>
 
-#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#ifdef ARDUINO_ARCH_ESP8266
 #include <sys/time.h>
 #endif
 

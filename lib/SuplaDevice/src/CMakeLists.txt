@@ -15,6 +15,7 @@ set(SRCS
   supla/action_handler.cpp
   supla/mutex.cpp
   supla/auto_lock.cpp
+  supla/crc16.cpp
 
   supla/device/last_state_logger.cpp
   supla/device/sw_update.cpp
@@ -36,6 +37,9 @@ set(SRCS
   supla/control/action_trigger.cpp
   supla/control/relay.cpp
   supla/control/virtual_relay.cpp
+  supla/control/roller_shutter.cpp
+  supla/control/bistable_roller_shutter.cpp
+  supla/control/tripple_button_roller_shutter.cpp
 
   supla/condition.cpp
   supla/condition_getter.cpp
@@ -55,6 +59,8 @@ set(SRCS
   supla/network/html_generator.cpp
   supla/network/client.cpp
   supla/network/ip_address.cpp
+  supla/network/html/text_cmd_input_parameter.cpp
+  supla/network/web_sender.cpp
   supla/clock/clock.cpp
 
   supla/protocol/protocol_layer.cpp

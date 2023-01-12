@@ -95,6 +95,10 @@ SuplaDeviceClass::~SuplaDeviceClass() {
     delete[] customHostnamePrefix;
     customHostnamePrefix = nullptr;
   }
+  if (lastStateLogger) {
+    delete lastStateLogger;
+    lastStateLogger = nullptr;
+  }
 }
 
 void SuplaDeviceClass::setStatusFuncImpl(
@@ -762,6 +766,9 @@ void SuplaDeviceClass::removeFlags(_supla_int_t flags) {
 
 int SuplaDeviceClass::handleCalcfgFromServer(TSD_DeviceCalCfgRequest *request) {
   if (request) {
+    if (request->SuperUserAuthorized != 1) {
+      return SUPLA_CALCFG_RESULT_UNAUTHORIZED;
+    }
     switch (request->Command) {
       case SUPLA_CALCFG_CMD_ENTER_CFG_MODE: {
         SUPLA_LOG_INFO("CALCFG ENTER CFGMODE received");
@@ -933,8 +940,10 @@ void SuplaDeviceClass::handleAction(int event, int action) {
 
 void SuplaDeviceClass::resetToFactorySettings() {
   // cleanup device's configuration, but keep GUID and AuthKey
+  SUPLA_LOG_DEBUG("Reset to factory settings");
   auto cfg = Supla::Storage::ConfigInstance();
   if (cfg) {
+    SUPLA_LOG_DEBUG("Clearing configuration...");
     cfg->removeAll();
     cfg->setGUID(Supla::Channel::reg_dev.GUID);
     cfg->setAuthKey(Supla::Channel::reg_dev.AuthKey);
@@ -945,6 +954,7 @@ void SuplaDeviceClass::resetToFactorySettings() {
   // TODO(klew): add handling of persistant data (like energy counters)
   auto storage = Supla::Storage::Instance();
   if (storage) {
+    SUPLA_LOG_DEBUG("Clearing state storage...");
     storage->deleteAll();
   }
 }
