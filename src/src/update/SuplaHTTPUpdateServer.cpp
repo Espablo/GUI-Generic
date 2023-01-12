@@ -84,7 +84,11 @@ void HTTPUpdateServer::handleFirmwareUp() {
 #endif
     if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_URL) == 0) {
       if (strcmp(WebServer->httpServer->arg(INPUT_UPDATE_URL).c_str(), "") != 0) {
-        update = new UpdateURL(WebServer->httpServer->arg(INPUT_UPDATE_URL).c_str());
+#ifdef ARDUINO_ARCH_ESP8266
+        update = new UpdateURL(WebServer->httpServer->arg(INPUT_UPDATE_URL) + "&type=gz");
+#elif ARDUINO_ARCH_ESP32
+        update = new UpdateURL(WebServer->httpServer->arg(INPUT_UPDATE_URL) + "&type=bin");
+#endif
       }
       else {
         suplaWebPageUpddate(SaveResult::UPDATE_ERROR, PATH_UPDATE_HENDLE);
