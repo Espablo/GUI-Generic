@@ -17,14 +17,9 @@
 #ifndef SuplaLCD_H
 #define SuplaLCD_H
 
-#include "GUI-Generic_Config.h"
+#include "../../SuplaDeviceGUI.h"
 
 #ifdef SUPLA_LCD_HD44780
-#include "GUIGenericCommon.h"
-#include "SuplaConfigManager.h"
-#include "SuplaConfigESP.h"
-#include "SuplaDevice.h"
-
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
