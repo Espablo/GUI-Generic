@@ -35,21 +35,6 @@ int UpdateBuilder::check() {
   client.print(String("GET ") + parseURL->getPath().c_str() + " HTTP/1.1\r\n" + "Host: " + parseURL->getHost().c_str() + "\r\n" +
                "Connection: close\r\n\r\n");
 
-#ifdef ARDUINO_ARCH_ESP8266
-  String result = "";
-  while (client.connected()) {
-    if (client.available()) {
-      char c = client.read();
-      // Serial.write(c);
-      if (c == '\n') {  // Headers received
-        result = "";
-      }
-      else if (c != '\r') {
-        result += c;
-      }
-    }
-  }
-#elif ARDUINO_ARCH_ESP32
   while (client.connected() || client.available()) {
     if (client.readStringUntil('\n') == "\r") {
       Serial.println(F("UpdateBuilder - Headers received"));
@@ -57,12 +42,37 @@ int UpdateBuilder::check() {
     }
   }
 
-  String result = "";
-  while (client.connected() || client.available()) {
-    char c = client.read();
-    result += c;
-  }
-#endif
+  String result = client.readStringUntil('\n');
+
+  // #ifdef ARDUINO_ARCH_ESP8266
+  //   String result = "";
+  //   while (client.connected()) {
+  //     if (client.available()) {
+  //       char c = client.read();
+  //       // Serial.write(c);
+  //       if (c == '\n') {  // Headers received
+  //         result = "";
+  //       }
+  //       else if (c != '\r') {
+  //         result += c;
+  //       }
+  //     }
+  //   }
+  // #elif ARDUINO_ARCH_ESP32
+  //   while (client.connected() || client.available()) {
+  //     if (client.readStringUntil('\n') == "\r") {
+  //       Serial.println(F("UpdateBuilder - Headers received"));
+  //       break;
+  //     }
+  //   }
+
+  //   String result = "";
+  //   while (client.connected() || client.available()) {
+  //     char c = client.read();
+  //     result += c;
+  //   }
+  // #endif
+  
   client.stop();
 
   Serial.print("Update status: ");
