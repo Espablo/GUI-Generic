@@ -63,6 +63,7 @@ int UpdateBuilder::check() {
     result += c;
   }
 #endif
+  client.stop();
 
   Serial.print("Update status: ");
 

@@ -43,13 +43,15 @@ int UpdateURL::update() {
   ESPhttpUpdate.rebootOnUpdate(false);
   ESPhttpUpdate.setLedPin(ConfigESP->getGpio(FUNCTION_CFG_LED), ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)));
   ESPhttpUpdate.closeConnectionsOnUpdate(false);
-  
+
   auto ret = ESPhttpUpdate.update(client, parseURL->getHost().c_str(), parseURL->getPort(), parseURL->getPath().c_str());
 #elif ARDUINO_ARCH_ESP32
   httpUpdate.rebootOnUpdate(false);
   httpUpdate.setLedPin(ConfigESP->getGpio(FUNCTION_CFG_LED), ConfigESP->getLevel(ConfigESP->getGpio(FUNCTION_CFG_LED)));
   auto ret = httpUpdate.update(client, parseURL->getHost().c_str(), parseURL->getPort(), parseURL->getPath().c_str());
 #endif
+
+  client.stop();
 
   return ret;
 }
