@@ -104,6 +104,11 @@ void HTTPUpdateServer::handleFirmwareUp() {
 #ifdef ARDUINO_ARCH_ESP8266
           Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
 
+          if (ESPhttpUpdate.getLastError() == HTTP_UE_TOO_LESS_SPACE) {
+            suplaWebPageUpddate(SaveResult::UPDATE_TOO_LESS_SPACE, PATH_UPDATE_HENDLE);
+            break;
+          }
+
 #elif ARDUINO_ARCH_ESP32
           Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
 #endif

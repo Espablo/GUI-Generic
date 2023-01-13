@@ -148,7 +148,8 @@ enum SaveResult
   UPDATE_SUCCESS,
   UPDATE_ERROR,
   UPDATE_WAIT,
-  UPDATE_NO_UPDATES
+  UPDATE_NO_UPDATES,
+  UPDATE_TOO_LESS_SPACE
 };
 
 const String SuplaSaveResult(int save);
