@@ -555,10 +555,7 @@ void SuplaOled::addButtonOled(uint8_t pin) {
 
     Supla::Control::Button* button = new Supla::Control::Button(pin, pullUp, invertLogic);
 
-    if (frameCount > 1) {
-      button->addAction(OLED_NEXT_FRAME, this, Supla::ON_PRESS);
-    }
-
+    button->addAction(OLED_NEXT_FRAME, this, Supla::ON_PRESS);
     button->addAction(OLED_TURN_ON, this, Supla::ON_PRESS);
   }
 }
