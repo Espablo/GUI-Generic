@@ -55,7 +55,7 @@
 #include "Markup.h"
 
 #ifdef SUPLA_OLED
-#include "SuplaOled.h"
+#include "src/display/SuplaOled.h"
 #endif
 
 #include <vector>
@@ -162,7 +162,7 @@
 #include <supla/sensor/electricity_meter.h>
 
 #ifdef SUPLA_LCD_HD44780
-#include "SuplaLCD.h"
+#include "src/display/SuplaLCD.h"
 #endif
 
 #ifdef SUPLA_BH1750
