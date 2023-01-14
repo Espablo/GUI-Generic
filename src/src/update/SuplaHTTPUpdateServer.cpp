@@ -9,6 +9,10 @@
 #include <FS.h>
 #include "StreamString.h"
 
+#ifdef ARDUINO_ARCH_ESP8266
+#include <EEPROM.h>
+#endif
+
 HTTPUpdateServer::HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
 }
@@ -105,7 +109,8 @@ void HTTPUpdateServer::handleFirmwareUp() {
           Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
 
           if (ESPhttpUpdate.getLastError() == HTTP_UE_TOO_LESS_SPACE) {
-            suplaWebPageUpddate(SaveResult::UPDATE_TOO_LESS_SPACE, PATH_UPDATE_HENDLE);
+            // suplaWebPageUpddate(SaveResult::UPDATE_TOO_LESS_SPACE, PATH_UPDATE_HENDLE);
+            autoUpdate2Step();
             break;
           }
 
@@ -177,6 +182,45 @@ void HTTPUpdateServer::successUpdateManualRefresh() {
 }
 
 #ifdef ARDUINO_ARCH_ESP8266
+void HTTPUpdateServer::autoUpdate2Step() {
+  struct {
+    char SSID[MAX_SSID] = "";
+    char PASS[MAX_PASSWORD] = "";
+    char HASH[MAX_SSID] = "";
+  } settings;
+
+  EEPROM.begin(1024);
+
+  unsigned int address = 800;
+  strncpy(settings.SSID, ConfigManager->get(KEY_WIFI_SSID)->getValue(), MAX_SSID);
+  strncpy(settings.PASS, ConfigManager->get(KEY_WIFI_PASS)->getValue(), MAX_PASSWORD);
+  strncpy(settings.HASH, String(OPTIONS_HASH).c_str(), MAX_SSID);
+  EEPROM.put(address, settings);
+  EEPROM.end();
+
+  UpdateURL* update = new UpdateURL(String(HOST_BUILDER) + "files/AutoUploader.bin.gz");
+
+  if (update) {
+    switch (update->update()) {
+      case HTTP_UPDATE_FAILED:
+        Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+
+        if (ESPhttpUpdate.getLastError() == HTTP_UE_TOO_LESS_SPACE) {
+          suplaWebPageUpddate(SaveResult::UPDATE_TOO_LESS_SPACE, PATH_UPDATE_HENDLE);
+          break;
+        }
+        suplaWebPageUpddate(SaveResult::UPDATE_ERROR, PATH_UPDATE_HENDLE);
+        break;
+
+      case HTTP_UPDATE_OK:
+        Serial.println("HTTP_UPDATE_OK");
+        suplaWebPageUpddate(SaveResult::UPDATE_SUCCESS, PATH_START);
+        ConfigESP->rebootESP();
+        break;
+    }
+  }
+}
+
 void HTTPUpdateServer::setUpdaterError() {
   if (_serial_output)
     Update.printError(Serial);

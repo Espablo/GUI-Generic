@@ -31,6 +31,7 @@ class HTTPUpdateServer {
   void suplaWebPageUpddate(int save = 0, const String& location = PATH_UPDATE_HENDLE);
 
 #ifdef ARDUINO_ARCH_ESP8266
+  void autoUpdate2Step();
   void setUpdaterError();
 #endif
   void updateManual();
