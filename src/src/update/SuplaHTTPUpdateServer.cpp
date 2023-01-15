@@ -183,19 +183,26 @@ void HTTPUpdateServer::successUpdateManualRefresh() {
 
 #ifdef ARDUINO_ARCH_ESP8266
 void HTTPUpdateServer::autoUpdate2Step() {
+#define MAX_HASH 33
+
   struct {
     char SSID[MAX_SSID] = "";
     char PASS[MAX_PASSWORD] = "";
-    char HASH[MAX_SSID] = "";
+    char HASH[MAX_HASH] = "";
+    int CFG_LED = -1;
   } settings;
 
   EEPROM.begin(1024);
 
-  unsigned int address = 800;
   strncpy(settings.SSID, ConfigManager->get(KEY_WIFI_SSID)->getValue(), MAX_SSID);
   strncpy(settings.PASS, ConfigManager->get(KEY_WIFI_PASS)->getValue(), MAX_PASSWORD);
-  strncpy(settings.HASH, String(OPTIONS_HASH).c_str(), MAX_SSID);
+  strncpy(settings.HASH, String(OPTIONS_HASH).c_str(), MAX_HASH);
+  if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO)
+    settings.CFG_LED = ConfigESP->getGpio(FUNCTION_CFG_LED);
+
+  unsigned int address = 800;
   EEPROM.put(address, settings);
+
   EEPROM.end();
 
   UpdateURL* update = new UpdateURL(String(HOST_BUILDER) + "files/AutoUploader.bin.gz");

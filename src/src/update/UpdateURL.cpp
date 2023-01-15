@@ -28,7 +28,8 @@ int UpdateURL::update() {
   WiFiClient client;
 
   Serial.print("connecting to ");
-  Serial.println(parseURL->getHost());
+  Serial.print(parseURL->getHost());
+  Serial.print(":");
   Serial.println(parseURL->getPort());
 
   if (!client.connect(parseURL->getHost().c_str(), parseURL->getPort())) {
