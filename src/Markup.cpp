@@ -594,7 +594,7 @@ const String SuplaSaveResult(int save) {
       saveresult += F("Błąd aktualizacji.");
       break;
     case SaveResult::UPDATE_WAIT:
-      saveresult += F("Zostanie wygenerowana nowa wersja. Spróbuj ponownie za chwilę.");
+      saveresult += F("Zostanie wygenerowana nowa wersja. Spróbuj ponownie za 5min.");
       break;
     case SaveResult::UPDATE_NO_UPDATES:
       saveresult += F("Brak aktualizacji.");
