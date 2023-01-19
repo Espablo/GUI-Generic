@@ -35,8 +35,8 @@ void SDM120::readValuesFromDevice() {
   clearErrCount();
   clearErrCode();
 
-  setFwdActEnergy(0, ReadValuesSDM::getFwdActEnergyTotal() * 100000);
-  setFwdReactEnergy(0, ReadValuesSDM::getFwdReactEnergyTotal() * 100000);
+  setFwdActEnergy(0, ReadValuesSDM::getFwdActEnergy() * 100000);
+  setFwdReactEnergy(0, ReadValuesSDM::getFwdReactEnergy() * 100000);
 
   setRvrActEnergy(0, ReadValuesSDM::getRvrActEnergy() * 100000);
   setRvrReactEnergy(0, ReadValuesSDM::getRvrReactEnergy() * 100000);
