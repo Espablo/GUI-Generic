@@ -3,12 +3,13 @@
 
 #include <Arduino.h>
 
-#define PATH_UPDATE_HENDLE       "update"
-#define PATH_UPDATE_HENDLE_2STEP "u2s"
-#define PATH_UPDATE_URL          "u2u"
-#define PATH_UPDATE_BUILDER      "u2b"
-#define INPUT_UPDATE_URL         "iuu"
-#define PATH_UPDATE              "updateOTA"
+#define PATH_UPDATE_HENDLE        "update"
+#define PATH_UPDATE_HENDLE_2STEP  "u2s"
+#define PATH_UPDATE_URL           "u2u"
+#define PATH_UPDATE_BUILDER       "u2b"
+#define PATH_UPDATE_CHECK_BUILDER "u2cb"
+#define INPUT_UPDATE_URL          "iuu"
+#define PATH_UPDATE               "updateOTA"
 
 #define HOST_BUILDER "http://gui-generic-builder.supla.io/"
 
@@ -29,6 +30,7 @@ class HTTPUpdateServer {
 
   void handleFirmwareUp();
   void suplaWebPageUpddate(int save = 0, const String& location = PATH_UPDATE_HENDLE);
+  
 
 #ifdef ARDUINO_ARCH_ESP8266
   void autoUpdate2Step();

@@ -62,7 +62,7 @@ void HTTPUpdateServer::handleFirmwareUp() {
     UpdateURL* update = nullptr;
 
 #ifdef OPTIONS_HASH
-    if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_BUILDER) == 0) {
+    if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_BUILDER) == 0 || strcasecmp_P(sCommand.c_str(), PATH_UPDATE_CHECK_BUILDER) == 0) {
       UpdateBuilder* updateBuilder = new UpdateBuilder(getUpdateBuilderUrl());
 
       switch (updateBuilder->check()) {
@@ -77,11 +77,18 @@ void HTTPUpdateServer::handleFirmwareUp() {
           break;
         case BUILDER_UPDATE_READY:
 
+          if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_CHECK_BUILDER) == 0) {
+            suplaWebPageUpddate(SaveResult::UPDATE_NEW_VERSION, PATH_UPDATE_HENDLE);
+            break;
+          }
+
+          if (strcasecmp_P(sCommand.c_str(), PATH_UPDATE_BUILDER) == 0) {
 #ifdef ARDUINO_ARCH_ESP8266
-          update = new UpdateURL(getUpdateBuilderUrl() + "&type=gz");
+            update = new UpdateURL(getUpdateBuilderUrl() + "&type=gz");
 #elif ARDUINO_ARCH_ESP32
-          update = new UpdateURL(getUpdateBuilderUrl() + "&type=bin");
+            update = new UpdateURL(getUpdateBuilderUrl() + "&type=bin");
 #endif
+          }
           break;
       }
     }
@@ -149,14 +156,15 @@ void HTTPUpdateServer::suplaWebPageUpddate(int save, const String& location) {
 
 #ifdef OPTIONS_HASH
   addFormHeader(webContentBuffer, String(S_UPDATE) + S_SPACE + "automatyczna");
+  addButton(webContentBuffer, "Sprawdź aktualizację", getParameterRequest(PATH_UPDATE_HENDLE, ARG_PARM_URL, PATH_UPDATE_CHECK_BUILDER));
   addButton(webContentBuffer, S_UPDATE_FIRMWARE, getParameterRequest(PATH_UPDATE_HENDLE, ARG_PARM_URL, PATH_UPDATE_BUILDER));
   addHyperlink(webContentBuffer, "Pobierz", getUpdateBuilderUrl());
   addFormHeaderEnd(webContentBuffer);
 #endif
 
   addForm(webContentBuffer, F("post"), getParameterRequest(PATH_UPDATE_HENDLE, ARG_PARM_URL, PATH_UPDATE_URL));
-  addFormHeader(webContentBuffer, String(S_UPDATE) + S_SPACE + "OTA url");
-  addTextBox(webContentBuffer, INPUT_UPDATE_URL, String(S_ADDRESS) + S_SPACE + "url", S_EMPTY, 0, 600, false);
+  addFormHeader(webContentBuffer, String(S_UPDATE) + S_SPACE + "OTA URL");
+  addTextBox(webContentBuffer, INPUT_UPDATE_URL, String(S_ADDRESS) + S_SPACE + "URL", S_EMPTY, 0, 600, false);
   addButtonSubmit(webContentBuffer, S_UPDATE_FIRMWARE);
   addFormEnd(webContentBuffer);
   addFormHeaderEnd(webContentBuffer);
