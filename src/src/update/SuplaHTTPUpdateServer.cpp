@@ -186,7 +186,7 @@ void HTTPUpdateServer::successUpdateManualRefresh() {
   WebServer->httpServer->send(200, F("text/html"), succes.c_str());
   delay(100);
   WebServer->httpServer->client().stop();
-  ESP.restart();
+  ConfigESP->rebootESP();
 }
 
 #ifdef ARDUINO_ARCH_ESP8266

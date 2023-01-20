@@ -149,8 +149,10 @@ void SuplaConfigESP::rebootESP() {
   // WebServer->httpServer->send(302, "text/plain", "");
   // WebServer->sendContent();
 
-  WiFi.disconnect(true);
+  WiFi.forceSleepBegin();
+  wdt_reset();
   ESP.restart();
+  while (1) wdt_reset();
 }
 
 void SuplaConfigESP::configModeInit() {
