@@ -18,47 +18,48 @@
 #define _hc_sr04_newping_h
 
 #include <NewPing.h>
-#include <supla/sensor/HC_SR04.h>
+#include <supla/sensor/distance.h>
 
 namespace Supla {
 namespace Sensor {
-class HC_SR04_NewPing : public HC_SR04 {
+class HC_SR04_NewPing : public Distance {
  public:
-  HC_SR04_NewPing(int8_t trigPin,
-                  int8_t echoPin,
-                  int16_t minIn = 0,
-                  int16_t maxIn = 500,
-                  int16_t minOut = 0,
-                  int16_t maxOut = 500)
-      : HC_SR04(trigPin, echoPin, minIn, maxIn, minOut, maxOut) {
-    sonar = new NewPing(trigPin, echoPin, maxIn);
+  HC_SR04_NewPing(int8_t trigPin, int8_t echoPin, int16_t minIn = 0, int16_t maxIn = 500, int16_t minOut = 0, int16_t maxOut = 500) {
+    _trigPin = trigPin;
+    _echoPin = echoPin;
+    _minIn = minIn;
+    _maxIn = maxIn;
+    _minOut = minOut;
+    _maxOut = maxOut;
+
+    sonar = new NewPing(_trigPin, _echoPin, _maxIn);
+    delay(100);  // give time to inizialise, preventing ping_median fails
+    sonar->ping_median(5);
   }
 
   virtual double getValue() {
-    unsigned long uS = sonar->ping_median();
+    float distance = (float)(sonar->ping_median(5)) / US_ROUNDTRIP_CM;
 
-    if (uS < 50) {
-      failCount++;
-    } else {
-      failCount = 0;
-
-      unsigned long distance = sonar->convert_cm(uS);
-
-      value = map(distance, _minIn, _maxIn, _minOut, _maxOut);
-      if (_minOut < _maxOut) {
-        value = constrain(value, _minOut, _maxOut);
-      } else {
-        value = constrain(value, _maxOut, _minOut);
-      }
+    float value = map(distance, _minIn, _maxIn, _minOut, _maxOut);
+    if (_minOut < _maxOut) {
+      value = constrain(value, _minOut, _maxOut);
+    }
+    else {
+      value = constrain(value, _maxOut, _minOut);
     }
 
-    return failCount <= 3 ? static_cast<double>(value) / 100.0
-                          : DISTANCE_NOT_AVAILABLE;
+    return static_cast<double>(value) / 100.0;
   }
 
  protected:
+  int8_t _trigPin;
+  int8_t _echoPin;
+  int16_t _minIn;
+  int16_t _maxIn;
+  int16_t _minOut;
+  int16_t _maxOut;
+
   NewPing *sonar = nullptr;
-  long value;
 };
 
 };  // namespace Sensor
