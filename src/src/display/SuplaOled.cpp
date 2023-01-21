@@ -560,7 +560,7 @@ void SuplaOled::addButtonOled(uint8_t pin) {
 }
 
 void SuplaOled::handleAction(int event, int action) {
-  if (action == OLED_NEXT_FRAME && oledON) {
+  if (action == OLED_NEXT_FRAME && oledON && frameCount > 1) {
     ui->nextFrame();
   }
 
