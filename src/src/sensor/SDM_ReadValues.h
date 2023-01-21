@@ -35,24 +35,35 @@ class ReadValuesSDM : public Element {
 #else
   ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud);
 #endif
+  // energy 1 == 0.00001 kWh  - one phase
+  float getFwdActEnergy();
+
+  // energy 1 == 0.00001 kWh  - one phase
+  float getRvrActEnergy();
+
+  // energy 1 == 0.00001 kWh  - one phase
+  float getFwdReactEnergy();
+
+  // energy 1 == 0.00001 kWh  - one phase
+  float getRvrReactEnergy();
 
   // energy 1 == 0.00001 kWh
-  float getFwdActEnergy(int phase = 0);
+  float getFwdActEnergy(int phase);
 
-    // energy 1 == 0.00001 kWh
+  // energy 1 == 0.00001 kWh
   float getFwdActEnergyTotal();
 
   // energy 1 == 0.00001 kWh
-  float getRvrActEnergy(int phase = 0);
+  float getRvrActEnergy(int phase);
 
   // energy 1 == 0.00001 kWh
-  float getFwdReactEnergy(int phase = 0);
+  float getFwdReactEnergy(int phase);
 
-    // energy 1 == 0.00001 kWh
+  // energy 1 == 0.00001 kWh
   float getFwdReactEnergyTotal();
 
   // energy 1 == 0.00001 kWh
-  float getRvrReactEnergy(int phase = 0);
+  float getRvrReactEnergy(int phase);
 
   // voltage 1 == 0.01 V
   float getVoltage(int phase = 0);

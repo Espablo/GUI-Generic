@@ -31,6 +31,26 @@ ReadValuesSDM::ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX,
 }
 #endif
 
+// energy 1 == 0.00001 kWh - one phase
+float ReadValuesSDM::getFwdActEnergy() {
+  return sdmRead(SDM_IMPORT_ACTIVE_ENERGY);
+}
+
+// energy 1 == 0.00001 kWh - one phase
+float ReadValuesSDM::getRvrActEnergy() {
+  return sdmRead(SDM_EXPORT_ACTIVE_ENERGY);
+}
+
+// energy 1 == 0.00001 kWh - one phase
+float ReadValuesSDM::getFwdReactEnergy() {
+  return sdmRead(SDM_IMPORT_REACTIVE_ENERGY);
+}
+
+// energy 1 == 0.00001 kWh - one phase
+float ReadValuesSDM::getRvrReactEnergy() {
+  return sdmRead(SDM_EXPORT_REACTIVE_ENERGY);
+}
+
 // energy 1 == 0.00001 kWh
 float ReadValuesSDM::getFwdActEnergy(int phase) {
   uint16_t reg = SDM_ERR_NO_ERROR;
