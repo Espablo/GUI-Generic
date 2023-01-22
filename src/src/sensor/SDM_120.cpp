@@ -54,6 +54,7 @@ void SDM120::readValuesFromDevice() {
   setVoltage(0, ReadValuesSDM::getVoltage() * 100);
   setCurrent(0, ReadValuesSDM::getCurrent() * 1000);
   setPowerActive(0, ReadValuesSDM::getPowerActive() * 100000);
+  setPowerFactor(0, ReadValuesSDM::getPowerFactor() * 1000);
 
   setFreq(ReadValuesSDM::getFreq() * 100);
   setPowerReactive(0, ReadValuesSDM::getPowerReactive() * 10000);
