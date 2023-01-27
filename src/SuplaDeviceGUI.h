@@ -73,7 +73,7 @@
 #include <supla/sensor/DHT.h>
 
 #ifdef SUPLA_HC_SR04
-#include <supla/sensor/HC_SR04_NewPing.h>
+#include "src/sensor/HC_SR04_NewPing.h"
 #endif
 
 #include <supla/sensor/binary.h>
@@ -227,8 +227,14 @@ void addButtonToRelay(uint8_t nrRelay);
 #endif
 
 #ifdef SUPLA_ACTION_TRIGGER
+struct ActionTrigger {
+  bool active = false;
+};
+
+extern ActionTrigger *actionTrigger;
+
 void addButtonActionTrigger(uint8_t nr);
-void addActionTriggerRelatedChannel(Supla::Control::Button *button, int eventButton, Supla::Element *element);
+void addActionTriggerRelatedChannel(uint8_t nr, Supla::Control::Button *button, int eventButton, Supla::Element *element);
 #endif
 
 #if defined(SUPLA_RF_BRIDGE)
@@ -269,7 +275,7 @@ void addImpulseCounter(uint8_t nr);
 
 #ifdef SUPLA_RGBW
 void addRGBWLeds(uint8_t nr);
-void setRGBWButton(Supla::Control::RGBWBase *rgbw, int buttonPin);
+void setRGBWButton(uint8_t nr, Supla::Control::RGBWBase *rgbw);
 void setRGBWDefaultState(Supla::Control::RGBWBase *rgbw, uint8_t memory);
 #endif
 

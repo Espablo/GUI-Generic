@@ -594,9 +594,9 @@ const String SuplaSaveResult(int save) {
       saveresult += S_RESTART_MODULE;
       break;
     case SaveResult::DATA_ERASED_RESTART_DEVICE:
-      saveresult += S_DATA_ERASED_RESTART_DEVICE; // do usunięcia
+      saveresult += S_DATA_ERASED_RESTART_DEVICE;  // do usunięcia
       break;
-    case SaveResult::WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING: // do usunięcia
+    case SaveResult::WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING:  // do usunięcia
       saveresult += S_WRITE_ERROR_UNABLE_TO_READ_FILE_FS_PARTITION_MISSING;
       break;
     case SaveResult::DATA_SAVED_RESTART_MODULE:
@@ -622,6 +622,9 @@ const String SuplaSaveResult(int save) {
       break;
     case SaveResult::UPDATE_TOO_LESS_SPACE:
       saveresult += F("Wykonaj aktualizację 2 etapową.");
+      break;
+    case SaveResult::UPDATE_NEW_VERSION:
+      saveresult += F("Dostępna nowa wersja.");
       break;
 
     default:

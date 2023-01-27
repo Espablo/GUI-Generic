@@ -35,8 +35,18 @@ void SDM120::readValuesFromDevice() {
   clearErrCount();
   clearErrCode();
 
-  setFwdActEnergy(0, ReadValuesSDM::getFwdActEnergyTotal() * 100000);
-  setFwdReactEnergy(0, ReadValuesSDM::getFwdReactEnergyTotal() * 100000);
+  float energy = ReadValuesSDM::getFwdActEnergy();
+  float reactEnergy = ReadValuesSDM::getFwdReactEnergy();
+
+  if (energy > 0)
+    setFwdActEnergy(0, energy * 100000);
+  else
+    setFwdActEnergy(0, ReadValuesSDM::getFwdActEnergyTotal() * 100000);
+
+  if (reactEnergy > 0)
+    setFwdReactEnergy(0, reactEnergy * 100000);
+  else
+    setFwdReactEnergy(0, ReadValuesSDM::getFwdReactEnergyTotal() * 100000);
 
   setRvrActEnergy(0, ReadValuesSDM::getRvrActEnergy() * 100000);
   setRvrReactEnergy(0, ReadValuesSDM::getRvrReactEnergy() * 100000);
@@ -44,6 +54,7 @@ void SDM120::readValuesFromDevice() {
   setVoltage(0, ReadValuesSDM::getVoltage() * 100);
   setCurrent(0, ReadValuesSDM::getCurrent() * 1000);
   setPowerActive(0, ReadValuesSDM::getPowerActive() * 100000);
+  setPowerFactor(0, ReadValuesSDM::getPowerFactor() * 1000);
 
   setFreq(ReadValuesSDM::getFreq() * 100);
   setPowerReactive(0, ReadValuesSDM::getPowerReactive() * 10000);
