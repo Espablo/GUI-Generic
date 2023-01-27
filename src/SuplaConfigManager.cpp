@@ -194,19 +194,10 @@ SuplaConfigManager::SuplaConfigManager() {
 
 #ifdef SUPLA_RELAY
     this->addKey(KEY_MAX_RELAY, "1", 2);
-    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2);
-    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1);
-    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4);
-    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4);
     this->addKey(KEY_VIRTUAL_RELAY, MAX_VIRTUAL_RELAY * 2);
     this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_VIRTUAL_RELAY * 2);
-
 #else
     this->addKey(KEY_MAX_RELAY, 2, false);
-    this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, false);
-    this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, false);
-    this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, false);
-    this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, false);
     this->addKey(KEY_VIRTUAL_RELAY, MAX_GPIO * 2, false);
     this->addKey(KEY_VIRTUAL_RELAY_MEMORY, MAX_GPIO * 2, false);
 
@@ -217,12 +208,20 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1);
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4);
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4);
+    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3);
+    this->addKey(KEY_CONDITIONS_CLIENT_TYPE, MAX_GPIO * 2);
+    this->addKey(KEY_CONDITIONS_CLIENT_TYPE_NUMBER, "0", MAX_GPIO * 3);
+    this->addKey(KEY_MAX_CONDITIONS, "1", 2);
 
 #else
     this->addKey(KEY_CONDITIONS_SENSOR_TYPE, MAX_GPIO * 2, false);
     this->addKey(KEY_CONDITIONS_TYPE, MAX_GPIO * 1, false);
     this->addKey(KEY_CONDITIONS_MIN, MAX_GPIO * 4, false);
     this->addKey(KEY_CONDITIONS_MAX, MAX_GPIO * 4, false);
+    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, MAX_GPIO * 3, false);
+    this->addKey(KEY_CONDITIONS_CLIENT_TYPE, MAX_GPIO * 2, false);
+    this->addKey(KEY_CONDITIONS_CLIENT_TYPE_NUMBER, "0", MAX_GPIO * 3, false);
+    this->addKey(KEY_MAX_CONDITIONS, "1", 2), false;
 #endif
 
 #ifdef SUPLA_BUTTON
@@ -357,12 +356,6 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_HD44780_TYPE, "2", 1);
 #else
     this->addKey(KEY_HD44780_TYPE, 1, false);
-#endif
-
-#ifdef SUPLA_CONDITIONS
-    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, "0", MAX_GPIO * 3);
-#else
-    this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, MAX_GPIO * 3, false);
 #endif
 
 #ifdef SUPLA_RF_BRIDGE

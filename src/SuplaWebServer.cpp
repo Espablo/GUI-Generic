@@ -75,6 +75,10 @@ void SuplaWebServer::createWebServer() {
   createWebPageOther();
 #endif
   createWebPageSensors();
+
+#ifdef SUPLA_CONDITIONS
+  createWebConditions();
+#endif
 }
 
 void SuplaWebServer::sendHeaderStart() {
