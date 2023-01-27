@@ -126,7 +126,9 @@ void addRelay(uint8_t nr) {
       relay.push_back(new Supla::Control::Relay(pinRelay, highIsOn));
     }
 
+#ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsExecutive(CONDITIONS::EXECUTIVE_RELAY, relay[nr], nr);
+#endif
 
     switch (ConfigESP->getMemory(pinRelay, nr)) {
       case MEMORY_OFF:
@@ -554,26 +556,31 @@ void addRGBWLeds(uint8_t nr) {
     auto rgbw = new Supla::Control::RGBWLeds(redPin, greenPin, bluePin, brightnessPin);
     setRGBWDefaultState(rgbw, ConfigESP->getMemory(redPin));
     setRGBWButton(nr, rgbw);
-    
+
+#ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsExecutive(CONDITIONS::EXECUTIVE_RGBW, rgbw, nr);
     Supla::GUI::Conditions::addConditionsSensor(SENSOR_RGBW, rgbw, nr);
+#endif
   }
   else if (redPin != OFF_GPIO && greenPin != OFF_GPIO && bluePin != OFF_GPIO) {
     auto rgbw = new Supla::Control::RGBLeds(redPin, greenPin, bluePin);
     setRGBWDefaultState(rgbw, ConfigESP->getMemory(redPin));
     setRGBWButton(nr, rgbw);
 
+#ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsExecutive(CONDITIONS::EXECUTIVE_RGBW, rgbw, nr);
     Supla::GUI::Conditions::addConditionsSensor(SENSOR_RGBW, rgbw, nr);
-
+#endif
   }
   else if (brightnessPin != OFF_GPIO) {
     auto rgbw = new Supla::Control::DimmerLeds(brightnessPin);
     setRGBWDefaultState(rgbw, ConfigESP->getMemory(brightnessPin));
     setRGBWButton(nr, rgbw);
 
+#ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsExecutive(CONDITIONS::EXECUTIVE_RGBW, rgbw, nr);
     Supla::GUI::Conditions::addConditionsSensor(SENSOR_RGBW, rgbw, nr);
+#endif
   }
 }
 
