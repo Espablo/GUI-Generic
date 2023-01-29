@@ -396,12 +396,17 @@ void addDS18B20MultiThermometer(int pinNumber) {
       sensorDS.push_back(new DS18B20(pinNumber, HexToBytes(ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i))));
       supla_log(LOG_DEBUG, "Index %d - address %s", i, ConfigManager->get(KEY_ADDR_DS18B20)->getElement(i).c_str());
 
+#ifdef SUPLA_CONDITIONS
       Supla::GUI::Conditions::addConditionsSensor(SENSOR_DS18B20, S_DS18B20, sensorDS[i], i);
+#endif
     }
   }
   else {
     sensorDS.push_back(new DS18B20(ConfigESP->getGpio(FUNCTION_DS18B20)));
+
+#ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsSensor(SENSOR_DS18B20, S_DS18B20, sensorDS[0]);
+#endif
   }
 }
 #endif
@@ -664,7 +669,9 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL) {
   if (counterHLW8012 == NULL && pinCF != OFF_GPIO && pinCF1 != OFF_GPIO && pinSEL != OFF_GPIO) {
     counterHLW8012 = new Supla::Sensor::HLW_8012(pinCF, pinCF1, pinSEL);
 
+#ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsSensor(SENSOR_HLW8012, S_HLW8012, counterHLW8012);
+#endif
   }
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
 }
@@ -677,7 +684,9 @@ void addCSE7766(int8_t pinRX) {
   if (counterCSE7766 == NULL && pinRX != OFF_GPIO) {
     counterCSE7766 = new Supla::Sensor::CSE_7766(ConfigESP->getHardwareSerial(pinRX));
 
+#ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsSensor(SENSOR_CSE7766, S_CSE7766, counterCSE7766);
+#endif
   }
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
 }
@@ -690,7 +699,9 @@ void addADE7953(int8_t pinIRQ) {
   if (couterADE7953 == NULL && pinIRQ != OFF_GPIO) {
     couterADE7953 = new Supla::Sensor::ADE7953(pinIRQ);
 
+#ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsSensor(SENSOR_ADE7953, S_ADE7953, couterADE7953);
+#endif
   }
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
 }
