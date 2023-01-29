@@ -20,6 +20,15 @@
 #include <supla/channel_element.h>
 #include <supla/sensor/electricity_meter.h>
 
+#if defined(GUI_SENSOR_SPI) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_OTHER) || defined(GUI_SENSOR_ANALOG) || \
+    defined(SUPLA_RGBW)
+#define GUI_ALL_SENSOR
+#endif
+
+#if defined(GUI_OTHER_ENERGY) || defined(GUI_SENSOR_I2C_ENERGY_METER)
+#define GUI_ALL_ENERGY
+#endif
+
 #ifdef SUPLA_CONDITIONS
 #define PATH_CONDITIONS "conditions"
 
