@@ -175,8 +175,9 @@ bool SuplaWebServer::isLoggedIn(bool force) {
 }
 
 bool SuplaWebServer::saveGPIO(const String& _input, uint8_t function, uint8_t nr, const String& input_max) {
-  uint8_t gpio, _gpio, _function, _nr, current_value, key;
+  uint8_t gpio = OFF_GPIO, _gpio = OFF_GPIO, _function = FUNCTION_OFF, _nr = 0, current_value = 0, key = KEY_GPIO;
   String input;
+  input.reserve(16);
   input = _input + nr;
 
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") == 0) {
