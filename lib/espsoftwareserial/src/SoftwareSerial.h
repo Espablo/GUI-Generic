@@ -124,8 +124,10 @@ public:
     void setTransmitEnablePin(int8_t txEnablePin);
     /// Enable (default) or disable interrupts during tx.
     void enableIntTx(bool on);
-    /// Enable (default) or disable internal rx GPIO pullup.
-    void enableRxGPIOPullup(bool on);
+    /// Enable (default) or disable internal rx GPIO pull-up.
+    void enableRxGPIOPullUp(bool on);
+    /// Enable or disable (default) tx GPIO output mode.
+    void enableTxGPIOOpenDrain(bool on);
 
     bool overflow();
 
@@ -201,12 +203,13 @@ public:
     bool isListening() { return m_rxEnabled; }
     bool stopListening() { enableRx(false); return true; }
 
-    /// Set an event handler for received data.
-    void onReceive(Delegate<void(int available), void*> handler);
-
-    /// Run the internal processing and event engine. Can be iteratively called
-    /// from loop, or otherwise scheduled.
-    void perform_work();
+    /// onReceive sets a callback that will be called in interrupt context
+    /// when data is received.
+    /// More precisely, the callback is triggered when EspSoftwareSerial detects
+    /// a new reception, which may not yet have completed on invocation.
+    /// Reading - never from this interrupt context - should therefore be
+    /// delayed for the duration of one incoming word.
+    void onReceive(Delegate<void(), void*> handler);
 
     using Print::write;
 
@@ -221,21 +224,30 @@ private:
     // If offCycle == 0, the level remains unchanged from dutyCycle.
     void writePeriod(
         uint32_t dutyCycle, uint32_t offCycle, bool withStopBit);
-    bool isValidGPIOpin(int8_t pin);
-    bool isValidRxGPIOpin(int8_t pin);
-    bool isValidTxGPIOpin(int8_t pin);
+    static constexpr bool isValidGPIOpin(int8_t pin);
+    static constexpr bool isValidRxGPIOpin(int8_t pin);
+    static constexpr bool isValidTxGPIOpin(int8_t pin);
     // result is only defined for a valid Rx GPIO pin
-    bool hasRxGPIOPullUp(int8_t pin);
+    static constexpr bool hasRxGPIOPullUp(int8_t pin);
     // safely set the pin mode for the Rx GPIO pin
-    void setRxGPIOPullUp();
+    void setRxGPIOPinMode();
+    // safely set the pin mode for the Tx GPIO pin
+    void setTxGPIOPinMode();
     /* check m_rxValid that calling is safe */
     void rxBits();
-    void rxBits(const uint32_t isrCycle);
+    void rxBits(const uint32_t isrTick);
     static void disableInterrupts();
     static void restoreInterrupts();
 
     static void rxBitISR(SoftwareSerial* self);
     static void rxBitSyncISR(SoftwareSerial* self);
+
+    static inline uint32_t microsToTicks(uint32_t micros) {
+        return micros << 1;
+    }
+    static inline uint32_t ticksToMicros(uint32_t ticks) {
+        return ticks >> 1;
+    }
 
     // Member variables
     int8_t m_rxPin = -1;
@@ -257,12 +269,13 @@ private:
     /// PDU bits include data, parity and stop bits; the start bit is not counted.
     uint8_t m_pduBits;
     bool m_intTxEnabled;
-    bool m_rxGPIOPullupEnabled;
+    bool m_rxGPIOPullUpEnabled;
+    bool m_txGPIOOpenDrain;
     SoftwareSerialParity m_parityMode;
     uint8_t m_stopBits;
     bool m_lastReadParity;
     bool m_overflow = false;
-    uint32_t m_bitCycles;
+    uint32_t m_bitTicks;
     uint8_t m_parityInPos;
     uint8_t m_parityOutPos;
     int8_t m_rxLastBit; // 0 thru (m_pduBits - m_stopBits - 1): data/parity bits. -1: start bit. (m_pduBits - 1): stop bit.
@@ -279,11 +292,12 @@ private:
     // the ISR stores the relative bit times in the buffer. The inversion corrected level is used as sign bit (2's complement):
     // 1 = positive including 0, 0 = negative.
     std::unique_ptr<circular_queue<uint32_t, SoftwareSerial*> > m_isrBuffer;
-    const Delegate<void(uint32_t&&), SoftwareSerial*> m_isrBufferForEachDel = { [](SoftwareSerial* self, uint32_t&& isrCycle) { self->rxBits(isrCycle); }, this };
+    const Delegate<void(uint32_t&&), SoftwareSerial*> m_isrBufferForEachDel = { [](SoftwareSerial* self, uint32_t&& isrTick) { self->rxBits(isrTick); }, this };
     std::atomic<bool> m_isrOverflow;
-    uint32_t m_isrLastCycle;
+    uint32_t m_isrLastTick;
     bool m_rxCurParity = false;
-    Delegate<void(int available), void*> receiveHandler;
+    Delegate<void(), void*> m_rxHandler;
 };
 
 #endif // __SoftwareSerial_h
+
