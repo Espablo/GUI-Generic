@@ -17,6 +17,10 @@
 #include "SuplaConditions.h"
 
 #ifdef SUPLA_CONDITIONS
+
+const char *CONDITIONS_SENSOR_LIST[COUNT_SENSOR_LIST] = {};
+const char *CONDITIONS_EXECUTIVE_TYPE_LIST[COUNT_EXECUTIVE_LIST] = {};
+
 void createWebConditions() {
   WebServer->httpServer->on(getURL(PATH_CONDITIONS), [&]() {
     if (!WebServer->isLoggedIn())
@@ -44,14 +48,15 @@ void handleConditions(int save) {
       addFormHeader(webContentBuffer, String(S_CONDITION) + S_SPACE + (nr + 1));
       uint8_t selected = ConfigManager->get(KEY_CONDITIONS_CLIENT_TYPE)->getElement(nr).toInt();
 
-      addListBox(webContentBuffer, String(INPUT_CONDITIONS_TYPE_CLIENT) + nr, "Wykonaj dla", CONDITIONS_EXECUTIVE_TYPE_LIST_P, COUNT_EXECUTIVE_LIST,
+      addListBox(webContentBuffer, String(INPUT_CONDITIONS_TYPE_CLIENT) + nr, "Wykonaj dla", CONDITIONS_EXECUTIVE_TYPE_LIST, COUNT_EXECUTIVE_LIST,
                  selected, 0, false);
 
       selected = ConfigManager->get(KEY_CONDITIONS_CLIENT_TYPE_NUMBER)->getElement(nr).toInt();
       addListNumbersBox(webContentBuffer, String(INPUT_CONDITIONS_CLIENT_NUMBER) + nr, "Numer", 20, selected);
 
       selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt();
-      addListBox(webContentBuffer, String(INPUT_CONDITIONS_SENSOR_TYPE) + nr, "Sensor", SENSOR_LIST_P, COUNT_SENSOR_LIST, selected, 0, false);
+      addListBox(webContentBuffer, String(INPUT_CONDITIONS_SENSOR_TYPE) + nr, "Sensor", CONDITIONS_SENSOR_LIST, COUNT_SENSOR_LIST, selected, 0,
+                 false);
 
       selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt();
       addListNumbersBox(webContentBuffer, String(INPUT_CONDITIONS_SENSOR_NUMBER) + nr, "Numer", 20, selected);
@@ -151,7 +156,9 @@ void addConditionsElement() {
   }
 }
 
-void addConditionsExecutive(int functionClient, Supla::ActionHandler *client, uint8_t nrClient) {
+void addConditionsExecutive(int functionClient, const char *nameExecutive, Supla::ActionHandler *client, uint8_t nrClient) {
+  CONDITIONS_EXECUTIVE_TYPE_LIST[functionClient] = nameExecutive;
+
   for (uint8_t nr = 0; nr < ConfigManager->get(KEY_MAX_CONDITIONS)->getValueInt(); nr++) {
     if (conditions[nr].functionClient == functionClient && conditions[nr].nrClient == nrClient) {
       conditions[nr].client = client;
@@ -165,7 +172,9 @@ void addConditionsExecutive(int functionClient, Supla::ActionHandler *client, ui
   }
 }
 
-void addConditionsSensor(int functionSensor, Supla::ChannelElement *sensor, uint8_t nrSensor) {
+void addConditionsSensor(int functionSensor, const char *nameSensor, Supla::ChannelElement *sensor, uint8_t nrSensor) {
+  CONDITIONS_SENSOR_LIST[functionSensor] = nameSensor;
+
   for (uint8_t nr = 0; nr < ConfigManager->get(KEY_MAX_CONDITIONS)->getValueInt(); nr++) {
     if (conditions[nr].functionSensor == functionSensor && conditions[nr].nrSensor == nrSensor) {
       conditions[nr].sensor = sensor;
@@ -179,17 +188,19 @@ void addConditionsSensor(int functionSensor, Supla::ChannelElement *sensor, uint
   }
 }
 
-void addConditionsSensor(int functionSensor, Supla::Sensor::ElectricityMeter *electricityMete, uint8_t nrSensor) {
+void addConditionsSensor(int functionSensor, const char *nameSensor, Supla::Sensor::ElectricityMeter *electricityMete, uint8_t nrSensor) {
+  CONDITIONS_SENSOR_LIST[functionSensor] = nameSensor;
+
   for (uint8_t nr = 0; nr < ConfigManager->get(KEY_MAX_CONDITIONS)->getValueInt(); nr++) {
     if (conditions[nr].functionSensor == functionSensor && conditions[nr].nrClient == nrSensor) {
-    conditions[nr].electricityMete = electricityMete;
+      conditions[nr].electricityMete = electricityMete;
 
-    Serial.print("addConditionsElectricityMete: ");
-    Serial.print("functionSensor: ");
-    Serial.print(conditions[nr].functionSensor);
-    Serial.print(", nrSensor : ");
-    Serial.println(conditions[nr].nrSensor);
-  }
+      Serial.print("addConditionsElectricityMete: ");
+      Serial.print("functionSensor: ");
+      Serial.print(conditions[nr].functionSensor);
+      Serial.print(", nrSensor : ");
+      Serial.println(conditions[nr].nrSensor);
+    }
   }
 }
 
