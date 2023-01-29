@@ -20,10 +20,9 @@ namespace Supla {
 namespace Sensor {
 
 #if defined(ESP8266)
-ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud) : sdm(swSerSDM, baud, NOT_A_PIN, SWSERIAL_8N1, pinRX, pinTX) {
+ReadValuesSDM::ReadValuesSDM(int8_t pinRX, int8_t pinTX, long baud)
+    : swSerSDM(pinRX, pinTX), sdm(swSerSDM, baud, NOT_A_PIN, SWSERIAL_8N1, pinRX, pinTX) {
   sdm.begin();
-  // sdm.setMsTurnaround(100);
-  // sdm.setMsTimeout(250);
 }
 #else
 ReadValuesSDM::ReadValuesSDM(HardwareSerial& serial, int8_t pinRX, int8_t pinTX, long baud) : sdm(serial, baud, NOT_A_PIN, SERIAL_8N1, pinRX, pinTX) {
@@ -301,6 +300,30 @@ float ReadValuesSDM::sdmRead(uint16_t reg) {
   //   tmpval = 0.00;
 
   // return tmpval;
+}
+
+uint16_t ReadValuesSDM::getErrCode(bool _clear) {
+  return sdm.getErrCode(_clear);
+}
+
+uint32_t ReadValuesSDM::getErrCount(bool _clear) {
+  return sdm.getErrCount(_clear);
+}
+
+uint32_t ReadValuesSDM::getSuccCount(bool _clear) {
+  return sdm.getSuccCount(_clear);
+}
+
+void ReadValuesSDM::clearErrCode() {
+  sdm.clearErrCode();
+}
+
+void ReadValuesSDM::clearErrCount() {
+  sdm.clearErrCount();
+}
+
+void ReadValuesSDM::clearSuccCount() {
+  sdm.clearSuccCount();
 }
 
 };  // namespace Sensor
