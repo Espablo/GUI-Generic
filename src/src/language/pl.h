@@ -123,7 +123,7 @@
 #define S_ON_GREATER "większa"
 
 #define S_CHANNEL_VALUE "kanału"
-#define S_HUMIDITY      "wilgotność"
+#define S_HUMIDITY      "wilgotności"
 #define S_VOLTAGE       "napięcia[V]"
 #define S_CURRENT       "natężenia[A]"
 #define S_POWER         "mocy czynnej[W]"

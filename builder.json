@@ -199,8 +199,7 @@
 			"depOn": [
 				"SUPLA_ROLLERSHUTTER",
 				"SUPLA_DIRECT_LINKS",
-				"SUPLA_LED",
-				"SUPLA_CONDITIONS"
+				"SUPLA_LED"
 			],
 			"en": {
 				"name": "Relays",
@@ -217,27 +216,6 @@
 			"fr": {
 				"name": "Relais",
 				"desc": "Paramètres de l´appareil->Relais. Il permet le fonctionnement des relais."
-			}
-		},
-		"SUPLA_CONDITIONS": {
-			"name": "Warunkowanie przekaźnika",
-			"desc": "Umożliwia sterowanie przekaźnikiem w zależnośći od wartości sensora.",
-			"defOn": false,
-			"en": {
-				"name": "Conditioning of relay",
-				"desc": "It allows you to control the relay depending on the sensor value."
-			},
-			"es": {
-				"name": "Acondicionamiento de relé",
-				"desc": "Le permite controlar el relé en función del valor del sensor."
-			},
-			"de": {
-				"name": "Konditionierung des Relais",
-				"desc": "Damit können Sie das Relais abhängig vom Sensorwert steuern."
-			},
-			"fr": {
-				"name": "Conditionnement de relais",
-				"desc": "Il permet de contrôler le relais en fonction de la valeur du capteur."
 			}
 		},
 		"SUPLA_BUTTON": {

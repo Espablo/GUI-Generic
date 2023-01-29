@@ -146,10 +146,6 @@ void handleRelaySaveSet() {
     ConfigESP->setLevel(gpio, WebServer->httpServer->arg(input).toInt());
   }
 
-#ifdef SUPLA_CONDITIONS
-  conditionsWebPageSave(nr_relay.toInt());
-#endif
-
 #if defined(SUPLA_LED)
   if (gpio != GPIO_VIRTUAL_RELAY) {
     input = INPUT_LED;
@@ -304,10 +300,6 @@ void handleRelaySet(int save) {
     directLinksWebPage(nr_relay.toInt());
 #endif
 
-#ifdef SUPLA_CONDITIONS
-    conditionsWebPage(nr_relay.toInt());
-#endif
-
     addButtonSubmit(webContentBuffer, S_SAVE);
     addFormEnd(webContentBuffer);
   }
@@ -363,10 +355,6 @@ void handleRelaySetMCP23017(int save) {
 #if defined(SUPLA_DIRECT_LINKS)
     directLinksWebPage(nr_relay.toInt());
 #endif
-
-#ifdef SUPLA_CONDITIONS
-    conditionsWebPage(nr_relay.toInt());
-#endif
   }
 
   addButtonSubmit(webContentBuffer, S_SAVE);
@@ -414,10 +402,6 @@ void handleRelaySaveSetMCP23017() {
 #if defined(SUPLA_DIRECT_LINKS)
     directLinksWebPageSave(nr_relay.toInt());
 #endif
-
-#ifdef SUPLA_CONDITIONS
-    conditionsWebPageSave(nr_relay.toInt());
-#endif
   }
   else {
     for (gpio = 0; gpio <= OFF_GPIO; gpio++) {
@@ -435,42 +419,6 @@ void handleRelaySaveSetMCP23017() {
       handleRelaySetMCP23017(2);
       break;
   }
-}
-#endif
-
-#ifdef SUPLA_CONDITIONS
-void conditionsWebPage(int nr) {
-  if (COUNT_SENSOR_LIST > 1) {
-    addFormHeader(webContentBuffer, S_CONDITIONING);
-
-    uint8_t selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_TYPE)->getElement(nr).toInt();
-    addListBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_TYPE, S_TYPE, SENSOR_LIST_P, COUNT_SENSOR_LIST, selected);
-
-    selected = ConfigManager->get(KEY_CONDITIONS_SENSOR_NUMBER)->getElement(nr).toInt();
-    addListNumbersBox(webContentBuffer, INPUT_CONDITIONS_SENSOR_NUMBER, S_SENSOR, 20, selected);
-
-    selected = ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt();
-    addListBox(webContentBuffer, INPUT_CONDITIONS_TYPE, S_TURN_ON_WHEN, CONDITIONS_TYPE_P, CONDITION_COUNT, selected);
-
-    String value = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr);
-    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MIN, S_ON, S_SWITCH_ON_VALUE, false, value);
-    value = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr);
-    addNumberBox(webContentBuffer, INPUT_CONDITIONS_MAX, S_OFF, S_SWITCH_OFF_VALUE, false, value);
-    addFormHeaderEnd(webContentBuffer);
-  }
-}
-
-void conditionsWebPageSave(int nr) {
-  String input = INPUT_CONDITIONS_SENSOR_TYPE;
-  ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, nr, WebServer->httpServer->arg(input).toInt());
-  input = INPUT_CONDITIONS_TYPE;
-  ConfigManager->setElement(KEY_CONDITIONS_TYPE, nr, WebServer->httpServer->arg(input).toInt());
-  input = INPUT_CONDITIONS_MIN;
-  ConfigManager->setElement(KEY_CONDITIONS_MIN, nr, WebServer->httpServer->arg(input).c_str());
-  input = INPUT_CONDITIONS_MAX;
-  ConfigManager->setElement(KEY_CONDITIONS_MAX, nr, WebServer->httpServer->arg(input).c_str());
-  input = INPUT_CONDITIONS_SENSOR_NUMBER;
-  ConfigManager->setElement(KEY_CONDITIONS_SENSOR_NUMBER, nr, WebServer->httpServer->arg(input).c_str());
 }
 #endif
 

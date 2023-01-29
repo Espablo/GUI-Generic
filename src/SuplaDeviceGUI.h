@@ -53,6 +53,7 @@
 
 #include "SuplaCommonPROGMEM.h"
 #include "Markup.h"
+#include "SuplaConditions.h"
 
 #ifdef SUPLA_OLED
 #include "src/display/SuplaOled.h"
@@ -277,9 +278,6 @@ void addRGBWLeds(uint8_t nr);
 void setRGBWButton(uint8_t nr, Supla::Control::RGBWBase *rgbw);
 void setRGBWDefaultState(Supla::Control::RGBWBase *rgbw, uint8_t memory);
 #endif
-
-void addConditionsRelay(int function, Supla::ChannelElement *client, uint8_t sensorNumber = 0);
-void addConditionsRelay(int function, Supla::Sensor::ElectricityMeter *client, uint8_t sensorNumber = 0);
 
 #if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
 void addCorrectionSensor();

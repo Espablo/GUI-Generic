@@ -49,7 +49,11 @@ void HTTPUpdateServer::setup() {
 }
 
 String HTTPUpdateServer::getUpdateBuilderUrl() {
+  #ifdef BUILDER_TEST
+    return String(HOST_BUILDER) + "test.php?firmware=" + String(OPTIONS_HASH);
+  #else
   return String(HOST_BUILDER) + "?firmware=" + String(OPTIONS_HASH);
+  #endif
 }
 
 void HTTPUpdateServer::handleFirmwareUp() {

@@ -172,8 +172,15 @@ void addNumberBox(String& html, const String& input_id, const String& name, uint
   WebServer->sendHeader();
 }
 
-void addNumberBox(String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value) {
-  html += F("<i><label>");
+void addNumberBox(
+    String& html, const String& input_id, const String& name, const String& placeholder, bool required, const String& value, bool underline) {
+  if (underline) {
+    html += F("<i>");
+  }
+  else {
+    html += F("<i style='border-bottom:none !important;'>");
+  }
+  html += F("<label>");
   html += name;
   html += F("</label><input name='");
   html += input_id;
@@ -421,8 +428,22 @@ void addListExpanderGPIO(String& html,
 }
 #endif
 
-void addListBox(String& html, const String& input_id, const String& name, const char* const* array_P, uint8_t size, uint8_t selected, uint8_t nr) {
-  html += F("<i><label>");
+void addListBox(String& html,
+                const String& input_id,
+                const String& name,
+                const char* const* array_P,
+                uint8_t size,
+                uint8_t selected,
+                uint8_t nr,
+                bool underline) {
+  if (underline) {
+    html += F("<i>");
+  }
+  else {
+    html += F("<i style='border-bottom:none !important;'>");
+  }
+
+  html += F("<label>");
   if (nr != 0) {
     html += nr;
     html += F(". ");

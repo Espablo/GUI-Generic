@@ -28,6 +28,7 @@
 namespace Supla {
 namespace Sensor {
 
+// class SoftwareSerial;
 class ReadValuesSDM : public Element {
  public:
 #if defined(ESP8266)
@@ -91,36 +92,19 @@ class ReadValuesSDM : public Element {
 
   float sdmRead(uint16_t reg);
 
-  uint16_t getErrCode(bool _clear = false) {
-    return sdm.getErrCode(_clear);
-  }
+  uint16_t getErrCode(bool _clear = false);
+  uint32_t getErrCount(bool _clear = false);
+  uint32_t getSuccCount(bool _clear = false);
+  void clearErrCode();
+  void clearErrCount();
+  void clearSuccCount();
 
-  uint32_t getErrCount(bool _clear = false) {
-    return sdm.getErrCount(_clear);
-  }
-
-  uint32_t getSuccCount(bool _clear = false) {
-    return sdm.getSuccCount(_clear);
-  }
-
-  void clearErrCode() {
-    sdm.clearErrCode();
-  }
-
-  void clearErrCount() {
-    sdm.clearErrCount();
-  }
-
-  void clearSuccCount() {
-    sdm.clearSuccCount();
-  }
-
- protected:
-  SDM sdm;  // config SDM
-
+ private:
 #if defined(ESP8266)
-  SoftwareSerial swSerSDM;  // config SoftwareSerial
+  SoftwareSerial swSerSDM;
 #endif
+
+  SDM sdm;
 };
 
 };  // namespace Sensor

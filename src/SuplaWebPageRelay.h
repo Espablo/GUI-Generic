@@ -77,17 +77,6 @@ void handleRelaySaveSetMCP23017();
 #define INPUT_LEVEL_LED "ill"
 #endif
 
-#ifdef SUPLA_CONDITIONS
-#define INPUT_CONDITIONS_SENSOR_TYPE   "cst"
-#define INPUT_CONDITIONS_TYPE          "ct"
-#define INPUT_CONDITIONS_MIN           "cmi"
-#define INPUT_CONDITIONS_MAX           "cma"
-#define INPUT_CONDITIONS_SENSOR_NUMBER "csc"
-
-void conditionsWebPage(int nr);
-void conditionsWebPageSave(int nr);
-#endif
-
 #ifdef SUPLA_DIRECT_LINKS
 #define INPUT_DIRECT_LINK_ON  "dlo"
 #define INPUT_DIRECT_LINK_OFF "dlof"

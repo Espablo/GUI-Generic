@@ -65,6 +65,9 @@ void chooseTemplateBoard(String board) {
   ConfigManager->set(KEY_ANALOG_BUTTON, "");
   ConfigManager->set(KEY_ANALOG_INPUT_EXPECTED, "");
 
+  ConfigManager->set(KEY_MAX_CONDITIONS, "0");
+  ConfigManager->set(KEY_CONDITIONS_CLIENT_TYPE, "");
+  ConfigManager->set(KEY_CONDITIONS_CLIENT_TYPE_NUMBER, "");
   ConfigManager->set(KEY_CONDITIONS_SENSOR_TYPE, "");
   ConfigManager->set(KEY_CONDITIONS_SENSOR_NUMBER, "");
   ConfigManager->set(KEY_CONDITIONS_TYPE, "");
@@ -91,9 +94,12 @@ void chooseTemplateBoard(String board) {
     // addButton(i, A0, Supla::Event::ON_CHANGE, buttonAction, true, true);
   }
 
-  // {"NAME":"Shelly 2.5","GPIO":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736],"COND":[{"relay":0,"type":2,"number":1,"condition":1,"data":[20.5,21.1]},{"relay":1,"type":3,"number":1,"condition":1,"data":[20.5,21.1]}]}
-  // {"NAME":"Shelly 2.5","GPIO":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736],"COND":[[0,1,0,1,20.5,21.1],[1,20,0,7,"",1]]}
-  // "COND":[numberRelay,type,numberSensor,condition,valueON,valueOFF]
+  // {"NAME":"Shelly 2.5","GPIO":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736],"COND":[[0,0,10,0,0,"",90],[0,1,10,0,0,"",90]]}
+  // "COND":[typeExecuitive, numberExecuitive,typeSensor,numberSensor,condition,valueON,valueOFF]
+  //"typeExecuitive"
+  // 0 - EXECUTIVE_RELAY
+  // 1 - EXECUTIVE_RGBW
+
   //"type"
   // 0 - NO_SENSORS
   // 1 - SENSOR_DS18B20
@@ -127,22 +133,28 @@ void chooseTemplateBoard(String board) {
   //  6 - CONDITION_ON_LESS_POWER_ACTIVE
   //  7 - CONDITION_GPIO
 
+  // "COND":[typeExecuitive, numberExecuitive,typeSensor,numberSensor,condition,valueON,valueOFF]
+
   JsonArray& conditions = root["COND"];
 
   for (size_t i = 0; i < conditions.size(); i++) {
-    int relay = (int)conditions[i][0];  //"relay"
+    uint8_t maxConditions = ConfigManager->get(KEY_MAX_CONDITIONS)->getValueInt();
 
-    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, relay, (int)conditions[i][1]);    // "type"
-    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_NUMBER, relay, (int)conditions[i][2]);  // "number"
-    ConfigManager->setElement(KEY_CONDITIONS_TYPE, relay, (int)conditions[i][3]);           // "condition"
-
-    if (strcmp(conditions[i][4], "") != 0) {
-      ConfigManager->setElement(KEY_CONDITIONS_MIN, relay, (const char*)conditions[i][4]);  // "valueON"
-    }
+    ConfigManager->setElement(KEY_CONDITIONS_CLIENT_TYPE, maxConditions, (int)conditions[i][0]);         // typeExecuitive
+    ConfigManager->setElement(KEY_CONDITIONS_CLIENT_TYPE_NUMBER, maxConditions, (int)conditions[i][1]);  // numberExecuitive
+    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_TYPE, maxConditions, (int)conditions[i][2]);         // typeSensor
+    ConfigManager->setElement(KEY_CONDITIONS_SENSOR_NUMBER, maxConditions, (int)conditions[i][3]);       // numberSensor
+    ConfigManager->setElement(KEY_CONDITIONS_TYPE, maxConditions, (int)conditions[i][4]);                // condition
 
     if (strcmp(conditions[i][5], "") != 0) {
-      ConfigManager->setElement(KEY_CONDITIONS_MAX, relay, (const char*)conditions[i][5]);  // "valueOFF"
+      ConfigManager->setElement(KEY_CONDITIONS_MIN, maxConditions, (const char*)conditions[i][5]);  // "valueON"
     }
+
+    if (strcmp(conditions[i][6], "") != 0) {
+      ConfigManager->setElement(KEY_CONDITIONS_MAX, maxConditions, (const char*)conditions[i][6]);  // "valueOFF"
+    }
+
+    ConfigManager->set(KEY_MAX_CONDITIONS, maxConditions + 1);
   }
 
   String name = root["NAME"];
