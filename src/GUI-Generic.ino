@@ -331,7 +331,7 @@ void setup() {
     if (gpio != OFF_GPIO) {
       Supla::GUI::analog[nr] = new Supla::Sensor::AnalogRedingMap(gpio);
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr], nr);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_ANALOG_READING_MAP, S_ANALOG_READING_MAP, Supla::GUI::analog[nr], nr);
 #endif
     }
   }
