@@ -154,7 +154,7 @@ void setup() {
     if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(), "") != 0) {
       switch (ConfigManager->get(KEY_DIRECT_LINKS_TYPE)->getElement(nr).toInt()) {
         case DIRECT_LINKS_TYPE_TEMP:
-          new Supla::Sensor::DirectLinksThermometer(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
+          auto directLinkSensorThermometer = new Supla::Sensor::DirectLinksThermometer(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
                                                     ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
 #ifdef SUPLA_CONDITIONS
           Supla::GUI::Conditions::addConditionsSensor(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, S_DIRECT_LINKS_SENSOR_THERMOMETR,
