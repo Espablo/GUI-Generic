@@ -153,15 +153,13 @@ void setup() {
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR)->getValueInt(); nr++) {
     if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(), "") != 0) {
       switch (ConfigManager->get(KEY_DIRECT_LINKS_TYPE)->getElement(nr).toInt()) {
-        case DIRECT_LINKS_TYPE_TEMP:
-          auto directLinkSensorThermometer = new Supla::Sensor::DirectLinksThermometer(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
-                                                    ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-#ifdef SUPLA_CONDITIONS
+        case DIRECT_LINKS_TYPE_TEMP: {
+          auto directLinkSensorThermometer = new Supla::Sensor::DirectLinksThermometer(
+              ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(), ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
           Supla::GUI::Conditions::addConditionsSensor(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, S_DIRECT_LINKS_SENSOR_THERMOMETR,
                                                       directLinkSensorThermometer, nr);
-#endif
           break;
-
+        }
         case DIRECT_LINKS_TYPE_TEMP_HYGR:
           new Supla::Sensor::DirectLinksThermHygroMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
                                                         ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
@@ -181,6 +179,7 @@ void setup() {
           new Supla::Sensor::DirectLinksDistance(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
                                                  ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
           break;
+
         case DIRECT_LINKS_TYPE_DEPTH:
           new Supla::Sensor::DirectLinksDepth(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
                                               ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
