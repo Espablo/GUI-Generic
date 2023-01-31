@@ -25,6 +25,7 @@ class HTTPUpdateServer {
  private:
   bool _serial_output;
   String _updaterError;
+  String _optionsHash = "";
 
   String getUpdateBuilderUrl();
 

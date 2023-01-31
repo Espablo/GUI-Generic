@@ -15,6 +15,10 @@
 
 HTTPUpdateServer::HTTPUpdateServer(bool serial_debug) {
   _serial_output = serial_debug;
+#ifdef OPTIONS_HASH
+  _optionsHash.reserve(33);
+  _optionsHash = String(OPTIONS_HASH).c_str();
+#endif
 }
 
 void HTTPUpdateServer::setup() {
@@ -49,11 +53,11 @@ void HTTPUpdateServer::setup() {
 }
 
 String HTTPUpdateServer::getUpdateBuilderUrl() {
-  #ifdef BUILDER_TEST
-    return String(HOST_BUILDER) + "test.php?firmware=" + String(OPTIONS_HASH);
-  #else
-  return String(HOST_BUILDER) + "?firmware=" + String(OPTIONS_HASH);
-  #endif
+#ifdef BUILDER_TEST
+  return String(HOST_BUILDER) + "test.php?firmware=" + _optionsHash.c_str();
+#else
+  return String(HOST_BUILDER) + "?firmware=" + _optionsHash.c_str();
+#endif
 }
 
 void HTTPUpdateServer::handleFirmwareUp() {
@@ -208,7 +212,8 @@ void HTTPUpdateServer::autoUpdate2Step() {
 
   strncpy(settings.SSID, ConfigManager->get(KEY_WIFI_SSID)->getValue(), MAX_SSID);
   strncpy(settings.PASS, ConfigManager->get(KEY_WIFI_PASS)->getValue(), MAX_PASSWORD);
-  strncpy(settings.HASH, String(OPTIONS_HASH).c_str(), MAX_HASH);
+  strncpy(settings.HASH, _optionsHash.c_str(), MAX_HASH);
+
   if (ConfigESP->getGpio(FUNCTION_CFG_LED) != OFF_GPIO)
     settings.CFG_LED = ConfigESP->getGpio(FUNCTION_CFG_LED);
 
