@@ -125,7 +125,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_BINARY, binary, nr);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_BINARY, S_LIMIT_SWITCH, binary, nr);
 #endif
     }
   }
@@ -153,14 +153,13 @@ void setup() {
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_DIRECT_LINKS_SENSOR)->getValueInt(); nr++) {
     if (strcmp(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(), "") != 0) {
       switch (ConfigManager->get(KEY_DIRECT_LINKS_TYPE)->getElement(nr).toInt()) {
-        case DIRECT_LINKS_TYPE_TEMP:
-          new Supla::Sensor::DirectLinksThermometer(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
-                                                    ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
-#ifdef SUPLA_CONDITIONS
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
-#endif
+        case DIRECT_LINKS_TYPE_TEMP: {
+          auto directLinkSensorThermometer = new Supla::Sensor::DirectLinksThermometer(
+              ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(), ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, S_DIRECT_LINKS_SENSOR_THERMOMETR,
+                                                      directLinkSensorThermometer, nr);
           break;
-
+        }
         case DIRECT_LINKS_TYPE_TEMP_HYGR:
           new Supla::Sensor::DirectLinksThermHygroMeter(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
                                                         ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
@@ -180,6 +179,7 @@ void setup() {
           new Supla::Sensor::DirectLinksDistance(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
                                                  ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
           break;
+
         case DIRECT_LINKS_TYPE_DEPTH:
           new Supla::Sensor::DirectLinksDepth(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(),
                                               ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
@@ -196,7 +196,8 @@ void setup() {
       directLinkSensorThermometer->setUrl(ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str());
 
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, directLinkSensorThermometer, nr);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, S_DIRECT_LINKS_SENSOR_THERMOMETR,
+                                                  directLinkSensorThermometer, nr);
 #endif
     }
   }
@@ -208,7 +209,7 @@ void setup() {
       auto dht11 = new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT11), DHT11);
 
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_DHT11, dht11, nr);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_DHT11, S_DHT11, dht11, nr);
 #endif
     }
   }
@@ -220,7 +221,7 @@ void setup() {
       auto dht22 = new Supla::Sensor::DHT(ConfigESP->getGpio(nr, FUNCTION_DHT22), DHT22);
 
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_DHT22, dht22, nr);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_DHT22, S_DHT22, dht22, nr);
 #endif
     }
   }
@@ -230,7 +231,7 @@ void setup() {
   if (ConfigESP->getGpio(FUNCTION_SI7021_SONOFF) != OFF_GPIO) {
     auto si7021sonoff = new Supla::Sensor::Si7021Sonoff(ConfigESP->getGpio(FUNCTION_SI7021_SONOFF));
 #ifdef SUPLA_CONDITIONS
-    Supla::GUI::Conditions::addConditionsSensor(SENSOR_SI7021_SONOFF, si7021sonoff);
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_SI7021_SONOFF, S_SI7021_SONOFF, si7021sonoff);
 #endif
   }
 #endif
@@ -248,7 +249,7 @@ void setup() {
     }
 
 #ifdef SUPLA_CONDITIONS
-    Supla::GUI::Conditions::addConditionsSensor(SENSOR_HC_SR04, hcsr04);
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_HC_SR04, S_HC_SR04, hcsr04);
 #endif
   }
 #endif
@@ -260,7 +261,7 @@ void setup() {
       auto thermocouple =
           new Supla::Sensor::MAX6675_K(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_MAX6675, thermocouple);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_MAX6675, S_MAX6675, thermocouple);
 #endif
     }
 #endif
@@ -270,7 +271,7 @@ void setup() {
       auto thermocouple =
           new Supla::Sensor::MAX31855(ConfigESP->getGpio(FUNCTION_CLK), ConfigESP->getGpio(FUNCTION_CS), ConfigESP->getGpio(FUNCTION_D0));
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_MAX31855, thermocouple);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_MAX31855, S_MAX31855, thermocouple);
 #endif
     }
 #endif
@@ -281,7 +282,7 @@ void setup() {
   if (ConfigESP->getGpio(FUNCTION_NTC_10K) != OFF_GPIO) {
     auto ntc10k = new Supla::Sensor::NTC10K(ConfigESP->getGpio(FUNCTION_NTC_10K));
 #ifdef SUPLA_CONDITIONS
-    Supla::GUI::Conditions::addConditionsSensor(SENSOR_NTC_10K, ntc10k);
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_NTC_10K, S_NTC_10K, ntc10k);
 #endif
   }
 #endif
@@ -290,7 +291,7 @@ void setup() {
   if (ConfigESP->getGpio(FUNCTION_MPX_5XXX) != OFF_GPIO) {
     Supla::GUI::mpx = new Supla::Sensor::MPX_5XXX(ConfigESP->getGpio(FUNCTION_MPX_5XXX));
 #ifdef SUPLA_CONDITIONS
-    Supla::GUI::Conditions::addConditionsSensor(SENSOR_MPX_5XXX, Supla::GUI::mpx);
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_MPX_5XXX, S_MPX_5XXX, Supla::GUI::mpx);
 #endif
 
     Supla::Sensor::Percentage *mpxPercent;
@@ -302,7 +303,7 @@ void setup() {
     }
 
 #ifdef SUPLA_CONDITIONS
-    Supla::GUI::Conditions::addConditionsSensor(SENSOR_MPX_5XXX_PERCENT, mpxPercent);
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_MPX_5XXX_PERCENT, S_MPX_5XXX_PERCENT, mpxPercent);
 #endif
   }
 #endif
@@ -316,7 +317,7 @@ void setup() {
     for (nr = 0; nr < ConfigManager->get(KEY_MAX_ANALOG_READING)->getValueInt(); nr++) {
       Supla::GUI::analog[nr] = new Supla::Sensor::AnalogRedingMap(gpio);
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr], nr);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_ANALOG_READING_MAP, S_ANALOG_READING_MAP, Supla::GUI::analog[nr], nr);
 #endif
     }
   }
@@ -329,7 +330,7 @@ void setup() {
     if (gpio != OFF_GPIO) {
       Supla::GUI::analog[nr] = new Supla::Sensor::AnalogRedingMap(gpio);
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_ANALOG_READING_MAP, Supla::GUI::analog[nr], nr);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_ANALOG_READING_MAP, S_ANALOG_READING_MAP, Supla::GUI::analog[nr], nr);
 #endif
     }
   }
@@ -345,7 +346,7 @@ void setup() {
 #endif
 
 #ifdef SUPLA_CONDITIONS
-    Supla::GUI::Conditions::addConditionsSensor(SENSOR_VINDRIKTNING_IKEA, vindriktningIkea);
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_VINDRIKTNING_IKEA, S_VINDRIKTNING_IKEA, vindriktningIkea);
 #endif
   }
 #endif
@@ -366,7 +367,7 @@ void setup() {
     new Supla::Sensor::PMS_PM10(pms);
 
 #ifdef SUPLA_CONDITIONS
-    Supla::GUI::Conditions::addConditionsSensor(SENSOR_PMSX003, pmsPM25);
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_PMSX003, S_PMSX003_PM25, pmsPM25);
 #endif
   }
 #endif
@@ -424,7 +425,7 @@ void setup() {
 
   if (PZEMv3) {
 #ifdef SUPLA_CONDITIONS
-    Supla::GUI::Conditions::addConditionsSensor(SENSOR_PZEM_V3, PZEMv3);
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_PZEM_V3, S_PZEM_V3, PZEMv3);
 #endif
   }
 #endif
@@ -491,14 +492,14 @@ void setup() {
           bme280 = new Supla::Sensor::BME280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
 
 #ifdef SUPLA_CONDITIONS
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BME280, bme280);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BME280, S_BME280, bme280);
 #endif
           break;
         case BMx280_ADDRESS_0X77:
           bme280 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
 
 #ifdef SUPLA_CONDITIONS
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BME280, bme280);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BME280, S_BME280, bme280);
 #endif
           break;
         case BMx280_ADDRESS_0X76_AND_0X77:
@@ -506,8 +507,8 @@ void setup() {
           Supla::Sensor::BME280 *bme280_1 = new Supla::Sensor::BME280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
 
 #ifdef SUPLA_CONDITIONS
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BME280, bme280);
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BME280, bme280_1, 1);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BME280, S_BME280, bme280);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BME280, S_BME280, bme280_1, 1);
 #endif
           break;
       }
@@ -523,14 +524,14 @@ void setup() {
           bmp280 = new Supla::Sensor::BMP280(0x76, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
 
 #ifdef SUPLA_CONDITIONS
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BMP280, bmp280);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BMP280, S_BMP280, bmp280);
 #endif
           break;
         case BMx280_ADDRESS_0X77:
           bmp280 = new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
 
 #ifdef SUPLA_CONDITIONS
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BMP280, bmp280);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BMP280, S_BMP280, bmp280);
 #endif
           break;
         case BMx280_ADDRESS_0X76_AND_0X77:
@@ -538,8 +539,8 @@ void setup() {
           Supla::Sensor::BMP280 *bmp280_1 = new Supla::Sensor::BMP280(0x77, ConfigManager->get(KEY_ALTITUDE_BMX280)->getValueInt());
 
 #ifdef SUPLA_CONDITIONS
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BMP280, bmp280);
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BMP280, bmp280_1, 1);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BMP280, S_BMP280, bmp280);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_BMP280, S_BMP280, bmp280_1, 1);
 #endif
           break;
       }
@@ -555,14 +556,14 @@ void setup() {
           sht3x = new Supla::Sensor::SHT3x(0x44);
 
 #ifdef SUPLA_CONDITIONS
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_SHT3x, sht3x);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_SHT3x, S_SHT3X, sht3x);
 #endif
           break;
         case SHT3x_ADDRESS_0X45:
           sht3x = new Supla::Sensor::SHT3x(0x45);
 
 #ifdef SUPLA_CONDITIONS
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_SHT3x, sht3x);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_SHT3x, S_SHT3X, sht3x);
 #endif
           break;
         case SHT3x_ADDRESS_0X44_AND_0X45:
@@ -570,8 +571,8 @@ void setup() {
           Supla::Sensor::SHT3x *sht3x_1 = new Supla::Sensor::SHT3x(0x45);
 
 #ifdef SUPLA_CONDITIONS
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_SHT3x, sht3x);
-          Supla::GUI::Conditions::addConditionsSensor(SENSOR_SHT3x, sht3x_1, 1);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_SHT3x, S_SHT3X, sht3x);
+          Supla::GUI::Conditions::addConditionsSensor(SENSOR_SHT3x, S_SHT3X, sht3x_1, 1);
 #endif
           break;
       }
@@ -583,7 +584,7 @@ void setup() {
       Supla::Sensor::SHTAutoDetect *shtAutoDetect = new Supla::Sensor::SHTAutoDetect();
 
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_SHT3x, shtAutoDetect);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_SHT3x, S_SHT3X, shtAutoDetect);
 #endif
     }
 #endif
@@ -592,7 +593,7 @@ void setup() {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_SI7021).toInt()) {
       auto si7021 = new Supla::Sensor::Si7021();
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_SI7021, si7021);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_SI7021, S_SI702, si7021);
 #endif
     }
 #endif
@@ -618,7 +619,7 @@ void setup() {
       force400khz = true;
 
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_VL53L0X, vl53l0x);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_VL53L0X, S_VL53L0X, vl53l0x);
 #endif
     }
 #endif
@@ -629,7 +630,7 @@ void setup() {
       force400khz = true;
 
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_HDC1080, hdc1080);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_HDC1080, S_HDC1080, hdc1080);
 #endif
     }
 #endif
@@ -639,7 +640,7 @@ void setup() {
       auto bh1750 = new Supla::Sensor::BH1750();
 
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_BH1750, bh1750);
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_BH1750, S_BH1750, bh1750);
 #endif
     }
 #endif

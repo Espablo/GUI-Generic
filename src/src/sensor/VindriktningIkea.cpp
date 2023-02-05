@@ -84,7 +84,7 @@ void VindriktningIkea::parseState(particleSensorState_t& state) {
     state.avgPM25 = avgPM25;
     state.valid = true;
 
-    Serial.printf("New Avg PM25: %d\n", state.avgPM25);
+    Serial.printf("New Avg PM25: %f\n", state.avgPM25);
   }
 
   clearRxBuf();
@@ -140,7 +140,7 @@ void VindriktningIkea::handleUart(particleSensorState_t& state) {
   if (isValidHeader() && isValidChecksum()) {
     parseState(state);
 
-    Serial.printf("Current measurements: %d, %d, %d, %d, %d\n", state.measurements[0], state.measurements[1], state.measurements[2],
+    Serial.printf("Current measurements: %f, %f, %f, %f, %f\n", state.measurements[0], state.measurements[1], state.measurements[2],
                   state.measurements[3], state.measurements[4]);
   }
   else {

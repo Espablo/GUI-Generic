@@ -176,7 +176,7 @@ int32_t ADE7953::Ade7953Read(uint16_t reg) {
     Wire.endTransmission(0);
     Wire.requestFrom(ADE7953_ADDR, size);
     if (size <= Wire.available()) {
-      for (uint32_t i = 0; i < size; i++) {
+      for (int i = 0; i < size; i++) {
         response = response << 8 | Wire.read();  // receive DATA (MSB first)
       }
     }

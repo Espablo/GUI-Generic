@@ -37,7 +37,6 @@
 #include "SuplaWebPageConfig.h"
 
 #include "SuplaWebPageDeviceSettings.h"
-#include "SuplaWebPageHome.h"
 
 #include "SuplaWebPageSensors.h"
 #include "SuplaWebPageSensorSpi.h"
@@ -54,6 +53,7 @@
 #include "SuplaCommonPROGMEM.h"
 #include "Markup.h"
 #include "SuplaConditions.h"
+#include "SuplaWebPageHome.h"
 
 #ifdef SUPLA_OLED
 #include "src/display/SuplaOled.h"
