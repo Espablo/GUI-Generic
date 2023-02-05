@@ -156,8 +156,10 @@ void setup() {
         case DIRECT_LINKS_TYPE_TEMP: {
           auto directLinkSensorThermometer = new Supla::Sensor::DirectLinksThermometer(
               ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(), ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+#ifdef SUPLA_CONDITIONS
           Supla::GUI::Conditions::addConditionsSensor(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, S_DIRECT_LINKS_SENSOR_THERMOMETR,
                                                       directLinkSensorThermometer, nr);
+#endif
           break;
         }
         case DIRECT_LINKS_TYPE_TEMP_HYGR:
