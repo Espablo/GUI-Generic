@@ -357,10 +357,15 @@ void addListExpanderGPIOBox(String& html, const String& input_id, const String& 
 
   type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 
-  if (type == EXPENDER_PCF8574) {
+  if (type == EXPENDER_PCF8574 || type == EXPENDER_PCF8574_I2C2) {
     maxNr = 8;
     listAdressExpender = EXPENDER_PCF8574_P;
-    listExpender = GPIO_PCF_8574_P;
+    listExpender = GPIO_PCF_XXX_P;
+  }
+  else if (type == EXPENDER_PCF8575 || type == EXPENDER_PCF8575_I2C2) {
+    maxNr = 16;
+    listAdressExpender = EXPENDER_P;
+    listExpender = GPIO_PCF_XXX_P;
   }
   else {
     maxNr = 16;
