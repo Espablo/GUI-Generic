@@ -487,7 +487,7 @@ void chooseTemplateBoard(String board) {
   }
 
   if (root["PCF8575"].success()) {
-    addExpander(EXPENDER_PCF8575, root["PCF8575_I2C2"]);
+    addExpander(EXPENDER_PCF8575_I2C2, root["PCF8575_I2C2"]);
   }
 
   if (root["PCF8574"].success()) {
