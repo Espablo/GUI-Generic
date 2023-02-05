@@ -477,6 +477,10 @@ void chooseTemplateBoard(String board) {
     addExpander(EXPENDER_PCF8575, root["PCF8575"]);
   }
 
+  if (root["PCF8575"].success()) {
+    addExpander(EXPENDER_PCF8575, root["PCF8575_I2C2"]);
+  }
+
   if (root["PCF8574"].success()) {
     addExpander(EXPENDER_PCF8574, root["PCF8574"]);
   }
@@ -824,6 +828,11 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
       sizeExpander = 16;
       ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, true);
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8575);
+    }
+    else if (typeExpander == EXPENDER_PCF8575_I2C2) {
+      sizeExpander = 16;
+      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, true);
+      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8575_I2C2);
     }
     else if (typeExpander == EXPENDER_PCF8574) {
       sizeExpander = 8;
