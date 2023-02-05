@@ -1,225 +1,474 @@
-//
-//    FILE: PCF8575.cpp
-//  AUTHOR: Rob Tillaart
-//    DATE: 2020-07-20
-// VERSION: 0.1.5
-// PURPOSE: Arduino library for PCF8575 - 16 channel I2C IO expander
-//     URL: https://github.com/RobTillaart/PCF8575
-//
-// HISTORY: see CHANGELOG.md
-
-
+/*
+ * PCF8575 GPIO Port Expand
+ * https://www.mischianti.org/
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2019 Renzo Mischianti www.mischianti.org All right reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 #include "PCF8575.h"
+#include "Wire.h"
 
+/**
+ * Constructor
+ * @param address: i2c address
+ */
+PCF8575::PCF8575(uint8_t address){
+	_wire = &Wire;
 
-PCF8575::PCF8575(const uint8_t deviceAddress, TwoWire *wire)
-{
-  _address    = deviceAddress;
-  _wire       = wire;
-  _dataIn     = 0;
-  _dataOut    = 0xFFFF;
-  _buttonMask = 0xFFFF;
-  _error      = PCF8575_OK;
-}
+	_address = address;
+};
 
+/**
+ * Construcor
+ * @param address: i2c address
+ * @param interruptPin: pin to set interrupt
+ * @param interruptFunction: function to call when interrupt raised
+ */
+PCF8575::PCF8575(uint8_t address, uint8_t interruptPin,  void (*interruptFunction)() ){
+	_wire = &Wire;
 
-#if defined (ESP8266) || defined(ESP32)
-bool PCF8575::begin(int dataPin, int clockPin, uint16_t value)
-{
-  _wire      = &Wire;
-  if ((dataPin < 255) && (clockPin < 255))
-  {
-    _wire->begin(dataPin, clockPin);
-  } else {
-    _wire->begin();
-  }
-  if (! isConnected()) return false;
-  PCF8575::write16(value);
-  return true;
-}
+	_address = address;
+	_interruptPin = interruptPin;
+	_interruptFunction = interruptFunction;
+	_usingInterrupt = true;
+};
+
+#if !defined(__AVR) && !defined(__STM32F1__)
+	/**
+	 * Constructor
+	 * @param address: i2c address
+	 * @param sda: sda pin
+	 * @param scl: scl pin
+	 */
+	PCF8575::PCF8575(uint8_t address, uint8_t sda, uint8_t scl){
+		_wire = &Wire;
+
+		_address = address;
+		_sda = sda;
+		_scl = scl;
+	};
+
+	/**
+	 * Constructor
+	 * @param address: i2c address
+	 * @param sda: sda pin
+	 * @param scl: scl pin
+	 * @param interruptPin: pin to set interrupt
+ 	 * @param interruptFunction: function to call when interrupt raised
+	 */
+	PCF8575::PCF8575(uint8_t address, uint8_t sda, uint8_t scl, uint8_t interruptPin,  void (*interruptFunction)() ){
+		_wire = &Wire;
+
+		_address = address;
+		_sda = sda;
+		_scl = scl;
+
+		_interruptPin = interruptPin;
+		_interruptFunction = interruptFunction;
+
+		_usingInterrupt = true;
+	};
 #endif
 
+#ifdef ESP32
+	/**
+	 * Constructor
+	 * @param address: i2c address
+	 */
+	PCF8575::PCF8575(TwoWire *pWire, uint8_t address){
+		_wire = pWire;
 
-bool PCF8575::begin(uint16_t value)
-{
-  _wire->begin();
-  if (! isConnected()) return false;
-  PCF8575::write16(value);
-  return true;
+		_address = address;
+	};
+
+	/**
+	 * Construcor
+	 * @param address: i2c address
+	 * @param interruptPin: pin to set interrupt
+	 * @param interruptFunction: function to call when interrupt raised
+	 */
+	PCF8575::PCF8575(TwoWire *pWire, uint8_t address, uint8_t interruptPin,  void (*interruptFunction)() ){
+		_wire = pWire;
+
+		_address = address;
+		_interruptPin = interruptPin;
+		_interruptFunction = interruptFunction;
+		_usingInterrupt = true;
+	};
+
+	/**
+	 * Constructor
+	 * @param address: i2c address
+	 * @param sda: sda pin
+	 * @param scl: scl pin
+	 */
+	PCF8575::PCF8575(TwoWire *pWire, uint8_t address, uint8_t sda, uint8_t scl){
+		_wire = pWire;
+
+		_address = address;
+		_sda = sda;
+		_scl = scl;
+	};
+
+	/**
+	 * Constructor
+	 * @param address: i2c address
+	 * @param sda: sda pin
+	 * @param scl: scl pin
+	 * @param interruptPin: pin to set interrupt
+	 * @param interruptFunction: function to call when interrupt raised
+	 */
+	PCF8575::PCF8575(TwoWire *pWire, uint8_t address, uint8_t sda, uint8_t scl, uint8_t interruptPin,  void (*interruptFunction)() ){
+		_wire = pWire;
+
+		_address = address;
+		_sda = sda;
+		_scl = scl;
+
+		_interruptPin = interruptPin;
+		_interruptFunction = interruptFunction;
+
+		_usingInterrupt = true;
+	};
+#endif
+
+/**
+ * wake up i2c controller
+ */
+void PCF8575::begin(){
+	#if !defined(__AVR) && !defined(__STM32F1__)
+		_wire->begin(_sda, _scl);
+	#else
+	//			Default pin for AVR some problem on software emulation
+	//			#define SCL_PIN _scl
+	// 			#define SDA_PIN _sda
+		_wire->begin();
+	#endif
+
+//		Serial.println( writeMode, BIN);
+//		Serial.println( readMode, BIN);
+
+	// Check if there are pins to set low
+	if (writeMode>0 || readMode>0){
+		DEBUG_PRINTLN("Set write mode");
+		_wire->beginTransmission(_address);
+		DEBUG_PRINT(" ");
+		DEBUG_PRINT("usedPin pin ");
+
+
+		uint16_t usedPin = writeMode | readMode;
+		DEBUG_PRINTLN( ~usedPin, BIN);
+//		Serial.println( ~usedPin, BIN);
+
+		_wire->write((uint8_t) ~usedPin);
+		_wire->write((uint8_t) (~(usedPin >> 8)));
+
+		DEBUG_PRINTLN("Start end trasmission if stop here check pullup resistor.");
+		_wire->endTransmission();
+	}
+
+	// If using interrupt set interrupt value to pin
+	if (_usingInterrupt){
+		DEBUG_PRINTLN("Using interrupt pin (not all pin is interrupted)");
+		::pinMode(_interruptPin, INPUT_PULLUP);
+		attachInterrupt(digitalPinToInterrupt(_interruptPin), (*_interruptFunction), FALLING );
+	}
+
+	// inizialize last read
+	lastReadMillis = millis();
 }
 
+/**
+ * Set if fin is OUTPUT or INPUT
+ * @param pin: pin to set
+ * @param mode: mode, supported only INPUT or OUTPUT (to semplify)
+ */
+void PCF8575::pinMode(uint8_t pin, uint8_t mode){
+	DEBUG_PRINT("Set pin ");
+	DEBUG_PRINT(pin);
+	DEBUG_PRINT(" as ");
+	DEBUG_PRINTLN(mode);
 
-bool PCF8575::isConnected()
-{
-  _wire->beginTransmission(_address);
-  return ( _wire->endTransmission() == 0);
+	if (mode == OUTPUT){
+		writeMode = writeMode | bit(pin);
+		readMode =  readMode & ~bit(pin);
+//		DEBUG_PRINT("writeMode: ");
+//		DEBUG_PRINT(writeMode, BIN);
+//		DEBUG_PRINT("readMode: ");
+//		DEBUG_PRINTLN(readMode, BIN);
+
+	}else if (mode == INPUT){
+		writeMode = writeMode & ~bit(pin);
+		readMode =   readMode | bit(pin);
+//		DEBUG_PRINT("writeMode: ");
+//		DEBUG_PRINT(writeMode, BIN);
+//		DEBUG_PRINT("readMode: ");
+//		DEBUG_PRINTLN(readMode, BIN);
+	}
+	else{
+		DEBUG_PRINTLN("Mode non supported by PCF8575")
+	}
+	DEBUG_PRINT("Write mode: ");
+	DEBUG_PRINTLN(writeMode, BIN);
+
+};
+
+/**
+ * Read value from i2c and bufferize it
+ * @param force
+ */
+void PCF8575::readBuffer(bool force){
+	if (millis() > PCF8575::lastReadMillis+READ_ELAPSED_TIME || _usingInterrupt || force){
+		_wire->requestFrom(_address,(uint8_t)2);// Begin transmission to PCF8575 with the buttons
+		lastReadMillis = millis();
+		if(_wire->available())   // If uint16_ts are available to be recieved
+		{
+			uint16_t iInput = _wire->read();// Read a uint16_t
+			iInput |= _wire->read() << 8;// Read a uint16_t
+			if ((iInput & readMode)>0){
+				byteBuffered = byteBuffered | (uint16_t)iInput;
+			}
+		}
+	}
 }
 
+#ifndef PCF8575_LOW_MEMORY
+	/**
+	 * Read value of all INPUT pin
+	 * Debounce read more fast than 10millis, non managed for interrupt mode
+	 * @return
+	 */
+	PCF8575::DigitalInput PCF8575::digitalReadAll(void){
+		DEBUG_PRINTLN("Read from buffer");
+		_wire->requestFrom(_address,(uint8_t)2);// Begin transmission to PCF8575 with the buttons
+		lastReadMillis = millis();
+		if(_wire->available())   // If uint16_ts are available to be recieved
+		{
+			  DEBUG_PRINTLN("Data ready");
+			  uint16_t iInput = _wire->read();// Read a uint16_t
+				iInput |= _wire->read() << 8;// Read a uint16_t
 
-bool PCF8575::setAddress(const uint8_t deviceAddress)
-{
-  _address = deviceAddress;
-  return isConnected();
-}
+			  if ((iInput & readMode)>0){
+				  DEBUG_PRINT("Input ");
+				  DEBUG_PRINTLN((uint16_t)iInput, BIN);
 
+				  byteBuffered = byteBuffered | (uint16_t)iInput;
+				  DEBUG_PRINT("byteBuffered ");
+				  DEBUG_PRINTLN(byteBuffered, BIN);
+			  }
+		}
 
-uint8_t PCF8575::getAddress()
-{
-  return _address;
-}
+		DEBUG_PRINT("Buffer value ");
+		DEBUG_PRINTLN(byteBuffered, BIN);
+#ifdef NOT_SEQUENTIAL_PINOUT
+		if ((bit(0) & readMode)>0) digitalInput.p00 = ((byteBuffered & bit(0))>0)?HIGH:LOW;
+		if ((bit(1) & readMode)>0) digitalInput.p01 = ((byteBuffered & bit(1))>0)?HIGH:LOW;
+		if ((bit(2) & readMode)>0) digitalInput.p02 = ((byteBuffered & bit(2))>0)?HIGH:LOW;
+		if ((bit(3) & readMode)>0) digitalInput.p03 = ((byteBuffered & bit(3))>0)?HIGH:LOW;
+		if ((bit(4) & readMode)>0) digitalInput.p04 = ((byteBuffered & bit(4))>0)?HIGH:LOW;
+		if ((bit(5) & readMode)>0) digitalInput.p05 = ((byteBuffered & bit(5))>0)?HIGH:LOW;
+		if ((bit(6) & readMode)>0) digitalInput.p06 = ((byteBuffered & bit(6))>0)?HIGH:LOW;
+		if ((bit(7) & readMode)>0) digitalInput.p07 = ((byteBuffered & bit(7))>0)?HIGH:LOW;
+		if ((bit(8) & readMode)>0) digitalInput.p10 = ((byteBuffered & bit(8))>0)?HIGH:LOW;
+		if ((bit(9) & readMode)>0) digitalInput.p11 = ((byteBuffered & bit(9))>0)?HIGH:LOW;
+		if ((bit(10) & readMode)>0) digitalInput.p12 = ((byteBuffered & bit(10))>0)?HIGH:LOW;
+		if ((bit(11) & readMode)>0) digitalInput.p13 = ((byteBuffered & bit(11))>0)?HIGH:LOW;
+		if ((bit(12) & readMode)>0) digitalInput.p14 = ((byteBuffered & bit(12))>0)?HIGH:LOW;
+		if ((bit(13) & readMode)>0) digitalInput.p15 = ((byteBuffered & bit(13))>0)?HIGH:LOW;
+		if ((bit(14) & readMode)>0) digitalInput.p16 = ((byteBuffered & bit(14))>0)?HIGH:LOW;
+		if ((bit(15) & readMode)>0) digitalInput.p17 = ((byteBuffered & bit(15))>0)?HIGH:LOW;
+#else
+		if ((bit(0) & readMode)>0) digitalInput.p0 = ((byteBuffered & bit(0))>0)?HIGH:LOW;
+		if ((bit(1) & readMode)>0) digitalInput.p1 = ((byteBuffered & bit(1))>0)?HIGH:LOW;
+		if ((bit(2) & readMode)>0) digitalInput.p2 = ((byteBuffered & bit(2))>0)?HIGH:LOW;
+		if ((bit(3) & readMode)>0) digitalInput.p3 = ((byteBuffered & bit(3))>0)?HIGH:LOW;
+		if ((bit(4) & readMode)>0) digitalInput.p4 = ((byteBuffered & bit(4))>0)?HIGH:LOW;
+		if ((bit(5) & readMode)>0) digitalInput.p5 = ((byteBuffered & bit(5))>0)?HIGH:LOW;
+		if ((bit(6) & readMode)>0) digitalInput.p6 = ((byteBuffered & bit(6))>0)?HIGH:LOW;
+		if ((bit(7) & readMode)>0) digitalInput.p7 = ((byteBuffered & bit(7))>0)?HIGH:LOW;
+		if ((bit(8) & readMode)>0) digitalInput.p8 = ((byteBuffered & bit(8))>0)?HIGH:LOW;
+		if ((bit(9) & readMode)>0) digitalInput.p9 = ((byteBuffered & bit(9))>0)?HIGH:LOW;
+		if ((bit(10) & readMode)>0) digitalInput.p10 = ((byteBuffered & bit(10))>0)?HIGH:LOW;
+		if ((bit(11) & readMode)>0) digitalInput.p11 = ((byteBuffered & bit(11))>0)?HIGH:LOW;
+		if ((bit(12) & readMode)>0) digitalInput.p12 = ((byteBuffered & bit(12))>0)?HIGH:LOW;
+		if ((bit(13) & readMode)>0) digitalInput.p13 = ((byteBuffered & bit(13))>0)?HIGH:LOW;
+		if ((bit(14) & readMode)>0) digitalInput.p14 = ((byteBuffered & bit(14))>0)?HIGH:LOW;
+		if ((bit(15) & readMode)>0) digitalInput.p15 = ((byteBuffered & bit(15))>0)?HIGH:LOW;
+#endif
+		if ((readMode & byteBuffered)>0){
+			byteBuffered = ~readMode & byteBuffered;
+			DEBUG_PRINT("Buffer hight value readed set readed ");
+			DEBUG_PRINTLN(byteBuffered, BIN);
+		}
+		DEBUG_PRINT("Return value ");
+		return digitalInput;
+	};
+#else
+	/**
+	 * Read value of all INPUT pin in byte format for low memory usage
+	 * Debounce read more fast than 10millis, non managed for interrupt mode
+	 * @return
+	 */
+	uint16_t PCF8575::digitalReadAll(void){
+		DEBUG_PRINTLN("Read from buffer");
+		_wire->requestFrom(_address,(uint8_t)2);// Begin transmission to PCF8575 with the buttons
+		lastReadMillis = millis();
+		if(_wire->available())   // If uint16_ts are available to be recieved
+		{
+			  DEBUG_PRINTLN("Data ready");
+			  uint16_t iInput = _wire->read();// Read a uint16_t
+				iInput |= _wire->read() << 8;// Read a uint16_t
 
+			  if ((iInput & readMode)>0){
+				  DEBUG_PRINT("Input ");
+				  DEBUG_PRINTLN((uint16_t)iInput, BIN);
 
-uint16_t PCF8575::read16()
-{
-  if (_wire->requestFrom(_address, (uint8_t)2) != 2)
-  {
-    _error = PCF8575_I2C_ERROR;
-    return _dataIn; // last value
-  }
-  _dataIn = _wire->read();            // low 8 bits
-  _dataIn |= (_wire->read() << 8);    // high 8 bits
-  return _dataIn;
-}
+				  byteBuffered = byteBuffered | (uint16_t)iInput;
+				  DEBUG_PRINT("byteBuffered ");
+				  DEBUG_PRINTLN(byteBuffered, BIN);
+			  }
+		}
 
+		DEBUG_PRINT("Buffer value ");
+		DEBUG_PRINTLN(byteBuffered, BIN);
 
-void PCF8575::write16(const uint16_t value)
-{
-  _dataOut = value;
-  _wire->beginTransmission(_address);
-  _wire->write(_dataOut & 0xFF);      // low 8 bits
-  _wire->write(_dataOut >> 8);        // high 8 bits
-  _error = _wire->endTransmission();
-}
+		uint16_t byteRead = byteBuffered;
 
+		if ((readMode & byteBuffered)>0){
+			byteBuffered = ~readMode & byteBuffered;
+			DEBUG_PRINT("Buffer hight value readed set readed ");
+			DEBUG_PRINTLN(byteBuffered, BIN);
+		}
+		DEBUG_PRINT("Return value ");
+		return byteRead;
+	};
+#endif
 
-uint8_t PCF8575::read(const uint8_t pin)
-{
-  if (pin > 15)
-  {
-    _error = PCF8575_PIN_ERROR;
-    return 0;
-  }
-  PCF8575::read16();
-  return (_dataIn & (1 << pin)) > 0;
-}
+/**
+ * Read value of specified pin
+ * Debounce read more fast than 10millis, non managed for interrupt mode
+ * @param pin
+ * @return
+ */
+uint8_t PCF8575::digitalRead(uint8_t pin){
+	uint8_t value = LOW;
+	if ((bit(pin) & writeMode)>0){
+		DEBUG_PRINTLN("Pin in write mode, return value");
+		DEBUG_PRINT("Write data ");
+		DEBUG_PRINT(writeByteBuffered, BIN);
+		DEBUG_PRINT(" for pin ");
+		DEBUG_PRINT(pin);
+		DEBUG_PRINT(" bin value ");
+		DEBUG_PRINT(bit(pin), BIN);
+		DEBUG_PRINT(" value ");
+		DEBUG_PRINTLN(value);
 
+		if ((bit(pin) & writeByteBuffered)>0){
+			  value = HIGH;
+		  }else{
+			  value = LOW;
+		  }
+		return value;
+	}
 
-void PCF8575::write(const uint8_t pin, const uint8_t value)
-{
-  if (pin > 15)
-  {
-    _error = PCF8575_PIN_ERROR;
-    return;
-  }
-  if (value == LOW)
-  {
-    _dataOut &= ~(1 << pin);
-  }
-  else
-  {
-    _dataOut |= (1 << pin);
-  }
-  write16(_dataOut);
-}
+	DEBUG_PRINT("Read pin ");
+	DEBUG_PRINTLN(pin);
+	// Check if pin already HIGH than read and prevent reread of i2c
+	if ((bit(pin) & byteBuffered)>0){
+		DEBUG_PRINTLN("Pin already up");
+		value = HIGH;
+	 }else if ((/*(bit(pin) & byteBuffered)<=0 && */millis() > PCF8575::lastReadMillis+READ_ELAPSED_TIME) /*|| _usingInterrupt*/){
+		 DEBUG_PRINTLN("Read from buffer");
+		  _wire->requestFrom(_address,(uint8_t)2);// Begin transmission to PCF8575 with the buttons
+		  lastReadMillis = millis();
+		  if(_wire->available())   // If bytes are available to be recieved
+		  {
+			  DEBUG_PRINTLN("Data ready");
+			  uint16_t iInput = _wire->read();// Read a uint16_t
+				iInput |= _wire->read() << 8;// Read a uint16_t
 
+//				Serial.println(iInput, BIN);
 
-void PCF8575::toggle(const uint8_t pin)
-{
-  if (pin > 15)
-  {
-    _error = PCF8575_PIN_ERROR;
-    return;
-  }
-  toggleMask(1 << pin);
-}
+			  if ((iInput & readMode)>0){
+				  DEBUG_PRINT("Input ");
+				  DEBUG_PRINTLN((uint16_t)iInput, BIN);
 
+				  byteBuffered = byteBuffered | (uint16_t)iInput;
+				  DEBUG_PRINT("byteBuffered ");
+				  DEBUG_PRINTLN(byteBuffered, BIN);
 
-void PCF8575::toggleMask(const uint16_t mask)
-{
-  _dataOut ^= mask;
-  PCF8575::write16(_dataOut);
-}
+				  if ((bit(pin) & byteBuffered)>0){
+					  value = HIGH;
+				  }
+			  }
+		  }
+	}
+	DEBUG_PRINT("Buffer value ");
+	DEBUG_PRINTLN(byteBuffered, BIN);
+	// If HIGH set to low to read buffer only one time
+	if (value==HIGH){
+		byteBuffered = ~bit(pin) & byteBuffered;
+		DEBUG_PRINT("Buffer hight value readed set readed ");
+		DEBUG_PRINTLN(byteBuffered, BIN);
+	}
+	DEBUG_PRINT("Return value ");
+	DEBUG_PRINTLN(value);
+	return value;
+};
 
+/**
+ * Write on pin
+ * @param pin
+ * @param value
+ */
+void PCF8575::digitalWrite(uint8_t pin, uint8_t value){
+	DEBUG_PRINTLN("Begin trasmission");
+	_wire->beginTransmission(_address);     //Begin the transmission to PCF8575
+	if (value==HIGH){
+		writeByteBuffered = writeByteBuffered | bit(pin);
+	}else{
+		writeByteBuffered = writeByteBuffered & ~bit(pin);
+	}
+//	DEBUG_PRINT("Write data ");
+//	DEBUG_PRINT(writeByteBuffered, BIN);
+//	DEBUG_PRINT(" for pin ");
+//	DEBUG_PRINT(pin);
+//	DEBUG_PRINT(" bin value ");
+//	DEBUG_PRINT(bit(pin), BIN);
+//	DEBUG_PRINT(" value ");
+//	DEBUG_PRINTLN(value);
 
-void PCF8575::shiftRight(const uint8_t n)
-{
-  if ((n == 0) || (_dataOut == 0)) return;
-  if (n > 15)         _dataOut = 0;    // shift 15++ clears all, valid...
-  if (_dataOut != 0) _dataOut >>= n;   // only shift if there are bits set
-  PCF8575::write16(_dataOut);
-}
+//	Serial.print(" --> ");
+//	Serial.println(writeByteBuffered);
+//	Serial.println((uint8_t) writeByteBuffered);
+//	Serial.println((uint8_t) (writeByteBuffered >> 8));
 
+	writeByteBuffered = writeByteBuffered & writeMode;
+	_wire->write((uint8_t) writeByteBuffered);
+	_wire->write((uint8_t) (writeByteBuffered >> 8));
+	DEBUG_PRINTLN("Start end trasmission if stop here check pullup resistor.");
 
-void PCF8575::shiftLeft(const uint8_t n)
-{
-  if ((n == 0) || (_dataOut == 0)) return;
-  if (n > 15)        _dataOut = 0;    // shift 15++ clears all, valid...
-  if (_dataOut != 0) _dataOut <<= n;  // only shift if there are bits set
-  PCF8575::write16(_dataOut);
-}
+	_wire->endTransmission();
+};
 
-
-int PCF8575::lastError()
-{
-  int e = _error;
-  _error = PCF8575_OK;  // reset error after read, is this wise?
-  return e;
-}
-
-
-void PCF8575::rotateRight(const uint8_t n)
-{
-  uint8_t r = n & 15;
-  if (r == 0) return;
-  _dataOut = (_dataOut >> r) | (_dataOut << (15 - r));
-  PCF8575::write16(_dataOut);
-}
-
-
-void PCF8575::rotateLeft(const uint8_t n)
-{
-  rotateRight(16 - (n & 15));
-}
-
-
-void PCF8575::reverse()   // quite fast
-{                                                     //     1 char === 1 bit
-  uint16_t x = _dataOut;                              // x = 0123456789ABCDEF 
-  x = (((x & 0xAAAA) >> 1) | ((x & 0x5555) << 1));    // x = 1032547698BADCFE
-  x = (((x & 0xCCCC) >> 2) | ((x & 0x3333) << 2));    // x = 32107654BA98FEDC
-  x = (((x & 0xF0F0) >> 4) | ((x & 0x0F0F) << 4));    // x = 76543210FEDCBA98
-  x = (x >> 8) | ( x << 8);                           // x = FEDCBA9876543210
-  PCF8575::write16(x);
-}
-
-
-//added 0.1.07/08 Septillion
-uint16_t PCF8575::readButton16(const uint16_t mask)
-{
-  uint16_t temp = _dataOut;
-  PCF8575::write16(mask | _dataOut);  // read only selected lines
-  PCF8575::read16();
-  PCF8575::write16(temp);             // restore
-  return _dataIn;
-}
-
-
-//added 0.1.07 Septillion
-uint8_t PCF8575::readButton(const uint8_t pin)
-{
-  if (pin > 15)
-  {
-    _error = PCF8575_PIN_ERROR;
-    return 0;
-  }
-  uint16_t temp = _dataOut;
-  PCF8575::write(pin, HIGH);
-  uint8_t rtn = PCF8575::read(pin);
-  PCF8575::write16(temp);
-  return rtn;
-}
-
-
-// -- END OF FILE --
 

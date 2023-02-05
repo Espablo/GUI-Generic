@@ -5,24 +5,24 @@
 #include <functional>
 
 #include <supla/io.h>
+#include <Wire.h>
 
 #define EXPENDER_SHIFT_MCP23017     80
 #define EXPENDER_SHIFT_PIN_MCP23017 16
 
 class MCP23017 {
  public:
+  MCP23017(TwoWire *wire = &Wire);
+
   typedef std::function<void(uint16_t pins, uint16_t values)> callback_t;
 
-  MCP23017() : _callback(NULL) {
-  }
-
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-  static void init(uint8_t sda, uint8_t scl, bool fast = true);
-  static void init(bool fast = true) {
+  void init(uint8_t sda, uint8_t scl, bool fast = true);
+  void init(bool fast = true) {
     init(SDA, SCL, fast);
   }
 #else
-  static void init(bool fast = true);
+  void init(bool fast = true);
 #endif
 
   bool begin(uint8_t address = 0);
@@ -53,6 +53,7 @@ class MCP23017 {
   uint16_t ba = 0;
   unsigned long get_ba = 0;
   callback_t _callback;
+  TwoWire *_wire;
 };
 
 namespace Supla {
@@ -60,6 +61,7 @@ namespace Control {
 class MCP_23017 : public Supla::Io {
  public:
   MCP_23017();
+  TwoWire &getTwoWire(uint8_t address);
   void customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val);
   int customDigitalRead(int channelNumber, uint8_t pin);
   void customPinMode(int channelNumber, uint8_t pin, uint8_t mode);

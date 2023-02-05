@@ -252,6 +252,21 @@ const char* const EXPENDER_LIST_P[] PROGMEM = {
 #else
     S_EMPTY,
 #endif
+#ifdef SUPLA_MCP23017
+    "MCP23017 I2C2",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_PCF8575
+    "PCF8575  I2C2",
+#else
+    S_EMPTY,
+#endif
+#ifdef SUPLA_PCF8574
+    "PCF8574/A  I2C2",
+#else
+    S_EMPTY,
+#endif
 };
 
 enum
@@ -259,7 +274,11 @@ enum
   EXPENDER_OFF,
   EXPENDER_MCP23017,
   EXPENDER_PCF8575,
-  EXPENDER_PCF8574
+  EXPENDER_PCF8574,
+  EXPENDER_MCP23017_I2C2,
+  EXPENDER_PCF8575_I2C2,
+  EXPENDER_PCF8574_I2C2,
+  EXPENDER_COUNT
 };
 
 #endif

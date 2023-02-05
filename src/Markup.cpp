@@ -339,7 +339,7 @@ void addListExpanderBox(String& html, const String& input_id, const String& name
   uint8_t type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 
   if (nr == 0) {
-    addListBox(html, INPUT_EXPENDER_TYPE, S_TYPE, EXPENDER_LIST_P, 4, type);
+    addListBox(html, INPUT_EXPENDER_TYPE, S_TYPE, EXPENDER_LIST_P, EXPENDER_COUNT, type);
   }
 
   if (ConfigESP->checkActiveMCP23017(function)) {

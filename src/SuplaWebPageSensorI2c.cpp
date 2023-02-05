@@ -30,18 +30,18 @@ void createWebPageSensorI2c() {
   });
 }
 
-void webPageI2CScanner() {
+void webPageI2CScanner(TwoWire* wire) {
   byte error, address;
   int nDevices;
 
   Serial.println("Scanning...");
 
-  Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
+  // wire->begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
 
   nDevices = 0;
   for (address = 1; address < 127; address++) {
-    Wire.beginTransmission(address);
-    error = Wire.endTransmission();
+    wire->beginTransmission(address);
+    error = wire->endTransmission();
 
     if (error == 0) {
       Serial.print("I2C device found at address 0x");
@@ -71,13 +71,14 @@ void handleSensorI2c(int save) {
 
   addForm(webContentBuffer, F("post"), PATH_I2C);
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_I2C);
-  addListGPIOBox(webContentBuffer, INPUT_SDA_GPIO, S_SDA, FUNCTION_SDA);
-  addListGPIOBox(webContentBuffer, INPUT_SCL_GPIO, S_SCL, FUNCTION_SCL);
+  addListGPIOBox(webContentBuffer, INPUT_SDA, S_SDA, FUNCTION_SDA);
+  addListGPIOBox(webContentBuffer, INPUT_SCL, S_SCL, FUNCTION_SCL);
   addFormHeaderEnd(webContentBuffer);
 
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     addFormHeader(webContentBuffer);
-    webPageI2CScanner();
+    webPageI2CScanner(&Wire);
+
     addFormHeaderEnd(webContentBuffer);
 
 #ifdef SUPLA_BME280
@@ -239,6 +240,17 @@ void handleSensorI2c(int save) {
 #endif
   }
 
+#ifdef ARDUINO_ARCH_ESP32
+  addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_I2C + "2");
+  addListGPIOBox(webContentBuffer, INPUT_SDA_2, String(S_SDA) + "2", FUNCTION_SDA_2);
+  addListGPIOBox(webContentBuffer, INPUT_SCL_2, String(S_SCL) + "2", FUNCTION_SCL_2);
+
+  if (ConfigESP->getGpio(FUNCTION_SDA_2) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL_2) != OFF_GPIO) {
+    webPageI2CScanner(&Wire1);
+  }
+  addFormHeaderEnd(webContentBuffer);
+#endif
+
   addButtonSubmit(webContentBuffer, S_SAVE);
   addFormEnd(webContentBuffer);
 
@@ -250,14 +262,17 @@ void handleSensorI2cSave() {
   String input;
   uint8_t key;
 
-  if (!WebServer->saveGPIO(INPUT_SDA_GPIO, FUNCTION_SDA)) {
+  if (!WebServer->saveGPIO(INPUT_SDA, FUNCTION_SDA) || !WebServer->saveGPIO(INPUT_SCL, FUNCTION_SCL)) {
     handleSensorI2c(6);
     return;
   }
-  if (!WebServer->saveGPIO(INPUT_SCL_GPIO, FUNCTION_SCL)) {
+
+#ifdef ARDUINO_ARCH_ESP32
+  if (!WebServer->saveGPIO(INPUT_SDA_2, FUNCTION_SDA_2) || !WebServer->saveGPIO(INPUT_SCL_2, FUNCTION_SCL_2)) {
     handleSensorI2c(6);
     return;
   }
+#endif
 
 #ifdef SUPLA_BME280
   key = KEY_ACTIVE_SENSOR;

@@ -1,90 +1,208 @@
-#pragma once
-//
-//    FILE: PCF8575.h
-//  AUTHOR: Rob Tillaart
-//    DATE: 2020-07-20
-// VERSION: 0.1.5
-// PURPOSE: Arduino library for PCF8575 - 16 channel I2C IO expander
-//     URL: https://github.com/RobTillaart/PCF8575
-//
+/*
+ * PCF8575 GPIO Port Expand
+ * https://www.mischianti.org/2019/07/22/pcf8575-i2c-16-bit-digital-i-o-expander/
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2019 Renzo Mischianti www.mischianti.org All right reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
+#ifndef PCF8575_h
+#define PCF8575_h
 
-#include "Arduino.h"
 #include "Wire.h"
 
-
-#define PCF8575_LIB_VERSION      (F("0.1.5"))
-
-
-#ifndef PCF8575_INITIAL_VALUE
-#define PCF8575_INITIAL_VALUE    0xFFFF
+#if ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h"
 #endif
 
-#define PCF8575_OK               0x00
-#define PCF8575_PIN_ERROR        0x81
-#define PCF8575_I2C_ERROR        0x82
+// Uncomment to enable printing out nice debug messages.
+// #define PCF8575_DEBUG
+
+// Uncomment for low memory usage this prevent use of complex DigitalInput structure and free 7byte of memory
+// #define PCF8575_LOW_MEMORY
+
+// Define where debug output will be printed.
+#define DEBUG_PRINTER Serial
+
+// Define to manage original pinout of pcf8575
+// like datasheet but not sequential
+//#define NOT_SEQUENTIAL_PINOUT
+
+// Setup debug printing macros.
+#ifdef PCF8575_DEBUG
+	#define DEBUG_PRINT(...) { DEBUG_PRINTER.print(__VA_ARGS__); }
+	#define DEBUG_PRINTLN(...) { DEBUG_PRINTER.println(__VA_ARGS__); }
+#else
+	#define DEBUG_PRINT(...) {}
+	#define DEBUG_PRINTLN(...) {}
+#endif
+
+#define READ_ELAPSED_TIME 10
+
+//#define P0  	B00000001
+//#define P1  	B00000010
+//#define P2  	B00000100
+//#define P3  	B00001000
+//#define P4  	B00010000
+//#define P5  	B00100000
+//#define P6  	B01000000
+//#define P7  	B10000000
+//
+#ifdef NOT_SEQUENTIAL_PINOUT
+	#define P00  	0
+	#define P01  	1
+	#define P02  	2
+	#define P03  	3
+	#define P04  	4
+	#define P05  	5
+	#define P06  	6
+	#define P07  	7
+	#define P10  	8
+	#define P11  	9
+	#define P12  	10
+	#define P13  	11
+	#define P14  	12
+	#define P15  	13
+	#define P16  	14
+	#define P17  	15
+#else
+	#define P0  	0
+	#define P1  	1
+	#define P2  	2
+	#define P3  	3
+	#define P4  	4
+	#define P5  	5
+	#define P6  	6
+	#define P7  	7
+	#define P8  	8
+	#define P9  	9
+	#define P10  	10
+	#define P11  	11
+	#define P12  	12
+	#define P13  	13
+	#define P14  	14
+	#define P15  	15
+#endif
+
+#include <math.h>
 
 
-class PCF8575
-{
+class PCF8575 {
 public:
-  // deviceAddress base = 0x20 + depends on address bits
-  explicit PCF8575(const uint8_t deviceAddress = 0x20, TwoWire *wire = &Wire);
 
-#if defined (ESP8266) || defined(ESP32)
-  bool     begin(int sda, int scl, uint16_t value = PCF8575_INITIAL_VALUE);
+	PCF8575(uint8_t address);
+	PCF8575(uint8_t address, uint8_t interruptPin,  void (*interruptFunction)() );
+
+#if !defined(__AVR) && !defined(__STM32F1__)
+	PCF8575(uint8_t address, uint8_t sda, uint8_t scl);
+	PCF8575(uint8_t address, uint8_t sda, uint8_t scl, uint8_t interruptPin,  void (*interruptFunction)());
 #endif
-  bool     begin(uint16_t value = PCF8575_INITIAL_VALUE);
-  bool     isConnected();
+
+#ifdef ESP32
+	///// changes for second i2c bus
+	PCF8575(TwoWire *pWire, uint8_t address);
+	PCF8575(TwoWire *pWire, uint8_t address, uint8_t sda, uint8_t scl);
+
+	PCF8575(TwoWire *pWire, uint8_t address, uint8_t interruptPin,  void (*interruptFunction)() );
+	PCF8575(TwoWire *pWire, uint8_t address, uint8_t sda, uint8_t scl, uint8_t interruptPin,  void (*interruptFunction)());
+#endif
+
+	void begin();
+	void pinMode(uint8_t pin, uint8_t mode);
+
+	void readBuffer(bool force = true);
+	uint8_t digitalRead(uint8_t pin);
+	#ifndef PCF8575_LOW_MEMORY
+		struct DigitalInput {
+#ifdef NOT_SEQUENTIAL_PINOUT
+		uint8_t p00;
+		uint8_t p01;
+		uint8_t p02;
+		uint8_t p03;
+		uint8_t p04;
+		uint8_t p05;
+		uint8_t p06;
+		uint8_t p07;
+		uint8_t p10;
+		uint8_t p11;
+		uint8_t p12;
+		uint8_t p13;
+		uint8_t p14;
+		uint8_t p15;
+		uint8_t p16;
+		uint8_t p17;
+#else
+		uint8_t p0;
+		uint8_t p1;
+		uint8_t p2;
+		uint8_t p3;
+		uint8_t p4;
+		uint8_t p5;
+		uint8_t p6;
+		uint8_t p7;
+		uint8_t p8;
+		uint8_t p9;
+		uint8_t p10;
+		uint8_t p11;
+		uint8_t p12;
+		uint8_t p13;
+		uint8_t p14;
+		uint8_t p15;
+#endif
+		} digitalInput;
 
 
-  // note: setting the address corrupt internal buffer values
-  // a read8() / write8() call updates them.
-  bool    setAddress(const uint8_t deviceAddress);
-  uint8_t getAddress();  
-
-
-  uint16_t read16();
-  uint8_t  read(uint8_t pin);
-  uint16_t value() const { return _dataIn; };
-
-
-  void     write16(const uint16_t value);
-  void     write(const uint8_t pin, const uint8_t value);
-  uint16_t valueOut() const { return _dataOut; }
-
-
-  //  added 0.1.07/08 Septillion
-  uint16_t readButton16()  { return readButton16(_buttonMask); }
-  uint16_t readButton16(const uint16_t mask);
-  uint8_t  readButton(const uint8_t pin);
-  void     setButtonMask(uint16_t mask) { _buttonMask = mask; };
-  uint16_t getButtonMask() { return _buttonMask; };
-
-
-  // rotate, shift, toggle, reverse expect all lines are output
-  void     toggle(const uint8_t pin);
-  void     toggleMask(const uint16_t mask = 0xFFFF);    // default invertAll()
-  void     shiftRight(const uint8_t n = 1);
-  void     shiftLeft(const uint8_t n = 1);
-  void     rotateRight(const uint8_t n = 1);
-  void     rotateLeft(const uint8_t n = 1);
-  void     reverse();
-
-
-  int      lastError();
-
+		DigitalInput digitalReadAll(void);
+	#else
+		uint16_t digitalReadAll(void);
+	#endif
+	void digitalWrite(uint8_t pin, uint8_t value);
 
 private:
-  uint8_t  _address;
-  uint16_t _dataIn;
-  uint16_t _dataOut;
-  uint16_t _buttonMask;
-  int      _error;
+	uint8_t _address;
 
-  TwoWire*  _wire;
+	#if defined(__AVR) || defined(__STM32F1__)
+		uint8_t _sda;
+		uint8_t _scl;
+	#else
+		uint8_t _sda = SDA;
+		uint8_t _scl = SCL;
+	#endif
+
+	TwoWire *_wire;
+
+	bool _usingInterrupt = false;
+	uint8_t _interruptPin = 2;
+	void (*_interruptFunction)(){};
+
+	uint16_t writeMode 	= 	0;
+	uint16_t readMode 	= 	0;
+	uint16_t byteBuffered = 0;
+	unsigned long lastReadMillis = 0;
+
+	uint16_t writeByteBuffered = 0;
+
 };
 
-
-// -- END OF FILE --
-
+#endif

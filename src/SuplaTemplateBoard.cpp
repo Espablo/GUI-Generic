@@ -204,6 +204,13 @@ void chooseTemplateBoard(String board) {
         ConfigESP->setGpio(gpio, FUNCTION_SDA);
         break;
 
+      case NewI2CSCL2:
+        ConfigESP->setGpio(gpio, FUNCTION_SCL_2);
+        break;
+      case NewI2CSDA2:
+        ConfigESP->setGpio(gpio, FUNCTION_SDA_2);
+        break;
+
       case NewRelay1:
         addRelay(0, gpio);
         break;
@@ -460,6 +467,10 @@ void chooseTemplateBoard(String board) {
 #ifdef GUI_SENSOR_I2C_EXPENDER
   if (root["MCP23017"].success()) {
     addExpander(EXPENDER_MCP23017, root["MCP23017"]);
+  }
+
+  if (root["MCP23017_I2C2"].success()) {
+    addExpander(EXPENDER_MCP23017_I2C2, root["MCP23017_I2C2"]);
   }
 
   if (root["PCF8575"].success()) {
@@ -803,6 +814,11 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
       sizeExpander = 16;
       ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, true);
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_MCP23017);
+    }
+    else if (typeExpander == EXPENDER_MCP23017_I2C2) {
+      sizeExpander = 16;
+      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, true);
+      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_MCP23017_I2C2);
     }
     else if (typeExpander == EXPENDER_PCF8575) {
       sizeExpander = 16;

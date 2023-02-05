@@ -1,10 +1,8 @@
 #include "MCP_23017.h"
-
+#include "../../SuplaDeviceGUI.h"
 #include <FunctionalInterrupt.h>
-#include <Wire.h>
 
 static const uint8_t MCP23017_BASEADDRESS = 0x20;
-
 static const uint8_t MCP23017_IODIRA = 0x00;
 static const uint8_t MCP23017_IODIRB = 0x01;
 static const uint8_t MCP23017_IPOLA = 0x02;
@@ -28,17 +26,20 @@ static const uint8_t MCP23017_GPIOB = 0x13;
 static const uint8_t MCP23017_OLATA = 0x14;
 static const uint8_t MCP23017_OLATB = 0x15;
 
+MCP23017::MCP23017(TwoWire* wire) : _wire(wire), _callback(NULL) {
+}
+
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 void MCP23017::init(uint8_t sda, uint8_t scl, bool fast) {
-  Wire.begin(sda, scl);
+  _wire->begin(sda, scl);
   if (fast)
-    Wire.setClock(400000);
+    _wire->setClock(400000);
 }
 #else
 void MCP23017::init(bool fast) {
-  Wire.begin();
+  _wire->begin();
   if (fast)
-    Wire.setClock(400000);
+    _wire->setClock(400000);
 }
 #endif
 
@@ -138,67 +139,67 @@ void MCP23017::setupInterrupts(uint16_t pins, bool enable) {
 }
 
 bool MCP23017::writeReg(uint8_t reg, uint8_t value) {
-  Wire.beginTransmission(_address);
-  Wire.write(reg);
-  Wire.write(value);
-  return (Wire.endTransmission() == 0);
+  _wire->beginTransmission(_address);
+  _wire->write(reg);
+  _wire->write(value);
+  return (_wire->endTransmission() == 0);
 }
 
 bool MCP23017::writeReg16(uint8_t reg, uint16_t value) {
-  Wire.beginTransmission(_address);
-  Wire.write(reg);
-  Wire.write(value & 0xFF);
-  Wire.write(value >> 8);
-  return (Wire.endTransmission() == 0);
+  _wire->beginTransmission(_address);
+  _wire->write(reg);
+  _wire->write(value & 0xFF);
+  _wire->write(value >> 8);
+  return (_wire->endTransmission() == 0);
 }
 
 uint8_t MCP23017::readReg(uint8_t reg) {
-  Wire.beginTransmission(_address);
-  Wire.write(reg);
-  if (Wire.endTransmission() != 0)
+  _wire->beginTransmission(_address);
+  _wire->write(reg);
+  if (_wire->endTransmission() != 0)
     return 0;  // Error!
-  Wire.requestFrom(_address, (uint8_t)1);
-  return Wire.read();
+  _wire->requestFrom(_address, (uint8_t)1);
+  return _wire->read();
 }
 
 uint16_t MCP23017::readReg16(uint8_t reg) {
-  Wire.beginTransmission(_address);
-  Wire.write(reg);
-  if (Wire.endTransmission() != 0)
+  _wire->beginTransmission(_address);
+  _wire->write(reg);
+  if (_wire->endTransmission() != 0)
     return 0;  // Error!
-  Wire.requestFrom(_address, (uint8_t)2);
-  uint8_t a = Wire.read();
-  return ((Wire.read() << 8) | a);
+  _wire->requestFrom(_address, (uint8_t)2);
+  uint8_t a = _wire->read();
+  return ((_wire->read() << 8) | a);
 }
 
 bool MCP23017::updateReg(uint8_t reg, uint8_t andMask, uint8_t orMask) {
-  Wire.beginTransmission(_address);
-  Wire.write(reg);
-  if (Wire.endTransmission() != 0)
+  _wire->beginTransmission(_address);
+  _wire->write(reg);
+  if (_wire->endTransmission() != 0)
     return false;  // Error!
-  Wire.requestFrom(_address, (uint8_t)1);
-  uint8_t a = (Wire.read() & andMask) | orMask;
-  Wire.beginTransmission(_address);
-  Wire.write(reg);
-  Wire.write(a);
-  return (Wire.endTransmission() == 0);
+  _wire->requestFrom(_address, (uint8_t)1);
+  uint8_t a = (_wire->read() & andMask) | orMask;
+  _wire->beginTransmission(_address);
+  _wire->write(reg);
+  _wire->write(a);
+  return (_wire->endTransmission() == 0);
 }
 
 bool MCP23017::updateReg16(uint8_t reg, uint16_t andMask, uint16_t orMask) {
-  Wire.beginTransmission(_address);
-  Wire.write(reg);
-  if (Wire.endTransmission() != 0)
+  _wire->beginTransmission(_address);
+  _wire->write(reg);
+  if (_wire->endTransmission() != 0)
     return false;  // Error!
-  Wire.requestFrom(_address, (uint8_t)2);
-  uint16_t ab = Wire.read();
-  ab |= (Wire.read() << 8);
+  _wire->requestFrom(_address, (uint8_t)2);
+  uint16_t ab = _wire->read();
+  ab |= (_wire->read() << 8);
   ab &= andMask;
   ab |= orMask;
-  Wire.beginTransmission(_address);
-  Wire.write(reg);
-  Wire.write(ab & 0xFF);
-  Wire.write(ab >> 8);
-  return (Wire.endTransmission() == 0);
+  _wire->beginTransmission(_address);
+  _wire->write(reg);
+  _wire->write(ab & 0xFF);
+  _wire->write(ab >> 8);
+  return (_wire->endTransmission() == 0);
 }
 
 void IRAM_ATTR MCP23017::_interrupt() {
@@ -213,10 +214,10 @@ void IRAM_ATTR MCP23017::_interrupt() {
 namespace Supla {
 namespace Control {
 MCP_23017::MCP_23017() {
-  mcp1 = new MCP23017();
-  mcp2 = new MCP23017();
-  mcp3 = new MCP23017();
-  mcp4 = new MCP23017();
+  mcp1 = new MCP23017(&getTwoWire(0));
+  mcp2 = new MCP23017(&getTwoWire(1));
+  mcp3 = new MCP23017(&getTwoWire(2));
+  mcp4 = new MCP23017(&getTwoWire(3));
 
   if (!mcp1->begin(0)) {
     Serial.println(F("MCP23017 1 not found!"));  // begin(uint8_t address)  "Pin 100 - 115"
@@ -230,6 +231,29 @@ MCP_23017::MCP_23017() {
   if (!mcp4->begin(3)) {
     Serial.println(F("MCP23017 4 not found!"));  // begin(uint8_t address)  "Pin 148 - 163"
   }
+}
+
+TwoWire& MCP_23017::getTwoWire(uint8_t address) {
+  if (ConfigESP->getAdressMCP23017(0, FUNCTION_RELAY) == address &&
+      ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(FUNCTION_RELAY).toInt() == EXPENDER_MCP23017_I2C2) {
+    Serial.print(F("Add Wire1 for address: "));
+    Serial.println(address);
+    return Wire1;
+  }
+  if (ConfigESP->getAdressMCP23017(0, FUNCTION_BUTTON) == address &&
+      ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(FUNCTION_BUTTON).toInt() == EXPENDER_MCP23017_I2C2) {
+    Serial.print(F("Add Wire1 for address: "));
+    Serial.println(address);
+    return Wire1;
+  }
+  if (ConfigESP->getAdressMCP23017(0, FUNCTION_LIMIT_SWITCH) == address &&
+      ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(FUNCTION_LIMIT_SWITCH).toInt() == EXPENDER_MCP23017_I2C2) {
+    Serial.print(F("Add Wire1 for address: "));
+    Serial.println(address);
+    return Wire1;
+  }
+
+  return Wire;
 }
 
 void MCP_23017::customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val) {

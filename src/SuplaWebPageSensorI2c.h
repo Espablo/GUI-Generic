@@ -18,9 +18,10 @@
 #define SuplaWebPageSensorI2c_h
 
 #include "SuplaDeviceGUI.h"
+#include <Wire.h>
 
-#if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(GUI_SENSOR_I2C_EXPENDER) ||         \
-    defined(SUPLA_BMP280) || defined(SUPLA_VL53L0X) || defined(SUPLA_HDC1080) || defined(SUPLA_LCD_HD44780) || defined(SUPLA_BH1750) || \
+#if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(GUI_SENSOR_I2C_EXPENDER) || \
+    defined(SUPLA_BMP280) || defined(SUPLA_VL53L0X) || defined(SUPLA_HDC1080) || defined(SUPLA_LCD_HD44780) || defined(SUPLA_BH1750) ||  \
     defined(SUPLA_MAX44009) || defined(SUPLA_SHT_AUTODETECT)
 #define GUI_SENSOR_I2C
 #endif
@@ -89,8 +90,13 @@ enum _LCDAdress
 
 #define PATH_I2C "i2c"
 
-#define INPUT_SDA_GPIO "sdag"
-#define INPUT_SCL_GPIO "sclg"
+#define INPUT_SDA "sda"
+#define INPUT_SCL "scl"
+
+#ifdef ARDUINO_ARCH_ESP32
+#define INPUT_SDA_2 "sda2"
+#define INPUT_SCL_2 "scl2"
+#endif
 
 #ifdef SUPLA_SHT3x
 #define INPUT_SHT3x "sht30"
@@ -116,7 +122,7 @@ enum _LCDAdress
 void createWebPageSensorI2c();
 void handleSensorI2c(int save = 0);
 void handleSensorI2cSave();
-void webPageI2CScanner();
+void webPageI2CScanner(TwoWire* wire);
 
 #ifdef SUPLA_VL53L0X
 #define INPUT_VL53L0X "ilox"

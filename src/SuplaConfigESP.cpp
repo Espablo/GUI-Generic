@@ -355,7 +355,17 @@ int SuplaConfigESP::getGpio(int nr, int function) {
           shiftPin = EXPENDER_SHIFT_PIN_MCP23017;
           break;
 
+        case EXPENDER_MCP23017_I2C2:
+          shift = EXPENDER_SHIFT_MCP23017;
+          shiftPin = EXPENDER_SHIFT_PIN_MCP23017;
+          break;
+
         case EXPENDER_PCF8575:
+          shift = EXPENDER_SHIFT_PCF8575;
+          shiftPin = EXPENDER_SHIFT_PIN_PCF8575;
+          break;
+
+        case EXPENDER_PCF8575_I2C2:
           shift = EXPENDER_SHIFT_PCF8575;
           shiftPin = EXPENDER_SHIFT_PIN_PCF8575;
           break;
