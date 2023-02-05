@@ -21,10 +21,17 @@ namespace Supla {
 namespace Control {
 
 PCF_8575::PCF_8575() {
+#ifdef ARDUINO_ARCH_ESP32
   control1 = new PCF8575(&getTwoWire(0), 0x20);
   control2 = new PCF8575(&getTwoWire(1), 0x21);
   control3 = new PCF8575(&getTwoWire(2), 0x22);
   control4 = new PCF8575(&getTwoWire(3), 0x23);
+#else
+  control1 = new PCF8575(0x20);
+  control2 = new PCF8575(0x21);
+  control3 = new PCF8575(0x22);
+  control4 = new PCF8575(0x23);
+#endif
 }
 
 void PCF_8575::onInit() {
