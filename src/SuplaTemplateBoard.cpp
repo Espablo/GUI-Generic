@@ -427,6 +427,15 @@ void chooseTemplateBoard(String board) {
         ConfigESP->setGpio(gpio, FUNCTION_NTC_10K);
         break;
 
+      case NewEthPOWER:
+        break;
+
+      case NewEthMDC:
+        break;
+
+      case NewEthMDIO:
+        break;
+
       case NewSI7021:
         ConfigESP->setGpio(gpio, FUNCTION_SI7021_SONOFF);
         break;

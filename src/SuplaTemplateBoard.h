@@ -184,6 +184,9 @@ enum FunctionNew
   NewCSE7766Rx = 3104,
   NewADE7953_IRQ = 3456,
   NewTemperatureAnalog = 4736,
+  NewEthPOWER = 5536,
+  NewEthMDC = 5568,
+  NewEthMDIO = 5600,
   NewUsers = 1,
 };
 
