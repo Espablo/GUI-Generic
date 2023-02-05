@@ -17,13 +17,13 @@ void CSE7766::expectedCurrent(double expected) {
   }
 }
 
-void CSE7766::expectedVoltage(unsigned int expected) {
+void CSE7766::expectedVoltage(double expected) {
   if ((expected > 0) && (_voltage > 0)) {
     _ratioV = _ratioV * (expected / _voltage);
   }
 }
 
-void CSE7766::expectedPower(unsigned int expected) {
+void CSE7766::expectedPower(double expected) {
   if ((expected > 0) && (_active > 0)) {
     _ratioP = _ratioP * (expected / _active);
   }
