@@ -234,6 +234,7 @@ MCP_23017::MCP_23017() {
 }
 
 TwoWire& MCP_23017::getTwoWire(uint8_t address) {
+#ifdef ARDUINO_ARCH_ESP32
   if (ConfigESP->getAdressMCP23017(0, FUNCTION_RELAY) == address &&
       ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(FUNCTION_RELAY).toInt() == EXPENDER_MCP23017_I2C2) {
     Serial.print(F("Add Wire1 for address: "));
@@ -252,6 +253,7 @@ TwoWire& MCP_23017::getTwoWire(uint8_t address) {
     Serial.println(address);
     return Wire1;
   }
+#endif
 
   return Wire;
 }

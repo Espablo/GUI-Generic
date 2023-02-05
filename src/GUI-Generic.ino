@@ -726,10 +726,12 @@ void setup() {
     }
 #endif
 
+#ifdef ARDUINO_ARCH_ESP32
     if (ConfigESP->getGpio(FUNCTION_SDA_2) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL_2) != OFF_GPIO) {
       Wire1.begin(ConfigESP->getGpio(FUNCTION_SDA_2), ConfigESP->getGpio(FUNCTION_SCL_2));
       Wire1.setClock(400000);
     }
+#endif
 
 #ifdef SUPLA_PCF8574
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt()) {

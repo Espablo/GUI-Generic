@@ -88,6 +88,7 @@ void PCF_8575::customPinMode(int channelNumber, uint8_t pin, uint8_t mode) {
 }
 
 TwoWire& PCF_8575::getTwoWire(uint8_t address) {
+#ifdef ARDUINO_ARCH_ESP32
   if (ConfigESP->getAdressMCP23017(0, FUNCTION_RELAY) == address &&
       ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(FUNCTION_RELAY).toInt() == EXPENDER_PCF8575_I2C2) {
     Serial.print(F("Add Wire1 for PCF8575 address: "));
@@ -106,6 +107,7 @@ TwoWire& PCF_8575::getTwoWire(uint8_t address) {
     Serial.println(address);
     return Wire1;
   }
+#endif
 
   return Wire;
 }
