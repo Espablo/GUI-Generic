@@ -28,6 +28,7 @@ set(SUPLA_DEVICE_LINUX_SRCS
   linux_platform.cpp
   linux_file_state_logger.cpp
   linux_client.cpp
+  linux_file_storage.cpp
 
   linux_timers.cpp
 
@@ -43,6 +44,13 @@ set(SUPLA_DEVICE_LINUX_SRCS
   supla/sensor/impulse_counter_parsed.cpp
   supla/sensor/electricity_meter_parsed.cpp
   supla/sensor/binary_parsed.cpp
+  supla/sensor/humidity_parsed.cpp
+  supla/sensor/pressure_parsed.cpp
+  supla/sensor/rain_parsed.cpp
+  supla/sensor/wind_parsed.cpp
+  supla/sensor/therm_hygro_meter_parsed.cpp
+
+  supla/control/cmd_relay.cpp
 
   ../../../src/supla/pv/fronius.cpp
   ../../../src/supla/pv/afore.cpp

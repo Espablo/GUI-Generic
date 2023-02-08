@@ -19,7 +19,7 @@
 #include <supla/time.h>
 #include <supla/storage/storage.h>
 #include <supla/storage/config.h>
-//#include <supla/network/html/button_multiclick_parameters.h>
+#include <supla/network/html/button_multiclick_parameters.h>
 #include <supla/events.h>
 #include <supla/actions.h>
 #include <SuplaDevice.h>
@@ -180,15 +180,15 @@ bool Supla::Control::Button::isBistable() const {
 }
 
 void Supla::Control::Button::onLoadConfig() {
-  // auto cfg = Supla::Storage::ConfigInstance();
-  // if (cfg) {
-  //   uint32_t value = 300;
-  //   if (cfg->getUInt32(Supla::Html::BtnMulticlickTag, &value)) {
-  //     if (value >= 300 && value <= 10000) {
-  //       setMulticlickTime(value, isBistable());
-  //     }
-  //   }
-  // }
+  auto cfg = Supla::Storage::ConfigInstance();
+  if (cfg) {
+    uint32_t value = 300;
+    if (cfg->getUInt32(Supla::Html::BtnMulticlickTag, &value)) {
+      if (value >= 300 && value <= 10000) {
+        setMulticlickTime(value, isBistable());
+      }
+    }
+  }
 }
 
 void Supla::Control::Button::configureAsConfigButton(SuplaDeviceClass *sdc) {

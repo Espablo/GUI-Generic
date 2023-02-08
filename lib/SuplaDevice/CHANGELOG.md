@@ -1,5 +1,74 @@
 # CHANGELOG.md
 
+## 22.12.01 (2023-01-09)
+
+  - Fix: RGBW/Dimmer fix starting at lowest brighness when previously set brightness level was < 5%
+  - Add: RGBW/Dimmer add option to set delay between dim direction change during dimming by button (setMinMaxIterationDelay)
+  - Add: (ESP-IDF, ESP8266 RTOS) add HTTP status code to LAST STATE when it is different than 200
+## 22.12 (2022-12-19)
+
+  - Fix: Afore: fix crash on initialization
+  - Fix: allow 32 bytes of Wi-Fi SSID
+  - Fix: TrippleButtonRollerShutter add initialization of GPIO for STOP button
+  - Fix: fixed reset to factory defaults for LittleFsConfig for Arduino IDE
+  - Fix: Config mode: add escaping of HTML special characters when rendering user input values
+  - Fix: (ESP-IDF, ESP8266 RTOS) always run full Wi-Fi scan even if we are performing reconnection procedure. Sometimes device fails in finding best AP during scan and without full scan option it connects to the first one found. Then device remembers it as last AP and adjacent connections will be performed to not optimal AP. In multi-AP Wi-Fi network this old behaviour can lead to stucking with connecting to distant APs instead of the one with the best signal.
+  - Change: add CRC calculation and verification for Storage classes
+  - Add: MQTT support for ElectricityMeter
+  - Add: Linux support for ThermHygroMeterParsed
+  - Add: getter for RollerShutter current direction
+  - Add: RGBW, Dimmer: add events on turn on/off for each sub-channel
+  - Add: Linux: add battery_level option
+  - Add: Html: add CustomTextParameter for user defined text input in config mode
+  - Add: Arduino: add example ConfigModeInputs
+  - Add: Linux: add JSON parsing by path (JSON pointer)
+  - Add: Linux: add example Airly integration
+  - Add: Linux: add Afore integration
+  - Add: Linux: add state storage file
+  - Add: Linux: VirtualRelay - add option to define initial relay state (on/off/restore)
+  - Add: Linux: add option to disable time expriation check for File source
+  - Add: Linux: add CmdRelay - allows to execute Linux command on relay state change
+
+
+## 22.11.03 (2022-11-28)
+
+  - Fix: THW-01: enabled more detailed logging of connection problem in "LAST STATE" field
+  - Fix: allow going back to "server disconnected" device state, when device is in error state
+  - Add: (Arduino ESPx) add log with BSSID on connection to Wi-Fi establishment
+  - Change: CALCFG handling - moved checking of "super user authorized" flag from supla_srpc to individual CALCFG handlers. Note: if your code use CALCFG then you should add checking if received CALCFG message has "authorized" flag set (if required by message).
+  - Change: Storage: removed not used section types "device config" and "element config".
+  - Add: Storage class: add "special storage section" functionality (see [4cf87f516c91](https://github.com/SUPLA/supla-device/commit/4cf87f516c91f2955f4b6eddd9069fa1cddc8112))
+  - Add: ElectricityMeter: add handling of CALCFG reset counters message. Add EM channel flag informing about reset counters capability. It still requires implementation of resetStorage() method to work.
+  - Add: ElectricityMeter: handling of Supla::RESET action
+  - Add: TextCmdInputParameter HTML elements. It creates text input HTML field. You can register any text command that will trigger local action
+when form is saved.
+  - Add: SelectCmdInputParameter HTML element - works in the same way as TextCmdInputParameter, but generates select HTML input type with all available options
+
+
+## 22.11.02 (2022-11-03)
+
+  - Fix: "beta" config HTML page stuck at "Loading..."
+
+
+## 22.11.01 (2022-11-02)
+
+  - Change: THW-01 will try to connect for 15 s and then go to sleep in order to prevent internal heating.
+
+## 22.10.05 (N/A)
+
+  - Change: New CSS and HTML layout for web interface
+  - Add: (Arduino ESPx, Arduino Mega) DS1307 external RTC support (thanks @lukfud)
+  - Add: (ESP-IDF) add sending Action Trigger over MQTT
+  - Add: ability for device to work in offline mode - allow normal functions without Wi-Fi, when Wi-Fi/server configuration is empty.
+
+
+## 22.10.04 (2022-10-18)
+
+  - Add: ActionTrigger support for publishing Home Assistant MQTT auto discovery
+  - Add: Linux: support for new parsed sensors: HumidityParsed, PressureParsed, RainParsed, WindParsed
+  - Fix: THW-01: Fixed random hang during encrypted connection establishment on private Supla servers.
+  - Fix: Linux reading of uint8_t from yaml config should use int conversion instead of char (ASCII value)
+
 ## 22.10.03 (2022-10-12)
 
   - Change: Linux example extended with security_level setting

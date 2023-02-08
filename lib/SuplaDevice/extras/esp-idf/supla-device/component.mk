@@ -26,6 +26,8 @@ COMPONENT_OBJS := \
   ../../../src/supla/auto_lock.o \
   ../../../src/supla/sha256.o \
   ../../../src/supla/rsa_verificator.o \
+  ../../../src/supla/crc8.o \
+  ../../../src/supla/crc16.o \
 	\
   ../../../src/supla/storage/storage.o \
   ../../../src/supla/storage/config.o \
@@ -48,6 +50,9 @@ COMPONENT_OBJS := \
   ../../../src/supla/network/html/channel_correction.o \
   ../../../src/supla/network/html/hide_show_container.o \
   ../../../src/supla/network/html/div.o \
+  ../../../src/supla/network/html/button_action_trigger_config.o \
+  ../../../src/supla/network/html/text_cmd_input_parameter.o \
+  ../../../src/supla/network/html/select_cmd_input_parameter.o \
   ../../../src/supla/network/client.o \
   ../../../src/supla/network/ip_address.o \
   \

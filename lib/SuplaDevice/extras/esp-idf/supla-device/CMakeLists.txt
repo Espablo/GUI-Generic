@@ -26,6 +26,8 @@ set(SUPLA_DEVICE_SRCS
   ../../../src/supla/auto_lock.cpp
   ../../../src/supla/sha256.cpp
   ../../../src/supla/rsa_verificator.cpp
+  ../../../src/supla/crc8.cpp
+  ../../../src/supla/crc16.cpp
 
   ../../../src/supla/storage/storage.cpp
   ../../../src/supla/storage/config.cpp
@@ -48,6 +50,9 @@ set(SUPLA_DEVICE_SRCS
   ../../../src/supla/network/html/channel_correction.cpp
   ../../../src/supla/network/html/hide_show_container.cpp
   ../../../src/supla/network/html/div.cpp
+  ../../../src/supla/network/html/button_action_trigger_config.cpp
+  ../../../src/supla/network/html/text_cmd_input_parameter.cpp
+  ../../../src/supla/network/html/select_cmd_input_parameter.cpp
   ../../../src/supla/network/client.cpp
   ../../../src/supla/network/ip_address.cpp
 
@@ -164,11 +169,11 @@ if (CONFIG_SUPLA_DEBUG_BUILD)
   target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DEBUG)
   #add_definitions( -DSUPLA_DEBUG )
   if (CONFIG_SUPLA_DISABLE_LOGS)
-    target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DISALBE_LOGS)
+    target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DISABLE_LOGS)
     #add_definitions( -DSUPLA_DISABLE_LOGS )
   endif()
 else()
-  target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DISALBE_LOGS)
+  target_compile_definitions(${COMPONENT_LIB} PUBLIC SUPLA_DISABLE_LOGS)
   #add_definitions( -DSUPLA_DISABLE_LOGS )
 endif()
 

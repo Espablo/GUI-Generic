@@ -222,8 +222,11 @@ if you need something more.
 
 Supported channel types:
 * `VirtualRelay` - related class `Supla::Control::VirtualRelay`
+* `CmdRelay` - related class `Supla::Control::CmdRelay`
 * `Fronius` - related class `Supla::PV::Fronius`
+* `Afore` - related class `Supla::PV::Afore`
 * `ThermometerParsed` - related class `Supla::Sensor::ThermometerParsed`
+* `ThermHygroMeterParsed` - related class `Supla::Sensor::ThermHygroMeterParsed`
 * `ImpulseCounterParsed` - related class `Supla::Sensor::ImpulseCounterParsed`
 * `ElectricityMeterParsed` - related class `Supla::Sensor::ElectricityMeterParsed`
 * `BinaryParsed` - related class `Supla::Sensor::BinaryParsed`
@@ -233,14 +236,44 @@ Example channels configuration (details are exaplained later):
     channels:
       - type: VirtualRelay
         name: vr1 # optional, can be used as reference for adding actions (TBD)
+        initial_state: on
 
       - type: VirtualRelay
         name: vr2
+        initial_state: restore
+
+    # CmdRelay with state kept in memory and stored in storage
+      - type: CmdRelay
+        name: command_relay_1
+        initial_state: restore
+        cmd_on: "echo 1 > command_relay_1.out"
+        cmd_off: "echo 0 > command_relay_1.out"
+
+    # CmdRelay with state read from data source
+      - type: CmdRelay
+        name: command_relay_2
+        cmd_on: "echo 1 > command_relay_1.out"
+        cmd_off: "echo 0 > command_relay_1.out"
+        source:
+          type: Cmd
+          command: "cat in_r2.txt"
+        parser:
+          type: Simple
+          refresh_time_ms: 1000
+        state: 0
 
       - type: Fronius
         ip: 192.168.1.7
         port: 80
         device_id: 1
+
+      - type: Afore
+        ip: 192.168.1.17
+        port: 80
+    # login_and_password is base64 encoded "login:password"
+    # You can use any online base64 encoder to convert your login and password,
+    # i.e. https://www.base64encode.org/
+    login_and_password: "bG9naW46cGFzc3dvcmQ="
 
       - type: ThermometerParsed
         name: t1
@@ -315,10 +348,68 @@ Example channels configuration (details are exaplained later):
         parser:
           use: parser_1
 
+      - type: ThermHygroMeterParsed
+        name: th1
+        source:
+          type: File
+      # use file "temp_humi.txt" from current folder
+          file: "temp_humi.txt"
+        parser:
+          type: Simple
+          refresh_time_ms: 200
+      # temperature is read from first line of txt file
+        temperature: 0
+      # humidity is read from second line of txt file
+        humidity: 1
+        multiplier_temp: 1
+        multiplier_humi: 1
+        battery_level: 2
+        multiplier_battery_level: 100
+
 There are some new classes (compared to standard non-Linux supla-device) which
 names end with "Parsed" word. In general, those channels use `parser` and
 `source` functions to get some data from your computer and put it to that
 channel.
+
+### VirtualRelay
+
+VirtualRelay is pretending to be a relay channel in Supla. You can turn it on
+and off from Supla App, etc.
+
+It is virtual, because it doesn't control anything - it just keeps state that
+was set on it.
+
+There are two optional parameters:
+`name` - name of channel in YAML file - it doesn't have any functional meaning
+so far.
+`initial_state` - allows to define what state should be set on relay when
+supla-device application is started. Following values are allowed:
+on, off, restore.
+"off" is default value.
+"restore" will use state storage file to keep and restore relay state.
+
+### CmdRelay
+
+CmdRelay is pretending to be a relay channel in Supla. It is very similar to
+VirtualRelay, however additionally it allows to configure Linux command to
+be executed on every turn on/off action.
+
+CmdRelay accepts the same parameters as VirtualRelay. Additionally it supports
+two extra configuration options:
+`cmd_on` - command to be exectued on turn on.
+`cmd_off` - command to be executed on turn off.
+
+When CmdRelay is added without `state` parameter, then it will use internal
+memory to keep it's state, which will be always consistent with last executed
+action on relay channel. Such state can be saved to Storage.
+
+Another option for CmdRelay is to define `state` parameter. When `state`
+parameter is defined, it require to use Parser instance (and underlying Source)
+which is used to read state of this relay channel. It works exactly the same as
+for BinaryParsed channel. So you can define data source as file or command and
+use any available Parser to read your relay state. Please remember to keep
+state refresh rate at reasonable level (i.e. fetching data remotly every
+100 ms may not be the best idea :) ).
 
 ## Parsed channel `source` parameter
 
@@ -334,6 +425,7 @@ There are two supported parser types:
 additionally you can define `expiration_time_sec` parameter. If last modification
 time of a file is older than `expiration_time_sec` then this source will be
 considered as invalid. `expiration_time_sec` is by default set to 10 minutes. 
+In order to disable time expiration check, please set `expiration_time_sec` to 0.
 2. `Cmd` - use Linux command line as an input. Command is provided by `commonad`
 field.
 
@@ -352,8 +444,10 @@ to a floating point number. Value from each line can be referenced later by
 using line index number (index counting starts with 0). I.e. please take a look
 at `t1` channel above.
 2. `Json` - it takes input from source and parse it as JSON format. Values can
-be referenced in parsed channel by JSON key name and each value is converted to
-a floating point number. I.e. please check `i1` channel above.
+be referenced in parsed channel by JSON key name or by JSON pointer and each
+value is converted to a floating point number. I.e. please check `i1`
+channel above. More details about parsing JSON can be found in JSON parser
+section of this document.
 
 Type of a parser is selected with a `type` parameter. You can provide a name for
 your parser with `name` parameter (named parsers can be reused for different
@@ -369,6 +463,54 @@ update every 200 ms.
 
 If parser was already defined earlier, you can reuse it by providing `use`
 parameter with a parser name.
+
+### JSON parser
+JSON parser takes input from source and parse it as JSON format. Values can
+be referenced in parsed channel by JSON key name or by JSON pointer and each
+value is converted to a floating point number.
+
+JSON pointer is specified in [RFC6901](https://www.rfc-editor.org/rfc/rfc6901).
+
+I.e. consider following JSON:
+
+    {
+      "my_temperature": 23.5,
+      "measurements": [
+        {
+          "name": "humidity",
+          "value": 84.1
+        },
+        {
+          "name": "pressure",
+          "value": 1023
+        }
+      ]
+    }
+
+Temperature value can be accessed by providing key name, because it is directly
+under the root of JSON structure:
+
+    temperature: "my_temperature"
+
+Alternatively you can use JSON pointer to access the same value:
+
+    temperature: "/my_temperature"
+
+All keys are considered as JSON pointer when they start with "/", otherwise
+keys are expected to be name of parameter in the root structure.
+
+In order to access humidity or pressure values, you have to specify JSON
+pointer, becuase they are not in the root:
+
+    pressure: "/measurements/1/value"
+    humidity: "/measurements/0/value"
+
+If you use such JSON with arrays as a source, please make sure that order of
+array elements will not change, because it will change JSON pointer and
+your integration will not work properly.
+
+Above examples show part of YAML configuration file. Each of those lines has
+to be part of a proper channel definition.
 
 ## Parsed channel definition
 
@@ -394,6 +536,17 @@ Mandatory parameter: `temperature` - defines key/index by which data is fetched
 from `parser`.
 Optional parameter: `multiplier` - defines multiplier for fetched value
 (you can put any floating point number).
+
+### `ThermHygroMeterParsed`
+
+Add channel with "thermometer + hygrometer" type.
+
+Mandatory parameters: `temperature` - defines key/index by which data is fetched
+from `parser` for temperature value, `humidity` - defines key/index by which
+data is fetched from `parser` for humidity value;
+Optional parameter: `multiplier_temp` - defines multiplier for temperatur value
+(you can put any floating point number), `multiplier_humi` - defines multiplier
+for humidity value.
 
 ### `ImpulseCounterParsed`
 
@@ -484,6 +637,15 @@ AMIplus meter on standard single tariff:
           - voltage: voltage_at_phase_2_v
         phase_3:
           - voltage: voltage_at_phase_3_v
+
+## Battery level information for Parsed channels
+
+Each Parsed channel may have additional `battery_level` and `multiplier_battery_level` field.
+Battery level information is added to channel state response (the (i) button in mobile apps).
+Battery level has to be in 0 to 100 range, otherwise device wont' be reported as battery
+powered. Multiplier parameter allows to do some simple conversion. I.e. if battery level
+in source is in 0 to 1 range, then you can provide multiplier with value 100 to convert it to
+0 to 100 range.
 
 # Running supla-device as a service
 

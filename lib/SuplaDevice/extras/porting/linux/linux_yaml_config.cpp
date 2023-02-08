@@ -24,13 +24,19 @@
 #include <supla/parser/parser.h>
 #include <supla/parser/simple.h>
 #include <supla/pv/fronius.h>
+#include <supla/pv/afore.h>
 #include <supla/sensor/binary_parsed.h>
 #include <supla/sensor/electricity_meter_parsed.h>
 #include <supla/sensor/impulse_counter_parsed.h>
 #include <supla/sensor/thermometer_parsed.h>
+#include <supla/sensor/humidity_parsed.h>
+#include <supla/sensor/pressure_parsed.h>
+#include <supla/sensor/wind_parsed.h>
+#include <supla/sensor/rain_parsed.h>
 #include <supla/source/cmd.h>
 #include <supla/source/file.h>
 #include <supla/source/source.h>
+#include <supla/control/cmd_relay.h>
 #include <supla/tools.h>
 #include <yaml-cpp/exceptions.h>
 
@@ -42,9 +48,13 @@
 #include <string>
 
 #include "linux_yaml_config.h"
+#include "supla/sensor/sensor_parsed.h"
+#include "supla/sensor/therm_hygro_meter_parsed.h"
 
 namespace Supla {
 const char Multiplier[] = "multiplier";
+const char MultiplierTemp[] = "multiplier_temp";
+const char MultiplierHumi[] = "multiplier_humi";
 
 const char GuidAuthFileName[] = "/guid_auth.yaml";
 const char GuidKey[] = "guid";
@@ -171,7 +181,7 @@ bool Supla::LinuxYamlConfig::getInt8(const char* key, int8_t* result) {
 bool Supla::LinuxYamlConfig::getUInt8(const char* key, uint8_t* result) {
   try {
     if (config[key]) {
-      *result = config[key].as<uint8_t>();
+      *result = static_cast<uint8_t>(config[key].as<unsigned int>());
       return true;
     }
   } catch (const YAML::Exception& ex) {
@@ -377,37 +387,68 @@ bool Supla::LinuxYamlConfig::parseChannel(const YAML::Node& ch,
 
     if (type == "VirtualRelay") {
       return addVirtualRelay(ch, channelNumber);
-    }
-    if (type == "Fronius") {
+    } else if (type == "CmdRelay") {
+      return addCmdRelay(ch, channelNumber, parser);
+    } else if (type == "Fronius") {
       return addFronius(ch, channelNumber);
-    }
-    if (type == "ThermometerParsed") {
+    } else if (type == "Afore") {
+      return addAfore(ch, channelNumber);
+    } else if (type == "ThermometerParsed") {
       if (!parser) {
         SUPLA_LOG_ERROR("Channel[%d] config: missing parser", channelNumber);
         return false;
       }
       return addThermometerParsed(ch, channelNumber, parser);
-    }
-    if (type == "ImpulseCounterParsed") {
+    } else if (type == "ImpulseCounterParsed") {
       if (!parser) {
         SUPLA_LOG_ERROR("Channel[%d] config: missing parser", channelNumber);
         return false;
       }
       return addImpulseCounterParsed(ch, channelNumber, parser);
-    }
-    if (type == "ElectricityMeterParsed") {
+    } else if (type == "ElectricityMeterParsed") {
       if (!parser) {
         SUPLA_LOG_ERROR("Channel[%d] config: missing parser", channelNumber);
         return false;
       }
       return addElectricityMeterParsed(ch, channelNumber, parser);
-    }
-    if (type == "BinaryParsed") {
+    } else if (type == "BinaryParsed") {
       if (!parser) {
         SUPLA_LOG_ERROR("Channel[%d] config: missing parser", channelNumber);
         return false;
       }
       return addBinaryParsed(ch, channelNumber, parser);
+    } else if (type == "HumidityParsed") {
+      if (!parser) {
+        SUPLA_LOG_ERROR("Channel[%d] config: missing parser", channelNumber);
+        return false;
+      }
+      return addHumidityParsed(ch, channelNumber, parser);
+    } else if (type == "PressureParsed") {
+      if (!parser) {
+        SUPLA_LOG_ERROR("Channel[%d] config: missing parser", channelNumber);
+        return false;
+      }
+      return addPressureParsed(ch, channelNumber, parser);
+    }
+    if (type == "WindParsed") {
+      if (!parser) {
+        SUPLA_LOG_ERROR("Channel[%d] config: missing parser", channelNumber);
+        return false;
+      }
+      return addWindParsed(ch, channelNumber, parser);
+    }
+    if (type == "RainParsed") {
+      if (!parser) {
+        SUPLA_LOG_ERROR("Channel[%d] config: missing parser", channelNumber);
+        return false;
+      }
+      return addRainParsed(ch, channelNumber, parser);
+    } else if (type == "ThermHygroMeterParsed") {
+      if (!parser) {
+        SUPLA_LOG_ERROR("Channel[%d] config: missing parser", channelNumber);
+        return false;
+      }
+      return addThermHygroMeterParsed(ch, channelNumber, parser);
     } else {
       SUPLA_LOG_ERROR(
                 "Channel[%d] config: unknown type \"%s\"",
@@ -434,7 +475,62 @@ bool Supla::LinuxYamlConfig::parseChannel(const YAML::Node& ch,
 bool Supla::LinuxYamlConfig::addVirtualRelay(const YAML::Node& ch,
                                              int channelNumber) {
   SUPLA_LOG_INFO("Channel[%d] config: adding VirtualRelay", channelNumber);
-  new Supla::Control::VirtualRelay();
+  auto vr = new Supla::Control::VirtualRelay();
+  if (ch["initial_state"]) {
+    paramCount++;
+    auto initialState = ch["initial_state"].as<std::string>();
+    if (initialState == "on") {
+      vr->setDefaultStateOn();
+    } else if (initialState == "off") {
+      vr->setDefaultStateOff();
+    } else if (initialState == "restore") {
+      vr->setDefaultStateRestore();
+    }
+  }
+  return true;
+}
+
+bool Supla::LinuxYamlConfig::addCmdRelay(const YAML::Node& ch,
+                                         int channelNumber,
+                                         Supla::Parser::Parser *parser) {
+  SUPLA_LOG_INFO("Channel[%d] config: adding CmdRelay", channelNumber);
+  auto cr = new Supla::Control::CmdRelay(parser);
+  if (ch["initial_state"]) {
+    paramCount++;
+    auto initialState = ch["initial_state"].as<std::string>();
+    if (initialState == "on") {
+      cr->setDefaultStateOn();
+    } else if (initialState == "off") {
+      cr->setDefaultStateOff();
+    } else if (initialState == "restore") {
+      cr->setDefaultStateRestore();
+    }
+  }
+  if (ch["cmd_on"]) {
+    paramCount++;
+    auto cmdOn = ch["cmd_on"].as<std::string>();
+    cr->setCmdOn(cmdOn);
+  }
+  if (ch["cmd_off"]) {
+    paramCount++;
+    auto cmdOff = ch["cmd_off"].as<std::string>();
+    cr->setCmdOff(cmdOff);
+  }
+  if (parser == nullptr && ch[Supla::Parser::State]) {
+    SUPLA_LOG_ERROR("Channel[%d] config: missing parser", channelNumber);
+    return false;
+  }
+  if (ch[Supla::Parser::State]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Parser::State].as<int>();
+      cr->setMapping(Supla::Parser::State, index);
+    } else {
+      std::string key = ch[Supla::Parser::State].as<std::string>();
+      cr->setMapping(Supla::Parser::State, key);
+    }
+  }
+
   return true;
 }
 
@@ -464,6 +560,53 @@ bool Supla::LinuxYamlConfig::addFronius(const YAML::Node& ch,
     IPAddress ipAddr(ip);
     new Supla::PV::Fronius(ipAddr, port, deviceId);
   } else {
+    SUPLA_LOG_ERROR(
+              "Channel[%d] config: missing mandatory \"ip\" parameter",
+              channelNumber);
+    return false;
+  }
+
+  return true;
+}
+
+bool Supla::LinuxYamlConfig::addAfore(const YAML::Node& ch,
+                                        int channelNumber) {
+  int port = 80;
+  if (ch["port"]) {
+    paramCount++;
+    port = ch["port"].as<int>();
+  }
+
+  std::string loginAndPassword;
+
+  if (ch["login_and_password"]) {
+    paramCount++;
+    loginAndPassword = ch["login_and_password"].as<std::string>();
+  } else {
+    SUPLA_LOG_ERROR(
+              "Channel[%d] config: missing mandatory"
+              " \"login_and_password\" parameter",
+              channelNumber);
+    return false;
+  }
+
+  if (ch["ip"]) {  // mandatory
+    paramCount++;
+    std::string ip = ch["ip"].as<std::string>();
+    SUPLA_LOG_INFO(
+        "Channel[%d] config: adding Afore with IP %s, port: %d,"
+        " login_and_password: %s",
+        channelNumber,
+        ip.c_str(),
+        port,
+        loginAndPassword.c_str());
+
+    IPAddress ipAddr(ip);
+    new Supla::PV::Afore(ipAddr, port, loginAndPassword.c_str());
+  } else {
+    SUPLA_LOG_ERROR(
+              "Channel[%d] config: missing mandatory \"ip\" parameter",
+              channelNumber);
     return false;
   }
 
@@ -494,6 +637,27 @@ bool Supla::LinuxYamlConfig::addThermometerParsed(
     paramCount++;
     double multiplier = ch[Supla::Multiplier].as<double>();
     therm->setMultiplier(Supla::Parser::Temperature, multiplier);
+  } else if (ch[Supla::MultiplierTemp]) {
+    paramCount++;
+    double multiplier = ch[Supla::MultiplierTemp].as<double>();
+    therm->setMultiplier(Supla::Parser::Temperature, multiplier);
+  }
+
+  auto sensor = therm;
+  if (ch[Supla::Sensor::BatteryLevel]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Sensor::BatteryLevel].as<int>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, index);
+    } else {
+      std::string key = ch[Supla::Sensor::BatteryLevel].as<std::string>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, key);
+    }
+  }
+  if (ch[Supla::Sensor::MultiplierBatteryLevel]) {
+    paramCount++;
+    double multiplier = ch[Supla::Sensor::MultiplierBatteryLevel].as<double>();
+    sensor->setMultiplier(Supla::Sensor::BatteryLevel, multiplier);
   }
 
   return true;
@@ -525,6 +689,23 @@ bool Supla::LinuxYamlConfig::addImpulseCounterParsed(
     paramCount++;
     double multiplier = ch[Supla::Multiplier].as<double>();
     ic->setMultiplier(Supla::Parser::Counter, multiplier);
+  }
+
+  auto sensor = ic;
+  if (ch[Supla::Sensor::BatteryLevel]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Sensor::BatteryLevel].as<int>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, index);
+    } else {
+      std::string key = ch[Supla::Sensor::BatteryLevel].as<std::string>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, key);
+    }
+  }
+  if (ch[Supla::Sensor::MultiplierBatteryLevel]) {
+    paramCount++;
+    double multiplier = ch[Supla::Sensor::MultiplierBatteryLevel].as<double>();
+    sensor->setMultiplier(Supla::Sensor::BatteryLevel, multiplier);
   }
 
   return true;
@@ -595,6 +776,23 @@ bool Supla::LinuxYamlConfig::addElectricityMeterParsed(
     }
   }
 
+  auto sensor = em;
+  if (ch[Supla::Sensor::BatteryLevel]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Sensor::BatteryLevel].as<int>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, index);
+    } else {
+      std::string key = ch[Supla::Sensor::BatteryLevel].as<std::string>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, key);
+    }
+  }
+  if (ch[Supla::Sensor::MultiplierBatteryLevel]) {
+    paramCount++;
+    double multiplier = ch[Supla::Sensor::MultiplierBatteryLevel].as<double>();
+    sensor->setMultiplier(Supla::Sensor::BatteryLevel, multiplier);
+  }
+
   return true;
 }
 
@@ -618,6 +816,23 @@ bool Supla::LinuxYamlConfig::addBinaryParsed(const YAML::Node& ch,
               channelNumber,
               Supla::Parser::State);
     return false;
+  }
+
+  auto sensor = binary;
+  if (ch[Supla::Sensor::BatteryLevel]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Sensor::BatteryLevel].as<int>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, index);
+    } else {
+      std::string key = ch[Supla::Sensor::BatteryLevel].as<std::string>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, key);
+    }
+  }
+  if (ch[Supla::Sensor::MultiplierBatteryLevel]) {
+    paramCount++;
+    double multiplier = ch[Supla::Sensor::MultiplierBatteryLevel].as<double>();
+    sensor->setMultiplier(Supla::Sensor::BatteryLevel, multiplier);
   }
 
   return true;
@@ -807,5 +1022,261 @@ bool Supla::LinuxYamlConfig::saveGuidAuth(const std::string& path) {
 
 bool Supla::LinuxYamlConfig::isConfigModeSupported() {
   return false;
+}
+
+bool Supla::LinuxYamlConfig::addThermHygroMeterParsed(const YAML::Node& ch,
+                            int channelNumber,
+                            Supla::Parser::Parser* parser) {
+  SUPLA_LOG_INFO("Channel[%d] config: adding ThermHygroMeterParsed",
+      channelNumber);
+  auto thermHumi = new Supla::Sensor::ThermHygroMeterParsed(parser);
+  if (ch[Supla::Parser::Humidity]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Parser::Humidity].as<int>();
+      thermHumi->setMapping(Supla::Parser::Humidity, index);
+    } else {
+      std::string key = ch[Supla::Parser::Humidity].as<std::string>();
+      thermHumi->setMapping(Supla::Parser::Humidity, key);
+    }
+  } else {
+    SUPLA_LOG_ERROR(
+              "Channel[%d] config: missing \"%s\" parameter",
+              channelNumber,
+              Supla::Parser::Humidity);
+    return false;
+  }
+
+  if (ch[Supla::MultiplierHumi]) {
+    paramCount++;
+    double multiplier = ch[Supla::MultiplierHumi].as<double>();
+    thermHumi->setMultiplier(Supla::Parser::Humidity, multiplier);
+  }
+
+  if (ch[Supla::Parser::Temperature]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Parser::Temperature].as<int>();
+      thermHumi->setMapping(Supla::Parser::Temperature, index);
+    } else {
+      std::string key = ch[Supla::Parser::Temperature].as<std::string>();
+      thermHumi->setMapping(Supla::Parser::Temperature, key);
+    }
+  } else {
+    SUPLA_LOG_ERROR(
+              "Channel[%d] config: missing \"%s\" parameter",
+              channelNumber,
+              Supla::Parser::Temperature);
+    return false;
+  }
+
+  if (ch[Supla::MultiplierTemp]) {
+    paramCount++;
+    double multiplier = ch[Supla::MultiplierTemp].as<double>();
+    thermHumi->setMultiplier(Supla::Parser::Temperature, multiplier);
+  }
+
+  auto sensor = thermHumi;
+  if (ch[Supla::Sensor::BatteryLevel]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Sensor::BatteryLevel].as<int>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, index);
+    } else {
+      std::string key = ch[Supla::Sensor::BatteryLevel].as<std::string>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, key);
+    }
+  }
+  if (ch[Supla::Sensor::MultiplierBatteryLevel]) {
+    paramCount++;
+    double multiplier = ch[Supla::Sensor::MultiplierBatteryLevel].as<double>();
+    sensor->setMultiplier(Supla::Sensor::BatteryLevel, multiplier);
+  }
+
+  return true;
+}
+
+bool Supla::LinuxYamlConfig::addHumidityParsed(
+    const YAML::Node& ch, int channelNumber, Supla::Parser::Parser* parser) {
+  SUPLA_LOG_INFO("Channel[%d] config: adding HumidityParsed", channelNumber);
+  auto humi = new Supla::Sensor::HumidityParsed(parser);
+  if (ch[Supla::Parser::Humidity]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Parser::Humidity].as<int>();
+      humi->setMapping(Supla::Parser::Humidity, index);
+    } else {
+      std::string key = ch[Supla::Parser::Humidity].as<std::string>();
+      humi->setMapping(Supla::Parser::Humidity, key);
+    }
+  } else {
+    SUPLA_LOG_ERROR(
+              "Channel[%d] config: missing \"%s\" parameter",
+              channelNumber,
+              Supla::Parser::Humidity);
+    return false;
+  }
+  if (ch[Supla::Multiplier]) {
+    paramCount++;
+    double multiplier = ch[Supla::Multiplier].as<double>();
+    humi->setMultiplier(Supla::Parser::Humidity, multiplier);
+  }
+
+  auto sensor = humi;
+  if (ch[Supla::Sensor::BatteryLevel]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Sensor::BatteryLevel].as<int>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, index);
+    } else {
+      std::string key = ch[Supla::Sensor::BatteryLevel].as<std::string>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, key);
+    }
+  }
+  if (ch[Supla::Sensor::MultiplierBatteryLevel]) {
+    paramCount++;
+    double multiplier = ch[Supla::Sensor::MultiplierBatteryLevel].as<double>();
+    sensor->setMultiplier(Supla::Sensor::BatteryLevel, multiplier);
+  }
+
+  return true;
+}
+
+bool Supla::LinuxYamlConfig::addPressureParsed(
+    const YAML::Node& ch, int channelNumber, Supla::Parser::Parser* parser) {
+  SUPLA_LOG_INFO("Channel[%d] config: adding PressureParsed", channelNumber);
+  auto pressure = new Supla::Sensor::PressureParsed(parser);
+  if (ch[Supla::Parser::Pressure]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Parser::Pressure].as<int>();
+      pressure->setMapping(Supla::Parser::Pressure, index);
+    } else {
+      std::string key = ch[Supla::Parser::Pressure].as<std::string>();
+      pressure->setMapping(Supla::Parser::Pressure, key);
+    }
+  } else {
+    SUPLA_LOG_ERROR(
+              "Channel[%d] config: missing \"%s\" parameter",
+              channelNumber,
+              Supla::Parser::Pressure);
+    return false;
+  }
+  if (ch[Supla::Multiplier]) {
+    paramCount++;
+    double multiplier = ch[Supla::Multiplier].as<double>();
+    pressure->setMultiplier(Supla::Parser::Pressure, multiplier);
+  }
+
+  auto sensor = pressure;
+  if (ch[Supla::Sensor::BatteryLevel]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Sensor::BatteryLevel].as<int>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, index);
+    } else {
+      std::string key = ch[Supla::Sensor::BatteryLevel].as<std::string>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, key);
+    }
+  }
+  if (ch[Supla::Sensor::MultiplierBatteryLevel]) {
+    paramCount++;
+    double multiplier = ch[Supla::Sensor::MultiplierBatteryLevel].as<double>();
+    sensor->setMultiplier(Supla::Sensor::BatteryLevel, multiplier);
+  }
+
+  return true;
+}
+
+bool Supla::LinuxYamlConfig::addWindParsed(
+    const YAML::Node& ch, int channelNumber, Supla::Parser::Parser* parser) {
+  SUPLA_LOG_INFO("Channel[%d] config: adding WindParsed", channelNumber);
+  auto wind = new Supla::Sensor::WindParsed(parser);
+  if (ch[Supla::Parser::Wind]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Parser::Wind].as<int>();
+      wind->setMapping(Supla::Parser::Wind, index);
+    } else {
+      std::string key = ch[Supla::Parser::Wind].as<std::string>();
+      wind->setMapping(Supla::Parser::Wind, key);
+    }
+  } else {
+    SUPLA_LOG_ERROR(
+              "Channel[%d] config: missing \"%s\" parameter",
+              channelNumber,
+              Supla::Parser::Wind);
+    return false;
+  }
+  if (ch[Supla::Multiplier]) {
+    paramCount++;
+    double multiplier = ch[Supla::Multiplier].as<double>();
+    wind->setMultiplier(Supla::Parser::Wind, multiplier);
+  }
+
+  auto sensor = wind;
+  if (ch[Supla::Sensor::BatteryLevel]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Sensor::BatteryLevel].as<int>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, index);
+    } else {
+      std::string key = ch[Supla::Sensor::BatteryLevel].as<std::string>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, key);
+    }
+  }
+  if (ch[Supla::Sensor::MultiplierBatteryLevel]) {
+    paramCount++;
+    double multiplier = ch[Supla::Sensor::MultiplierBatteryLevel].as<double>();
+    sensor->setMultiplier(Supla::Sensor::BatteryLevel, multiplier);
+  }
+
+  return true;
+}
+
+bool Supla::LinuxYamlConfig::addRainParsed(
+    const YAML::Node& ch, int channelNumber, Supla::Parser::Parser* parser) {
+  SUPLA_LOG_INFO("Channel[%d] config: adding RainParsed", channelNumber);
+  auto rain = new Supla::Sensor::RainParsed(parser);
+  if (ch[Supla::Parser::Rain]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Parser::Rain].as<int>();
+      rain->setMapping(Supla::Parser::Rain, index);
+    } else {
+      std::string key = ch[Supla::Parser::Rain].as<std::string>();
+      rain->setMapping(Supla::Parser::Rain, key);
+    }
+  } else {
+    SUPLA_LOG_ERROR(
+              "Channel[%d] config: missing \"%s\" parameter",
+              channelNumber,
+              Supla::Parser::Rain);
+    return false;
+  }
+  if (ch[Supla::Multiplier]) {
+    paramCount++;
+    double multiplier = ch[Supla::Multiplier].as<double>();
+    rain->setMultiplier(Supla::Parser::Rain, multiplier);
+  }
+
+  auto sensor = rain;
+  if (ch[Supla::Sensor::BatteryLevel]) {
+    paramCount++;
+    if (parser->isBasedOnIndex()) {
+      int index = ch[Supla::Sensor::BatteryLevel].as<int>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, index);
+    } else {
+      std::string key = ch[Supla::Sensor::BatteryLevel].as<std::string>();
+      sensor->setMapping(Supla::Sensor::BatteryLevel, key);
+    }
+  }
+  if (ch[Supla::Sensor::MultiplierBatteryLevel]) {
+    paramCount++;
+    double multiplier = ch[Supla::Sensor::MultiplierBatteryLevel].as<double>();
+    sensor->setMultiplier(Supla::Sensor::BatteryLevel, multiplier);
+  }
+
+  return true;
 }
 
