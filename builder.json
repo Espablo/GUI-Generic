@@ -313,6 +313,27 @@
 				"desc": "Paramètres de l´appareil->Interrupteurs de fin de course. Permet le fonctionnement des interrupteurs de fin de course."
 			}
 		},
+		"SUPLA_CONDITIONS": {
+			"name": "Warunkowanie",
+			"desc": "Umożliwia sterowanie różnymi elementami (przekaźnikami, rgbw itd.) w zależnośći od wartości sensora.",
+			"defOn": false,
+			"en": {
+				"name": "Conditioning",
+				"desc": "It allows you to control depending on the sensor value."
+			},
+			"es": {
+				"name": "Acondicionamiento",
+				"desc": "Le permite controlar el relé en función del valor del sensor."
+			},
+			"de": {
+				"name": "Konditionierung",
+				"desc": "Damit können Sie das Relais abhängig vom Sensorwert steuern."
+			},
+			"fr": {
+				"name": "Conditionnement",
+				"desc": "Il permet de contrôler le relais en fonction de la valeur du capteur."
+			}
+		},
 		"SUPLA_LED": {
 			"name": "LED załączenia przekaźnika",
 			"desc": "Ustawienia urządzenia->LED. Umożliwia zmianę poziomu sygnału sterującego LED sygnalizującym załączenie przekaźnika.",

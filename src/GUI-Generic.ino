@@ -649,7 +649,11 @@ void setup() {
 
 #ifdef SUPLA_MAX44009
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MAX44009).toInt()) {
-      new Supla::Sensor::MAX_44009();
+      auto max4409 = new Supla::Sensor::MAX_44009();
+
+#ifdef SUPLA_CONDITIONS
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_MAX44009, S_MAX44009, max4409);
+#endif
     }
 #endif
 
