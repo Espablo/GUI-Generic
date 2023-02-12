@@ -16,7 +16,7 @@
 #ifndef SuplaConditions_h
 #define SuplaConditions_h
 
-#include "SuplaDeviceGUI.h"
+#include "SuplaCommonPROGMEM.h"
 #include <supla/channel_element.h>
 #include <supla/sensor/electricity_meter.h>
 
@@ -98,6 +98,7 @@ enum sensorList
   SENSOR_ADE7953,
   SENSOR_BH1750,
   SENSOR_RGBW,
+  SENSOR_PUSHOVER,
   COUNT_SENSOR_LIST
 };
 

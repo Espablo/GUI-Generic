@@ -18,6 +18,8 @@
 
 #ifdef SUPLA_CONDITIONS
 
+#include "SuplaDeviceGUI.h"
+
 const char *CONDITIONS_SENSOR_LIST[COUNT_SENSOR_LIST] = {};
 const char *CONDITIONS_EXECUTIVE_TYPE_LIST[COUNT_EXECUTIVE_LIST] = {};
 
