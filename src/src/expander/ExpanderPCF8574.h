@@ -27,11 +27,8 @@ namespace Supla {
 namespace Control {
 class ExpanderPCF8574 : public Supla::Io, public Supla::Element {
  public:
-#ifdef ARDUINO_ARCH_ESP32
   ExpanderPCF8574(TwoWire *wire, uint8_t address);
-#else
-  ExpanderPCF8574(uint8_t address);
-#endif
+
   virtual void onInit();
 
   virtual void customPinMode(int channelNumber, uint8_t pin, uint8_t mode);

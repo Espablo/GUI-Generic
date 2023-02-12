@@ -73,11 +73,7 @@ namespace Supla {
 namespace Control {
 class ExpanderMCP23017 : public Supla::Io, public Supla::Element {
  public:
-#ifdef ARDUINO_ARCH_ESP32
   ExpanderMCP23017(TwoWire *wire, uint8_t address);
-#else
-  ExpanderMCP23017(uint8_t address);
-#endif
 
   virtual void customPinMode(int channelNumber, uint8_t pin, uint8_t mode);
   virtual int customDigitalRead(int channelNumber, uint8_t pin);

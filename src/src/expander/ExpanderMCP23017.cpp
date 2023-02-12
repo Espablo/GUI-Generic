@@ -228,6 +228,7 @@ void IRAM_ATTR MCP23017::_interrupt() {
 
 namespace Supla {
 namespace Control {
+
 ExpanderMCP23017::ExpanderMCP23017(TwoWire* wire, uint8_t address) : Supla::Io(false) {
   _control = new MCP23017(wire);
 

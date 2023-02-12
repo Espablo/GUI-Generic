@@ -18,20 +18,13 @@
 
 namespace Supla {
 namespace Control {
-#ifdef ARDUINO_ARCH_ESP32
+
 ExpanderPCF8575::ExpanderPCF8575(TwoWire *wire, uint8_t address) : Supla::Io(false) {
+#ifdef ARDUINO_ARCH_ESP32
   _control = new PCF8575(wire, address);
-
-  wire->beginTransmission(address);
-  if (wire->endTransmission() == 0) {
-    isConnected = true;
-    Serial.print("PCF8575 is connected address: ");
-    Serial.println(address, HEX);
-  }
-}
 #else
-ExpanderPCF8575::ExpanderPCF8575(uint8_t address) : Supla::Io(false) {
-  _control = new PCF8575(&Wire, address);
+  _control = new PCF8575(address);
+#endif
 
   wire->beginTransmission(address);
   if (wire->endTransmission() == 0) {
@@ -40,7 +33,6 @@ ExpanderPCF8575::ExpanderPCF8575(uint8_t address) : Supla::Io(false) {
     Serial.println(address, HEX);
   }
 }
-#endif
 
 void ExpanderPCF8575::onInit() {
   _control->begin();
