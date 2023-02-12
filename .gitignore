@@ -11,3 +11,5 @@ src/GUI-Generic.ino.cpp
 .project
 .cproject
 .settings
+#### SuplaDevice ####
+lib/SuplaDevice/src/supla/supla_lib_config.h
