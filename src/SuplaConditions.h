@@ -16,7 +16,8 @@
 #ifndef SuplaConditions_h
 #define SuplaConditions_h
 
-#include "SuplaCommonPROGMEM.h"
+#include "SuplaDeviceGUI.h"
+
 #include <supla/channel_element.h>
 #include <supla/sensor/electricity_meter.h>
 
