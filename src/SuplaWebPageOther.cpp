@@ -205,7 +205,7 @@ void handleOther(int save) {
                Supla::PushoverSound::SOUND_COUNT, selected, false, false);
 
     String massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str();
-    addTextBox(webContentBuffer, String(INPUT_PUSHOVER_MESSAGE) + nr, String(S_MESSAGE) + S_SPACE + (nr + 1), massage, 0, MAX_MESSAGE_SIZE, false);
+    addTextBox(webContentBuffer, String(INPUT_PUSHOVER_MESSAGE) + nr, String(S_MESSAGE) + S_SPACE + (nr + 1), massage, 0, 0, false);
   }
 
   addFormHeaderEnd(webContentBuffer);
