@@ -15,7 +15,12 @@
 */
 
 #include "ConfigExpander.h"
+
 #include "../../SuplaDeviceGUI.h"
+
+#include "ExpanderPCF8575.h"
+#include "ExpanderPCF8574.h"
+#include "ExpanderMCP23017.h"
 
 namespace Supla {
 namespace Control {
