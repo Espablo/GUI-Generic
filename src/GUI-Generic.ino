@@ -118,10 +118,6 @@ void setup() {
         }
 #endif
 
-#ifdef SUPLA_PUSHOVER
-        Supla::GUI::addPushover(nr, S_RELAY, Supla::GUI::relay[nr]);
-#endif
-
 #ifdef SUPLA_DIRECT_LINKS
         Supla::GUI::addDirectLinks(nr);
 #endif
@@ -140,13 +136,16 @@ void setup() {
     if (gpio != OFF_GPIO) {
       binary = Supla::Control::GUI::Binary(gpio, ConfigESP->getPullUp(gpio), false, nr);
     }
-#ifdef SUPLA_PUSHOVER
-    Supla::GUI::addPushover(nr, S_LIMIT_SWITCH, binary);
-#endif
 
 #ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsSensor(SENSOR_BINARY, S_LIMIT_SWITCH, binary, nr);
 #endif
+  }
+#endif
+
+#ifdef SUPLA_PUSHOVER
+  for (uint8_t nr = 0; nr < MAX_PUSHOVER_MESSAGE; nr++) {
+    Supla::GUI::addPushover(nr);
   }
 #endif
 

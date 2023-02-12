@@ -14,7 +14,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "pushover.h"
+#include "Pushover.h"
 
 #include <Arduino.h>
 
@@ -231,7 +231,7 @@ void Pushover::iterateAlways() {
 
 void Pushover::handleAction(int event, int action) {
   (void)(event);
-  if (action == Supla::TURN_ON) {
+  if (action == Supla::TURN_ON || action == Supla::TURN_OFF) {
     lastMsgReceivedMs = millis();
   }
 }

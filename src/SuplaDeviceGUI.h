@@ -128,7 +128,10 @@
 
 #include <Wire.h>
 
-#include <supla/control/pushover.h>
+#ifdef SUPLA_PUSHOVER
+#include "src/control/Pushover.h"
+#endif
+
 #include <supla/control/direct_links.h>
 
 #ifdef SUPLA_NTC_10K
@@ -249,8 +252,8 @@ void addButtonBridge(uint8_t nr);
 extern std::vector<Supla::Control::Relay *> relay;
 #endif
 
-#if defined(SUPLA_PUSHOVER)
-void addPushover(uint8_t nr, const String &name, Supla::ChannelElement *client);
+#ifdef SUPLA_PUSHOVER
+void addPushover(uint8_t nr);
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS)

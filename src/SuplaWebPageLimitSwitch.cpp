@@ -130,10 +130,6 @@ void handleLimitSwitchSet(int save) {
     input = INPUT_LIMIT_SWITCH_PULLUP;
     addCheckBox(webContentBuffer, input, S_INTERNAL_PULL_UP, selected);
     addFormHeaderEnd(webContentBuffer);
-
-#ifdef SUPLA_PUSHOVER
-    Html::addPushover(nr.toInt());
-#endif
   }
 
   addButtonSubmit(webContentBuffer, S_SAVE);
@@ -156,15 +152,6 @@ void handleLimitSwitchSaveSet() {
     ConfigESP->setPullUp(gpio, 1);
   else
     ConfigESP->setPullUp(gpio, 0);
-
-#ifdef SUPLA_PUSHOVER
-  if (nr.toInt() <= MAX_PUSHOVER_MESSAGE) {
-    input = INPUT_PUSHOVER_SOUND;
-    ConfigManager->setElement(KEY_PUSHOVER_SOUND, (nr.toInt()), WebServer->httpServer->arg(input).c_str());
-    input = INPUT_PUSHOVER_MESSAGE;
-    ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, (nr.toInt()), WebServer->httpServer->arg(input).c_str());
-  }
-#endif
 
   switch (ConfigManager->save()) {
     case E_CONFIG_OK:

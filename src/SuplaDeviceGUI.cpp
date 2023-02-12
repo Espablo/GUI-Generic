@@ -128,6 +128,7 @@ void addRelay(uint8_t nr) {
 
 #ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsExecutive(CONDITIONS::EXECUTIVE_RELAY, S_RELAY, relay[nr], nr);
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_RELAY, S_RELAY, relay[nr], nr);
 #endif
 
     switch (ConfigESP->getMemory(pinRelay, nr)) {
@@ -345,24 +346,24 @@ void addButtonBridge(uint8_t nr) {
 #endif
 
 #ifdef SUPLA_PUSHOVER
-void addPushover(uint8_t nr, const String &name, Supla::ChannelElement *client) {
-  if (nr <= MAX_PUSHOVER_MESSAGE) {
-    if (strcmp(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str(), "") != 0 &&
-        strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 && strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
-      auto pushover =
-          new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
+void addPushover(uint8_t nr) {
+  if (strcmp(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str(), "") != 0 &&
+      strcmp(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), "") != 0 && strcmp(ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), "") != 0) {
+    auto pushover =
+        new Supla::Control::Pushover(ConfigManager->get(KEY_PUSHOVER_TOKEN)->getValue(), ConfigManager->get(KEY_PUSHOVER_USER)->getValue(), true);
 
-      String title = ConfigManager->get(KEY_HOST_NAME)->getValue();
+    String title = ConfigManager->get(KEY_HOST_NAME)->getValue();
 
-      if (title.indexOf(" ", title.length() - 1) == -1) {
-        title = String(ConfigManager->get(KEY_HOST_NAME)->getValue()) + S_SPACE + "-" + S_SPACE + name + S_SPACE + (nr + 1);
-      }
+    // if (title.indexOf(" ", title.length() - 1) == -1) {
+    //   title = String(ConfigManager->get(KEY_HOST_NAME)->getValue()) + S_SPACE + "-" + S_SPACE + name + S_SPACE + (nr + 1);
+    // }
 
-      pushover->setTitle(title.c_str());
-      pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str());
-      pushover->setSound(ConfigManager->get(KEY_PUSHOVER_SOUND)->getElement(nr).toInt());
-      client->addAction(Supla::TURN_ON, pushover, Supla::ON_TURN_ON);
-    }
+    pushover->setTitle(title.c_str());
+    pushover->setMessage(ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str());
+    pushover->setSound(ConfigManager->get(KEY_PUSHOVER_SOUND)->getElement(nr).toInt());
+#ifdef SUPLA_CONDITIONS
+    Supla::GUI::Conditions::addConditionsExecutive(CONDITIONS::EXECUTIVE_PUSHOVER, S_PUSHOVER, pushover, nr);
+#endif
   }
 }
 #endif

@@ -61,7 +61,7 @@ enum PushoverSound {
 };
 };
 namespace Control {
-class Pushover : public Element, public ActionHandler {
+class Pushover : public Supla::Element, public Supla::ActionHandler {
  public:
   Pushover(const char *token = nullptr,
            const char *user = nullptr,

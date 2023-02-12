@@ -168,10 +168,4 @@ enum SaveResult
 
 const String SuplaSaveResult(int save);
 
-#ifdef SUPLA_PUSHOVER
-namespace Html {
-void addPushover(uint8_t nr);
-}
-#endif
-
 #endif  // Markup_h

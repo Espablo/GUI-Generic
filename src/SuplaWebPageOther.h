@@ -108,6 +108,9 @@ void handleCounterCalibrateSave();
 #ifdef SUPLA_PUSHOVER
 #define INPUT_PUSHOVER_TOKEN "pot"
 #define INPUT_PUSHOVER_USER  "pou"
+
+#define INPUT_PUSHOVER_MESSAGE "ipm"
+#define INPUT_PUSHOVER_SOUND   "ips"
 #endif
 
 #ifdef SUPLA_HC_SR04
