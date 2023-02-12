@@ -53,8 +53,8 @@ void ExpanderPCF8575::customPinMode(int channelNumber, uint8_t pin, uint8_t mode
 int ExpanderPCF8575::customDigitalRead(int channelNumber, uint8_t pin) {
   uint8_t val = 0;
   if (isConnected) {
-    // val = _control->digitalRead(pin);
-    // delay(10);
+    val = _control->digitalRead(pin);
+    delay(10);
   }
   return val;
 }

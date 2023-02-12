@@ -245,8 +245,8 @@ void ExpanderMCP23017::customPinMode(int channelNumber, uint8_t pin, uint8_t mod
 int ExpanderMCP23017::customDigitalRead(int channelNumber, uint8_t pin) {
   uint8_t val = 0;
   if (isConnected) {
-    // val = _control->digitalRead(pin);
-    // delay(10);
+    val = _control->digitalRead(pin);
+    delay(10);
   }
   return val;
 }
