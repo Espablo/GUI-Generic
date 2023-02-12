@@ -494,6 +494,16 @@ void chooseTemplateBoard(String board) {
     addExpander(EXPENDER_PCF8574, root["PCF8574"]);
   }
 #endif
+
+  JsonArray& numberButtons = root["BTN"];
+  for (size_t i = 0; i < numberButtons.size(); i++) {
+    int nr = numberButtons[i];
+    nr--;
+
+    if (nr >= 0) {
+      ConfigManager->setElement(KEY_NUMBER_BUTTON, i, nr);
+    }
+  }
 }
 
 int convert(int gpioJSON) {
@@ -825,32 +835,26 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
 
     if (typeExpander == EXPENDER_MCP23017) {
       sizeExpander = 16;
-      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, true);
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_MCP23017);
     }
     else if (typeExpander == EXPENDER_MCP23017_I2C2) {
       sizeExpander = 16;
-      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, true);
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_MCP23017_I2C2);
     }
     else if (typeExpander == EXPENDER_PCF8575) {
       sizeExpander = 16;
-      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, true);
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8575);
     }
     else if (typeExpander == EXPENDER_PCF8575_I2C2) {
       sizeExpander = 16;
-      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, true);
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8575_I2C2);
     }
     else if (typeExpander == EXPENDER_PCF8574) {
       sizeExpander = 8;
-      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, true);
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8574);
     }
     else {
-      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, false);
-      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, false);
+      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8574_I2C2);
     }
 
     for (size_t ii = 1; ii <= sizeExpander; ii++) {
@@ -860,7 +864,8 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
         if (gpio != 17)
           gpio = gpio - 1;
 
-        ConfigESP->setGpioMCP23017(gpio, address, ConfigManager->get(key)->getValueInt(), function);
+        uint8_t nr = ConfigManager->get(key)->getValueInt();
+        Expander->setGpioExpander(gpio, address, nr, function);
 
         switch (function) {
           case FUNCTION_RELAY:
@@ -872,6 +877,7 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
             ConfigESP->setEvent(gpio, Supla::Event::ON_CHANGE);
             ConfigESP->setPullUp(gpio, true);
             ConfigESP->setInversed(gpio, true);
+            ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
             break;
         }
         ConfigManager->set(key, ConfigManager->get(key)->getValueInt() + 1);

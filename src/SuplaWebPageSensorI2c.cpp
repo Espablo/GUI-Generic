@@ -73,14 +73,13 @@ void handleSensorI2c(int save) {
   addFormHeader(webContentBuffer, String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_I2C);
   addListGPIOBox(webContentBuffer, INPUT_SDA, S_SDA, FUNCTION_SDA);
   addListGPIOBox(webContentBuffer, INPUT_SCL, S_SCL, FUNCTION_SCL);
+
+  if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
+    webPageI2CScanner(&Wire);
+  }
   addFormHeaderEnd(webContentBuffer);
 
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
-    addFormHeader(webContentBuffer);
-    webPageI2CScanner(&Wire);
-
-    addFormHeaderEnd(webContentBuffer);
-
 #ifdef SUPLA_BME280
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt();
     addFormHeader(webContentBuffer);
@@ -159,7 +158,7 @@ void handleSensorI2c(int save) {
 
 #ifdef SUPLA_BUTTON
 #ifdef GUI_SENSOR_I2C_EXPENDER
-      if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
+      if (ConfigESP->checkActiveExpander(FUNCTION_BUTTON)) {
         addListExpanderGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON, 0);
       }
       else {
@@ -210,20 +209,6 @@ void handleSensorI2c(int save) {
         addTextBox(webContentBuffer, input, name, sensorName, 0, MAX_DS18B20_NAME, false);
       }
     }
-    addFormHeaderEnd(webContentBuffer);
-#endif
-
-#ifdef SUPLA_MCP23017
-    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt();
-    addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_MCP23017, S_MCP23017, STATE_P, 2, selected);
-    addFormHeaderEnd(webContentBuffer);
-#endif
-
-#if defined(SUPLA_PCF8575) || defined(SUPLA_PCF8574)
-    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt();
-    addFormHeader(webContentBuffer);
-    addListBox(webContentBuffer, INPUT_PCF857x, F("PCF857x"), STATE_P, 2, selected);
     addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -367,7 +352,7 @@ void handleSensorI2cSave() {
 
 #ifdef SUPLA_BUTTON
 #ifdef GUI_SENSOR_I2C_EXPENDER
-  if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
+  if (ConfigESP->checkActiveExpander(FUNCTION_BUTTON)) {
     if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
       handleControl(6);
       return;
@@ -437,27 +422,6 @@ void handleSensorI2cSave() {
     if (strcmp(WebServer->httpServer->arg(input).c_str(), ConfigManager->get(KEY_NAME_SENSOR)->getElement(i).c_str()) != 0) {
       ConfigManager->setElement(KEY_NAME_SENSOR, i, WebServer->httpServer->arg(input).c_str());
     }
-  }
-#endif
-
-#ifdef SUPLA_MCP23017
-  key = KEY_ACTIVE_SENSOR;
-  input = INPUT_MCP23017;
-  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, WebServer->httpServer->arg(input).toInt());
-
-    // if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-    //   ConfigESP->clearFunctionGpio(FUNCTION_RELAY);
-    //   ConfigESP->clearFunctionGpio(FUNCTION_BUTTON);
-    // }
-  }
-#endif
-
-#if defined(SUPLA_PCF8575) || defined(SUPLA_PCF8574)
-  key = KEY_ACTIVE_SENSOR;
-  input = INPUT_PCF857x;
-  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, WebServer->httpServer->arg(input).toInt());
   }
 #endif
 

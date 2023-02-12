@@ -1,152 +1,144 @@
+<div>
+<a href="https://www.mischianti.org/forums/forum/mischiantis-libraries/pcf8574-i2c-digital-i-o-expander/"><img
+  src="https://github.com/xreef/LoRa_E32_Series_Library/raw/master/resources/buttonSupportForumEnglish.png" alt="Support forum pcf8574 English"
+   align="right"></a>
+</div>
+<div>
+<a href="https://www.mischianti.org/it/forums/forum/le-librerie-di-mischianti/pcf8574-expander-digitale-i-o-i2c/"><img
+  src="https://github.com/xreef/LoRa_E32_Series_Library/raw/master/resources/buttonSupportForumItaliano.png" alt="Forum supporto pcf8574 italiano"
+  align="right"></a>
+</div>
 
-[![Arduino CI](https://github.com/RobTillaart/PCF8574/workflows/Arduino%20CI/badge.svg)](https://github.com/marketplace/actions/arduino_ci)
-[![Arduino-lint](https://github.com/RobTillaart/PCF8574/actions/workflows/arduino-lint.yml/badge.svg)](https://github.com/RobTillaart/PCF8574/actions/workflows/arduino-lint.yml)
-[![JSON check](https://github.com/RobTillaart/PCF8574/actions/workflows/jsoncheck.yml/badge.svg)](https://github.com/RobTillaart/PCF8574/actions/workflows/jsoncheck.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/RobTillaart/PCF8574/blob/master/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/RobTillaart/PCF8574.svg?maxAge=3600)](https://github.com/RobTillaart/PCF8574/releases)
+#
+#
+#
+#
+#
+#
 
+### Additional information and documentation on my site: [pcf8574 Article](https://www.mischianti.org/2019/01/02/pcf8574-i2c-digital-i-o-expander-fast-easy-usage/).
 
-# PCF8574
+### If you need more pins [here](https://www.mischianti.org/2019/07/22/pcf8575-i2c-16-bit-digital-i-o-expander/) you can find the pcf8575 16bit version of the IC.
 
-Arduino library for PCF8574 - 8 channel I2C IO expander
+### Version 2.2
 
+Library to use I2C analog IC with arduino and esp8266. Can read and write digital value with only 2 wires (perfect for ESP-01).
 
-## Description
+Tutorial: 
 
-Related to the PCF8575 16 channel IO expander library  https://github.com/RobTillaart/PCF8575
+To download. click the DOWNLOADS button in the top right corner, rename the uncompressed folder PCF8574. Check that the PCF8574 folder contains `PCF8574\\.cpp` and `PCF8574.h`. Place the DHT library folder your `<arduinosketchfolder>/libraries/` folder. You may need to create the libraries subfolder if its your first library. Restart the IDE.
 
-This library gives easy control over the 8 pins of a PCF8574 and PCF8574A chip.
-These chips are identical in behaviour although there are two distinct address ranges.
+## Changelog
+10/08/2022: v2.3.4 Add support for custom SERCOM interface of Arduino SAMD devices. Force SDA SCL to use GPIO numeration for STM32 bug (https://www.mischianti.org/forums/topic/compatible-with-stm32duino/). 
+28/07/2022: v2.3.3 Force SDA SCL to use GPIO numeration (https://www.mischianti.org/forums/topic/cannot-set-sda-clk-on-esp8266/).
+28/07/2022: v2.3.2 Fix the SDA SCL type #58 and add basic support for SAMD device.
+26/04/2022: v2.3.1 Fix example for esp32 and double begin issue #56.
+06/04/2022: v2.3.0 Fix package size
+30/12/2021: v2.2.4 Minor fix and remove deprecated declaration
+23/11/2020: v2.2.2 Add multiple implementation for encoder management (you can enable by uncomment relative define)
 
-| TYPE     | ADDRESS-RANGE | notes                    |
-|:---------|:-------------:|:------------------------:|
-|PCF8574   |  0x20 to 0x27 | same range as PCF8575 !! |
-|PCF8574A  |  0x38 to 0x3F |                          |
+# Reef complete PCF8574 PCF8574AP digital input and output expander with i2c bus.
+I try to simplify the use of this IC, with a minimal set of operations.
 
-So you can connect up to 16 PCF8574 on one I2C bus, giving access 
-to 16 x 8 = 128 IO lines. To maximize IO lines combine 8 x PCF8575 + 8 x PCF8574A giving
-128 + 64 = 192 IO lines. 
-Be sure to have a well dimensioned power supply.
+PCF8574P address map 0x20-0x27 
+PCF8574AP address map 0x38-0x3f 
 
-The library allows to read and write both single pins or 8 pins at once.
-Furthermore some additional functions are implemented that are playful and useful.
+**Constructor:**
+Pass the address of I2C (to check the address use this guide [I2cScanner](https://playground.arduino.cc/Main/I2cScanner)) 
+```cpp
+	PCF8574(uint8_t address);
+```
+For ESP8266 if you want to specify SDA and SCL pins use this:
 
+```cpp
+	PCF8574(uint8_t address, uint8_t sda, uint8_t scl);
+```
+You must set input/output mode:
+```cpp
+	pcf8574.pinMode(P0, OUTPUT);
+	pcf8574.pinMode(P1, INPUT);
+	pcf8574.pinMode(P2, INPUT);
+```
 
-## I2C Clock
+then IC as you can see in the image has 8 digital input/output ports:
 
-Tested on UNO with **PCF8574_performance** showed that the PCF8574 still works at 500 KHz and failed at 600 KHz.
-These values are outside the specs of the datasheet so they are not recommended.
-However when performance is needed you can try to overclock the chip. 
+![PCF8574 schema](https://github.com/xreef/PCF8574_library/blob/master/resources/PCF8574-pins.gif)
 
-| clock speed |  Read  |  Write  |  Notes            |
-|:-----------:|:------:|:-------:|:------------------|
-|  100000     |  236   |   240   | spec datasheet    |
-|  200000     |  132   |   140   |
-|  300000     |  104   |   108   |
-|  400000     |   96   |    96   | max advised speed |
-|  500000     |   92   |    92   | not recommended   |
-|  600000     | crash  |  crash  | 
+To read all analog input in one trasmission you can do (even if I use a 10millis debounce time to prevent too much read from i2c):
+```cpp
+	PCF8574::DigitalInput di = PCF8574.digitalReadAll();
+	Serial.print(di.p0);
+	Serial.print(" - ");
+	Serial.print(di.p1);
+	Serial.print(" - ");
+	Serial.print(di.p2);
+	Serial.print(" - ");
+	Serial.println(di.p3);
+```
 
+To follow a request (you can see It on [issue #5](https://github.com/xreef/PCF8574_library/issues/5)) I create a define variable to work with low memory devices, if you uncomment this line in the .h file of the library:
 
-## Interface
+```cpp
+// #define PCF8574_LOW_MEMORY
+```
 
-**PCF8574_INITIAL_VALUE** is a define that can be set compile time or before
-the include of "pcf8574.h" to overrule the default value used with the **begin()** call.
+Enable low memory props and gain about 7 bytes of memory, and you must use the method to read all like so:
 
+ ```cpp
+	byte di = pcf8574.digitalReadAll();
+	Serial.print("READ VALUE FROM PCF: ");
+	Serial.println(di, BIN);
+```
 
-### Constructor
+where `di` is a byte like 1110001, so you must do a bitwise operation to get the data, operation that I already do in the "normal" mode. For example:
 
-- **PCF8574(uint8_t deviceAddress = 0x20, TwoWire \*wire = &Wire)** Constructor with optional device address, default 0x20, 
-and the optional Wire interface as parameter.
-- **bool begin(uint8_t value = PCF8574_INITIAL_VALUE)** set the initial value for the pins and masks.
-- **bool begin(int sda, int scl, uint8_t value = PCF8574_INITIAL_VALUE)** idem, for the ESP32 where one can choose the I2C pins.
-- **bool isConnected()** checks if the address set in the constructor or by **setAddress()** is visible on the I2C bus.
-- **bool setAddress(const uint8_t deviceAddress)** sets the device address after construction. 
-Can be used to switch between PCF8574 modules runtime. Note this corrupts internal buffered values, 
-so one might need to call **read8()** and/or **write8()**. Returns true if address can be found on I2C bus.
-- **uint8_t getAddress()** returns the device address.
+ ```cpp
+	p0 = ((di & bit(0))>0)?HIGH:LOW;
+	p1 = ((di & bit(1))>0)?HIGH:LOW;
+	p2 = ((di & bit(2))>0)?HIGH:LOW;
+	p3 = ((di & bit(3))>0)?HIGH:LOW;
+	p4 = ((di & bit(4))>0)?HIGH:LOW;
+	p5 = ((di & bit(5))>0)?HIGH:LOW;
+	p6 = ((di & bit(6))>0)?HIGH:LOW;
+	p7 = ((di & bit(7))>0)?HIGH:LOW;
+ ```
+ 
 
+if you want to read a single input:
 
-### Read and Write
+```cpp
+	int p1Digital = PCF8574.digitalRead(P1); // read P1
+```
 
-- **uint8_t read8()** reads all 8 pins at once. This one does the actual reading.
-- **uint8_t read(uint8_t pin)** reads a single pin; pin = 0..7
-- **uint8_t value()** returns the last read inputs again, as this information is buffered 
-in the class this is faster than reread the pins.
-- **void write8(const uint8_t value)** writes all 8 pins at once. This one does the actual writing.
-- **uint8_t write(const uint8_t pin, const uint8_t value)** writes a single pin; pin = 0..7; 
-value is HIGH(1) or LOW (0)
-- **uint8_t valueOut()** returns the last written data.
+If you want to write a digital value:
+```cpp
+	PCF8574.digitalWrite(P1, HIGH);
+```
+or:
+```cpp
+	PCF8574.digitalWrite(P1, LOW);
+```
 
+You can also use an interrupt pin:
+You must initialize the pin and the function to call when interrupt raised from PCF8574
+```cpp
+// Function interrupt
+void keyPressedOnPCF8574();
 
-### Button
+// Set i2c address
+PCF8574 pcf8574(0x39, ARDUINO_UNO_INTERRUPT_PIN, keyPressedOnPCF8574);
+```
+Remember you can't use Serial or Wire on an interrupt function.
 
-The **"button"** functions are to be used when you mix input and output on one IC.
-It does not change / affect the pins used for output by masking these.
-Typical usage is to call **setButtonMask()** once in setup as pins do not (often) change
-during program execution. 
+It's better to only set a variable to read on loop:
+```cpp
+void keyPressedOnPCF8574(){
+	// Interrupt called (No Serial no read no wire in this function, and DEBUG disabled on PCF library)
+	 keyPressed = true;
+}
+```
 
-- **void setButtonMask(const uint8_t mask)** sets the (bit) mask which lines are input.
-- **uint8_t getButtonMask()** returns the set buttonMask.
-- **uint8_t readButton8()** use the mask set by setButtonMask to select specific input pins.
-- **uint8_t readButton8(const uint8_t mask)** use a specific mask to select specific input pins.
-Note this can be a subset of the pins set with **setButtonMask()** if one wants to process not all.
-- **uint8_t readButton(const uint8_t pin)** read a singe input pin.
+For the examples I use this wire schema on breadboard:
+![Breadboard](https://github.com/xreef/PCF8574_library/raw/master/resources/testReadWriteLedButton_bb.png)
 
-Background - https://github.com/RobTillaart/Arduino/issues/38
-
-
-### Special
-
-- **void toggle(const uint8_t pin)** toggles a single pin
-- **void toggleMask(const uint8_t mask = 0xFF)** toggles a selection of pins, 
-if you want to invert all pins use 0xFF (default value).
-- **void shiftRight(const uint8_t n = 1)** shifts output channels n pins (default 1) pins right (e.g. LEDs ).
-Fills the higher lines with zero's.
-- **void shiftLeft(const uint8_t n = 1)**  shifts output channels n pins (default 1) pins left (e.g. LEDs ).
-Fills the lower lines with zero's.
-- **void rotateRight(const uint8_t n = 1)** rotates output channels to right, moving lowest line to highest line.
-- **void rotateLeft(const uint8_t n = 1)** rotates output channels to left, moving highest line to lowest line.
-- **void reverse()** reverse the "bit pattern" of the lines, swapping pin 7 with 0, 6 with 1, 5 with 2 etc.
-
-
-### Select
-
-Some convenience wrappers.
-
-- **void select(const uint8_t pin)** sets a single pin to HIGH, all others are set to LOW.
-If pin > 7 all pins are set to LOW.
-Can be used to select one of n devices.
-- **void selectN(const uint8_t pin)** sets pins 0..pin to HIGH, all others are set to LOW.
-If pin > 7 all pins are set to LOW.
-This can typical be used to implement a VU meter.
-- **void selectNone()** sets all pins to LOW.
-- **void selectAll()** sets all pins to HIGH.
-
-
-### Miscellaneous
-
-- **int lastError()** returns the last error from the lib. (see .h file).
-
-
-## Error codes
-
-| name               | value | description             |
-|:-------------------|:-----:|:------------------------|
-| PCF8574_OK         |  0x00 | no error                |
-| PCF8574_PIN_ERROR  |  0x81 | pin number out of range |
-| PCF8574_I2C_ERROR  |  0x82 | I2C communication error |
-
-
-## Operation
-
-See examples.
-
-It is advised to use pull-up or pull-down resistors so the lines have a defined state at startup.
-
-
-## Future
-
-- 
-
-
+https://downloads.arduino.cc/libraries/logs/github.com/xreef/PCF8574_library/

@@ -342,7 +342,7 @@ void addListExpanderBox(String& html, const String& input_id, const String& name
     addListBox(html, INPUT_EXPENDER_TYPE, S_TYPE, EXPENDER_LIST_P, EXPENDER_COUNT, type);
   }
 
-  if (ConfigESP->checkActiveMCP23017(function)) {
+  if (Expander->checkActiveExpander(function)) {
     addListExpanderGPIOBox(webContentBuffer, input_id, name, function, nr, url);
   }
   else {
@@ -375,7 +375,7 @@ void addListExpanderGPIOBox(String& html, const String& input_id, const String& 
 
   if (nr == 0 || nr == maxNr) {
     for (uint8_t gpio = nr; gpio <= OFF_GPIO_EXPENDER; gpio++) {
-      address = ConfigESP->getAdressMCP23017(gpio, function);
+      address = Expander->getAdressExpander(gpio, function);
       if (address != OFF_ADDRESS_MCP23017) {
         break;
       }
@@ -412,11 +412,11 @@ void addListExpanderGPIO(String& html,
   html += nr;
   html += F("'>");
 
-  uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
+  uint8_t selected = Expander->getGpioExpander(nr, function);
 
   for (uint8_t suported = 0; suported < size; suported++) {
     if (!String(FPSTR(array_P[suported])).isEmpty()) {
-      if (ConfigESP->checkBusyGpioMCP23017(suported, nr, function) || selected == suported) {
+      if (Expander->checkBusyGpioExpander(suported, nr, function) || selected == suported) {
         html += F("<option value='");
         html += suported;
         html += F("'");

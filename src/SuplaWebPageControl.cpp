@@ -34,7 +34,7 @@ void createWebPageControl() {
       return;
     }
 #ifdef GUI_SENSOR_I2C_EXPENDER
-    if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
+    if (Expander->checkActiveExpander(FUNCTION_BUTTON)) {
       if (WebServer->httpServer->method() == HTTP_GET)
         handleButtonSetMCP23017();
       else
@@ -66,7 +66,7 @@ void handleControlSave() {
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
 #ifdef GUI_SENSOR_I2C_EXPENDER
-    if (ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)) {
+    if (Expander->checkActiveExpander(FUNCTION_BUTTON)) {
       if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, nr, INPUT_MAX_BUTTON)) {
         handleControl(6);
         return;
@@ -142,7 +142,7 @@ void handleControl(int save) {
 #ifdef SUPLA_ROLLERSHUTTER
     if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr
 #ifdef GUI_SENSOR_I2C_EXPENDER
-        && !ConfigESP->checkActiveMCP23017(FUNCTION_BUTTON)
+        && !Expander->checkActiveExpander(FUNCTION_BUTTON)
 #endif
     ) {
       if (nr % 2 == 0) {
@@ -328,9 +328,9 @@ void handleButtonSetMCP23017(int save) {
   button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   if (!button.isEmpty())
-    gpio = ConfigESP->getGpioMCP23017(button.toInt(), FUNCTION_BUTTON);
+    gpio = Expander->getGpioExpander(button.toInt(), FUNCTION_BUTTON);
   else
-    gpio = ConfigESP->getGpioMCP23017(0, FUNCTION_BUTTON);
+    gpio = Expander->getGpioExpander(0, FUNCTION_BUTTON);
 
   webContentBuffer += SuplaSaveResult(save);
   webContentBuffer += SuplaJavaScript(getParameterRequest(PATH_BUTTON_SET, ARG_PARM_NUMBER, button));
@@ -360,6 +360,8 @@ void handleButtonSetMCP23017(int save) {
 #endif
   }
   else {
+    selected = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(button.toInt()).toInt();
+    addListNumbersBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_RELAY_CONTROL, ConfigESP->countFreeGpio(FUNCTION_RELAY), selected);
     selected = ConfigESP->getPullUp(gpio);
     addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
     selected = ConfigESP->getInversed(gpio);
@@ -414,13 +416,16 @@ void handleButtonSaveSetMCP23017() {
   button = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   if (!button.isEmpty()) {
-    gpio = ConfigESP->getGpioMCP23017(button.toInt(), FUNCTION_BUTTON);
+    gpio = Expander->getGpioExpander(button.toInt(), FUNCTION_BUTTON);
     key = KEY_GPIO + gpio;
 
     ConfigManager->setElement(key, PULL_UP_BUTTON, pullup);
     ConfigManager->setElement(key, INVERSED_BUTTON, inversed);
     ConfigManager->setElement(key, EVENT_BUTTON, event);
     ConfigManager->setElement(key, ACTION_BUTTON, action);
+
+    input = INPUT_BUTTON_NUMBER;
+    ConfigManager->setElement(KEY_NUMBER_BUTTON, button.toInt(), WebServer->httpServer->arg(input).toInt());
   }
   else {
     for (gpio = 0; gpio <= OFF_GPIO; gpio++) {

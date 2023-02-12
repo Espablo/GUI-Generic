@@ -37,7 +37,7 @@ enum _sensor
   SENSOR_I2C_SI7021,
   SENSOR_SPI_MAX6675,
   SENSOR_I2C_OLED,
-  SENSOR_I2C_MCP23017,
+  SENSOR_I2C_FOR_USE_1,
   SENSOR_I2C_BMP280,
   SENSOR_I2C_VL53L0X,
   SENSOR_I2C_HDC1080,
@@ -45,7 +45,7 @@ enum _sensor
   SENSOR_SPI_MAX31855,
   SENSOR_I2C_BH1750,
   SENSOR_I2C_MAX44009,
-  SENSOR_I2C_PCF857X
+  SENSOR_I2C_FOR_USE_2
 };
 
 #if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
@@ -143,14 +143,6 @@ void webPageI2CScanner(TwoWire* wire);
 #ifdef SUPLA_ADE7953
 #define INPUT_ADE7953_IRQ           "iai"
 #define INPUT_ADE7953_COUNTER_VALUE "iacv"
-#endif
-
-#ifdef GUI_SENSOR_I2C_EXPENDER
-#define INPUT_MCP23017 "imcp"
-#endif
-
-#if defined(SUPLA_PCF8575) || defined(SUPLA_PCF8574)
-#define INPUT_PCF857x "ipcf"
 #endif
 
 #ifdef SUPLA_SHT_AUTODETECT

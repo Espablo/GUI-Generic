@@ -34,7 +34,7 @@ void createWebPageRelay() {
       return;
     }
 #ifdef GUI_SENSOR_I2C_EXPENDER
-    if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
+    if (Expander->checkActiveExpander(FUNCTION_RELAY)) {
       if (WebServer->httpServer->method() == HTTP_GET)
         handleRelaySetMCP23017();
       else
@@ -64,7 +64,7 @@ void handleRelaySave() {
 
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_RELAY)->getValueInt(); nr++) {
 #ifdef GUI_SENSOR_I2C_EXPENDER
-    if (ConfigESP->checkActiveMCP23017(FUNCTION_RELAY)) {
+    if (Expander->checkActiveExpander(FUNCTION_RELAY)) {
       if (!WebServer->saveGpioMCP23017(INPUT_RELAY_GPIO, FUNCTION_RELAY, nr, INPUT_MAX_RELAY)) {
         handleRelay(6);
         return;
@@ -321,9 +321,9 @@ void handleRelaySetMCP23017(int save) {
   nr_relay = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   if (!nr_relay.isEmpty())
-    gpio = ConfigESP->getGpioMCP23017(nr_relay.toInt(), FUNCTION_RELAY);
+    gpio = Expander->getGpioExpander(nr_relay.toInt(), FUNCTION_RELAY);
   else
-    gpio = ConfigESP->getGpioMCP23017(0, FUNCTION_RELAY);
+    gpio = Expander->getGpioExpander(0, FUNCTION_RELAY);
 
   WebServer->sendHeaderStart();
   webContentBuffer += SuplaSaveResult(save);
@@ -384,7 +384,7 @@ void handleRelaySaveSetMCP23017() {
   nr_relay = WebServer->httpServer->arg(ARG_PARM_NUMBER);
 
   if (!nr_relay.isEmpty()) {
-    gpio = ConfigESP->getGpioMCP23017(nr_relay.toInt(), FUNCTION_RELAY);
+    gpio = Expander->getGpioExpander(nr_relay.toInt(), FUNCTION_RELAY);
     key = KEY_GPIO + gpio;
 
     ConfigManager->setElement(key, MEMORY, memory);

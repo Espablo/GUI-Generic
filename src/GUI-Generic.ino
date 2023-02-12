@@ -48,9 +48,27 @@ void setup() {
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
+#ifdef GUI_SENSOR_I2C_EXPENDER
+  Expander = new Supla::Control::ConfigExpander();
+#endif
 
 #ifdef SUPLA_CONDITIONS
   Supla::GUI::Conditions::addConditionsElement();
+#endif
+
+#if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
+  if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
+    bool force400khz = false;
+
+    Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
+  }
+
+#ifdef ARDUINO_ARCH_ESP32
+  if (ConfigESP->getGpio(FUNCTION_SDA_2) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL_2) != OFF_GPIO) {
+    Wire1.begin(ConfigESP->getGpio(FUNCTION_SDA_2), ConfigESP->getGpio(FUNCTION_SCL_2));
+    Wire1.setClock(100000UL);
+  }
+#endif
 #endif
 
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
@@ -117,17 +135,18 @@ void setup() {
   for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
     gpio = ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH);
 
-    if (gpio != OFF_GPIO) {
-      auto binary = new Supla::Sensor::Binary(gpio, ConfigESP->getPullUp(gpio));
+    Supla::Sensor::Binary *binary = nullptr;
 
+    if (gpio != OFF_GPIO) {
+      binary = Supla::Control::GUI::Binary(gpio, ConfigESP->getPullUp(gpio), false, nr);
+    }
 #ifdef SUPLA_PUSHOVER
-      Supla::GUI::addPushover(nr, S_LIMIT_SWITCH, binary);
+    Supla::GUI::addPushover(nr, S_LIMIT_SWITCH, binary);
 #endif
 
 #ifdef SUPLA_CONDITIONS
-      Supla::GUI::Conditions::addConditionsSensor(SENSOR_BINARY, S_LIMIT_SWITCH, binary, nr);
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_BINARY, S_LIMIT_SWITCH, binary, nr);
 #endif
-    }
   }
 #endif
 
@@ -481,8 +500,6 @@ void setup() {
   if (ConfigESP->getGpio(FUNCTION_SDA) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL) != OFF_GPIO) {
     bool force400khz = false;
 
-    Wire.begin(ConfigESP->getGpio(FUNCTION_SDA), ConfigESP->getGpio(FUNCTION_SCL));
-
 #ifdef SUPLA_BME280
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_BME280).toInt()) {
       Supla::Sensor::BME280 *bme280 = nullptr;
@@ -727,46 +744,6 @@ void setup() {
     }
 #endif
 
-#ifdef ARDUINO_ARCH_ESP32
-    if (ConfigESP->getGpio(FUNCTION_SDA_2) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SCL_2) != OFF_GPIO) {
-      Wire1.begin(ConfigESP->getGpio(FUNCTION_SDA_2), ConfigESP->getGpio(FUNCTION_SCL_2));
-      Wire1.setClock(400000);
-    }
-#endif
-
-#ifdef SUPLA_PCF8574
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt()) {
-      new Supla::Control::PCF_8574();
-      force400khz = true;
-    }
-#endif
-
-#ifdef SUPLA_PCF8575
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_PCF857X).toInt()) {
-      new Supla::Control::PCF_8575();
-      force400khz = true;
-    }
-#endif
-
-#ifdef SUPLA_MCP23017
-    if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MCP23017).toInt()) {
-      Supla::Control::MCP_23017 *mcp = new Supla::Control::MCP_23017();
-
-      for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
-        gpio = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
-        if (gpio != OFF_GPIO)
-          mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), false);
-      }
-
-      for (nr = 0; nr < ConfigManager->get(KEY_MAX_LIMIT_SWITCH)->getValueInt(); nr++) {
-        gpio = ConfigESP->getGpio(nr, FUNCTION_LIMIT_SWITCH);
-        if (gpio != OFF_GPIO)
-          mcp->setPullup(gpio, ConfigESP->getPullUp(gpio), true);
-      }
-
-      force400khz = true;
-    }
-#endif
     if (force400khz)
       Wire.setClock(400000);
   }

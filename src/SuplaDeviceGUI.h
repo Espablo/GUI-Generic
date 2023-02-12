@@ -22,6 +22,7 @@
 
 #include <SuplaDeviceExtensions.h>
 #include <SuplaDevice.h>
+#include "src/control/ControlGUI.h"
 
 #include "GUI-Generic_Config.h"
 #include "GUIGenericCommonDefined.h"
@@ -29,6 +30,7 @@
 #include "SuplaTemplateBoard.h"
 
 #include "SuplaConfigESP.h"
+
 #include "SuplaConfigManager.h"
 #include "SuplaWebPageRelay.h"
 #include "SuplaWebPageControl.h"
@@ -192,9 +194,10 @@
 #endif
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
-#include "src/control/PCF_8575.h"
-#include "src/control/PCF_8574.h"
-#include "src/control/MCP_23017.h"
+#include "src/expander/ConfigExpander.h"
+#include "src/expander/ExpanderPCF8574.h"
+#include "src/expander/ExpanderPCF8575.h"
+#include "src/expander/ExpanderMCP23017.h"
 #endif
 
 #ifdef SUPLA_WAKE_ON_LAN
@@ -320,6 +323,11 @@ extern Supla::Sensor::SDM120 *smd120;
 extern SuplaConfigManager *ConfigManager;
 extern SuplaConfigESP *ConfigESP;
 extern SuplaWebServer *WebServer;
+
+#ifdef GUI_SENSOR_I2C_EXPENDER
+extern Supla::Control::ConfigExpander *Expander;
+#endif
+
 #ifdef SUPLA_WT32_ETH01_LAN8720
 extern Supla::WT32_ETH01 *eth;
 #else

@@ -15,6 +15,7 @@
 */
 #ifndef SuplaConfigESP_h
 #define SuplaConfigESP_h
+#include <supla/io.h>
 
 #include "GUIGenericCommonDefined.h"
 #include "GUI-Generic_Config.h"
@@ -139,19 +140,6 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void factoryReset(bool forceReset = false);
   const String getConfigNameAP();
 
-#ifdef GUI_SENSOR_I2C_EXPENDER
-  bool checkBusyGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function);
-  uint8_t getGpioMCP23017(uint8_t nr, uint8_t function);
-  uint8_t getAdressMCP23017(uint8_t nr, uint8_t function);
-  void setGpioMCP23017(uint8_t gpio, uint8_t adress, uint8_t nr, uint8_t function);
-  void clearGpioMCP23017(uint8_t gpio, uint8_t nr, uint8_t function);
-  void clearFunctionGpio(uint8_t function);
-
-  bool checkActiveMCP23017(uint8_t function);
-  uint8_t getFunctionMCP23017(uint8_t adress);
-  uint8_t getNrMCP23017(uint8_t adress);
-#endif
-
   void configModeInit();
   void clearEEPROM();
 
@@ -164,9 +152,4 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
 
 void ledBlinkingTicker();
 void status_func(int status, const char *msg);
-
-uint32_t getFreeStackWatermark();
-unsigned long FreeMem();
-void checkRAM();
-
 #endif  // SuplaConfigESP_h
