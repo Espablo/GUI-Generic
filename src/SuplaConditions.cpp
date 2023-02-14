@@ -207,7 +207,7 @@ void addConditionsSensor(int functionSensor, const char *nameSensor, Supla::Sens
 void addConditions() {
   for (uint8_t nr = 0; nr < ConfigManager->get(KEY_MAX_CONDITIONS)->getValueInt(); nr++) {
     /////// Warunkowanie dla sensorów //////
-    if (conditions[nr].client != nullptr && conditions[nr].sensor != nullptr) {
+    if (conditions[nr].client != nullptr && conditions[nr].sensor != nullptr && conditions[nr].nrSensor == nr) {
       if (strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0) {
         Serial.print("addConditions MIN: ");
         Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
@@ -264,7 +264,7 @@ void addConditions() {
     }
 
     /////// Warunkowanie dla liczników energii //////
-    if (conditions[nr].client != nullptr && conditions[nr].electricityMete != nullptr) {
+    if (conditions[nr].client != nullptr && conditions[nr].electricityMete != nullptr && conditions[nr].nrSensor == nr) {
       if (strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0) {
         Serial.print("addConditionsRelay - ElectricityMeter: ");
         Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
