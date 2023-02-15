@@ -46,6 +46,7 @@
 #define S_CSE7766                        "CSE7766"
 #define S_ADE7953                        "ADE7953"
 #define S_MAX44009                       "MAX44009"
+#define S_GPIO                           "GPIO"
 
 //### PIN codes not translated ###
 #define S_D0  "D0"
