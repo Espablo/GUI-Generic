@@ -48,6 +48,9 @@ void setup() {
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
+#ifdef SUPLA_ACTION_TRIGGER
+  Supla::GUI::actionTrigger = new Supla::GUI::ActionTrigger[ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()];
+#endif
 
 #ifdef SUPLA_CONDITIONS
   Supla::GUI::Conditions::addConditionsElement();
