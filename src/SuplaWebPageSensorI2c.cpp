@@ -158,7 +158,7 @@ void handleSensorI2c(int save) {
 
 #ifdef SUPLA_BUTTON
 #ifdef GUI_SENSOR_I2C_EXPENDER
-      if (ConfigESP->checkActiveExpander(FUNCTION_BUTTON)) {
+      if (Expander->checkActiveExpander(FUNCTION_BUTTON)) {
         addListExpanderGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON, 0);
       }
       else {
@@ -352,7 +352,7 @@ void handleSensorI2cSave() {
 
 #ifdef SUPLA_BUTTON
 #ifdef GUI_SENSOR_I2C_EXPENDER
-  if (ConfigESP->checkActiveExpander(FUNCTION_BUTTON)) {
+  if (Expander->checkActiveExpander(FUNCTION_BUTTON)) {
     if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
       handleControl(6);
       return;
