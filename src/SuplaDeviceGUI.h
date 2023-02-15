@@ -119,6 +119,7 @@
 #endif
 
 #include "src/control/PinStatusLedGUI.h"
+#include "src/control/Pushover.h"
 
 #ifdef SUPLA_RGBW
 #include <supla/control/rgbw_leds.h>
@@ -127,10 +128,6 @@
 #endif
 
 #include <Wire.h>
-
-#ifdef SUPLA_PUSHOVER
-#include "src/control/Pushover.h"
-#endif
 
 #include <supla/control/direct_links.h>
 
