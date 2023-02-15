@@ -125,8 +125,8 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #else
     S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
-#ifdef SUPLA_LIMIT_SWITCH
-    "Stan GPIO",
+#if defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_RELAY)
+    "stan GPIO",
 #else
     S_EMPTY,
 #endif
