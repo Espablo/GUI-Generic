@@ -199,10 +199,6 @@ void addButtonToRelay(uint8_t nrRelay) {
 ActionTrigger *actionTrigger;
 
 void addActionTriggerRelatedChannel(uint8_t nr, Supla::Control::Button *button, int eventButton, Supla::Element *element) {
-  if (actionTrigger == nullptr) {
-    actionTrigger = new ActionTrigger[ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()];
-  }
-
   button->setSwNoiseFilterDelay(50);
   auto at = new Supla::Control::ActionTrigger();
 

@@ -48,8 +48,12 @@ void setup() {
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
+  
 #ifdef GUI_SENSOR_I2C_EXPENDER
   Expander = new Supla::Control::ConfigExpander();
+#endif
+#ifdef SUPLA_ACTION_TRIGGER
+  Supla::GUI::actionTrigger = new Supla::GUI::ActionTrigger[ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()];
 #endif
 
 #ifdef SUPLA_CONDITIONS
@@ -174,8 +178,10 @@ void setup() {
         case DIRECT_LINKS_TYPE_TEMP: {
           auto directLinkSensorThermometer = new Supla::Sensor::DirectLinksThermometer(
               ConfigManager->get(KEY_DIRECT_LINKS_SENSOR)->getElement(nr).c_str(), ConfigManager->get(KEY_SUPLA_SERVER)->getValue());
+#ifdef SUPLA_CONDITIONS
           Supla::GUI::Conditions::addConditionsSensor(SENSOR_DIRECT_LINKS_SENSOR_THERMOMETR, S_DIRECT_LINKS_SENSOR_THERMOMETR,
                                                       directLinkSensorThermometer, nr);
+#endif
           break;
         }
         case DIRECT_LINKS_TYPE_TEMP_HYGR:
@@ -663,7 +669,11 @@ void setup() {
 
 #ifdef SUPLA_MAX44009
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MAX44009).toInt()) {
-      new Supla::Sensor::MAX_44009();
+      auto max4409 = new Supla::Sensor::MAX_44009();
+
+#ifdef SUPLA_CONDITIONS
+      Supla::GUI::Conditions::addConditionsSensor(SENSOR_MAX44009, S_MAX44009, max4409);
+#endif
     }
 #endif
 

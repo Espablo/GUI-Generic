@@ -87,7 +87,7 @@ double HLW8012::getCurrent() {
 
 }
 
-unsigned int HLW8012::getVoltage() {
+double HLW8012::getVoltage() {
     if (_use_interrupts) {
         _checkCF1Signal();
     } else if (_mode != _current_mode) {
@@ -97,7 +97,7 @@ unsigned int HLW8012::getVoltage() {
     return _voltage;
 }
 
-unsigned int HLW8012::getActivePower() {
+double HLW8012::getActivePower() {
     if (_use_interrupts) {
         _checkCFSignal();
     } else {
@@ -107,7 +107,7 @@ unsigned int HLW8012::getActivePower() {
     return _power;
 }
 
-unsigned int HLW8012::getApparentPower() {
+double HLW8012::getApparentPower() {
     double current = getCurrent();
     unsigned int voltage = getVoltage();
     return voltage * current;
@@ -155,14 +155,14 @@ void HLW8012::expectedCurrent(double value) {
     if (_current > 0) _current_multiplier *= (value / _current);
 }
 
-void HLW8012::expectedVoltage(unsigned int value) {
+void HLW8012::expectedVoltage(double value) {
     if (_voltage == 0) getVoltage();
-    if (_voltage > 0) _voltage_multiplier *= ((double) value / _voltage);
+    if (_voltage > 0) _voltage_multiplier *= (value / _voltage);
 }
 
-void HLW8012::expectedActivePower(unsigned int value) {
+void HLW8012::expectedActivePower(double value) {
     if (_power == 0) getActivePower();
-    if (_power > 0) _power_multiplier *= ((double) value / _power);
+    if (_power > 0) _power_multiplier *= (value / _power);
 }
 
 void HLW8012::resetMultipliers() {

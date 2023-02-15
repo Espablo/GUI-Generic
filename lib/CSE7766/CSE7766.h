@@ -47,8 +47,8 @@ class CSE7766 {
   CSE7766(HardwareSerial& serial);
 
   void expectedCurrent(double expected);
-  void expectedVoltage(unsigned int expected);
-  void expectedPower(unsigned int expected);
+  void expectedVoltage(double expected);
+  void expectedPower(double expected);
   void setCurrentRatio(double value);
   void setVoltageRatio(double value);
   void setPowerRatio(double value);

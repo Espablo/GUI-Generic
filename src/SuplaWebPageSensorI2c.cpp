@@ -179,7 +179,7 @@ void handleSensorI2c(int save) {
         input += i;
         name = S_SCREEN;
         name += i + 1;
-        addTextBox(webContentBuffer, input, name, sensorName, 0, MAX_DS18B20_NAME, false);
+        addTextBox(webContentBuffer, input, name, sensorName, 0, 12, false);
       }
     }
     addFormHeaderEnd(webContentBuffer);
@@ -206,7 +206,7 @@ void handleSensorI2c(int save) {
         input += i;
         name = S_SCREEN;
         name += i + 1;
-        addTextBox(webContentBuffer, input, name, sensorName, 0, MAX_DS18B20_NAME, false);
+        addTextBox(webContentBuffer, input, name, sensorName, 0, 12, false);
       }
     }
     addFormHeaderEnd(webContentBuffer);

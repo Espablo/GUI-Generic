@@ -45,6 +45,7 @@
 #define S_BH1750                         "BH1750"
 #define S_CSE7766                        "CSE7766"
 #define S_ADE7953                        "ADE7953"
+#define S_MAX44009                       "MAX44009"
 
 //### PIN codes not translated ###
 #define S_D0  "D0"
