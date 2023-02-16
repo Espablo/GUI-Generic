@@ -41,7 +41,7 @@ static const uint8_t MCP23017_GPIOB = 0x13;
 static const uint8_t MCP23017_OLATA = 0x14;
 static const uint8_t MCP23017_OLATB = 0x15;
 
-MCP23017::MCP23017(TwoWire* wire) : _wire(wire), _callback(NULL) {
+MCP23017::MCP23017() : _callback(NULL) {
 }
 
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
@@ -58,7 +58,8 @@ void MCP23017::init(bool fast) {
 }
 #endif
 
-bool MCP23017::begin(uint8_t address) {
+bool MCP23017::begin(uint8_t address, TwoWire* wire) {
+  _wire = wire;
   _address = address;  // MCP23017_BASEADDRESS | (address & 0x07);
   return (writeReg16(MCP23017_IOCONA, 0x4242) && writeReg16(MCP23017_IODIRA,
                                                             0xFFFF));  // INT MIRROR & INT POL HIGH, ALL INPUTS
@@ -230,30 +231,25 @@ namespace Supla {
 namespace Control {
 
 ExpanderMCP23017::ExpanderMCP23017(TwoWire* wire, uint8_t address) : Supla::Io(false) {
-  _control = new MCP23017(wire);
-
-  if (_control->begin(address)) {
+  if (_control.begin(address, wire)) {
     Serial.print("MCP23017 is connected address: ");
     Serial.println(address, HEX);
-    isConnected = true;
+  }
+  else {
+    Serial.println("Couldn't find MCP23017");
   }
 }
 
 void ExpanderMCP23017::customPinMode(int channelNumber, uint8_t pin, uint8_t mode) {
-  _control->pinMode(pin, mode);
+  _control.pinMode(pin, mode);
 }
 
 int ExpanderMCP23017::customDigitalRead(int channelNumber, uint8_t pin) {
-  uint8_t val = 0;
-  if (isConnected) {
-    val = _control->digitalRead(pin);
-    delay(10);
-  }
-  return val;
+  return _control.digitalRead(pin);
 }
 
 void ExpanderMCP23017::customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val) {
-  _control->digitalWrite(pin, val);
+  _control.digitalWrite(pin, val);
 }
 
 }  // namespace Control

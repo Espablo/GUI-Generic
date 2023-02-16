@@ -25,7 +25,7 @@
 
 class MCP23017 {
  public:
-  MCP23017(TwoWire *wire = &Wire);
+  MCP23017();
 
   typedef std::function<void(uint16_t pins, uint16_t values)> callback_t;
 
@@ -38,7 +38,7 @@ class MCP23017 {
   void init(bool fast = true);
 #endif
 
-  bool begin(uint8_t address = 0);
+  bool begin(uint8_t address, TwoWire *wire = &Wire);
 
   void pinMode(uint8_t pin, uint8_t mode);
   void setPullup(uint8_t pin, bool pullup, bool inverse = false);
@@ -88,8 +88,7 @@ class ExpanderMCP23017 : public Supla::Io, public Supla::Element {
   }
 
  protected:
-  MCP23017 *_control;
-  bool isConnected = false;
+  MCP23017 _control;
 };
 };  // namespace Control
 };  // namespace Supla
