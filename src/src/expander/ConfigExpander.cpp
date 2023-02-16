@@ -204,45 +204,47 @@ Supla::Io *ConfigExpander::getIoExpender(uint8_t nr, uint8_t function) {
   uint8_t address = getAdressExpander(nr, function);
   uint8_t addressHex = 0x20 | (address & 0x07);
 
-  switch (ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt()) {
-    case EXPENDER_PCF8575:
-      if (ioExpender[address].io == nullptr) {
-        ioExpender[address].io = new Supla::Control::ExpanderPCF8575(&Wire, addressHex);
-      }
-      io = ioExpender[address].io;
-      break;
-    case EXPENDER_PCF8574:
-      if (ioExpender[address].io == nullptr) {
-        ioExpender[address].io = new Supla::Control::ExpanderPCF8574(&Wire, addressHex);
-      }
-      io = ioExpender[address].io;
-      break;
-    case EXPENDER_MCP23017:
-      if (ioExpender[address].io == nullptr) {
-        ioExpender[address].io = new Supla::Control::ExpanderMCP23017(&Wire, addressHex);
-      }
-      io = ioExpender[address].io;
-      break;
+  if (address != OFF_ADDRESS_MCP23017) {
+    switch (ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt()) {
+      case EXPENDER_PCF8575:
+        if (ioExpender[address].io == nullptr) {
+          ioExpender[address].io = new Supla::Control::ExpanderPCF8575(&Wire, addressHex);
+        }
+        io = ioExpender[address].io;
+        break;
+      case EXPENDER_PCF8574:
+        if (ioExpender[address].io == nullptr) {
+          ioExpender[address].io = new Supla::Control::ExpanderPCF8574(&Wire, addressHex);
+        }
+        io = ioExpender[address].io;
+        break;
+      case EXPENDER_MCP23017:
+        if (ioExpender[address].io == nullptr) {
+          ioExpender[address].io = new Supla::Control::ExpanderMCP23017(&Wire, addressHex);
+        }
+        io = ioExpender[address].io;
+        break;
 
 #ifdef ARDUINO_ARCH_ESP32
-    case EXPENDER_PCF8575_I2C2:
-      if (ioExpender[address].io_Wire1 == nullptr) {
-        ioExpender[address].io_Wire1 = new Supla::Control::ExpanderPCF8575(&Wire1, addressHex);
-      }
-      io = ioExpender[address].io_Wire1;
-      break;
-    case EXPENDER_PCF8574_I2C2:
-      if (ioExpender[address].io_Wire1 == nullptr) {
-        ioExpender[address].io_Wire1 = new Supla::Control::ExpanderPCF8574(&Wire1, addressHex);
-      }
-      io = ioExpender[address].io_Wire1;
-      break;
-    case EXPENDER_MCP23017_I2C2:
-      if (ioExpender[address].io_Wire1 == nullptr) {
-        ioExpender[address].io_Wire1 = new Supla::Control::ExpanderMCP23017(&Wire1, addressHex);
-      }
-      io = ioExpender[address].io_Wire1;
+      case EXPENDER_PCF8575_I2C2:
+        if (ioExpender[address].io_Wire1 == nullptr) {
+          ioExpender[address].io_Wire1 = new Supla::Control::ExpanderPCF8575(&Wire1, addressHex);
+        }
+        io = ioExpender[address].io_Wire1;
+        break;
+      case EXPENDER_PCF8574_I2C2:
+        if (ioExpender[address].io_Wire1 == nullptr) {
+          ioExpender[address].io_Wire1 = new Supla::Control::ExpanderPCF8574(&Wire1, addressHex);
+        }
+        io = ioExpender[address].io_Wire1;
+        break;
+      case EXPENDER_MCP23017_I2C2:
+        if (ioExpender[address].io_Wire1 == nullptr) {
+          ioExpender[address].io_Wire1 = new Supla::Control::ExpanderMCP23017(&Wire1, addressHex);
+        }
+        io = ioExpender[address].io_Wire1;
 #endif
+    }
   }
 
   return io;

@@ -133,7 +133,7 @@ class ConfigExpander {
 #endif
   };
 
-  IoExpender ioExpender[3];
+  IoExpender ioExpender[4];
 };
 };  // namespace Control
 };  // namespace Supla
