@@ -124,7 +124,7 @@ void ConfigExpander::clearGpioExpander(uint8_t gpio, uint8_t nr, uint8_t functio
     ConfigManager->setElement(key, getFunctionExpander(adress), FUNCTION_OFF);
 
   if (function == FUNCTION_BUTTON) {
-    ConfigESP->setPullUp(gpio, false);
+    ConfigESP->setPullUp(gpio, true);
     ConfigESP->setInversed(gpio, true);
     ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
     ConfigESP->setEvent(gpio, Supla::Event::ON_PRESS);

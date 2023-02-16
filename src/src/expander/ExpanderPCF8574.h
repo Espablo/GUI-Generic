@@ -21,7 +21,7 @@
 
 #include <supla/io.h>
 #include <supla/element.h>
-#include <PCF8574.h>
+#include <Adafruit_PCF8574.h>
 
 namespace Supla {
 namespace Control {
@@ -44,8 +44,7 @@ class ExpanderPCF8574 : public Supla::Io, public Supla::Element {
   }
 
  protected:
-  PCF8574 *_control;
-  bool isConnected = false;
+  Adafruit_PCF8574 _control;
 };
 };  // namespace Control
 };  // namespace Supla
