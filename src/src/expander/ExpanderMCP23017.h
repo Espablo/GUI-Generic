@@ -89,6 +89,7 @@ class ExpanderMCP23017 : public Supla::Io, public Supla::Element {
 
  protected:
   MCP23017 _control;
+  bool isConnected = false;
 };
 };  // namespace Control
 };  // namespace Supla

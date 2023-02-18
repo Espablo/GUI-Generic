@@ -234,6 +234,7 @@ ExpanderMCP23017::ExpanderMCP23017(TwoWire* wire, uint8_t address) : Supla::Io(f
   if (_control.begin(address, wire)) {
     Serial.print("MCP23017 is connected address: ");
     Serial.println(address, HEX);
+    isConnected = true;
   }
   else {
     Serial.println("Couldn't find MCP23017");
@@ -241,15 +242,17 @@ ExpanderMCP23017::ExpanderMCP23017(TwoWire* wire, uint8_t address) : Supla::Io(f
 }
 
 void ExpanderMCP23017::customPinMode(int channelNumber, uint8_t pin, uint8_t mode) {
-  _control.pinMode(pin, mode);
+  if (isConnected)
+    _control.pinMode(pin, mode);
 }
 
 int ExpanderMCP23017::customDigitalRead(int channelNumber, uint8_t pin) {
-  return _control.digitalRead(pin);
+  return isConnected ? _control.digitalRead(pin) : 0;
 }
 
 void ExpanderMCP23017::customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val) {
-  _control.digitalWrite(pin, val);
+  if (isConnected)
+    _control.digitalWrite(pin, val);
 }
 
 }  // namespace Control

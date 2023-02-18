@@ -47,6 +47,7 @@ class ExpanderPCF8575 : public Supla::Io, public Supla::Element {
 
  protected:
   Adafruit_PCF8575 _control;
+  bool isConnected = false;
 };
 };  // namespace Control
 };  // namespace Supla

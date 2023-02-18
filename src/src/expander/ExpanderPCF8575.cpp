@@ -23,6 +23,7 @@ ExpanderPCF8575::ExpanderPCF8575(TwoWire *wire, uint8_t address) : Supla::Io(fal
   if (_control.begin(address, wire)) {
     Serial.print("PCF8575 is connected address: ");
     Serial.println(address, HEX);
+    isConnected = true;
   }
   else {
     Serial.println("Couldn't find PCF8575");
@@ -33,15 +34,17 @@ void ExpanderPCF8575::onInit() {
 }
 
 void ExpanderPCF8575::customPinMode(int channelNumber, uint8_t pin, uint8_t mode) {
-  _control.pinMode(pin, mode);
+  if (isConnected)
+    _control.pinMode(pin, mode);
 }
 
 int ExpanderPCF8575::customDigitalRead(int channelNumber, uint8_t pin) {
-  return _control.digitalRead(pin);
+  return isConnected ? _control.digitalRead(pin) : 0;
 }
 
 void ExpanderPCF8575::customDigitalWrite(int channelNumber, uint8_t pin, uint8_t val) {
-  _control.digitalWrite(pin, val);
+  if (isConnected)
+    _control.digitalWrite(pin, val);
 }
 
 }  // namespace Control
