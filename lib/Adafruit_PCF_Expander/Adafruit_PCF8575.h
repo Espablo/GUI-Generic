@@ -36,7 +36,7 @@ public:
   bool digitalWrite(uint8_t pinnum, bool val);
   uint16_t digitalReadWord(void);
   bool digitalRead(uint8_t pinnum);
-  bool pinMode(uint8_t pinnum, uint8_t val);
+  void pinMode(uint8_t pinnum, uint8_t val);
 
 private:
   uint16_t _readbuf = 0, _writebuf = 0;

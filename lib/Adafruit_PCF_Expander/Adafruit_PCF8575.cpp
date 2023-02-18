@@ -101,14 +101,14 @@ bool Adafruit_PCF8575::digitalWrite(uint8_t pinnum, bool val) {
  * drain device
  *    @return True if we were able to write the data successfully over I2C
  */
-bool Adafruit_PCF8575::pinMode(uint8_t pinnum, uint8_t val) {
+void Adafruit_PCF8575::pinMode(uint8_t pinnum, uint8_t val) {
   if ((val == INPUT) || (val == INPUT_PULLUP)) {
     _writebuf |= 1UL << pinnum;
+     i2c_dev->write((uint8_t *)&_writebuf, 2);
   }
   else {
     _writebuf &= ~(1UL << pinnum);
   }
-  return i2c_dev->write((uint8_t *)&_writebuf, 2);
 }
 
 /*!
