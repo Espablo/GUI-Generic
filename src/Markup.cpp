@@ -343,7 +343,12 @@ void addListExpanderBox(String& html, const String& input_id, const String& name
   }
 
   if (Expander->checkActiveExpander(function)) {
-    addListExpanderGPIOBox(webContentBuffer, input_id, name, function, nr, url);
+    if (nr < MAX_EXPANDER_FOR_FUNCTION) {
+      addListExpanderGPIOBox(webContentBuffer, input_id, name, function, nr, url);
+    }
+    else {
+      addListGPIOLinkBox(webContentBuffer, input_id, name, getParameterRequest(url, ARG_PARM_NUMBER), function, nr);
+    }
   }
   else {
     addListGPIOLinkBox(webContentBuffer, input_id, name, getParameterRequest(url, ARG_PARM_NUMBER), function, nr);

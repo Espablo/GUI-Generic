@@ -510,15 +510,14 @@ int SuplaConfigESP::getBaudRateSpeed(uint8_t gpio) {
 
 uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {
 #ifdef GUI_SENSOR_I2C_EXPENDER
-  if (strcmp(ConfigManager->get(KEY_EXPANDER_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0 &&
-      Expander->checkActiveExpander(FUNCTION_BUTTON)) {
+  if (strcmp(ConfigManager->get(KEY_EXPANDER_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0 && Expander->checkActiveExpander(FUNCTION_BUTTON)) {
     return ConfigManager->get(KEY_EXPANDER_NUMBER_BUTTON)->getElement(nr).toInt();
   }
-#endif
-
+#else
   if (strcmp(ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0) {
     return ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).toInt();
   }
+#endif
 
   return nr;
 }
@@ -637,6 +636,14 @@ void SuplaConfigESP::setEvent(uint8_t gpio, int event) {
   ConfigManager->setElement(getKeyGpio(gpio), EVENT_BUTTON, event);
 }
 
+void SuplaConfigESP::setNumberButton(uint8_t nr, uint8_t nrButton) {
+#ifdef GUI_SENSOR_I2C_EXPENDER
+  ConfigManager->setElement(KEY_EXPANDER_NUMBER_BUTTON, nr, nr);
+#else
+  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
+#endif
+}
+
 void SuplaConfigESP::setGpio(uint8_t gpio, uint8_t nr, uint8_t function) {
   uint8_t key;
   nr++;
@@ -699,12 +706,6 @@ void SuplaConfigESP::clearGpio(uint8_t gpio, uint8_t function) {
 uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   uint8_t count = 1;
 
-#ifdef GUI_SENSOR_I2C_EXPENDER
-  if (Expander->checkActiveExpander(exception)) {
-    return 32;
-  }
-#endif
-
   for (uint8_t gpio = 0; gpio < OFF_GPIO; gpio++) {
     if (checkGpio(gpio)) {
       uint8_t key = KEY_GPIO + gpio;
@@ -717,7 +718,13 @@ uint8_t SuplaConfigESP::countFreeGpio(uint8_t exception) {
   }
 
   if (exception == FUNCTION_RELAY)
-    count = count + MAX_VIRTUAL_RELAY;
+    count += MAX_VIRTUAL_RELAY;
+
+#ifdef GUI_SENSOR_I2C_EXPENDER
+  if (Expander->checkActiveExpander(exception)) {
+    count += MAX_EXPANDER_FOR_FUNCTION;
+  }
+#endif
 
   return count;
 }

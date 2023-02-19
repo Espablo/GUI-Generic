@@ -501,7 +501,7 @@ void chooseTemplateBoard(String board) {
     nr--;
 
     if (nr >= 0) {
-      ConfigManager->setElement(KEY_NUMBER_BUTTON, i, nr);
+       ConfigESP->setNumberButton(nr);
     }
   }
 }
@@ -704,7 +704,7 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, JsonArray& buttonAction,
     addButtonCFG(gpio);
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
 
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
+   ConfigESP->setNumberButton(nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
@@ -717,7 +717,7 @@ void addButtonAnalog(uint8_t nr, uint8_t gpio, JsonArray& buttonAction) {
     ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
 
   ConfigESP->setEvent(gpio, Supla::Event::ON_PRESS);
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
+   ConfigESP->setNumberButton(nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
@@ -877,7 +877,7 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
             ConfigESP->setEvent(gpio, Supla::Event::ON_CHANGE);
             ConfigESP->setPullUp(gpio, true);
             ConfigESP->setInversed(gpio, true);
-            ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
+            ConfigESP->setNumberButton(nr);
             break;
         }
         ConfigManager->set(key, ConfigManager->get(key)->getValueInt() + 1);

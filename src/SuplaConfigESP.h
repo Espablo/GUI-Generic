@@ -129,6 +129,10 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   void setInversed(uint8_t gpio, int inversed);
   void setAction(uint8_t gpio, int action);
   void setEvent(uint8_t gpio, int event);
+  void setNumberButton(uint8_t nr) {
+    setNumberButton(nr, nr);
+  }
+  void setNumberButton(uint8_t nr, uint8_t nrButton);
 
   void setGpio(uint8_t gpio, uint8_t nr, uint8_t function);
   void setGpio(uint8_t gpio, uint8_t function) {

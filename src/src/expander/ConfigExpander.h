@@ -22,6 +22,8 @@
 #include <supla/io.h>
 #include "../../SuplaCommonPROGMEM.h"
 
+#define MAX_EXPANDER_FOR_FUNCTION 32
+
 const char GPIO_A0[] PROGMEM = "A0";
 const char GPIO_A1[] PROGMEM = "A1";
 const char GPIO_A2[] PROGMEM = "A2";

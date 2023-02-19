@@ -209,7 +209,7 @@ void handleButtonSaveSet() {
   }
 
   input = INPUT_BUTTON_NUMBER;
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, button.toInt(), WebServer->httpServer->arg(input).toInt());
+  ConfigESP->setNumberButton(button.toInt(), WebServer->httpServer->arg(input).toInt());
 
   input = INPUT_BUTTON_EVENT;
   ConfigManager->setElement(key, EVENT_BUTTON, WebServer->httpServer->arg(input).toInt());
@@ -280,7 +280,7 @@ void handleButtonSet(int save) {
 #endif
     }
     else {
-      selected = ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(button.toInt()).toInt();
+      selected = ConfigESP->getNumberButton(button.toInt());
       addListNumbersBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_RELAY_CONTROL, ConfigESP->countFreeGpio(FUNCTION_RELAY), selected);
 
 #ifdef ARDUINO_ARCH_ESP8266
@@ -360,7 +360,7 @@ void handleButtonSetMCP23017(int save) {
 #endif
   }
   else {
-    selected = ConfigManager->get(KEY_EXPANDER_NUMBER_BUTTON)->getElement(button.toInt()).toInt();
+    selected = ConfigESP->getNumberButton(button.toInt());
     addListNumbersBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_RELAY_CONTROL, ConfigESP->countFreeGpio(FUNCTION_RELAY), selected);
     selected = ConfigESP->getPullUp(gpio);
     addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
@@ -425,7 +425,7 @@ void handleButtonSaveSetMCP23017() {
     ConfigManager->setElement(key, ACTION_BUTTON, action);
 
     input = INPUT_BUTTON_NUMBER;
-    ConfigManager->setElement(KEY_EXPANDER_NUMBER_BUTTON, button.toInt(), WebServer->httpServer->arg(input).toInt());
+    ConfigESP->setNumberButton(button.toInt(), WebServer->httpServer->arg(input).toInt());
   }
   else {
     for (gpio = 0; gpio <= OFF_GPIO; gpio++) {

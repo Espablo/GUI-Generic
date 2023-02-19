@@ -392,10 +392,10 @@ SuplaConfigManager::SuplaConfigManager() {
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
     this->addKey(KEY_ACTIVE_EXPENDER, 20);
-    this->addKey(KEY_EXPANDER_NUMBER_BUTTON, 64);
+    this->addKey(KEY_EXPANDER_NUMBER_BUTTON, 96);
 #else
     this->addKey(KEY_ACTIVE_EXPENDER, 20, false);
-    this->addKey(KEY_EXPANDER_NUMBER_BUTTON, 64, false);
+    this->addKey(KEY_EXPANDER_NUMBER_BUTTON, 96, false);
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_DIRECT_LINKS_MULTI_SENSOR)
