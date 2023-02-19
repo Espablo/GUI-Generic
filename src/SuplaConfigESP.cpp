@@ -509,12 +509,18 @@ int SuplaConfigESP::getBaudRateSpeed(uint8_t gpio) {
 }
 
 uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {
+#ifdef GUI_SENSOR_I2C_EXPENDER
+  if (strcmp(ConfigManager->get(KEY_EXPANDER_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0 &&
+      Expander->checkActiveExpander(FUNCTION_BUTTON)) {
+    return ConfigManager->get(KEY_EXPANDER_NUMBER_BUTTON)->getElement(nr).toInt();
+  }
+#endif
+
   if (strcmp(ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).c_str(), "") != 0) {
     return ConfigManager->get(KEY_NUMBER_BUTTON)->getElement(nr).toInt();
   }
-  else {
-    return nr;
-  }
+
+  return nr;
 }
 
 uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {

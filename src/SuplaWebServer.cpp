@@ -345,7 +345,7 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
     Expander->setGpioExpander(_gpio, _address, nr, function);
 
     if (function == FUNCTION_BUTTON)
-      ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
+      ConfigManager->setElement(KEY_EXPANDER_NUMBER_BUTTON, nr, nr);
 #ifdef SUPLA_ROLLERSHUTTER
     if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr) {
       if (nr % 2 == 0) {
