@@ -278,9 +278,8 @@ float ReadValuesSDM::sdmRead(uint16_t reg) {
   float tmpval = NAN;
 
   tmpval = sdm.readVal(reg);
-
-  if (isnan(tmpval))
-    tmpval = 0.0f;
+  // if (isnan(tmpval))
+  //   tmpval = 0.0f;
 
   return tmpval;
   // uint8_t retry_count = 3;

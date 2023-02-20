@@ -34,33 +34,57 @@ void SDM630::readValuesFromDevice() {
   clearSuccCount();
   clearErrCount();
   clearErrCode();
+  
+  float energyTotal = ReadValuesSDM::getFwdActEnergyTotal();
+  float reactEnergyTotal = ReadValuesSDM::getFwdReactEnergyTotal();
+  float freq = ReadValuesSDM::getFreq();
 
   for (int i = 0; i < MAX_PHASES; i++) {
     float energy = ReadValuesSDM::getFwdActEnergy(i);
     float reactEnergy = ReadValuesSDM::getFwdReactEnergy(i);
 
-    if (energy > 0)
+    float rvrActEnergy = ReadValuesSDM::getRvrActEnergy(i);
+    float rvrReactEnergy = ReadValuesSDM::getRvrReactEnergy(i);
+    float voltage = ReadValuesSDM::getVoltage(i);
+    float current = ReadValuesSDM::getCurrent(i);
+    float powerActive = ReadValuesSDM::getPowerActive(i);
+    float powerFactor = ReadValuesSDM::getPowerFactor(i);
+    float powerReactive = ReadValuesSDM::getPowerReactive(i);
+    float powerApparent = ReadValuesSDM::getPowerApparent(i);
+    float phaseAngle = ReadValuesSDM::getPhaseAngle(i);
+
+    if (!isnan(energy))
       setFwdActEnergy(i, energy * 100000);
-    else
-      setFwdActEnergy(0, ReadValuesSDM::getFwdActEnergyTotal() * 100000);
+    else if (!isnan(energyTotal))
+      setFwdActEnergy(0, energyTotal * 100000);
 
-    if (reactEnergy > 0)
+    if (!isnan(reactEnergy))
       setFwdReactEnergy(i, reactEnergy * 100000);
-    else
-      setFwdReactEnergy(0, ReadValuesSDM::getFwdReactEnergyTotal() * 100000);
+    else if (!isnan(reactEnergyTotal))
+      setFwdReactEnergy(0, reactEnergyTotal * 100000);
 
-    setRvrActEnergy(i, ReadValuesSDM::getRvrActEnergy(i) * 100000);
-    setRvrReactEnergy(i, ReadValuesSDM::getRvrReactEnergy(i) * 100000);
+    if (!isnan(rvrActEnergy))
+      setRvrActEnergy(i, rvrActEnergy * 100000);
+    if (!isnan(rvrReactEnergy))
+      setRvrReactEnergy(i, rvrReactEnergy * 100000);
 
-    setVoltage(i, ReadValuesSDM::getVoltage(i) * 100);
-    setCurrent(i, ReadValuesSDM::getCurrent(i) * 1000);
-    setPowerActive(i, ReadValuesSDM::getPowerActive(i) * 100000);
-    setPowerFactor(i, ReadValuesSDM::getPowerFactor(i) * 1000);
+    if (!isnan(voltage))
+      setVoltage(i, voltage * 100);
+    if (!isnan(current))
+      setCurrent(i, current * 1000);
+    if (!isnan(powerActive))
+      setPowerActive(i, powerActive * 100000);
+    if (!isnan(powerFactor))
+      setPowerFactor(i, powerFactor * 1000);
+    if (!isnan(freq))
+      setFreq(freq * 100);
+    if (!isnan(powerReactive))
+      setPowerReactive(i, powerReactive * 10000);
+    if (!isnan(powerApparent))
+      setPowerApparent(i, powerApparent * 100000);
+    if (!isnan(phaseAngle))
+      setPhaseAngle(i, phaseAngle * 10);
 
-    setFreq(ReadValuesSDM::getFreq() * 100);
-    setPowerReactive(i, ReadValuesSDM::getPowerReactive(i) * 10000);
-    setPowerApparent(i, ReadValuesSDM::getPowerApparent(i) * 100000);
-    setPhaseAngle(i, ReadValuesSDM::getPhaseAngle(i) * 10);
     delay(0);
   }
 }
