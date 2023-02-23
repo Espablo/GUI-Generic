@@ -111,9 +111,9 @@ void Adafruit_PCF8575::pinMode(uint8_t pinnum, uint8_t val) {
     _writebuf |= 1UL << pinnum;
     i2c_dev->write((uint8_t *)&_writebuf, 2);
   }
-  else {
-    _writebuf &= ~(1UL << pinnum);
-  }
+  // else {
+  //   _writebuf &= ~(1UL << pinnum);
+  // }
 }
 
 /*!
