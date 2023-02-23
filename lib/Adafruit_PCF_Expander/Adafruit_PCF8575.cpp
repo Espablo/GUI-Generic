@@ -52,6 +52,11 @@ bool Adafruit_PCF8575::begin(uint8_t i2c_address, TwoWire *wire) {
     return false;
   }
 
+  for (uint8_t p = 0; p < 16; p++) {
+    _writebuf |= 1UL << p;
+  }
+  i2c_dev->write((uint8_t *)&_writebuf, 2);
+
   return true;
 }
 
@@ -104,7 +109,7 @@ bool Adafruit_PCF8575::digitalWrite(uint8_t pinnum, bool val) {
 void Adafruit_PCF8575::pinMode(uint8_t pinnum, uint8_t val) {
   if ((val == INPUT) || (val == INPUT_PULLUP)) {
     _writebuf |= 1UL << pinnum;
-     i2c_dev->write((uint8_t *)&_writebuf, 2);
+    i2c_dev->write((uint8_t *)&_writebuf, 2);
   }
   else {
     _writebuf &= ~(1UL << pinnum);
