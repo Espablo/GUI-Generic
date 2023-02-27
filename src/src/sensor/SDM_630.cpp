@@ -35,8 +35,8 @@ void SDM630::readValuesFromDevice() {
   clearErrCount();
   clearErrCode();
   
-  float energyTotal = ReadValuesSDM::getFwdActEnergyTotal();
-  float reactEnergyTotal = ReadValuesSDM::getFwdReactEnergyTotal();
+  // float energyTotal = ReadValuesSDM::getFwdActEnergyTotal();
+  // float reactEnergyTotal = ReadValuesSDM::getFwdReactEnergyTotal();
   float freq = ReadValuesSDM::getFreq();
 
   for (int i = 0; i < MAX_PHASES; i++) {
@@ -55,13 +55,13 @@ void SDM630::readValuesFromDevice() {
 
     if (!isnan(energy))
       setFwdActEnergy(i, energy * 100000);
-    else if (!isnan(energyTotal))
-      setFwdActEnergy(0, energyTotal * 100000);
+    // else if (!isnan(energyTotal))
+    //   setFwdActEnergy(0, energyTotal * 100000);
 
     if (!isnan(reactEnergy))
       setFwdReactEnergy(i, reactEnergy * 100000);
-    else if (!isnan(reactEnergyTotal))
-      setFwdReactEnergy(0, reactEnergyTotal * 100000);
+    // else if (!isnan(reactEnergyTotal))
+    //   setFwdReactEnergy(0, reactEnergyTotal * 100000);
 
     if (!isnan(rvrActEnergy))
       setRvrActEnergy(i, rvrActEnergy * 100000);

@@ -36,10 +36,10 @@ void SDM120::readValuesFromDevice() {
   clearErrCode();
 
   float energy = ReadValuesSDM::getFwdActEnergy();
-  float energyTotal = ReadValuesSDM::getFwdActEnergyTotal();
+  // float energyTotal = ReadValuesSDM::getFwdActEnergyTotal();
 
   float reactEnergy = ReadValuesSDM::getFwdReactEnergy();
-  float reactEnergyTotal = ReadValuesSDM::getFwdReactEnergyTotal();
+  // float reactEnergyTotal = ReadValuesSDM::getFwdReactEnergyTotal();
 
   float rvrActEnergy = ReadValuesSDM::getRvrActEnergy();
   float rvrReactEnergy = ReadValuesSDM::getRvrReactEnergy();
@@ -55,13 +55,13 @@ void SDM120::readValuesFromDevice() {
 
   if (!isnan(energy))
     setFwdActEnergy(0, energy * 100000);
-  else if (!isnan(energyTotal))
-    setFwdActEnergy(0, energyTotal * 100000);
+  // else if (!isnan(energyTotal))
+  //   setFwdActEnergy(0, energyTotal * 100000);
 
   if (!isnan(reactEnergy))
     setFwdReactEnergy(0, reactEnergy * 100000);
-  else if (!isnan(reactEnergyTotal))
-    setFwdReactEnergy(0, reactEnergyTotal * 100000);
+  // else if (!isnan(reactEnergyTotal))
+  //   setFwdReactEnergy(0, reactEnergyTotal * 100000);
 
   if (!isnan(rvrActEnergy))
     setRvrActEnergy(0, rvrActEnergy * 100000);
