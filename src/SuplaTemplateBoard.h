@@ -171,7 +171,9 @@ enum FunctionNew
   NewLedLink = 544,
   NewLedLinki = 576,
   NewI2CSCL = 608,
+  NewI2CSCL2 = 609,
   NewI2CSDA = 640,
+  NewI2CSDA2 = 641,
   NewSI7021 = 1248,
   NewDS18x20 = 1312,
   NewHLWBLSELi = 2624,
@@ -182,6 +184,9 @@ enum FunctionNew
   NewCSE7766Rx = 3104,
   NewADE7953_IRQ = 3456,
   NewTemperatureAnalog = 4736,
+  NewEthPOWER = 5536,
+  NewEthMDC = 5568,
+  NewEthMDIO = 5600,
   NewUsers = 1,
 };
 

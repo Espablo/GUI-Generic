@@ -23,15 +23,15 @@
 #include <supla/network/network.h>
 
 class NetworkMockWithMac : public Supla::Network {
-  public:
-    NetworkMockWithMac() : Supla::Network(nullptr) {};
-    MOCK_METHOD(void, setup, (), (override));
-    MOCK_METHOD(void, disable, (), (override));
+ public:
+  NetworkMockWithMac();
+  virtual ~NetworkMockWithMac();
+  MOCK_METHOD(void, setup, (), (override));
+  MOCK_METHOD(void, disable, (), (override));
 
-    MOCK_METHOD(bool, isReady, (), (override));
-    MOCK_METHOD(bool, iterate, (), (override));
-    MOCK_METHOD(bool, getMacAddr, (uint8_t*), (override));
+  MOCK_METHOD(bool, isReady, (), (override));
+  MOCK_METHOD(bool, iterate, (), (override));
+  MOCK_METHOD(bool, getMacAddr, (uint8_t*), (override));
 };
-
 
 #endif  // EXTRAS_TEST_DOUBLES_NETWORK_WITH_MAC_MOCK_H_

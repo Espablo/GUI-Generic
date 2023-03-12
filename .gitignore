@@ -12,10 +12,4 @@ src/GUI-Generic.ino.cpp
 .cproject
 .settings
 #### SuplaDevice ####
-lib/SuplaDevice/src/supla/network/html
-lib/SuplaDevice/src/supla/network/web_sender*
-lib/SuplaDevice/src/supla/network/web_server*
-lib/SuplaDevice/src/supla/network/html_generator*
-lib/SuplaDevice/src/supla/network/html_element.*
-lib/SuplaDevice/src/supla/network/esp_web_server.*
 lib/SuplaDevice/src/supla/supla_lib_config.h

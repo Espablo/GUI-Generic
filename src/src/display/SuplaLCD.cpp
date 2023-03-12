@@ -95,13 +95,14 @@ SuplaLCD::SuplaLCD(uint8_t lcdAddr, uint8_t lcdCols, uint8_t lcdRows) {
 }
 
 void SuplaLCD::onInit() {
-  uint8_t pinButton = ConfigESP->getGpio(FUNCTION_BUTTON);
+  uint8_t nrButton = ConfigESP->getNumberButtonAdditional(BUTTON_LCD);
+  uint8_t pinButton = ConfigESP->getGpio(nrButton, FUNCTION_BUTTON);
 
   if (pinButton != OFF_GPIO) {
-    bool pullUp = ConfigESP->getPullUp(ConfigESP->getGpio(FUNCTION_BUTTON));
-    bool invertLogic = ConfigESP->getInversed(ConfigESP->getGpio(FUNCTION_BUTTON));
+    bool pullUp = ConfigESP->getPullUp(pinButton);
+    bool invertLogic = ConfigESP->getInversed(pinButton);
 
-    Supla::Control::Button* button = new Supla::Control::Button(pinButton, pullUp, invertLogic);
+    Supla::Control::Button* button = Supla::Control::GUI::Button(pinButton, pullUp, invertLogic, nrButton);
     button->addAction(ActionLCD::LCD_NEXT_FRAME, this, Supla::ON_PRESS);
     button->addAction(ActionLCD::LCD_TURN_ON, this, Supla::ON_PRESS);
   }

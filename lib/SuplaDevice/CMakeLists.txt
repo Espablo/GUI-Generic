@@ -18,6 +18,8 @@ set(SUPLA_DEVICE_SRCS
   src/supla/auto_lock.cpp
   src/supla/sha256.cpp
   src/supla/rsa_verificator.cpp
+  src/supla/crc8.cpp
+  src/supla/crc16.cpp
 
   src/supla/condition.cpp
   src/supla/condition_getter.cpp
@@ -53,6 +55,8 @@ set(SUPLA_DEVICE_SRCS
   src/supla/network/html/sw_update_beta.cpp
   src/supla/network/html/sw_update.cpp
   src/supla/network/html/custom_sw_update.cpp
+  src/supla/network/html/text_cmd_input_parameter.cpp
+  src/supla/network/html/select_cmd_input_parameter.cpp
   src/supla/network/client.cpp
   src/supla/network/ip_address.cpp
 

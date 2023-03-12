@@ -102,12 +102,16 @@ void handleCounterCalibrateSave();
 #define INPUT_RGBW_BLUE             "rgbwb"
 #define INPUT_RGBW_BRIGHTNESS       "rgbwbr"
 #define INPUT_RGBW_COLOR_BRIGHTNESS "rgbwcb"
+#define INPUT_BUTTON_RGBW           "ibr"
 #define INPUT_RGBW_MEMORY           "irm"
 #endif
 
 #ifdef SUPLA_PUSHOVER
 #define INPUT_PUSHOVER_TOKEN "pot"
 #define INPUT_PUSHOVER_USER  "pou"
+
+#define INPUT_PUSHOVER_MESSAGE "ipm"
+#define INPUT_PUSHOVER_SOUND   "ips"
 #endif
 
 #ifdef SUPLA_HC_SR04

@@ -204,6 +204,13 @@ void chooseTemplateBoard(String board) {
         ConfigESP->setGpio(gpio, FUNCTION_SDA);
         break;
 
+      case NewI2CSCL2:
+        ConfigESP->setGpio(gpio, FUNCTION_SCL_2);
+        break;
+      case NewI2CSDA2:
+        ConfigESP->setGpio(gpio, FUNCTION_SDA_2);
+        break;
+
       case NewRelay1:
         addRelay(0, gpio);
         break;
@@ -420,6 +427,15 @@ void chooseTemplateBoard(String board) {
         ConfigESP->setGpio(gpio, FUNCTION_NTC_10K);
         break;
 
+      case NewEthPOWER:
+        break;
+
+      case NewEthMDC:
+        break;
+
+      case NewEthMDIO:
+        break;
+
       case NewSI7021:
         ConfigESP->setGpio(gpio, FUNCTION_SI7021_SONOFF);
         break;
@@ -462,14 +478,32 @@ void chooseTemplateBoard(String board) {
     addExpander(EXPENDER_MCP23017, root["MCP23017"]);
   }
 
+  if (root["MCP23017_I2C2"].success()) {
+    addExpander(EXPENDER_MCP23017_I2C2, root["MCP23017_I2C2"]);
+  }
+
   if (root["PCF8575"].success()) {
     addExpander(EXPENDER_PCF8575, root["PCF8575"]);
+  }
+
+  if (root["PCF8575"].success()) {
+    addExpander(EXPENDER_PCF8575_I2C2, root["PCF8575_I2C2"]);
   }
 
   if (root["PCF8574"].success()) {
     addExpander(EXPENDER_PCF8574, root["PCF8574"]);
   }
 #endif
+
+  JsonArray& numberButtons = root["BTN"];
+  for (size_t i = 0; i < numberButtons.size(); i++) {
+    int nr = numberButtons[i];
+    nr--;
+
+    if (nr >= 0) {
+      ConfigESP->setNumberButton(nr);
+    }
+  }
 }
 
 int convert(int gpioJSON) {
@@ -670,7 +704,7 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, JsonArray& buttonAction,
     addButtonCFG(gpio);
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
 
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
+  ConfigESP->setNumberButton(nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
@@ -683,7 +717,7 @@ void addButtonAnalog(uint8_t nr, uint8_t gpio, JsonArray& buttonAction) {
     ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
 
   ConfigESP->setEvent(gpio, Supla::Event::ON_PRESS);
-  ConfigManager->setElement(KEY_NUMBER_BUTTON, nr, nr);
+  ConfigESP->setNumberButton(nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
@@ -801,22 +835,26 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
 
     if (typeExpander == EXPENDER_MCP23017) {
       sizeExpander = 16;
-      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MCP23017, true);
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_MCP23017);
+    }
+    else if (typeExpander == EXPENDER_MCP23017_I2C2) {
+      sizeExpander = 16;
+      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_MCP23017_I2C2);
     }
     else if (typeExpander == EXPENDER_PCF8575) {
       sizeExpander = 16;
-      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, true);
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8575);
+    }
+    else if (typeExpander == EXPENDER_PCF8575_I2C2) {
+      sizeExpander = 16;
+      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8575_I2C2);
     }
     else if (typeExpander == EXPENDER_PCF8574) {
       sizeExpander = 8;
-      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, true);
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8574);
     }
-    else {
-      ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_PCF857X, false);
-      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, false);
+    else if (typeExpander == EXPENDER_PCF8574_I2C2) {
+      ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8574_I2C2);
     }
 
     for (size_t ii = 1; ii <= sizeExpander; ii++) {
@@ -826,7 +864,8 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
         if (gpio != 17)
           gpio = gpio - 1;
 
-        ConfigESP->setGpioMCP23017(gpio, address, ConfigManager->get(key)->getValueInt(), function);
+        uint8_t nr = ConfigManager->get(key)->getValueInt();
+        Expander->setGpioExpander(gpio, address, nr, function);
 
         switch (function) {
           case FUNCTION_RELAY:
@@ -838,6 +877,7 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
             ConfigESP->setEvent(gpio, Supla::Event::ON_CHANGE);
             ConfigESP->setPullUp(gpio, true);
             ConfigESP->setInversed(gpio, true);
+            ConfigESP->setNumberButton(nr);
             break;
         }
         ConfigManager->set(key, ConfigManager->get(key)->getValueInt() + 1);

@@ -221,7 +221,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, MAX_GPIO * 3, false);
     this->addKey(KEY_CONDITIONS_CLIENT_TYPE, MAX_GPIO * 2, false);
     this->addKey(KEY_CONDITIONS_CLIENT_TYPE_NUMBER, "0", MAX_GPIO * 3, false);
-    this->addKey(KEY_MAX_CONDITIONS, "1", 2), false;
+    this->addKey(KEY_MAX_CONDITIONS, "1", 2, false);
 #endif
 
 #ifdef SUPLA_BUTTON
@@ -230,12 +230,14 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON);
     this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2);
     this->addKey(KEY_AT_HOLD_TIME, "0.45", 4);
+    this->addKey(KEY_NUMBER_BUTTON_ADDITIONAL, 36);
 #else
     this->addKey(KEY_MAX_BUTTON, 2, false);
     this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON, false);
     this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON, false);
     this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, false);
     this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, false);
+    this->addKey(KEY_NUMBER_BUTTON_ADDITIONAL, 36, false);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
@@ -307,8 +309,8 @@ SuplaConfigManager::SuplaConfigManager() {
 #endif
 
 #ifdef SUPLA_PUSHOVER
-    this->addKey(KEY_PUSHOVER_TOKEN, "0", MAX_TOKEN_SIZE);
-    this->addKey(KEY_PUSHOVER_USER, "0", MAX_USER_SIZE);
+    this->addKey(KEY_PUSHOVER_TOKEN, MAX_TOKEN_SIZE);
+    this->addKey(KEY_PUSHOVER_USER, MAX_USER_SIZE);
     this->addKey(KEY_PUSHOVER_MASSAGE, MAX_MESSAGE_SIZE * MAX_PUSHOVER_MESSAGE);
     this->addKey(KEY_PUSHOVER_SOUND, 3 * MAX_PUSHOVER_MESSAGE);
 #else
@@ -392,8 +394,10 @@ SuplaConfigManager::SuplaConfigManager() {
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
     this->addKey(KEY_ACTIVE_EXPENDER, 20);
+    this->addKey(KEY_EXPANDER_NUMBER_BUTTON, 96);
 #else
     this->addKey(KEY_ACTIVE_EXPENDER, 20, false);
+    this->addKey(KEY_EXPANDER_NUMBER_BUTTON, 96, false);
 #endif
 
 #if defined(SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR) || defined(SUPLA_DIRECT_LINKS_MULTI_SENSOR)
@@ -414,7 +418,6 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_WAKE_ON_LAN_MAX, 2, false);
     this->addKey(KEY_WAKE_ON_LAN_MAC, MAX_WAKE_ON_LAN * 18, false);
 #endif
-
     //  this->addKey(KEY_VERSION_CONFIG, String(CURENT_VERSION).c_str(), 2);
 
     SPIFFS.end();

@@ -189,6 +189,28 @@
 				"name": "Protocole mDNS",
 				"desc": "L'utilisation du protocole mDNS permet de se connecter au module sans connaître son adresse IP, il suffit de saisir l'adresse du module http://supla.local"
 			}
+		},
+		"SUPLA_WAKE_ON_LAN": {
+			"name": "Wake on LAN",
+			"desc": "Włączanie komputerów poprzez sieć lokalną LAN.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "Wake on LAN",
+				"desc": "Turning on computers via LAN."
+			},
+			"es": {
+				"name": "Wake on LAN",
+				"desc": "Encendido de computadoras a través de LAN."
+			},
+			"de": {
+				"name": "Wake on LAN",
+				"desc": "Einschalten von Computern über LAN."
+			},
+			"fr": {
+				"name": "Wake on LAN",
+				"desc": "Allumer les ordinateurs via LAN."
+			}
 		}
 	},
 	"CONTROL": {
@@ -1005,6 +1027,50 @@
 			"fr": {
 				"name": "Compteur d´énergie ADE7953",
 				"desc": "Paramètres de l´appareil->I2C. Il permet le fonctionnement du compteur d´énergie ADE7953."
+			}
+		},
+		"SUPLA_MODBUS_SDM_ONE_PHASE": {
+			"name": "Licznik energii SDM Modbus 1F",
+			"desc": "Umożliwia obsługę licznika energii za pomoca protokołu Modbus.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "Energy meter SDM Modbus 1F",
+				"desc": "It enables the operation of the energy meter SDM Modbus 1F."
+			},
+			"es": {
+				"name": "Contador de energía SDM Modbus 1F",
+				"desc": "Permite el funcionamiento del contador de energía SDM Modbus 1F."
+			},
+			"de": {
+				"name": "Energiezähler SDM Modbus 1F",
+				"desc": "Es ermöglicht den Betrieb des Energiezählers SDM Modbus 1F."
+			},
+			"fr": {
+				"name": "Compteur d´énergie SDM Modbus 1F",
+				"desc": "Il permet le fonctionnement du compteur d´énergie SDM Modbus 1F."
+			}
+		},
+		"SUPLA_MODBUS_SDM": {
+			"name": "Licznik energii SDM Modbus 3F",
+			"desc": "Umożliwia obsługę licznika energii za pomoca protokołu Modbus.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "Energy meter SDM Modbus 3F",
+				"desc": "It enables the operation of the energy meter SDM Modbus 3F."
+			},
+			"es": {
+				"name": "Contador de energía SDM Modbus 3F",
+				"desc": "Permite el funcionamiento del contador de energía SDM Modbus 3F."
+			},
+			"de": {
+				"name": "Energiezähler SDM Modbus 3F",
+				"desc": "Es ermöglicht den Betrieb des Energiezählers SDM Modbus 3F."
+			},
+			"fr": {
+				"name": "Compteur d´énergie SDM Modbus 3F",
+				"desc": "Il permet le fonctionnement du compteur d´énergie SDM Modbus 3F."
 			}
 		}
 	},

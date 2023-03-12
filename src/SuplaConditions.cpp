@@ -180,7 +180,11 @@ void addConditionsSensor(int functionSensor, const char *nameSensor, Supla::Chan
       conditions[nr].sensor = sensor;
 
       Serial.print("addConditionsSensor: ");
-      Serial.print("functionSensor: ");
+      Serial.print("functionClient: ");
+      Serial.print(conditions[nr].functionClient);
+      Serial.print(", nrClient: ");
+      Serial.print(conditions[nr].nrClient);
+      Serial.print(" functionSensor: ");
       Serial.print(conditions[nr].functionSensor);
       Serial.print(", nrSensor : ");
       Serial.println(conditions[nr].nrSensor);
@@ -192,11 +196,15 @@ void addConditionsSensor(int functionSensor, const char *nameSensor, Supla::Sens
   CONDITIONS_SENSOR_LIST[functionSensor] = nameSensor;
 
   for (uint8_t nr = 0; nr < ConfigManager->get(KEY_MAX_CONDITIONS)->getValueInt(); nr++) {
-    if (conditions[nr].functionSensor == functionSensor && conditions[nr].nrClient == nrSensor) {
+    if (conditions[nr].functionSensor == functionSensor && conditions[nr].nrSensor == nrSensor) {
       conditions[nr].electricityMete = electricityMete;
 
       Serial.print("addConditionsElectricityMete: ");
-      Serial.print("functionSensor: ");
+      Serial.print("functionClient: ");
+      Serial.print(conditions[nr].functionClient);
+      Serial.print(", nrClient: ");
+      Serial.print(conditions[nr].nrClient);
+      Serial.print(" functionSensor: ");
       Serial.print(conditions[nr].functionSensor);
       Serial.print(", nrSensor : ");
       Serial.println(conditions[nr].nrSensor);
@@ -266,7 +274,7 @@ void addConditions() {
     /////// Warunkowanie dla liczników energii //////
     if (conditions[nr].client != nullptr && conditions[nr].electricityMete != nullptr) {
       if (strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0) {
-        Serial.print("addConditionsRelay - ElectricityMeter: ");
+        Serial.print("addConditions MIN - ElectricityMeter: ");
         Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
 
         double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
@@ -296,7 +304,7 @@ void addConditions() {
       }
 
       if (strcmp(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str(), "") != 0) {
-        Serial.print("addConditionsTurnOFF - ElectricityMeter: ");
+        Serial.print("addConditions MAX - ElectricityMeter: ");
         Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
 
         double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();

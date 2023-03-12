@@ -17,7 +17,6 @@
 #ifndef SuplaCommonPROGMEM_h
 #define SuplaCommonPROGMEM_h
 #include <pgmspace.h>
-#include "SuplaDeviceGUI.h"
 #include "GUIGenericCommon.h"
 
 #define PGMT(pgm_ptr) (reinterpret_cast<const __FlashStringHelper*>(pgm_ptr))
@@ -209,59 +208,6 @@ const char* const GPIO_P[] PROGMEM = {GPIO0,  GPIO1,  GPIO2,  GPIO3,  GPIO4,  GP
                                       GPIO11, GPIO12, GPIO13, GPIO14, GPIO15, GPIO16, GPIO17,  GPIO18,  GPIO19,  GPIO20,  GPIO21,
                                       GPIO22, GPIO23, GPIO24, GPIO25, GPIO26, GPIO27, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, GPIO32,
                                       GPIO33, GPIO34, GPIO35, GPIO36, GPIO37, GPIO38, GPIO39,  OFF};
-#endif
-
-#ifdef GUI_SENSOR_I2C_EXPENDER
-const char GPIO_A0[] PROGMEM = "A0";
-const char GPIO_A1[] PROGMEM = "A1";
-const char GPIO_A2[] PROGMEM = "A2";
-const char GPIO_A3[] PROGMEM = "A3";
-const char GPIO_A4[] PROGMEM = "A4";
-const char GPIO_A5[] PROGMEM = "A5";
-const char GPIO_A6[] PROGMEM = "A6";
-const char GPIO_A7[] PROGMEM = "A7";
-const char GPIO_B0[] PROGMEM = "B0";
-const char GPIO_B1[] PROGMEM = "B1";
-const char GPIO_B2[] PROGMEM = "B2";
-const char GPIO_B3[] PROGMEM = "B3";
-const char GPIO_B4[] PROGMEM = "B4";
-const char GPIO_B5[] PROGMEM = "B5";
-const char GPIO_B6[] PROGMEM = "B6";
-const char GPIO_B7[] PROGMEM = "B7";
-
-const char* const GPIO_MCP23017_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, GPIO_B0,
-                                               GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7, S_EMPTY, OFF};
-
-const char* const GPIO_PCF_8574_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, S_EMPTY,
-                                               S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, OFF};
-
-const char* const EXPENDER_LIST_P[] PROGMEM = {
-    OFF,
-#ifdef SUPLA_MCP23017
-    "MCP23017",
-#else
-    S_EMPTY,
-#endif
-#ifdef SUPLA_PCF8575
-    "PCF8575",
-#else
-    S_EMPTY,
-#endif
-#ifdef SUPLA_PCF8574
-    "PCF8574/A",
-#else
-    S_EMPTY,
-#endif
-};
-
-enum
-{
-  EXPENDER_OFF,
-  EXPENDER_MCP23017,
-  EXPENDER_PCF8575,
-  EXPENDER_PCF8574
-};
-
 #endif
 
 #if defined(SUPLA_BME280) || defined(SUPLA_BMP280)

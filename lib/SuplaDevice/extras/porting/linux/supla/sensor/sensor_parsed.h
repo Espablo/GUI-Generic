@@ -21,15 +21,27 @@
 
 #include <supla/parser/parser.h>
 
+#include <supla-common/proto.h>
 #include <map>
 #include <string>
+#include <vector>
+#include <utility>
+#include "supla/control/action_trigger.h"
 
 namespace Supla {
+
+namespace Control {
+class ActionTriggerParsed;
+}  // namespace Control
+
 namespace Sensor {
 
-class SensorParsed {
+const char BatteryLevel[] = "battery_level";
+const char MultiplierBatteryLevel[] = "multiplier_battery_level";
+
+class SensorParsedBase {
  public:
-  explicit SensorParsed(Supla::Parser::Parser *);
+  explicit SensorParsedBase(Supla::Parser::Parser *);
 
   void setMapping(const std::string &parameter, const std::string &key);
 
@@ -41,14 +53,77 @@ class SensorParsed {
 
   bool isParameterConfigured(const std::string &parameter);
 
+  // Returns -1 on invalid source/parser/value,
+  // Otherwise returns >= 0 read from parser.
+  int getStateValue();
+  void setOnValues(const std::vector<int> &onValues);
+  bool addAtOnState(const std::vector<int> &onState);
+  bool addAtOnValue(const std::vector<int> &onValue);
+  bool addAtOnStateChange(const std::vector<int> &onState);
+  bool addAtOnValueChange(const std::vector<int> &onValue);
+  void setLastState(int newState);
+  void setLastValue(int newValue);
+  void setAtName(std::string);
+  void registerActions();
+
+  static void registerAtName(std::string,
+                             Supla::Control::ActionTriggerParsed *);
+
  protected:
   double getParameterValue(const std::string &parameter);
 
+  // parser configuration
+  int id;
   Supla::Parser::Parser *parser = nullptr;
   std::map<std::string, std::string> parameterToKey;
   std::map<std::string, double> parameterMultiplier;
-  int id;
+  std::vector<int> stateOnValues;
+
+  // action trigger configuration
+  std::string atName;
+  int lastState = -1;
+  int lastValue = -1;
+  std::map<int, int> atOnState;  // map<state, event>
+  std::map<int, int> atOnValue;
+  std::map<std::pair<int, int>, int>
+      atOnStateChangeFromTo;  // map<<from, to>, event>
+  std::map<std::pair<int, int>, int> atOnValueChangeFromTo;
+
+  static std::map<std::string, Supla::Control::ActionTriggerParsed *> atMap;
+
+  // TODO(klew): add local action
 };
+
+template <typename T> class SensorParsed : public T, public SensorParsedBase {
+ public:
+  explicit SensorParsed(Supla::Parser::Parser *);
+
+  void handleGetChannelState(TDSC_ChannelState *channelState) override;
+};
+
+template <typename T>
+SensorParsed<T>::SensorParsed(Supla::Parser::Parser *parser)
+    : SensorParsedBase(parser) {
+}
+
+template <typename T>
+void SensorParsed<T>::handleGetChannelState(TDSC_ChannelState *channelState) {
+  unsigned char batteryLevel = 255;
+  if (isParameterConfigured(BatteryLevel)) {
+    if (refreshParserSource()) {
+      batteryLevel = getParameterValue(BatteryLevel);
+    }
+    if (T::getChannel()) {
+      T::getChannel()->setBatteryLevel(batteryLevel);
+    }
+    if (T::getSecondaryChannel()) {
+      T::getSecondaryChannel()->setBatteryLevel(batteryLevel);
+    }
+  }
+
+  T::handleGetChannelState(channelState);
+}
+
 };  // namespace Sensor
 };  // namespace Supla
 

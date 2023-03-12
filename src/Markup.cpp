@@ -339,11 +339,16 @@ void addListExpanderBox(String& html, const String& input_id, const String& name
   uint8_t type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 
   if (nr == 0) {
-    addListBox(html, INPUT_EXPENDER_TYPE, S_TYPE, EXPENDER_LIST_P, 4, type);
+    addListBox(html, INPUT_EXPENDER_TYPE, S_TYPE, EXPENDER_LIST_P, EXPENDER_COUNT, type);
   }
 
-  if (ConfigESP->checkActiveMCP23017(function)) {
-    addListExpanderGPIOBox(webContentBuffer, input_id, name, function, nr, url);
+  if (Expander->checkActiveExpander(function)) {
+    if (nr < MAX_EXPANDER_FOR_FUNCTION) {
+      addListExpanderGPIOBox(webContentBuffer, input_id, name, function, nr, url);
+    }
+    else {
+      addListGPIOLinkBox(webContentBuffer, input_id, name, getParameterRequest(url, ARG_PARM_NUMBER), function, nr);
+    }
   }
   else {
     addListGPIOLinkBox(webContentBuffer, input_id, name, getParameterRequest(url, ARG_PARM_NUMBER), function, nr);
@@ -357,10 +362,15 @@ void addListExpanderGPIOBox(String& html, const String& input_id, const String& 
 
   type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 
-  if (type == EXPENDER_PCF8574) {
+  if (type == EXPENDER_PCF8574 || type == EXPENDER_PCF8574_I2C2) {
     maxNr = 8;
     listAdressExpender = EXPENDER_PCF8574_P;
-    listExpender = GPIO_PCF_8574_P;
+    listExpender = GPIO_PCF_XXX_P;
+  }
+  else if (type == EXPENDER_PCF8575 || type == EXPENDER_PCF8575_I2C2) {
+    maxNr = 16;
+    listAdressExpender = EXPENDER_P;
+    listExpender = GPIO_PCF_XXX_P;
   }
   else {
     maxNr = 16;
@@ -370,7 +380,7 @@ void addListExpanderGPIOBox(String& html, const String& input_id, const String& 
 
   if (nr == 0 || nr == maxNr) {
     for (uint8_t gpio = nr; gpio <= OFF_GPIO_EXPENDER; gpio++) {
-      address = ConfigESP->getAdressMCP23017(gpio, function);
+      address = Expander->getAdressExpander(gpio, function);
       if (address != OFF_ADDRESS_MCP23017) {
         break;
       }
@@ -407,11 +417,11 @@ void addListExpanderGPIO(String& html,
   html += nr;
   html += F("'>");
 
-  uint8_t selected = ConfigESP->getGpioMCP23017(nr, function);
+  uint8_t selected = Expander->getGpioExpander(nr, function);
 
   for (uint8_t suported = 0; suported < size; suported++) {
     if (!String(FPSTR(array_P[suported])).isEmpty()) {
-      if (ConfigESP->checkBusyGpioMCP23017(suported, nr, function) || selected == suported) {
+      if (Expander->checkBusyGpioExpander(suported, nr, function) || selected == suported) {
         html += F("<option value='");
         html += suported;
         html += F("'");
@@ -635,20 +645,3 @@ const String SuplaSaveResult(int save) {
   saveresult += F("</div>");
   return saveresult;
 }
-
-#ifdef SUPLA_PUSHOVER
-namespace Html {
-void addPushover(uint8_t nr) {
-  if (nr <= MAX_PUSHOVER_MESSAGE) {
-    addFormHeader(webContentBuffer, S_PUSHOVER);
-
-    uint8_t selected = ConfigManager->get(KEY_PUSHOVER_SOUND)->getElement(nr).toInt();
-    addListBox(webContentBuffer, INPUT_PUSHOVER_SOUND, S_SOUND, PUSHOVER_SOUND_LIST_P, Supla::PushoverSound::SOUND_COUNT, selected);
-
-    String massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str();
-    addTextBox(webContentBuffer, INPUT_PUSHOVER_MESSAGE, S_MESSAGE, massage, 0, MAX_MESSAGE_SIZE, false);
-    addFormHeaderEnd(webContentBuffer);
-  }
-}
-}  // namespace Html
-#endif

@@ -19,7 +19,7 @@
 #include <supla/time.h>
 #include <supla/storage/storage.h>
 #include <supla/storage/config.h>
-//#include <supla/network/html/button_multiclick_parameters.h>
+#include <supla/network/html/button_multiclick_parameters.h>
 #include <supla/events.h>
 #include <supla/actions.h>
 #include <SuplaDevice.h>
@@ -28,15 +28,15 @@
 
 #define CFG_MODE_ON_HOLD_TIME 5000
 
-Supla::Control::Button::Button(int pin, bool pullUp, bool invertLogic)
-    : SimpleButton(pin, pullUp, invertLogic),
-      holdTimeMs(0),
-      repeatOnHoldMs(0),
-      multiclickTimeMs(0),
-      lastStateChangeMs(0),
-      clickCounter(0),
-      holdSend(0),
-      bistable(false) {
+Supla::Control::Button::Button(Supla::Io *io,
+                               int pin,
+                               bool pullUp,
+                               bool invertLogic)
+    : SimpleButton(io, pin, pullUp, invertLogic) {
+    }
+
+      Supla::Control::Button::Button(int pin, bool pullUp, bool invertLogic)
+    : SimpleButton(pin, pullUp, invertLogic) {
 }
 
 void Supla::Control::Button::onTimer() {
@@ -180,15 +180,15 @@ bool Supla::Control::Button::isBistable() const {
 }
 
 void Supla::Control::Button::onLoadConfig() {
-  // auto cfg = Supla::Storage::ConfigInstance();
-  // if (cfg) {
-  //   uint32_t value = 300;
-  //   if (cfg->getUInt32(Supla::Html::BtnMulticlickTag, &value)) {
-  //     if (value >= 300 && value <= 10000) {
-  //       setMulticlickTime(value, isBistable());
-  //     }
-  //   }
-  // }
+  auto cfg = Supla::Storage::ConfigInstance();
+  if (cfg) {
+    uint32_t value = 300;
+    if (cfg->getUInt32(Supla::Html::BtnMulticlickTag, &value)) {
+      if (value >= 300 && value <= 10000) {
+        setMulticlickTime(value, isBistable());
+      }
+    }
+  }
 }
 
 void Supla::Control::Button::configureAsConfigButton(SuplaDeviceClass *sdc) {

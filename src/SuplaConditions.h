@@ -17,6 +17,7 @@
 #define SuplaConditions_h
 
 #include "SuplaDeviceGUI.h"
+
 #include <supla/channel_element.h>
 #include <supla/sensor/electricity_meter.h>
 
@@ -49,6 +50,7 @@ enum CONDITIONS
 {
   EXECUTIVE_RELAY,
   EXECUTIVE_RGBW,
+  EXECUTIVE_PUSHOVER,
   COUNT_EXECUTIVE_LIST
 };
 
@@ -98,6 +100,7 @@ enum sensorList
   SENSOR_ADE7953,
   SENSOR_BH1750,
   SENSOR_RGBW,
+  SENSOR_RELAY,
   SENSOR_MAX44009,
   COUNT_SENSOR_LIST
 };
@@ -122,8 +125,8 @@ const char* const CONDITIONS_TYPE_P[] PROGMEM = {
 #else
     S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY, S_EMPTY,
 #endif
-#ifdef SUPLA_LIMIT_SWITCH
-    "Stan GPIO",
+#if defined(SUPLA_LIMIT_SWITCH) || defined(SUPLA_RELAY)
+    S_GPIO,
 #else
     S_EMPTY,
 #endif

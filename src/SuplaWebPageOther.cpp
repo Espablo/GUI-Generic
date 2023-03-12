@@ -189,15 +189,30 @@ void handleOther(int save) {
     else {
       selected = OFF_GPIO;
     }
-    addListBox(webContentBuffer, String(INPUT_RGBW_MEMORY) + nr, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
+    addListBox(webContentBuffer, String(INPUT_RGBW_MEMORY) + nr, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected, 0, false);
+
+#ifdef SUPLA_BUTTON
+    selected = ConfigESP->getNumberButtonAdditional(BUTTON_RGBW, nr);
+    addListNumbersBox(webContentBuffer, String(INPUT_BUTTON_RGBW) + nr, S_BUTTON, ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(), selected);
+#endif
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
 
-#if defined(SUPLA_PUSHOVER)
+#ifdef SUPLA_PUSHOVER
   addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_PUSHOVER);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_USER, F("Your User Key"), KEY_PUSHOVER_USER, 0, MAX_USER_SIZE, false);
   addTextBox(webContentBuffer, INPUT_PUSHOVER_TOKEN, F("API Token"), KEY_PUSHOVER_TOKEN, 0, MAX_TOKEN_SIZE, false);
+
+  for (uint8_t nr = 0; nr < MAX_PUSHOVER_MESSAGE; nr++) {
+    uint8_t selected = ConfigManager->get(KEY_PUSHOVER_SOUND)->getElement(nr).toInt();
+    addListBox(webContentBuffer, String(INPUT_PUSHOVER_SOUND) + nr, String(S_SOUND) + S_SPACE + (nr + 1), PUSHOVER_SOUND_LIST_P,
+               Supla::PushoverSound::SOUND_COUNT, selected, false, false);
+
+    String massage = ConfigManager->get(KEY_PUSHOVER_MASSAGE)->getElement(nr).c_str();
+    addTextBox(webContentBuffer, String(INPUT_PUSHOVER_MESSAGE) + nr, String(S_MESSAGE) + S_SPACE + (nr + 1), massage, 0, 0, false);
+  }
+
   addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -365,6 +380,12 @@ void handleOtherSave() {
       return;
     }
 
+    String input = INPUT_BUTTON_RGBW;
+    input += nr;
+    if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+      ConfigManager->setElement(KEY_NUMBER_BUTTON_ADDITIONAL, BUTTON_RGBW + nr, WebServer->httpServer->arg(input).toInt());
+    }
+
     uint8_t redPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_RED);
     uint8_t brightnessPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_BRIGHTNESS);
     uint8_t memory = WebServer->httpServer->arg(String(INPUT_RGBW_MEMORY) + nr).toInt();
@@ -379,7 +400,7 @@ void handleOtherSave() {
   ConfigManager->set(KEY_MAX_RGBW, WebServer->httpServer->arg(INPUT_RGBW_MAX).c_str());
 #endif
 
-#if defined(SUPLA_PUSHOVER)
+#ifdef SUPLA_PUSHOVER
   if (strcmp(WebServer->httpServer->arg(INPUT_PUSHOVER_TOKEN).c_str(), "") != 0) {
     ConfigManager->set(KEY_PUSHOVER_TOKEN, WebServer->httpServer->arg(INPUT_PUSHOVER_TOKEN).c_str());
   }
@@ -387,6 +408,16 @@ void handleOtherSave() {
   if (strcmp(WebServer->httpServer->arg(INPUT_PUSHOVER_USER).c_str(), "") != 0) {
     ConfigManager->set(KEY_PUSHOVER_USER, WebServer->httpServer->arg(INPUT_PUSHOVER_USER).c_str());
   }
+
+  for (uint8_t nr = 0; nr < MAX_PUSHOVER_MESSAGE; nr++) {
+    String input = INPUT_PUSHOVER_SOUND;
+    input += nr;
+    ConfigManager->setElement(KEY_PUSHOVER_SOUND, nr, WebServer->httpServer->arg(input).c_str());
+    input = INPUT_PUSHOVER_MESSAGE;
+    input += nr;
+    ConfigManager->setElement(KEY_PUSHOVER_MASSAGE, nr, WebServer->httpServer->arg(input).c_str());
+  }
+
 #endif
 
 #ifdef SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR

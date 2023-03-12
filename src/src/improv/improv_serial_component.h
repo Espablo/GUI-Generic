@@ -29,7 +29,7 @@ static const uint8_t IMPROV_SERIAL_VERSION = 1;
 class ImprovSerialComponent : public Supla::Element {
  public:
   ImprovSerialComponent();
-  void onInit();
+  // void onInit();
   void iterateAlways();
 
   float get_setup_priority() {
@@ -60,6 +60,7 @@ class ImprovSerialComponent : public Supla::Element {
 #endif
 
   std::vector<uint8_t> rx_buffer_;
+  uint32_t last_read_byte_{0};
   improv::State state_;
 };
 #endif

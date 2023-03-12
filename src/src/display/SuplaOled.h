@@ -80,7 +80,7 @@ Supla::Channel* getChanelByChannelNumber(int channelNumber);
 class SuplaOled : public Supla::ActionHandler, public Supla::Element {
  public:
   SuplaOled();
-  void addButtonOled(uint8_t pin);
+  void addButtonOled();
 
  private:
   void onInit();

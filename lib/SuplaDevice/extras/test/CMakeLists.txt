@@ -8,6 +8,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_BUILD_TYPE Debug)
 set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+  set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
+endif(CCACHE_FOUND)
 
 include_directories(../../src)
 include_directories(doubles)
@@ -53,6 +57,8 @@ file(GLOB TEST_SRC
   ElectricityMeterTests/*.cpp
   ToolsTests/*.cpp
   Mqtt/*.cpp
+  Html/*.cpp
+  RollerShutterTests/*.cpp
   )
 
 file(GLOB DOUBLE_SRC doubles/*.cpp)

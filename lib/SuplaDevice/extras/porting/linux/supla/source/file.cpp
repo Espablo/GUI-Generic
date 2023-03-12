@@ -39,7 +39,8 @@ std::string Supla::Source::File::getContent() {
     auto fileTime = std::filesystem::last_write_time(filePath);
     auto now = std::filesystem::file_time_type::clock::now();
 
-    if (fileTime + std::chrono::seconds(fileExpirationSec) < now) {
+    if (fileExpirationSec != 0
+        && fileTime + std::chrono::seconds(fileExpirationSec) < now) {
       if (!fileIsTooOldLog) {
         fileIsTooOldLog = true;
         SUPLA_LOG_DEBUG("File: file \"%s\" is too old", filePath.c_str());
@@ -58,15 +59,23 @@ std::string Supla::Source::File::getContent() {
       }
     }
   } catch (std::filesystem::filesystem_error) {
+    SUPLA_LOG_ERROR("File: file \"%s\" reading error", filePath.c_str());
   }
 
   file.close();
+
+  if (result.length() < 1 && readFailures < 3) {
+    SUPLA_LOG_DEBUG("File: file \"%s\" reading error or empty",
+                    filePath.c_str());
+    readFailures++;
+    return prevResult;
+  }
+
+  readFailures = 0;
+  prevResult = result;
   return result;
 }
 
 void Supla::Source::File::setExpirationTime(int timeSec) {
-  if (timeSec < 1) {
-    timeSec = 1;
-  }
   fileExpirationSec = timeSec;
 }
