@@ -100,6 +100,8 @@ void CSE7766::begin() {
   if (!_dirty)
     return;
 
+  this->last_transmission = millis();
+
   _ready = true;
   _dirty = false;
 }
@@ -224,20 +226,17 @@ void CSE7766::_process() {
 
 void CSE7766::_read() {
   _error = SENSOR_ERROR_OK;
-  const uint32_t now = millis();
 
-  // A 24 bytes message takes ~55ms to go through at 4800 bps
-  // Reset counter if more than 1000ms have passed since last byte.
-  if (now - this->last_transmission > CSE7766_SYNC_INTERVAL)
-    index = 0;
+  while (_serial_available() > 0) {
+    const uint32_t now = millis();
 
-  if (_serial_available() == 0) {
-    return;
-  }
+    // A 24 bytes message takes ~55ms to go through at 4800 bps
+    // Reset counter if more than 1000ms have passed since last byte.
+    if (now - this->last_transmission > CSE7766_SYNC_INTERVAL)
+      index = 0;
 
-  this->last_transmission = now;
+    this->last_transmission = now;
 
-  while (_serial_available() != 0) {
     uint8_t byte = _serial_read();
 
     // first byte must be 0x55 or 0xF?
@@ -257,7 +256,6 @@ void CSE7766::_read() {
 
     _data[index++] = byte;
     if (index > 23) {
-      _serial_flush();
       break;
     }
   }
