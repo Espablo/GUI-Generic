@@ -44,24 +44,15 @@ void ImprovSerialComponent::write_data_(std::vector<uint8_t> &data) {
 #endif
 }
 
-void ImprovSerialComponent::onInit() {
-  if (Supla::Network::IsReady()) {
-    this->state_ = improv::STATE_PROVISIONED;
-  }
-}
+// void ImprovSerialComponent::onInit() {
+//   if (Supla::Network::IsReady()) {
+//     this->state_ = improv::STATE_PROVISIONED;
+//   }
+// }
 
 void ImprovSerialComponent::iterateAlways() {
-  if (!this->available_()) {
-    return;
-  }
-
-  if (this->state_ == improv::STATE_AUTHORIZED || this->state_ == improv::STATE_PROVISIONING) {
-    if (Supla::Network::IsReady()) {
-      this->set_state_(improv::STATE_PROVISIONED);
-
-      std::vector<uint8_t> url = this->build_rpc_settings_response_(improv::WIFI_SETTINGS);
-      this->send_response_(url);
-    }
+  if (Supla::Network::IsReady() && this->state_ == improv::STATE_AUTHORIZED) {
+    this->state_ = improv::STATE_PROVISIONED;
   }
 
   const uint32_t now = millis();
@@ -80,31 +71,23 @@ void ImprovSerialComponent::iterateAlways() {
     }
   }
 
-  //   if (!this->available_()) {
-  //     return;
-  //   }
+  if (this->state_ == improv::STATE_PROVISIONING) {
+    if (Supla::Network::IsReady()) {
+      this->set_state_(improv::STATE_PROVISIONED);
 
-  //   long now = millis();
-  //   long lastMsg = now;
-
-  //   while (millis() - lastMsg < 50) {
-  //     if (this->available_()) {
-  //       lastMsg = now;
-  //       uint8_t byte = this->read_byte_();
-
-  //       if (!this->parse_improv_serial_byte_(byte)) {
-  //         this->rx_buffer_.clear();
-  //       }
-  //     }
-  //   }
+      std::vector<uint8_t> url = this->build_rpc_settings_response_(improv::WIFI_SETTINGS);
+      this->send_response_(url);
+    }
+  }
 }
 
 std::vector<uint8_t> ImprovSerialComponent::build_rpc_settings_response_(improv::Command command) {
+  const uint8_t MAX_URL_LENGTH = 16;
   std::vector<std::string> urls;
+  char ip[MAX_URL_LENGTH];
 
-  std::string ip = WiFi.localIP().toString().c_str();
-  std::string webserver_url = "http://" + ip;
-  urls.push_back(webserver_url);
+  snprintf(ip, MAX_URL_LENGTH, "%d.%d.%d.%d", WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3]);
+  urls.emplace_back(std::string("http://") + ip);
 
   std::vector<uint8_t> data = improv::build_rpc_response(command, urls, false);
   return data;
@@ -186,8 +169,8 @@ bool ImprovSerialComponent::parse_improv_payload_(improv::ImprovCommand &command
 
       Supla::GUI::setupConnection();
 
-      this->set_state_(improv::STATE_AUTHORIZED);
-      // this->set_state_(improv::STATE_PROVISIONING);
+      // this->set_state_(improv::STATE_AUTHORIZED);
+      this->set_state_(improv::STATE_PROVISIONING);
       //  Serial.printf(
       //     "Received Improv wifi settings ssid=%s, password="
       //     "%s",
