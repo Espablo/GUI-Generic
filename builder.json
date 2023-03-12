@@ -1047,7 +1047,7 @@
 			"fr": {
 				"name": "Compteur d´énergie SDM Modbus 1F",
 				"desc": "Il permet le fonctionnement du compteur d´énergie SDM Modbus 1F."
-			},
+			}
 		},
 		"SUPLA_MODBUS_SDM": {
 			"name": "Licznik energii SDM Modbus 3F",
