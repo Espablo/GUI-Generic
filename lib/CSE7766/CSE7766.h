@@ -88,7 +88,7 @@ class CSE7766 {
   double _ratioC = 1.0;
   double _ratioP = 1.0;
 
-  uint8_t index = 0;
+  std::vector<uint8_t> rx_buffer_;
   uint32_t last_transmission = 0;
 
   unsigned char _data[24];

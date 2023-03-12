@@ -232,38 +232,35 @@ void CSE7766::_read() {
 
     // A 24 bytes message takes ~55ms to go through at 4800 bps
     // Reset counter if more than 1000ms have passed since last byte.
-    if (now - this->last_transmission > CSE7766_SYNC_INTERVAL)
-      index = 0;
+    if (now - this->last_transmission > CSE7766_SYNC_INTERVAL) {
+      rx_buffer_.clear();
+    }
 
     this->last_transmission = now;
 
     uint8_t byte = _serial_read();
 
     // first byte must be 0x55 or 0xF?
-    if (0 == index) {
+    if (rx_buffer_.empty()) {
       if ((0x55 != byte) && (byte < 0xF0)) {
         continue;
       }
-
-      // second byte must be 0x5A
     }
-    else if (1 == index) {
+
+    // second byte must be 0x5A
+    if (rx_buffer_.size() == 1) {
       if (0x5A != byte) {
-        index = 0;
+        rx_buffer_.clear();
         continue;
       }
     }
 
-    _data[index++] = byte;
-    if (index > 23) {
-      break;
-    }
-  }
+    rx_buffer_.push_back(byte);
 
-  // Process packet
-  if (24 == index) {
-    _process();
-    index = 0;
+    if (rx_buffer_.size() > 23) {
+      _process();
+      rx_buffer_.clear();
+    }
   }
 }
 
