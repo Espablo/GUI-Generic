@@ -784,9 +784,9 @@ void setup() {
   Supla::GUI::addCorrectionSensor();
 #endif
 
-  if (!ConfigESP->checkBusyGpio(3)) {  // GPIO_RX
-    new ImprovSerialComponent();
-  }
+  //  if (!ConfigESP->checkBusyGpio(3)) {  // GPIO_RX
+  new ImprovSerialComponent();
+  //  }
 }
 
 void loop() {

@@ -60,23 +60,39 @@ void ImprovSerialComponent::iterateAlways() {
     }
   }
 
-  if (!this->available_()) {
-    return;
+  const uint32_t now = millis();
+  if (now - this->last_read_byte_ > 50) {
+    this->rx_buffer_.clear();
+    this->last_read_byte_ = now;
   }
 
-  long now = millis();
-  long lastMsg = now;
-
-  while (millis() - lastMsg < 50) {
-    if (this->available_()) {
-      lastMsg = now;
-      uint8_t byte = this->read_byte_();
-
-      if (!this->parse_improv_serial_byte_(byte)) {
-        this->rx_buffer_.clear();
-      }
+  while (this->available_()) {
+    uint8_t byte = this->read_byte_();
+    if (this->parse_improv_serial_byte_(byte)) {
+      this->last_read_byte_ = now;
+    }
+    else {
+      this->rx_buffer_.clear();
     }
   }
+
+  //   if (!this->available_()) {
+  //     return;
+  //   }
+
+  //   long now = millis();
+  //   long lastMsg = now;
+
+  //   while (millis() - lastMsg < 50) {
+  //     if (this->available_()) {
+  //       lastMsg = now;
+  //       uint8_t byte = this->read_byte_();
+
+  //       if (!this->parse_improv_serial_byte_(byte)) {
+  //         this->rx_buffer_.clear();
+  //       }
+  //     }
+  //   }
 }
 
 std::vector<uint8_t> ImprovSerialComponent::build_rpc_settings_response_(improv::Command command) {
