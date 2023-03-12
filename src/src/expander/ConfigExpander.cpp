@@ -33,7 +33,7 @@ bool ConfigExpander::checkBusyGpioExpander(uint8_t gpio, uint8_t nr, uint8_t fun
   uint8_t address = OFF_ADDRESS_MCP23017, maxNr;
   uint8_t type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 
-  if (type == EXPENDER_PCF8574) {
+  if (type == EXPENDER_PCF8574 || type == EXPENDER_PCF8574_I2C2) {
     maxNr = 8;
   }
   else {
@@ -117,6 +117,7 @@ void ConfigExpander::setGpioExpander(uint8_t gpio, uint8_t adress, uint8_t nr, u
 void ConfigExpander::clearGpioExpander(uint8_t gpio, uint8_t nr, uint8_t function) {
   uint8_t key = KEY_GPIO + gpio;
   uint8_t adress = getAdressExpander(nr, function);
+  uint8_t type = ConfigManager->get(KEY_ACTIVE_EXPENDER)->getElement(function).toInt();
 
   if (getNrExpander(adress) != OFF_GPIO_EXPENDER)
     ConfigManager->setElement(key, getNrExpander(adress), 0);
@@ -124,7 +125,13 @@ void ConfigExpander::clearGpioExpander(uint8_t gpio, uint8_t nr, uint8_t functio
     ConfigManager->setElement(key, getFunctionExpander(adress), FUNCTION_OFF);
 
   if (function == FUNCTION_BUTTON) {
-    ConfigESP->setPullUp(gpio, true);
+    if (type == EXPENDER_PCF8575 || type == EXPENDER_PCF8575_I2C2) {
+      ConfigESP->setPullUp(gpio, false);
+    }
+    else {
+      ConfigESP->setPullUp(gpio, true);
+    }
+
     ConfigESP->setInversed(gpio, true);
     ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
     ConfigESP->setEvent(gpio, Supla::Event::ON_PRESS);

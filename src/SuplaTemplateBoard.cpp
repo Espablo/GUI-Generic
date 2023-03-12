@@ -501,7 +501,7 @@ void chooseTemplateBoard(String board) {
     nr--;
 
     if (nr >= 0) {
-       ConfigESP->setNumberButton(nr);
+      ConfigESP->setNumberButton(nr);
     }
   }
 }
@@ -704,7 +704,7 @@ void addButton(uint8_t nr, uint8_t gpio, uint8_t event, JsonArray& buttonAction,
     addButtonCFG(gpio);
   ConfigESP->setGpio(gpio, nr, FUNCTION_BUTTON);
 
-   ConfigESP->setNumberButton(nr);
+  ConfigESP->setNumberButton(nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
@@ -717,7 +717,7 @@ void addButtonAnalog(uint8_t nr, uint8_t gpio, JsonArray& buttonAction) {
     ConfigESP->setAction(gpio, Supla::Action::TOGGLE);
 
   ConfigESP->setEvent(gpio, Supla::Event::ON_PRESS);
-   ConfigESP->setNumberButton(nr);
+  ConfigESP->setNumberButton(nr);
   ConfigManager->set(KEY_MAX_BUTTON, maxButton + 1);
 }
 
@@ -853,7 +853,7 @@ void addExpander(uint8_t typeExpander, JsonArray& expander) {
       sizeExpander = 8;
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8574);
     }
-    else {
+    else if (typeExpander == EXPENDER_PCF8574_I2C2) {
       ConfigManager->setElement(KEY_ACTIVE_EXPENDER, function, EXPENDER_PCF8574_I2C2);
     }
 

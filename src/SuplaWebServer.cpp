@@ -319,7 +319,7 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
     return true;
   }
 
-  if (_type == EXPENDER_PCF8574) {
+  if (_type == EXPENDER_PCF8574 || _type == EXPENDER_PCF8574_I2C2) {
     shiftAddress = 8;
   }
   else {
