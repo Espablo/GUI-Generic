@@ -194,6 +194,7 @@
 			"name": "Wake on LAN",
 			"desc": "Włączanie komputerów poprzez sieć lokalną LAN.",
 			"defOn": false,
+			"new": true,
 			"en": {
 				"name": "Wake on LAN",
 				"desc": "Turning on computers via LAN."
@@ -1032,6 +1033,7 @@
 			"name": "Licznik energii SDM Modbus 1F",
 			"desc": "Umożliwia obsługę licznika energii za pomoca protokołu Modbus.",
 			"defOn": false,
+			"new": true,
 			"en": {
 				"name": "Energy meter SDM Modbus 1F",
 				"desc": "It enables the operation of the energy meter SDM Modbus 1F."
@@ -1053,6 +1055,7 @@
 			"name": "Licznik energii SDM Modbus 3F",
 			"desc": "Umożliwia obsługę licznika energii za pomoca protokołu Modbus.",
 			"defOn": false,
+			"new": true,
 			"en": {
 				"name": "Energy meter SDM Modbus 3F",
 				"desc": "It enables the operation of the energy meter SDM Modbus 3F."
