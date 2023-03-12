@@ -585,12 +585,13 @@ void addRGBWLeds(uint8_t nr) {
 }
 
 void setRGBWButton(uint8_t nr, Supla::Control::RGBWBase *rgbw) {
-  int buttonPin = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
+  uint8_t nrButton = ConfigESP->getNumberButtonAdditional(BUTTON_RGBW, nr);
+  int buttonPin = ConfigESP->getGpio(nrButton, FUNCTION_BUTTON);
   int pullupButton = ConfigESP->getPullUp(buttonPin);
   int inversedButton = ConfigESP->getInversed(buttonPin);
 
   if (buttonPin != OFF_GPIO) {
-    auto button = Supla::Control::GUI::Button(buttonPin, pullupButton, inversedButton, nr);
+    auto button = Supla::Control::GUI::Button(buttonPin, pullupButton, inversedButton, nrButton);
     button->setMulticlickTime(200);
     button->setHoldTime(400);
     button->repeatOnHoldEvery(35);

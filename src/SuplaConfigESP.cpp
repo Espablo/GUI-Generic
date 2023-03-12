@@ -522,6 +522,14 @@ uint8_t SuplaConfigESP::getNumberButton(uint8_t nr) {
   return nr;
 }
 
+uint8_t SuplaConfigESP::getNumberButtonAdditional(uint8_t functionButton, uint8_t nr) {
+  if (strcmp(ConfigManager->get(KEY_NUMBER_BUTTON_ADDITIONAL)->getElement(functionButton + nr).c_str(), "") != 0) {
+    return ConfigManager->get(KEY_NUMBER_BUTTON_ADDITIONAL)->getElement(functionButton + nr).toInt();
+  }
+
+  return nr;
+}
+
 uint8_t SuplaConfigESP::getKeyGpio(uint8_t gpio) {
   return KEY_GPIO + gpio;
 }

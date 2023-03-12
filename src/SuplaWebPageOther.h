@@ -102,6 +102,7 @@ void handleCounterCalibrateSave();
 #define INPUT_RGBW_BLUE             "rgbwb"
 #define INPUT_RGBW_BRIGHTNESS       "rgbwbr"
 #define INPUT_RGBW_COLOR_BRIGHTNESS "rgbwcb"
+#define INPUT_BUTTON_RGBW           "ibr"
 #define INPUT_RGBW_MEMORY           "irm"
 #endif
 

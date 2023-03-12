@@ -157,16 +157,8 @@ void handleSensorI2c(int save) {
       String name, sensorName, input;
 
 #ifdef SUPLA_BUTTON
-#ifdef GUI_SENSOR_I2C_EXPENDER
-      if (Expander->checkActiveExpander(FUNCTION_BUTTON)) {
-        addListExpanderGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON, 0);
-      }
-      else {
-        addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON);
-      }
-#else
-      addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_OLED_BUTTON, FUNCTION_BUTTON);
-#endif
+      selected = ConfigESP->getNumberButtonAdditional(BUTTON_OLED);
+      addListNumbersBox(webContentBuffer, INPUT_BUTTON_OLED, S_BUTTON, ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(), selected);
 #endif
 
       addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 99);
@@ -196,7 +188,12 @@ void handleSensorI2c(int save) {
 
       selected = ConfigManager->get(KEY_HD44780_TYPE)->getValueInt();
       addListBox(webContentBuffer, INPUT_HD44780_TYPE, S_TYPE, HD44780_TYPE_P, 4, selected);
-      addListGPIOBox(webContentBuffer, INPUT_BUTTON_GPIO, S_BUTTON, FUNCTION_BUTTON);
+
+#ifdef SUPLA_BUTTON
+      selected = ConfigESP->getNumberButtonAdditional(BUTTON_LCD);
+      addListNumbersBox(webContentBuffer, INPUT_BUTTON_LCD, S_BUTTON, ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(), selected);
+#endif
+
       addNumberBox(webContentBuffer, INPUT_OLED_ANIMATION, S_SCREEN_TIME, KEY_OLED_ANIMATION, 99);
       addNumberBox(webContentBuffer, INPUT_OLED_BRIGHTNESS_TIME, S_BACKLIGHT_S, KEY_OLED_BACK_LIGHT_TIME, 99);
 
@@ -351,25 +348,10 @@ void handleSensorI2cSave() {
   }
 
 #ifdef SUPLA_BUTTON
-#ifdef GUI_SENSOR_I2C_EXPENDER
-  if (Expander->checkActiveExpander(FUNCTION_BUTTON)) {
-    if (!WebServer->saveGpioMCP23017(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
-      handleControl(6);
-      return;
-    }
+  input = INPUT_BUTTON_OLED;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_NUMBER_BUTTON_ADDITIONAL, BUTTON_OLED, WebServer->httpServer->arg(input).toInt());
   }
-  else {
-    if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
-      handleControl(6);
-      return;
-    }
-  }
-#else
-  if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
-    handleControl(6);
-    return;
-  }
-#endif
 #endif
 
   input = INPUT_OLED_ANIMATION;
@@ -400,10 +382,13 @@ void handleSensorI2cSave() {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_HD44780, WebServer->httpServer->arg(input).toInt());
   }
 
-  if (!WebServer->saveGPIO(INPUT_BUTTON_GPIO, FUNCTION_BUTTON, 0)) {
-    handleSensorI2c(6);
-    return;
+#ifdef SUPLA_BUTTON
+  input = INPUT_BUTTON_LCD;
+  if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+    ConfigManager->setElement(KEY_NUMBER_BUTTON_ADDITIONAL, BUTTON_LCD, WebServer->httpServer->arg(input).toInt());
   }
+#endif
+
   input = INPUT_HD44780_TYPE;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0)
     ConfigManager->set(KEY_HD44780_TYPE, WebServer->httpServer->arg(input).c_str());

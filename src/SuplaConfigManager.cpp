@@ -221,7 +221,7 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_CONDITIONS_SENSOR_NUMBER, MAX_GPIO * 3, false);
     this->addKey(KEY_CONDITIONS_CLIENT_TYPE, MAX_GPIO * 2, false);
     this->addKey(KEY_CONDITIONS_CLIENT_TYPE_NUMBER, "0", MAX_GPIO * 3, false);
-    this->addKey(KEY_MAX_CONDITIONS, "1", 2), false;
+    this->addKey(KEY_MAX_CONDITIONS, "1", 2, false);
 #endif
 
 #ifdef SUPLA_BUTTON
@@ -230,12 +230,14 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON);
     this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2);
     this->addKey(KEY_AT_HOLD_TIME, "0.45", 4);
+    this->addKey(KEY_NUMBER_BUTTON_ADDITIONAL, 36);
 #else
     this->addKey(KEY_MAX_BUTTON, 2, false);
     this->addKey(KEY_ANALOG_BUTTON, 2 * MAX_ANALOG_BUTTON, false);
     this->addKey(KEY_ANALOG_INPUT_EXPECTED, 5 * MAX_ANALOG_BUTTON, false);
     this->addKey(KEY_NUMBER_BUTTON, MAX_GPIO * 2, false);
     this->addKey(KEY_AT_HOLD_TIME, "0.45", 4, false);
+    this->addKey(KEY_NUMBER_BUTTON_ADDITIONAL, 36, false);
 #endif
 
 #ifdef SUPLA_LIMIT_SWITCH
@@ -416,7 +418,6 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_WAKE_ON_LAN_MAX, 2, false);
     this->addKey(KEY_WAKE_ON_LAN_MAC, MAX_WAKE_ON_LAN * 18, false);
 #endif
-
     //  this->addKey(KEY_VERSION_CONFIG, String(CURENT_VERSION).c_str(), 2);
 
     SPIFFS.end();

@@ -114,9 +114,8 @@ enum _LCDAdress
 #define INPUT_OLED_BRIGHTNESS_TIME "oledb"
 #define INPUT_OLED_BRIGHTNESS_LVL  "oledc"
 #define INPUT_OLED_NAME            "ion"
-#ifndef INPUT_BUTTON_GPIO
-#define INPUT_BUTTON_GPIO "btg"
-#endif
+#define INPUT_BUTTON_OLED          "ibo"
+#define INPUT_BUTTON_LCD           "ibl"
 #endif
 
 void createWebPageSensorI2c();

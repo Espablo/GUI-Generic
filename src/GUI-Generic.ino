@@ -48,7 +48,7 @@ void setup() {
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
-  
+
 #ifdef GUI_SENSOR_I2C_EXPENDER
   Expander = new Supla::Control::ConfigExpander();
 #endif
@@ -681,7 +681,7 @@ void setup() {
     if (ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_OLED).toInt()) {
       SuplaOled *oled = new SuplaOled();
 #ifdef SUPLA_BUTTON
-      oled->addButtonOled(ConfigESP->getGpio(FUNCTION_BUTTON));
+      oled->addButtonOled();
 #endif
     }
 #endif

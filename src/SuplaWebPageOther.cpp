@@ -189,7 +189,12 @@ void handleOther(int save) {
     else {
       selected = OFF_GPIO;
     }
-    addListBox(webContentBuffer, String(INPUT_RGBW_MEMORY) + nr, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected);
+    addListBox(webContentBuffer, String(INPUT_RGBW_MEMORY) + nr, S_REACTION_AFTER_RESET, MEMORY_P, 3, selected, 0, false);
+
+#ifdef SUPLA_BUTTON
+    selected = ConfigESP->getNumberButtonAdditional(BUTTON_RGBW, nr);
+    addListNumbersBox(webContentBuffer, String(INPUT_BUTTON_RGBW) + nr, S_BUTTON, ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(), selected);
+#endif
   }
   addFormHeaderEnd(webContentBuffer);
 #endif
@@ -373,6 +378,12 @@ void handleOtherSave() {
         !WebServer->saveGPIO(INPUT_RGBW_BRIGHTNESS, FUNCTION_RGBW_BRIGHTNESS, nr, INPUT_RGBW_MAX)) {
       handleOther(6);
       return;
+    }
+
+    String input = INPUT_BUTTON_RGBW;
+    input += nr;
+    if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
+      ConfigManager->setElement(KEY_NUMBER_BUTTON_ADDITIONAL, BUTTON_RGBW + nr, WebServer->httpServer->arg(input).toInt());
     }
 
     uint8_t redPin = ConfigESP->getGpio(nr, FUNCTION_RGBW_RED);

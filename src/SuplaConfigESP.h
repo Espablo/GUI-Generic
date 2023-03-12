@@ -106,6 +106,7 @@ class SuplaConfigESP : public Supla::ActionHandler, public Supla::Element {
   int getBaudRateSpeed(uint8_t gpio);
 
   uint8_t getNumberButton(uint8_t nr);
+  uint8_t getNumberButtonAdditional(uint8_t functionButton, uint8_t nr = 0);
   uint8_t getKeyGpio(uint8_t gpio);
 
   bool getLevel(uint8_t gpio);
