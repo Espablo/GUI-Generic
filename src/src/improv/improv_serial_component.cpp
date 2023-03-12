@@ -51,6 +51,10 @@ void ImprovSerialComponent::onInit() {
 }
 
 void ImprovSerialComponent::iterateAlways() {
+  if (!this->available_()) {
+    return;
+  }
+
   if (this->state_ == improv::STATE_AUTHORIZED || this->state_ == improv::STATE_PROVISIONING) {
     if (Supla::Network::IsReady()) {
       this->set_state_(improv::STATE_PROVISIONED);
