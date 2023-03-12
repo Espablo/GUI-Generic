@@ -158,7 +158,7 @@ void handleRelaySaveSet() {
       input = INPUT_LEVEL_LED;
       input += nr_relay;
 
-      ConfigESP->setLevel(ConfigESP->getGpio(FUNCTION_LED), WebServer->httpServer->arg(input).toInt());
+      ConfigESP->setLevel(ConfigESP->getGpio(nr_relay.toInt(), FUNCTION_LED), WebServer->httpServer->arg(input).toInt());
     }
   }
 #endif
