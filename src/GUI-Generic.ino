@@ -49,6 +49,10 @@ void setup() {
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
 
+  //  if (!ConfigESP->checkBusyGpio(3)) {  // GPIO_RX
+  new ImprovSerialComponent();
+  //  }
+
 #ifdef GUI_SENSOR_I2C_EXPENDER
   Expander = new Supla::Control::ConfigExpander();
 #endif
@@ -783,10 +787,6 @@ void setup() {
 #if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
   Supla::GUI::addCorrectionSensor();
 #endif
-
-  //  if (!ConfigESP->checkBusyGpio(3)) {  // GPIO_RX
-  new ImprovSerialComponent();
-  //  }
 }
 
 void loop() {
