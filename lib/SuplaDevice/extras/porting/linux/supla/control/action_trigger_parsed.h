@@ -16,22 +16,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef EXTRAS_TEST_DOUBLES_NETWORK_WITH_MAC_MOCK_H_
-#define EXTRAS_TEST_DOUBLES_NETWORK_WITH_MAC_MOCK_H_
+#ifndef EXTRAS_PORTING_LINUX_SUPLA_CONTROL_ACTION_TRIGGER_PARSED_H_
+#define EXTRAS_PORTING_LINUX_SUPLA_CONTROL_ACTION_TRIGGER_PARSED_H_
 
-#include <gmock/gmock.h>
-#include <supla/network/network.h>
+#include <supla/control/action_trigger.h>
 
-class NetworkMockWithMac : public Supla::Network {
+#include <string>
+
+namespace Supla {
+
+namespace Control {
+
+class ActionTriggerParsed : public ActionTrigger {
  public:
-  NetworkMockWithMac();
-  virtual ~NetworkMockWithMac();
-  MOCK_METHOD(void, setup, (), (override));
-  MOCK_METHOD(void, disable, (), (override));
+  explicit ActionTriggerParsed(const std::string &name);
 
-  MOCK_METHOD(bool, isReady, (), (override));
-  MOCK_METHOD(bool, iterate, (), (override));
-  MOCK_METHOD(bool, getMacAddr, (uint8_t*), (override));
+  void activateAction(int action) override;
+
+  void sendActionTrigger(int action);
 };
 
-#endif  // EXTRAS_TEST_DOUBLES_NETWORK_WITH_MAC_MOCK_H_
+}  // namespace Control
+}  // namespace Supla
+
+#endif  // EXTRAS_PORTING_LINUX_SUPLA_CONTROL_ACTION_TRIGGER_PARSED_H_

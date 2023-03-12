@@ -16,22 +16,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef EXTRAS_TEST_DOUBLES_NETWORK_WITH_MAC_MOCK_H_
-#define EXTRAS_TEST_DOUBLES_NETWORK_WITH_MAC_MOCK_H_
+#include "action_trigger_parsed.h"
 
-#include <gmock/gmock.h>
-#include <supla/network/network.h>
+#include <supla/sensor/sensor_parsed.h>
+#include <supla/log_wrapper.h>
 
-class NetworkMockWithMac : public Supla::Network {
- public:
-  NetworkMockWithMac();
-  virtual ~NetworkMockWithMac();
-  MOCK_METHOD(void, setup, (), (override));
-  MOCK_METHOD(void, disable, (), (override));
+using Supla::Control::ActionTriggerParsed;
 
-  MOCK_METHOD(bool, isReady, (), (override));
-  MOCK_METHOD(bool, iterate, (), (override));
-  MOCK_METHOD(bool, getMacAddr, (uint8_t*), (override));
-};
+ActionTriggerParsed::ActionTriggerParsed(const std::string &name) {
+  Supla::Sensor::SensorParsedBase::registerAtName(name, this);
+}
 
-#endif  // EXTRAS_TEST_DOUBLES_NETWORK_WITH_MAC_MOCK_H_
+void ActionTriggerParsed::sendActionTrigger(int action) {
+  uint32_t actionCap = (1 << action);
+
+  if (actionCap & activeActionsFromServer ||
+      actionHandlingType != ActionHandlingType_RelayOnSuplaServer) {
+    channel.pushAction(actionCap);
+  }
+}
+
+void ActionTriggerParsed::activateAction(int action) {
+  SUPLA_LOG_INFO("Activating action %d", action);
+  channel.activateAction((1 << action));
+}

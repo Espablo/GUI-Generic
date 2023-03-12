@@ -30,6 +30,12 @@ Supla::Control::CmdRelay::CmdRelay(Supla::Parser::Parser *parser,
   channel.setFuncList(functions);
 }
 
+
+void Supla::Control::CmdRelay::onInit() {
+  VirtualRelay::onInit();
+  registerActions();
+}
+
 void Supla::Control::CmdRelay::turnOn(_supla_int_t duration) {
   Supla::Control::VirtualRelay::turnOn(duration);
   channel.setNewValue(isOn());
@@ -59,24 +65,23 @@ void Supla::Control::CmdRelay::setCmdOff(const std::string &newCmdOff) {
 }
 
 bool Supla::Control::CmdRelay::isOn() {
-  if (parser) {
-    bool value = false;
+  bool newState = false;
 
-    if (isParameterConfigured(Supla::Parser::State)) {
-      if (refreshParserSource()) {
-        double result = getParameterValue(Supla::Parser::State);
-        if (result - 0.1 <= 1 && 1 <= result + 0.1) {
-          value = true;
-        }
-        if (!parser->isValid()) {
-          value = false;
-        }
-      }
+  int result = 0;
+  if (parser) {
+    result = getStateValue();
+    if (result == 1) {
+      newState = true;
+    } else if (result != -1) {
+     result = 0;
     }
-    return value;
   } else {
-    return Supla::Control::VirtualRelay::isOn();
+    newState = Supla::Control::VirtualRelay::isOn();
   }
+
+  setLastState(result);
+
+  return newState;
 }
 
 void Supla::Control::CmdRelay::iterateAlways() {
@@ -85,6 +90,27 @@ void Supla::Control::CmdRelay::iterateAlways() {
   if (parser && (millis() - lastReadTime > 100)) {
     lastReadTime = millis();
     channel.setNewValue(isOn());
+    if (isOffline()) {
+      channel.setOffline();
+    } else {
+      channel.setOnline();
+    }
   }
+}
+
+bool Supla::Control::CmdRelay::isOffline() {
+  if (useOfflineOnInvalidState && parser) {
+    if (getStateValue() == -1) {
+      return true;
+    }
+  }
+  return false;
+  //    return Supla::Control::VirtualRelay::isOffline();
+}
+
+void Supla::Control::CmdRelay::setUseOfflineOnInvalidState(
+    bool useOfflineOnInvalidState) {
+  this->useOfflineOnInvalidState = useOfflineOnInvalidState;
+  SUPLA_LOG_INFO("useOfflineOnInvalidState = %d", useOfflineOnInvalidState);
 }
 
