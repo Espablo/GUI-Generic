@@ -159,8 +159,12 @@ void SuplaWebServer::sendContent() {
 }
 
 void SuplaWebServer::handleNotFound() {
+  if (!WebServer->isLoggedIn()) {
+    return;
+  }
   httpServer->sendHeader("Location", PATH_START, true);
-  handlePageHome(2);
+  httpServer->send(302, "text/plane", "");
+  handlePageHome();
 }
 
 bool SuplaWebServer::isLoggedIn(bool force) {
@@ -347,7 +351,7 @@ bool SuplaWebServer::saveGpioMCP23017(const String& _input, uint8_t function, ui
     Expander->setGpioExpander(_gpio, _address, nr, function);
 
     if (function == FUNCTION_BUTTON)
-       ConfigESP->setNumberButton(nr);
+      ConfigESP->setNumberButton(nr);
 #ifdef SUPLA_ROLLERSHUTTER
     if (ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt() * 2 > nr) {
       if (nr % 2 == 0) {
