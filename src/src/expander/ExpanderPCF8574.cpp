@@ -24,6 +24,11 @@ ExpanderPCF8574::ExpanderPCF8574(TwoWire *wire, uint8_t address) : Supla::Io(fal
     Serial.println(address, HEX);
     isConnected = true;
   }
+  else if (_control.begin(address ^ 0x18, wire)) {
+    Serial.print("PCF8574 is connected address: ");
+    Serial.println(address ^ 0x18, HEX);
+    isConnected = true;
+  }
   else {
     Serial.println("Couldn't find PCF8574");
   }
