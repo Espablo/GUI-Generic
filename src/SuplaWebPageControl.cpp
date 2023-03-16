@@ -281,7 +281,7 @@ void handleButtonSet(int save) {
     }
     else {
       selected = ConfigESP->getNumberButton(button.toInt());
-      addListNumbersBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_RELAY_CONTROL, ConfigESP->countFreeGpio(FUNCTION_RELAY), selected);
+      addListNumbersBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_RELAY_CONTROL, ConfigManager->get(KEY_MAX_RELAY)->getValueInt(), selected);
 
 #ifdef ARDUINO_ARCH_ESP8266
       if (gpio == A0) {
@@ -361,7 +361,7 @@ void handleButtonSetMCP23017(int save) {
   }
   else {
     selected = ConfigESP->getNumberButton(button.toInt());
-    addListNumbersBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_RELAY_CONTROL, ConfigESP->countFreeGpio(FUNCTION_RELAY), selected);
+    addListNumbersBox(webContentBuffer, INPUT_BUTTON_NUMBER, S_RELAY_CONTROL, ConfigManager->get(KEY_MAX_RELAY)->getValueInt(), selected);
     selected = ConfigESP->getPullUp(gpio);
     addCheckBox(webContentBuffer, INPUT_BUTTON_LEVEL, S_INTERNAL_PULL_UP, selected);
     selected = ConfigESP->getInversed(gpio);
