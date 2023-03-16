@@ -61,8 +61,11 @@ const char GPIO_P17[] PROGMEM = "P17";
 const char* const GPIO_MCP23017_P[] PROGMEM = {GPIO_A0, GPIO_A1, GPIO_A2, GPIO_A3, GPIO_A4, GPIO_A5, GPIO_A6, GPIO_A7, GPIO_B0,
                                                GPIO_B1, GPIO_B2, GPIO_B3, GPIO_B4, GPIO_B5, GPIO_B6, GPIO_B7, S_EMPTY, OFF};
 
-const char* const GPIO_PCF_XXX_P[] PROGMEM = {GPIO_P00, GPIO_P01, GPIO_P02, GPIO_P03, GPIO_P04, GPIO_P05, GPIO_P06, GPIO_P07, GPIO_P10,
-                                              GPIO_P11, GPIO_P12, GPIO_P13, GPIO_P14, GPIO_P15, GPIO_P16, GPIO_P17, S_EMPTY,  OFF};
+const char* const GPIO_PCF_PCF8575_P[] PROGMEM = {GPIO_P00, GPIO_P01, GPIO_P02, GPIO_P03, GPIO_P04, GPIO_P05, GPIO_P06, GPIO_P07, GPIO_P10,
+                                                  GPIO_P11, GPIO_P12, GPIO_P13, GPIO_P14, GPIO_P15, GPIO_P16, GPIO_P17, S_EMPTY,  OFF};
+
+const char* const GPIO_PCF_8574_P[] PROGMEM = {GPIO_P00, GPIO_P01, GPIO_P02, GPIO_P03, GPIO_P04, GPIO_P05, GPIO_P06, GPIO_P07, S_EMPTY,
+                                               S_EMPTY,  S_EMPTY,  S_EMPTY,  S_EMPTY,  S_EMPTY,  S_EMPTY,  S_EMPTY,  S_EMPTY,  OFF};
 
 const char* const EXPENDER_LIST_P[] PROGMEM = {
     OFF,
