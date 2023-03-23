@@ -213,32 +213,39 @@ void addConditionsSensor(int functionSensor, const char *nameSensor, Supla::Sens
 }
 
 void addConditions() {
+  int actionON = Supla::TURN_ON;
+  int actionOFF = Supla::TURN_OFF;
+
   for (uint8_t nr = 0; nr < ConfigManager->get(KEY_MAX_CONDITIONS)->getValueInt(); nr++) {
     /////// Warunkowanie dla sensorów //////
     if (conditions[nr].client != nullptr && conditions[nr].sensor != nullptr) {
+      if (ConfigManager->get(KEY_CONDITIONS_CLIENT_TYPE)->getElement(nr).toInt() == CONDITIONS::EXECUTIVE_ROLLER_SHUTTER) {
+        actionON = Supla::OPEN;
+        actionOFF = Supla::CLOSE;
+      }
+
       if (strcmp(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str(), "") != 0) {
         Serial.print("addConditions MIN: ");
         Serial.println(ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).c_str());
 
         double threshold = ConfigManager->get(KEY_CONDITIONS_MIN)->getElement(nr).toDouble();
-
-        conditions[nr].sensor->addAction(Supla::TURN_OFF, conditions[nr].client, OnInvalid());
+        conditions[nr].sensor->addAction(actionOFF, conditions[nr].client, OnInvalid());
 
         switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
           case CONDITION_ON_LESS:
-            conditions[nr].sensor->addAction(Supla::TURN_ON, conditions[nr].client, OnLessEq(threshold));
+            conditions[nr].sensor->addAction(actionON, conditions[nr].client, OnLessEq(threshold));
             break;
           case CONDITION_ON_GREATER:
-            conditions[nr].sensor->addAction(Supla::TURN_ON, conditions[nr].client, OnGreaterEq(threshold));
+            conditions[nr].sensor->addAction(actionON, conditions[nr].client, OnGreaterEq(threshold));
             break;
           case CONDITION_ON_LESS_HUMIDITY:
-            conditions[nr].sensor->addAction(Supla::TURN_ON, conditions[nr].client, OnLessEq(threshold, true));
+            conditions[nr].sensor->addAction(actionON, conditions[nr].client, OnLessEq(threshold, true));
             break;
           case CONDITION_ON_GREATER_HUMIDITY:
-            conditions[nr].sensor->addAction(Supla::TURN_ON, conditions[nr].client, OnGreaterEq(threshold, true));
+            conditions[nr].sensor->addAction(actionON, conditions[nr].client, OnGreaterEq(threshold, true));
             break;
           case CONDITION_GPIO:
-            conditions[nr].sensor->addAction(Supla::TURN_ON, conditions[nr].client, Supla::ON_TURN_ON);
+            conditions[nr].sensor->addAction(actionON, conditions[nr].client, Supla::ON_TURN_ON);
             break;
         }
       }
@@ -248,24 +255,23 @@ void addConditions() {
         Serial.println(ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).c_str());
 
         double threshold = ConfigManager->get(KEY_CONDITIONS_MAX)->getElement(nr).toDouble();
-
-        conditions[nr].sensor->addAction(Supla::TURN_OFF, conditions[nr].client, OnInvalid());
+        conditions[nr].sensor->addAction(actionOFF, conditions[nr].client, OnInvalid());
 
         switch (ConfigManager->get(KEY_CONDITIONS_TYPE)->getElement(nr).toInt()) {
           case CONDITION_ON_LESS:
-            conditions[nr].sensor->addAction(Supla::TURN_OFF, conditions[nr].client, OnGreaterEq(threshold));
+            conditions[nr].sensor->addAction(actionOFF, conditions[nr].client, OnGreaterEq(threshold));
             break;
           case CONDITION_ON_GREATER:
-            conditions[nr].sensor->addAction(Supla::TURN_OFF, conditions[nr].client, OnLessEq(threshold));
+            conditions[nr].sensor->addAction(actionOFF, conditions[nr].client, OnLessEq(threshold));
             break;
           case CONDITION_ON_LESS_HUMIDITY:
-            conditions[nr].sensor->addAction(Supla::TURN_OFF, conditions[nr].client, OnGreaterEq(threshold, true));
+            conditions[nr].sensor->addAction(actionOFF, conditions[nr].client, OnGreaterEq(threshold, true));
             break;
           case CONDITION_ON_GREATER_HUMIDITY:
-            conditions[nr].sensor->addAction(Supla::TURN_OFF, conditions[nr].client, OnLessEq(threshold, true));
+            conditions[nr].sensor->addAction(actionOFF, conditions[nr].client, OnLessEq(threshold, true));
             break;
           case CONDITION_GPIO:
-            conditions[nr].sensor->addAction(Supla::TURN_OFF, conditions[nr].client, Supla::ON_TURN_OFF);
+            conditions[nr].sensor->addAction(actionOFF, conditions[nr].client, Supla::ON_TURN_OFF);
             break;
         }
       }

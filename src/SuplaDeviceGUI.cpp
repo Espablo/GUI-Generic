@@ -465,6 +465,10 @@ void addRolleShutter(uint8_t nr) {
 
   auto rollerShutterRelay = Supla::Control::GUI::RollerShutter(pinRelayUp, pinRelayDown, highIsOn, nr);
 
+#ifdef SUPLA_CONDITIONS
+  Supla::GUI::Conditions::addConditionsExecutive(CONDITIONS::EXECUTIVE_ROLLER_SHUTTER, S_ROLLERSHUTTERS, rollerShutterRelay, nr);
+#endif
+
   if (pinButtonUp != OFF_GPIO && actionButtonUp == Supla::Action::STEP_BY_STEP) {
     auto rollerShutterButtonOpen = Supla::Control::GUI::Button(pinButtonUp, pullupButtonUp, inversedButtonUp, nr);
 #ifdef SUPLA_ACTION_TRIGGER
