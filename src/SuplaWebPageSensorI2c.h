@@ -22,7 +22,7 @@
 
 #if defined(SUPLA_BME280) || defined(SUPLA_SHT3x) || defined(SUPLA_SI7021) || defined(SUPLA_OLED) || defined(GUI_SENSOR_I2C_EXPENDER) || \
     defined(SUPLA_BMP280) || defined(SUPLA_VL53L0X) || defined(SUPLA_HDC1080) || defined(SUPLA_LCD_HD44780) || defined(SUPLA_BH1750) ||  \
-    defined(SUPLA_MAX44009) || defined(SUPLA_SHT_AUTODETECT)
+    defined(SUPLA_MAX44009) || defined(SUPLA_SHT_AUTODETECT) || defined(SUPLA_MS5611)
 #define GUI_SENSOR_I2C
 #endif
 
@@ -45,7 +45,8 @@ enum _sensor
   SENSOR_SPI_MAX31855,
   SENSOR_I2C_BH1750,
   SENSOR_I2C_MAX44009,
-  SENSOR_I2C_FOR_USE_2
+  SENSOR_I2C_FOR_USE_2,
+  SENSOR_I2C_MS5611
 };
 
 #if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
@@ -133,6 +134,10 @@ void webPageI2CScanner(TwoWire* wire);
 
 #ifdef SUPLA_BH1750
 #define INPUT_BH1750 "ibh"
+#endif
+
+#ifdef SUPLA_MS5611
+#define INPUT_MS5611 "ms5611"
 #endif
 
 #ifdef SUPLA_MAX44009

@@ -806,6 +806,28 @@
 				"desc": "Paramètres de l´appareil->I2C. Capteur d'intensité lumineuse BH1750."
 			}
 		},
+		"SUPLA_MS5611": {
+			"name": "Sensor MS5611",
+			"desc": "Ustawienia urządzenia->I2C. Barometr MS5611",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "MS5611 sensor",
+				"desc": "Device settings->I2C. Barometer MS5611."
+			},
+			"es": {
+				"name": "Sonda MS5611",
+				"desc": "Configuración del dispositivo->I2C. Barometer MS5611."
+			},
+			"de": {
+				"name": "Fühler MS5611",
+				"desc": "Geräteeinstellungen->I2C. Barometer MS5611."
+			},
+			"fr": {
+				"name": "Capteur MS5611",
+				"desc": "Paramètres de l´appareil->I2C. Barometer MS5611."
+			}
+		},
 		"SUPLA_MAX44009": {
 			"name": "Sensor MAX44009",
 			"desc": "Ustawienia urządzenia->I2C. Czujnik natężenia światła MAX44009",

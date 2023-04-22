@@ -43,6 +43,7 @@
 #define S_VL53L0X                        "VL53L0X"
 #define S_HDC1080                        "HDC1080"
 #define S_BH1750                         "BH1750"
+#define S_MS5611                         "MS5611"
 #define S_CSE7766                        "CSE7766"
 #define S_ADE7953                        "ADE7953"
 #define S_MAX44009                       "MAX44009"
