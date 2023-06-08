@@ -22,45 +22,61 @@ Supla::Control::ButtonAnalog::ButtonAnalog(int pin, int expected)
 }
 
 void Supla::Control::ButtonAnalog::onTimer() {
-  unsigned int timeDelta = millis() - lastStateChangeMs;
+  uint64_t timeDelta = millis() - lastStateChangeMs;
   bool stateChanged = false;
   int stateResult = update();
   if (stateResult == TO_PRESSED) {
     stateChanged = true;
     runAction(ON_PRESS);
     runAction(ON_CHANGE);
+    if (clickCounter == 0 && holdSend == 0) {
+      runAction(CONDITIONAL_ON_PRESS);
+      runAction(CONDITIONAL_ON_CHANGE);
+    }
   } else if (stateResult == TO_RELEASED) {
     stateChanged = true;
     runAction(ON_RELEASE);
     runAction(ON_CHANGE);
+    if (clickCounter <= 1 && holdSend == 0) {
+      runAction(CONDITIONAL_ON_RELEASE);
+      runAction(CONDITIONAL_ON_CHANGE);
+    }
   }
 
   if (stateChanged) {
     lastStateChangeMs = millis();
-    if (stateResult == TO_PRESSED || bistable) {
-      clickCounter++;
+    if (multiclickTimeMs > 0 &&
+        (stateResult == TO_PRESSED || isBistable() || isMotionSensor())) {
+      if (clickCounter <= maxMulticlickValueConfigured) {
+        // don't increase counter if already at max value
+        clickCounter++;
+      }
     }
   }
 
-  if (!stateChanged) {
-    if (!bistable && stateResult == PRESSED) {
+  if (!stateChanged && lastStateChangeMs) {
+    if (isMonostable() && stateResult == PRESSED) {
       if (clickCounter <= 1 && holdTimeMs > 0 &&
           timeDelta > (holdTimeMs + holdSend * repeatOnHoldMs) &&
           (repeatOnHoldMs == 0 ? !holdSend : true)) {
         runAction(ON_HOLD);
         ++holdSend;
       }
-    } else if ((bistable || stateResult == RELEASED)) {
+    } else if (stateResult == RELEASED || isBistable() || isMotionSensor()) {
+      // for all button types (monostable, bistable, and motion sensor)
       if (multiclickTimeMs == 0) {
         holdSend = 0;
         clickCounter = 0;
       }
-      if (multiclickTimeMs > 0 && timeDelta > multiclickTimeMs) {
-        if (holdSend == 0) {
+      if (multiclickTimeMs > 0 &&
+          (timeDelta > multiclickTimeMs ||
+           maxMulticlickValueConfigured == clickCounter)) {
+        if (holdSend == 0 && clickCounter != 255) {
           switch (clickCounter) {
-            case 1:
+            case 1: {
               runAction(ON_CLICK_1);
               break;
+            }
             case 2:
               runAction(ON_CLICK_2);
               break;
@@ -87,10 +103,8 @@ void Supla::Control::ButtonAnalog::onTimer() {
               break;
             case 10:
               runAction(ON_CLICK_10);
+              runAction(ON_CRAZY_CLICKER);
               break;
-          }
-          if (clickCounter >= 10) {
-            runAction(ON_CRAZY_CLICKER);
           }
         } else {
           switch (clickCounter) {
@@ -130,8 +144,11 @@ void Supla::Control::ButtonAnalog::onTimer() {
               break;
           }
         }
-        holdSend = 0;
-        clickCounter = 0;
+        clickCounter = 255;
+        if (timeDelta > multiclickTimeMs) {
+          holdSend = 0;
+          clickCounter = 0;
+        }
       }
     }
   }
