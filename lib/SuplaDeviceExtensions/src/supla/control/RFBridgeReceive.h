@@ -32,6 +32,7 @@ class RFBridgeReceive : public RFBridge, public Button {
   RFBridgeReceive(int receivePin);
   void onTimer();
   int update();
+  void isMonostable();
 
   bool currentState = LOW;
   int8_t newStatusCandidate = LOW;
