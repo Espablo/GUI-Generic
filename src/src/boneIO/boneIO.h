@@ -30,8 +30,25 @@
 #define BONEIO_RELAY_CHANNEL
 #endif
 
+#define P00 0
+#define P01 1
+#define P02 2
+#define P03 3
+#define P04 4
+#define P05 5
+#define P06 6
+#define P07 7
+
+#define P10 8
+#define P11 9
+#define P12 10
+#define P13 11
+#define P14 12
+#define P15 13
+#define P16 14
+#define P17 15
+
 #include <Arduino.h>
-#include "src/boneIO/Common.h"
 #include "src/sensor/LM75.h"
 #include "../../SuplaDeviceGUI.h"
 #include "../expander/ExpanderMCP23017.h"
