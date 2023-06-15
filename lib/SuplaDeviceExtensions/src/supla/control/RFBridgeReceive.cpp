@@ -111,20 +111,20 @@ void RFBridgeReceive::onTimer() {
 
   if (stateChanged) {
     lastStateChangeMs = millis();
-    if (stateResult == TO_PRESSED || bistable) {
+    if (stateResult == TO_PRESSED || isBistable()) {
       clickCounter++;
     }
   }
 
   if (!stateChanged) {
-    if (!bistable && stateResult == PRESSED) {
+    if (!isBistable() && stateResult == PRESSED) {
       if (clickCounter <= 1 && holdTimeMs > 0 &&
           timeDelta > (holdTimeMs + holdSend * repeatOnHoldMs) &&
           (repeatOnHoldMs == 0 ? !holdSend : true)) {
         runAction(ON_HOLD);
         ++holdSend;
       }
-    } else if ((bistable || stateResult == RELEASED)) {
+    } else if ((isBistable() || stateResult == RELEASED)) {
       if (multiclickTimeMs == 0) {
         holdSend = 0;
         clickCounter = 0;

@@ -85,7 +85,7 @@ Element *Element::next() {
 
 void Element::onInit() {}
 
-void Element::onLoadConfig() {}
+void Element::onLoadConfig(SuplaDeviceClass *) {}
 
 void Element::onLoadState() {}
 
@@ -98,11 +98,13 @@ void Element::onRegistered(Supla::Protocol::SuplaSrpc *suplaSrpc) {
   auto ch = getChannel();
 
   if (ch != nullptr && ch->isSleepingEnabled()) {
-      suplaSrpc->sendChannelStateResult(0, ch->getChannelNumber());
+    suplaSrpc->sendChannelStateResult(0, ch->getChannelNumber());
+    ch->setUpdateReady();
   }
   ch = getSecondaryChannel();
   if (ch != nullptr && ch->isSleepingEnabled()) {
-      suplaSrpc->sendChannelStateResult(0, ch->getChannelNumber());
+    suplaSrpc->sendChannelStateResult(0, ch->getChannelNumber());
+    ch->setUpdateReady();
   }
 }
 
@@ -206,6 +208,9 @@ void Element::handleChannelConfig(TSD_ChannelConfig *result) {
 
 void Element::generateKey(char *output, const char *key) {
   Supla::Config::generateKey(output, getChannelNumber(), key);
+}
+
+void Element::onSoftReset() {
 }
 
 };  // namespace Supla

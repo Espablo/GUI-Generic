@@ -174,7 +174,7 @@ bool SuplaDeviceClass::begin(unsigned char protoVersion) {
     // Load elements configuration
     for (auto element = Supla::Element::begin(); element != nullptr;
          element = element->next()) {
-      element->onLoadConfig();
+      element->onLoadConfig(this);
       delay(0);
     }
   }
@@ -305,6 +305,9 @@ bool SuplaDeviceClass::begin(unsigned char protoVersion) {
   if (strnlen(Supla::Channel::reg_dev.SoftVer, SUPLA_SOFTVER_MAXSIZE) == 0) {
     setSwVersion(suplaDeviceVersion);
   }
+  SUPLA_LOG_INFO("Device name: %s", Supla::Channel::reg_dev.Name);
+  SUPLA_LOG_INFO("Device software version: %s",
+                 Supla::Channel::reg_dev.SoftVer);
 
   SUPLA_LOG_DEBUG("Initializing network layer");
   char hostname[32] = {};
@@ -441,12 +444,12 @@ void SuplaDeviceClass::iterate(void) {
       }
 
       if (deviceMode == Supla::DEVICE_MODE_TEST) {
-        // Test mode
+      // Test mode
       }
       break;
     }
 
-// Config mode
+    // Config mode
     case Supla::DEVICE_MODE_CONFIG: {
       break;
     }
@@ -466,7 +469,7 @@ void SuplaDeviceClass::iterate(void) {
         } else {
           swUpdate = Supla::Device::SwUpdate::Create(this, url);
         }
-        if (cfg->isSwUpdateBeta()) {
+        if (cfg && cfg->isSwUpdateBeta()) {
           swUpdate->useBeta();
         }
       }
@@ -731,6 +734,12 @@ void SuplaDeviceClass::softRestart() {
   deviceMode = Supla::DEVICE_MODE_NORMAL;
 
   // TODO(klew): stop supla timers
+
+  for (auto element = Supla::Element::begin(); element != nullptr;
+       element = element->next()) {
+    element->onSoftReset();
+    delay(0);
+  }
 
   if (Supla::WebServer::Instance()) {
     Supla::WebServer::Instance()->stop();

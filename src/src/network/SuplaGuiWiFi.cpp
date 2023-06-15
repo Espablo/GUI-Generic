@@ -145,19 +145,4 @@ void GUIESPWifi::setPassword(const char *wifiPassword) {
     strncpy(password, wifiPassword, MAX_WIFI_PASSWORD_SIZE);
   }
 }
-
-const String GUIESPWifi::getAPName() {
-  uint8_t mac[6] = {};
-  char macStr[12 + 6] = {};
-  if (Supla::Network::GetMacAddr(mac)) {
-    generateHexString(mac, macStr, 6);
-  }
-
-  String cstr = "SUPLA-GUI-Generic-";
-  cstr.reserve(32);
-  cstr += macStr;
-
-  return cstr.c_str();
-}
-
 };  // namespace Supla
