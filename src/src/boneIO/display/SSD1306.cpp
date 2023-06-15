@@ -16,7 +16,6 @@
 
 #include "SSD1306.h"
 
-#include <WiFi.h>
 #include <ETH.h>
 #include <supla/tools.h>
 #include "GUIGenericCommon.h"
