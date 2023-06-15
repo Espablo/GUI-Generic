@@ -172,6 +172,10 @@
 #include <supla/sensor/BH1750.h>
 #endif
 
+#ifdef SUPLA_MS5611
+#include <supla/sensor/MS5611.h>
+#endif
+
 #ifdef SUPLA_MAX44009
 #include "src/sensor/MAX_44009.h"
 #endif
