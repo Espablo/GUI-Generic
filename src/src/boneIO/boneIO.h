@@ -49,7 +49,7 @@
 #define P17 15
 
 #include <Arduino.h>
-#include "src/sensor/LM75.h"
+#include "../sensor/LM75.h"
 #include "../../SuplaDeviceGUI.h"
 #include "../expander/ExpanderMCP23017.h"
 #include "../expander/ExpanderPCF8574.h"
