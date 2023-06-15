@@ -17,7 +17,7 @@
 #include "SSD1306.h"
 
 #include <supla/tools.h>
-#include "GUIGenericCommon.h"
+#include "../../../GUIGenericCommon.h"
 
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state) {
   display->setColor(WHITE);
