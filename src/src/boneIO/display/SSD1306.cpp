@@ -19,7 +19,6 @@
 #include <WiFi.h>
 #include <ETH.h>
 #include <supla/tools.h>
-#include "../Common.h"
 #include "GUIGenericCommon.h"
 
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state) {
