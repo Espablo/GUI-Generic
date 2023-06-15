@@ -148,6 +148,7 @@ void webPageI2CScanner(TwoWire* wire);
 
 #ifdef SUPLA_MS5611
 #define INPUT_MS5611 "ms5611"
+#define INPUT_ALTITUDE_MS5611 "ams5611"
 #endif
 
 #ifdef SUPLA_MAX44009

@@ -144,6 +144,8 @@ void handleSensorI2c(int save) {
     selected = ConfigManager->get(KEY_ACTIVE_SENSOR_2)->getElement(SENSOR_I2C_MS5611).toInt();
     addFormHeader(webContentBuffer);
     addListBox(webContentBuffer, INPUT_MS5611, F("MS5611"), STATE_P, 2, selected);
+    if (ConfigManager->get(KEY_ACTIVE_SENSOR_2)->getElement(SENSOR_I2C_MS5611).toInt())
+      addNumberBox(webContentBuffer, INPUT_ALTITUDE_MS5611, S_ALTITUDE_ABOVE_SEA_LEVEL, KEY_ALTITUDE_MS5611, 9000);
     addFormHeaderEnd(webContentBuffer);
 #endif
 
@@ -344,6 +346,12 @@ void handleSensorI2cSave() {
   input = INPUT_MS5611;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
     ConfigManager->setElement(KEY_ACTIVE_SENSOR_2, SENSOR_I2C_MS5611, WebServer->httpServer->arg(input).toInt());
+  }
+
+  key = KEY_ALTITUDE_MS5611;
+  input = INPUT_ALTITUDE_MS5611;
+  if (strcmp(WebServer->httpServer->arg(INPUT_ALTITUDE_MS5611).c_str(), "") != 0) {
+    ConfigManager->set(key, WebServer->httpServer->arg(input).c_str());
   }
 #endif
 

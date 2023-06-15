@@ -669,7 +669,7 @@ void setup() {
 
 #ifdef SUPLA_MS5611
     if (ConfigManager->get(KEY_ACTIVE_SENSOR_2)->getElement(SENSOR_I2C_MS5611).toInt()) {
-      auto ms5611 = new Supla::Sensor::MS5611Sensor();
+      auto ms5611 = new Supla::Sensor::MS5611Sensor(ConfigManager->get(KEY_ALTITUDE_MS5611)->getValueInt());
 /*
 #ifdef SUPLA_CONDITIONS
       Supla::GUI::Conditions::addConditionsSensor(SENSOR_MS5611, S_MS5611, ms5611);

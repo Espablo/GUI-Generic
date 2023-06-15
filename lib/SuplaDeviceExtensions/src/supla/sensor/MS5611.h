@@ -28,7 +28,8 @@ namespace Supla {
 namespace Sensor {
 class MS5611Sensor : public ThermPressMeter {
  public:
-  MS5611Sensor() {
+  MS5611Sensor(int altitude) {
+    this->altitude=altitude;
   }
 
   double getValue() {
