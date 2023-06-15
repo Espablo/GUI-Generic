@@ -38,6 +38,8 @@ extern "C" {
 #include "src/sensor/DirectLinks.h"
 #endif
 
+#include "src/boneIO/boneIO.h"
+
 uint32_t last_loop{0};
 #define LOOP_INTERVAL 16
 
@@ -48,6 +50,10 @@ void setup() {
 
   ConfigManager = new SuplaConfigManager();
   ConfigESP = new SuplaConfigESP();
+
+#ifdef SUPLA_BONEIO
+  new Supla::boneIO();
+#endif
 
 #ifdef GUI_SENSOR_I2C_EXPENDER
   Expander = new Supla::Control::ConfigExpander();
@@ -779,7 +785,7 @@ void setup() {
 #endif
 
   new ImprovSerialComponent();
-  
+
   Supla::GUI::begin();
 
 #if defined(GUI_SENSOR_1WIRE) || defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
