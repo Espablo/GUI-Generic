@@ -16,7 +16,7 @@
 #ifndef _bone_IO_h
 #define _bone_IO_h
 
-#if defined(SUPLA_SUPLA_BONEIO_32x10A) || defined(SUPLA_SUPLA_BONEIO_24x16A)
+#if defined(SUPLA_BONEIO_32x10A) || defined(SUPLA_BONEIO_24x16A)
 #define SUPLA_BONEIO
 #endif
 
