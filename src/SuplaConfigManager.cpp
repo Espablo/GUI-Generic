@@ -343,9 +343,15 @@ SuplaConfigManager::SuplaConfigManager() {
 #endif
 
 #if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_SPI)
-    this->addKey(KEY_ACTIVE_SENSOR, 20);
+    this->addKey(KEY_ACTIVE_SENSOR, 16);
 #else
-    this->addKey(KEY_ACTIVE_SENSOR, 20, false);
+    this->addKey(KEY_ACTIVE_SENSOR, 16, false);
+#endif
+
+#if defined(GUI_SENSOR_I2C_2)
+    this->addKey(KEY_ACTIVE_SENSOR_2, 16);
+#else
+    this->addKey(KEY_ACTIVE_SENSOR_2, 16, false);
 #endif
 
 #ifdef SUPLA_DEEP_SLEEP

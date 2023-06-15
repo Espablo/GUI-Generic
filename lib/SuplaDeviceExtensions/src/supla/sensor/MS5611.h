@@ -31,12 +31,13 @@ class MS5611Sensor : public ThermPressMeter {
   MS5611Sensor() {
   }
 
-  double getTemp() {
+  double getValue() {
     Serial.println(F("MS5611 getting temp."));
     float value = TEMPERATURE_NOT_AVAILABLE;
     value = ms5611.getTemperature();
 
     if (isnan(value)) {
+      Serial.println(F("MS5611 temp not available."));
       value = TEMPERATURE_NOT_AVAILABLE;
     }
 
@@ -54,6 +55,9 @@ class MS5611Sensor : public ThermPressMeter {
   }
     else{
     value = ms5611.getPressure();
+    float temp=ms5611.getTemperature();
+    float multiplier=0.0065;
+    value=pow(((multiplier * altitude) / (temp+273.15 ) + 1), 5.255) * value;
     }
     return value;
   }
@@ -70,11 +74,12 @@ class MS5611Sensor : public ThermPressMeter {
       Serial.println("MS5611 not found.");
     }
     pressureChannel.setNewValue(getPressure());
-    channel.setNewValue(getTemp(), HUMIDITY_NOT_AVAILABLE);
+    channel.setNewValue(getValue(), HUMIDITY_NOT_AVAILABLE);
   }
 
  protected:
   ::MS5611 ms5611;  // I2C
+  float altitude=248;
 };
 
 };  // namespace Sensor

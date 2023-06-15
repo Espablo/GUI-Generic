@@ -141,7 +141,7 @@ void handleSensorI2c(int save) {
 #endif
 
 #ifdef SUPLA_MS5611
-    selected = ConfigManager->get(KEY_ACTIVE_SENSOR)->getElement(SENSOR_I2C_MS5611).toInt();
+    selected = ConfigManager->get(KEY_ACTIVE_SENSOR_2)->getElement(SENSOR_I2C_MS5611).toInt();
     addFormHeader(webContentBuffer);
     addListBox(webContentBuffer, INPUT_MS5611, F("MS5611"), STATE_P, 2, selected);
     addFormHeaderEnd(webContentBuffer);
@@ -340,10 +340,10 @@ void handleSensorI2cSave() {
 #endif
 
 #ifdef SUPLA_MS5611
-  key = KEY_ACTIVE_SENSOR;
+  key = KEY_ACTIVE_SENSOR_2;
   input = INPUT_MS5611;
   if (strcmp(WebServer->httpServer->arg(input).c_str(), "") != 0) {
-    ConfigManager->setElement(KEY_ACTIVE_SENSOR, SENSOR_I2C_MS5611, WebServer->httpServer->arg(input).toInt());
+    ConfigManager->setElement(KEY_ACTIVE_SENSOR_2, SENSOR_I2C_MS5611, WebServer->httpServer->arg(input).toInt());
   }
 #endif
 
