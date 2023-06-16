@@ -211,6 +211,28 @@
 				"name": "Wake on LAN",
 				"desc": "Allumer les ordinateurs via LAN."
 			}
+		},
+		"WT32-ETH01": {
+			"name": "WT32-ETH01",
+			"desc": "WT32-ETH01 to wbudowany moduł szeregowo-ethernetowy oparty na jednostkach MCU WT32-S1 z serii ESP32.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "WT32-ETH01",
+				"desc": ""
+			},
+			"es": {
+				"name": "WT32-ETH01",
+				"desc": ""
+			},
+			"de": {
+				"name": "WT32-ETH01",
+				"desc": ""
+			},
+			"fr": {
+				"name": "WT32-ETH01",
+				"desc": ""
+			}
 		}
 	},
 	"CONTROL": {
@@ -1256,6 +1278,52 @@
 			}
 		}
 	},
+	"BONEIO": {
+		"SUPLA_BONEIO_32x10A": {
+			"name": "boneIO 32x10A",
+			"desc": "",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "boneIO 32x10A",
+				"desc": ""
+			},
+			"es": {
+				"name": "boneIO 32x10A",
+				"desc": ""
+			},
+			"de": {
+				"name": "boneIO 32x10A",
+				"desc": ""
+			},
+			"fr": {
+				"name": "boneIO 32x10A",
+				"desc": ""
+			}
+		},
+		"SUPLA_BONEIO_24x16A": {
+			"name": "boneIO 24x16A",
+			"desc": "",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "boneIO 24x16A",
+				"desc": ""
+			},
+			"es": {
+				"name": "boneIO 24x16A",
+				"desc": ""
+			},
+			"de": {
+				"name": "boneIO 24x16A",
+				"desc": ""
+			},
+			"fr": {
+				"name": "boneIO 24x16A",
+				"desc": ""
+			}
+		}
+	},
 	"SECTIONS": {
 		"BASIC": {
 			"pl": "Podstawowe",
@@ -1341,6 +1409,13 @@
 			"de": "Stromzähler",
 			"fr": "Compteur d'énergie électrique"
 		}
-
+		,
+		"BONEIO": {
+			"pl": "boneIO",
+			"en": "boneIO",
+			"es": "boneIO",
+			"de": "boneIO",
+			"fr": "boneIO"
+		}
 	}
 }
