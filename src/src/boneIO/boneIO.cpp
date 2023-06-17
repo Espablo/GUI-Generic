@@ -16,6 +16,7 @@
 
 #include "boneIO.h"
 
+#ifdef SUPLA_BONEIO
 namespace Supla {
 
 boneIO::boneIO() {
@@ -165,3 +166,5 @@ RelayButtonPair boneIO::createRelayChannel(DevicePin relayPin, DevicePin buttonP
 }
 
 };  // namespace Supla
+
+#endif

@@ -16,10 +16,13 @@
 #ifndef _bone_IO_h
 #define _bone_IO_h
 
+#if defined(ARDUINO_ARCH_ESP32)
 #if defined(SUPLA_BONEIO_32x10A) || defined(SUPLA_BONEIO_24x16A)
 #define SUPLA_BONEIO
 #endif
+#endif
 
+#ifdef SUPLA_BONEIO
 #if defined(SUPLA_MCP23017)
 #define USE_MCP_OUTPUT
 #endif
@@ -29,6 +32,14 @@
 #else
 #define BONEIO_RELAY_CHANNEL
 #endif
+
+#include <Arduino.h>
+#include "../sensor/LM75.h"
+#include "../../SuplaDeviceGUI.h"
+#include "../expander/ExpanderMCP23017.h"
+#include "../expander/ExpanderPCF8574.h"
+#include "../expander/ExpanderPCF8575.h"
+#include "display/SSD1306.h"
 
 #define P00 0
 #define P01 1
@@ -47,15 +58,6 @@
 #define P15 13
 #define P16 14
 #define P17 15
-
-#include <Arduino.h>
-#include "../sensor/LM75.h"
-#include "../../SuplaDeviceGUI.h"
-#include "../expander/ExpanderMCP23017.h"
-#include "../expander/ExpanderPCF8574.h"
-#include "../expander/ExpanderPCF8575.h"
-#include "display/SSD1306.h"
-
 namespace Supla {
 
 struct DevicePin {
@@ -85,5 +87,5 @@ class boneIO {
 };
 
 };  // namespace Supla
-
+#endif
 #endif
