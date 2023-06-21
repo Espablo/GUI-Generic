@@ -636,6 +636,9 @@ const String SuplaSaveResult(int save) {
     case SaveResult::UPDATE_NEW_VERSION:
       saveresult += F("Dostępna nowa wersja.");
       break;
+    case SaveResult::UPDATE_2STEP:
+      saveresult += F("Aktualizacja 2 etapowa.");
+      break;
 
     default:
       return F("");

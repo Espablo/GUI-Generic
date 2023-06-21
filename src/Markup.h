@@ -163,7 +163,8 @@ enum SaveResult
   UPDATE_WAIT,
   UPDATE_NO_UPDATES,
   UPDATE_TOO_LESS_SPACE,
-  UPDATE_NEW_VERSION
+  UPDATE_NEW_VERSION,
+  UPDATE_2STEP
 };
 
 const String SuplaSaveResult(int save);
