@@ -26,6 +26,11 @@
 #define GUI_SENSOR_I2C
 #endif
 
+/* Another one to support more sensors settings.*/
+#if defined(SUPLA_MS5611)
+#define GUI_SENSOR_I2C_2
+#endif
+
 #if defined(SUPLA_ADE7953)
 #define GUI_SENSOR_I2C_ENERGY_METER
 #endif
@@ -45,7 +50,13 @@ enum _sensor
   SENSOR_SPI_MAX31855,
   SENSOR_I2C_BH1750,
   SENSOR_I2C_MAX44009,
-  SENSOR_I2C_FOR_USE_2
+  SENSOR_I2C_FOR_USE_2,
+};
+
+/*Added to support configuration of more sensors.*/
+enum _sensor2
+{
+  SENSOR_I2C_MS5611
 };
 
 #if defined(GUI_SENSOR_I2C) || defined(GUI_SENSOR_I2C_ENERGY_METER)
@@ -133,6 +144,11 @@ void webPageI2CScanner(TwoWire* wire);
 
 #ifdef SUPLA_BH1750
 #define INPUT_BH1750 "ibh"
+#endif
+
+#ifdef SUPLA_MS5611
+#define INPUT_MS5611 "ms5611"
+#define INPUT_ALTITUDE_MS5611 "ams5611"
 #endif
 
 #ifdef SUPLA_MAX44009

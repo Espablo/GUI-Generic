@@ -211,6 +211,28 @@
 				"name": "Wake on LAN",
 				"desc": "Allumer les ordinateurs via LAN."
 			}
+		},
+		"SUPLA_WT32_ETH01_LAN8720": {
+			"name": "WT32-ETH01",
+			"desc": "WT32-ETH01 to wbudowany moduł szeregowo-ethernetowy oparty na jednostkach MCU WT32-S1 z serii ESP32.",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "WT32-ETH01",
+				"desc": ""
+			},
+			"es": {
+				"name": "WT32-ETH01",
+				"desc": ""
+			},
+			"de": {
+				"name": "WT32-ETH01",
+				"desc": ""
+			},
+			"fr": {
+				"name": "WT32-ETH01",
+				"desc": ""
+			}
 		}
 	},
 	"CONTROL": {
@@ -806,6 +828,28 @@
 				"desc": "Paramètres de l´appareil->I2C. Capteur d'intensité lumineuse BH1750."
 			}
 		},
+		"SUPLA_MS5611": {
+			"name": "Sensor MS5611",
+			"desc": "Ustawienia urządzenia->I2C. Barometr MS5611",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "MS5611 sensor",
+				"desc": "Device settings->I2C. Barometer MS5611."
+			},
+			"es": {
+				"name": "Sonda MS5611",
+				"desc": "Configuración del dispositivo->I2C. Barometer MS5611."
+			},
+			"de": {
+				"name": "Fühler MS5611",
+				"desc": "Geräteeinstellungen->I2C. Barometer MS5611."
+			},
+			"fr": {
+				"name": "Capteur MS5611",
+				"desc": "Paramètres de l´appareil->I2C. Barometer MS5611."
+			}
+		},
 		"SUPLA_MAX44009": {
 			"name": "Sensor MAX44009",
 			"desc": "Ustawienia urządzenia->I2C. Czujnik natężenia światła MAX44009",
@@ -1234,6 +1278,52 @@
 			}
 		}
 	},
+	"BONEIO": {
+		"SUPLA_BONEIO_32x10A": {
+			"name": "boneIO 32x10A",
+			"desc": "",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "boneIO 32x10A",
+				"desc": ""
+			},
+			"es": {
+				"name": "boneIO 32x10A",
+				"desc": ""
+			},
+			"de": {
+				"name": "boneIO 32x10A",
+				"desc": ""
+			},
+			"fr": {
+				"name": "boneIO 32x10A",
+				"desc": ""
+			}
+		},
+		"SUPLA_BONEIO_24x16A": {
+			"name": "boneIO 24x16A",
+			"desc": "",
+			"defOn": false,
+			"new": true,
+			"en": {
+				"name": "boneIO 24x16A",
+				"desc": ""
+			},
+			"es": {
+				"name": "boneIO 24x16A",
+				"desc": ""
+			},
+			"de": {
+				"name": "boneIO 24x16A",
+				"desc": ""
+			},
+			"fr": {
+				"name": "boneIO 24x16A",
+				"desc": ""
+			}
+		}
+	},
 	"SECTIONS": {
 		"BASIC": {
 			"pl": "Podstawowe",
@@ -1319,6 +1409,13 @@
 			"de": "Stromzähler",
 			"fr": "Compteur d'énergie électrique"
 		}
-
+		,
+		"BONEIO": {
+			"pl": "boneIO",
+			"en": "boneIO",
+			"es": "boneIO",
+			"de": "boneIO",
+			"fr": "boneIO"
+		}
 	}
 }

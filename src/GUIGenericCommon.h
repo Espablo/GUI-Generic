@@ -32,5 +32,6 @@
 uint8_t *HexToBytes(String _value);
 uint8_t getCountSensorChannels();
 int getCountChannels();
+const String getAPName();
 
 #endif  // GUI_GENERIC_COMMON_H

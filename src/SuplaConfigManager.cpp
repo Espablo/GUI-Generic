@@ -348,6 +348,18 @@ SuplaConfigManager::SuplaConfigManager() {
     this->addKey(KEY_ACTIVE_SENSOR, 16, false);
 #endif
 
+#if defined(GUI_SENSOR_I2C_2)
+    this->addKey(KEY_ACTIVE_SENSOR_2, 96);
+#else
+    this->addKey(KEY_ACTIVE_SENSOR_2, 96, false);
+#endif
+
+#if defined(SUPLA_MS5611)
+    this->addKey(KEY_ALTITUDE_MS5611, "0", 4);
+#else
+    this->addKey(KEY_ALTITUDE_MS5611, 4, false);
+#endif
+
 #ifdef SUPLA_DEEP_SLEEP
     this->addKey(KEY_DEEP_SLEEP_TIME, "0", 3);
 #else
