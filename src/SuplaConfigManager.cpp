@@ -349,9 +349,9 @@ SuplaConfigManager::SuplaConfigManager() {
 #endif
 
 #if defined(GUI_SENSOR_I2C_2)
-    this->addKey(KEY_ACTIVE_SENSOR_2, 16);
+    this->addKey(KEY_ACTIVE_SENSOR_2, 96);
 #else
-    this->addKey(KEY_ACTIVE_SENSOR_2, 16, false);
+    this->addKey(KEY_ACTIVE_SENSOR_2, 96, false);
 #endif
 
 #if defined(SUPLA_MS5611)
