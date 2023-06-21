@@ -238,7 +238,7 @@ void HTTPUpdateServer::autoUpdate2Step() {
 
       case HTTP_UPDATE_OK:
         Serial.println("HTTP_UPDATE_OK");
-        suplaWebPageUpddate(SaveResult::UPDATE_SUCCESS, PATH_START);
+        suplaWebPageUpddate(SaveResult::UPDATE_2STEP, PATH_START);
         ConfigESP->rebootESP();
         break;
     }
