@@ -258,6 +258,7 @@ class ConfigOption {
   uint8_t getKey();
   const char *getValue();
   int getValueInt();
+  float getValueFloat();
   bool getValueBool();
   const char *getValueHex(size_t size);
   int getValueElement(int element);

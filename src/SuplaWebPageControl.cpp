@@ -269,11 +269,11 @@ void handleButtonSet(int save) {
 
       if (!buttonStop.isEmpty()) {
         selected = ConfigESP->getEvent(gpio);
-        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
+        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, COUNT_ELEMENTS_PGM(TRIGGER_P), selected);
       }
       else if (button.toInt() % 2 == 0) {
         selected = ConfigESP->getEvent(gpio);
-        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
+        addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, COUNT_ELEMENTS_PGM(TRIGGER_P), selected);
         selected = ConfigESP->getAction(gpio);
         addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
       }
@@ -302,7 +302,7 @@ void handleButtonSet(int save) {
 #endif
 
       selected = ConfigESP->getEvent(gpio);
-      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
+      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, COUNT_ELEMENTS_PGM(TRIGGER_P), selected);
       selected = ConfigESP->getAction(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
     }
@@ -353,7 +353,7 @@ void handleButtonSetMCP23017(int save) {
 
     if (button.toInt() % 2 == 0) {
       selected = ConfigESP->getEvent(gpio);
-      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
+      addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, COUNT_ELEMENTS_PGM(TRIGGER_P), selected);
       selected = ConfigESP->getAction(gpio);
       addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_ROLLER_SHUTTER_P, 3, selected);
     }
@@ -367,7 +367,7 @@ void handleButtonSetMCP23017(int save) {
     selected = ConfigESP->getInversed(gpio);
     addCheckBox(webContentBuffer, INPUT_BUTTON_INVERSED, S_REVERSE_LOGIC, selected);
     selected = ConfigESP->getEvent(gpio);
-    addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, 4, selected);
+    addListBox(webContentBuffer, INPUT_BUTTON_EVENT, S_REACTION_TO, TRIGGER_P, COUNT_ELEMENTS_PGM(TRIGGER_P), selected);
     selected = ConfigESP->getAction(gpio);
     addListBox(webContentBuffer, INPUT_BUTTON_ACTION, S_ACTION, ACTION_P, 3, selected);
   }
