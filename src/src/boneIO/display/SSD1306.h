@@ -29,7 +29,9 @@
 #include <OLEDDisplayUi.h>
 
 #include "../../../SuplaDeviceGUI.h"
+#include "../boneIO.h"
 
+#ifdef SUPLA_BONEIO
 #define supla_logo_width  48
 #define supla_logo_height 48
 const uint8_t supla_logo_bits[] PROGMEM = {
@@ -46,7 +48,11 @@ const uint8_t supla_logo_bits[] PROGMEM = {
     0x00, 0x00, 0x60, 0x60, 0x00, 0x00, 0x00, 0x00, 0x60, 0x60, 0x00, 0x00, 0x00, 0x00, 0x60, 0x60, 0x00, 0x00, 0x00, 0x00, 0xC0, 0x30, 0x00, 0x00,
     0x00, 0x00, 0xC0, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-enum customActions { OLED_TURN_ON, OLED_NEXT_FRAME };
+enum customActionsBoneIO
+{
+  OLED_TURN_ON,
+  OLED_NEXT_FRAME
+};
 
 void msOverlay(OLEDDisplay* display, OLEDDisplayUiState* state);
 void drawFrameStart(OLEDDisplay* display);
@@ -81,4 +87,5 @@ class SSD1306 : public Supla::ActionHandler, public Supla::Element {
 };
 }  // namespace Display
 }  // namespace Supla
+#endif
 #endif
