@@ -220,7 +220,7 @@ void addButtonToRelay(uint8_t nrRelay) {
 #endif
 
 #ifdef SUPLA_ACTION_TRIGGER
-ActionTrigger *actionTrigger;
+std::vector<ActionTrigger> actionTrigger;
 
 void addActionTriggerRelatedChannel(uint8_t nr, Supla::Control::Button *button, int eventButton, Supla::Element *element) {
   button->setSwNoiseFilterDelay(50);
@@ -241,7 +241,9 @@ void addActionTriggerRelatedChannel(uint8_t nr, Supla::Control::Button *button, 
   }
   at->attach(button);
 
-  actionTrigger[nr].active = true;
+  ActionTrigger newTrigger;
+  actionTrigger.push_back(newTrigger);
+  actionTrigger.back().active = true;
 }
 
 void addButtonActionTrigger(uint8_t nr) {
