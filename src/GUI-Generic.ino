@@ -58,9 +58,6 @@ void setup() {
 #ifdef GUI_SENSOR_I2C_EXPENDER
   Expander = new Supla::Control::ConfigExpander();
 #endif
-#ifdef SUPLA_ACTION_TRIGGER
-  Supla::GUI::actionTrigger = new Supla::GUI::ActionTrigger[ConfigManager->get(KEY_MAX_BUTTON)->getValueInt()];
-#endif
 
 #ifdef SUPLA_CONDITIONS
   Supla::GUI::Conditions::addConditionsElement();

@@ -16,6 +16,7 @@
 
 #include "SSD1306.h"
 
+#ifdef SUPLA_BONEIO
 #include <supla/tools.h>
 #include "../../../GUIGenericCommon.h"
 
@@ -176,3 +177,4 @@ void SSD1306::handleAction(int event, int action) {
 }
 }  // namespace Display
 }  // namespace Supla
+#endif

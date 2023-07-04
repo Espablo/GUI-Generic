@@ -238,7 +238,7 @@ struct ActionTrigger {
   bool active = false;
 };
 
-extern ActionTrigger *actionTrigger;
+extern std::vector<ActionTrigger> actionTrigger;
 
 void addButtonActionTrigger(uint8_t nr);
 void addActionTriggerRelatedChannel(uint8_t nr, Supla::Control::Button *button, int eventButton, Supla::Element *element);

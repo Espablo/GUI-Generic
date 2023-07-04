@@ -679,29 +679,19 @@ void receiveCodeRFBridge() {
   String code;
 
   if (WebServer->httpServer->arg(ARG_PARM_URL) == "read") {
-    RCSwitch* mySwitch = new RCSwitch();
-    mySwitch->enableReceive(ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE));
+    RCSwitch mySwitch;
+    mySwitch.enableReceive(ConfigESP->getGpio(FUNCTION_RF_BRIDGE_RECEIVE));
 
     unsigned long timeout = millis();
     while ((millis() - timeout) < 5000) {
-      if (mySwitch->available()) {
-        code += "Received ";
-        code += mySwitch->getReceivedValue();
-        code += " Length: ";
-        code += mySwitch->getReceivedBitlength();
-        code += "bit ";
-        code += "Protocol: ";
-        code += mySwitch->getReceivedProtocol();
-        code += " Pulse Length: ";
-        code += mySwitch->getReceivedDelay();
-        code += "<br>";
-        delay(5);
-        mySwitch->resetAvailable();
+      if (mySwitch.available()) {
+        String code = "Received " + String(mySwitch.getReceivedValue()) + " Length: " + String(mySwitch.getReceivedBitlength()) + "bit " +
+                      "Protocol: " + String(mySwitch.getReceivedProtocol()) + " Pulse Length: " + String(mySwitch.getReceivedDelay()) + "<br>";
+        mySwitch.resetAvailable();
+        yield();
       }
-      delay(0);
+      yield();
     }
-
-    delete mySwitch;
   }
 
   addFormHeader(webContentBuffer, String(S_SETTING_FOR) + S_SPACE + S_CODES);

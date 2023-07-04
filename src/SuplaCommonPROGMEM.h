@@ -20,6 +20,8 @@
 #include "GUIGenericCommon.h"
 
 #define PGMT(pgm_ptr) (reinterpret_cast<const __FlashStringHelper*>(pgm_ptr))
+#define COUNT_ELEMENTS_PGM(arr) (sizeof(arr) / sizeof(arr[0]))
+
 
 const char HTTP_META[] PROGMEM =
     "<!DOCTYPE HTML><html><head><meta http-equiv='content-type' content='text/html; charset=UTF-8'>"
@@ -253,11 +255,40 @@ const char* const LEVEL_P[] PROGMEM = {LOW_STATE_CONTROL, HIGH_STATE_CONTROL};
 const char POSITION_MEMORY[] PROGMEM = S_POSITION_MEMORY;
 const char* const MEMORY_P[] PROGMEM = {OFF, ON, POSITION_MEMORY};
 
-const char REACTION_ON_PRESS[] PROGMEM = S_REACTION_ON_PRESS;
-const char REACTION_ON_RELEASE[] PROGMEM = S_REACTION_ON_RELEASE;
-const char REACTION_ON_CHANGE[] PROGMEM = S_REACTION_ON_CHANGE;
-const char REACTION_ON_HOLD[] PROGMEM = S_REACTION_ON_HOLD;
-const char* const TRIGGER_P[] PROGMEM = {REACTION_ON_PRESS, REACTION_ON_RELEASE, REACTION_ON_CHANGE, REACTION_ON_HOLD};
+const char* const TRIGGER_P[] PROGMEM = {S_REACTION_ON_PRESS,
+                                         S_REACTION_ON_RELEASE,
+                                         S_REACTION_ON_CHANGE,
+                                         S_REACTION_ON_HOLD,
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         "",
+                                         S_REACTION_MOTION_SENSOR};
 
 const char* const ACTION_P[] PROGMEM = {ON, OFF, S_TOGGLE};
 

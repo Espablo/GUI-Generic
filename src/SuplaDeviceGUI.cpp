@@ -157,12 +157,14 @@ void addRelay(uint8_t nr) {
 }
 
 void addButtonToRelay(uint8_t nrRelay) {
-  uint8_t pinButton, nrButton, pinRelay;
+  uint8_t pinButton, nrButton, pinRelay, buttonAction, buttonEvent;
 
   for (uint8_t nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
     nrButton = ConfigESP->getNumberButton(nr);
     pinButton = ConfigESP->getGpio(nr, FUNCTION_BUTTON);
     pinRelay = ConfigESP->getGpio(nrButton, FUNCTION_RELAY);
+    buttonAction = ConfigESP->getAction(pinButton);
+    buttonEvent = ConfigESP->getEvent(pinButton);
 
     if (pinButton != OFF_GPIO && pinRelay != OFF_GPIO && nrRelay == nrButton) {
       Supla::Control::Button *button = nullptr;
@@ -175,16 +177,38 @@ void addButtonToRelay(uint8_t nrRelay) {
       if (button == nullptr) {
         button = Supla::Control::GUI::Button(pinButton, ConfigESP->getPullUp(pinButton), ConfigESP->getInversed(pinButton), nrButton);
       }
-
       button->setSwNoiseFilterDelay(50);
 
-      if (ConfigESP->getEvent(pinButton) == Supla::ON_HOLD) {
-        int holdTimeMs = String(ConfigManager->get(KEY_AT_HOLD_TIME)->getValue()).toDouble() * 1000;
-        button->setHoldTime(holdTimeMs);
-        button->repeatOnHoldEvery(2000);
-      }
+      switch (buttonEvent) {
+          // case Supla::Event::ON_PRESS:
+          //   button->setButtonType(Supla::Control::Button::ButtonType::MONOSTABLE);
+          //   relay[nrButton]->attach(button);
+          //   break;
 
-      button->addAction(ConfigESP->getAction(pinButton), relay[nrButton], ConfigESP->getEvent(pinButton));
+          // case Supla::Event::ON_RELEASE:
+          //   button->addAction(buttonAction, relay[nrButton], buttonEvent);
+          //   break;
+
+          // case Supla::Event::ON_CHANGE:
+          //   button->setButtonType(Supla::Control::Button::ButtonType::BISTABLE);
+          //   relay[nrButton]->attach(button);
+          //   break;
+
+        case Supla::Event::CONDITIONAL_ON_CHANGE:
+          button->setButtonType(Supla::Control::Button::ButtonType::MOTION_SENSOR);
+          relay[nrButton]->attach(button);
+          break;
+
+        case Supla::Event::ON_HOLD:
+          button->setHoldTime(ConfigManager->get(KEY_AT_HOLD_TIME)->getValueFloat() * 1000);
+          button->repeatOnHoldEvery(2000);
+          button->addAction(buttonAction, relay[nrButton], buttonEvent);
+          break;
+
+        default:
+          button->addAction(buttonAction, relay[nrButton], buttonEvent);
+          break;
+      }
 
 #ifdef SUPLA_ACTION_TRIGGER
       addActionTriggerRelatedChannel(nrButton, button, ConfigESP->getEvent(pinButton), relay[nrButton]);
@@ -196,14 +220,14 @@ void addButtonToRelay(uint8_t nrRelay) {
 #endif
 
 #ifdef SUPLA_ACTION_TRIGGER
-ActionTrigger *actionTrigger;
+std::vector<ActionTrigger> actionTrigger;
 
 void addActionTriggerRelatedChannel(uint8_t nr, Supla::Control::Button *button, int eventButton, Supla::Element *element) {
   button->setSwNoiseFilterDelay(50);
   auto at = new Supla::Control::ActionTrigger();
 
-  int muliclickTimeMs = String(ConfigManager->get(KEY_AT_MULTICLICK_TIME)->getValue()).toDouble() * 1000;
-  int holdTimeMs = String(ConfigManager->get(KEY_AT_HOLD_TIME)->getValue()).toDouble() * 1000;
+  int muliclickTimeMs = ConfigManager->get(KEY_AT_MULTICLICK_TIME)->getValueFloat() * 1000;
+  int holdTimeMs = ConfigManager->get(KEY_AT_HOLD_TIME)->getValueFloat() * 1000;
 
   if (eventButton == Supla::ON_CHANGE) {
     button->setMulticlickTime(muliclickTimeMs, true);
@@ -217,7 +241,9 @@ void addActionTriggerRelatedChannel(uint8_t nr, Supla::Control::Button *button, 
   }
   at->attach(button);
 
-  actionTrigger[nr].active = true;
+  ActionTrigger newTrigger;
+  actionTrigger.push_back(newTrigger);
+  actionTrigger.back().active = true;
 }
 
 void addButtonActionTrigger(uint8_t nr) {
@@ -230,8 +256,8 @@ void addButtonActionTrigger(uint8_t nr) {
 
     button->addAction(ConfigESP->getAction(pinButton), at, ConfigESP->getEvent(pinButton));
 
-    int muliclickTimeMs = String(ConfigManager->get(KEY_AT_MULTICLICK_TIME)->getValue()).toDouble() * 1000;
-    int holdTimeMs = String(ConfigManager->get(KEY_AT_HOLD_TIME)->getValue()).toDouble() * 1000;
+    int muliclickTimeMs = ConfigManager->get(KEY_AT_MULTICLICK_TIME)->getValueFloat() * 1000;
+    int holdTimeMs = ConfigManager->get(KEY_AT_HOLD_TIME)->getValueFloat() * 1000;
 
     if (ConfigESP->getEvent(pinButton) == Supla::ON_CHANGE) {
       button->setMulticlickTime(muliclickTimeMs, true);

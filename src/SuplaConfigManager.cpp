@@ -51,6 +51,10 @@ int ConfigOption::getValueInt() {
   return atoi(this->getValue());
 }
 
+float ConfigOption::getValueFloat() {
+  return atof(this->getValue());
+}
+
 bool ConfigOption::getValueBool() {
   return atoi(this->getValue());
 }
