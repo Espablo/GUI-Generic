@@ -685,10 +685,9 @@ void receiveCodeRFBridge() {
     unsigned long timeout = millis();
     while ((millis() - timeout) < 5000) {
       if (mySwitch.available()) {
-        String code = "Received " + String(mySwitch.getReceivedValue()) + " Length: " + String(mySwitch.getReceivedBitlength()) + "bit " +
-                      "Protocol: " + String(mySwitch.getReceivedProtocol()) + " Pulse Length: " + String(mySwitch.getReceivedDelay()) + "<br>";
+        code += "Received " + String(mySwitch.getReceivedValue()) + " Length: " + String(mySwitch.getReceivedBitlength()) + "bit " +
+                "Protocol: " + String(mySwitch.getReceivedProtocol()) + " Pulse Length: " + String(mySwitch.getReceivedDelay()) + "<br>";
         mySwitch.resetAvailable();
-        yield();
       }
       yield();
     }
