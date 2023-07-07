@@ -230,44 +230,37 @@ void CSE7766::_read() {
   static unsigned char index = 0;
   static unsigned long last = millis();
 
-  uint8_t byte;
-  while ((_serial_available() > 0) && (index <= 23)) {
-    // A 24 bytes message takes ~55ms to go through at 4800 bps
-    // Reset counter if more than 1000ms have passed since last byte.
-    if (millis() - last > CSE7766_SYNC_INTERVAL)
+  while (_serial_available()) {
+    if (millis() - last > CSE7766_SYNC_INTERVAL) {
       index = 0;
+    }
     last = millis();
 
-    byte = _serial_read();
+    uint8_t byte = _serial_read();
 
-    // first byte must be 0x55 or 0xF?
-    if (0 == index) {
-      if ((0x55 != byte) && (byte < 0xF0)) {
-        continue;
-      }
-    }
-    else if (1 == index) {
-      if (0x5A != byte) {
-        index = 0;
-        continue;
-      }
+    switch (index) {
+      case 0:
+        if (byte != 0x55 && byte < 0xF0) {
+          continue;
+        }
+        break;
+      case 1:
+        if (byte != 0x5A) {
+          index = 0;
+          continue;
+        }
+        break;
     }
 
     _data[index++] = byte;
-  }
-
-  // Process packet
-  if (24 == index) {
-    _process();
-    index = 0;
-  }
-
-  // Flush remaining bytes if index exceeded 23
-  if (index > 23) {
-    while (_serial_available() > 0) {
-      byte = _serial_read();
-      // Handle remaining bytes if needed
+    if (index > 23) {
+      _serial_flush();
+      break;
     }
+  }
+
+  if (index == 24) {
+    _process();
     index = 0;
   }
 }
