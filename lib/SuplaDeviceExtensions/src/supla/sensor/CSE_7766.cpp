@@ -161,6 +161,7 @@ void CSE_7766::setPowerMultiplier(double value) {
 void CSE_7766::setCounter(_supla_int64_t value) {
   _energy = value;  // ------- energy value read from memory at startup
   energy = value;
+  sensor.resetEnergy(value);
   setFwdActEnergy(0, value);
 }
 
