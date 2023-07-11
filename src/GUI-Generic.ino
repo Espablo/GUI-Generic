@@ -78,6 +78,10 @@ void setup() {
 #endif
 #endif
 
+#ifdef SUPLA_ACTION_TRIGGER
+  Supla::GUI::actionTrigger = new Supla::GUI::ActionTrigger[ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() + MAX_BRIDGE_RF];
+#endif
+
 #if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
   uint8_t rollershutters = ConfigManager->get(KEY_MAX_ROLLERSHUTTER)->getValueInt();
 
@@ -773,9 +777,10 @@ void setup() {
 #endif
 
 #ifdef SUPLA_ACTION_TRIGGER
-  for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt(); nr++) {
+  for (nr = 0; nr < ConfigManager->get(KEY_MAX_BUTTON)->getValueInt() + MAX_BRIDGE_RF; nr++) {
     Supla::GUI::addButtonActionTrigger(nr);
   }
+  delete Supla::GUI::actionTrigger;
 #endif
 
 #ifdef DEBUG_MODE
