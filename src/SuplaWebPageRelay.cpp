@@ -168,7 +168,7 @@ void handleRelaySaveSet() {
 #endif
 
 #ifdef SUPLA_RF_BRIDGE
-  if (nr_relay.toInt() <= MAX_BRIDGE_RF) {
+  if (nr_relay.toInt() < MAX_BRIDGE_RF) {
     String input;
 
     input = INPUT_RF_BRIDGE_TYPE;
@@ -233,7 +233,7 @@ void handleRelaySet(int save) {
     addFormHeaderEnd(webContentBuffer);
 
 #ifdef SUPLA_RF_BRIDGE
-    if (nr_relay.toInt() <= MAX_BRIDGE_RF) {
+    if (nr_relay.toInt() < MAX_BRIDGE_RF) {
       String value;
 
       addFormHeader(webContentBuffer, F("RF BRIDGE"));
