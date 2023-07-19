@@ -277,8 +277,6 @@ bool SuplaDeviceClass::begin(unsigned char protoVersion) {
       if (cfg->getAuthKey(buf)) {
         setAuthKey(buf);
       }
-      generateHexString(Supla::Channel::reg_dev.GUID, buf, SUPLA_GUID_SIZE);
-      SUPLA_LOG_INFO("New GUID: %s", buf);
       generateHexString(
           Supla::Channel::reg_dev.AuthKey, buf, SUPLA_AUTHKEY_SIZE);
       SUPLA_LOG_DEBUG("New AuthKey: %s", buf);
@@ -289,6 +287,10 @@ bool SuplaDeviceClass::begin(unsigned char protoVersion) {
       return false;
     }
   }
+
+  char buf[SUPLA_GUID_SIZE * 2 + 1] = {};
+  generateHexString(Supla::Channel::reg_dev.GUID, buf, SUPLA_GUID_SIZE);
+  SUPLA_LOG_INFO("GUID: %s", buf);
 
   if (strnlen(Supla::Channel::reg_dev.Name, SUPLA_DEVICE_NAME_MAXSIZE) == 0) {
 #if defined(ARDUINO_ARCH_ESP8266)
@@ -307,7 +309,7 @@ bool SuplaDeviceClass::begin(unsigned char protoVersion) {
   }
   SUPLA_LOG_INFO("Device name: %s", Supla::Channel::reg_dev.Name);
   SUPLA_LOG_INFO("Device software version: %s",
-                 Supla::Channel::reg_dev.SoftVer);
+      Supla::Channel::reg_dev.SoftVer);
 
   SUPLA_LOG_DEBUG("Initializing network layer");
   char hostname[32] = {};
@@ -385,7 +387,7 @@ void SuplaDeviceClass::iterate(void) {
     cfg->saveIfNeeded();
   }
 
-  uint64_t _millis = millis();
+  uint32_t _millis = millis();
   checkIfRestartIsNeeded(_millis);
   handleLocalActionTriggers();
   iterateAlwaysElements(_millis);
@@ -434,9 +436,20 @@ void SuplaDeviceClass::iterate(void) {
       }
       if (iterateConnected) {
         // Iterate all elements
-        for (auto element = Supla::Element::begin(); element != nullptr;
-            element = element->next()) {
-          if (!element->iterateConnected()) {
+        // Iterate connected exits loop when method returns false, which means
+        // that element send message to server. In next iteration we'll start
+        // with next element instead of first one on the list.
+        if (Supla::Element::IsInvalidPtrSet()) {
+          iterateConnectedPtr = nullptr;
+          Supla::Element::ClearInvalidPtr();
+        }
+        if (iterateConnectedPtr == nullptr) {
+          iterateConnectedPtr = Supla::Element::begin();
+        }
+        for (; iterateConnectedPtr != nullptr;
+             iterateConnectedPtr = iterateConnectedPtr->next()) {
+          if (!iterateConnectedPtr->iterateConnected()) {
+            iterateConnectedPtr = iterateConnectedPtr->next();
             break;
           }
           delay(0);
@@ -629,7 +642,7 @@ bool SuplaDeviceClass::loadDeviceConfig() {
   return configComplete;
 }
 
-void SuplaDeviceClass::iterateAlwaysElements(uint64_t _millis) {
+void SuplaDeviceClass::iterateAlwaysElements(uint32_t _millis) {
   uptime.iterate(_millis);
 
   // Iterate all elements
@@ -1004,7 +1017,7 @@ void SuplaDeviceClass::handleLocalActionTriggers() {
   }
 }
 
-void SuplaDeviceClass::checkIfRestartIsNeeded(uint64_t _millis) {
+void SuplaDeviceClass::checkIfRestartIsNeeded(uint32_t _millis) {
   if (deviceRestartTimeoutTimestamp != 0 &&
       _millis - deviceRestartTimeoutTimestamp > 5ul * 60 * 1000) {
     SUPLA_LOG_INFO("Config mode 5 min timeout. Reset device");
