@@ -36,7 +36,7 @@ class LightRelay : public Relay {
  protected:
   uint16_t lifespan;
   _supla_int_t turnOnSecondsCumulative;
-  uint32_t turnOnTimestamp;
+  uint64_t turnOnTimestamp;
 };
 
 };  // namespace Control

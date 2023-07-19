@@ -18,10 +18,15 @@
 
 namespace Supla {
 
-Uptime::Uptime() {
+Uptime::Uptime()
+    : lastMillis(0),
+      deviceUptime(0),
+      connectionUptime(0),
+      lastConnectionResetCause(SUPLA_LASTCONNECTIONRESETCAUSE_UNKNOWN),
+      acceptConnectionLostCause(false) {
 }
 
-void Uptime::iterate(uint32_t millis) {
+void Uptime::iterate(uint64_t millis) {
   int seconds = (millis - lastMillis) / 1000;
   if (seconds > 0) {
     lastMillis = millis - ((millis - lastMillis) % 1000);
@@ -42,15 +47,15 @@ void Uptime::setConnectionLostCause(unsigned char cause) {
   }
 }
 
-unsigned _supla_int_t Uptime::getUptime() const {
+unsigned _supla_int_t Uptime::getUptime() {
   return deviceUptime;
 }
 
-unsigned _supla_int_t Uptime::getConnectionUptime() const {
+unsigned _supla_int_t Uptime::getConnectionUptime() {
   return connectionUptime;
 }
 
-unsigned char Uptime::getLastResetCause() const {
+unsigned char Uptime::getLastResetCause() {
   return lastConnectionResetCause;
 }
 

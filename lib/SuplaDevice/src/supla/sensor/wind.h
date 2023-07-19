@@ -46,7 +46,7 @@ class Wind : public ChannelElement {
   }
 
  protected:
-  uint32_t lastReadTime = 0;
+  uint64_t lastReadTime = 0;
 };
 
 };  // namespace Sensor

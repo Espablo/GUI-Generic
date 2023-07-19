@@ -97,7 +97,7 @@ class OneWireBus {
 
   uint8_t pin;
   OneWireBus *nextBus;
-  uint32_t lastReadTime;
+  uint64_t lastReadTime;
   DallasTemperature sensors;
 
  protected:

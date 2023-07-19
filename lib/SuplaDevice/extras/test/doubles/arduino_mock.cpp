@@ -61,7 +61,7 @@ void pinMode(uint8_t pin, uint8_t mode) {
   DigitalInterface::instance->pinMode(pin, mode);
 }
 
-uint32_t millis() {
+unsigned long millis() {
   assert(TimeInterface::instance);
   return TimeInterface::instance->millis();
 }

@@ -45,7 +45,7 @@ class CmdRelay : public Sensor::SensorParsed<VirtualRelay> {
  protected:
   std::string cmdOn;
   std::string cmdOff;
-  uint32_t lastReadTime = 0;
+  uint64_t lastReadTime = 0;
   bool useOfflineOnInvalidState = false;
 };
 

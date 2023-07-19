@@ -41,7 +41,7 @@ class Binary : public ChannelElement {
   int pin = -1;
   bool pullUp = false;
   bool invertLogic = false;
-  uint32_t lastReadTime = 0;
+  uint64_t lastReadTime = 0;
   Supla::Io *io = nullptr;
 };
 

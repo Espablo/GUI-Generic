@@ -42,8 +42,8 @@ class Clock : public Element {
 
  protected:
   time_t localtime;
-  uint32_t lastServerUpdate;
-  uint32_t lastMillis;
+  uint64_t lastServerUpdate;
+  uint64_t lastMillis;
   bool isClockReady;
 };
 

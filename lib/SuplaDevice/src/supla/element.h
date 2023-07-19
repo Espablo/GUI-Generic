@@ -33,8 +33,6 @@ class Element {
   static Element *last();
   static Element *getElementByChannelNumber(int channelNumber);
   static bool IsAnyUpdatePending();
-  static bool IsInvalidPtrSet();
-  static void ClearInvalidPtr();
   Element *next();
 
   // First method called on element in SuplaDevice.begin()
@@ -109,7 +107,6 @@ class Element {
 
  protected:
   static Element *firstPtr;
-  static bool invalidatePtr;
   Element *nextPtr;
 };
 

@@ -48,7 +48,7 @@ class Afore : public Supla::Sensor::OnePhaseElectricityMeter {
   bool varFound;
   bool dataIsReady;
   bool dataFetchInProgress;
-  uint32_t connectionTimeoutMs;
+  uint64_t connectionTimeoutMs;
 };
 };  // namespace PV
 };  // namespace Supla

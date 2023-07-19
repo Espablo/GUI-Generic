@@ -66,7 +66,7 @@ class SolarEdge : public Supla::Sensor::ElectricityMeter {
   bool dataIsReady;
   bool dataFetchInProgress;
   bool headerFound;
-  uint32_t connectionTimeoutMs;
+  uint64_t connectionTimeoutMs;
 
   char apiKey[APIKEY_MAX_LENGTH] = {};
   char siteId[PARAMETER_MAX_LENGTH] = {};

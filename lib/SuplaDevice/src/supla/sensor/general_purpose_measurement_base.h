@@ -39,7 +39,7 @@ class GeneralPurposeMeasurementBase : public ChannelElement {
   }
 
  protected:
-  uint32_t lastReadTime;
+  uint64_t lastReadTime;
 };
 
 };  // namespace Sensor

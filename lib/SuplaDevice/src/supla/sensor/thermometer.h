@@ -34,7 +34,7 @@ class Thermometer : public ChannelElement {
   void iterateAlways() override;
 
  protected:
-  uint32_t lastReadTime;
+  uint64_t lastReadTime;
 };
 
 };  // namespace Sensor

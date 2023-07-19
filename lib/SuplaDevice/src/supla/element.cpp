@@ -23,7 +23,6 @@
 
 namespace Supla {
 Element *Element::firstPtr = nullptr;
-bool Element::invalidatePtr = false;
 
 Element::Element() : nextPtr(nullptr) {
   if (firstPtr == nullptr) {
@@ -34,7 +33,6 @@ Element::Element() : nextPtr(nullptr) {
 }
 
 Element::~Element() {
-  invalidatePtr = true;
   if (begin() == this) {
     firstPtr = next();
     return;
@@ -119,10 +117,10 @@ bool Element::iterateConnected(void *ptr) {
 
 bool Element::iterateConnected() {
   bool response = true;
-  uint32_t timestamp = millis();
+  uint64_t timestamp = millis();
   Channel *secondaryChannel = getSecondaryChannel();
   if (secondaryChannel && secondaryChannel->isUpdateReady() &&
-      timestamp - secondaryChannel->lastCommunicationTimeMs > 50) {
+      timestamp - secondaryChannel->lastCommunicationTimeMs > 100) {
     secondaryChannel->lastCommunicationTimeMs = timestamp;
     secondaryChannel->sendUpdate();
     response = false;
@@ -130,7 +128,7 @@ bool Element::iterateConnected() {
 
   Channel *channel = getChannel();
   if (channel && channel->isUpdateReady() &&
-      timestamp - channel->lastCommunicationTimeMs > 50) {
+      timestamp - channel->lastCommunicationTimeMs > 100) {
     channel->lastCommunicationTimeMs = timestamp;
     channel->sendUpdate();
     response = false;
@@ -213,14 +211,6 @@ void Element::generateKey(char *output, const char *key) {
 }
 
 void Element::onSoftReset() {
-}
-
-bool Element::IsInvalidPtrSet() {
-  return invalidatePtr;
-}
-
-void Element::ClearInvalidPtr() {
-  invalidatePtr = false;
 }
 
 };  // namespace Supla
